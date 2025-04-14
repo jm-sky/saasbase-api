@@ -11,7 +11,11 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/horizon": "^5.31",
+        "laravel/telescope": "^5.7",
+        "laravel/tinker": "^2.10.1",
+        "ramsey/uuid": "^4.7",
+        "tymon/jwt-auth": "^2.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -52,7 +56,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" --names=server,queue,logs"
         ]
     },
     "extra": {
