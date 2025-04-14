@@ -12,9 +12,11 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.31",
+        "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.7",
         "laravel/tinker": "^2.10.1",
         "ramsey/uuid": "^4.7",
+        "spatie/laravel-data": "^4.15",
         "tymon/jwt-auth": "^2.2"
     },
     "require-dev": {
