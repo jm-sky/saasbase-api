@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id');
             $table->uuid('skill_id');
-            $table->integer('level')->default(1);
+            $table->integer('level')->comment('1-5');
             $table->timestamp('acquired_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
