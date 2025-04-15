@@ -10,9 +10,9 @@ class SkillCategoryDto
         public readonly string $id,
         public readonly string $name,
         public readonly ?string $description,
-        public readonly Carbon $created_at,
-        public readonly Carbon $updated_at,
-        public readonly ?Carbon $deleted_at,
+        public readonly Carbon $createdAt,
+        public readonly Carbon $updatedAt,
+        public readonly ?Carbon $deletedAt,
     ) {}
 
     public static function fromModel(\App\Domain\Skills\Models\SkillCategory $model): self
@@ -21,9 +21,9 @@ class SkillCategoryDto
             id: $model->id,
             name: $model->name,
             description: $model->description,
-            created_at: $model->created_at,
-            updated_at: $model->updated_at,
-            deleted_at: $model->deleted_at,
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 
@@ -33,9 +33,9 @@ class SkillCategoryDto
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+            'deletedAt' => $this->deletedAt,
         ];
     }
 }

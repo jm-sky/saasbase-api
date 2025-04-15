@@ -10,10 +10,10 @@ class UserDto
         public readonly string $id,
         public readonly string $name,
         public readonly string $email,
-        public readonly ?string $avatar_url,
-        public readonly Carbon $created_at,
-        public readonly Carbon $updated_at,
-        public readonly ?Carbon $deleted_at,
+        public readonly ?string $avatarUrl,
+        public readonly Carbon $createdAt,
+        public readonly Carbon $updatedAt,
+        public readonly ?Carbon $deletedAt,
     ) {}
 
     public static function fromModel(\App\Domain\Auth\Models\User $model): self
@@ -22,10 +22,10 @@ class UserDto
             id: $model->id,
             name: $model->name,
             email: $model->email,
-            avatar_url: $model->avatar_url,
-            created_at: $model->created_at,
-            updated_at: $model->updated_at,
-            deleted_at: $model->deleted_at,
+            avatarUrl: $model->avatar_url,
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 
@@ -35,10 +35,10 @@ class UserDto
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar_url' => $this->avatar_url,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at,
+            'avatarUrl' => $this->avatarUrl,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+            'deletedAt' => $this->deletedAt,
         ];
     }
 }

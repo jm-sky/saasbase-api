@@ -5,12 +5,12 @@ namespace App\Domains\Tenant\DTOs;
 use Spatie\LaravelData\Data;
 
 /**
- * @property string|null $id UUID
+ * @property ?string $id UUID
  * @property string $name
  * @property string $slug
- * @property string|null $created_at
- * @property string|null $updated_at
- * @property string|null $deleted_at
+ * @property ?string $createdAt
+ * @property ?string $updatedAt
+ * @property ?string $deletedAt
  */
 class TenantDTO extends Data
 {
@@ -18,8 +18,8 @@ class TenantDTO extends Data
         public ?string $id = null,
         public string $name,
         public string $slug,
-        public ?string $created_at = null,
-        public ?string $updated_at = null,
-        public ?string $deleted_at = null,
+        public ?string $createdAt = null,
+        public ?string $updatedAt = null,
+        public ?string $deletedAt = null,
     ) {}
 }

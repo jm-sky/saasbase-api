@@ -5,18 +5,18 @@ namespace App\Domain\Contractors\DTO;
 use Spatie\LaravelData\Data;
 
 /**
- * @property string|null $id UUID
+ * @property ?string $id UUID
  * @property string $name
  * @property string $email
- * @property string|null $phone
- * @property string|null $address
- * @property string|null $city
- * @property string|null $state
- * @property string|null $zip_code
- * @property string|null $country
- * @property string|null $tax_id
- * @property string|null $notes
- * @property bool $is_active
+ * @property ?string $phone
+ * @property ?string $address
+ * @property ?string $city
+ * @property ?string $state
+ * @property ?string $zipCode
+ * @property ?string $country
+ * @property ?string $taxId
+ * @property ?string $notes
+ * @property bool $isActive
  */
 class ContractorDTO extends Data
 {
@@ -28,10 +28,10 @@ class ContractorDTO extends Data
         public ?string $address = null,
         public ?string $city = null,
         public ?string $state = null,
-        public ?string $zip_code = null,
+        public ?string $zipCode = null,
         public ?string $country = null,
-        public ?string $tax_id = null,
+        public ?string $taxId = null,
         public ?string $notes = null,
-        public bool $is_active = true,
+        public bool $isActive = true,
     ) {}
 }
