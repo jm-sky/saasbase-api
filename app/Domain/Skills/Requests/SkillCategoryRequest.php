@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Tenant\Requests;
+namespace App\Domain\Skills\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TenantRequest extends FormRequest
+class SkillCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -13,14 +13,9 @@ class TenantRequest extends FormRequest
 
     public function rules(): array
     {
-        $uniqueRule = 'unique:tenants,slug';
-        if ($this->tenant) {
-            $uniqueRule .= ',' . $this->tenant->id;
-        }
-
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', $uniqueRule],
+            'description' => ['nullable', 'string'],
         ];
     }
 
@@ -28,13 +23,17 @@ class TenantRequest extends FormRequest
     {
         return [
             'name.required' => 'The name field is required.',
-            'slug.required' => 'The slug field is required.',
-            'slug.unique' => 'This slug is already taken.',
         ];
     }
 
     public function validated($key = null, $default = null): array
     {
-        return parent::validated();
+        $validated = parent::validated();
+
+        // Transform camelCase to snake_case for database
+        return [
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+        ];
     }
 }
