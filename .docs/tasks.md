@@ -31,3 +31,7 @@ class SetLocaleFromHeader
 }
 ```
 -----------------------------------------------------
+
+## 2. [ ] Add seeders for all models 
+## 3. [ ] Add countries to Country seeders JSON file (European countries, and most large countries)
+## 4. [ ] Add routes & actions for current user - change settings, reset password etc. 
