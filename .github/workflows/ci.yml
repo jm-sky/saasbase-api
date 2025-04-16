@@ -1,62 +1,53 @@
-name: CI
+name: Laravel CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  laravel-tests:
+  build:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: sail
-          POSTGRES_USER: sail
-          POSTGRES_PASSWORD: secret
-        options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, bcmath, intl, pdo, pdo_pgsql, pgsql
-          coverage: none
+    # Cache Composer dependencies
+    - name: Cache Composer dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.composer/cache
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+    # Set up PHP 8.3
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
 
-      - name: Copy .env and configure for CI
-        run: |
-          cp .env.example .env
-          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
-          sed -i 's/DB_PORT=.*/DB_PORT=5432/' .env
-          sed -i 's/DB_DATABASE=.*/DB_DATABASE=sail/' .env
-          sed -i 's/DB_USERNAME=.*/DB_USERNAME=sail/' .env
-          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
+    - name: Install dependencies (Composer)
+      run: |
+        composer install --prefer-dist --no-interaction --no-scripts
 
-      - name: Generate app key
-        run: php artisan key:generate
+    # Run Larastan for static analysis
+    - name: Run Larastan
+      run: |
+        vendor/bin/phpstan analyse
 
-      - name: Run migrations
-        run: php artisan migrate --force
+    # Run PHP CS Fixer for code formatting
+    - name: Run PHP CS Fixer
+      run: |
+        vendor/bin/php-cs-fixer fix --dry-run --diff
 
-      - name: Run tests
-        run: php artisan test
+    # Run Tests
+    - name: Run Tests
+      run: |
+        vendor/bin/phpunit --coverage-text --color=never
 
-      - name: Run Larastan
-        run: ./vendor/bin/phpstan analyse
-
-      - name: Run PHP-CS-Fixer
-        run: composer csf || true
+    # (Optional) Build Docker images, deploy, etc.
