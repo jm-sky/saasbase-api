@@ -1,0 +1,8 @@
+---
+description: Wszystkie dane wysyłane do frontendu powinny być w formacie camelCase.
+globs: ["app/Http/Resources/**/*.php", "routes/api.php"]
+tags: ["api", "naming", "frontend"]
+---
+
+- Ensure all API responses follow camelCase key naming.
+- Avoid snake_case and PascalCase in responses.
