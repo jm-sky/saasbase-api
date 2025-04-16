@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Locales
+    |--------------------------------------------------------------------------
+    |
+    | This array lists all the locales that your application supports.
+    |
+    */
+    'supported_locales' => ['en', 'pl'],
+
 ];

@@ -1,8 +1,3 @@
-# Tasks
-
-## 1. [x] Add middleware to set locale based on Accept Language header. 
-
-```
 <?php
 
 namespace App\Http\Middleware;
@@ -16,10 +11,10 @@ class SetLocaleFromHeader
 {
     public function handle(Request $request, Closure $next)
     {
-        // Pobierz listę z configu
+        // Get supported locales from config
         $supportedLocales = Config::get('app.supported_locales', ['en']);
 
-        // Laravelowy helper do analizy Accept-Language
+        // Laravel helper to parse Accept-Language header
         $locale = $request->getPreferredLanguage($supportedLocales);
 
         if ($locale) {
@@ -29,5 +24,3 @@ class SetLocaleFromHeader
         return $next($request);
     }
 }
-```
------------------------------------------------------
