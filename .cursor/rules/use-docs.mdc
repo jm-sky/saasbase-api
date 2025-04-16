@@ -1,0 +1,8 @@
+---
+description: Dodatkowe informacje projektowe znajdują się w katalogu `.docs` – należy je uwzględniać jako kontekst.
+globs: [".docs/**/*"]
+tags: ["docs", "project"]
+---
+
+- Check `.docs/` for project-specific rules, constraints, and domain logic.
+- Treat `.docs/` as part of the code context.
