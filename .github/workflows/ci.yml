@@ -33,7 +33,7 @@ jobs:
         run: cp .env.example .env
 
       - name: Set up Docker Compose
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
 
       - name: Wait for containers
         run: sleep 20
@@ -46,16 +46,16 @@ jobs:
           composer install --no-interaction --prefer-dist
 
       - name: Generate app key
-        run: docker-compose exec -T laravel.test php artisan key:generate
+        run: docker compose exec -T laravel.test php artisan key:generate
 
       - name: Run migrations
-        run: docker-compose exec -T laravel.test php artisan migrate --force
+        run: docker compose exec -T laravel.test php artisan migrate --force
 
       - name: Run tests
-        run: docker-compose exec -T laravel.test php artisan test --no-interaction
+        run: docker compose exec -T laravel.test php artisan test --no-interaction
 
       - name: Run Larastan
-        run: docker-compose exec -T laravel.test vendor/bin/phpstan analyse
+        run: docker compose exec -T laravel.test vendor/bin/phpstan analyse
 
       - name: Run PHP CS Fixer
-        run: docker-compose exec -T laravel.test vendor/bin/php-cs-fixer fix --dry-run --diff
+        run: docker compose exec -T laravel.test vendor/bin/php-cs-fixer fix --dry-run --diff
