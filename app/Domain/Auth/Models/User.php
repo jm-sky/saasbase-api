@@ -2,15 +2,17 @@
 
 namespace App\Domain\Auth\Models;
 
-use App\Domain\Tenant\Models\UserTenant;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Carbon\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use Database\Factories\UserFactory;
+use App\Domain\Tenant\Models\UserTenant;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * @property string $id
@@ -23,9 +25,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property ?string $phone
  * @property ?string $avatar_url
  * @property bool $is_admin
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property ?\Carbon\Carbon $deleted_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
  */
 class User extends Authenticatable
 {
@@ -104,5 +106,10 @@ class User extends Authenticatable
     public function skills(): HasMany
     {
         return $this->hasMany(\App\Domain\Skills\Models\UserSkill::class);
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 }

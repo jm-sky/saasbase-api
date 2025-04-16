@@ -1,0 +1,7 @@
+---
+description: 
+globs: app/Domain/**/*Controller.php
+alwaysApply: false
+---
+
+- Prefer pagination in index method of CRUD for listing resource

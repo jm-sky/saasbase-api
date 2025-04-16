@@ -14,7 +14,7 @@ class TenantControllerTest extends TestCase
     {
         $tenants = Tenant::factory()->count(3)->create();
 
-        $response = $this->getJson('/api/tenants');
+        $response = $this->getJson('/api/v1/tenants');
 
         $response->assertOk()
             ->assertJsonCount(3)
@@ -23,8 +23,8 @@ class TenantControllerTest extends TestCase
                     'id',
                     'name',
                     'slug',
-                    'created_at',
-                    'updated_at',
+                    'createdAt',
+                    'updatedAt',
                 ],
             ]);
     }
@@ -36,15 +36,15 @@ class TenantControllerTest extends TestCase
             'slug' => 'test-tenant',
         ];
 
-        $response = $this->postJson('/api/tenants', $data);
+        $response = $this->postJson('/api/v1/tenants', $data);
 
         $response->assertCreated()
             ->assertJsonStructure([
                 'id',
                 'name',
                 'slug',
-                'created_at',
-                'updated_at',
+                'createdAt',
+                'updatedAt',
             ])
             ->assertJson($data);
 
@@ -55,15 +55,15 @@ class TenantControllerTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
 
-        $response = $this->getJson("/api/tenants/{$tenant->id}");
+        $response = $this->getJson("/api/v1/tenants/{$tenant->id}");
 
         $response->assertOk()
             ->assertJsonStructure([
                 'id',
                 'name',
                 'slug',
-                'created_at',
-                'updated_at',
+                'createdAt',
+                'updatedAt',
             ])
             ->assertJson([
                 'id' => $tenant->id,
@@ -80,15 +80,15 @@ class TenantControllerTest extends TestCase
             'slug' => 'updated-tenant',
         ];
 
-        $response = $this->putJson("/api/tenants/{$tenant->id}", $data);
+        $response = $this->putJson("/api/v1/tenants/{$tenant->id}", $data);
 
         $response->assertOk()
             ->assertJsonStructure([
                 'id',
                 'name',
                 'slug',
-                'created_at',
-                'updated_at',
+                'createdAt',
+                'updatedAt',
             ])
             ->assertJson($data);
 
@@ -99,7 +99,7 @@ class TenantControllerTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
 
-        $response = $this->deleteJson("/api/tenants/{$tenant->id}");
+        $response = $this->deleteJson("/api/v1/tenants/{$tenant->id}");
 
         $response->assertNoContent();
         $this->assertSoftDeleted('tenants', ['id' => $tenant->id]);

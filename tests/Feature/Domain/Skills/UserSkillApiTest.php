@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UserSkillApiTest extends TestCase
@@ -21,6 +22,7 @@ class UserSkillApiTest extends TestCase
         parent::setUp();
         $this->user = User::factory()->create();
         $this->skill = Skill::factory()->create();
+        Sanctum::actingAs($this->user);
     }
 
     public function test_can_list_user_skills(): void

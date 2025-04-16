@@ -2,7 +2,7 @@
 
 namespace App\Domain\Skills\Controllers;
 
-use App\Domain\Skills\DTO\UserSkillDTO;
+use App\Domain\Skills\DTOs\UserSkillDTO;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Skills\Requests\UserSkillRequest;
 use App\Http\Controllers\Controller;
@@ -13,19 +13,24 @@ class UserSkillController extends Controller
 {
     public function index(): JsonResponse
     {
-        $userSkills = UserSkill::with(['user', 'skill'])->paginate();
+        $userSkills = UserSkill::with(['user', 'skill'])->get();
         return response()->json(
-            UserSkillDTO::collect($userSkills)
+            $userSkills->map(fn (UserSkill $skill) => UserSkillDTO::fromModel($skill))
         );
     }
 
     public function store(UserSkillRequest $request): JsonResponse
     {
         $dto = UserSkillDTO::from($request->validated());
-        $userSkill = UserSkill::create((array) $dto);
+        $userSkill = UserSkill::create([
+            'user_id' => $dto->userId,
+            'skill_id' => $dto->skillId,
+            'level' => $dto->level,
+            'acquired_at' => $dto->acquiredAt,
+        ]);
 
         return response()->json(
-            UserSkillDTO::from($userSkill),
+            UserSkillDTO::fromModel($userSkill),
             Response::HTTP_CREATED
         );
     }
@@ -34,17 +39,22 @@ class UserSkillController extends Controller
     {
         $userSkill->load(['user', 'skill']);
         return response()->json(
-            UserSkillDTO::from($userSkill)
+            UserSkillDTO::fromModel($userSkill)
         );
     }
 
     public function update(UserSkillRequest $request, UserSkill $userSkill): JsonResponse
     {
         $dto = UserSkillDTO::from($request->validated());
-        $userSkill->update((array) $dto);
+        $userSkill->update([
+            'user_id' => $dto->userId,
+            'skill_id' => $dto->skillId,
+            'level' => $dto->level,
+            'acquired_at' => $dto->acquiredAt,
+        ]);
 
         return response()->json(
-            UserSkillDTO::from($userSkill)
+            UserSkillDTO::fromModel($userSkill)
         );
     }
 

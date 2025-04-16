@@ -2,7 +2,7 @@
 
 namespace App\Domain\Contractors\Controllers;
 
-use App\Domain\Contractors\DTO\ContractorDTO;
+use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Http\Controllers\Controller;

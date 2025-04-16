@@ -3,6 +3,7 @@
 namespace App\Domain\Skills\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserSkillRequest extends FormRequest
 {
@@ -14,8 +15,8 @@ class UserSkillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'userId' => ['required', 'string', 'exists:users,id'],
-            'skillId' => ['required', 'string', 'exists:skills,id'],
+            'userId' => ['required', 'uuid', 'exists:users,id'],
+            'skillId' => ['required', 'uuid', 'exists:skills,id'],
             'level' => ['required', 'integer', 'min:1', 'max:5'],
             'acquiredAt' => ['nullable', 'date'],
         ];
@@ -25,8 +26,10 @@ class UserSkillRequest extends FormRequest
     {
         return [
             'userId.required' => 'The user ID is required.',
+            'userId.uuid' => 'The user ID must be a valid UUID.',
             'userId.exists' => 'The selected user does not exist.',
             'skillId.required' => 'The skill ID is required.',
+            'skillId.uuid' => 'The skill ID must be a valid UUID.',
             'skillId.exists' => 'The selected skill does not exist.',
             'level.required' => 'The level field is required.',
             'level.integer' => 'The level must be an integer.',
@@ -40,12 +43,12 @@ class UserSkillRequest extends FormRequest
     {
         $validated = parent::validated();
 
-        // Transform camelCase to snake_case for database
+        // Keep camelCase for DTO and add snake_case for database
         return [
-            'user_id' => $validated['userId'],
-            'skill_id' => $validated['skillId'],
+            'userId' => $validated['userId'],
+            'skillId' => $validated['skillId'],
             'level' => $validated['level'],
-            'acquired_at' => $validated['acquiredAt'] ?? null,
+            'acquiredAt' => $validated['acquiredAt'] ?? null,
         ];
     }
 }

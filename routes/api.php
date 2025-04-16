@@ -4,6 +4,7 @@ use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Skills\Controllers\{SkillController, SkillCategoryController, UserSkillController};
 use App\Domain\Common\Controllers\CountryController;
+use App\Domain\Tenant\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
+    Route::apiResource('tenants', TenantController::class);
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('contractors', ContractorController::class);
         Route::apiResource('products', ProductController::class);

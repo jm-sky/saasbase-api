@@ -2,17 +2,16 @@
 
 namespace Tests\Unit\Domain\Skills;
 
-use App\Domain\Skills\DTOs\SkillCategoryDto;
+use App\Domain\Skills\DTOs\SkillCategoryDTO;
 use App\Domain\Skills\Models\SkillCategory;
-use Carbon\Carbon;
 use Tests\TestCase;
 
-class SkillCategoryDtoTest extends TestCase
+class SkillCategoryDTOTest extends TestCase
 {
     public function test_can_create_skill_category_dto_from_model(): void
     {
         $category = SkillCategory::factory()->create();
-        $dto = SkillCategoryDto::fromModel($category);
+        $dto = SkillCategoryDTO::fromModel($category);
 
         $this->assertEquals($category->id, $dto->id);
         $this->assertEquals($category->name, $dto->name);
@@ -25,7 +24,7 @@ class SkillCategoryDtoTest extends TestCase
     public function test_can_convert_skill_category_dto_to_array(): void
     {
         $category = SkillCategory::factory()->create();
-        $dto = SkillCategoryDto::fromModel($category);
+        $dto = SkillCategoryDTO::fromModel($category);
         $array = $dto->toArray();
 
         $this->assertIsArray($array);

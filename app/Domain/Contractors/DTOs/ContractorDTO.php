@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Contractors\DTO;
+namespace App\Domain\Contractors\DTOs;
 
 use Spatie\LaravelData\Data;
 
@@ -21,9 +21,9 @@ use Spatie\LaravelData\Data;
 class ContractorDTO extends Data
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $email,
-        public readonly ?string $id = null,
+        public ?string $id = null,
+        public string $name,
+        public string $email,
         public ?string $phone = null,
         public ?string $address = null,
         public ?string $city = null,
@@ -32,6 +32,7 @@ class ContractorDTO extends Data
         public ?string $country = null,
         public ?string $taxId = null,
         public ?string $notes = null,
-        public bool $isActive = true,
-    ) {}
+        public ?bool $isActive = true,
+    ) {
+    }
 }

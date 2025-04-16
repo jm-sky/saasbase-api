@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Domain\Skills;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class SkillApiTest extends TestCase
@@ -13,11 +15,14 @@ class SkillApiTest extends TestCase
 
     private string $baseUrl = '/api/v1/skills';
     private SkillCategory $category;
+    private User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->user = User::factory()->create();
         $this->category = SkillCategory::factory()->create();
+        Sanctum::actingAs($this->user);
     }
 
     public function test_can_list_skills(): void

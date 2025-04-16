@@ -1,25 +1,23 @@
 <?php
 
-namespace App\Domain\Skills\DTO;
+namespace App\Domain\Products\DTOs;
 
 use Spatie\LaravelData\Data;
 
 /**
- * @property string $userId
- * @property string $skillId
- * @property int $level
- * @property ?string $acquiredAt
+ * @property ?string $id UUID
+ * @property string $name
+ * @property float $rate
  * @property ?string $createdAt
  * @property ?string $updatedAt
  * @property ?string $deletedAt
  */
-class UserSkillDTO extends Data
+class VatRateDTO extends Data
 {
     public function __construct(
-        public string $userId,
-        public string $skillId,
-        public int $level,
-        public ?string $acquiredAt = null,
+        public readonly string $name,
+        public readonly float $rate,
+        public readonly ?string $id = null,
         public ?string $createdAt = null,
         public ?string $updatedAt = null,
         public ?string $deletedAt = null,

@@ -2,7 +2,7 @@
 
 namespace App\Domain\Products\Controllers;
 
-use App\Domain\Products\DTO\ProductDTO;
+use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Http\Controllers\Controller;

@@ -10,7 +10,7 @@ class TenantApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    private string $baseUrl = '/api/tenants';
+    private string $baseUrl = '/api/v1/tenants';
 
     public function test_can_list_tenants(): void
     {
@@ -25,9 +25,9 @@ class TenantApiTest extends TestCase
                     'id',
                     'name',
                     'slug',
-                    'created_at',
-                    'updated_at',
-                    'deleted_at'
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt'
                 ]
             ]);
     }
@@ -46,9 +46,9 @@ class TenantApiTest extends TestCase
                 'id',
                 'name',
                 'slug',
-                'created_at',
-                'updated_at',
-                'deleted_at'
+                'createdAt',
+                'updatedAt',
+                'deletedAt'
             ])
             ->assertJson([
                 'name' => $tenantData['name'],
@@ -84,9 +84,9 @@ class TenantApiTest extends TestCase
                 'id',
                 'name',
                 'slug',
-                'created_at',
-                'updated_at',
-                'deleted_at'
+                'createdAt',
+                'updatedAt',
+                'deletedAt'
             ])
             ->assertJson([
                 'id' => $tenant->id,
@@ -110,9 +110,9 @@ class TenantApiTest extends TestCase
                 'id',
                 'name',
                 'slug',
-                'created_at',
-                'updated_at',
-                'deleted_at'
+                'createdAt',
+                'updatedAt',
+                'deletedAt'
             ])
             ->assertJson([
                 'name' => $updateData['name'],

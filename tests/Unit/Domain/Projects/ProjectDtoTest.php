@@ -2,19 +2,19 @@
 
 namespace Tests\Unit\Domain\Projects;
 
-use App\Domain\Projects\DTOs\ProjectDto;
+use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Tests\TestCase;
 
-class ProjectDtoTest extends TestCase
+class ProjectDTOTest extends TestCase
 {
     public function test_can_create_project_dto_from_model(): void
     {
         $project = Project::factory()->create();
-        $dto = ProjectDto::fromModel($project);
+        $dto = ProjectDTO::fromModel($project);
 
         $this->assertEquals($project->id, $dto->id);
         $this->assertEquals($project->tenant_id, $dto->tenant_id);
@@ -37,7 +37,7 @@ class ProjectDtoTest extends TestCase
         $project = Project::factory()->create();
         $project->load(['owner', 'users', 'tasks', 'requiredSkills']);
 
-        $dto = ProjectDto::fromModel($project, true);
+        $dto = ProjectDTO::fromModel($project, true);
 
         $this->assertNotNull($dto->owner);
         $this->assertNotNull($dto->users);
@@ -48,7 +48,7 @@ class ProjectDtoTest extends TestCase
     public function test_can_convert_project_dto_to_array(): void
     {
         $project = Project::factory()->create();
-        $dto = ProjectDto::fromModel($project);
+        $dto = ProjectDTO::fromModel($project);
         $array = $dto->toArray();
 
         $this->assertIsArray($array);
@@ -73,7 +73,7 @@ class ProjectDtoTest extends TestCase
         $project = Project::factory()->create();
         $project->load(['owner', 'users', 'tasks', 'requiredSkills']);
 
-        $dto = ProjectDto::fromModel($project, true);
+        $dto = ProjectDTO::fromModel($project, true);
         $array = $dto->toArray();
 
         $this->assertIsArray($array['owner']);

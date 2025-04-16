@@ -30,7 +30,6 @@ class SkillCategoryRequest extends FormRequest
     {
         $validated = parent::validated();
 
-        // Transform camelCase to snake_case for database
         return [
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,

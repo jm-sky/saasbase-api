@@ -2,19 +2,17 @@
 
 namespace Tests\Unit\Domain\Skills;
 
-use App\Domain\Skills\DTOs\SkillDto;
-use App\Domain\Skills\DTOs\SkillCategoryDto;
+use App\Domain\Skills\DTOs\SkillDTO;
+use App\Domain\Skills\DTOs\SkillCategoryDTO;
 use App\Domain\Skills\Models\Skill;
-use App\Domain\Skills\Models\SkillCategory;
-use Carbon\Carbon;
 use Tests\TestCase;
 
-class SkillDtoTest extends TestCase
+class SkillDTOTest extends TestCase
 {
     public function test_can_create_skill_dto_from_model(): void
     {
         $skill = Skill::factory()->create();
-        $dto = SkillDto::fromModel($skill);
+        $dto = SkillDTO::fromModel($skill);
 
         $this->assertEquals($skill->id, $dto->id);
         $this->assertEquals($skill->category_id, $dto->category_id);
@@ -31,9 +29,9 @@ class SkillDtoTest extends TestCase
         $skill = Skill::factory()->create();
         $skill->load('category');
 
-        $dto = SkillDto::fromModel($skill, true);
+        $dto = SkillDTO::fromModel($skill, true);
 
-        $this->assertInstanceOf(SkillCategoryDto::class, $dto->category);
+        $this->assertInstanceOf(SkillCategoryDTO::class, $dto->category);
         $this->assertEquals($skill->category->id, $dto->category->id);
         $this->assertEquals($skill->category->name, $dto->category->name);
     }
@@ -41,7 +39,7 @@ class SkillDtoTest extends TestCase
     public function test_can_convert_skill_dto_to_array(): void
     {
         $skill = Skill::factory()->create();
-        $dto = SkillDto::fromModel($skill);
+        $dto = SkillDTO::fromModel($skill);
         $array = $dto->toArray();
 
         $this->assertIsArray($array);
@@ -60,7 +58,7 @@ class SkillDtoTest extends TestCase
         $skill = Skill::factory()->create();
         $skill->load('category');
 
-        $dto = SkillDto::fromModel($skill, true);
+        $dto = SkillDTO::fromModel($skill, true);
         $array = $dto->toArray();
 
         $this->assertIsArray($array['category']);

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Domain\Contractors;
 
-use App\Domain\Contractors\DTO\ContractorDTO;
+use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use Tests\TestCase;
 

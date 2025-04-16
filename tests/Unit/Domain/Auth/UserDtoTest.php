@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Domain\Auth;
 
-use App\Domain\Auth\DTOs\UserDto;
+use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
 
-class UserDtoTest extends TestCase
+class UserDTOTest extends TestCase
 {
     public function test_can_create_user_dto_from_model(): void
     {
@@ -17,7 +17,7 @@ class UserDtoTest extends TestCase
             'avatar_url' => 'https://example.com/avatar.jpg',
         ]);
 
-        $dto = UserDto::fromModel($user);
+        $dto = UserDTO::fromModel($user);
 
         $this->assertEquals($user->id, $dto->id);
         $this->assertEquals($user->name, $dto->name);
@@ -31,7 +31,7 @@ class UserDtoTest extends TestCase
     public function test_can_convert_user_dto_to_array(): void
     {
         $now = Carbon::now();
-        $dto = new UserDto(
+        $dto = new UserDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',
             name: 'Test User',
             email: 'test@example.com',

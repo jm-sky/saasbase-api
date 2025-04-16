@@ -5,6 +5,7 @@ namespace App\Domain\Skills\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
 /**
@@ -21,6 +22,8 @@ use Carbon\Carbon;
  */
 class UserSkill extends BaseModel
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'user_id',
         'skill_id',

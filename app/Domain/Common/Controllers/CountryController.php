@@ -2,7 +2,7 @@
 
 namespace App\Domain\Common\Controllers;
 
-use App\Domain\Common\DTO\CountryDTO;
+use App\Domain\Common\DTOs\CountryDTO;
 use App\Domain\Common\Models\Country;
 use App\Domain\Common\Requests\CountryRequest;
 use App\Http\Controllers\Controller;

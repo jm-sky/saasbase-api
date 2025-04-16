@@ -2,7 +2,7 @@
 
 namespace App\Domain\Skills\Controllers;
 
-use App\Domain\Skills\DTO\SkillDTO;
+use App\Domain\Skills\DTOs\SkillDTO;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Requests\SkillRequest;
 use App\Http\Controllers\Controller;
