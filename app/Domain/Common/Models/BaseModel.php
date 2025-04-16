@@ -3,6 +3,7 @@
 namespace App\Domain\Common\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,9 +19,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class BaseModel extends Model
 {
     use HasUuids;
+    use HasFactory;
 
-    // protected string $keyType = 'string';
-    // public bool $incrementing = false;
+    protected static function newFactory()
+    {
+        $factoryClass = 'Database\\Factories\\' . class_basename(static::class) . 'Factory';
 
-    // protected array $guarded = ['id'];
+        return class_exists($factoryClass) ? $factoryClass::new() : null;
+    }
 }
