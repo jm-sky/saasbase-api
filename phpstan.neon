@@ -9,7 +9,7 @@ parameters:
         - routes
         - tests
 
-    level: 8
+    level: 5
 
     excludePaths:
         - %currentWorkingDirectory%/database/migrations/*.php

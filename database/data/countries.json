@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Afghanistan",
+        "code": "AF",
+        "code3": "AFG",
+        "numeric_code": "004",
+        "phone_code": "93",
+        "capital": "Kabul",
+        "currency": "Afghan afghani",
+        "currency_code": "AFN",
+        "currency_symbol": "؋",
+        "tld": ".af",
+        "native": "افغانستان",
+        "region": "Asia",
+        "subregion": "Southern Asia",
+        "emoji": "🇦🇫",
+        "emojiU": "U+1F1E6 U+1F1EB"
+    },
+    {
+        "name": "Poland",
+        "code": "PL",
+        "code3": "POL",
+        "numeric_code": "616",
+        "phone_code": "48",
+        "capital": "Warsaw",
+        "currency": "Polish złoty",
+        "currency_code": "PLN",
+        "currency_symbol": "zł",
+        "tld": ".pl",
+        "native": "Polska",
+        "region": "Europe",
+        "subregion": "Eastern Europe",
+        "emoji": "🇵🇱",
+        "emojiU": "U+1F1F5 U+1F1F1"
+    },
+    {
+        "name": "United States",
+        "code": "US",
+        "code3": "USA",
+        "numeric_code": "840",
+        "phone_code": "1",
+        "capital": "Washington, D.C.",
+        "currency": "United States dollar",
+        "currency_code": "USD",
+        "currency_symbol": "$",
+        "tld": ".us",
+        "native": "United States",
+        "region": "Americas",
+        "subregion": "Northern America",
+        "emoji": "🇺🇸",
+        "emojiU": "U+1F1FA U+1F1F8"
+    }
+]

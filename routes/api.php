@@ -3,6 +3,7 @@
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Skills\Controllers\{SkillController, SkillCategoryController, UserSkillController};
+use App\Domain\Common\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,5 +24,6 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('skills', SkillController::class);
         Route::apiResource('skill-categories', SkillCategoryController::class);
         Route::apiResource('user-skills', UserSkillController::class);
+        Route::apiResource('countries', CountryController::class);
     });
 });

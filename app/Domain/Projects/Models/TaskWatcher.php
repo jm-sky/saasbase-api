@@ -20,7 +20,7 @@ use Carbon\Carbon;
  */
 class TaskWatcher extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'task_id',
         'user_id',
     ];

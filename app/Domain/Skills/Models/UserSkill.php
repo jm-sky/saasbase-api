@@ -21,7 +21,7 @@ use Carbon\Carbon;
  */
 class UserSkill extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'skill_id',
         'level',

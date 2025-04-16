@@ -21,7 +21,7 @@ use Carbon\Carbon;
  */
 class ProjectRole extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'tenant_id',
         'name',
         'description',

@@ -12,12 +12,12 @@ use Carbon\Carbon;
  * @property string $id
  * @property string $tenant_id
  * @property string $name
- * @property string|null $description
+ * @property ?string$description
  * @property string $status
  * @property string $owner_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property Carbon|null $deleted_at
+ * @property ?Carbon $deleted_at
  *
  * @property-read User $owner
  * @property-read Collection<int, Task> $tasks
@@ -28,7 +28,7 @@ use Carbon\Carbon;
  */
 class Project extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'tenant_id',
         'name',
         'description',
@@ -36,7 +36,7 @@ class Project extends BaseModel
         'owner_id',
     ];
 
-    protected array $casts = [
+    protected $casts = [
         'status' => 'string',
     ];
 

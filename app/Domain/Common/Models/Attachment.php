@@ -22,7 +22,7 @@ use Carbon\Carbon;
  */
 class Attachment extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'file_name',
         'file_url',
         'file_type',

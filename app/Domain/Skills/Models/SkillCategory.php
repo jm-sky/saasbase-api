@@ -19,7 +19,7 @@ use Carbon\Carbon;
  */
 class SkillCategory extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'description',
     ];

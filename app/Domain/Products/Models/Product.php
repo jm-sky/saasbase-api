@@ -23,7 +23,7 @@ use Carbon\Carbon;
  */
 class Product extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'tenant_id',
         'name',
         'description',

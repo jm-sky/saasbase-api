@@ -33,7 +33,7 @@ use Carbon\Carbon;
  */
 class Task extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'project_id',
         'title',
         'description',

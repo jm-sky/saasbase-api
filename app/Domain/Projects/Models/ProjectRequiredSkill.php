@@ -21,7 +21,7 @@ use Carbon\Carbon;
  */
 class ProjectRequiredSkill extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'project_id',
         'skill_id',
         'required_level',

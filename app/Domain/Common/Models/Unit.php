@@ -18,7 +18,7 @@ use Carbon\Carbon;
  */
 class Unit extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'code',
         'name',
     ];

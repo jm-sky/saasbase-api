@@ -22,7 +22,7 @@ use Carbon\Carbon;
  */
 class Comment extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'user_id',
         'content',
         'commentable_id',

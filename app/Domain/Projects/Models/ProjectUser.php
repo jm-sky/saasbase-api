@@ -22,7 +22,7 @@ use Carbon\Carbon;
  */
 class ProjectUser extends BaseModel
 {
-    protected array $fillable = [
+    protected $fillable = [
         'project_id',
         'user_id',
         'project_role_id',
