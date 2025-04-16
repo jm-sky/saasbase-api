@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Domain\Common;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Country;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CountryApiTest extends TestCase
@@ -11,6 +13,14 @@ class CountryApiTest extends TestCase
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/countries';
+    private User $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        Sanctum::actingAs($this->user);
+    }
 
     public function test_can_list_countries(): void
     {

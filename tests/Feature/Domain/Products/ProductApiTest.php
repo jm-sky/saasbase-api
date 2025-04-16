@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Domain\Products;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Unit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ProductApiTest extends TestCase
@@ -17,13 +19,16 @@ class ProductApiTest extends TestCase
     private Tenant $tenant;
     private Unit $unit;
     private VatRate $vatRate;
+    private User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->user = User::factory()->create();
         $this->tenant = Tenant::factory()->create();
         $this->unit = Unit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
+        Sanctum::actingAs($this->user);
     }
 
     public function test_can_list_products(): void

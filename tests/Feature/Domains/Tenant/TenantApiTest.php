@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Domains\Tenant;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TenantApiTest extends TestCase
@@ -11,6 +13,14 @@ class TenantApiTest extends TestCase
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/tenants';
+    private User $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        Sanctum::actingAs($this->user);
+    }
 
     public function test_can_list_tenants(): void
     {
