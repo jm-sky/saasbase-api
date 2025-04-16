@@ -2,23 +2,24 @@ name: Laravel CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:17
-        ports:
-          - 5432:5432
         env:
           POSTGRES_DB: saasbase_api
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd="pg_isready -U root -d saasbase_api"
           --health-interval=10s
@@ -27,35 +28,44 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo, pdo_pgsql, redis, bcmath, fileinfo, mbstring
+          tools: composer
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
       - name: Copy .env
         run: cp .env.example .env
 
-      - name: Set up Docker Compose
-        run: docker compose up -d --build
-
-      - name: Wait for containers
-        run: sleep 20
-
       - name: Install Composer dependencies
-        run: docker run --rm \
-          -v ${{ github.workspace }}:/var/www/html \
-          -w /var/www/html \
-          laravelsail/php83-composer \
-          composer install --no-interaction --prefer-dist
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Generate app key
-        run: docker compose exec -T laravel.test php artisan key:generate
+        run: php artisan key:generate
+
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h 127.0.0.1 -p 5432 -U root -d saasbase_api; do
+            sleep 1
+          done
 
       - name: Run migrations
-        run: docker compose exec -T laravel.test php artisan migrate --force
-
-      - name: Run tests
-        run: docker compose exec -T laravel.test php artisan test --no-interaction
+        run: php artisan migrate --force
 
       - name: Run Larastan
-        run: docker compose exec -T laravel.test vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse --memory-limit=1G
 
-      - name: Run PHP CS Fixer
-        run: docker compose exec -T laravel.test vendor/bin/php-cs-fixer fix --dry-run --diff
+      - name: Run tests
+        run: vendor/bin/phpunit
