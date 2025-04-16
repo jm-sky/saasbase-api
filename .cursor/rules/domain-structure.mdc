@@ -1,7 +1,7 @@
 ---
 description: Domains live in `app/Domain/` and follow a structured modular pattern.
-globs: ["app/Domain/**/*.php"]
-tags: ["domain", "structure", "ddd", "laravel"]
+globs: app/Domain/**/*.php
+alwaysApply: false
 ---
 
 - Each domain resides in `app/Domain/DomainName/`.

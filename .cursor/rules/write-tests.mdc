@@ -1,7 +1,7 @@
 ---
 description: Nowe funkcjonalności powinny mieć przygotowane testy automatyczne (np. Feature/Unit tests w Laravelu).
-globs: ["tests/Feature/**/*.php", "tests/Unit/**/*.php"]
-tags: ["testing", "phpunit", "laravel"]
+globs: tests/**/*.php
+alwaysApply: false
 ---
 
 - Write PHPUnit tests for every new feature.

@@ -1,0 +1,6 @@
+---
+description: 
+globs: tests/Feature/**/*.php,routes/api.php
+alwaysApply: false
+---
+- We use API versioning, base api url starts with `/api/v1`

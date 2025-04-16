@@ -1,6 +1,6 @@
 ---
 description: 
-globs: ["app/**/*.php"]
+globs: app/**/*.php
 alwaysApply: false
 ---
 

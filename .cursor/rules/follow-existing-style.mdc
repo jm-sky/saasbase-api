@@ -1,7 +1,7 @@
 ---
 description: Jeśli występują wątpliwości co do stylu lub implementacji, należy wzorować się na już istniejącym kodzie.
-globs: ["app/**/*.php"]
-tags: ["style", "consistency"]
+globs: app/**/*.php
+alwaysApply: false
 ---
 
 - Follow the conventions and patterns found in existing code.
