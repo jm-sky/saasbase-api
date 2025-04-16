@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Unit\Domains\Tenant;
+namespace Tests\Unit\Domain\Tenant;
 
-use App\Domains\Tenant\DTOs\TenantDTO;
-use App\Domains\Tenant\Models\Tenant;
+use App\Domain\Tenant\DTOs\TenantDTO;
+use App\Domain\Tenant\Models\Tenant;
 use Tests\TestCase;
 
 class TenantDTOTest extends TestCase

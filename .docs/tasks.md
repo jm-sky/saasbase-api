@@ -1,4 +1,6 @@
-Add middleware to set locale based on Accept Language header. 
+# Tasks
+
+## 1. [ ] Add middleware to set locale based on Accept Language header. 
 
 ```
 <?php
@@ -28,3 +30,4 @@ class SetLocaleFromHeader
     }
 }
 ```
+-----------------------------------------------------
