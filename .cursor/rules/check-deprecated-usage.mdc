@@ -1,0 +1,10 @@
+---
+description: Ensure code uses current APIs and avoids deprecated features by checking the latest documentation.
+globs: ["app/**/*.php", "package.json", "composer.json"]
+tags: ["docs", "maintenance", "libraries", "best-practices"]
+---
+
+- Before using or suggesting code, check the official documentation of used libraries and frameworks.
+- Avoid deprecated or outdated features.
+- Prefer modern, documented best practices.
+- Suggest newer alternatives if old patterns are detected.
