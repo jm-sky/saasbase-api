@@ -22,5 +22,5 @@ class BaseModel extends Model
     // protected string $keyType = 'string';
     // public bool $incrementing = false;
 
-    protected array $guarded = ['id'];
+    // protected array $guarded = ['id'];
 }
