@@ -1,3 +1,4 @@
+
 # SaaSBase API
 
 A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a modular architecture. Includes GitHub Actions for CI, static analysis (Larastan), and tests (PHPUnit).
@@ -31,3 +32,88 @@ git clone https://github.com/your-username/saasbase-api.git
 cd saasbase-api
 ```
 
+2. Copy the `.env` file and configure:
+
+```bash
+cp .env.example .env
+```
+
+3. Start Docker containers:
+
+```bash
+docker-compose up -d
+```
+
+4. Install PHP dependencies:
+
+```bash
+composer install
+```
+
+5. Generate the application key:
+
+```bash
+php artisan key:generate
+```
+
+6. Run database migrations:
+
+```bash
+php artisan migrate
+```
+
+---
+
+## Running Tests
+
+Run PHPUnit tests:
+
+```bash
+php artisan test
+```
+
+Or directly:
+
+```bash
+vendor/bin/phpunit
+```
+
+Run Larastan static analysis:
+
+```bash
+vendor/bin/phpstan analyse
+```
+
+---
+
+## CI/CD
+
+This repository includes a GitHub Actions workflow:
+
+- Validates code with Larastan
+- Runs PHPUnit tests
+- Uses PostgreSQL service
+- Caches Composer dependencies
+
+### Triggered on:
+
+- Push to `main`
+- Pull request to `main`
+
+---
+
+## Docker Services
+
+The default `docker-compose.yml` includes:
+
+- `pgsql`: PostgreSQL 17
+- `redis`: Redis (for cache & queues)
+- `minio`: S3-compatible storage
+- `mailpit`: Dev SMTP server
+- `soketi`: WebSocket server
+
+---
+
+## License
+
+[MIT](LICENSE)
