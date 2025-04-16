@@ -1,0 +1,15 @@
+---
+description: Domains live in `app/Domain/` and follow a structured modular pattern.
+globs: ["app/Domain/**/*.php"]
+tags: ["domain", "structure", "ddd", "laravel"]
+---
+
+- Each domain resides in `app/Domain/DomainName/`.
+- Should typically include:
+  - `Model.php` with Doctrine-style annotations (for documentation, IDE support, etc.).
+  - `DTOs/` using `Spatie\LaravelData\Data` (camelCase properties).
+  - `Requests/` for input validation.
+  - `Controllers/` with RESTful CRUD logic.
+  - `Actions/` for custom operations outside basic CRUD.
+  - `Policies/` to encapsulate authorization logic.
+- Keep structure consistent across domains for maintainability.
