@@ -78,9 +78,9 @@ class TaskDto
             'deleted_at' => $this->deleted_at,
             'assigned_to' => $this->assignedTo?->toArray(),
             'created_by' => $this->createdBy?->toArray(),
-            'watchers' => $this->watchers?->map(fn($watcher) => $watcher->toArray())->toArray(),
-            'comments' => $this->comments?->map(fn($comment) => $comment->toArray())->toArray(),
-            'attachments' => $this->attachments?->map(fn($attachment) => $attachment->toArray())->toArray(),
+            'watchers' => $this->watchers ? array_map(fn($watcher) => $watcher->toArray(), $this->watchers) : null,
+            'comments' => $this->comments ? array_map(fn($comment) => $comment->toArray(), $this->comments) : null,
+            'attachments' => $this->attachments ? array_map(fn($attachment) => $attachment->toArray(), $this->attachments) : null,
         ];
     }
 }

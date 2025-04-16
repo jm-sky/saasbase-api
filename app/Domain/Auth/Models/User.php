@@ -2,6 +2,7 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Tenant\Models\UserTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +21,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property ?string $description
  * @property ?string $birth_date
  * @property ?string $phone
+ * @property ?string $avatar_url
  * @property bool $is_admin
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -36,7 +38,7 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected $fillable = [
         'first_name',
@@ -47,12 +49,13 @@ class User extends Authenticatable
         'birth_date',
         'is_admin',
         'phone',
+        'avatar_url',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -92,7 +95,7 @@ class User extends Authenticatable
      */
     public function tenantMemberships(): HasMany
     {
-        return $this->hasMany(\App\Domain\Tenancy\Models\UserTenant::class);
+        return $this->hasMany(UserTenant::class);
     }
 
     /**

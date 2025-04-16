@@ -19,15 +19,15 @@ use Spatie\LaravelData\Data;
 class ProductDTO extends Data
 {
     public function __construct(
-        public ?string $id = null,
-        public string $tenantId,
-        public string $name,
-        public ?string $description = null,
-        public string $unitId,
-        public float $priceNet,
-        public string $vatRateId,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        public readonly string $tenantId,
+        public readonly string $name,
+        public readonly string $unitId,
+        public readonly float $priceNet,
+        public readonly string $vatRateId,
+        public readonly ?string $id = null,
+        public readonly ?string $description = null,
+        public readonly ?string $createdAt = null,
+        public readonly ?string $updatedAt = null,
+        public readonly ?string $deletedAt = null,
     ) {}
 }

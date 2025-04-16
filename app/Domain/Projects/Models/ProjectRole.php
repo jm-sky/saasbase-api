@@ -28,7 +28,12 @@ class ProjectRole extends BaseModel
         'permissions',
     ];
 
-    protected array $casts = [
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
         'permissions' => 'array',
     ];
 

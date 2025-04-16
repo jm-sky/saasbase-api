@@ -15,9 +15,9 @@ use Spatie\LaravelData\Data;
 class TenantDTO extends Data
 {
     public function __construct(
-        public ?string $id = null,
-        public string $name,
-        public string $slug,
+        public readonly string $name,
+        public readonly string $slug,
+        public readonly ?string $id = null,
         public ?string $createdAt = null,
         public ?string $updatedAt = null,
         public ?string $deletedAt = null,

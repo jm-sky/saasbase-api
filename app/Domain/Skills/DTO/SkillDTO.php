@@ -16,9 +16,9 @@ use Spatie\LaravelData\Data;
 class SkillDTO extends Data
 {
     public function __construct(
-        public ?string $id = null,
-        public string $categoryId,
-        public string $name,
+        public readonly string $categoryId,
+        public readonly string $name,
+        public readonly ?string $id = null,
         public ?string $description = null,
         public ?string $createdAt = null,
         public ?string $updatedAt = null,

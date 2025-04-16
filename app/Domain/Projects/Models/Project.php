@@ -15,6 +15,8 @@ use Carbon\Carbon;
  * @property ?string$description
  * @property string $status
  * @property string $owner_id
+ * @property Carbon $start_date
+ * @property ?Carbon $end_date
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property ?Carbon $deleted_at
@@ -34,10 +36,14 @@ class Project extends BaseModel
         'description',
         'status',
         'owner_id',
+        'start_date',
+        'end_date',
     ];
 
     protected $casts = [
         'status' => 'string',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     public function owner(): BelongsTo

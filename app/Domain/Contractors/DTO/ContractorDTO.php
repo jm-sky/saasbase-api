@@ -21,9 +21,9 @@ use Spatie\LaravelData\Data;
 class ContractorDTO extends Data
 {
     public function __construct(
-        public ?string $id = null,
-        public string $name,
-        public string $email,
+        public readonly string $name,
+        public readonly string $email,
+        public readonly ?string $id = null,
         public ?string $phone = null,
         public ?string $address = null,
         public ?string $city = null,

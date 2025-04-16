@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domains\Tenant\Controllers;
+namespace App\Domain\Tenant\Controllers;
 
-use App\Domains\Tenant\DTOs\TenantDTO;
-use App\Domains\Tenant\Models\Tenant;
-use App\Domains\Tenant\Requests\TenantRequest;
+use App\Domain\Tenant\DTOs\TenantDTO;
+use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Requests\TenantRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;

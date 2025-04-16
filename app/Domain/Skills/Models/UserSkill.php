@@ -28,7 +28,12 @@ class UserSkill extends BaseModel
         'acquired_at',
     ];
 
-    protected array $casts = [
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
         'level' => 'integer',
         'acquired_at' => 'datetime',
     ];

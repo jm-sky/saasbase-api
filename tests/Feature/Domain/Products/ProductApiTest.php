@@ -5,7 +5,7 @@ namespace Tests\Feature\Domain\Products;
 use App\Domain\Common\Models\Unit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
-use App\Domains\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

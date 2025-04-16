@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Domains\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TenantFactory extends Factory

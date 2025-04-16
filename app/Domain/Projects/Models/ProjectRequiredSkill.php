@@ -27,7 +27,12 @@ class ProjectRequiredSkill extends BaseModel
         'required_level',
     ];
 
-    protected array $casts = [
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
         'required_level' => 'integer',
     ];
 

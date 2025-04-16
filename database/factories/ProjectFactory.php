@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Domain\Projects\Models\Project;
 use App\Domain\Auth\Models\User;
-use App\Domains\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProjectFactory extends Factory

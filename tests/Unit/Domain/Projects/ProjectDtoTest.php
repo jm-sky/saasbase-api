@@ -5,7 +5,7 @@ namespace Tests\Unit\Domain\Projects;
 use App\Domain\Projects\DTOs\ProjectDto;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Auth\Models\User;
-use App\Domains\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Tests\TestCase;
 

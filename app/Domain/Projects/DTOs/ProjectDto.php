@@ -66,9 +66,9 @@ class ProjectDto
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
             'owner' => $this->owner?->toArray(),
-            'users' => $this->users?->map(fn($user) => $user->toArray())->toArray(),
-            'tasks' => $this->tasks?->map(fn($task) => $task->toArray())->toArray(),
-            'required_skills' => $this->requiredSkills?->map(fn($skill) => $skill->toArray())->toArray(),
+            'users' => $this->users ? array_map(fn($user) => $user->toArray(), $this->users) : null,
+            'tasks' => $this->tasks ? array_map(fn($task) => $task->toArray(), $this->tasks) : null,
+            'required_skills' => $this->requiredSkills ? array_map(fn($skill) => $skill->toArray(), $this->requiredSkills) : null,
         ];
     }
 }

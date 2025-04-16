@@ -44,7 +44,12 @@ class Task extends BaseModel
         'due_date',
     ];
 
-    protected array $casts = [
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
         'status' => 'string',
         'priority' => 'string',
         'due_date' => 'datetime',

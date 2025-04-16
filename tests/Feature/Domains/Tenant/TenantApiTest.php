@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Domains\Tenant;
 
-use App\Domains\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

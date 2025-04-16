@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Domain\Auth\Models;
+namespace App\Domain\Tenant\Models;
 
+use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserSettings extends Model
+class UserTenant extends Model
 {
-    use HasFactory;
     use HasUuids;
 
     /**
@@ -19,12 +18,8 @@ class UserSettings extends Model
      */
     protected $fillable = [
         'user_id',
-        'language',
-        'theme',
-        'timezone',
-        'two_factor_enabled',
-        'two_factor_confirmed',
-        'preferences',
+        'tenant_id',
+        'role',
     ];
 
     /**
@@ -33,16 +28,22 @@ class UserSettings extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'two_factor_enabled' => 'boolean',
-        'two_factor_confirmed' => 'boolean',
-        'preferences' => 'array',
+        'role' => 'string',
     ];
 
     /**
-     * Get the user that owns the settings.
+     * Get the user that owns the tenant membership.
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the tenant that the user belongs to.
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 }

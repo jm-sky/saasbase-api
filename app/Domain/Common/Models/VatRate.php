@@ -23,7 +23,12 @@ class VatRate extends BaseModel
         'rate',
     ];
 
-    protected array $casts = [
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
         'rate' => 'decimal:2',
     ];
 
