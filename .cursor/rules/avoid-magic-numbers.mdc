@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Avoid magic numbers
+
+- Avoid magic numbers, i.e. http status code `500` could be `Response::HTTP_INTERNAL_SERVER_ERROR` or `CONSTANT_WITH_A_MEANING = 500`
