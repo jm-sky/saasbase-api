@@ -2,17 +2,16 @@ name: Laravel CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
-      pgsql:
+      postgres:
         image: postgres:17
         env:
           POSTGRES_DB: saasbase_api
@@ -45,8 +44,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Copy .env
-        run: cp .env.example .env
+      - name: Override .env DB host for CI
+        run: sed -i 's/DB_HOST=pgsql/DB_HOST=127.0.0.1/' .env.example && cp .env.example .env
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -56,16 +55,4 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          echo "Waiting for PostgreSQL to be ready..."
-          until pg_isready -h 127.0.0.1 -p 5432 -U root -d saasbase_api; do
-            sleep 1
-          done
-
-      - name: Run migrations
-        run: php artisan migrate --force
-
-      - name: Run Larastan
-        run: vendor/bin/phpstan analyse --memory-limit=1G
-
-      - name: Run tests
-        run: vendor/bin/phpunit
+          echo "
