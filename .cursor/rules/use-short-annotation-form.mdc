@@ -1,0 +1,7 @@
+---
+description: 
+globs: ["app/**/*.php"]
+alwaysApply: false
+---
+
+- Use short annotation form i.e. `?string` instead of `null|string`
