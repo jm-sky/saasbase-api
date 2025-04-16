@@ -9,24 +9,11 @@ parameters:
         - routes
         - tests
 
-    # Level 8 is recommended for most projects
     level: 8
 
     excludePaths:
-        - ./*/*/FileToBeExcluded.php
+        - %currentWorkingDirectory%/database/migrations/*.php
 
     ignoreErrors:
         - '#PHPDoc tag @var#'
-        - '#Access to an undefined property App\\Models\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+\.#'
-        - '#Call to an undefined method Illuminate\\Database\\Query\\Builder::[a-zA-Z0-9\\_]+\(\)\.#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::[a-zA-Z0-9\\_]+\(\)\.#'
-        - '#Call to an undefined method Illuminate\\Support\\Collection::[a-zA-Z0-9\\_]+\(\)\.#'
-
-    # If you're getting errors about missing return types
-    checkExplicitMixed: false
-
-    # Laravel specific settings
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
-    checkMissingTypehint: false
-    checkMissingPropertyTypehint: false
+        - '#Access to an undefined property App\\Models\
