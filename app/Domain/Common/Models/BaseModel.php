@@ -19,8 +19,8 @@ class BaseModel extends Model
 {
     use HasUuids;
 
-    protected string $keyType = 'string';
-    public bool $incrementing = false;
+    // protected string $keyType = 'string';
+    // public bool $incrementing = false;
 
     protected array $guarded = ['id'];
 }
