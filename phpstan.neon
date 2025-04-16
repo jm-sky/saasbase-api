@@ -15,8 +15,6 @@ parameters:
     excludePaths:
         - ./*/*/FileToBeExcluded.php
 
-    checkGenericClassInNonGenericObjectType: false
-
     ignoreErrors:
         - '#PHPDoc tag @var#'
         - '#Access to an undefined property App\\Models\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+\.#'
