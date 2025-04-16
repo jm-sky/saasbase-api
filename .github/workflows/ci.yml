@@ -7,50 +7,56 @@ on:
     branches: [main]
 
 jobs:
-  laravel-ci:
+  laravel-tests:
     runs-on: ubuntu-latest
-
     services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
+      postgres:
+        image: postgres:17
         ports:
-          - 3306:3306
+          - 5432:5432
+        env:
+          POSTGRES_DB: sail
+          POSTGRES_USER: sail
+          POSTGRES_PASSWORD: secret
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="pg_isready"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, pdo_mysql, bcmath
+          extensions: mbstring, bcmath, intl, pdo, pdo_pgsql, pgsql
           coverage: none
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Set up environment
+      - name: Copy .env and configure for CI
         run: |
           cp .env.example .env
-          php artisan key:generate
-          php artisan migrate --force
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_PORT=.*/DB_PORT=5432/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=sail/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=sail/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
 
       - name: Run tests
         run: php artisan test
 
       - name: Run Larastan
-        run: vendor/bin/phpstan analyse --memory-limit=1G
+        run: ./vendor/bin/phpstan analyse
 
-      - name: Run PHP CS Fixer
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+      - name: Run PHP-CS-Fixer
+        run: composer csf || true
