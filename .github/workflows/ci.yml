@@ -1,4 +1,4 @@
-name: Laravel CI/CD Pipeline
+name: Laravel CI
 
 on:
   push:
@@ -9,45 +9,65 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: saasbase_api
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+        options: >-
+          --health-cmd="pg_isready -U root -d saasbase_api"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    # Cache Composer dependencies
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
     - name: Cache Composer dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.composer/cache
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-composer-
 
-    # Set up PHP 8.3
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
+    - name: Set environment file
+      run: cp .env.example .env
 
-    - name: Install dependencies (Composer)
+    - name: Build containers
+      run: ./vendor/bin/sail build --no-cache
+
+    - name: Start containers
+      run: ./vendor/bin/sail up -d
+
+    - name: Wait for database
       run: |
-        composer install --prefer-dist --no-interaction --no-scripts
+        until docker-compose exec pgsql pg_isready -U root -d saasbase_api; do
+          echo "Waiting for PostgreSQL..."
+          sleep 5
+        done
 
-    # Run Larastan for static analysis
+    - name: Generate Laravel key
+      run: ./vendor/bin/sail artisan key:generate
+
+    - name: Run migrations
+      run: ./vendor/bin/sail artisan migrate --force
+
+    - name: Run tests
+      run: ./vendor/bin/sail artisan test --no-interaction
+
     - name: Run Larastan
-      run: |
-        vendor/bin/phpstan analyse
+      run: ./vendor/bin/sail vendor/bin/phpstan analyse
 
-    # Run PHP CS Fixer for code formatting
     - name: Run PHP CS Fixer
-      run: |
-        vendor/bin/php-cs-fixer fix --dry-run --diff
-
-    # Run Tests
-    - name: Run Tests
-      run: |
-        vendor/bin/phpunit --coverage-text --color=never
-
-    # (Optional) Build Docker images, deploy, etc.
+      run: ./vendor/bin/sail vendor/bin/php-cs-fixer fix --dry-run --diff
