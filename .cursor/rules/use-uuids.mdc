@@ -1,0 +1,8 @@
+---
+description: Identyfikatory modeli powinny być UUID — nie używamy autoinkrementacji.
+globs: ["app/Models/**/*.php"]
+tags: ["laravel", "models", "uuid"]
+---
+
+- All Eloquent models should use UUIDs as primary keys.
+- Do not use auto-incrementing integers.
