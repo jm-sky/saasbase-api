@@ -133,7 +133,7 @@ class DateRangeFilter implements Filter
 }
 ```
 
-Use this trait in controllers, fill `$filters` wilth all columns of domain model, and some relations if needed. 
+Use this trait in controllers, fill `$filters` wilth all columns of domain model, and some relations if needed. Use DateRangeFilter for date fields. 
 
 Create sth like `Search[model]Request` with validation for those filters.
 
