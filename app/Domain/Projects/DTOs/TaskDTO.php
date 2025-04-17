@@ -5,6 +5,9 @@ namespace App\Domain\Projects\DTOs;
 use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Common\DTOs\{CommentDTO, AttachmentDTO};
 use App\Domain\Projects\Models\Task;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
@@ -16,10 +19,10 @@ use Spatie\LaravelData\Data;
  * @property string $priority
  * @property ?string $assignedToId
  * @property string $createdById
- * @property ?string $dueDate
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?string $dueDate ISO 8601 date
+ * @property ?string $createdAt ISO 8601 timestamp
+ * @property ?string $updatedAt ISO 8601 timestamp
+ * @property ?string $deletedAt ISO 8601 timestamp
  * @property ?UserDTO $assignedTo
  * @property ?UserDTO $createdBy
  * @property ?array $watchers
@@ -38,9 +41,12 @@ class TaskDTO extends Data
         public readonly ?string $description = null,
         public readonly ?string $assignedToId = null,
         public readonly ?string $dueDate = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $createdAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $updatedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $deletedAt = null,
         public ?UserDTO $assignedTo = null,
         public ?UserDTO $createdBy = null,
         public ?array $watchers = null,
@@ -59,10 +65,10 @@ class TaskDTO extends Data
             id: $model->id,
             description: $model->description,
             assignedToId: $model->assigned_to_id,
-            dueDate: $model->due_date?->format('Y-m-d'),
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            dueDate: $model->due_date?->toISOString(),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
             assignedTo: $model->assignedTo ? UserDTO::fromModel($model->assignedTo) : null,
             createdBy: $model->createdBy ? UserDTO::fromModel($model->createdBy) : null,
             watchers: $model->watchers ? $model->watchers->map(fn ($watcher) => TaskWatcherDTO::fromModel($watcher))->toArray() : null,

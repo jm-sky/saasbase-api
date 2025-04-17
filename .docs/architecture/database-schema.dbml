@@ -16,10 +16,10 @@ Table users {
   first_name varchar
   last_name varchar
   email varchar [unique]
-  phone varchar
+  phone varchar [note: 'nullable']
   password varchar
-  description text
-  birth_date date
+  description text [note: 'nullable']
+  birth_date date [note: 'nullable']
   is_admin boolean
   created_at timestamp
   updated_at timestamp
@@ -29,7 +29,7 @@ Table tenant_users {
   tenant_id uuid [ref: > tenants.id]
   user_id uuid [ref: > users.id]
   role varchar
-  permissions text
+  permissions text [note: 'nullable']
   joined_at timestamp
   [pk: tenant_id, user_id]
 }
@@ -38,12 +38,12 @@ Table projects {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
   name varchar
-  description text
+  description text [note: 'nullable']
   status_id uuid [ref: > project_statuses.id]
   owner_id uuid [ref: > users.id]
   created_at timestamp
   updated_at timestamp
-  deleted_at timestamp [nullable]
+  deleted_at timestamp [note: 'nullable']
 }
 
 Table project_statuses {
@@ -61,15 +61,15 @@ Table tasks {
   id uuid [pk]
   project_id uuid [ref: > projects.id]
   title varchar
-  description text
+  description text [note: 'nullable']
   status_id uuid [ref: > task_statuses.id]
-  priority varchar
-  assigned_to_id uuid [ref: > users.id]
+  priority varchar [note: 'nullable']
+  assigned_to_id uuid [ref: > users.id, note: 'nullable']
   created_by_id uuid [ref: > users.id]
-  due_date date
+  due_date date [note: 'nullable']
   created_at timestamp
   updated_at timestamp
-  deleted_at timestamp [nullable]
+  deleted_at timestamp [note: 'nullable']
 }
 
 Table task_statuses {
@@ -87,15 +87,15 @@ Table contractors {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
   name varchar
-  tax_id varchar
-  email varchar
-  phone varchar
-  description text
+  tax_id varchar [note: 'nullable']
+  email varchar [note: 'nullable']
+  phone varchar [note: 'nullable']
+  description text [note: 'nullable']
   is_supplier boolean
   is_buyer boolean
   created_at timestamp
   updated_at timestamp
-  deleted_at timestamp [nullable]
+  deleted_at timestamp [note: 'nullable']
 }
 
 Table contractor_addresses {
@@ -105,7 +105,7 @@ Table contractor_addresses {
   country_code varchar
   street varchar
   city varchar
-  zip varchar
+  zip varchar [note: 'nullable']
   is_default boolean
 }
 
@@ -122,9 +122,9 @@ Table contractor_contact_persons {
   id uuid [pk]
   contractor_id uuid [ref: > contractors.id]
   name varchar
-  email varchar
-  phone varchar
-  position varchar
+  email varchar [note: 'nullable']
+  phone varchar [note: 'nullable']
+  position varchar [note: 'nullable']
 }
 
 Table invoices {
@@ -146,7 +146,7 @@ Table invoices {
 Table invoice_items {
   id uuid [pk]
   invoice_id uuid [ref: > invoices.id]
-  product_id uuid [ref: > products.id]
+  product_id uuid [ref: > products.id, note: 'nullable']
   name varchar
   quantity decimal
   unit_id uuid [ref: > measurement_units.id]
@@ -169,7 +169,7 @@ Table products {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
   name varchar
-  description text
+  description text [note: 'nullable']
   unit_id uuid [ref: > measurement_units.id]
   price_net decimal
   vat_rate_id uuid [ref: > vat_rates.id]
@@ -192,7 +192,7 @@ Table measurement_units {
   tenant_id uuid [ref: > tenants.id]
   name varchar
   shortcut varchar
-  category varchar
+  category varchar [note: 'nullable']
   is_default boolean
   created_at timestamp
   updated_at timestamp
@@ -202,7 +202,7 @@ Table default_measurement_units {
   id uuid [pk]
   name varchar
   shortcut varchar
-  category varchar
+  category varchar [note: 'nullable']
   is_default boolean
 }
 
@@ -212,7 +212,7 @@ Table default_project_statuses {
   name varchar
   color varchar
   sort_order int
-  category varchar
+  category varchar [note: 'nullable']
   is_default boolean
 }
 
@@ -222,7 +222,7 @@ Table default_task_statuses {
   name varchar
   color varchar
   sort_order int
-  category varchar
+  category varchar [note: 'nullable']
   is_default boolean
 }
 
@@ -238,7 +238,7 @@ Table comments {
 Table tags {
   id uuid [pk]
   name varchar
-  color varchar
+  color varchar [note: 'nullable']
 }
 
 Table taggables {
@@ -256,7 +256,7 @@ Table attachments {
   collection_name varchar
   name varchar
   file_name varchar
-  mime_type varchar
+  mime_type varchar [note: 'nullable']
   size int
   disk varchar
   created_at timestamp
@@ -272,22 +272,22 @@ Table attachmentables {
 
 Table skills {
   id uuid [pk]
-  category_id uuid [ref: > skill_categories.id]
+  category_id uuid [ref: > skill_categories.id, note: 'nullable']
   name varchar
-  description text
+  description text [note: 'nullable']
 }
 
 Table skill_categories {
   id uuid [pk]
   name varchar
-  description text
+  description text [note: 'nullable']
 }
 
 Table user_skills {
   user_id uuid [ref: > users.id]
   skill_id uuid [ref: > skills.id]
   level int
-  acquired_at date
+  acquired_at date [note: 'nullable']
   [pk: user_id, skill_id]
 }
 
@@ -300,12 +300,12 @@ Table project_required_skills {
 
 Table user_settings {
   user_id uuid [ref: > users.id]
-  language varchar
-  theme varchar
-  timezone varchar
+  language varchar [note: 'nullable']
+  theme varchar [note: 'nullable']
+  timezone varchar [note: 'nullable']
   two_factor_enabled boolean
   two_factor_confirmed boolean
-  preferences text
+  preferences text [note: 'nullable']
 }
 
 Table user_oauth_accounts {
@@ -313,7 +313,7 @@ Table user_oauth_accounts {
   user_id uuid [ref: > users.id]
   provider varchar
   provider_user_id varchar
-  email varchar
+  email varchar [note: 'nullable']
   linked_at timestamp
 }
 
@@ -324,7 +324,7 @@ Table user_addresses {
   country_code varchar
   street varchar
   city varchar
-  zip varchar
+  zip varchar [note: 'nullable']
   is_default boolean
   created_at timestamp
   updated_at timestamp

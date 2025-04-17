@@ -31,8 +31,8 @@ class SkillCategoryDTOTest extends TestCase
         $this->assertEquals($category->id, $array['id']);
         $this->assertEquals($category->name, $array['name']);
         $this->assertEquals($category->description, $array['description']);
-        $this->assertEquals($category->created_at, $array['createdAt']);
-        $this->assertEquals($category->updated_at, $array['updatedAt']);
-        $this->assertEquals($category->deleted_at, $array['deletedAt']);
+        $this->assertEquals($category->created_at?->toIso8601String(), $array['createdAt']);
+        $this->assertEquals($category->updated_at?->toIso8601String(), $array['updatedAt']);
+        $this->assertEquals($category->deleted_at?->toIso8601String(), $array['deletedAt']);
     }
 }

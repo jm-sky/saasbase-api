@@ -3,6 +3,9 @@
 namespace App\Domain\Common\DTOs;
 
 use App\Domain\Common\Models\Attachment;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
@@ -13,9 +16,9 @@ use Spatie\LaravelData\Data;
  * @property int $fileSize
  * @property string $attachmentableId
  * @property string $attachmentableType
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class AttachmentDTO extends Data
 {
@@ -27,9 +30,12 @@ class AttachmentDTO extends Data
         public readonly string $attachmentableId,
         public readonly string $attachmentableType,
         public readonly ?string $id = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $createdAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $updatedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $deletedAt = null,
     ) {}
 
     public static function fromModel(Attachment $model): self
@@ -42,9 +48,9 @@ class AttachmentDTO extends Data
             attachmentableId: $model->attachmentable_id,
             attachmentableType: $model->attachmentable_type,
             id: $model->id,
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 }

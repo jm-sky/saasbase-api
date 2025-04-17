@@ -6,6 +6,8 @@ use App\Domain\Common\Models\{BaseModel, Unit, VatRate};
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property string $id
@@ -25,6 +27,7 @@ use Carbon\Carbon;
 class Product extends BaseModel
 {
     use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -52,5 +55,10 @@ class Product extends BaseModel
     public function vatRate(): BelongsTo
     {
         return $this->belongsTo(VatRate::class);
+    }
+
+    protected static function newFactory()
+    {
+        return ProductFactory::new();
     }
 }

@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('status')->default('active');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
             $table->uuid('owner_id');
             $table->timestamps();
             $table->softDeletes();

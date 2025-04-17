@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('category_id');
-            $table->string('name');
+            $table->string('category');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('category_id')->references('id')->on('skill_categories')->onDelete('cascade');
+            $table->foreign('category')->references('name')->on('skill_categories')->onDelete('cascade');
         });
     }
 

@@ -4,7 +4,7 @@ namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\{BaseModel, Comment, Attachment};
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, MorphMany};
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, MorphMany, BelongsToMany};
 use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 
@@ -12,7 +12,7 @@ use Carbon\Carbon;
  * @property string $id
  * @property string $tenant_id
  * @property string $name
- * @property ?string$description
+ * @property ?string $description
  * @property string $status
  * @property string $owner_id
  * @property Carbon $start_date
@@ -22,6 +22,7 @@ use Carbon\Carbon;
  * @property ?Carbon $deleted_at
  *
  * @property-read User $owner
+ * @property-read Collection<int, User> $users
  * @property-read Collection<int, Task> $tasks
  * @property-read Collection<int, ProjectUser> $projectUsers
  * @property-read Collection<int, ProjectRequiredSkill> $requiredSkills
@@ -49,6 +50,13 @@ class Project extends BaseModel
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'project_users')
+            ->withPivot(['role'])
+            ->withTimestamps();
     }
 
     public function tasks(): HasMany

@@ -3,6 +3,12 @@
 namespace App\Domain\Projects\DTOs;
 
 use App\Domain\Projects\Models\ProjectRole;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
@@ -11,9 +17,9 @@ use Spatie\LaravelData\Data;
  * @property string $name
  * @property ?string $description
  * @property ?array $permissions
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class ProjectRoleDTO extends Data
 {
@@ -23,9 +29,12 @@ class ProjectRoleDTO extends Data
         public readonly ?string $id = null,
         public readonly ?string $description = null,
         public readonly ?array $permissions = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $createdAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $updatedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $deletedAt = null,
     ) {}
 
     public static function fromModel(ProjectRole $model): self
@@ -36,9 +45,9 @@ class ProjectRoleDTO extends Data
             id: $model->id,
             description: $model->description,
             permissions: $model->permissions,
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 }

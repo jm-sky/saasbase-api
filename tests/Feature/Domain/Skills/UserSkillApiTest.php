@@ -8,6 +8,7 @@ use App\Domain\Skills\Models\UserSkill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Illuminate\Http\Response;
 
 class UserSkillApiTest extends TestCase
 {
@@ -96,7 +97,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->postJson($this->baseUrl, $userSkillData);
 
-        $response->assertStatus(422)
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors([
                 'userId',
                 'skillId',

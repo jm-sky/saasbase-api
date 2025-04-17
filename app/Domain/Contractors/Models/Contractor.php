@@ -2,6 +2,9 @@
 
 namespace App\Domain\Contractors\Models;
 
+use Carbon\Carbon;
+use Database\Factories\ContractorFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,13 +21,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $tax_id
  * @property ?string $notes
  * @property bool $is_active
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property ?\Carbon\Carbon $deleted_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
  */
 class Contractor extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -43,4 +47,9 @@ class Contractor extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected static function newFactory()
+    {
+        return ContractorFactory::new();
+    }
 }

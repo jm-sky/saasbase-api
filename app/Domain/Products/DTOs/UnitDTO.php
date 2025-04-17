@@ -2,16 +2,19 @@
 
 namespace App\Domain\Products\DTOs;
 
-use App\Domain\Products\Models\Unit;
+use App\Domain\Common\Models\Unit;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
  * @property ?string $id UUID
  * @property string $code
  * @property string $name
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class UnitDTO extends Data
 {
@@ -19,9 +22,12 @@ class UnitDTO extends Data
         public readonly string $code,
         public readonly string $name,
         public readonly ?string $id = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $createdAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $updatedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $deletedAt = null,
     ) {}
 
     public static function fromModel(Unit $model): self
@@ -30,9 +36,9 @@ class UnitDTO extends Data
             code: $model->code,
             name: $model->name,
             id: $model->id,
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 }

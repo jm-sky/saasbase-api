@@ -3,6 +3,9 @@
 namespace App\Domain\Common\DTOs;
 
 use App\Domain\Common\Models\Country;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
@@ -22,9 +25,9 @@ use Spatie\LaravelData\Data;
  * @property ?string $subregion
  * @property ?string $emoji
  * @property ?string $emojiU
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class CountryDTO extends Data
 {
@@ -45,9 +48,12 @@ class CountryDTO extends Data
         public ?string $subregion = null,
         public ?string $emoji = null,
         public ?string $emojiU = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $createdAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $updatedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $deletedAt = null,
     ) {}
 
     public static function fromModel(Country $model): self
@@ -68,10 +74,10 @@ class CountryDTO extends Data
             region: $model->region,
             subregion: $model->subregion,
             emoji: $model->emoji,
-            emojiU: $model->emoji_u,
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            emojiU: $model->emojiU,
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 }

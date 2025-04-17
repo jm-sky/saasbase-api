@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('skill_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();

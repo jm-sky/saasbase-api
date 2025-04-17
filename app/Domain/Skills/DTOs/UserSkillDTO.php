@@ -2,6 +2,9 @@
 
 namespace App\Domain\Skills\DTOs;
 
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 use App\Domain\Skills\Models\UserSkill;
 
@@ -11,9 +14,9 @@ use App\Domain\Skills\Models\UserSkill;
  * @property string $skillId
  * @property int $level
  * @property string $acquiredAt
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class UserSkillDTO extends Data
 {
@@ -23,9 +26,12 @@ class UserSkillDTO extends Data
         public readonly int $level,
         public readonly ?string $acquiredAt,
         public readonly ?string $id = null,
-        public ?string $createdAt = null,
-        public ?string $updatedAt = null,
-        public ?string $deletedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $createdAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $updatedAt = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public ?Carbon $deletedAt = null,
     ) {}
 
     public static function fromModel(UserSkill $model): self
@@ -36,9 +42,9 @@ class UserSkillDTO extends Data
             level: $model->level,
             acquiredAt: $model->acquired_at?->format('Y-m-d'),
             id: $model->id,
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 }

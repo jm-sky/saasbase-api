@@ -2,20 +2,25 @@
 
 namespace App\Domain\Products\DTOs;
 
+use App\Domain\Common\Models\Unit;
 use App\Domain\Products\Models\Product;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
  * @property ?string $id UUID
- * @property string $tenantId
  * @property string $name
- * @property ?string $description
+ * @property string $description
+ * @property string $sku
+ * @property float $price
+ * @property int $quantity
  * @property string $unitId
- * @property float $priceNet
- * @property string $vatRateId
- * @property ?string $createdAt
- * @property ?string $updatedAt
- * @property ?string $deletedAt
+ * @property ?Unit $unit
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class ProductDTO extends Data
 {
@@ -42,9 +47,9 @@ class ProductDTO extends Data
             vatRateId: $model->vat_rate_id,
             id: $model->id,
             description: $model->description,
-            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
-            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
-            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 }

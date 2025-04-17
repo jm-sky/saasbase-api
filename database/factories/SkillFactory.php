@@ -12,9 +12,11 @@ class SkillFactory extends Factory
 
     public function definition(): array
     {
+        $category = SkillCategory::factory()->create();
+
         return [
             'id' => fake()->uuid(),
-            'category_id' => SkillCategory::factory(),
+            'category' => $category->name,
             'name' => fake()->unique()->word(),
             'description' => fake()->sentence(),
         ];
