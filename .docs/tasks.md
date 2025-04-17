@@ -103,6 +103,8 @@ trait HasIndexQuery
 
 Use this trait in controllers, fill `$filters` wilth all columns of domain model, and some relations if needed. 
 
-Create sth like Search[model]Request with validation for those filters.
+Create sth like `Search[model]Request` with validation for those filters.
+
+Add tests. 
 
 ---
