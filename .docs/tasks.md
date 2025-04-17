@@ -264,3 +264,30 @@ Add tests.
   - **Testing**:
     - Write unit and feature tests for uploading and retrieving media across all models.
     - Test the integration of MinIO for file storage. 
+
+---
+
+## 13. [ ] Integrate company data lookup via NIP using the Polish White List API (MF)
+
+- **Goal**: Allow fetching contractor details (e.g., name, address, VAT status) using NIP via the official [White List of VAT Taxpayers API](https://www.podatki.gov.pl/wykaz-podatnikow-vat).
+- **Use cases**: 
+  - API endpoint for user lookup (manual input)
+  - Internal processes (e.g., invoice imports, contractor matching)
+- **Caching**: Use configurable cache (default until midnight, but can be overridden to e.g. next month)
+- **HTTP Client**: Use [Saloon](https://docs.saloon.dev) for integration.
+
+- **Subtasks**:
+  - Install and configure Saloon HTTP client package
+  - Create connector class for MF White List API using Saloon
+  - Create request class for NIP lookup via Saloon
+  - Build service class `CompanyLookupService` to fetch and parse data from API
+  - Add configurable caching logic:
+    - Default: cache until midnight
+    - Accept override for next-day / next-month expiration
+  - Create API endpoint `GET /api/contractors/lookup-by-nip/{nip}`:
+    - Validate NIP format
+    - Call `CompanyLookupService`
+    - Return company name, address, VAT status, REGON, bank accounts, etc.
+  - Log lookup results and errors (optional: store audit log)
+  - Write tests for API and service class
+  - Use internally in processes like invoice import or contractor auto-fill 
