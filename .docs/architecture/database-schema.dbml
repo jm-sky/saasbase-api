@@ -1,0 +1,331 @@
+Project Saasbase {
+  database_type: 'PostgreSQL'
+  Note: 'SaaS platform with multi-tenancy, customizable statuses, units, and invoice management.'
+}
+
+Table tenants {
+  id uuid [pk]
+  name varchar
+  slug varchar [unique]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id uuid [pk]
+  first_name varchar
+  last_name varchar
+  email varchar [unique]
+  phone varchar
+  password varchar
+  description text
+  birth_date date
+  is_admin boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tenant_users {
+  tenant_id uuid [ref: > tenants.id]
+  user_id uuid [ref: > users.id]
+  role varchar
+  permissions text
+  joined_at timestamp
+  [pk: tenant_id, user_id]
+}
+
+Table projects {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  description text
+  status_id uuid [ref: > project_statuses.id]
+  owner_id uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [nullable]
+}
+
+Table project_statuses {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  color varchar
+  sort_order int
+  is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tasks {
+  id uuid [pk]
+  project_id uuid [ref: > projects.id]
+  title varchar
+  description text
+  status_id uuid [ref: > task_statuses.id]
+  priority varchar
+  assigned_to_id uuid [ref: > users.id]
+  created_by_id uuid [ref: > users.id]
+  due_date date
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [nullable]
+}
+
+Table task_statuses {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  color varchar
+  sort_order int
+  is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table contractors {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  tax_id varchar
+  email varchar
+  phone varchar
+  description text
+  is_supplier boolean
+  is_buyer boolean
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [nullable]
+}
+
+Table contractor_addresses {
+  id uuid [pk]
+  contractor_id uuid [ref: > contractors.id]
+  label varchar
+  country_code varchar
+  street varchar
+  city varchar
+  zip varchar
+  is_default boolean
+}
+
+Table contractor_bank_accounts {
+  id uuid [pk]
+  contractor_id uuid [ref: > contractors.id]
+  bank_name varchar
+  iban varchar
+  currencies varchar
+  is_default boolean
+}
+
+Table contractor_contact_persons {
+  id uuid [pk]
+  contractor_id uuid [ref: > contractors.id]
+  name varchar
+  email varchar
+  phone varchar
+  position varchar
+}
+
+Table invoices {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  contractor_id uuid [ref: > contractors.id]
+  invoice_type_id uuid [ref: > invoice_types.id]
+  invoice_number varchar
+  issue_date date
+  due_date date
+  total_net decimal
+  total_tax decimal
+  total_gross decimal
+  status varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table invoice_items {
+  id uuid [pk]
+  invoice_id uuid [ref: > invoices.id]
+  product_id uuid [ref: > products.id]
+  name varchar
+  quantity decimal
+  unit_id uuid [ref: > measurement_units.id]
+  price_net decimal
+  vat_rate_id uuid [ref: > vat_rates.id]
+  total_net decimal
+  total_tax decimal
+  total_gross decimal
+}
+
+Table invoice_types {
+  id uuid [pk]
+  name varchar
+  is_correction boolean
+  is_vat boolean
+  is_accounting boolean
+}
+
+Table products {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  description text
+  unit_id uuid [ref: > measurement_units.id]
+  price_net decimal
+  vat_rate_id uuid [ref: > vat_rates.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table vat_rates {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  rate decimal
+  is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table measurement_units {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  shortcut varchar
+  category varchar
+  is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table default_measurement_units {
+  id uuid [pk]
+  name varchar
+  shortcut varchar
+  category varchar
+  is_default boolean
+}
+
+Table default_project_statuses {
+  id uuid [pk]
+  model varchar
+  name varchar
+  color varchar
+  sort_order int
+  category varchar
+  is_default boolean
+}
+
+Table default_task_statuses {
+  id uuid [pk]
+  model varchar
+  name varchar
+  color varchar
+  sort_order int
+  category varchar
+  is_default boolean
+}
+
+Table comments {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  content text
+  commentable_id uuid
+  commentable_type varchar
+  created_at timestamp
+}
+
+Table tags {
+  id uuid [pk]
+  name varchar
+  color varchar
+}
+
+Table taggables {
+  tag_id uuid [ref: > tags.id]
+  taggable_id uuid
+  taggable_type varchar
+  [pk: tag_id, taggable_id, taggable_type]
+}
+
+Table attachments {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  model_type varchar
+  model_id uuid
+  collection_name varchar
+  name varchar
+  file_name varchar
+  mime_type varchar
+  size int
+  disk varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table attachmentables {
+  attachment_id uuid [ref: > attachments.id]
+  attachmentable_id uuid
+  attachmentable_type varchar
+  [pk: attachment_id, attachmentable_id, attachmentable_type]
+}
+
+Table skills {
+  id uuid [pk]
+  category_id uuid [ref: > skill_categories.id]
+  name varchar
+  description text
+}
+
+Table skill_categories {
+  id uuid [pk]
+  name varchar
+  description text
+}
+
+Table user_skills {
+  user_id uuid [ref: > users.id]
+  skill_id uuid [ref: > skills.id]
+  level int
+  acquired_at date
+  [pk: user_id, skill_id]
+}
+
+Table project_required_skills {
+  project_id uuid [ref: > projects.id]
+  skill_id uuid [ref: > skills.id]
+  required_level int
+  [pk: project_id, skill_id]
+}
+
+Table user_settings {
+  user_id uuid [ref: > users.id]
+  language varchar
+  theme varchar
+  timezone varchar
+  two_factor_enabled boolean
+  two_factor_confirmed boolean
+  preferences text
+}
+
+Table user_oauth_accounts {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  provider varchar
+  provider_user_id varchar
+  email varchar
+  linked_at timestamp
+}
+
+Table user_addresses {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  label varchar
+  country_code varchar
+  street varchar
+  city varchar
+  zip varchar
+  is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
