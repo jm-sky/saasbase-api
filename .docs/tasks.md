@@ -342,6 +342,56 @@ Add tests.
 
 ---
 
+## 17. [ ] Implement customizable statuses per model with admin-managed defaults
+
+- **Goal**: Allow each tenant to define their own statuses per domain model (e.g., tasks, projects), with a shared set of admin-managed default statuses.
+
+- **Subtasks**:
+  - Create separate status models, e.g. `ProjectStatus`, `TaskStatus`.
+  - For each status model:
+    - Add `tenant_id` (**required**).
+    - Add `is_default` boolean flag (used to distinguish default records copied to new tenants).
+    - Include fields like `name`, `color`, `order`, etc.
+  - Create seeders for `DefaultProjectStatus` and `DefaultTaskStatus` managed by the system.
+  - On tenant creation, copy default statuses into tenant-specific records with proper `tenant_id`.
+  - Create API endpoints/actions to manage statuses per tenant (CRUD).
+  - Ensure each related domain model (`Project`, `Task`, etc.) uses the appropriate status model via relationship.
+  - Add UI and validation rules for status management.
+  - Include automated tests for:
+    - Default seeding
+    - Tenant customization
+    - Relationship with domain models 
+
+---
+
+## 18. [ ] Implement tenant-specific measurement units for invoice items (e.g. hour, day, km)
+
+- **Goal**: Allow tenants to manage their own units of measurement (e.g., hours, kilometers), with admin-managed defaults categorized by type.
+
+- **Subtasks**:
+  - Create `MeasurementUnit` model with the following fields:
+    - `tenant_id` (**required**)
+    - `name` (e.g. "hour")
+    - `shortcut` (e.g. "h")
+    - `category` (e.g. "time", "length", "energy")
+    - `is_default` (boolean to distinguish system defaults)
+  - Seed default units (e.g., hour, day, km, liter) categorized properly.
+  - On tenant creation, copy default units to tenant with `is_default = true`.
+  - Allow tenants to:
+    - View their unit list
+    - Create new custom units
+    - Add more predefined units from a selected category
+  - Add API endpoints/actions to manage units (CRUD).
+  - Add validation for name/shortcut uniqueness per tenant.
+  - Use the `MeasurementUnit` model in invoice items and other relevant models.
+  - Add automated tests for:
+    - Default seeding
+    - Tenant initialization
+    - CRUD operations
+    - Unit usage in invoices
+
+---
+
 ## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
 
 - **Goal**: Enable text extraction from images and PDFs (e.g., invoices, ID documents, scanned agreements) using the Tesseract OCR engine.
