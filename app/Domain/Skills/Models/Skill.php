@@ -14,7 +14,6 @@ use Carbon\Carbon;
  * @property ?string $description
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property ?Carbon $deleted_at
  *
  * @property-read SkillCategory $skillCategory
  * @property-read Collection<int, UserSkill> $userSkills

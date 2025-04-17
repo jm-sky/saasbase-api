@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();
-            $table->softDeletes();
 
             $table->foreign('category')->references('name')->on('skill_categories')->onDelete('cascade');
         });

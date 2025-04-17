@@ -13,7 +13,7 @@ class SkillController extends Controller
 {
     public function index(): JsonResponse
     {
-        $skills = Skill::with('category')->paginate();
+        $skills = Skill::with('skillCategory')->paginate();
         return response()->json(
             SkillDTO::collect($skills)
         );
@@ -32,7 +32,7 @@ class SkillController extends Controller
 
     public function show(Skill $skill): JsonResponse
     {
-        $skill->load('category');
+        $skill->load('skillCategory');
         return response()->json(
             SkillDTO::from($skill)
         );

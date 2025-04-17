@@ -17,7 +17,6 @@ use Spatie\LaravelData\Attributes\MapOutputName;
  * @property ?SkillCategoryDTO $skillCategory
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 class SkillDTO extends Data
 {
@@ -32,8 +31,6 @@ class SkillDTO extends Data
         public ?Carbon $createdAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
-        public ?Carbon $deletedAt = null,
     ) {}
 
     public static function fromModel(Skill $model, bool $withRelations = false): self
@@ -48,7 +45,6 @@ class SkillDTO extends Data
                 : null,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
         );
     }
 }
