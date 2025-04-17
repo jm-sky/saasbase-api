@@ -291,3 +291,44 @@ Add tests.
   - Log lookup results and errors (optional: store audit log)
   - Write tests for API and service class
   - Use internally in processes like invoice import or contractor auto-fill 
+
+---
+
+## 14. [ ] Generate PDF files from invoices
+
+- **Goal**: Automatically generate PDF representations of invoices for downloading, sending, and archiving purposes.
+
+- **Note**: We'll use **mPDF** for better support of modern HTML/CSS and multilingual content.
+
+- **Subtasks**:
+  - Install [mpdf/mpdf](https://github.com/mpdf/mpdf) via Composer and configure it.
+  - Create a Blade view or HTML template for rendering the invoice layout.
+  - Create a service class `InvoicePdfGenerator` to generate PDFs from invoice data using mPDF.
+  - Store generated PDFs as media attachments using Spatie Media Library (collection: `generated_pdfs`).
+  - Add an endpoint or action to download or regenerate the PDF for a specific invoice.
+  - Include tenant branding (logo, company info) and styling in the layout.
+  - Handle currency formatting, VAT, totals, line items, etc.
+  - Add automated tests to ensure correctness of generated PDFs.
+
+---
+
+
+---
+
+## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
+
+- **Goal**: Enable text extraction from images and PDFs (e.g., invoices, ID documents, scanned agreements) using the Tesseract OCR engine.
+
+- **Use Cases**:
+  - Extracting text from scanned invoices during import processes
+  - Reading text from uploaded ID documents for contractors or users
+  - Processing scanned agreements or other documents for data extraction
+
+- **Subtasks**:
+  - Install and configure Tesseract OCR on the server environment
+  - Create a service class `OcrService` to handle image processing and text extraction
+  - Implement support for common image formats (e.g., JPEG, PNG) and PDFs
+  - Integrate OCR processing into relevant workflows (e.g., invoice import, document upload)
+  - Store or display extracted text as needed for further processing or user review
+  - Add configuration options for OCR processing (e.g., language selection, preprocessing steps)
+  - Write unit and integration tests for OCR functionality 
