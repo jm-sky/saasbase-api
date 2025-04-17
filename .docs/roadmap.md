@@ -113,3 +113,17 @@
 ### 3. Future Dictionaries (if applicable)
 - [ ] **Payment Methods**: Supported methods for payments (credit card, PayPal, etc.).
 - [ ] **Roles**: Custom roles for users (admin, manager, user, etc.).
+
+---
+
+#### CRUD Module: [RESOURCE NAME] (e.g. Invoice)
+
+- [ ] (P1) Create `[Resource]` model, migration and factory  
+- [ ] (P1) Create DTOs: `[Resource]Data`, `[Resource]UpdateData`  
+- [ ] (P1) Create request classes: `Store[Resource]Request`, `Update[Resource]Request` [depends on: DTOs]  
+- [ ] (P1) Create `[Resource]Controller` with CRUD methods [depends on: requests]  
+- [ ] (P1) Add `[resource]` API routes to `routes/api.php` [depends on: controller]  
+- [ ] (P2) Write feature tests for `[resource]` API [depends on: controller, routes]  
+- [ ] (P2) Add support for file attachments (if applicable)  
+- [ ] (P2) Generate downloadable PDF (if applicable)  
+- [ ] (P3) Connect `[resource]` with related models (e.g. contractors, products)
