@@ -4,10 +4,8 @@ namespace App\Domain\Common\Controllers;
 
 use App\Domain\Common\DTOs\CountryDTO;
 use App\Domain\Common\Models\Country;
-use App\Domain\Common\Requests\CountryRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class CountryController extends Controller
 {
@@ -15,18 +13,7 @@ class CountryController extends Controller
     {
         $countries = Country::paginate();
         return response()->json(
-            CountryDTO::collect($countries)
-        );
-    }
-
-    public function store(CountryRequest $request): JsonResponse
-    {
-        $dto = CountryDTO::from($request->validated());
-        $country = Country::create((array) $dto);
-
-        return response()->json(
-            CountryDTO::from($country),
-            Response::HTTP_CREATED
+            CountryDTO::collect($countries->items())
         );
     }
 
@@ -35,21 +22,5 @@ class CountryController extends Controller
         return response()->json(
             CountryDTO::from($country)
         );
-    }
-
-    public function update(CountryRequest $request, Country $country): JsonResponse
-    {
-        $dto = CountryDTO::from($request->validated());
-        $country->update((array) $dto);
-
-        return response()->json(
-            CountryDTO::from($country)
-        );
-    }
-
-    public function destroy(Country $country): JsonResponse
-    {
-        $country->delete();
-        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

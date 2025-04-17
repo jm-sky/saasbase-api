@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Domain\Common\Models\{Unit, VatRate};
 use App\Domain\Products\Models\Product;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -15,15 +17,14 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-        $name = fake()->unique()->productName();
         return [
-            'name' => $name,
-            'slug' => Str::slug($name),
-            'description' => fake()->paragraph(),
-            'price' => fake()->randomFloat(2, 10, 1000),
-            'sku' => fake()->unique()->ean8(),
-            'stock' => fake()->numberBetween(0, 100),
-            'is_active' => fake()->boolean(90), // 90% chance of being active
+            'id' => fake()->uuid(),
+            'tenant_id' => Tenant::factory(),
+            'name' => fake()->words(3, true),
+            'description' => fake()->optional()->paragraph(),
+            'unit_id' => Unit::factory(),
+            'price_net' => fake()->randomFloat(2, 10, 1000),
+            'vat_rate_id' => VatRate::factory(),
         ];
     }
 }

@@ -27,6 +27,6 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('skills', SkillController::class);
         Route::apiResource('skill-categories', SkillCategoryController::class);
         Route::apiResource('user-skills', UserSkillController::class);
-        Route::apiResource('countries', CountryController::class);
+        Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
     });
 });

@@ -3,6 +3,9 @@
 namespace App\Domain\Projects\DTOs;
 
 use App\Domain\Auth\DTOs\UserDTO;
+use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\DTOs\TaskDTO;
+use App\Domain\Projects\DTOs\ProjectRequiredSkillDTO;
 use Spatie\LaravelData\Data;
 
 /**
@@ -39,4 +42,24 @@ class ProjectDTO extends Data
         public ?array $tasks = null,
         public ?array $requiredSkills = null,
     ) {}
+
+    public static function fromModel(Project $model): self
+    {
+        return new self(
+            tenantId: $model->tenant_id,
+            name: $model->name,
+            status: $model->status,
+            startDate: $model->start_date->format('Y-m-d'),
+            id: $model->id,
+            description: $model->description,
+            endDate: $model->end_date?->format('Y-m-d'),
+            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
+            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
+            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+            owner: $model->owner ? UserDTO::fromModel($model->owner) : null,
+            users: $model->users ? $model->users->map(fn ($user) => UserDTO::fromModel($user))->toArray() : null,
+            tasks: $model->tasks ? $model->tasks->map(fn ($task) => TaskDTO::fromModel($task))->toArray() : null,
+            requiredSkills: $model->requiredSkills ? $model->requiredSkills->map(fn ($skill) => ProjectRequiredSkillDTO::fromModel($skill))->toArray() : null,
+        );
+    }
 }

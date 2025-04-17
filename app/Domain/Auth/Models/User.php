@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Session;
 
 /**
  * @property string $id
@@ -75,6 +76,33 @@ class User extends Authenticatable
         'birth_date' => 'date',
         'is_admin' => 'boolean',
     ];
+
+    /**
+     * Get the user's current tenant ID from session or active membership.
+     * TODO: Handle JWT token.
+     *
+     * @return string|null
+     */
+    public function getTenantId(): ?string
+    {
+        // First try to get from session
+        $tenantId = Session::get('current_tenant_id');
+
+        if ($tenantId) {
+            return $tenantId;
+        }
+
+        // If not in session, get from first active membership
+        $membership = $this->tenantMemberships()->first();
+
+        if ($membership) {
+            // Store in session for future use
+            Session::put('current_tenant_id', $membership->tenant_id);
+            return $membership->tenant_id;
+        }
+
+        return null;
+    }
 
     /**
      * Get the user's settings.

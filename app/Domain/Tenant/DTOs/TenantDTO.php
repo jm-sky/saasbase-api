@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenant\DTOs;
 
+use App\Domain\Tenant\Models\Tenant;
 use Spatie\LaravelData\Data;
 
 /**
@@ -22,4 +23,16 @@ class TenantDTO extends Data
         public ?string $updatedAt = null,
         public ?string $deletedAt = null,
     ) {}
+
+    public static function fromModel(Tenant $model): self
+    {
+        return new self(
+            name: $model->name,
+            slug: $model->slug,
+            id: $model->id,
+            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
+            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
+            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+        );
+    }
 }

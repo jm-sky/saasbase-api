@@ -7,25 +7,30 @@ use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $products = Product::with(['unit', 'vatRate'])->paginate();
+        $products = Product::query()
+            ->where('tenant_id', $request->user()->getTenantId())
+            ->with(['unit', 'vatRate'])
+            ->paginate();
+
         return response()->json(
-            ProductDTO::collect($products)
+            ProductDTO::collect($products->items())
         );
     }
 
     public function store(ProductRequest $request): JsonResponse
     {
-        $dto = ProductDTO::from($request->validated());
-        $product = Product::create((array) $dto);
+        $product = Product::create($request->validated());
+        $product->load(['unit', 'vatRate']);
 
         return response()->json(
-            ProductDTO::from($product),
+            ProductDTO::fromModel($product),
             Response::HTTP_CREATED
         );
     }
@@ -34,17 +39,18 @@ class ProductController extends Controller
     {
         $product->load(['unit', 'vatRate']);
         return response()->json(
-            ProductDTO::from($product)
+            ProductDTO::fromModel($product)
         );
     }
 
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
-        $dto = ProductDTO::from($request->validated());
-        $product->update((array) $dto);
+        $product->update($request->validated());
+        $product->load(['unit', 'vatRate']);
+        $product = $product->fresh();
 
         return response()->json(
-            ProductDTO::from($product)
+            ProductDTO::fromModel($product)
         );
     }
 

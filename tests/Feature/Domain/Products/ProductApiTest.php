@@ -6,7 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Unit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
-use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\{Tenant, UserTenant};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -24,8 +24,16 @@ class ProductApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
         $this->tenant = Tenant::factory()->create();
+        $this->user = User::factory()->create();
+
+        // Create tenant membership
+        UserTenant::create([
+            'user_id' => $this->user->id,
+            'tenant_id' => $this->tenant->id,
+            'role' => 'member'
+        ]);
+
         $this->unit = Unit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
         Sanctum::actingAs($this->user);
@@ -37,6 +45,15 @@ class ProductApiTest extends TestCase
             ->count(3)
             ->create([
                 'tenant_id' => $this->tenant->id,
+                'unit_id' => $this->unit->id,
+                'vat_rate_id' => $this->vatRate->id,
+            ]);
+
+        // Create some products for a different tenant to ensure they're not returned
+        Product::factory()
+            ->count(2)
+            ->create([
+                'tenant_id' => Tenant::factory()->create()->id,
                 'unit_id' => $this->unit->id,
                 'vat_rate_id' => $this->vatRate->id,
             ]);
@@ -198,7 +215,9 @@ class ProductApiTest extends TestCase
             'id' => $product->id,
             'name' => $updateData['name'],
             'description' => $updateData['description'],
+            'unit_id' => $updateData['unitId'],
             'price_net' => $updateData['priceNet'],
+            'vat_rate_id' => $updateData['vatRateId'],
         ]);
     }
 

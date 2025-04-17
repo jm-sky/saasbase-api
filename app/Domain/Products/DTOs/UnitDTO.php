@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\DTOs;
 
+use App\Domain\Products\Models\Unit;
 use Spatie\LaravelData\Data;
 
 /**
@@ -22,4 +23,16 @@ class UnitDTO extends Data
         public ?string $updatedAt = null,
         public ?string $deletedAt = null,
     ) {}
+
+    public static function fromModel(Unit $model): self
+    {
+        return new self(
+            code: $model->code,
+            name: $model->name,
+            id: $model->id,
+            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
+            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
+            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+        );
+    }
 }

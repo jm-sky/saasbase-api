@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\DTOs;
 
+use App\Domain\Contractors\Models\Contractor;
 use Spatie\LaravelData\Data;
 
 /**
@@ -34,5 +35,23 @@ class ContractorDTO extends Data
         public ?string $notes = null,
         public ?bool $isActive = true,
     ) {
+    }
+
+    public static function fromModel(Contractor $model): self
+    {
+        return new self(
+            id: $model->id,
+            name: $model->name,
+            email: $model->email,
+            phone: $model->phone,
+            address: $model->address,
+            city: $model->city,
+            state: $model->state,
+            zipCode: $model->zip_code,
+            country: $model->country,
+            taxId: $model->tax_id,
+            notes: $model->notes,
+            isActive: $model->is_active,
+        );
     }
 }

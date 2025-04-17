@@ -32,6 +32,8 @@ class SetLocaleFromHeader
 ```
 -----------------------------------------------------
 
-## 2. [ ] Add seeders for all models 
+## 2. [ ] Add seeders for all models. I need seeder for skill categories and skills, lets start with IT area. I want to have a demo with few users, few tanants, some contractors, products, projects & tasks.
 ## 3. [ ] Add countries to Country seeders JSON file (European countries, and most large countries)
 ## 4. [ ] Add routes & actions for current user - change settings, reset password etc. 
+## 5. [ ] Add trait (BelongsToTenant?) tht apply global scope for models with tenant_id. We'll store tenant_id in session or jwt. Its for security.
+## 6. [ ] Refactor foreign keys. i.e. refer country code (pl, de) instead of id. Analyse.

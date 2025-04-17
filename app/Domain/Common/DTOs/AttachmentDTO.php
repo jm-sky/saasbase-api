@@ -2,6 +2,7 @@
 
 namespace App\Domain\Common\DTOs;
 
+use App\Domain\Common\Models\Attachment;
 use Spatie\LaravelData\Data;
 
 /**
@@ -30,4 +31,20 @@ class AttachmentDTO extends Data
         public ?string $updatedAt = null,
         public ?string $deletedAt = null,
     ) {}
+
+    public static function fromModel(Attachment $model): self
+    {
+        return new self(
+            fileName: $model->file_name,
+            fileUrl: $model->file_url,
+            fileType: $model->file_type,
+            fileSize: $model->file_size,
+            attachmentableId: $model->attachmentable_id,
+            attachmentableType: $model->attachmentable_type,
+            id: $model->id,
+            createdAt: $model->created_at?->format('Y-m-d H:i:s'),
+            updatedAt: $model->updated_at?->format('Y-m-d H:i:s'),
+            deletedAt: $model->deleted_at?->format('Y-m-d H:i:s'),
+        );
+    }
 }
