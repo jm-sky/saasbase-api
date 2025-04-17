@@ -2,7 +2,7 @@
 
 ## 1. [x] Add middleware to set locale based on Accept Language header. 
 
-\```php
+```php
 <?php
 
 namespace App\Http\Middleware;
@@ -29,8 +29,9 @@ class SetLocaleFromHeader
         return $next($request);
     }
 }
-\```
------------------------------------------------------
+```
+
+---
 
 ## 2. [ ] Add seeders for all models. I need seeder for skill categories and skills, let's start with IT area. I want to have a demo with few users, few tenants, some contractors, products, projects & tasks.
 
@@ -81,7 +82,7 @@ class SetLocaleFromHeader
 ## 7. [ ] Implement standardized filtering and sorting with Spatie Query Builder to index method in all CRUD controllers. 
 
 Create trait
-\```php
+```php
 namespace App\Http\Controllers\Concerns;
 
 use Illuminate\Http\Request;
@@ -131,10 +132,10 @@ trait HasIndexQuery
         return $this->getIndexQuery($request)->paginate()->appends($request->query());
     }
 }
-\```
+```
 
 Create DateRangeFilter
-\```php
+```php
 namespace App\Filters;
 
 use Spatie\QueryBuilder\Filters\Filter;
@@ -163,7 +164,7 @@ class DateRangeFilter implements Filter
         }
     }
 }
-\```
+```
 
 Use this trait in controllers, fill `$filters` with all columns of domain model, and some relations if needed. Use DateRangeFilter for date fields.
 
