@@ -312,6 +312,33 @@ Add tests.
 
 ---
 
+## 16. [ ] Handle notifications for project/task updates and invoices waiting for payment
+
+- **Goal**: Implement a notification system to inform users of project/task changes and invoices that are pending payment.
+
+- **Subtasks**:
+  - **Set up notifications**:
+    - Define notification types: project/task updates (e.g., assigned, completed), invoice payment reminders.
+    - Use **Laravel Notifications** to send notifications via email, SMS, or in-app alerts.
+  - **Create custom notification channels** (if needed), such as:
+    - Email notifications for project/task updates and invoice payment reminders.
+    - In-app notifications for users to track progress on assigned tasks or upcoming payments.
+  - **Use Horizon for background job processing**:
+    - Set up **Laravel Horizon** for managing background jobs related to notifications.
+    - Create queued jobs for sending notifications (e.g., task assignment, project status change, invoice due reminders).
+    - Configure Horizon to monitor and manage these jobs effectively.
+  - **Create jobs**:
+    - Create queued jobs for project/task notifications (e.g., `SendProjectUpdateNotification`, `SendTaskUpdateNotification`).
+    - Create jobs for invoice payment reminders (e.g., `SendInvoicePaymentReminder`).
+  - **Handle delayed notifications**:
+    - For invoices, ensure notifications are sent a few days before the due date.
+    - For project/task updates, send notifications immediately or after a short delay.
+  - **Add testing**:
+    - Write automated tests for job processing and notification delivery.
+    - Test scenarios for notifications on task changes, project progress, and invoice due dates.
+  - **Optional**:
+    - Implement user preferences for notification settings (e.g., frequency of reminders, channels).
+    - Add retry logic for failed notifications and ensure proper logging for debugging.
 
 ---
 
