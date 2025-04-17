@@ -235,3 +235,32 @@ Add tests.
       `belongsTo(VatRate::class, 'vat_rate', 'rate')`
   - Update all forms, API payloads and tests to use new string-based keys.
   - (Optional) Apply the same pattern to other dictionaries like `countries`, `units`, etc.
+
+---
+
+## 12. [ ] Implement file attachments using Spatie Media Library
+
+- **Goal**: Allow models to support file attachments (e.g., for tasks, invoices, products, etc.) using the Spatie Media Library package.
+
+- **Subtasks**:
+  - **Install and configure**: Install and configure [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary).
+  - **Set up media storage**:
+    - Configure the media disk in `config/filesystems.php` and `.env` for MinIO integration.
+  - **Create a reusable trait**:
+    - Create a trait `HasAttachments` to handle media logic across models.
+  - **Update models to use media**:
+    - Add `InteractsWithMedia` and `HasMedia` to models like `User`, `Project`, `Task`, `Contractor`, `Comment`, `Tenant`, `Invoice`, and `Product`.
+  - **Define media collections**:
+    - Allow models to handle multiple collections such as `profile_images`, `task_attachments`, `product_images`, `invoice_pdfs`, etc.
+    - Define media conversions for thumbnails, PDF previews, etc.
+  - **Implement attachment CRUD**:
+    - Create controllers (e.g., `ProductAttachmentsController`, `InvoiceAttachmentsController`) for handling file upload, update, deletion, and retrieval.
+    - Support single and multiple file uploads.
+    - Implement actions or API endpoints to upload, update, delete, and retrieve attachments.
+  - **Update API Resources or Transformers**:
+    - Ensure media URLs are included in API responses (e.g., `profile_image_url`, `task_attachments_url`).
+  - **Handle file types and previews**:
+    - Implement preview generation for common file types (e.g., PDF thumbnails, image resizing).
+  - **Testing**:
+    - Write unit and feature tests for uploading and retrieving media across all models.
+    - Test the integration of MinIO for file storage. 
