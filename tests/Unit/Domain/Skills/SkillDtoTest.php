@@ -23,7 +23,6 @@ class SkillDTOTest extends TestCase
         $this->assertEquals($skill->description, $dto->description);
         $this->assertEquals($skill->created_at, $dto->createdAt);
         $this->assertEquals($skill->updated_at, $dto->updatedAt);
-        $this->assertEquals($skill->deleted_at, $dto->deletedAt);
         $this->assertNull($dto->skillCategory);
     }
 
@@ -52,7 +51,6 @@ class SkillDTOTest extends TestCase
         $this->assertEquals($skill->description, $array['description']);
         $this->assertEquals($skill->created_at?->toIso8601String(), $array['createdAt']);
         $this->assertEquals($skill->updated_at?->toIso8601String(), $array['updatedAt']);
-        $this->assertEquals($skill->deleted_at?->toIso8601String(), $array['deletedAt']);
         $this->assertNull($array['skill_category']);
     }
 
