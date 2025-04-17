@@ -4,13 +4,16 @@ namespace Tests\Unit\Domain\Contractors;
 
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Tenant\Models\Tenant;
 use Tests\TestCase;
 
 class ContractorDTOTest extends TestCase
 {
     public function test_can_create_contractor_dto_from_model(): void
     {
+        $tenant = Tenant::factory()->create();
         $contractor = Contractor::factory()->create([
+            'tenant_id' => $tenant->id,
             'name' => 'Test Contractor',
             'email' => 'test@example.com',
             'phone' => '1234567890',
@@ -27,6 +30,7 @@ class ContractorDTOTest extends TestCase
         $dto = ContractorDTO::from($contractor);
 
         $this->assertEquals($contractor->id, $dto->id);
+        $this->assertEquals($contractor->tenant_id, $dto->tenantId);
         $this->assertEquals($contractor->name, $dto->name);
         $this->assertEquals($contractor->email, $dto->email);
         $this->assertEquals($contractor->phone, $dto->phone);
@@ -44,6 +48,7 @@ class ContractorDTOTest extends TestCase
     {
         $dto = new ContractorDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',
+            tenantId: '123e4567-e89b-12d3-a456-426614174001',
             name: 'Test Contractor',
             email: 'test@example.com',
             phone: '1234567890',
@@ -60,6 +65,7 @@ class ContractorDTOTest extends TestCase
         $array = $dto->toArray();
 
         $this->assertEquals('123e4567-e89b-12d3-a456-426614174000', $array['id']);
+        $this->assertEquals('123e4567-e89b-12d3-a456-426614174001', $array['tenantId']);
         $this->assertEquals('Test Contractor', $array['name']);
         $this->assertEquals('test@example.com', $array['email']);
         $this->assertEquals('1234567890', $array['phone']);

@@ -15,6 +15,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.7",
         "laravel/tinker": "^2.10.1",
+        "lorisleiva/laravel-actions": "^2.9",
         "ramsey/uuid": "^4.7",
         "spatie/laravel-data": "^4.15",
         "tymon/jwt-auth": "^2.2"

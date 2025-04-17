@@ -2,6 +2,7 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Database\Factories\UserFactory;
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property string $id
@@ -30,7 +33,7 @@ use Illuminate\Support\Facades\Session;
  * @property Carbon $updated_at
  * @property ?Carbon $deleted_at
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens;
     use HasFactory;
@@ -76,6 +79,22 @@ class User extends Authenticatable
         'birth_date' => 'date',
         'is_admin' => 'boolean',
     ];
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     */
+    public function getJWTIdentifier(): string
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     */
+    public function getJWTCustomClaims(): array
+    {
+        return [];
+    }
 
     /**
      * Get the user's current tenant ID from session or active membership.
@@ -134,6 +153,13 @@ class User extends Authenticatable
     public function skills(): HasMany
     {
         return $this->hasMany(\App\Domain\Skills\Models\UserSkill::class);
+    }
+
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class, 'tenant_users')
+            ->withPivot(['role'])
+            ->withTimestamps();
     }
 
     protected static function newFactory()

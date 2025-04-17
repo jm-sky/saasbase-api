@@ -67,7 +67,7 @@ class SetLocaleFromHeader
 
 ---
 
-## 5. [ ] Add trait (BelongsToTenant) that applies a global scope for models with `tenant_id`. We'll store `tenant_id` in session or JWT for security.  
+## 5. [x] Add trait (BelongsToTenant) that applies a global scope for models with `tenant_id`. We'll store `tenant_id` in session or JWT for security.  
 - **Note**: User does not have tenant_id; a user can belong to many tenants, not just one.
 - **Subtasks**:
   - Create a `BelongsToTenant` trait that applies a global scope for models.

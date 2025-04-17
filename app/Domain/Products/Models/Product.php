@@ -3,6 +3,7 @@
 namespace App\Domain\Products\Models;
 
 use App\Domain\Common\Models\{BaseModel, Unit, VatRate};
+use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
@@ -28,6 +29,7 @@ class Product extends BaseModel
 {
     use SoftDeletes;
     use HasFactory;
+    use BelongsToTenant;
 
     protected $fillable = [
         'tenant_id',

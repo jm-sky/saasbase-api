@@ -5,6 +5,7 @@ namespace App\Domain\Projects\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\{Comment, Attachment};
+use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -33,6 +34,8 @@ use Carbon\Carbon;
  */
 class Task extends BaseModel
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'project_id',
         'title',

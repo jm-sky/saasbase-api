@@ -14,7 +14,10 @@ class TenantController extends Controller
 {
     public function index(): JsonResponse
     {
-        $tenants = Tenant::all();
+        $tenants = Tenant::query()
+            ->orderBy('created_at')
+            ->get();
+
         return response()->json(
             TenantDTO::collect($tenants)
         );

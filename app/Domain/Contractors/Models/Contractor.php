@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Models;
 
+use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $id
+ * @property string $tenant_id
  * @property string $name
  * @property string $email
  * @property ?string $phone
@@ -29,6 +31,7 @@ class Contractor extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    use BelongsToTenant;
 
     protected $fillable = [
         'name',

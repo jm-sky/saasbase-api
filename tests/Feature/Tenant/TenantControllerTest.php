@@ -12,6 +12,9 @@ class TenantControllerTest extends TestCase
 
     public function test_index_returns_all_tenants(): void
     {
+        // Clear any existing tenants
+        Tenant::query()->forceDelete();
+
         $tenants = Tenant::factory()->count(3)->create();
 
         $response = $this->getJson('/api/v1/tenants');
@@ -27,6 +30,11 @@ class TenantControllerTest extends TestCase
                     'updatedAt',
                 ],
             ]);
+
+        // Verify we got exactly the tenants we created
+        $responseIds = collect($response->json())->pluck('id')->sort()->values();
+        $expectedIds = $tenants->pluck('id')->sort()->values();
+        $this->assertEquals($expectedIds, $responseIds);
     }
 
     public function test_store_creates_new_tenant(): void

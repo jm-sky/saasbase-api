@@ -4,6 +4,7 @@ namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\{BaseModel, Comment, Attachment};
+use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, MorphMany, BelongsToMany};
 use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
@@ -31,6 +32,8 @@ use Carbon\Carbon;
  */
 class Project extends BaseModel
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'name',

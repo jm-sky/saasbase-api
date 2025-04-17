@@ -5,6 +5,7 @@ use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Skills\Controllers\{SkillController, SkillCategoryController, UserSkillController};
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Tenant\Controllers\TenantController;
+use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,5 +29,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('skill-categories', SkillCategoryController::class);
         Route::apiResource('user-skills', UserSkillController::class);
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+    });
+
+    Route::middleware('auth:api')->group(function () {
+        Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
     });
 });
