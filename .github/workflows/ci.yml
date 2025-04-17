@@ -57,6 +57,9 @@ jobs:
       - name: Override .env DB host for CI
         run: sed -i 's/DB_HOST=postgres/DB_HOST=127.0.0.1/' .env.example && cp .env.example .env
 
+      - name: Override .env.testing DB host for CI
+        run: sed -i 's/DB_HOST=postgres/DB_HOST=127.0.0.1/' .env.testing
+
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
