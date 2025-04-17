@@ -43,6 +43,9 @@ class SetLocaleFromHeader
   - Create seeder for products (demo products).
   - Create seeder for projects (few demo projects).
   - Create seeder for tasks (few tasks related to projects).
+  - Create seeder for Vat rates - use Polish vat rates as example.
+
+---
 
 ## 3. [ ] Add countries to Country seeders JSON file (European countries, and most large countries).
 - **Note**: We can include all countries if performance is not impacted.
@@ -50,6 +53,8 @@ class SetLocaleFromHeader
   - Review existing Country seeder.
   - Add all countries (Europe and large countries) to the seeder.
   - Test seeding functionality.
+
+---
 
 ## 4. [ ] Add routes & actions for current user - change settings, reset password etc.
 - **Suggested**: Use Actions instead of controller methods for better organization.
@@ -60,13 +65,17 @@ class SetLocaleFromHeader
   - Implement action for changing language preference.
   - Implement validation for user settings actions.
 
-## 5. [ ] Add trait (BelongsToTenant?) that applies a global scope for models with tenant_id. We'll store tenant_id in session or JWT for security.  
+---
+
+## 5. [ ] Add trait (BelongsToTenant) that applies a global scope for models with `tenant_id`. We'll store `tenant_id` in session or JWT for security.  
 - **Note**: User does not have tenant_id; a user can belong to many tenants, not just one.
 - **Subtasks**:
   - Create a `BelongsToTenant` trait that applies a global scope for models.
   - Implement session or JWT storage for tenant identification.
   - Refactor models that should be tenant-scoped.
   - Add unit tests for tenant scoping.
+
+---
 
 ## 6. [ ] Refactor foreign keys. i.e. refer to country code (pl, de) instead of id. Analyse.  
 - **Note**: It may not be more efficient, but we would immediately see the country name instead of an anonymous ID.
@@ -206,3 +215,23 @@ Add tests.
   - Test multi-language support across the application.
 
 ---
+
+## 11. [ ] Refactor dictionary-like tables (e.g. VAT rates) to use meaningful string primary keys
+
+- **Goal**: Improve readability and maintainability by using string values (e.g., `'5%'`, `'PL'`, `'kg'`) as primary keys instead of UUIDs for static/dictionary data.
+
+- **Scope**: Applies to `vat_rates` (and optionally `countries`, `units`, etc.)
+
+- **Subtasks**:
+  - Change primary key of `vat_rates` from UUID to `rate` (e.g., `'5%'`, `'23%'`, `'0%'`).
+    - Drop `id` UUID column if not needed.
+    - Make `rate` the primary key (`string`, unique).
+  - Update all foreign keys in related models (`products`, etc.):
+    - Replace `vat_rate_id` with `vat_rate` (`string`).
+    - Update migrations and relationships accordingly.
+  - Update seeders to use `rate` as the key.
+  - Adjust model relationships:
+    - In `Product`, use:  
+      `belongsTo(VatRate::class, 'vat_rate', 'rate')`
+  - Update all forms, API payloads and tests to use new string-based keys.
+  - (Optional) Apply the same pattern to other dictionaries like `countries`, `units`, etc.
