@@ -12,19 +12,19 @@ class VatRateSeeder extends Seeder
         // Polish VAT rates as example
         $vatRates = [
             [
-                'name' => 'Standard rate',
-                'rate' => 23.00,
+                'name' => '23%',
+                'rate' => 0.23,
             ],
             [
-                'name' => 'Reduced rate',
-                'rate' => 8.00,
+                'name' => '8%',
+                'rate' => 0.8,
             ],
             [
-                'name' => 'Super-reduced rate',
-                'rate' => 5.00,
+                'name' => '5%',
+                'rate' => 0.5,
             ],
             [
-                'name' => 'Zero rate',
+                'name' => '0%',
                 'rate' => 0.00,
             ],
             [
