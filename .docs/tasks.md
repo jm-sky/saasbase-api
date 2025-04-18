@@ -56,7 +56,7 @@ class SetLocaleFromHeader
 
 ---
 
-## 3. [ ] Add countries to Country seeders JSON file (European countries, and most large countries).
+## 3. [x] Add countries to Country seeders JSON file (European countries, and most large countries).
 - **Note**: We can include all countries if performance is not impacted.
 - **Subtasks**:
   - Review existing Country seeder.
@@ -75,6 +75,7 @@ class SetLocaleFromHeader
   - Create action for updating notified preferences.
   - Implement action for changing language preference.
   - Implement validation for user settings actions.
+
    ```php
    // routes/api.php
    // Use actions instead of controllers 
