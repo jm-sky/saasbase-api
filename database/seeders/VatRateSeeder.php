@@ -17,11 +17,11 @@ class VatRateSeeder extends Seeder
             ],
             [
                 'name' => '8%',
-                'rate' => 0.8,
+                'rate' => 0.08,
             ],
             [
                 'name' => '5%',
-                'rate' => 0.5,
+                'rate' => 0.05,
             ],
             [
                 'name' => '0%',

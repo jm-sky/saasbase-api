@@ -17,19 +17,19 @@ class VatRateSeederTest extends TestCase
 
         $this->assertDatabaseCount('vat_rates', 5);
         $this->assertDatabaseHas('vat_rates', [
-            'name' => 'Standard rate',
-            'rate' => 23.00,
+            'name' => '23%',
+            'rate' => 0.23,
         ]);
         $this->assertDatabaseHas('vat_rates', [
-            'name' => 'Reduced rate',
-            'rate' => 8.00,
+            'name' => '8%',
+            'rate' => 0.08,
         ]);
         $this->assertDatabaseHas('vat_rates', [
-            'name' => 'Super-reduced rate',
-            'rate' => 5.00,
+            'name' => '5%',
+            'rate' => 0.05,
         ]);
         $this->assertDatabaseHas('vat_rates', [
-            'name' => 'Zero rate',
+            'name' => '0%',
             'rate' => 0.00,
         ]);
         $this->assertDatabaseHas('vat_rates', [
