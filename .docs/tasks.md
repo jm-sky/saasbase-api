@@ -414,7 +414,8 @@ Add tests.
 
 ## 21. [] **Migrate UUID to ULID**
   - Replace UUID identifiers with ULID across all models that currently use UUID.
-  - Create a new Laravel trait similar to `HasUuid` but using ULID (e.g. `HasUlid`).
+  - Check latest Laravel documentation (v12) for native Laravel support for ULID (in migration, validation, model trait) 
+  - Create a new Laravel trait similar to `HasUuid` but using ULID (e.g. `HasUlid`) (if needed).
   - Update model factories, migrations, and any related seeding logic to use ULID.
   - Ensure compatibility with existing tools like Spatie Media Library, Horizon, etc.
   - Validate sortability and uniqueness of ULIDs across tenants and environments.
