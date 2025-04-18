@@ -44,6 +44,15 @@ class SetLocaleFromHeader
   - Create seeder for projects (few demo projects).
   - Create seeder for tasks (few tasks related to projects).
   - Create seeder for Vat rates - use Polish vat rates as example.
+   ```jsonc
+   // database/seeders/data/polish_vat_rates.json
+   [
+     { "rate": 0.23, "name": "23%",     "is_default": true },
+     { "rate": 0.08,  "name": "8%",       "is_default": false },
+     { "rate": 0.05,  "name": "5%", "is_default": false },
+     { "rate": 0.0,  "name": "0%",          "is_default": false }
+   ]
+   ```
 
 ---
 
@@ -61,9 +70,25 @@ class SetLocaleFromHeader
 - **Subtasks**:
   - Create actions for changing user settings (username, email, etc.).
   - Create action for resetting password.
-  - Create action for updating user profile.
+  - Create action for updating user profile. 
+  - Create action for updating timezone. 
+  - Create action for updating notified preferences.
   - Implement action for changing language preference.
   - Implement validation for user settings actions.
+   ```php
+   // routes/api.php
+   // Use actions instead of controllers 
+   // Add timezone & notification prefs. 
+   Route::middleware('auth:sanctum')->group(function () {
+       Route::put('user/settings', [UserSettingsController::class, 'update']);
+       Route::patch('user/language', [UserSettingsController::class, 'changeLanguage']);
+   });
+   Route::post('user/password-reset', [PasswordResetController::class, 'sendResetLink']);
+   Route::put('user/password', [PasswordResetController::class, 'resetPassword']);
+   ```
+   **Done when:**  
+   - All four endpoints accept and return JSON, apply validation via FormRequest or Actions, and return appropriate HTTP codes.  
+   - Tests cover success and failure cases.
 
 ---
 
@@ -88,7 +113,7 @@ class SetLocaleFromHeader
 
 ---
 
-## 7. [ ] Implement standardized filtering and sorting with Spatie Query Builder to index method in all CRUD controllers. 
+## 7. [x] Implement standardized filtering and sorting with Spatie Query Builder to index method in all CRUD controllers. 
 
 Create trait
 ```php
@@ -180,18 +205,6 @@ Use this trait in controllers, fill `$filters` with all columns of domain model,
 Create something like `Search[model]Request` with validation for those filters.
 
 Add tests.
-
----
-
-## 8. [ ] Implement user settings and preferences as part of the user profile.
-
-- **Subtasks**:
-  - Implement a user settings model to store preferences (e.g., language, timezone, notification preferences).
-  - Create actions for updating user settings (language, timezone, etc.).
-  - Update user profile interface to allow settings modification.
-  - Add validation for user settings actions.
-  - Create migration for user settings table.
-  - Add tests for user settings actions.
 
 ---
 
@@ -401,6 +414,12 @@ Add tests.
   - Support invitation acceptance via token-based link (e.g. signed URL or UUID/UULID).
   - Handle cases for existing users and new user registrations through invitations.
   - Store invitation metadata (status, timestamps, who invited whom, etc.).
+  - Migration and `Invitation` model with fields: `recipient_email`, `tenant_id`, `role`, `invitation_token`, `invited_by`, `status`, `sent_at`.  
+   - `InvitationController@send`: accepts `{ email, tenant_id, role }`, creates record, sends signed URL email.  
+   - `InvitationController@accept`: via `GET /api/v1/invitations/{token}`, links or creates user, assigns role.  
+   - **Done when:**  
+     - Endpoints `POST /api/v1/tenant/{tenant}/invite` and `GET /api/v1/invitations/{token}` work end‑to‑end.  
+     - Tests assert invitation creation, email sent, and acceptance flow.
 
 ---
 
@@ -419,6 +438,8 @@ Add tests.
   - Update model factories, migrations, and any related seeding logic to use ULID.
   - Ensure compatibility with existing tools like Spatie Media Library, Horizon, etc.
   - Validate sortability and uniqueness of ULIDs across tenants and environments.
+    - Migrations update PK types to `ulid()`.  
+    - Factories use `Str::ulid()`.  
 
 ---
 
