@@ -3,12 +3,13 @@
 namespace Tests\Feature\Domain\Products;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\Unit;
+use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\{Tenant, UserTenant};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ProductApiTest extends TestCase
@@ -17,7 +18,7 @@ class ProductApiTest extends TestCase
 
     private string $baseUrl = '/api/v1/products';
     private Tenant $tenant;
-    private Unit $unit;
+    private MeasurementUnit $unit;
     private VatRate $vatRate;
     private User $user;
 
@@ -31,7 +32,7 @@ class ProductApiTest extends TestCase
         $this->user->tenants()->attach($this->tenant->id, ['role' => 'member']);
         session(['current_tenant_id' => $this->tenant->id]);
 
-        $this->unit = Unit::factory()->create();
+        $this->unit = MeasurementUnit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
 
         // Authenticate user after setting up tenant
@@ -201,7 +202,7 @@ class ProductApiTest extends TestCase
 
         $response = $this->putJson($this->baseUrl . '/' . $product->id, $updateData);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'id',
                 'tenantId',

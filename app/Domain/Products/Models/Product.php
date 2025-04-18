@@ -2,13 +2,13 @@
 
 namespace App\Domain\Products\Models;
 
-use App\Domain\Common\Models\{BaseModel, Unit, VatRate};
-use App\Domain\Tenant\Concerns\BelongsToTenant;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Domain\Tenant\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Domain\Common\Models\{BaseModel, MeasurementUnit, VatRate};
 
 /**
  * @property string $id
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon $updated_at
  * @property ?Carbon $deleted_at
  *
- * @property-read Unit $unit
+ * @property-read MeasurementUnit $unit
  * @property-read VatRate $vatRate
  */
 class Product extends BaseModel
@@ -51,7 +51,7 @@ class Product extends BaseModel
 
     public function unit(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(MeasurementUnit::class);
     }
 
     public function vatRate(): BelongsTo
