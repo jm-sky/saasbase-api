@@ -6,6 +6,7 @@ use App\Domain\Skills\Controllers\{SkillController, SkillCategoryController, Use
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Tenant\Controllers\TenantController;
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
+use App\Domain\Auth\Controllers\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +30,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('skill-categories', SkillCategoryController::class);
         Route::apiResource('user-skills', UserSkillController::class);
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+        Route::get('user/settings', [UserSettingsController::class, 'show']);
+        Route::put('user/settings', [UserSettingsController::class, 'update']);
+        Route::patch('user/settings/language', [UserSettingsController::class, 'updateLanguage']);
     });
 
     Route::middleware('auth:api')->group(function () {
