@@ -21,15 +21,15 @@ class ProductController extends Controller
 {
     use HasIndexQuery;
 
-    private const PER_PAGE = 15;
+    protected int $defaultPerPage = 15;
 
     public function __construct()
     {
         $this->modelClass = Product::class;
 
         $this->filters = [
-            AllowedFilter::exact('name'),
-            AllowedFilter::exact('description'),
+            AllowedFilter::partial('name'),
+            AllowedFilter::partial('description'),
             AllowedFilter::exact('unitId', 'unit_id'),
             AllowedFilter::exact('vatRateId', 'vat_rate_id'),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
@@ -48,23 +48,10 @@ class ProductController extends Controller
 
     public function index(SearchProductRequest $request): JsonResponse
     {
-        $query = QueryBuilder::for($this->modelClass)
-            ->allowedFilters($this->filters)
-            ->allowedSorts($this->sorts)
-            ->defaultSort($this->defaultSort)
-            ->with(['unit', 'vatRate']);
+        $result = $this->getIndexPaginator($request);
+        $result['data'] = ProductDTO::collect($result['data']);
 
-        $products = $query->paginate($request->input('per_page', self::PER_PAGE));
-
-        return response()->json([
-            'data' => ProductDTO::collect($products->items()),
-            'meta' => [
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-            ],
-        ]);
+        return response()->json($result);
     }
 
     public function store(ProductRequest $request): JsonResponse

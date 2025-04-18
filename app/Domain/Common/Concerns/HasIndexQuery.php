@@ -31,6 +31,11 @@ trait HasIndexQuery
     protected string $defaultSort = '-id';
 
     /**
+     * Default number of items per page.
+     */
+    protected int $defaultPerPage = 15;
+
+    /**
      * Create the base query using Spatie QueryBuilder.
      */
     public function getIndexQuery(Request $request): QueryBuilder
@@ -42,10 +47,21 @@ trait HasIndexQuery
     }
 
     /**
-     * Return paginated results.
+     * Return paginated results with metadata.
      */
-    public function getIndexPaginator(Request $request): LengthAwarePaginator
+    public function getIndexPaginator(Request $request, ?int $perPage = null): array
     {
-        return $this->getIndexQuery($request)->paginate()->appends($request->query());
+        $query = $this->getIndexQuery($request);
+        $paginator = $query->paginate($perPage ?? $request->input('per_page', $this->defaultPerPage));
+
+        return [
+            'data' => $paginator->items(),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+            ],
+        ];
     }
 }
