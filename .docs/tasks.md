@@ -33,7 +33,7 @@ class SetLocaleFromHeader
 
 ---
 
-## 2. [ ] Add seeders for all models. I need seeder for skill categories and skills, let's start with IT area. I want to have a demo with few users, few tenants, some contractors, products, projects & tasks.
+## 2. [x] Add seeders for all models. I need seeder for skill categories and skills, let's start with IT area. I want to have a demo with few users, few tenants, some contractors, products, projects & tasks.
 
 - **Subtasks**:
   - Create seeder for skill categories and skills (IT area).
