@@ -29,28 +29,29 @@ class CountryApiTest extends TestCase
         $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'name',
-                    'code',
-                    'code3',
-                    'numericCode',
-                    'phoneCode',
-                    'capital',
-                    'currency',
-                    'currencyCode',
-                    'currencySymbol',
-                    'tld',
-                    'native',
-                    'region',
-                    'subregion',
-                    'emoji',
-                    'emojiU',
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt'
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'code',
+                        'code3',
+                        'numericCode',
+                        'phoneCode',
+                        'capital',
+                        'currency',
+                        'currencyCode',
+                        'currencySymbol',
+                        'tld',
+                        'native',
+                        'region',
+                        'subregion',
+                        'emoji',
+                        'emojiU',
+                        'createdAt',
+                        'updatedAt',
+                    ]
                 ]
             ]);
     }
@@ -81,7 +82,6 @@ class CountryApiTest extends TestCase
                 'emojiU',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
             ])
             ->assertJson([
                 'id' => $country->id,

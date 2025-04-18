@@ -5,23 +5,53 @@ namespace App\Domain\Products\Controllers;
 use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
+use App\Domain\Products\Requests\SearchProductRequest;
+use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
-    public function index(Request $request): JsonResponse
-    {
-        $products = Product::query()
-            ->where('tenant_id', $request->user()->getTenantId())
-            ->with(['unit', 'vatRate'])
-            ->paginate();
+    use HasIndexQuery;
 
-        return response()->json(
-            ProductDTO::collect($products->items())
-        );
+    protected int $defaultPerPage = 15;
+
+    public function __construct()
+    {
+        $this->modelClass = Product::class;
+
+        $this->filters = [
+            AllowedFilter::partial('name'),
+            AllowedFilter::partial('description'),
+            AllowedFilter::exact('unitId', 'unit_id'),
+            AllowedFilter::exact('vatRateId', 'vat_rate_id'),
+            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
+            AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
+        ];
+
+        $this->sorts = [
+            'name',
+            'description',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
+        ];
+
+        $this->defaultSort = '-created_at';
+    }
+
+    public function index(SearchProductRequest $request): JsonResponse
+    {
+        $result = $this->getIndexPaginator($request);
+        $result['data'] = ProductDTO::collect($result['data']);
+
+        return response()->json($result);
     }
 
     public function store(ProductRequest $request): JsonResponse
@@ -58,5 +88,14 @@ class ProductController extends Controller
     {
         $product->delete();
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    protected function getIndexQuery(Request $request): QueryBuilder
+    {
+        return QueryBuilder::for($this->modelClass)
+            ->allowedFilters($this->filters)
+            ->allowedSorts($this->sorts)
+            ->defaultSort($this->defaultSort)
+            ->with(['unit', 'vatRate']);
     }
 }

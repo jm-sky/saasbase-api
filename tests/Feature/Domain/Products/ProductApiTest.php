@@ -27,21 +27,21 @@ class ProductApiTest extends TestCase
         $this->tenant = Tenant::factory()->create();
         $this->user = User::factory()->create();
 
-        // Create tenant membership
-        UserTenant::create([
-            'user_id' => $this->user->id,
-            'tenant_id' => $this->tenant->id,
-            'role' => 'member'
-        ]);
+        // Create tenant membership and set as current tenant
+        $this->user->tenants()->attach($this->tenant->id, ['role' => 'member']);
+        session(['current_tenant_id' => $this->tenant->id]);
 
         $this->unit = Unit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
+
+        // Authenticate user after setting up tenant
         Sanctum::actingAs($this->user);
     }
 
     public function test_can_list_products(): void
     {
-        $products = Product::factory()
+        // Create products for the current tenant
+        Product::factory()
             ->count(3)
             ->create([
                 'tenant_id' => $this->tenant->id,
@@ -49,11 +49,12 @@ class ProductApiTest extends TestCase
                 'vat_rate_id' => $this->vatRate->id,
             ]);
 
-        // Create some products for a different tenant to ensure they're not returned
+        // Create products for a different tenant
+        $otherTenant = Tenant::factory()->create();
         Product::factory()
             ->count(2)
             ->create([
-                'tenant_id' => Tenant::factory()->create()->id,
+                'tenant_id' => $otherTenant->id,
                 'unit_id' => $this->unit->id,
                 'vat_rate_id' => $this->vatRate->id,
             ]);
@@ -61,19 +62,27 @@ class ProductApiTest extends TestCase
         $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'tenantId',
-                    'name',
-                    'description',
-                    'unitId',
-                    'priceNet',
-                    'vatRateId',
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt'
+                'data' => [
+                    '*' => [
+                        'id',
+                        'tenantId',
+                        'name',
+                        'description',
+                        'unitId',
+                        'priceNet',
+                        'vatRateId',
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt'
+                    ]
+                ],
+                'meta' => [
+                    'current_page',
+                    'last_page',
+                    'per_page',
+                    'total'
                 ]
             ]);
     }
