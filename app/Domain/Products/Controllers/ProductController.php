@@ -5,23 +5,57 @@ namespace App\Domain\Products\Controllers;
 use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
+use App\Domain\Products\Requests\SearchProductRequest;
+use App\Filters\DateRangeFilter;
+use App\Http\Controllers\Concerns\HasIndexQuery;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class ProductController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    use HasIndexQuery;
+
+    protected string $modelClass = Product::class;
+    protected array $filters = [];
+    protected array $sorts = [];
+
+    public function __construct()
     {
-        $products = Product::query()
+        $this->filters = [
+            'name',
+            'description',
+            'unit_id',
+            'vat_rate_id',
+            AllowedFilter::custom('created_at', new DateRangeFilter('created_at')),
+            AllowedFilter::custom('updated_at', new DateRangeFilter('updated_at')),
+        ];
+
+        $this->sorts = [
+            'name',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    public function index(SearchProductRequest $request): JsonResponse
+    {
+        $products = $this->getIndexQuery($request)
             ->where('tenant_id', $request->user()->getTenantId())
             ->with(['unit', 'vatRate'])
             ->paginate();
 
-        return response()->json(
-            ProductDTO::collect($products->items())
-        );
+        return response()->json([
+            'data' => ProductDTO::collect($products->items()),
+            'meta' => [
+                'currentPage' => $products->currentPage(),
+                'lastPage' => $products->lastPage(),
+                'perPage' => $products->perPage(),
+                'total' => $products->total(),
+            ],
+        ]);
     }
 
     public function store(ProductRequest $request): JsonResponse
