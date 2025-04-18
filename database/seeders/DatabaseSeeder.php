@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CountrySeeder::class,
+            VatRateSeeder::class,
+            SkillCategorySeeder::class,
+            SkillSeeder::class,
         ]);
     }
 }
