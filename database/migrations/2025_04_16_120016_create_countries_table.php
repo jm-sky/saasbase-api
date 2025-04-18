@@ -29,7 +29,6 @@ return new class extends Migration
             $table->string('emoji', 10)->nullable();
             $table->string('emojiU', 20)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

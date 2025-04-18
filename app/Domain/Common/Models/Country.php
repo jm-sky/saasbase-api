@@ -2,12 +2,8 @@
 
 namespace App\Domain\Common\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Country extends BaseModel
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'name',
         'code',
