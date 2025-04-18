@@ -12,11 +12,10 @@ use Carbon\Carbon;
  * @property string $name
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property ?Carbon $deleted_at
  *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Product> $products
  */
-class Unit extends BaseModel
+class MeasurementUnit extends BaseModel
 {
     protected $fillable = [
         'code',
@@ -25,6 +24,6 @@ class Unit extends BaseModel
 
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'unit_id');
     }
 }

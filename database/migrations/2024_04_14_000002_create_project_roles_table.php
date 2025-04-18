@@ -10,14 +10,11 @@ return new class extends Migration
     {
         Schema::create('project_roles', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->json('permissions')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
         });
     }
 

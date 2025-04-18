@@ -17,7 +17,7 @@ class SearchProductRequest extends FormRequest
         return [
             'filter.name' => 'sometimes|string',
             'filter.description' => 'sometimes|string',
-            'filter.unitId' => 'sometimes|uuid|exists:units,id',
+            'filter.unitId' => 'sometimes|uuid|exists:measurement_units,id',
             'filter.vatRateId' => 'sometimes|uuid|exists:vat_rates,id',
             'filter.createdAt' => 'sometimes|array',
             'filter.createdAt.from' => 'required_with:filter.createdAt|date',

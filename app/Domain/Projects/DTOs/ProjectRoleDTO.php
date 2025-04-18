@@ -10,7 +10,6 @@ use Spatie\LaravelData\Data;
 
 /**
  * @property ?string $id UUID
- * @property string $tenantId
  * @property string $name
  * @property ?string $description
  * @property ?array $permissions
@@ -21,7 +20,6 @@ use Spatie\LaravelData\Data;
 class ProjectRoleDTO extends Data
 {
     public function __construct(
-        public readonly string $tenantId,
         public readonly string $name,
         public readonly ?string $id = null,
         public readonly ?string $description = null,
@@ -37,7 +35,6 @@ class ProjectRoleDTO extends Data
     public static function fromModel(ProjectRole $model): self
     {
         return new self(
-            tenantId: $model->tenant_id,
             name: $model->name,
             id: $model->id,
             description: $model->description,

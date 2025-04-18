@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 /**
  * @property string $id
- * @property string $tenant_id
  * @property string $name
  * @property ?string $description
  * @property ?array $permissions
@@ -22,7 +21,6 @@ use Carbon\Carbon;
 class ProjectRole extends BaseModel
 {
     protected $fillable = [
-        'tenant_id',
         'name',
         'description',
         'permissions',

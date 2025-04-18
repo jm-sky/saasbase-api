@@ -20,7 +20,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
-            $table->foreign('unit_id')->references('id')->on('units')->onDelete('restrict');
+            $table->foreign('unit_id')->references('id')->on('measurement_units')->onDelete('restrict');
             $table->foreign('vat_rate_id')->references('id')->on('vat_rates')->onDelete('restrict');
         });
     }

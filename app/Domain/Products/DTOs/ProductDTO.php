@@ -2,7 +2,7 @@
 
 namespace App\Domain\Products\DTOs;
 
-use App\Domain\Common\Models\Unit;
+use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -17,7 +17,7 @@ use Spatie\LaravelData\Data;
  * @property float $price
  * @property int $quantity
  * @property string $unitId
- * @property ?Unit $unit
+ * @property ?MeasurementUnit $unit
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601

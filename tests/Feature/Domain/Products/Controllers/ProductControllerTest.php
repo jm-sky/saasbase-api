@@ -3,7 +3,7 @@
 namespace Tests\Feature\Domain\Products\Controllers;
 
 use App\Domain\Products\Models\Product;
-use App\Domain\Common\Models\Unit;
+use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,14 +17,14 @@ class ProductControllerTest extends TestCase
     use WithAuthenticatedUser;
 
     private Tenant $tenant;
-    private Unit $unit;
+    private MeasurementUnit $unit;
     private VatRate $vatRate;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->unit = Unit::factory()->create();
+        $this->unit = MeasurementUnit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
         $this->authenticateUser($this->tenant);
     }
@@ -56,7 +56,7 @@ class ProductControllerTest extends TestCase
     #[Test]
     public function it_can_filter_products_by_unit_id(): void
     {
-        $unit2 = Unit::factory()->create();
+        $unit2 = MeasurementUnit::factory()->create();
 
         Product::factory()->create([
             'tenant_id' => $this->tenant->id,
