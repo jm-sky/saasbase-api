@@ -65,7 +65,7 @@ class SetLocaleFromHeader
 
 ---
 
-## 4. [ ] Add routes & actions for current user - change settings, reset password etc.
+## 4. [x] Add routes & actions for current user - change settings, reset password etc.
 - **Suggested**: Use Actions instead of controller methods for better organization.
 - **Subtasks**:
   - Create actions for changing user settings (username, email, etc.).
