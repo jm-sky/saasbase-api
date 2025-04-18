@@ -25,9 +25,9 @@ trait BelongsToTenant
             return session('current_tenant_id');
         }
 
-        // Try user's current tenant
-        if (Auth::check()) {
-            return $user->getTenantId();
+        // Try user's first tenant
+        if ($user) {
+            return $user->tenants()->first()?->id;
         }
 
         return null;

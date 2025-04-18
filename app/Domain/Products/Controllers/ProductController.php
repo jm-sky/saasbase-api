@@ -6,53 +6,62 @@ use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
-use App\Filters\DateRangeFilter;
-use App\Http\Controllers\Concerns\HasIndexQuery;
+use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
     use HasIndexQuery;
 
-    protected string $modelClass = Product::class;
-    protected array $filters = [];
-    protected array $sorts = [];
+    private const PER_PAGE = 15;
 
     public function __construct()
     {
+        $this->modelClass = Product::class;
+
         $this->filters = [
-            'name',
-            'description',
-            'unit_id',
-            'vat_rate_id',
-            AllowedFilter::custom('created_at', new DateRangeFilter('created_at')),
-            AllowedFilter::custom('updated_at', new DateRangeFilter('updated_at')),
+            AllowedFilter::exact('name'),
+            AllowedFilter::exact('description'),
+            AllowedFilter::exact('unitId', 'unit_id'),
+            AllowedFilter::exact('vatRateId', 'vat_rate_id'),
+            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
+            AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
         ];
 
         $this->sorts = [
             'name',
-            'created_at',
-            'updated_at',
+            'description',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
         ];
+
+        $this->defaultSort = '-created_at';
     }
 
     public function index(SearchProductRequest $request): JsonResponse
     {
-        $products = $this->getIndexQuery($request)
-            ->where('tenant_id', $request->user()->getTenantId())
-            ->with(['unit', 'vatRate'])
-            ->paginate();
+        $query = QueryBuilder::for($this->modelClass)
+            ->allowedFilters($this->filters)
+            ->allowedSorts($this->sorts)
+            ->defaultSort($this->defaultSort)
+            ->with(['unit', 'vatRate']);
+
+        $products = $query->paginate($request->input('per_page', self::PER_PAGE));
 
         return response()->json([
             'data' => ProductDTO::collect($products->items()),
             'meta' => [
-                'currentPage' => $products->currentPage(),
-                'lastPage' => $products->lastPage(),
-                'perPage' => $products->perPage(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
                 'total' => $products->total(),
             ],
         ]);
@@ -92,5 +101,14 @@ class ProductController extends Controller
     {
         $product->delete();
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    protected function getIndexQuery(Request $request): QueryBuilder
+    {
+        return QueryBuilder::for($this->modelClass)
+            ->allowedFilters($this->filters)
+            ->allowedSorts($this->sorts)
+            ->defaultSort($this->defaultSort)
+            ->with(['unit', 'vatRate']);
     }
 }

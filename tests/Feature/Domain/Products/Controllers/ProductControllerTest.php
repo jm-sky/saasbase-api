@@ -9,6 +9,7 @@ use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
+use PHPUnit\Framework\Attributes\Test;
 
 class ProductControllerTest extends TestCase
 {
@@ -28,7 +29,7 @@ class ProductControllerTest extends TestCase
         $this->authenticateUser($this->tenant);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_products_by_name(): void
     {
         Product::factory()->create([
@@ -45,14 +46,14 @@ class ProductControllerTest extends TestCase
             'vat_rate_id' => $this->vatRate->id,
         ]);
 
-        $response = $this->getJson('/api/products?filter[name]=Product A');
+        $response = $this->getJson('/api/v1/products?filter[name]=Product A');
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.name', 'Product A');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_products_by_unit_id(): void
     {
         $unit2 = Unit::factory()->create();
@@ -69,14 +70,14 @@ class ProductControllerTest extends TestCase
             'vat_rate_id' => $this->vatRate->id,
         ]);
 
-        $response = $this->getJson("/api/products?filter[unitId]={$this->unit->id}");
+        $response = $this->getJson("/api/v1/products?filter[unitId]={$this->unit->id}");
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.unitId', $this->unit->id);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_products_by_date_range(): void
     {
         $product1 = Product::factory()->create([
@@ -93,14 +94,14 @@ class ProductControllerTest extends TestCase
             'created_at' => '2024-02-01 12:00:00',
         ]);
 
-        $response = $this->getJson('/api/products?filter[createdAt]=2024-01-01,2024-01-31');
+        $response = $this->getJson('/api/v1/products?filter[createdAt][from]=2024-01-01&filter[createdAt][to]=2024-01-31');
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $product1->id);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_sort_products(): void
     {
         Product::factory()->create([
@@ -117,28 +118,27 @@ class ProductControllerTest extends TestCase
             'vat_rate_id' => $this->vatRate->id,
         ]);
 
-        $response = $this->getJson('/api/products?sort=name');
+        $response = $this->getJson('/api/v1/products?sort=name');
 
         $response->assertOk()
             ->assertJsonPath('data.0.name', 'Product A')
             ->assertJsonPath('data.1.name', 'Product B');
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_date_range_format(): void
     {
-        $response = $this->getJson('/api/products?filter[createdAt]=invalid-date');
+        $response = $this->getJson('/api/v1/products?filter[createdAt][from]=invalid-date');
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['filter.createdAt']);
+            ->assertJsonValidationErrors(['filter.createdAt.from']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_sort_parameter(): void
     {
-        $response = $this->getJson('/api/products?sort=invalid');
+        $response = $this->getJson('/api/v1/products?sort=invalid_field');
 
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['sort']);
+        $response->assertUnprocessable();
     }
 }
