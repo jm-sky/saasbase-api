@@ -392,6 +392,31 @@ Add tests.
 
 ---
 
+## 19.[] **Invitation System**
+  - Implement a system allowing users with appropriate permissions to send invitations to join a tenant.
+  - Each invitation should include:
+    - Recipient email address.
+    - The tenant the invitation is associated with.
+    - The role the invited user should be assigned to upon accepting the invitation.
+  - Support invitation acceptance via token-based link (e.g. signed URL or UUID/UULID).
+  - Handle cases for existing users and new user registrations through invitations.
+  - Store invitation metadata (status, timestamps, who invited whom, etc.).
+
+## 20. [] **Generate OpenAPI YAML Specification**
+  - Automatically generate OpenAPI documentation in YAML format for the entire API.
+  - Include all endpoints, models, request/response schemas, authentication details.
+  - Ensure compatibility with tools like Swagger UI and Postman.
+  - Preferably automate via Artisan command or during CI build.
+
+## 21. [] **Migrate UUID to ULID**
+  - Replace UUID identifiers with ULID across all models that currently use UUID.
+  - Create a new Laravel trait similar to `HasUuid` but using ULID (e.g. `HasUlid`).
+  - Update model factories, migrations, and any related seeding logic to use ULID.
+  - Ensure compatibility with existing tools like Spatie Media Library, Horizon, etc.
+  - Validate sortability and uniqueness of ULIDs across tenants and environments.
+
+---
+
 ## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
 
 - **Goal**: Enable text extraction from images and PDFs (e.g., invoices, ID documents, scanned agreements) using the Tesseract OCR engine.
