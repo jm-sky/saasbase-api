@@ -10,14 +10,14 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $projectId
- * @property string $userId
- * @property string $projectRoleId
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?UserDTO $user
+ * @property ?string         $id            UUID
+ * @property string          $projectId
+ * @property string          $userId
+ * @property string          $projectRoleId
+ * @property ?Carbon         $createdAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon         $updatedAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon         $deletedAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?UserDTO        $user
  * @property ?ProjectRoleDTO $role
  */
 class ProjectUserDTO extends Data
@@ -35,7 +35,8 @@ class ProjectUserDTO extends Data
         public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
         public ?ProjectRoleDTO $role = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(ProjectUser $model): self
     {

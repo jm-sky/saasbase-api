@@ -4,19 +4,19 @@ namespace App\Domain\Skills\DTOs;
 
 use App\Domain\Skills\Models\Skill;
 use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapOutputName;
 
 /**
- * @property ?string $id UUID
- * @property string $category
- * @property string $name
- * @property ?string $description
+ * @property ?string           $id            UUID
+ * @property string            $category
+ * @property string            $name
+ * @property ?string           $description
  * @property ?SkillCategoryDTO $skillCategory
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon           $createdAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon           $updatedAt     Internally Carbon, accepts/serializes ISO 8601
  */
 class SkillDTO extends Data
 {
@@ -31,7 +31,8 @@ class SkillDTO extends Data
         public ?Carbon $createdAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Skill $model, bool $withRelations = false): self
     {

@@ -3,17 +3,16 @@
 namespace App\Domain\Common\Models;
 
 use App\Domain\Products\Models\Product;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string $id
- * @property string $code
- * @property string $name
- * @property Carbon $created_at
- * @property Carbon $updated_at
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Product> $products
+ * @property string                                                 $id
+ * @property string                                                 $code
+ * @property string                                                 $name
+ * @property Carbon                                                 $created_at
+ * @property Carbon                                                 $updated_at
+ * @property \Illuminate\Database\Eloquent\Collection<int, Product> $products
  */
 class MeasurementUnit extends BaseModel
 {

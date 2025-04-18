@@ -2,21 +2,21 @@
 
 namespace App\Domain\Projects\DTOs;
 
-use App\Domain\Skills\DTOs\SkillDTO;
 use App\Domain\Projects\Models\ProjectRequiredSkill;
+use App\Domain\Skills\DTOs\SkillDTO;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $projectId
- * @property string $skillId
- * @property int $requiredLevel
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string   $id            UUID
+ * @property string    $projectId
+ * @property string    $skillId
+ * @property int       $requiredLevel
+ * @property ?Carbon   $createdAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon   $updatedAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon   $deletedAt     Internally Carbon, accepts/serializes ISO 8601
  * @property ?SkillDTO $skill
  */
 class ProjectRequiredSkillDTO extends Data
@@ -33,7 +33,8 @@ class ProjectRequiredSkillDTO extends Data
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
         public ?SkillDTO $skill = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(ProjectRequiredSkill $model): self
     {

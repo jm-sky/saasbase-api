@@ -5,21 +5,27 @@ namespace Tests\Unit\Domain\Auth;
 use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Models\User;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class UserDTOTest extends TestCase
 {
-    public function test_can_create_user_dto_from_model(): void
+    public function testCanCreateUserDtoFromModel(): void
     {
         $user = User::factory()->create([
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => 'test@example.com',
-            'avatar_url' => 'https://example.com/avatar.jpg',
+            'first_name'  => 'John',
+            'last_name'   => 'Doe',
+            'email'       => 'test@example.com',
+            'avatar_url'  => 'https://example.com/avatar.jpg',
             'description' => 'Test description',
-            'birth_date' => '1990-01-01',
-            'phone' => '+1234567890',
-            'is_admin' => true,
+            'birth_date'  => '1990-01-01',
+            'phone'       => '+1234567890',
+            'is_admin'    => true,
         ]);
 
         $dto = UserDTO::fromModel($user);
@@ -38,9 +44,9 @@ class UserDTOTest extends TestCase
         $this->assertEquals($user->deleted_at?->toIso8601String(), $dto->deletedAt?->toIso8601String());
     }
 
-    public function test_can_convert_user_dto_to_array(): void
+    public function testCanConvertUserDtoToArray(): void
     {
-        $now = Carbon::now();
+        $now    = Carbon::now();
         $isoNow = $now->toIso8601String();
 
         $dto = new UserDTO(

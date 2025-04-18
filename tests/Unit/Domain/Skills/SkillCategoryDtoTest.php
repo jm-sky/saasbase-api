@@ -4,14 +4,20 @@ namespace Tests\Unit\Domain\Skills;
 
 use App\Domain\Skills\DTOs\SkillCategoryDTO;
 use App\Domain\Skills\Models\SkillCategory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class SkillCategoryDTOTest extends TestCase
 {
-    public function test_can_create_skill_category_dto_from_model(): void
+    public function testCanCreateSkillCategoryDtoFromModel(): void
     {
         $category = SkillCategory::factory()->create();
-        $dto = SkillCategoryDTO::fromModel($category);
+        $dto      = SkillCategoryDTO::fromModel($category);
 
         $this->assertEquals($category->id, $dto->id);
         $this->assertEquals($category->name, $dto->name);
@@ -21,11 +27,11 @@ class SkillCategoryDTOTest extends TestCase
         $this->assertEquals($category->deleted_at, $dto->deletedAt);
     }
 
-    public function test_can_convert_skill_category_dto_to_array(): void
+    public function testCanConvertSkillCategoryDtoToArray(): void
     {
         $category = SkillCategory::factory()->create();
-        $dto = SkillCategoryDTO::fromModel($category);
-        $array = $dto->toArray();
+        $dto      = SkillCategoryDTO::fromModel($category);
+        $array    = $dto->toArray();
 
         $this->assertIsArray($array);
         $this->assertEquals($category->id, $array['id']);

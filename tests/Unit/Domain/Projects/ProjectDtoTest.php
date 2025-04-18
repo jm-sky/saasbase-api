@@ -5,16 +5,22 @@ namespace Tests\Unit\Domain\Projects;
 use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ProjectDTOTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_create_project_dto_from_model(): void
+    public function testCanCreateProjectDtoFromModel(): void
     {
         $project = Project::factory()->create();
-        $dto = ProjectDTO::fromModel($project);
+        $dto     = ProjectDTO::fromModel($project);
 
         $this->assertEquals($project->id, $dto->id);
         $this->assertEquals($project->tenant_id, $dto->tenantId);
@@ -31,7 +37,7 @@ class ProjectDTOTest extends TestCase
         $this->assertNull($dto->requiredSkills);
     }
 
-    public function test_can_create_project_dto_with_relations(): void
+    public function testCanCreateProjectDtoWithRelations(): void
     {
         $project = Project::factory()->create();
         $project->load(['owner', 'tasks', 'requiredSkills']);
@@ -43,11 +49,11 @@ class ProjectDTOTest extends TestCase
         $this->assertNotNull($dto->requiredSkills);
     }
 
-    public function test_can_convert_project_dto_to_array(): void
+    public function testCanConvertProjectDtoToArray(): void
     {
         $project = Project::factory()->create();
-        $dto = ProjectDTO::fromModel($project);
-        $array = $dto->toArray();
+        $dto     = ProjectDTO::fromModel($project);
+        $array   = $dto->toArray();
 
         $this->assertIsArray($array);
         $this->assertEquals($project->id, $array['id']);
@@ -65,12 +71,12 @@ class ProjectDTOTest extends TestCase
         $this->assertNull($array['required_skills']);
     }
 
-    public function test_can_convert_project_dto_with_relations_to_array(): void
+    public function testCanConvertProjectDtoWithRelationsToArray(): void
     {
         $project = Project::factory()->create();
         $project->load(['owner', 'tasks', 'requiredSkills']);
 
-        $dto = ProjectDTO::fromModel($project, true);
+        $dto   = ProjectDTO::fromModel($project, true);
         $array = $dto->toArray();
 
         $this->assertIsArray($array['owner']);

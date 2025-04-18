@@ -2,20 +2,26 @@
 
 namespace Tests\Unit\Domain\Skills;
 
-use App\Domain\Skills\DTOs\SkillDTO;
 use App\Domain\Skills\DTOs\SkillCategoryDTO;
+use App\Domain\Skills\DTOs\SkillDTO;
 use App\Domain\Skills\Models\Skill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class SkillDTOTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_create_skill_dto_from_model(): void
+    public function testCanCreateSkillDtoFromModel(): void
     {
         $skill = Skill::factory()->create();
-        $dto = SkillDTO::fromModel($skill);
+        $dto   = SkillDTO::fromModel($skill);
 
         $this->assertEquals($skill->id, $dto->id);
         $this->assertEquals($skill->category, $dto->category);
@@ -26,7 +32,7 @@ class SkillDTOTest extends TestCase
         $this->assertNull($dto->skillCategory);
     }
 
-    public function test_can_create_skill_dto_with_skill_category(): void
+    public function testCanCreateSkillDtoWithSkillCategory(): void
     {
         $skill = Skill::factory()->create();
         $skill->load('skillCategory');
@@ -38,10 +44,10 @@ class SkillDTOTest extends TestCase
         $this->assertEquals($skill->skillCategory->name, $dto->skillCategory->name);
     }
 
-    public function test_can_convert_skill_dto_to_array(): void
+    public function testCanConvertSkillDtoToArray(): void
     {
         $skill = Skill::factory()->create();
-        $dto = SkillDTO::fromModel($skill);
+        $dto   = SkillDTO::fromModel($skill);
         $array = $dto->toArray();
 
         $this->assertIsArray($array);
@@ -54,12 +60,12 @@ class SkillDTOTest extends TestCase
         $this->assertNull($array['skill_category']);
     }
 
-    public function test_can_convert_skill_dto_with_skill_category_to_array(): void
+    public function testCanConvertSkillDtoWithSkillCategoryToArray(): void
     {
         $skill = Skill::factory()->create();
         $skill->load('skillCategory');
 
-        $dto = SkillDTO::fromModel($skill, true);
+        $dto   = SkillDTO::fromModel($skill, true);
         $array = $dto->toArray();
 
         $this->assertIsArray($array['skill_category']);

@@ -3,32 +3,36 @@
 namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\{BaseModel, Comment, Attachment};
+use App\Domain\Common\Models\Attachment;
+use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Comment;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, MorphMany, BelongsToMany};
-use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * @property string $id
- * @property string $tenant_id
- * @property string $name
- * @property ?string $description
- * @property string $status
- * @property string $owner_id
- * @property Carbon $start_date
- * @property ?Carbon $end_date
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property ?Carbon $deleted_at
- *
- * @property-read User $owner
- * @property-read Collection<int, User> $users
- * @property-read Collection<int, Task> $tasks
- * @property-read Collection<int, ProjectUser> $projectUsers
- * @property-read Collection<int, ProjectRequiredSkill> $requiredSkills
- * @property-read Collection<int, Comment> $comments
- * @property-read Collection<int, Attachment> $attachments
+ * @property string                                $id
+ * @property string                                $tenant_id
+ * @property string                                $name
+ * @property ?string                               $description
+ * @property string                                $status
+ * @property string                                $owner_id
+ * @property Carbon                                $start_date
+ * @property ?Carbon                               $end_date
+ * @property Carbon                                $created_at
+ * @property Carbon                                $updated_at
+ * @property ?Carbon                               $deleted_at
+ * @property User                                  $owner
+ * @property Collection<int, User>                 $users
+ * @property Collection<int, Task>                 $tasks
+ * @property Collection<int, ProjectUser>          $projectUsers
+ * @property Collection<int, ProjectRequiredSkill> $requiredSkills
+ * @property Collection<int, Comment>              $comments
+ * @property Collection<int, Attachment>           $attachments
  */
 class Project extends BaseModel
 {
@@ -45,9 +49,9 @@ class Project extends BaseModel
     ];
 
     protected $casts = [
-        'status' => 'string',
+        'status'     => 'string',
         'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'end_date'   => 'datetime',
     ];
 
     public function owner(): BelongsTo
@@ -59,7 +63,8 @@ class Project extends BaseModel
     {
         return $this->belongsToMany(User::class, 'project_users')
             ->withPivot(['role'])
-            ->withTimestamps();
+            ->withTimestamps()
+        ;
     }
 
     public function tasks(): HasMany

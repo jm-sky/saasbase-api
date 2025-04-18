@@ -7,8 +7,6 @@ use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class TenantController extends Controller
 {
@@ -16,7 +14,8 @@ class TenantController extends Controller
     {
         $tenants = Tenant::query()
             ->orderBy('created_at')
-            ->get();
+            ->get()
+        ;
 
         return response()->json(
             TenantDTO::collect($tenants)
@@ -26,6 +25,7 @@ class TenantController extends Controller
     public function store(TenantRequest $request): JsonResponse
     {
         $tenant = Tenant::create($request->validated());
+
         return response()->json(
             TenantDTO::from($tenant),
             201
@@ -42,6 +42,7 @@ class TenantController extends Controller
     public function update(TenantRequest $request, Tenant $tenant): JsonResponse
     {
         $tenant->update($request->validated());
+
         return response()->json(
             TenantDTO::from($tenant)
         );
@@ -50,6 +51,7 @@ class TenantController extends Controller
     public function destroy(Tenant $tenant): JsonResponse
     {
         $tenant->delete();
+
         return response()->json(null, 204);
     }
 }

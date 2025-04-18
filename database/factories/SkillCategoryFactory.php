@@ -12,8 +12,8 @@ class SkillCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => fake()->uuid(),
-            'name' => fake()->unique()->word(),
+            'id'          => fake()->uuid(),
+            'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),
         ];
     }

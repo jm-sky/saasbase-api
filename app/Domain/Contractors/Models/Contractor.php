@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string $id
- * @property string $tenant_id
- * @property string $name
- * @property string $email
+ * @property string  $id
+ * @property string  $tenant_id
+ * @property string  $name
+ * @property string  $email
  * @property ?string $phone
  * @property ?string $address
  * @property ?string $city
@@ -22,9 +22,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $country
  * @property ?string $tax_id
  * @property ?string $notes
- * @property bool $is_active
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property bool    $is_active
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
  * @property ?Carbon $deleted_at
  */
 class Contractor extends Model

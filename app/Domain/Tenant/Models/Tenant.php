@@ -2,24 +2,25 @@
 
 namespace App\Domain\Tenant\Models;
 
-use Carbon\Carbon;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string $id
- * @property string $name
- * @property string $slug
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property string  $id
+ * @property string  $name
+ * @property string  $slug
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
  * @property ?Carbon $deleted_at
  */
 class Tenant extends BaseModel
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -34,6 +35,7 @@ class Tenant extends BaseModel
     {
         return $this->belongsToMany(User::class, 'tenant_users')
             ->withPivot(['role'])
-            ->withTimestamps();
+            ->withTimestamps()
+        ;
     }
 }

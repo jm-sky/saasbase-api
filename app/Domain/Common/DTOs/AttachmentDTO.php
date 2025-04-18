@@ -9,16 +9,16 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $fileName
- * @property string $fileUrl
- * @property string $fileType
- * @property int $fileSize
- * @property string $attachmentableId
- * @property string $attachmentableType
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id                 UUID
+ * @property string  $fileName
+ * @property string  $fileUrl
+ * @property string  $fileType
+ * @property int     $fileSize
+ * @property string  $attachmentableId
+ * @property string  $attachmentableType
+ * @property ?Carbon $createdAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt          Internally Carbon, accepts/serializes ISO 8601
  */
 class AttachmentDTO extends Data
 {
@@ -36,7 +36,8 @@ class AttachmentDTO extends Data
         public ?Carbon $updatedAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Attachment $model): self
     {

@@ -15,7 +15,7 @@ class MeasurementUnitFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->uuid(),
+            'id'   => $this->faker->uuid(),
             'code' => strtoupper($this->faker->unique()->lexify('??')),
             'name' => $this->faker->randomElement(['Piece', 'Kilogram', 'Meter', 'Hour', 'Box', 'Set', 'Pack']),
         ];

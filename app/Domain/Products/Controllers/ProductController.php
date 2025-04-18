@@ -2,20 +2,18 @@
 
 namespace App\Domain\Products\Controllers;
 
+use App\Domain\Common\Concerns\HasIndexQuery;
+use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
-use App\Domain\Common\Filters\DateRangeFilter;
-use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
@@ -48,7 +46,7 @@ class ProductController extends Controller
 
     public function index(SearchProductRequest $request): JsonResponse
     {
-        $result = $this->getIndexPaginator($request);
+        $result         = $this->getIndexPaginator($request);
         $result['data'] = ProductDTO::collect($result['data']);
 
         return response()->json($result);
@@ -68,6 +66,7 @@ class ProductController extends Controller
     public function show(Product $product): JsonResponse
     {
         $product->load(['unit', 'vatRate']);
+
         return response()->json(
             ProductDTO::fromModel($product)
         );
@@ -87,6 +86,7 @@ class ProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $product->delete();
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -96,6 +96,7 @@ class ProductController extends Controller
             ->allowedFilters($this->filters)
             ->allowedSorts($this->sorts)
             ->defaultSort($this->defaultSort)
-            ->with(['unit', 'vatRate']);
+            ->with(['unit', 'vatRate'])
+        ;
     }
 }

@@ -6,13 +6,20 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Country;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class CountryApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/countries';
+
     private User $user;
 
     protected function setUp(): void
@@ -22,7 +29,7 @@ class CountryApiTest extends TestCase
         Sanctum::actingAs($this->user);
     }
 
-    public function test_can_list_countries(): void
+    public function testCanListCountries(): void
     {
         $countries = Country::factory()->count(3)->create();
 
@@ -51,12 +58,13 @@ class CountryApiTest extends TestCase
                         'emojiU',
                         'createdAt',
                         'updatedAt',
-                    ]
-                ]
-            ]);
+                    ],
+                ],
+            ])
+        ;
     }
 
-    public function test_can_show_country(): void
+    public function testCanShowCountry(): void
     {
         $country = Country::factory()->create();
 
@@ -84,13 +92,14 @@ class CountryApiTest extends TestCase
                 'updatedAt',
             ])
             ->assertJson([
-                'id' => $country->id,
+                'id'   => $country->id,
                 'name' => $country->name,
-                'code' => $country->code
-            ]);
+                'code' => $country->code,
+            ])
+        ;
     }
 
-    public function test_returns_404_for_nonexistent_country(): void
+    public function testReturns404ForNonexistentCountry(): void
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 

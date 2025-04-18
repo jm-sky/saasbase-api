@@ -10,12 +10,12 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $taskId
- * @property string $userId
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string  $id        UUID
+ * @property string   $taskId
+ * @property string   $userId
+ * @property ?Carbon  $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $user
  */
 class TaskWatcherDTO extends Data
@@ -31,7 +31,8 @@ class TaskWatcherDTO extends Data
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(TaskWatcher $model): self
     {

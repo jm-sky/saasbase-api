@@ -33,9 +33,9 @@ class UserSettings extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'two_factor_enabled' => 'boolean',
+        'two_factor_enabled'   => 'boolean',
         'two_factor_confirmed' => 'boolean',
-        'preferences' => 'array',
+        'preferences'          => 'array',
     ];
 
     /**

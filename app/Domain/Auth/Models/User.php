@@ -3,34 +3,34 @@
 namespace App\Domain\Auth\Models;
 
 use App\Domain\Tenant\Models\Tenant;
-use Carbon\Carbon;
-use Laravel\Sanctum\HasApiTokens;
-use Database\Factories\UserFactory;
 use App\Domain\Tenant\Models\UserTenant;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Carbon\Carbon;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Session;
+use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * @property string $id
- * @property string $first_name
- * @property string $last_name
- * @property string $email
- * @property string $password
+ * @property string  $id
+ * @property string  $first_name
+ * @property string  $last_name
+ * @property string  $email
+ * @property string  $password
  * @property ?string $description
  * @property ?string $birth_date
  * @property ?string $phone
  * @property ?string $avatar_url
- * @property bool $is_admin
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property bool    $is_admin
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
  * @property ?Carbon $deleted_at
  */
 class User extends Authenticatable implements JWTSubject
@@ -75,9 +75,9 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'birth_date' => 'date',
-        'is_admin' => 'boolean',
+        'password'          => 'hashed',
+        'birth_date'        => 'date',
+        'is_admin'          => 'boolean',
     ];
 
     /**
@@ -99,8 +99,6 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Get the user's current tenant ID from session or active membership.
      * TODO: Handle JWT token.
-     *
-     * @return string|null
      */
     public function getTenantId(): ?string
     {
@@ -117,6 +115,7 @@ class User extends Authenticatable implements JWTSubject
         if ($membership) {
             // Store in session for future use
             Session::put('current_tenant_id', $membership->tenant_id);
+
             return $membership->tenant_id;
         }
 
@@ -159,7 +158,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Tenant::class, 'tenant_users')
             ->withPivot(['role'])
-            ->withTimestamps();
+            ->withTimestamps()
+        ;
     }
 
     protected static function newFactory()

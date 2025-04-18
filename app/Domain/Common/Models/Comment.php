@@ -3,22 +3,22 @@
 namespace App\Domain\Common\Models;
 
 use App\Domain\Auth\Models\User;
-use Illuminate\Database\Eloquent\Relations\{MorphTo, BelongsTo};
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @property string $id
- * @property string $user_id
- * @property string $content
- * @property string $commentable_id
- * @property string $commentable_type
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property string  $id
+ * @property string  $user_id
+ * @property string  $content
+ * @property string  $commentable_id
+ * @property string  $commentable_type
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
  * @property ?Carbon $deleted_at
- *
- * @property-read Model $commentable
- * @property-read User $user
+ * @property Model   $commentable
+ * @property User    $user
  */
 class Comment extends BaseModel
 {

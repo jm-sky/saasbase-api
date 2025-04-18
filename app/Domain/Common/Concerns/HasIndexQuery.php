@@ -3,10 +3,7 @@
 namespace App\Domain\Common\Concerns;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
 
 trait HasIndexQuery
 {
@@ -43,7 +40,8 @@ trait HasIndexQuery
         return QueryBuilder::for($this->modelClass)
             ->allowedFilters($this->filters)
             ->allowedSorts($this->sorts)
-            ->defaultSort($this->defaultSort);
+            ->defaultSort($this->defaultSort)
+        ;
     }
 
     /**
@@ -51,16 +49,16 @@ trait HasIndexQuery
      */
     public function getIndexPaginator(Request $request, ?int $perPage = null): array
     {
-        $query = $this->getIndexQuery($request);
+        $query     = $this->getIndexQuery($request);
         $paginator = $query->paginate($perPage ?? $request->input('per_page', $this->defaultPerPage));
 
         return [
             'data' => $paginator->items(),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
             ],
         ];
     }

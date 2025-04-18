@@ -6,59 +6,71 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
-use App\Domain\Tenant\Models\{Tenant, UserTenant};
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ProductApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/products';
+
     private Tenant $tenant;
+
     private MeasurementUnit $unit;
+
     private VatRate $vatRate;
+
     private User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user = User::factory()->create();
+        $this->user   = User::factory()->create();
 
         // Create tenant membership and set as current tenant
         $this->user->tenants()->attach($this->tenant->id, ['role' => 'member']);
         session(['current_tenant_id' => $this->tenant->id]);
 
-        $this->unit = MeasurementUnit::factory()->create();
+        $this->unit    = MeasurementUnit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
 
         // Authenticate user after setting up tenant
         Sanctum::actingAs($this->user);
     }
 
-    public function test_can_list_products(): void
+    public function testCanListProducts(): void
     {
         // Create products for the current tenant
         Product::factory()
             ->count(3)
             ->create([
-                'tenant_id' => $this->tenant->id,
-                'unit_id' => $this->unit->id,
+                'tenant_id'   => $this->tenant->id,
+                'unit_id'     => $this->unit->id,
                 'vat_rate_id' => $this->vatRate->id,
-            ]);
+            ])
+        ;
 
         // Create products for a different tenant
         $otherTenant = Tenant::factory()->create();
         Product::factory()
             ->count(2)
             ->create([
-                'tenant_id' => $otherTenant->id,
-                'unit_id' => $this->unit->id,
+                'tenant_id'   => $otherTenant->id,
+                'unit_id'     => $this->unit->id,
                 'vat_rate_id' => $this->vatRate->id,
-            ]);
+            ])
+        ;
 
         $response = $this->getJson($this->baseUrl);
 
@@ -76,27 +88,28 @@ class ProductApiTest extends TestCase
                         'vatRateId',
                         'createdAt',
                         'updatedAt',
-                        'deletedAt'
-                    ]
+                        'deletedAt',
+                    ],
                 ],
                 'meta' => [
                     'current_page',
                     'last_page',
                     'per_page',
-                    'total'
-                ]
-            ]);
+                    'total',
+                ],
+            ])
+        ;
     }
 
-    public function test_can_create_product(): void
+    public function testCanCreateProduct(): void
     {
         $productData = [
-            'tenantId' => $this->tenant->id,
-            'name' => 'Test Product',
+            'tenantId'    => $this->tenant->id,
+            'name'        => 'Test Product',
             'description' => 'Test Description',
-            'unitId' => $this->unit->id,
-            'priceNet' => 100.50,
-            'vatRateId' => $this->vatRate->id,
+            'unitId'      => $this->unit->id,
+            'priceNet'    => 100.50,
+            'vatRateId'   => $this->vatRate->id,
         ];
 
         $response = $this->postJson($this->baseUrl, $productData);
@@ -112,31 +125,32 @@ class ProductApiTest extends TestCase
                 'vatRateId',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'name' => $productData['name'],
+                'name'        => $productData['name'],
                 'description' => $productData['description'],
-                'priceNet' => $productData['priceNet'],
-            ]);
+                'priceNet'    => $productData['priceNet'],
+            ])
+        ;
 
         $this->assertDatabaseHas('products', [
-            'tenant_id' => $this->tenant->id,
-            'name' => $productData['name'],
+            'tenant_id'   => $this->tenant->id,
+            'name'        => $productData['name'],
             'description' => $productData['description'],
-            'unit_id' => $this->unit->id,
-            'price_net' => $productData['priceNet'],
+            'unit_id'     => $this->unit->id,
+            'price_net'   => $productData['priceNet'],
             'vat_rate_id' => $this->vatRate->id,
         ]);
     }
 
-    public function test_cannot_create_product_with_invalid_data(): void
+    public function testCannotCreateProductWithInvalidData(): void
     {
         $productData = [
-            'tenantId' => 'invalid-uuid',
-            'name' => '',
-            'unitId' => 'invalid-uuid',
-            'priceNet' => -100,
+            'tenantId'  => 'invalid-uuid',
+            'name'      => '',
+            'unitId'    => 'invalid-uuid',
+            'priceNet'  => -100,
             'vatRateId' => 'invalid-uuid',
         ];
 
@@ -149,14 +163,15 @@ class ProductApiTest extends TestCase
                 'unitId',
                 'priceNet',
                 'vatRateId',
-            ]);
+            ])
+        ;
     }
 
-    public function test_can_show_product(): void
+    public function testCanShowProduct(): void
     {
         $product = Product::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'unit_id' => $this->unit->id,
+            'tenant_id'   => $this->tenant->id,
+            'unit_id'     => $this->unit->id,
             'vat_rate_id' => $this->vatRate->id,
         ]);
 
@@ -173,31 +188,32 @@ class ProductApiTest extends TestCase
                 'vatRateId',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'id' => $product->id,
-                'name' => $product->name,
+                'id'          => $product->id,
+                'name'        => $product->name,
                 'description' => $product->description,
-                'priceNet' => $product->price_net,
-            ]);
+                'priceNet'    => $product->price_net,
+            ])
+        ;
     }
 
-    public function test_can_update_product(): void
+    public function testCanUpdateProduct(): void
     {
         $product = Product::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'unit_id' => $this->unit->id,
+            'tenant_id'   => $this->tenant->id,
+            'unit_id'     => $this->unit->id,
             'vat_rate_id' => $this->vatRate->id,
         ]);
 
         $updateData = [
-            'tenantId' => $this->tenant->id,
-            'name' => 'Updated Product',
+            'tenantId'    => $this->tenant->id,
+            'name'        => 'Updated Product',
             'description' => 'Updated Description',
-            'unitId' => $this->unit->id,
-            'priceNet' => 200.75,
-            'vatRateId' => $this->vatRate->id,
+            'unitId'      => $this->unit->id,
+            'priceNet'    => 200.75,
+            'vatRateId'   => $this->vatRate->id,
         ];
 
         $response = $this->putJson($this->baseUrl . '/' . $product->id, $updateData);
@@ -213,29 +229,30 @@ class ProductApiTest extends TestCase
                 'vatRateId',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'name' => $updateData['name'],
+                'name'        => $updateData['name'],
                 'description' => $updateData['description'],
-                'priceNet' => $updateData['priceNet'],
-            ]);
+                'priceNet'    => $updateData['priceNet'],
+            ])
+        ;
 
         $this->assertDatabaseHas('products', [
-            'id' => $product->id,
-            'name' => $updateData['name'],
+            'id'          => $product->id,
+            'name'        => $updateData['name'],
             'description' => $updateData['description'],
-            'unit_id' => $updateData['unitId'],
-            'price_net' => $updateData['priceNet'],
+            'unit_id'     => $updateData['unitId'],
+            'price_net'   => $updateData['priceNet'],
             'vat_rate_id' => $updateData['vatRateId'],
         ]);
     }
 
-    public function test_can_delete_product(): void
+    public function testCanDeleteProduct(): void
     {
         $product = Product::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'unit_id' => $this->unit->id,
+            'tenant_id'   => $this->tenant->id,
+            'unit_id'     => $this->unit->id,
             'vat_rate_id' => $this->vatRate->id,
         ]);
 
@@ -245,7 +262,7 @@ class ProductApiTest extends TestCase
         $this->assertSoftDeleted('products', ['id' => $product->id]);
     }
 
-    public function test_returns_404_for_nonexistent_product(): void
+    public function testReturns404ForNonexistentProduct(): void
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 

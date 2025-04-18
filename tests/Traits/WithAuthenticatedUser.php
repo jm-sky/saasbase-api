@@ -4,8 +4,8 @@ namespace Tests\Traits;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
-use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Facades\Session;
+use Laravel\Sanctum\Sanctum;
 
 trait WithAuthenticatedUser
 {

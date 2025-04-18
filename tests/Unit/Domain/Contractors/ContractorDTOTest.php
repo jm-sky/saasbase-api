@@ -5,25 +5,31 @@ namespace Tests\Unit\Domain\Contractors;
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ContractorDTOTest extends TestCase
 {
-    public function test_can_create_contractor_dto_from_model(): void
+    public function testCanCreateContractorDtoFromModel(): void
     {
-        $tenant = Tenant::factory()->create();
+        $tenant     = Tenant::factory()->create();
         $contractor = Contractor::factory()->create([
             'tenant_id' => $tenant->id,
-            'name' => 'Test Contractor',
-            'email' => 'test@example.com',
-            'phone' => '1234567890',
-            'address' => '123 Test St',
-            'city' => 'Test City',
-            'state' => 'TS',
-            'zip_code' => '12345',
-            'country' => 'US',
-            'tax_id' => '123456789',
-            'notes' => 'Test notes',
+            'name'      => 'Test Contractor',
+            'email'     => 'test@example.com',
+            'phone'     => '1234567890',
+            'address'   => '123 Test St',
+            'city'      => 'Test City',
+            'state'     => 'TS',
+            'zip_code'  => '12345',
+            'country'   => 'US',
+            'tax_id'    => '123456789',
+            'notes'     => 'Test notes',
             'is_active' => true,
         ]);
 
@@ -44,7 +50,7 @@ class ContractorDTOTest extends TestCase
         $this->assertEquals($contractor->is_active, $dto->isActive);
     }
 
-    public function test_can_convert_contractor_dto_to_array(): void
+    public function testCanConvertContractorDtoToArray(): void
     {
         $dto = new ContractorDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',

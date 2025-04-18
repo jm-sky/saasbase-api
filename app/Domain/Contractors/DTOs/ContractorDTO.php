@@ -9,10 +9,10 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $tenantId UUID
- * @property string $name
- * @property string $email
+ * @property ?string $id        UUID
+ * @property string  $tenantId  UUID
+ * @property string  $name
+ * @property string  $email
  * @property ?string $phone
  * @property ?string $address
  * @property ?string $city
@@ -21,7 +21,7 @@ use Spatie\LaravelData\Data;
  * @property ?string $country
  * @property ?string $taxId
  * @property ?string $notes
- * @property ?bool $isActive
+ * @property ?bool   $isActive
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601

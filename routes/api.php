@@ -1,12 +1,14 @@
 <?php
 
+use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
-use App\Domain\Skills\Controllers\{SkillController, SkillCategoryController, UserSkillController};
-use App\Domain\Common\Controllers\CountryController;
-use App\Domain\Tenant\Controllers\TenantController;
+use App\Domain\Skills\Controllers\SkillCategoryController;
+use App\Domain\Skills\Controllers\SkillController;
+use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
-use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Tenant\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*

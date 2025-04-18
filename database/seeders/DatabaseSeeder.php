@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
         // Create default user
         $user = User::factory()->create([
             'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
+            'last_name'  => 'User',
+            'email'      => 'test@example.com',
         ]);
 
         // Attach user to tenant

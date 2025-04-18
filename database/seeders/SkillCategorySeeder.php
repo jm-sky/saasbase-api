@@ -11,35 +11,35 @@ class SkillCategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Programming Languages',
+                'name'        => 'Programming Languages',
                 'description' => 'Programming and scripting languages',
             ],
             [
-                'name' => 'Web Development',
+                'name'        => 'Web Development',
                 'description' => 'Web development technologies and frameworks',
             ],
             [
-                'name' => 'Mobile Development',
+                'name'        => 'Mobile Development',
                 'description' => 'Mobile app development platforms and frameworks',
             ],
             [
-                'name' => 'Database',
+                'name'        => 'Database',
                 'description' => 'Database management systems and related technologies',
             ],
             [
-                'name' => 'DevOps',
+                'name'        => 'DevOps',
                 'description' => 'Development operations, CI/CD, and infrastructure',
             ],
             [
-                'name' => 'Cloud Computing',
+                'name'        => 'Cloud Computing',
                 'description' => 'Cloud platforms and services',
             ],
             [
-                'name' => 'Security',
+                'name'        => 'Security',
                 'description' => 'Cybersecurity and information security',
             ],
             [
-                'name' => 'AI & Machine Learning',
+                'name'        => 'AI & Machine Learning',
                 'description' => 'Artificial Intelligence and Machine Learning technologies',
             ],
         ];

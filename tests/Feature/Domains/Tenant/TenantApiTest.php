@@ -6,13 +6,20 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TenantApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/tenants';
+
     private User $user;
 
     protected function setUp(): void
@@ -22,7 +29,7 @@ class TenantApiTest extends TestCase
         Sanctum::actingAs($this->user);
     }
 
-    public function test_can_list_tenants(): void
+    public function testCanListTenants(): void
     {
         // Clear any existing tenants to ensure clean state
         Tenant::query()->forceDelete();
@@ -40,9 +47,10 @@ class TenantApiTest extends TestCase
                     'slug',
                     'createdAt',
                     'updatedAt',
-                    'deletedAt'
-                ]
-            ]);
+                    'deletedAt',
+                ],
+            ])
+        ;
 
         // Verify we got exactly the tenants we created
         $responseIds = collect($response->json())->pluck('id')->sort()->values();
@@ -50,11 +58,11 @@ class TenantApiTest extends TestCase
         $this->assertEquals($expectedIds, $responseIds);
     }
 
-    public function test_can_create_tenant(): void
+    public function testCanCreateTenant(): void
     {
         $tenantData = [
             'name' => 'Test Tenant',
-            'slug' => 'test-tenant'
+            'slug' => 'test-tenant',
         ];
 
         $response = $this->postJson($this->baseUrl, $tenantData);
@@ -66,32 +74,34 @@ class TenantApiTest extends TestCase
                 'slug',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
                 'name' => $tenantData['name'],
-                'slug' => $tenantData['slug']
-            ]);
+                'slug' => $tenantData['slug'],
+            ])
+        ;
 
         $this->assertDatabaseHas('tenants', $tenantData);
     }
 
-    public function test_cannot_create_tenant_with_duplicate_slug(): void
+    public function testCannotCreateTenantWithDuplicateSlug(): void
     {
         $existingTenant = Tenant::factory()->create();
 
         $tenantData = [
             'name' => 'Test Tenant',
-            'slug' => $existingTenant->slug
+            'slug' => $existingTenant->slug,
         ];
 
         $response = $this->postJson($this->baseUrl, $tenantData);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['slug']);
+            ->assertJsonValidationErrors(['slug'])
+        ;
     }
 
-    public function test_can_show_tenant(): void
+    public function testCanShowTenant(): void
     {
         $tenant = Tenant::factory()->create();
 
@@ -104,21 +114,22 @@ class TenantApiTest extends TestCase
                 'slug',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'id' => $tenant->id,
+                'id'   => $tenant->id,
                 'name' => $tenant->name,
-                'slug' => $tenant->slug
-            ]);
+                'slug' => $tenant->slug,
+            ])
+        ;
     }
 
-    public function test_can_update_tenant(): void
+    public function testCanUpdateTenant(): void
     {
-        $tenant = Tenant::factory()->create();
+        $tenant     = Tenant::factory()->create();
         $updateData = [
             'name' => 'Updated Name',
-            'slug' => 'updated-slug'
+            'slug' => 'updated-slug',
         ];
 
         $response = $this->putJson($this->baseUrl . '/' . $tenant->id, $updateData);
@@ -130,17 +141,18 @@ class TenantApiTest extends TestCase
                 'slug',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
                 'name' => $updateData['name'],
-                'slug' => $updateData['slug']
-            ]);
+                'slug' => $updateData['slug'],
+            ])
+        ;
 
         $this->assertDatabaseHas('tenants', $updateData);
     }
 
-    public function test_can_delete_tenant(): void
+    public function testCanDeleteTenant(): void
     {
         $tenant = Tenant::factory()->create();
 
@@ -150,7 +162,7 @@ class TenantApiTest extends TestCase
         $this->assertSoftDeleted('tenants', ['id' => $tenant->id]);
     }
 
-    public function test_returns_404_for_nonexistent_tenant(): void
+    public function testReturns404ForNonexistentTenant(): void
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 

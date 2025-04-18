@@ -9,12 +9,12 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $name
- * @property string $code
- * @property string $code3
- * @property string $numericCode
- * @property string $phoneCode
+ * @property ?string $id             UUID
+ * @property string  $name
+ * @property string  $code
+ * @property string  $code3
+ * @property string  $numericCode
+ * @property string  $phoneCode
  * @property ?string $capital
  * @property ?string $currency
  * @property ?string $currencyCode
@@ -25,8 +25,8 @@ use Spatie\LaravelData\Data;
  * @property ?string $subregion
  * @property ?string $emoji
  * @property ?string $emojiU
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt      Internally Carbon, accepts/serializes ISO 8601
  */
 class CountryDTO extends Data
 {
@@ -51,7 +51,8 @@ class CountryDTO extends Data
         public ?Carbon $createdAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Country $model): self
     {

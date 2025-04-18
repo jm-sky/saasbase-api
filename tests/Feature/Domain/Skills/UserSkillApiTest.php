@@ -6,34 +6,43 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
-use Tests\TestCase;
 use Illuminate\Http\Response;
+use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class UserSkillApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/user-skills';
+
     private User $user;
+
     private Skill $skill;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        $this->user  = User::factory()->create();
         $this->skill = Skill::factory()->create();
         Sanctum::actingAs($this->user);
     }
 
-    public function test_can_list_user_skills(): void
+    public function testCanListUserSkills(): void
     {
         $userSkills = UserSkill::factory()
             ->count(3)
             ->create([
-                'user_id' => $this->user->id,
+                'user_id'  => $this->user->id,
                 'skill_id' => $this->skill->id,
-            ]);
+            ])
+        ;
 
         $response = $this->getJson($this->baseUrl);
 
@@ -47,17 +56,18 @@ class UserSkillApiTest extends TestCase
                     'acquiredAt',
                     'createdAt',
                     'updatedAt',
-                    'deletedAt'
-                ]
-            ]);
+                    'deletedAt',
+                ],
+            ])
+        ;
     }
 
-    public function test_can_create_user_skill(): void
+    public function testCanCreateUserSkill(): void
     {
         $userSkillData = [
-            'userId' => $this->user->id,
-            'skillId' => $this->skill->id,
-            'level' => 3,
+            'userId'     => $this->user->id,
+            'skillId'    => $this->skill->id,
+            'level'      => 3,
             'acquiredAt' => now()->format('Y-m-d'),
         ];
 
@@ -71,27 +81,28 @@ class UserSkillApiTest extends TestCase
                 'acquiredAt',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'level' => $userSkillData['level'],
+                'level'      => $userSkillData['level'],
                 'acquiredAt' => $userSkillData['acquiredAt'],
-            ]);
+            ])
+        ;
 
         $this->assertDatabaseHas('user_skills', [
-            'user_id' => $this->user->id,
-            'skill_id' => $this->skill->id,
-            'level' => $userSkillData['level'],
+            'user_id'     => $this->user->id,
+            'skill_id'    => $this->skill->id,
+            'level'       => $userSkillData['level'],
             'acquired_at' => $userSkillData['acquiredAt'],
         ]);
     }
 
-    public function test_cannot_create_user_skill_with_invalid_data(): void
+    public function testCannotCreateUserSkillWithInvalidData(): void
     {
         $userSkillData = [
-            'userId' => 'invalid-uuid',
-            'skillId' => 'invalid-uuid',
-            'level' => 6,
+            'userId'     => 'invalid-uuid',
+            'skillId'    => 'invalid-uuid',
+            'level'      => 6,
             'acquiredAt' => 'invalid-date',
         ];
 
@@ -103,13 +114,14 @@ class UserSkillApiTest extends TestCase
                 'skillId',
                 'level',
                 'acquiredAt',
-            ]);
+            ])
+        ;
     }
 
-    public function test_can_show_user_skill(): void
+    public function testCanShowUserSkill(): void
     {
         $userSkill = UserSkill::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'skill_id' => $this->skill->id,
         ]);
 
@@ -123,26 +135,27 @@ class UserSkillApiTest extends TestCase
                 'acquiredAt',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'userId' => $this->user->id,
+                'userId'  => $this->user->id,
                 'skillId' => $this->skill->id,
-                'level' => $userSkill->level,
-            ]);
+                'level'   => $userSkill->level,
+            ])
+        ;
     }
 
-    public function test_can_update_user_skill(): void
+    public function testCanUpdateUserSkill(): void
     {
         $userSkill = UserSkill::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'skill_id' => $this->skill->id,
         ]);
 
         $updateData = [
-            'userId' => $this->user->id,
-            'skillId' => $this->skill->id,
-            'level' => 4,
+            'userId'     => $this->user->id,
+            'skillId'    => $this->skill->id,
+            'level'      => 4,
             'acquiredAt' => now()->format('Y-m-d'),
         ];
 
@@ -156,24 +169,25 @@ class UserSkillApiTest extends TestCase
                 'acquiredAt',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'level' => $updateData['level'],
+                'level'      => $updateData['level'],
                 'acquiredAt' => $updateData['acquiredAt'],
-            ]);
+            ])
+        ;
 
         $this->assertDatabaseHas('user_skills', [
-            'id' => $userSkill->id,
-            'level' => $updateData['level'],
+            'id'          => $userSkill->id,
+            'level'       => $updateData['level'],
             'acquired_at' => $updateData['acquiredAt'],
         ]);
     }
 
-    public function test_can_delete_user_skill(): void
+    public function testCanDeleteUserSkill(): void
     {
         $userSkill = UserSkill::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'skill_id' => $this->skill->id,
         ]);
 
@@ -183,7 +197,7 @@ class UserSkillApiTest extends TestCase
         $this->assertSoftDeleted('user_skills', ['id' => $userSkill->id]);
     }
 
-    public function test_returns_404_for_nonexistent_user_skill(): void
+    public function testReturns404ForNonexistentUserSkill(): void
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 
