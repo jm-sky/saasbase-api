@@ -28,8 +28,6 @@ class CountrySeeder extends Seeder
                 'native' => $country['native'],
                 'region' => $country['region'],
                 'subregion' => $country['subregion'],
-                'latitude' => $country['latitude'],
-                'longitude' => $country['longitude'],
                 'emoji' => $country['emoji'],
                 'emojiU' => $country['emojiU'],
             ]);
