@@ -402,11 +402,15 @@ Add tests.
   - Handle cases for existing users and new user registrations through invitations.
   - Store invitation metadata (status, timestamps, who invited whom, etc.).
 
+---
+
 ## 20. [] **Generate OpenAPI YAML Specification**
   - Automatically generate OpenAPI documentation in YAML format for the entire API.
   - Include all endpoints, models, request/response schemas, authentication details.
   - Ensure compatibility with tools like Swagger UI and Postman.
   - Preferably automate via Artisan command or during CI build.
+
+---
 
 ## 21. [] **Migrate UUID to ULID**
   - Replace UUID identifiers with ULID across all models that currently use UUID.
@@ -414,6 +418,16 @@ Add tests.
   - Update model factories, migrations, and any related seeding logic to use ULID.
   - Ensure compatibility with existing tools like Spatie Media Library, Horizon, etc.
   - Validate sortability and uniqueness of ULIDs across tenants and environments.
+
+---
+
+## 22. [] **Add Admin API Endpoints**
+  - Introduce new API namespace: `/api/v1/admin/...`.
+  - Allow full CRUD access to global models and dictionary tables outside of tenant scope.
+  - Example resources: tenants, users, invoices, default project/task statuses, units, VAT rates, etc.
+  - Ensure all admin endpoints are protected by proper authorization middleware (e.g. `is_admin`).
+  - Use separate controllers or route groups to avoid conflicts with tenant-scoped logic.
+  - Tag admin routes accordingly in OpenAPI documentation for visibility and clarity. 
 
 ---
 
