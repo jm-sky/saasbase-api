@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- We use Laravel Sails so remember to use sails/docker commands, esp. for tests
