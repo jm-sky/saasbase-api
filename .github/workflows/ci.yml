@@ -1,4 +1,4 @@
-name: Laravel CI
+name: Check & Test
 
 on:
   push:
@@ -78,6 +78,9 @@ jobs:
 
      # - name: Run Larastan
      #   run: vendor/bin/phpstan analyse --memory-limit=1G
+
+      - name: Run PHP-CS-Fixer linter
+        run: composer cs
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit
