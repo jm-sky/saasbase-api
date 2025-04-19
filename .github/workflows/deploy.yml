@@ -45,6 +45,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            source ~/.bashrc
+            php -v
             cd ${{ secrets.SSH_TARGET }}
             composer install --no-dev --optimize-autoloader
             php artisan migrate --force
