@@ -22,9 +22,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/status', fn () => ['status' => 'ok'])
-    ->withoutMiddleware(['api']);
-
 Route::prefix('v1')->group(function () {
     Route::apiResource('tenants', TenantController::class);
 
