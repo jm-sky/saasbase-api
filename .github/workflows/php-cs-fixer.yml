@@ -3,6 +3,9 @@ name: PHP CS Fixer
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
