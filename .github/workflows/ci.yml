@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  code-quality-and-tests:
     runs-on: ubuntu-latest
 
     services:
