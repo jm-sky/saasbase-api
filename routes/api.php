@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Auth\Controllers\UserSettingsController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::post('/v1/auth/login', [AuthController::class, 'login']);
 
 Route::prefix('v1')->group(function () {
     Route::apiResource('tenants', TenantController::class);
