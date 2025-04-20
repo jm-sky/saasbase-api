@@ -45,8 +45,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            export PATH="/home/madeyski/bin:$PATH"
-            export PATH=/opt/alt/php83/usr/bin:$PATH
+            source ~/.bashrc
             cd ${{ secrets.SSH_TARGET }}
             composer install --no-dev --optimize-autoloader
             php artisan migrate --force
