@@ -83,11 +83,11 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token'  => $token,
-            'refresh_token' => $token, // Optional: replace with separate logic if you want long-lived refresh tokens
-            'token_type'    => 'bearer',
-            'expires_in'    => auth()->factory()->getTTL() * 60,
-            'user'          => auth()->user(),
+            'accessToken'  => $token,
+            'refreshToken' => $token, // Optional: replace with separate logic if you want long-lived refresh tokens
+            'tokenType'    => 'bearer',
+            'expiresIn'    => auth()->factory()->getTTL() * 60,
+            'user'         => auth()->user(),
         ]);
     }
 }
