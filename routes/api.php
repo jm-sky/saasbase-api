@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/v1/auth/login', [AuthController::class, 'login']);
 Route::post('/v1/auth/register', [AuthController::class, 'register']);
 
+Route::middleware('auth:api')->post('/auth/refresh', [AuthController::class, 'refresh']);
+
 Route::prefix('v1')->group(function () {
     Route::apiResource('tenants', TenantController::class);
 
