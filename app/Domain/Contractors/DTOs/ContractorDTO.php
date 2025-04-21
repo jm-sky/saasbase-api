@@ -9,8 +9,8 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id        UUID
- * @property string  $tenantId  UUID
+ * @property ?string $id          UUID
+ * @property string  $tenantId    UUID
  * @property string  $name
  * @property string  $email
  * @property ?string $phone
@@ -20,9 +20,9 @@ use Spatie\LaravelData\Data;
  * @property ?bool   $isActive
  * @property ?bool   $isBuyer
  * @property ?bool   $isSupplier
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
 class ContractorDTO extends Data
 {

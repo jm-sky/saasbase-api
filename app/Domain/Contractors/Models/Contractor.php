@@ -44,8 +44,8 @@ class Contractor extends Model
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
-        'is_buyer' => 'boolean',
+        'is_active'   => 'boolean',
+        'is_buyer'    => 'boolean',
         'is_supplier' => 'boolean',
     ];
 
