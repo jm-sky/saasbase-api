@@ -7,6 +7,8 @@ use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class AuthController extends Controller
 {
@@ -47,13 +49,27 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    public function refresh()
+    {
+        try {
+            $newToken = auth()->refresh();
+
+            return $this->respondWithToken($newToken);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Token not provided or expired'], 401);
+        }
+    }
+
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => auth()->factory()->getTTL() * 60,
-            'user'         => auth()->user(),
+            'access_token'  => $token,
+            'refresh_token' => $token, // Optional: replace with separate logic if you want long-lived refresh tokens
+            'token_type'    => 'bearer',
+            'expires_in'    => auth()->factory()->getTTL() * 60,
+            'user'          => auth()->user(),
         ]);
     }
 }
