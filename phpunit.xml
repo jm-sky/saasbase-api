@@ -19,6 +19,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="JWT_SECRET" value="dummy-jwt-GfMKIfnmyljar0JCUQ2qof7nQWCYiz2spiuxXCIAKtSD2Mw-secret"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
