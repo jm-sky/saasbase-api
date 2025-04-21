@@ -10,13 +10,14 @@ use Tests\TestCase;
 
 /**
  * @internal
+ *
  * @coversNothing
  */
 class ContractorDTOTest extends TestCase
 {
     public function testCanCreateContractorDtoFromModel(): void
     {
-        $tenant = Tenant::factory()->create();
+        $tenant     = Tenant::factory()->create();
         $contractor = Contractor::factory()->create([
             'tenant_id'   => $tenant->id,
             'name'        => 'Test Contractor',
