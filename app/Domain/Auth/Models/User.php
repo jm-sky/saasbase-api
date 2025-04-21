@@ -11,34 +11,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Collection as Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * @property string              $id
- * @property string              $first_name
- * @property string              $last_name
- * @property string              $email
- * @property string              $password
- * @property ?string             $description
- * @property ?string             $birth_date
- * @property ?string             $phone
- * @property ?string             $avatar_url
- * @property bool                $is_admin
- * @property Carbon              $created_at
- * @property Carbon              $updated_at
- * @property ?Carbon             $deleted_at
- *
- * @property-read UserSettings|null                      $settings
- * @property-read Collection<int, OAuthAccount>          $oauthAccounts
- * @property-read Collection<int, UserTenant>            $tenantMemberships
- * @property-read Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
- * @property-read Collection<int, Tenant>                $tenants
+ * @property string                                               $id
+ * @property string                                               $first_name
+ * @property string                                               $last_name
+ * @property string                                               $email
+ * @property string                                               $password
+ * @property ?string                                              $description
+ * @property ?string                                              $birth_date
+ * @property ?string                                              $phone
+ * @property ?string                                              $avatar_url
+ * @property bool                                                 $is_admin
+ * @property Carbon                                               $created_at
+ * @property Carbon                                               $updated_at
+ * @property ?Carbon                                              $deleted_at
+ * @property UserSettings|null                                    $settings
+ * @property Collection<int, OAuthAccount>                        $oauthAccounts
+ * @property Collection<int, UserTenant>                          $tenantMemberships
+ * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
+ * @property Collection<int, Tenant>                              $tenants
  */
 class User extends Authenticatable implements JWTSubject
 {
