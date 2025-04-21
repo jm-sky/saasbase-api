@@ -453,6 +453,41 @@ Add tests.
   - Tag admin routes accordingly in OpenAPI documentation for visibility and clarity. 
 
 ---
+## 22. Refresh Token Support in JWTAuth
+
+### Goal
+Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-auth` package.
+
+### Requirements
+
+1. **TTL Configuration**:
+   - Access token: 15 minutes
+   - Refresh token: 7 days (10080 minutes)
+
+2. **Endpoints**:
+   - `POST /api/auth/login` — returns access token and refresh token
+   - `POST /api/auth/refresh` — accepts refresh token and returns new access token
+   - `POST /api/auth/logout` — invalidates current access token (and optionally the refresh token)
+
+3. **Security**:
+   - Refresh token should be stored on the client side (preferably in an HttpOnly cookie, or as a returned JSON field)
+   - Stateless approach: no server-side storage of refresh tokens unless explicitly extended
+
+4. **Middleware**:
+   - Every request should validate the access token
+   - Handle "token expired" errors with a clear path to refresh
+
+### Extras
+- Add unit and integration tests for login, refresh, and logout flows.
+- Optionally create a dedicated service (e.g., `AuthService`) to encapsulate token logic.
+
+### Definition of Done
+- All endpoints work as described.
+- Tokens are issued and refreshed respecting their TTLs.
+- Tests cover the main use cases.
+- API documentation updated (OpenAPI/Swagger or README). 
+
+---
 
 ## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
 
