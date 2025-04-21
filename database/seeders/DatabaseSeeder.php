@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Contractor\Models\Contractor;
+use App\Domain\Product\Models\Product;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -36,6 +38,14 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             ProjectRoleSeeder::class,
             MeasurementUnitSeeder::class,
+        ]);
+
+        Contractor::factory(5)->create([
+            'tenant_id' => \App\Domain\Tenant\Models\Tenant::first()->id,
+        ]);
+        
+        Product::factory(5)->create([
+            'tenant_id' => \App\Domain\Tenant\Models\Tenant::first()->id,
         ]);
     }
 }
