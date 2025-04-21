@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Contractor\Models\Contractor;
 use App\Domain\Product\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\UserTenant;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
