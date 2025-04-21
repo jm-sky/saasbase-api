@@ -26,12 +26,13 @@ use Illuminate\Support\Facades\Route;
 Route::post('/v1/auth/login', [AuthController::class, 'login']);
 Route::post('/v1/auth/register', [AuthController::class, 'register']);
 
-Route::middleware('auth:api')->post('/auth/refresh', [AuthController::class, 'refresh']);
+Route::middleware('auth:api')->post('/v1/auth/refresh', [AuthController::class, 'refresh']);
 
 Route::prefix('v1')->group(function () {
     Route::apiResource('tenants', TenantController::class);
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:api')->group(function () {
+        Route::get('user', [AuthController::class, 'getUser']);
         Route::apiResource('contractors', ContractorController::class);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('skills', SkillController::class);
