@@ -16,16 +16,14 @@ class ContractorFactory extends Factory
     {
         return [
             'name'      => fake()->company(),
-            'email'     => fake()->unique()->companyEmail(),
+            'email'     => fake()->companyEmail(),
             'phone'     => fake()->phoneNumber(),
-            'address'   => fake()->streetAddress(),
-            'city'      => fake()->city(),
-            'state'     => fake()->state(),
-            'zip_code'  => fake()->postcode(),
             'country'   => fake()->country(),
             'tax_id'    => fake()->numerify('##########'),
-            'notes'     => fake()->optional()->text(),
-            'is_active' => fake()->boolean(80), // 80% chance of being active
+            'description' => fake()->optional()->text(),
+            'is_active'   => fake()->boolean(80), // 80% chance of being active
+            'is_buyer'    => fake()->boolean(80),
+            'is_supplier' => fake()->boolean(80),
         ];
     }
 }
