@@ -27,10 +27,6 @@ class ContractorController extends Controller
             AllowedFilter::partial('name'),
             AllowedFilter::partial('email'),
             AllowedFilter::partial('phone'),
-            AllowedFilter::partial('address'),
-            AllowedFilter::partial('city'),
-            AllowedFilter::partial('state'),
-            AllowedFilter::partial('zipCode', 'zip_code'),
             AllowedFilter::partial('country'),
             AllowedFilter::partial('taxId', 'tax_id'),
             AllowedFilter::partial('notes'),
@@ -42,7 +38,6 @@ class ContractorController extends Controller
         $this->sorts = [
             'name',
             'email',
-            'city',
             'country',
             'isActive'  => 'is_active',
             'createdAt' => 'created_at',
