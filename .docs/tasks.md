@@ -487,6 +487,63 @@ Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-
 - Tests cover the main use cases.
 - API documentation updated (OpenAPI/Swagger or README). 
 
+--
+
+### Task: Implement Exchange and ExchangeRate Models with Read-Only Endpoints
+
+**Goal:**  
+Allow users to view currency exchange rates.
+
+**Scope:**  
+- Models:
+  - `Exchange` – Represents a currency (e.g., USD, EUR).
+  - `ExchangeRate` – Represents the rate for a specific day between two currencies.
+- Relationships:
+  - `ExchangeRate` belongs to `Exchange` (for both base and target currency).
+- Fields:
+  - `Exchange`: `id`, `code` (e.g., "USD"), `name` (e.g., "US Dollar")
+  - `ExchangeRate`: `id`, `exchange_id`, `target_exchange_id`, `rate`, `date`
+- Endpoints:
+  - `GET /api/exchanges`
+  - `GET /api/exchanges/{id}`
+  - `GET /api/exchange-rates`
+  - `GET /api/exchange-rates/{id}`
+- Notes:
+  - Read-only (no create/update/delete)
+  - Optional: Seed with basic currencies and rates
+
+**Definition of Done:**
+- Models and migrations created
+- Read-only API routes and controllers implemented
+- Proper resource classes for JSON output
+- Seeders for major currencies and sample rates
+
+--
+
+### Task: Create Invoice Numbering Template System
+
+**Goal:**  
+Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `INV-YYYY-MM/NNNN`).
+
+**Scope:**  
+- Model: `InvoiceNumberTemplate`
+- Fields:
+  - `id`, `tenant_id`, `invoice_type` (e.g., "sales", "proforma"), `template` (e.g., "YYYY/NNN")
+- Logic:
+  - Tokens to support: `YYYY`, `YY`, `MM`, `DD`, `NNN`, `NNNN`, etc.
+  - Stored per tenant and per invoice type
+- Endpoint:
+  - `GET /api/invoice-number-templates` (list for current tenant)
+  - Optional admin endpoint to define default templates
+- Usage:
+  - Will be used when generating new invoices
+
+**Definition of Done:**
+- Model and migration created
+- Read-only endpoint showing current tenant templates
+- Ability to support token parsing (future: during invoice creation)
+- Unit test for template rendering logic (optional in this task)
+
 ---
 
 ## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
