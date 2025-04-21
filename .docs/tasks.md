@@ -631,3 +631,48 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
 - Duplicate (create based on existing)
 - Draft saving
 - Custom fields (per tenant, JSON or relational) 
+
+--
+
+### Task: Implement Contractor Preferences
+
+**Objective:** Enable the system to store and manage contractor-specific preferences for language, currency exchange rate, invoice format, and payment method.
+
+#### Preferences:
+1. **Language**: Store the contractor's preferred language for communication and documents (e.g., Polish, English).
+2. **Currency Exchange**: Set the contractor's preferred currency for invoicing and transactions (e.g., PLN, EUR, USD).
+3. **Invoice Format**: Allow the contractor's default invoice format to be selected (e.g., PDF, HTML).
+4. **Payment Method**: Store the preferred payment method for transactions (e.g., Bank Transfer, PayPal, Credit Card).
+
+**Definition of Done:**
+- Contractor preferences are stored and can be updated.
+- Preferences are applied to invoices and financial transactions.
+- Changes can be easily made via a UI interface.
+
+---
+
+### Task: Integrate Exchange Rates from Multiple Sources
+
+**Objective:** Integrate exchange rate data from at least two sources (e.g., Polish NBP and another API) for daily exchange rate import.
+
+#### Subtasks:
+1. **Data Source Integration**: 
+   - Integrate the Polish NBP API to fetch exchange rates.
+   - Integrate a secondary source (e.g., European Central Bank or a commercial API like Open Exchange Rates) for redundancy and broader currency support.
+   
+2. **Daily Import**: 
+   - Set up a scheduled task (e.g., using Laravel Scheduler) to import exchange rates every day.
+   - Store the exchange rates in the database, linked to each currency.
+
+3. **Error Handling**: 
+   - Implement fallback logic if one of the APIs fails to return valid data (e.g., use the second source).
+   - Notify admins if data import fails for more than one day.
+
+4. **Use Case**: 
+   - Use exchange rates for contractor currency preferences and invoices.
+   - Ensure that the system can convert between currencies using the latest available rates.
+
+**Definition of Done:**
+- Exchange rates are automatically fetched from at least two sources daily.
+- Rates are stored correctly and used for currency conversion.
+- API failure is handled gracefully with fallback options. 
