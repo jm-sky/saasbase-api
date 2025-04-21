@@ -29,6 +29,15 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    public function logout()
+    {
+        auth()->logout();
+
+        return response()->json(['message' => 'Logged out'])->withCookie(
+            cookie()->forget('refresh_token')
+        );
+    }
+
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
