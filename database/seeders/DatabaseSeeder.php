@@ -29,8 +29,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Attach user to tenant
-        $user->tenants()->attach($tenant->id, ['role' => 'admin']);
-
+        UserTenant::create([
+            'user_id'   => $user->id,
+            'tenant_id' => $tenant->id,
+            'role'      => 'admin',
+        ]);
+        
         $this->call([
             CountrySeeder::class,
             VatRateSeeder::class,
