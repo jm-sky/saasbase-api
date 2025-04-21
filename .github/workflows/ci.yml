@@ -66,6 +66,9 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
+     - name: Generate JWT secret
+       run: php artisan jwt:secret --force
+
       - name: Wait for PostgreSQL
         run: |
           echo "Waiting for PostgreSQL to be ready..."
