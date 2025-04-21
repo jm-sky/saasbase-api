@@ -563,3 +563,71 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
   - Store or display extracted text as needed for further processing or user review
   - Add configuration options for OCR processing (e.g., language selection, preprocessing steps)
   - Write unit and integration tests for OCR functionality 
+
+--
+
+### Invoice Model – Requirements Summary (Updated)
+
+#### 1. Core Fields & Relationships
+- `id`, `tenant_id`, `contractor_id`, `project_id` (optional)
+- `employee_id`: user who issued the invoice
+- `template_id`: foreign key to `InvoiceNumberTemplate`
+- `issue_date`, `due_date`, `payment_date` (nullable)
+- `invoice_number`: generated
+- `status`: draft / issued / paid / overdue / canceled
+- `currency`, `exchange_rate`
+- `language_code`
+- `notes`, `footer`, `terms_and_conditions`
+
+#### 2. Line Items
+- Product/service reference
+- Quantity, unit, unit price
+- VAT rate per line
+- Line discount (optional)
+- Description
+
+#### 3. VAT & Tax
+- Support for multiple VAT rates per invoice
+- VAT-exempt support (e.g., reverse charge)
+- Summary per VAT rate
+- **[TODO] VIES API integration**: to validate EU VAT numbers
+
+#### 4. Attachments
+- File uploads: PDFs, images, related docs
+- Link to generated PDF version
+- Link to email confirmation or signed documents
+
+#### 5. Payments
+- `payment_status`: unpaid / partial / paid
+- Amount paid, outstanding
+- Payment log (optional, external or internal)
+- Support for partial payments
+
+#### 6. PDF Generation
+- Custom layout per tenant
+- Multi-language template support
+- Branding: logo, colors, footer
+
+#### 7. Automation & Workflow
+- Auto-increment invoice number via template
+- Drafts and scheduled creation
+- Recurring invoices (future)
+- Email invoice after status = `issued`, if enabled in preferences
+
+#### 8. Compliance & Audit
+- Lock after issuance (no edits allowed)
+- No invoice number gaps (future validation)
+- **Audit log:** handled by central **Action Log** mechanism
+
+#### 9. Reporting
+- Export to CSV/Excel
+- Filters by date, contractor, status
+- VAT summary reports
+- Overdue invoices
+
+#### 10. Miscellaneous
+- Credit notes / corrections
+- Proforma invoices
+- Duplicate (create based on existing)
+- Draft saving
+- Custom fields (per tenant, JSON or relational) 
