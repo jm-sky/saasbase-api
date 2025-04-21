@@ -13,14 +13,12 @@ return new class() extends Migration {
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('zip_code')->nullable();
             $table->string('country')->nullable();
             $table->string('tax_id')->nullable();
-            $table->text('notes')->nullable();
+            $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_buyer')->default(true);
+            $table->boolean('is_supplier')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
