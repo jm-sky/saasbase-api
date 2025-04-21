@@ -19,7 +19,7 @@ jobs:
           tools: composer
 
       - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --optimize-autoloader
 
       - name: Archive project
         run: |
