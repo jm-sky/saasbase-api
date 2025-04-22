@@ -1,5 +1,110 @@
 # Tasks
 
+## Task: Implement Multi-Tenancy with Global Tenant Scope and `BelongsToTenant` Trait
+
+### Objective:
+We need to implement a multi-tenancy system using a global scope to filter data based on the tenant ID. The `BelongsToTenant` trait will be used in models to automatically apply the tenant scope, while also allowing the scope to be bypassed when necessary (for example, in tests or seeding). If the tenant context is not available or invalid, a custom exception will be raised to ensure security.
+
+### Steps:
+1. Create a custom exception `TenantNotFoundException` that will be thrown when the tenant context is not found.
+2. Implement the `TenantScope` class that adds a global scope to filter models by `tenant_id`.
+3. Define the `BelongsToTenant` trait which applies the `TenantScope` to models.
+4. Allow the scope to be bypassed by providing a method `withoutTenantScope()` in the trait.
+
+---
+
+```php
+<?php
+
+// In app/Exceptions/TenantNotFoundException.php
+namespace App\Exceptions;
+
+use Exception;
+
+class TenantNotFoundException extends Exception
+{
+    protected $message = 'Tenant context not found. Please ensure the user is properly authenticated for the correct tenant.';
+
+    public function render($request)
+    {
+        return response()->json([
+            'error' => $this->message,
+        ], 403);  // You can customize the HTTP status code (403 is a good default for "Forbidden")
+    }
+}
+
+// In app/Scopes/TenantScope.php
+namespace App\Scopes;
+
+use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use App\Exceptions\TenantNotFoundException;
+
+class TenantScope implements Scope
+{
+    public function apply(Builder $builder, Model $model)
+    {
+        // Retrieve the tenant ID from the authenticated user
+        $tenantId = auth()->user()?->tenant_id;
+
+        // If tenant_id is not present or invalid, throw a custom exception
+        if (!$tenantId) {
+            throw new TenantNotFoundException();
+        }
+
+        // Apply the tenant_id condition to the query
+        $builder->where('tenant_id', $tenantId);
+    }
+}
+
+// In app/Domain/Tenant/Concerns/BelongsToTenant.php
+namespace App\Domain\Tenant\Concerns;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Scopes\TenantScope;
+
+trait BelongsToTenant
+{
+    protected static function bootBelongsToTenant(): void
+    {
+        static::addGlobalScope(new TenantScope);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    // Disable the global scope for the query
+    public static function withoutTenantScope(): Builder
+    {
+        return static::withoutGlobalScope(TenantScope::class);
+    }
+}
+
+// In app/Models/Project.php (Example Model using BelongsToTenant)
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use App\Domain\Tenant\Concerns\BelongsToTenant;
+
+class Project extends Model
+{
+    use BelongsToTenant;
+
+    // Other model logic here
+}
+
+// Example Usage:
+$projects = Project::all(); // TenantScope applied by default
+
+// Query without TenantScope applied
+$projectsWithoutScope = Project::withoutTenantScope()->get();
+
+
 ## 1. [x] Add middleware to set locale based on Accept Language header. 
 
 ```php
