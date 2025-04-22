@@ -49,7 +49,7 @@ class BelongsToTenantTest extends TestCase
                 'name'      => 'Other Tenant Model',
             ]);
         });
-                                       
+
         // Should only see records for current tenant
         $this->assertCount(1, Contractor::all());
         $this->assertEquals('Test Model', Contractor::first()->name);
@@ -117,7 +117,7 @@ class BelongsToTenantTest extends TestCase
                 'name'      => 'Other Tenant Model',
             ]);
         });
-        
+
         $otherTenantModels = Contractor::withoutTenant()
             ->where('tenant_id', $this->otherTenant->id)
             ->get()
