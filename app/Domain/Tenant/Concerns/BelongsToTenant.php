@@ -52,6 +52,7 @@ trait BelongsToTenant
         static::addGlobalScope('tenant', function (Builder $builder) {
             if (!static::$bypassTenantScope) {
                 $tenantId = static::getCurrentTenantId();
+
                 if ($tenantId) {
                     $builder->where('tenant_id', $tenantId);
                 }
@@ -69,6 +70,7 @@ trait BelongsToTenant
         if (!static::$bypassTenantScope && $tenantId !== static::getCurrentTenantId()) {
             throw new \RuntimeException('Cannot access data from different tenant');
         }
+
         return $query->where('tenant_id', $tenantId);
     }
 
@@ -83,6 +85,7 @@ trait BelongsToTenant
         }
 
         static::$bypassTenantScope = true;
+
         try {
             return $callback();
         } finally {

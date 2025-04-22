@@ -2,15 +2,15 @@
 
 namespace Tests\Unit\Domain\Projects;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Auth\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
-use Carbon\Carbon;
 
 /**
  * @internal
@@ -23,6 +23,7 @@ class ProjectDTOTest extends TestCase
     use WithAuthenticatedUser;
 
     private Tenant $tenant;
+
     private User $user;
 
     protected function setUp(): void
@@ -30,16 +31,16 @@ class ProjectDTOTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->user = $this->authenticateUser($this->tenant);
+        $this->user   = $this->authenticateUser($this->tenant);
     }
 
     public function testFromModel(): void
     {
         $project = Project::withoutTenantScope(function () {
             return Project::factory()->create([
-                'tenant_id' => $this->tenant->id,
-                'name'      => 'Test Project',
-                'status'    => 'active',
+                'tenant_id'  => $this->tenant->id,
+                'name'       => 'Test Project',
+                'status'     => 'active',
                 'start_date' => now(),
             ]);
         });
@@ -66,11 +67,11 @@ class ProjectDTOTest extends TestCase
 
         $project = Project::withoutTenantScope(function () use ($dto) {
             return Project::factory()->create([
-                'tenant_id' => $dto->tenantId,
-                'name' => $dto->name,
-                'status' => $dto->status,
+                'tenant_id'  => $dto->tenantId,
+                'name'       => $dto->name,
+                'status'     => $dto->status,
                 'start_date' => Carbon::parse($dto->startDate),
-                'owner_id' => $this->user->id,
+                'owner_id'   => $this->user->id,
             ]);
         });
 
@@ -84,17 +85,17 @@ class ProjectDTOTest extends TestCase
         $projects = collect([
             Project::withoutTenantScope(function () {
                 return Project::factory()->create([
-                    'tenant_id' => $this->tenant->id,
-                    'name'      => 'Test Project 1',
-                    'status'    => 'active',
+                    'tenant_id'  => $this->tenant->id,
+                    'name'       => 'Test Project 1',
+                    'status'     => 'active',
                     'start_date' => now(),
                 ]);
             }),
             Project::withoutTenantScope(function () {
                 return Project::factory()->create([
-                    'tenant_id' => $this->tenant->id,
-                    'name'      => 'Test Project 2',
-                    'status'    => 'completed',
+                    'tenant_id'  => $this->tenant->id,
+                    'name'       => 'Test Project 2',
+                    'status'     => 'completed',
                     'start_date' => now(),
                 ]);
             }),
@@ -111,14 +112,14 @@ class ProjectDTOTest extends TestCase
     {
         $project = Project::withoutTenantScope(function () {
             return Project::factory()->create([
-                'tenant_id' => $this->tenant->id,
-                'name'      => 'Test Project',
-                'status'    => 'active',
+                'tenant_id'  => $this->tenant->id,
+                'name'       => 'Test Project',
+                'status'     => 'active',
                 'start_date' => now(),
             ]);
         });
 
-        $dto = ProjectDTO::from($project);
+        $dto   = ProjectDTO::from($project);
         $array = $dto->toArray();
 
         $this->assertEquals($project->id, $array['id']);
