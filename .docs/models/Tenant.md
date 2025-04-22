@@ -19,21 +19,6 @@ Represents an organizational entity in the system (e.g., company, team). A tenan
 
 ---
 
-## [Role](./Role.md)
-
-Defines a named group of permissions for a tenant.
-
-### Key Fields
-- `id`: UUID
-- `tenant_id`: Belongs to a tenant
-- `name`: Role name (e.g., `"admin"`, `"manager"`, `"viewer"`)
-
-### Relationships
-- Many-to-many with users
-- Many-to-many with permissions
-
----
-
 ## [Permission](./Permission.md)
 
 Represents a single atomic permission that can be assigned to a role.
