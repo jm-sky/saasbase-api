@@ -1,5 +1,5 @@
 
-# SaaSBase API
+# DrpSaaS API
 
 A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a modular architecture. Includes GitHub Actions for CI, static analysis (Larastan), and tests (PHPUnit).
 
@@ -28,8 +28,8 @@ A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a m
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/saasbase-api.git
-cd saasbase-api
+git clone https://github.com/jm-sky/dropsaas-api.git
+cd dropsaas-api
 ```
 
 2. Copy the `.env` file and configure:
