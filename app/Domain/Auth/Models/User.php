@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -107,19 +108,27 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the user's current tenant ID from session or active membership.
-     * TODO: Handle JWT token.
+     * Get the user's current tenant ID from JWT payload, session, or active membership.
+     * Priority order:
+     * 1. JWT token claims
+     * 2. Session
+     * 3. First active membership.
      */
     public function getTenantId(): ?string
     {
-        // First try to get from session
+        // First try to get from JWT token if available
+        if (Auth::check() && Auth::payload()?->get('tenant_id')) {
+            return Auth::payload()->get('tenant_id');
+        }
+
+        // Then try session
         $tenantId = Session::get('current_tenant_id');
 
         if ($tenantId) {
             return $tenantId;
         }
 
-        // If not in session, get from first active membership
+        // Finally, try first active membership
         $membership = $this->tenantMemberships()->first();
 
         if ($membership) {
