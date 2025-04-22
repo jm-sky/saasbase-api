@@ -5,6 +5,65 @@ Project Saasbase {
   Note: 'SaaS platform with multi-tenancy, customizable statuses, units, and invoice management.'
 }
 
+// Action Logs
+Table action_logs {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  action_type varchar
+  description text [note: 'nullable']
+  model_type varchar
+  model_id uuid
+  ip_address varchar [note: 'nullable']
+  created_at timestamp
+}
+
+// Offices
+Table offices {
+  id uuid [pk]
+  name varchar
+  description text [note: 'nullable']
+  address varchar [note: 'nullable']
+  phone varchar [note: 'nullable']
+  email varchar [note: 'nullable']
+  website varchar [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Office Agreements
+Table office_agreements {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  office_id uuid [ref: > offices.id]
+  agreement_start_date date
+  agreement_end_date date [note: 'nullable']
+  contract_terms text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Office Service Types
+Table office_service_types {
+  id uuid [pk]
+  name varchar
+  description text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Office-Tenant Relation
+Table office_tenant_relations {
+  id uuid [pk]
+  office_id uuid [ref: > offices.id]
+  tenant_id uuid [ref: > tenants.id]
+  office_agreement_id uuid [ref: > office_agreements.id]
+  office_service_type_id uuid [ref: > office_service_types.id]
+  service_start_date date
+  service_end_date date [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
 // Exchanges
 Table exchanges {
   id uuid [pk]
@@ -396,6 +455,41 @@ Table user_addresses {
   city varchar
   zip varchar [note: 'nullable']
   is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Employees
+Table employees {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  user_id uuid [ref: > users.id, note: 'nullable']
+  first_name varchar
+  middle_name varchar [note: 'nullable']
+  last_name varchar
+  birth_date date
+  tax_id_type varchar [note: 'nullable']
+  tax_id varchar [note: 'nullable']
+  id_document_type varchar [note: 'nullable']
+  id_document varchar [note: 'nullable']
+  sex varchar [note: 'nullable']
+  position varchar
+  department varchar [note: 'nullable']
+  hire_date date
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Employee Agreements
+Table employee_agreements {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  employee_id uuid [ref: > employees.id]
+  agreement_start_date date
+  agreement_end_date date [note: 'nullable']
+  contract_terms text [note: 'nullable']
+  salary decimal [note: 'nullable']
   created_at timestamp
   updated_at timestamp
 }
