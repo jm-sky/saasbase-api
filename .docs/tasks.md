@@ -33,8 +33,7 @@ class TenantNotFoundException extends Exception
     }
 }
 
-// In app/Scopes/TenantScope.php
-namespace App\Scopes;
+namespace App\Domain\Tenant\Scopes;
 
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Model;
@@ -46,7 +45,7 @@ class TenantScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         // Retrieve the tenant ID from the authenticated user
-        $tenantId = auth()->user()?->tenant_id;
+        $tenantId = auth()->user()?->getTenantId();
 
         // If tenant_id is not present or invalid, throw a custom exception
         if (!$tenantId) {
@@ -84,26 +83,7 @@ trait BelongsToTenant
         return static::withoutGlobalScope(TenantScope::class);
     }
 }
-
-// In app/Models/Project.php (Example Model using BelongsToTenant)
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
-
-class Project extends Model
-{
-    use BelongsToTenant;
-
-    // Other model logic here
-}
-
-// Example Usage:
-$projects = Project::all(); // TenantScope applied by default
-
-// Query without TenantScope applied
-$projectsWithoutScope = Project::withoutTenantScope()->get();
-
+```
 
 ## 1. [x] Add middleware to set locale based on Accept Language header. 
 
