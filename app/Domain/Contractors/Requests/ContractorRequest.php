@@ -15,7 +15,7 @@ class ContractorRequest extends FormRequest
     {
         return [
             'name'        => ['required', 'string', 'max:255'],
-            'email'       => ['required', 'email', 'max:255'],
+            'email'       => ['nullable', 'email', 'max:255'],
             'phone'       => ['nullable', 'string', 'max:20'],
             'country'     => ['nullable', 'string', 'max:100'],
             'taxId'       => ['nullable', 'string', 'max:50'],
@@ -30,7 +30,6 @@ class ContractorRequest extends FormRequest
     {
         return [
             'name.required'  => 'The name field is required.',
-            'email.required' => 'The email field is required.',
             'email.email'    => 'The email must be a valid email address.',
         ];
     }
