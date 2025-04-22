@@ -111,6 +111,15 @@ trait BelongsToTenant
         return $this->belongsTo(Tenant::class);
     }
 
+    public function scopeForTenant(Builder $query, string $tenantId): Builder
+    {
+        if (!static::$bypassTenantScope && $tenantId !== static::getCurrentTenantId()) {
+            throw new \RuntimeException('Cannot access data from different tenant');
+        }
+
+        return $query->where('tenant_id', $tenantId);
+    }
+    
     /**
      * Execute a callback without tenant scoping.
      *
