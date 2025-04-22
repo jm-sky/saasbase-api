@@ -20,6 +20,7 @@ Table action_logs {
 // Offices
 Table offices {
   id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
   name varchar
   description text [note: 'nullable']
   address varchar [note: 'nullable']
