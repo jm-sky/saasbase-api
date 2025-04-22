@@ -55,6 +55,28 @@ This document provides a high-level overview of all models in the SaaSBass proje
 
 ---
 
+## Offices & Services
+
+- **[Office](./Office.md)**  
+  Physical office locations within the system.
+- **[OfficeAgreement](./OfficeAgreement.md)**  
+  Agreements linking tenants to office usage periods.
+- **[OfficeServiceType](./OfficeServiceType.md)**  
+  Types of services provided by offices.
+- **[OfficeTenantRelation](./OfficeTenantRelation.md)**  
+  Links tenants with offices and service details.
+
+---
+
+## Employees
+
+- **[Employee](./Employee.md)**  
+  Represents a person hired by a tenant, optionally linked to a user.
+- **[EmployeeAgreement](./EmployeeAgreement.md)**  
+  Describes employment contract details such as dates and salary.
+
+---
+
 ## System & Localization
 
 - **[Country](./Country.md)**  
