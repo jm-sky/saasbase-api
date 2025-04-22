@@ -1,8 +1,91 @@
+// Schemat bazy danych: SaaS platforma (Saasbase)
+
 Project Saasbase {
   database_type: 'PostgreSQL'
   Note: 'SaaS platform with multi-tenancy, customizable statuses, units, and invoice management.'
 }
 
+// Action Logs
+Table action_logs {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  action_type varchar
+  description text [note: 'nullable']
+  model_type varchar
+  model_id uuid
+  ip_address varchar [note: 'nullable']
+  created_at timestamp
+}
+
+// Offices
+Table offices {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  description text [note: 'nullable']
+  address varchar [note: 'nullable']
+  phone varchar [note: 'nullable']
+  email varchar [note: 'nullable']
+  website varchar [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Office Agreements
+Table office_agreements {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  office_id uuid [ref: > offices.id]
+  agreement_start_date date
+  agreement_end_date date [note: 'nullable']
+  contract_terms text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Office Service Types
+Table office_service_types {
+  id uuid [pk]
+  name varchar
+  description text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Office-Tenant Relation
+Table office_tenant_relations {
+  id uuid [pk]
+  office_id uuid [ref: > offices.id]
+  tenant_id uuid [ref: > tenants.id]
+  office_agreement_id uuid [ref: > office_agreements.id]
+  office_service_type_id uuid [ref: > office_service_types.id]
+  service_start_date date
+  service_end_date date [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Exchanges
+Table exchanges {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  base_currency varchar
+  target_currency varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Exchange Rates
+Table exchange_rates {
+  id uuid [pk]
+  exchange_id uuid [ref: > exchanges.id]
+  date date
+  rate decimal
+  created_at timestamp
+}
+
+// Tenants
 Table tenants {
   id uuid [pk]
   name varchar
@@ -11,6 +94,7 @@ Table tenants {
   updated_at timestamp
 }
 
+// Users
 Table users {
   id uuid [pk]
   first_name varchar
@@ -21,10 +105,12 @@ Table users {
   description text [note: 'nullable']
   birth_date date [note: 'nullable']
   is_admin boolean
+  email_confirmed_at timestamp [note: 'nullable']
   created_at timestamp
   updated_at timestamp
 }
 
+// Tenant Users
 Table tenant_users {
   tenant_id uuid [ref: > tenants.id]
   user_id uuid [ref: > users.id]
@@ -34,6 +120,7 @@ Table tenant_users {
   [pk: tenant_id, user_id]
 }
 
+// Projects
 Table projects {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -46,6 +133,7 @@ Table projects {
   deleted_at timestamp [note: 'nullable']
 }
 
+// Project Statuses
 Table project_statuses {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -57,6 +145,7 @@ Table project_statuses {
   updated_at timestamp
 }
 
+// Tasks
 Table tasks {
   id uuid [pk]
   project_id uuid [ref: > projects.id]
@@ -72,6 +161,7 @@ Table tasks {
   deleted_at timestamp [note: 'nullable']
 }
 
+// Task Statuses
 Table task_statuses {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -83,6 +173,7 @@ Table task_statuses {
   updated_at timestamp
 }
 
+// Contractors
 Table contractors {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -91,6 +182,7 @@ Table contractors {
   email varchar [note: 'nullable']
   phone varchar [note: 'nullable']
   description text [note: 'nullable']
+  preferences json [note: 'nullable']
   is_supplier boolean
   is_buyer boolean
   created_at timestamp
@@ -98,6 +190,7 @@ Table contractors {
   deleted_at timestamp [note: 'nullable']
 }
 
+// Contractor Addresses
 Table contractor_addresses {
   id uuid [pk]
   contractor_id uuid [ref: > contractors.id]
@@ -109,6 +202,7 @@ Table contractor_addresses {
   is_default boolean
 }
 
+// Contractor Bank Accounts
 Table contractor_bank_accounts {
   id uuid [pk]
   contractor_id uuid [ref: > contractors.id]
@@ -116,8 +210,11 @@ Table contractor_bank_accounts {
   iban varchar
   currencies varchar
   is_default boolean
+  white_list_checked_at timestamp [note: 'nullable']
+  white_list_status varchar [note: 'nullable']
 }
 
+// Contractor Contact Persons
 Table contractor_contact_persons {
   id uuid [pk]
   contractor_id uuid [ref: > contractors.id]
@@ -125,13 +222,16 @@ Table contractor_contact_persons {
   email varchar [note: 'nullable']
   phone varchar [note: 'nullable']
   position varchar [note: 'nullable']
+  description text [note: 'nullable']
 }
 
+// Invoices
 Table invoices {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
   contractor_id uuid [ref: > contractors.id]
   invoice_type_id uuid [ref: > invoice_types.id]
+  invoice_numbering_template_id uuid [ref: > invoice_numbering_templates.id, note: 'nullable']
   invoice_number varchar
   issue_date date
   due_date date
@@ -139,10 +239,12 @@ Table invoices {
   total_tax decimal
   total_gross decimal
   status varchar
+  exchange_rate_id uuid [ref: > exchange_rates.id, note: 'nullable']
   created_at timestamp
   updated_at timestamp
 }
 
+// Invoice Items
 Table invoice_items {
   id uuid [pk]
   invoice_id uuid [ref: > invoices.id]
@@ -155,8 +257,10 @@ Table invoice_items {
   total_net decimal
   total_tax decimal
   total_gross decimal
+  exchange_rate_id uuid [ref: > exchange_rates.id, note: 'nullable']
 }
 
+// Invoice Types
 Table invoice_types {
   id uuid [pk]
   name varchar
@@ -165,6 +269,22 @@ Table invoice_types {
   is_accounting boolean
 }
 
+// Invoice Numbering Templates
+Table invoice_numbering_templates {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  invoice_type_id uuid [ref: > invoice_types.id]
+  template varchar
+  is_default boolean
+  reset_period varchar [note: 'nullable']
+  start_sequence int [note: 'nullable']
+  description text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [note: 'nullable']
+}
+
+// Products
 Table products {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -177,6 +297,7 @@ Table products {
   updated_at timestamp
 }
 
+// VAT Rates
 Table vat_rates {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -187,6 +308,7 @@ Table vat_rates {
   updated_at timestamp
 }
 
+// Measurement Units
 Table measurement_units {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -198,6 +320,7 @@ Table measurement_units {
   updated_at timestamp
 }
 
+// Default Measurement Units
 Table default_measurement_units {
   id uuid [pk]
   name varchar
@@ -206,6 +329,7 @@ Table default_measurement_units {
   is_default boolean
 }
 
+// Default Statuses
 Table default_project_statuses {
   id uuid [pk]
   model varchar
@@ -226,6 +350,7 @@ Table default_task_statuses {
   is_default boolean
 }
 
+// Comments
 Table comments {
   id uuid [pk]
   user_id uuid [ref: > users.id]
@@ -235,6 +360,7 @@ Table comments {
   created_at timestamp
 }
 
+// Tags
 Table tags {
   id uuid [pk]
   name varchar
@@ -248,6 +374,7 @@ Table taggables {
   [pk: tag_id, taggable_id, taggable_type]
 }
 
+// Attachments
 Table attachments {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
@@ -270,6 +397,7 @@ Table attachmentables {
   [pk: attachment_id, attachmentable_id, attachmentable_type]
 }
 
+// Skills
 Table skills {
   id uuid [pk]
   category_id uuid [ref: > skill_categories.id, note: 'nullable']
@@ -298,6 +426,7 @@ Table project_required_skills {
   [pk: project_id, skill_id]
 }
 
+// User Settings and OAuth
 Table user_settings {
   user_id uuid [ref: > users.id]
   language varchar [note: 'nullable']
@@ -317,6 +446,7 @@ Table user_oauth_accounts {
   linked_at timestamp
 }
 
+// User Addresses
 Table user_addresses {
   id uuid [pk]
   user_id uuid [ref: > users.id]
@@ -326,6 +456,41 @@ Table user_addresses {
   city varchar
   zip varchar [note: 'nullable']
   is_default boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Employees
+Table employees {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  user_id uuid [ref: > users.id, note: 'nullable']
+  first_name varchar
+  middle_name varchar [note: 'nullable']
+  last_name varchar
+  birth_date date
+  tax_id_type varchar [note: 'nullable']
+  tax_id varchar [note: 'nullable']
+  id_document_type varchar [note: 'nullable']
+  id_document varchar [note: 'nullable']
+  sex varchar [note: 'nullable']
+  position varchar
+  department varchar [note: 'nullable']
+  hire_date date
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Employee Agreements
+Table employee_agreements {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  employee_id uuid [ref: > employees.id]
+  agreement_start_date date
+  agreement_end_date date [note: 'nullable']
+  contract_terms text [note: 'nullable']
+  salary decimal [note: 'nullable']
   created_at timestamp
   updated_at timestamp
 }
