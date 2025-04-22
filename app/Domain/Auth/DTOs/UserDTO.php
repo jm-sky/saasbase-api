@@ -9,18 +9,18 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $firstName
- * @property string $lastName
- * @property string $email
+ * @property ?string $id          UUID
+ * @property string  $firstName
+ * @property string  $lastName
+ * @property string  $email
  * @property ?string $avatarUrl
  * @property ?string $description
  * @property ?string $birthDate
  * @property ?string $phone
- * @property bool $isAdmin
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property bool    $isAdmin
+ * @property ?Carbon $createdAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
 class UserDTO extends Data
 {
@@ -45,9 +45,11 @@ class UserDTO extends Data
         if (is_string($this->createdAt)) {
             $this->createdAt = Carbon::parse($this->createdAt);
         }
+
         if (is_string($this->updatedAt)) {
             $this->updatedAt = Carbon::parse($this->updatedAt);
         }
+
         if (is_string($this->deletedAt)) {
             $this->deletedAt = Carbon::parse($this->deletedAt);
         }

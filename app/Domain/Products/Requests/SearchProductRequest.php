@@ -15,17 +15,17 @@ class SearchProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'filter.name' => 'sometimes|string',
-            'filter.description' => 'sometimes|string',
-            'filter.unitId' => 'sometimes|uuid|exists:measurement_units,id',
-            'filter.vatRateId' => 'sometimes|uuid|exists:vat_rates,id',
-            'filter.createdAt' => 'sometimes|array',
+            'filter.name'           => 'sometimes|string',
+            'filter.description'    => 'sometimes|string',
+            'filter.unitId'         => 'sometimes|uuid|exists:measurement_units,id',
+            'filter.vatRateId'      => 'sometimes|uuid|exists:vat_rates,id',
+            'filter.createdAt'      => 'sometimes|array',
             'filter.createdAt.from' => 'required_with:filter.createdAt|date',
-            'filter.createdAt.to' => 'required_with:filter.createdAt|date|after_or_equal:filter.createdAt.from',
-            'filter.updatedAt' => 'sometimes|array',
+            'filter.createdAt.to'   => 'required_with:filter.createdAt|date|after_or_equal:filter.createdAt.from',
+            'filter.updatedAt'      => 'sometimes|array',
             'filter.updatedAt.from' => 'required_with:filter.updatedAt|date',
-            'filter.updatedAt.to' => 'required_with:filter.updatedAt|date|after_or_equal:filter.updatedAt.from',
-            'sort' => ['sometimes', 'string', 'in:name,-name,createdAt,-createdAt,updatedAt,-updatedAt'],
+            'filter.updatedAt.to'   => 'required_with:filter.updatedAt|date|after_or_equal:filter.updatedAt.from',
+            'sort'                  => ['sometimes', 'string', 'in:name,-name,createdAt,-createdAt,updatedAt,-updatedAt'],
         ];
     }
 
@@ -42,12 +42,12 @@ class SearchProductRequest extends FormRequest
 
         // Transform sort parameter
         if ($this->has('sort')) {
-            $sort = $this->input('sort');
+            $sort      = $this->input('sort');
             $direction = str_starts_with($sort, '-') ? '-' : '';
-            $field = ltrim($sort, '-');
+            $field     = ltrim($sort, '-');
 
             $this->merge([
-                'sort' => $direction . Str::camel($field)
+                'sort' => $direction . Str::camel($field),
             ]);
         }
     }

@@ -9,9 +9,9 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $name
- * @property float $rate
+ * @property ?string $id        UUID
+ * @property string  $name
+ * @property float   $rate
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
@@ -28,7 +28,8 @@ class VatRateDTO extends Data
         public ?Carbon $updatedAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(VatRate $model): self
     {

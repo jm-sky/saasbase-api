@@ -14,8 +14,8 @@ class SkillRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => ['required', 'string', 'exists:skill_categories,name'],
-            'name' => ['required', 'string', 'max:255'],
+            'category'    => ['required', 'string', 'exists:skill_categories,name'],
+            'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -24,8 +24,8 @@ class SkillRequest extends FormRequest
     {
         return [
             'category.required' => 'The category is required.',
-            'category.exists' => 'The selected category does not exist.',
-            'name.required' => 'The name field is required.',
+            'category.exists'   => 'The selected category does not exist.',
+            'name.required'     => 'The name field is required.',
         ];
     }
 
@@ -35,8 +35,8 @@ class SkillRequest extends FormRequest
 
         // Transform camelCase to snake_case for database
         return [
-            'category' => $validated['category'],
-            'name' => $validated['name'],
+            'category'    => $validated['category'],
+            'name'        => $validated['name'],
             'description' => $validated['description'] ?? null,
         ];
     }

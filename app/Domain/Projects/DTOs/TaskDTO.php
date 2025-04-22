@@ -3,7 +3,8 @@
 namespace App\Domain\Projects\DTOs;
 
 use App\Domain\Auth\DTOs\UserDTO;
-use App\Domain\Common\DTOs\{CommentDTO, AttachmentDTO};
+use App\Domain\Common\DTOs\AttachmentDTO;
+use App\Domain\Common\DTOs\CommentDTO;
 use App\Domain\Projects\Models\Task;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -11,23 +12,23 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $projectId
- * @property string $title
- * @property ?string $description
- * @property string $status
- * @property string $priority
- * @property ?string $assignedToId
- * @property string $createdById
- * @property ?string $dueDate ISO 8601 date
- * @property ?string $createdAt ISO 8601 timestamp
- * @property ?string $updatedAt ISO 8601 timestamp
- * @property ?string $deletedAt ISO 8601 timestamp
+ * @property ?string  $id           UUID
+ * @property string   $projectId
+ * @property string   $title
+ * @property ?string  $description
+ * @property string   $status
+ * @property string   $priority
+ * @property ?string  $assignedToId
+ * @property string   $createdById
+ * @property ?string  $dueDate      ISO 8601 date
+ * @property ?string  $createdAt    ISO 8601 timestamp
+ * @property ?string  $updatedAt    ISO 8601 timestamp
+ * @property ?string  $deletedAt    ISO 8601 timestamp
  * @property ?UserDTO $assignedTo
  * @property ?UserDTO $createdBy
- * @property ?array $watchers
- * @property ?array $comments
- * @property ?array $attachments
+ * @property ?array   $watchers
+ * @property ?array   $comments
+ * @property ?array   $attachments
  */
 class TaskDTO extends Data
 {
@@ -52,7 +53,8 @@ class TaskDTO extends Data
         public ?array $watchers = null,
         public ?array $comments = null,
         public ?array $attachments = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Task $model): self
     {

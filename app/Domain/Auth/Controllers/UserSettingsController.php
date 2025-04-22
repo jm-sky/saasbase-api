@@ -5,7 +5,6 @@ namespace App\Domain\Auth\Controllers;
 use App\Domain\Auth\Actions\GetUserSettingsAction;
 use App\Domain\Auth\Actions\UpdateUserLanguageAction;
 use App\Domain\Auth\Actions\UpdateUserSettingsAction;
-use App\Domain\Auth\DTOs\UserSettingsDTO;
 use App\Domain\Auth\Requests\UpdateUserLanguageRequest;
 use App\Domain\Auth\Requests\UpdateUserSettingsRequest;
 use App\Http\Controllers\Controller;

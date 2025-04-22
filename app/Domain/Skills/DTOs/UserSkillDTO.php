@@ -2,21 +2,21 @@
 
 namespace App\Domain\Skills\DTOs;
 
+use App\Domain\Skills\Models\UserSkill;
 use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
-use App\Domain\Skills\Models\UserSkill;
 
 /**
- * @property ?string $id UUID
- * @property string $userId
- * @property string $skillId
- * @property int $level
- * @property string $acquiredAt
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id         UUID
+ * @property string  $userId
+ * @property string  $skillId
+ * @property int     $level
+ * @property string  $acquiredAt
+ * @property ?Carbon $createdAt  Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt  Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt  Internally Carbon, accepts/serializes ISO 8601
  */
 class UserSkillDTO extends Data
 {
@@ -32,7 +32,8 @@ class UserSkillDTO extends Data
         public ?Carbon $updatedAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(UserSkill $model): self
     {

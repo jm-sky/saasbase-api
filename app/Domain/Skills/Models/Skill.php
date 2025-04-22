@@ -3,21 +3,21 @@
 namespace App\Domain\Skills\Models;
 
 use App\Domain\Common\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
-use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string $id
- * @property string $category
- * @property string $name
- * @property ?string $description
- * @property Carbon $created_at
- * @property Carbon $updated_at
- *
- * @property-read SkillCategory $skillCategory
- * @property-read Collection<int, UserSkill> $userSkills
- * @property-read Collection<int, ProjectRequiredSkill> $projectRequiredSkills
+ * @property string                                $id
+ * @property string                                $category
+ * @property string                                $name
+ * @property ?string                               $description
+ * @property Carbon                                $created_at
+ * @property Carbon                                $updated_at
+ * @property SkillCategory                         $skillCategory
+ * @property Collection<int, UserSkill>            $userSkills
+ * @property Collection<int, ProjectRequiredSkill> $projectRequiredSkills
  */
 class Skill extends BaseModel
 {

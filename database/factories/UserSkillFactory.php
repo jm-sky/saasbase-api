@@ -17,9 +17,9 @@ class UserSkillFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'skill_id' => Skill::factory(),
-            'level' => fake()->numberBetween(1, 5),
+            'user_id'     => User::factory(),
+            'skill_id'    => Skill::factory(),
+            'level'       => fake()->numberBetween(1, 5),
             'acquired_at' => fake()->date(),
         ];
     }

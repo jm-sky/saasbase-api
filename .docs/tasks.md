@@ -1,5 +1,90 @@
 # Tasks
 
+## Task: Implement Multi-Tenancy with Global Tenant Scope and `BelongsToTenant` Trait
+
+### Objective:
+We need to implement a multi-tenancy system using a global scope to filter data based on the tenant ID. The `BelongsToTenant` trait will be used in models to automatically apply the tenant scope, while also allowing the scope to be bypassed when necessary (for example, in tests or seeding). If the tenant context is not available or invalid, a custom exception will be raised to ensure security.
+
+### Steps:
+1. Create a custom exception `TenantNotFoundException` that will be thrown when the tenant context is not found.
+2. Implement the `TenantScope` class that adds a global scope to filter models by `tenant_id`.
+3. Define the `BelongsToTenant` trait which applies the `TenantScope` to models.
+4. Allow the scope to be bypassed by providing a method `withoutTenantScope()` in the trait.
+
+---
+
+```php
+<?php
+
+// In app/Exceptions/TenantNotFoundException.php
+namespace App\Exceptions;
+
+use Exception;
+
+class TenantNotFoundException extends Exception
+{
+    protected $message = 'Tenant context not found. Please ensure the user is properly authenticated for the correct tenant.';
+
+    public function render($request)
+    {
+        return response()->json([
+            'error' => $this->message,
+        ], 403);  // You can customize the HTTP status code (403 is a good default for "Forbidden")
+    }
+}
+
+namespace App\Domain\Tenant\Scopes;
+
+use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use App\Exceptions\TenantNotFoundException;
+
+class TenantScope implements Scope
+{
+    public function apply(Builder $builder, Model $model)
+    {
+        // Retrieve the tenant ID from the authenticated user
+        $tenantId = auth()->user()?->getTenantId();
+
+        // If tenant_id is not present or invalid, throw a custom exception
+        if (!$tenantId) {
+            throw new TenantNotFoundException();
+        }
+
+        // Apply the tenant_id condition to the query
+        $builder->where('tenant_id', $tenantId);
+    }
+}
+
+// In app/Domain/Tenant/Concerns/BelongsToTenant.php
+namespace App\Domain\Tenant\Concerns;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Scopes\TenantScope;
+
+trait BelongsToTenant
+{
+    protected static function bootBelongsToTenant(): void
+    {
+        static::addGlobalScope(new TenantScope);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    // Disable the global scope for the query
+    public static function withoutTenantScope(): Builder
+    {
+        return static::withoutGlobalScope(TenantScope::class);
+    }
+}
+```
+
 ## 1. [x] Add middleware to set locale based on Accept Language header. 
 
 ```php
@@ -453,6 +538,98 @@ Add tests.
   - Tag admin routes accordingly in OpenAPI documentation for visibility and clarity. 
 
 ---
+## 22. Refresh Token Support in JWTAuth
+
+### Goal
+Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-auth` package.
+
+### Requirements
+
+1. **TTL Configuration**:
+   - Access token: 15 minutes
+   - Refresh token: 7 days (10080 minutes)
+
+2. **Endpoints**:
+   - `POST /api/auth/login` — returns access token and refresh token
+   - `POST /api/auth/refresh` — accepts refresh token and returns new access token
+   - `POST /api/auth/logout` — invalidates current access token (and optionally the refresh token)
+
+3. **Security**:
+   - Refresh token should be stored on the client side (preferably in an HttpOnly cookie, or as a returned JSON field)
+   - Stateless approach: no server-side storage of refresh tokens unless explicitly extended
+
+4. **Middleware**:
+   - Every request should validate the access token
+   - Handle "token expired" errors with a clear path to refresh
+
+### Extras
+- Add unit and integration tests for login, refresh, and logout flows.
+- Optionally create a dedicated service (e.g., `AuthService`) to encapsulate token logic.
+
+### Definition of Done
+- All endpoints work as described.
+- Tokens are issued and refreshed respecting their TTLs.
+- Tests cover the main use cases.
+- API documentation updated (OpenAPI/Swagger or README). 
+
+--
+
+### Task: Implement Exchange and ExchangeRate Models with Read-Only Endpoints
+
+**Goal:**  
+Allow users to view currency exchange rates.
+
+**Scope:**  
+- Models:
+  - `Exchange` – Represents a currency (e.g., USD, EUR).
+  - `ExchangeRate` – Represents the rate for a specific day between two currencies.
+- Relationships:
+  - `ExchangeRate` belongs to `Exchange` (for both base and target currency).
+- Fields:
+  - `Exchange`: `id`, `code` (e.g., "USD"), `name` (e.g., "US Dollar")
+  - `ExchangeRate`: `id`, `exchange_id`, `target_exchange_id`, `rate`, `date`
+- Endpoints:
+  - `GET /api/exchanges`
+  - `GET /api/exchanges/{id}`
+  - `GET /api/exchange-rates`
+  - `GET /api/exchange-rates/{id}`
+- Notes:
+  - Read-only (no create/update/delete)
+  - Optional: Seed with basic currencies and rates
+
+**Definition of Done:**
+- Models and migrations created
+- Read-only API routes and controllers implemented
+- Proper resource classes for JSON output
+- Seeders for major currencies and sample rates
+
+--
+
+### Task: Create Invoice Numbering Template System
+
+**Goal:**  
+Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `INV-YYYY-MM/NNNN`).
+
+**Scope:**  
+- Model: `InvoiceNumberTemplate`
+- Fields:
+  - `id`, `tenant_id`, `invoice_type` (e.g., "sales", "proforma"), `template` (e.g., "YYYY/NNN")
+- Logic:
+  - Tokens to support: `YYYY`, `YY`, `MM`, `DD`, `NNN`, `NNNN`, etc.
+  - Stored per tenant and per invoice type
+- Endpoint:
+  - `GET /api/invoice-number-templates` (list for current tenant)
+  - Optional admin endpoint to define default templates
+- Usage:
+  - Will be used when generating new invoices
+
+**Definition of Done:**
+- Model and migration created
+- Read-only endpoint showing current tenant templates
+- Ability to support token parsing (future: during invoice creation)
+- Unit test for template rendering logic (optional in this task)
+
+---
 
 ## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
 
@@ -471,3 +648,116 @@ Add tests.
   - Store or display extracted text as needed for further processing or user review
   - Add configuration options for OCR processing (e.g., language selection, preprocessing steps)
   - Write unit and integration tests for OCR functionality 
+
+--
+
+### Invoice Model – Requirements Summary (Updated)
+
+#### 1. Core Fields & Relationships
+- `id`, `tenant_id`, `contractor_id`, `project_id` (optional)
+- `employee_id`: user who issued the invoice
+- `template_id`: foreign key to `InvoiceNumberTemplate`
+- `issue_date`, `due_date`, `payment_date` (nullable)
+- `invoice_number`: generated
+- `status`: draft / issued / paid / overdue / canceled
+- `currency`, `exchange_rate`
+- `language_code`
+- `notes`, `footer`, `terms_and_conditions`
+
+#### 2. Line Items
+- Product/service reference
+- Quantity, unit, unit price
+- VAT rate per line
+- Line discount (optional)
+- Description
+
+#### 3. VAT & Tax
+- Support for multiple VAT rates per invoice
+- VAT-exempt support (e.g., reverse charge)
+- Summary per VAT rate
+- **[TODO] VIES API integration**: to validate EU VAT numbers
+
+#### 4. Attachments
+- File uploads: PDFs, images, related docs
+- Link to generated PDF version
+- Link to email confirmation or signed documents
+
+#### 5. Payments
+- `payment_status`: unpaid / partial / paid
+- Amount paid, outstanding
+- Payment log (optional, external or internal)
+- Support for partial payments
+
+#### 6. PDF Generation
+- Custom layout per tenant
+- Multi-language template support
+- Branding: logo, colors, footer
+
+#### 7. Automation & Workflow
+- Auto-increment invoice number via template
+- Drafts and scheduled creation
+- Recurring invoices (future)
+- Email invoice after status = `issued`, if enabled in preferences
+
+#### 8. Compliance & Audit
+- Lock after issuance (no edits allowed)
+- No invoice number gaps (future validation)
+- **Audit log:** handled by central **Action Log** mechanism
+
+#### 9. Reporting
+- Export to CSV/Excel
+- Filters by date, contractor, status
+- VAT summary reports
+- Overdue invoices
+
+#### 10. Miscellaneous
+- Credit notes / corrections
+- Proforma invoices
+- Duplicate (create based on existing)
+- Draft saving
+- Custom fields (per tenant, JSON or relational) 
+
+--
+
+### Task: Implement Contractor Preferences
+
+**Objective:** Enable the system to store and manage contractor-specific preferences for language, currency exchange rate, invoice format, and payment method.
+
+#### Preferences:
+1. **Language**: Store the contractor's preferred language for communication and documents (e.g., Polish, English).
+2. **Currency Exchange**: Set the contractor's preferred currency for invoicing and transactions (e.g., PLN, EUR, USD).
+3. **Invoice Format**: Allow the contractor's default invoice format to be selected (e.g., PDF, HTML).
+4. **Payment Method**: Store the preferred payment method for transactions (e.g., Bank Transfer, PayPal, Credit Card).
+
+**Definition of Done:**
+- Contractor preferences are stored and can be updated.
+- Preferences are applied to invoices and financial transactions.
+- Changes can be easily made via a UI interface.
+
+---
+
+### Task: Integrate Exchange Rates from Multiple Sources
+
+**Objective:** Integrate exchange rate data from at least two sources (e.g., Polish NBP and another API) for daily exchange rate import.
+
+#### Subtasks:
+1. **Data Source Integration**: 
+   - Integrate the Polish NBP API to fetch exchange rates.
+   - Integrate a secondary source (e.g., European Central Bank or a commercial API like Open Exchange Rates) for redundancy and broader currency support.
+   
+2. **Daily Import**: 
+   - Set up a scheduled task (e.g., using Laravel Scheduler) to import exchange rates every day.
+   - Store the exchange rates in the database, linked to each currency.
+
+3. **Error Handling**: 
+   - Implement fallback logic if one of the APIs fails to return valid data (e.g., use the second source).
+   - Notify admins if data import fails for more than one day.
+
+4. **Use Case**: 
+   - Use exchange rates for contractor currency preferences and invoices.
+   - Ensure that the system can convert between currencies using the latest available rates.
+
+**Definition of Done:**
+- Exchange rates are automatically fetched from at least two sources daily.
+- Rates are stored correctly and used for currency conversion.
+- API failure is handled gracefully with fallback options. 

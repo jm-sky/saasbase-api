@@ -2,35 +2,35 @@
 
 namespace App\Domain\Projects\Models;
 
-use App\Domain\Common\Models\BaseModel;
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\{Comment, Attachment};
+use App\Domain\Common\Models\Attachment;
+use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Comment;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Carbon\Carbon;
 
 /**
- * @property string $id
- * @property string $project_id
- * @property string $title
- * @property ?string $description
- * @property string $status
- * @property string $priority
- * @property ?string $assigned_to_id
- * @property string $created_by_id
- * @property ?Carbon $due_date
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property ?Carbon $deleted_at
- *
- * @property-read Project $project
- * @property-read ?User $assignedTo
- * @property-read User $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, TaskWatcher> $watchers
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $comments
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Attachment> $attachments
+ * @property string                                                     $id
+ * @property string                                                     $project_id
+ * @property string                                                     $title
+ * @property ?string                                                    $description
+ * @property string                                                     $status
+ * @property string                                                     $priority
+ * @property ?string                                                    $assigned_to_id
+ * @property string                                                     $created_by_id
+ * @property ?Carbon                                                    $due_date
+ * @property Carbon                                                     $created_at
+ * @property Carbon                                                     $updated_at
+ * @property ?Carbon                                                    $deleted_at
+ * @property Project                                                    $project
+ * @property ?User                                                      $assignedTo
+ * @property User                                                       $createdBy
+ * @property \Illuminate\Database\Eloquent\Collection<int, TaskWatcher> $watchers
+ * @property \Illuminate\Database\Eloquent\Collection<int, Comment>     $comments
+ * @property \Illuminate\Database\Eloquent\Collection<int, Attachment>  $attachments
  */
 class Task extends BaseModel
 {
@@ -53,7 +53,7 @@ class Task extends BaseModel
      * @var array<string, string>
      */
     protected $casts = [
-        'status' => 'string',
+        'status'   => 'string',
         'priority' => 'string',
         'due_date' => 'datetime',
     ];

@@ -1,12 +1,15 @@
 <?php
 
+use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
-use App\Domain\Skills\Controllers\{SkillController, SkillCategoryController, UserSkillController};
-use App\Domain\Common\Controllers\CountryController;
-use App\Domain\Tenant\Controllers\TenantController;
+use App\Domain\Skills\Controllers\SkillCategoryController;
+use App\Domain\Skills\Controllers\SkillController;
+use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
-use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Tenant\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,10 +23,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/v1/auth/login', [AuthController::class, 'login']);
+
+Route::post('/v1/auth/logout', [AuthController::class, 'logout']);
+
+Route::post('/v1/auth/register', [AuthController::class, 'register']);
+
+Route::middleware('auth:api')->post('/v1/auth/refresh', [AuthController::class, 'refresh']);
+
 Route::prefix('v1')->group(function () {
     Route::apiResource('tenants', TenantController::class);
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:api')->group(function () {
+        Route::get('user', [AuthController::class, 'getUser']);
         Route::apiResource('contractors', ContractorController::class);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('skills', SkillController::class);

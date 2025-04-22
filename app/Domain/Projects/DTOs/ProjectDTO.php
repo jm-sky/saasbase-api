@@ -4,29 +4,27 @@ namespace App\Domain\Projects\DTOs;
 
 use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Projects\Models\Project;
-use App\Domain\Projects\DTOs\TaskDTO;
-use App\Domain\Projects\DTOs\ProjectRequiredSkillDTO;
 use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapOutputName;
 
 /**
- * @property ?string $id UUID
- * @property string $tenantId
- * @property string $name
- * @property ?string $description
- * @property string $status
- * @property string $startDate
- * @property ?string $endDate
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string  $id             UUID
+ * @property string   $tenantId
+ * @property string   $name
+ * @property ?string  $description
+ * @property string   $status
+ * @property string   $startDate
+ * @property ?string  $endDate
+ * @property ?Carbon  $createdAt      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $updatedAt      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $deletedAt      Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $owner
- * @property ?array $users
- * @property ?array $tasks
- * @property ?array $requiredSkills
+ * @property ?array   $users
+ * @property ?array   $tasks
+ * @property ?array   $requiredSkills
  */
 class ProjectDTO extends Data
 {
@@ -50,7 +48,8 @@ class ProjectDTO extends Data
         public ?array $tasks = null,
         #[MapOutputName('required_skills')]
         public ?array $requiredSkills = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Project $model, bool $withRelations = false): self
     {

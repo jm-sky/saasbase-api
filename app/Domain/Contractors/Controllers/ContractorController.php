@@ -2,17 +2,16 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Common\Concerns\HasIndexQuery;
+use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorRequest;
-use App\Domain\Common\Concerns\HasIndexQuery;
-use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
-use App\Domain\Contractors\Requests\SearchContractorRequest;
 
 class ContractorController extends Controller
 {
@@ -28,10 +27,6 @@ class ContractorController extends Controller
             AllowedFilter::partial('name'),
             AllowedFilter::partial('email'),
             AllowedFilter::partial('phone'),
-            AllowedFilter::partial('address'),
-            AllowedFilter::partial('city'),
-            AllowedFilter::partial('state'),
-            AllowedFilter::partial('zipCode', 'zip_code'),
             AllowedFilter::partial('country'),
             AllowedFilter::partial('taxId', 'tax_id'),
             AllowedFilter::partial('notes'),
@@ -43,9 +38,8 @@ class ContractorController extends Controller
         $this->sorts = [
             'name',
             'email',
-            'city',
             'country',
-            'isActive' => 'is_active',
+            'isActive'  => 'is_active',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
@@ -55,7 +49,7 @@ class ContractorController extends Controller
 
     public function index(SearchContractorRequest $request): JsonResponse
     {
-        $result = $this->getIndexPaginator($request);
+        $result         = $this->getIndexPaginator($request);
         $result['data'] = ContractorDTO::collect($result['data']);
 
         return response()->json($result);
@@ -63,7 +57,7 @@ class ContractorController extends Controller
 
     public function store(ContractorRequest $request): JsonResponse
     {
-        $dto = ContractorDTO::from($request->validated());
+        $dto        = ContractorDTO::from($request->validated());
         $contractor = Contractor::create((array) $dto);
 
         return response()->json(
@@ -92,6 +86,7 @@ class ContractorController extends Controller
     public function destroy(Contractor $contractor): JsonResponse
     {
         $contractor->delete();
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

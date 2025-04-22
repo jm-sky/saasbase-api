@@ -25,3 +25,4 @@ yarn-error.log
 # Test files
 storage/test_jwt.key
 storage/test_jwt.pub
+.php-cs-fixer.cache

@@ -9,7 +9,8 @@ class DateRangeFilter implements Filter
 {
     public function __construct(
         private readonly string $field
-    ) {}
+    ) {
+    }
 
     public function __invoke(Builder $query, $value, string $property): Builder
     {

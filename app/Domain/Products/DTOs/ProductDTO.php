@@ -5,22 +5,20 @@ namespace App\Domain\Products\DTOs;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $name
- * @property string $description
- * @property string $sku
- * @property float $price
- * @property int $quantity
- * @property string $unitId
+ * @property ?string          $id          UUID
+ * @property string           $name
+ * @property string           $description
+ * @property string           $sku
+ * @property float            $price
+ * @property int              $quantity
+ * @property string           $unitId
  * @property ?MeasurementUnit $unit
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon          $createdAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon          $updatedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon          $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
 class ProductDTO extends Data
 {
@@ -35,7 +33,8 @@ class ProductDTO extends Data
         public readonly ?string $createdAt = null,
         public readonly ?string $updatedAt = null,
         public readonly ?string $deletedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Product $model): self
     {

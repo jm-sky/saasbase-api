@@ -10,14 +10,14 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id UUID
- * @property string $userId
- * @property string $content
- * @property string $commentableId
- * @property string $commentableType
- * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string  $id              UUID
+ * @property string   $userId
+ * @property string   $content
+ * @property string   $commentableId
+ * @property string   $commentableType
+ * @property ?Carbon  $createdAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $updatedAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $deletedAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $user
  */
 class CommentDTO extends Data
@@ -35,7 +35,8 @@ class CommentDTO extends Data
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Comment $model): self
     {

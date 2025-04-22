@@ -2,16 +2,16 @@
 
 namespace App\Domain\Products\DTOs;
 
-use Carbon\Carbon;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\WithCast;
 use App\Domain\Common\Models\MeasurementUnit;
+use Carbon\Carbon;
+use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
+use Spatie\LaravelData\Data;
 
 /**
- * @property string $id
- * @property string $code
- * @property string $name
+ * @property string  $id
+ * @property string  $code
+ * @property string  $name
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */

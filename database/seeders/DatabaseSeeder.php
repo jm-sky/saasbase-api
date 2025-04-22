@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\UserTenant;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -22,12 +25,16 @@ class DatabaseSeeder extends Seeder
         // Create default user
         $user = User::factory()->create([
             'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
+            'last_name'  => 'User',
+            'email'      => 'test@example.com',
         ]);
 
         // Attach user to tenant
-        $user->tenants()->attach($tenant->id, ['role' => 'admin']);
+        UserTenant::create([
+            'user_id'   => $user->id,
+            'tenant_id' => $tenant->id,
+            'role'      => 'admin',
+        ]);
 
         $this->call([
             CountrySeeder::class,
@@ -36,6 +43,14 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             ProjectRoleSeeder::class,
             MeasurementUnitSeeder::class,
+        ]);
+
+        Contractor::factory(5)->create([
+            'tenant_id' => $tenant->id,
+        ]);
+
+        Product::factory(5)->create([
+            'tenant_id' => $tenant->id,
         ]);
     }
 }

@@ -2,16 +2,21 @@
 
 namespace Tests\Feature\Database\Seeders;
 
-use App\Domain\Common\Models\VatRate;
 use Database\Seeders\VatRateSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class VatRateSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_vat_rate_seeder_creates_expected_records(): void
+    public function testVatRateSeederCreatesExpectedRecords(): void
     {
         $this->seed(VatRateSeeder::class);
 

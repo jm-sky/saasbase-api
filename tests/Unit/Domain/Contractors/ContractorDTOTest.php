@@ -5,26 +5,31 @@ namespace Tests\Unit\Domain\Contractors;
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ContractorDTOTest extends TestCase
 {
-    public function test_can_create_contractor_dto_from_model(): void
+    public function testCanCreateContractorDtoFromModel(): void
     {
         $tenant = Tenant::factory()->create();
+        session(['current_tenant_id' => $tenant->id]);
+
         $contractor = Contractor::factory()->create([
-            'tenant_id' => $tenant->id,
-            'name' => 'Test Contractor',
-            'email' => 'test@example.com',
-            'phone' => '1234567890',
-            'address' => '123 Test St',
-            'city' => 'Test City',
-            'state' => 'TS',
-            'zip_code' => '12345',
-            'country' => 'US',
-            'tax_id' => '123456789',
-            'notes' => 'Test notes',
-            'is_active' => true,
+            'name'        => 'Test Contractor',
+            'email'       => 'test@example.com',
+            'phone'       => '1234567890',
+            'country'     => 'US',
+            'tax_id'      => '123456789',
+            'description' => 'Test description',
+            'is_active'   => true,
+            'is_buyer'    => true,
+            'is_supplier' => false,
         ]);
 
         $dto = ContractorDTO::from($contractor);
@@ -34,17 +39,15 @@ class ContractorDTOTest extends TestCase
         $this->assertEquals($contractor->name, $dto->name);
         $this->assertEquals($contractor->email, $dto->email);
         $this->assertEquals($contractor->phone, $dto->phone);
-        $this->assertEquals($contractor->address, $dto->address);
-        $this->assertEquals($contractor->city, $dto->city);
-        $this->assertEquals($contractor->state, $dto->state);
-        $this->assertEquals($contractor->zip_code, $dto->zipCode);
         $this->assertEquals($contractor->country, $dto->country);
         $this->assertEquals($contractor->tax_id, $dto->taxId);
-        $this->assertEquals($contractor->notes, $dto->notes);
+        $this->assertEquals($contractor->description, $dto->description);
         $this->assertEquals($contractor->is_active, $dto->isActive);
+        $this->assertEquals($contractor->is_buyer, $dto->isBuyer);
+        $this->assertEquals($contractor->is_supplier, $dto->isSupplier);
     }
 
-    public function test_can_convert_contractor_dto_to_array(): void
+    public function testCanConvertContractorDtoToArray(): void
     {
         $dto = new ContractorDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',
@@ -52,14 +55,12 @@ class ContractorDTOTest extends TestCase
             name: 'Test Contractor',
             email: 'test@example.com',
             phone: '1234567890',
-            address: '123 Test St',
-            city: 'Test City',
-            state: 'TS',
-            zipCode: '12345',
             country: 'US',
             taxId: '123456789',
-            notes: 'Test notes',
+            description: 'Test description',
             isActive: true,
+            isBuyer: true,
+            isSupplier: false,
         );
 
         $array = $dto->toArray();
@@ -69,13 +70,11 @@ class ContractorDTOTest extends TestCase
         $this->assertEquals('Test Contractor', $array['name']);
         $this->assertEquals('test@example.com', $array['email']);
         $this->assertEquals('1234567890', $array['phone']);
-        $this->assertEquals('123 Test St', $array['address']);
-        $this->assertEquals('Test City', $array['city']);
-        $this->assertEquals('TS', $array['state']);
-        $this->assertEquals('12345', $array['zipCode']);
         $this->assertEquals('US', $array['country']);
         $this->assertEquals('123456789', $array['taxId']);
-        $this->assertEquals('Test notes', $array['notes']);
+        $this->assertEquals('Test description', $array['description']);
         $this->assertTrue($array['isActive']);
+        $this->assertTrue($array['isBuyer']);
+        $this->assertFalse($array['isSupplier']);
     }
 }

@@ -14,13 +14,13 @@ class RegisterUserAction
     public function execute(RegisterUserDTO $dto): User
     {
         return User::create([
-            'first_name' => $dto->firstName,
-            'last_name' => $dto->lastName,
-            'email' => $dto->email,
-            'password' => Hash::make($dto->password),
+            'first_name'  => $dto->firstName,
+            'last_name'   => $dto->lastName,
+            'email'       => $dto->email,
+            'password'    => Hash::make($dto->password),
             'description' => $dto->description,
-            'birth_date' => $dto->birthDate,
-            'phone' => $dto->phone,
+            'birth_date'  => $dto->birthDate,
+            'phone'       => $dto->phone,
         ]);
     }
 }

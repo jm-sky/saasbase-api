@@ -6,9 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Lorisleiva\Actions\Concerns\AsAction;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -22,9 +20,9 @@ class GenerateTenantJwtAction
 
         // Create custom claims with tenant context
         $customClaims = [
-            'tenant_id' => $tenant->id,
+            'tenant_id'   => $tenant->id,
             'tenant_slug' => $tenant->slug,
-            'user_role' => $user->tenants()->where('tenant_id', $tenant->id)->first()?->pivot->role
+            'user_role'   => $user->tenants()->where('tenant_id', $tenant->id)->first()?->pivot->role,
         ];
 
         // Generate token with custom claims
@@ -41,34 +39,34 @@ class GenerateTenantJwtAction
 
             return response()->json([
                 'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60
+                'token_type'   => 'bearer',
+                'expires_in'   => JWTAuth::factory()->getTTL() * 60,
             ]);
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             return response()->json([
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], Response::HTTP_FORBIDDEN);
         }
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     private function authorize(User $user, Tenant $tenant): void
     {
         // Verify user is authenticated
         if (!$user) {
-            throw new RuntimeException('User not authenticated');
+            throw new \RuntimeException('User not authenticated');
         }
 
         // Verify tenant exists and is active
-        if (!$tenant->exists || $tenant->deleted_at !== null) {
-            throw new RuntimeException('Tenant not found or inactive');
+        if (!$tenant->exists || null !== $tenant->deleted_at) {
+            throw new \RuntimeException('Tenant not found or inactive');
         }
 
         // Verify user belongs to tenant
         if (!$user->tenants()->where('tenant_id', $tenant->id)->exists()) {
-            throw new RuntimeException('User does not belong to this tenant');
+            throw new \RuntimeException('User does not belong to this tenant');
         }
     }
 
@@ -78,8 +76,8 @@ class GenerateTenantJwtAction
             'tenant' => [
                 'required',
                 'uuid',
-                'exists:tenants,id,deleted_at,NULL'
-            ]
+                'exists:tenants,id,deleted_at,NULL',
+            ],
         ];
     }
 }

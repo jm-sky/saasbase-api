@@ -14,6 +14,7 @@ class SkillController extends Controller
     public function index(): JsonResponse
     {
         $skills = Skill::with('skillCategory')->paginate();
+
         return response()->json(
             SkillDTO::collect($skills)
         );
@@ -21,7 +22,7 @@ class SkillController extends Controller
 
     public function store(SkillRequest $request): JsonResponse
     {
-        $dto = SkillDTO::from($request->validated());
+        $dto   = SkillDTO::from($request->validated());
         $skill = Skill::create((array) $dto);
 
         return response()->json(
@@ -33,6 +34,7 @@ class SkillController extends Controller
     public function show(Skill $skill): JsonResponse
     {
         $skill->load('skillCategory');
+
         return response()->json(
             SkillDTO::from($skill)
         );
@@ -51,6 +53,7 @@ class SkillController extends Controller
     public function destroy(Skill $skill): JsonResponse
     {
         $skill->delete();
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

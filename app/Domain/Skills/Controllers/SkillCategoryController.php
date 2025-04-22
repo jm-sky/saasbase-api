@@ -14,6 +14,7 @@ class SkillCategoryController extends Controller
     public function index(): JsonResponse
     {
         $categories = SkillCategory::with('skills')->paginate();
+
         return response()->json(
             SkillCategoryDTO::collect($categories)
         );
@@ -21,9 +22,9 @@ class SkillCategoryController extends Controller
 
     public function store(SkillCategoryRequest $request): JsonResponse
     {
-        $dto = SkillCategoryDTO::from($request->validated());
+        $dto      = SkillCategoryDTO::from($request->validated());
         $category = SkillCategory::create([
-            'name' => $dto->name,
+            'name'        => $dto->name,
             'description' => $dto->description,
         ]);
 
@@ -38,6 +39,7 @@ class SkillCategoryController extends Controller
         abort_if(!$category->exists(), Response::HTTP_NOT_FOUND);
 
         $category->load('skills');
+
         return response()->json(
             SkillCategoryDTO::fromModel($category)
         );
@@ -49,7 +51,7 @@ class SkillCategoryController extends Controller
 
         $dto = SkillCategoryDTO::from($request->validated());
         $category->update([
-            'name' => $dto->name,
+            'name'        => $dto->name,
             'description' => $dto->description,
         ]);
 
@@ -63,6 +65,7 @@ class SkillCategoryController extends Controller
         abort_if(!$category->exists(), Response::HTTP_NOT_FOUND);
 
         $category->delete();
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

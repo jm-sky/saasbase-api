@@ -2,25 +2,31 @@
 
 namespace Tests\Unit\Domain\Tenant;
 
-use Carbon\Carbon;
-use Tests\TestCase;
-use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\DTOs\TenantDTO;
+use App\Domain\Tenant\Models\Tenant;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TenantDTOTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_create_tenant_dto(): void
+    public function testCanCreateTenantDto(): void
     {
         $data = [
-            'id' => fake()->uuid(),
-            'name' => 'Test Tenant',
-            'slug' => 'test-tenant',
+            'id'        => fake()->uuid(),
+            'name'      => 'Test Tenant',
+            'slug'      => 'test-tenant',
             'createdAt' => now()->toIso8601String(),
             'updatedAt' => now()->toIso8601String(),
-            'deletedAt' => null
+            'deletedAt' => null,
         ];
 
         $dto = TenantDTO::from($data);
@@ -33,11 +39,11 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($data['deletedAt'], $dto->deletedAt);
     }
 
-    public function test_can_create_tenant_dto_with_minimal_data(): void
+    public function testCanCreateTenantDtoWithMinimalData(): void
     {
         $data = [
             'name' => 'Test Tenant',
-            'slug' => 'test-tenant'
+            'slug' => 'test-tenant',
         ];
 
         $dto = TenantDTO::from($data);
@@ -50,19 +56,19 @@ class TenantDTOTest extends TestCase
         $this->assertNull($dto->deletedAt);
     }
 
-    public function test_can_collect_multiple_tenant_dtos(): void
+    public function testCanCollectMultipleTenantDtos(): void
     {
         $data = [
             [
-                'id' => fake()->uuid(),
+                'id'   => fake()->uuid(),
                 'name' => 'Test Tenant 1',
-                'slug' => 'test-tenant-1'
+                'slug' => 'test-tenant-1',
             ],
             [
-                'id' => fake()->uuid(),
+                'id'   => fake()->uuid(),
                 'name' => 'Test Tenant 2',
-                'slug' => 'test-tenant-2'
-            ]
+                'slug' => 'test-tenant-2',
+            ],
         ];
 
         $dtos = TenantDTO::collect($data);
@@ -72,7 +78,7 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($data[1]['name'], $dtos[1]->name);
     }
 
-    public function test_can_create_tenant_dto_from_model(): void
+    public function testCanCreateTenantDtoFromModel(): void
     {
         $tenant = Tenant::factory()->create([
             'name' => 'Test Tenant',
@@ -89,7 +95,7 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($tenant->deleted_at, $dto->deletedAt);
     }
 
-    public function test_can_convert_tenant_dto_to_array(): void
+    public function testCanConvertTenantDtoToArray(): void
     {
         $dto = new TenantDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',

@@ -6,11 +6,15 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use RuntimeException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use function random_bytes;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class GenerateTenantJwtActionTest extends TestCase
 {
     use RefreshDatabase;
@@ -25,18 +29,18 @@ class GenerateTenantJwtActionTest extends TestCase
         $this->app['config']->set('jwt.ttl', 60);
     }
 
-    public function test_generates_jwt_with_tenant_context(): void
+    public function testGeneratesJwtWithTenantContext(): void
     {
         // Arrange
-        $user = User::factory()->create();
+        $user   = User::factory()->create();
         $tenant = Tenant::factory()->create();
-        $role = 'admin';
+        $role   = 'admin';
 
         // Associate user with tenant
         $user->tenants()->attach($tenant, ['role' => $role]);
 
         // Act
-        $token = GenerateTenantJwtAction::run($user, $tenant);
+        $token   = GenerateTenantJwtAction::run($user, $tenant);
         $payload = JWTAuth::setToken($token)->getPayload();
 
         // Assert
@@ -45,14 +49,14 @@ class GenerateTenantJwtActionTest extends TestCase
         $this->assertEquals($role, $payload->get('user_role'));
     }
 
-    public function test_throws_exception_when_user_does_not_belong_to_tenant(): void
+    public function testThrowsExceptionWhenUserDoesNotBelongToTenant(): void
     {
         // Arrange
-        $user = User::factory()->create();
+        $user   = User::factory()->create();
         $tenant = Tenant::factory()->create();
 
         // Assert & Act
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('User does not belong to this tenant');
 
         GenerateTenantJwtAction::run($user, $tenant);

@@ -2,11 +2,11 @@
 
 namespace App\Domain\Common\Controllers;
 
+use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Domain\Common\DTOs\CountryDTO;
+use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Models\Country;
 use App\Domain\Common\Requests\SearchCountryRequest;
-use App\Domain\Common\Concerns\HasIndexQuery;
-use App\Domain\Common\Filters\DateRangeFilter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -46,7 +46,7 @@ class CountryController extends Controller
             'code',
             'code3',
             'numericCode' => 'numeric_code',
-            'phoneCode' => 'phone_code',
+            'phoneCode'   => 'phone_code',
             'capital',
             'currency',
             'currencyCode' => 'currency_code',
@@ -61,7 +61,7 @@ class CountryController extends Controller
 
     public function index(SearchCountryRequest $request): JsonResponse
     {
-        $result = $this->getIndexPaginator($request);
+        $result         = $this->getIndexPaginator($request);
         $result['data'] = CountryDTO::collect($result['data']);
 
         return response()->json($result);

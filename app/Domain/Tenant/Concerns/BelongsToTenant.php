@@ -10,8 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 trait BelongsToTenant
 {
+    private static bool $bypassTenantScope = false;
+
     protected static function getCurrentTenantId(): ?string
     {
+        if (static::$bypassTenantScope) {
+            return null;
+        }
+
         /** @var \App\Domain\Auth\Models\User $user */
         $user = Auth::user();
 
@@ -26,8 +32,8 @@ trait BelongsToTenant
         }
 
         // Try user's first tenant
-        if ($user) {
-            return $user->tenants()->first()?->id;
+        if ($user && $user->tenants()->first()?->id) {
+            return $user->tenants()->first()->id;
         }
 
         return null;
@@ -38,13 +44,18 @@ trait BelongsToTenant
         static::creating(function (Model $model) {
             if (!$model->tenant_id) {
                 $model->tenant_id = static::getCurrentTenantId();
+            } elseif (!static::$bypassTenantScope && $model->tenant_id !== static::getCurrentTenantId()) {
+                throw new \RuntimeException('Cannot create record for different tenant');
             }
         });
 
         static::addGlobalScope('tenant', function (Builder $builder) {
-            $tenantId = static::getCurrentTenantId();
-            if ($tenantId) {
-                $builder->where('tenant_id', $tenantId);
+            if (!static::$bypassTenantScope) {
+                $tenantId = static::getCurrentTenantId();
+
+                if ($tenantId) {
+                    $builder->where('tenant_id', $tenantId);
+                }
             }
         });
     }
@@ -56,6 +67,29 @@ trait BelongsToTenant
 
     public function scopeForTenant(Builder $query, string $tenantId): Builder
     {
+        if (!static::$bypassTenantScope && $tenantId !== static::getCurrentTenantId()) {
+            throw new \RuntimeException('Cannot access data from different tenant');
+        }
+
         return $query->where('tenant_id', $tenantId);
+    }
+
+    /**
+     * Temporarily disable tenant scoping for test data setup.
+     * Should only be used in tests!
+     */
+    public static function withoutTenantScope(callable $callback): mixed
+    {
+        if (!app()->environment('testing')) {
+            throw new \RuntimeException('withoutTenantScope can only be used in testing environment');
+        }
+
+        static::$bypassTenantScope = true;
+
+        try {
+            return $callback();
+        } finally {
+            static::$bypassTenantScope = false;
+        }
     }
 }

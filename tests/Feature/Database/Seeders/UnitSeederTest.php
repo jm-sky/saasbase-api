@@ -2,16 +2,21 @@
 
 namespace Tests\Feature\Database\Seeders;
 
-use App\Domain\Common\Models\MeasurementUnit;
 use Database\Seeders\MeasurementUnitSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class MeasurementUnitSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_measurement_unit_seeder_creates_expected_records(): void
+    public function testMeasurementUnitSeederCreatesExpectedRecords(): void
     {
         $this->seed(MeasurementUnitSeeder::class);
 

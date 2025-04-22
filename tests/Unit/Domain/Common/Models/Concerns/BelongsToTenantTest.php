@@ -5,13 +5,20 @@ namespace Tests\Unit\Domain\Common\Models\Concerns;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;
 
     private Contractor $model;
+
     private Tenant $tenant;
 
     protected function setUp(): void
@@ -19,65 +26,87 @@ class BelongsToTenantTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->model = new Contractor();
+        $this->model  = new Contractor();
+
+        // Set current tenant context
+        session(['current_tenant_id' => $this->tenant->id]);
     }
 
-    public function test_model_is_scoped_to_tenant(): void
+    public function testModelIsScopedToTenant(): void
     {
-        session(['current_tenant_id' => $this->tenant->id]);
-
         Contractor::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'name' => 'Test Model'
+            'name'      => 'Test Model',
         ]);
 
+        // Create another contractor for a different tenant, but in a new tenant context
+        $otherTenant = Tenant::factory()->create();
+        session(['current_tenant_id' => $otherTenant->id]);
+
         Contractor::factory()->create([
-            'tenant_id' => Tenant::factory()->create()->id,
-            'name' => 'Other Tenant Model'
+            'tenant_id' => $otherTenant->id,
+            'name'      => 'Other Tenant Model',
         ]);
+
+        // Switch back to original tenant
+        session(['current_tenant_id' => $this->tenant->id]);
 
         $this->assertCount(1, Contractor::all());
         $this->assertEquals('Test Model', Contractor::first()->name);
     }
 
-    public function test_model_automatically_sets_tenant_id_on_create(): void
+    public function testModelAutomaticallySetsTenantIdOnCreate(): void
     {
-        session(['current_tenant_id' => $this->tenant->id]);
-
         $model = Contractor::factory()->create(['name' => 'Test Model']);
 
         $this->assertEquals($this->tenant->id, $model->tenant_id);
     }
 
-    public function test_can_explicitly_set_tenant_id(): void
+    public function testCannotCreateRecordForDifferentTenant(): void
     {
         $otherTenant = Tenant::factory()->create();
 
-        $model = Contractor::factory()->create([
-            'tenant_id' => $otherTenant->id,
-            'name' => 'Test Model'
-        ]);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot create record for different tenant');
 
-        $this->assertEquals($otherTenant->id, $model->tenant_id);
+        Contractor::factory()->create([
+            'tenant_id' => $otherTenant->id,
+            'name'      => 'Test Model',
+        ]);
     }
 
-    public function test_can_query_for_specific_tenant(): void
+    public function testCanQueryOnlyCurrentTenant(): void
     {
-        $otherTenant = Tenant::factory()->create();
-
+        // Create record for current tenant
         Contractor::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'name' => 'Test Model 1'
+            'name'      => 'Test Model 1',
         ]);
+
+        // Create record for other tenant in their context
+        $otherTenant = Tenant::factory()->create();
+        session(['current_tenant_id' => $otherTenant->id]);
 
         Contractor::factory()->create([
             'tenant_id' => $otherTenant->id,
-            'name' => 'Test Model 2'
+            'name'      => 'Test Model 2',
         ]);
 
-        $models = Contractor::forTenant($otherTenant->id)->get();
+        // Switch back and verify we can only see our records
+        session(['current_tenant_id' => $this->tenant->id]);
+        $models = Contractor::forTenant($this->tenant->id)->get();
 
         $this->assertCount(1, $models);
-        $this->assertEquals('Test Model 2', $models->first()->name);
+        $this->assertEquals('Test Model 1', $models->first()->name);
+    }
+
+    public function testCannotQueryDifferentTenant(): void
+    {
+        $otherTenant = Tenant::factory()->create();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot access data from different tenant');
+
+        Contractor::forTenant($otherTenant->id)->get();
     }
 }

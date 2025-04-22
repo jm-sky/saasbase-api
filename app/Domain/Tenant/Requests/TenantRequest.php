@@ -14,6 +14,7 @@ class TenantRequest extends FormRequest
     public function rules(): array
     {
         $uniqueRule = 'unique:tenants,slug';
+
         if ($this->tenant) {
             $uniqueRule .= ',' . $this->tenant->id;
         }
@@ -29,7 +30,7 @@ class TenantRequest extends FormRequest
         return [
             'name.required' => 'The name field is required.',
             'slug.required' => 'The slug field is required.',
-            'slug.unique' => 'This slug is already taken.',
+            'slug.unique'   => 'This slug is already taken.',
         ];
     }
 

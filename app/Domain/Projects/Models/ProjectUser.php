@@ -4,21 +4,20 @@ namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string $id
- * @property string $project_id
- * @property string $user_id
- * @property string $project_role_id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property ?Carbon $deleted_at
- *
- * @property-read Project $project
- * @property-read User $user
- * @property-read ProjectRole $role
+ * @property string      $id
+ * @property string      $project_id
+ * @property string      $user_id
+ * @property string      $project_role_id
+ * @property Carbon      $created_at
+ * @property Carbon      $updated_at
+ * @property ?Carbon     $deleted_at
+ * @property Project     $project
+ * @property User        $user
+ * @property ProjectRole $role
  */
 class ProjectUser extends BaseModel
 {

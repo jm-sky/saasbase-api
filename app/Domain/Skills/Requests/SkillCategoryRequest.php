@@ -14,7 +14,7 @@ class SkillCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -31,7 +31,7 @@ class SkillCategoryRequest extends FormRequest
         $validated = parent::validated();
 
         return [
-            'name' => $validated['name'],
+            'name'        => $validated['name'],
             'description' => $validated['description'] ?? null,
         ];
     }

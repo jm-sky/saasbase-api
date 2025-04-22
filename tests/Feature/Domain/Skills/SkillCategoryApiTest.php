@@ -6,13 +6,20 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class SkillCategoryApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private string $baseUrl = '/api/v1/skill-categories';
+
     private User $user;
 
     protected function setUp(): void
@@ -23,7 +30,7 @@ class SkillCategoryApiTest extends TestCase
         Sanctum::actingAs($this->user);
     }
 
-    public function test_can_list_categories(): void
+    public function testCanListCategories(): void
     {
         $categories = SkillCategory::factory()->count(3)->create();
 
@@ -38,15 +45,16 @@ class SkillCategoryApiTest extends TestCase
                     'description',
                     'createdAt',
                     'updatedAt',
-                    'deletedAt'
-                ]
-            ]);
+                    'deletedAt',
+                ],
+            ])
+        ;
     }
 
-    public function test_can_create_category(): void
+    public function testCanCreateCategory(): void
     {
         $categoryData = [
-            'name' => 'Test Category',
+            'name'        => 'Test Category',
             'description' => 'Test Description',
         ];
 
@@ -59,20 +67,21 @@ class SkillCategoryApiTest extends TestCase
                 'description',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'name' => $categoryData['name'],
+                'name'        => $categoryData['name'],
                 'description' => $categoryData['description'],
-            ]);
+            ])
+        ;
 
         $this->assertDatabaseHas('skill_categories', [
-            'name' => $categoryData['name'],
+            'name'        => $categoryData['name'],
             'description' => $categoryData['description'],
         ]);
     }
 
-    public function test_cannot_create_category_with_invalid_data(): void
+    public function testCannotCreateCategoryWithInvalidData(): void
     {
         $categoryData = [
             'name' => '',
@@ -81,10 +90,11 @@ class SkillCategoryApiTest extends TestCase
         $response = $this->postJson($this->baseUrl, $categoryData);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name']);
+            ->assertJsonValidationErrors(['name'])
+        ;
     }
 
-    public function test_can_show_category(): void
+    public function testCanShowCategory(): void
     {
         $category = SkillCategory::factory()->create();
 
@@ -97,21 +107,22 @@ class SkillCategoryApiTest extends TestCase
                 'description',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'id' => $category->id,
-                'name' => $category->name,
+                'id'          => $category->id,
+                'name'        => $category->name,
                 'description' => $category->description,
-            ]);
+            ])
+        ;
     }
 
-    public function test_can_update_category(): void
+    public function testCanUpdateCategory(): void
     {
         $category = SkillCategory::factory()->create();
 
         $updateData = [
-            'name' => 'Updated Category',
+            'name'        => 'Updated Category',
             'description' => 'Updated Description',
         ];
 
@@ -124,21 +135,22 @@ class SkillCategoryApiTest extends TestCase
                 'description',
                 'createdAt',
                 'updatedAt',
-                'deletedAt'
+                'deletedAt',
             ])
             ->assertJson([
-                'name' => $updateData['name'],
+                'name'        => $updateData['name'],
                 'description' => $updateData['description'],
-            ]);
+            ])
+        ;
 
         $this->assertDatabaseHas('skill_categories', [
-            'id' => $category->id,
-            'name' => $updateData['name'],
+            'id'          => $category->id,
+            'name'        => $updateData['name'],
             'description' => $updateData['description'],
         ]);
     }
 
-    public function test_can_delete_category(): void
+    public function testCanDeleteCategory(): void
     {
         $category = SkillCategory::factory()->create();
 
@@ -148,7 +160,7 @@ class SkillCategoryApiTest extends TestCase
         $this->assertSoftDeleted('skill_categories', ['id' => $category->id]);
     }
 
-    public function test_returns_404_for_nonexistent_category(): void
+    public function testReturns404ForNonexistentCategory(): void
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 

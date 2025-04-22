@@ -4,13 +4,19 @@ namespace Tests\Feature\Tenant;
 
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TenantControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_index_returns_all_tenants(): void
+    public function testIndexReturnsAllTenants(): void
     {
         // Clear any existing tenants
         Tenant::query()->forceDelete();
@@ -29,7 +35,8 @@ class TenantControllerTest extends TestCase
                     'createdAt',
                     'updatedAt',
                 ],
-            ]);
+            ])
+        ;
 
         // Verify we got exactly the tenants we created
         $responseIds = collect($response->json())->pluck('id')->sort()->values();
@@ -37,7 +44,7 @@ class TenantControllerTest extends TestCase
         $this->assertEquals($expectedIds, $responseIds);
     }
 
-    public function test_store_creates_new_tenant(): void
+    public function testStoreCreatesNewTenant(): void
     {
         $data = [
             'name' => 'Test Tenant',
@@ -54,12 +61,13 @@ class TenantControllerTest extends TestCase
                 'createdAt',
                 'updatedAt',
             ])
-            ->assertJson($data);
+            ->assertJson($data)
+        ;
 
         $this->assertDatabaseHas('tenants', $data);
     }
 
-    public function test_show_returns_specific_tenant(): void
+    public function testShowReturnsSpecificTenant(): void
     {
         $tenant = Tenant::factory()->create();
 
@@ -74,16 +82,17 @@ class TenantControllerTest extends TestCase
                 'updatedAt',
             ])
             ->assertJson([
-                'id' => $tenant->id,
+                'id'   => $tenant->id,
                 'name' => $tenant->name,
                 'slug' => $tenant->slug,
-            ]);
+            ])
+        ;
     }
 
-    public function test_update_modifies_existing_tenant(): void
+    public function testUpdateModifiesExistingTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $data = [
+        $data   = [
             'name' => 'Updated Tenant',
             'slug' => 'updated-tenant',
         ];
@@ -98,12 +107,13 @@ class TenantControllerTest extends TestCase
                 'createdAt',
                 'updatedAt',
             ])
-            ->assertJson($data);
+            ->assertJson($data)
+        ;
 
         $this->assertDatabaseHas('tenants', $data);
     }
 
-    public function test_destroy_deletes_tenant(): void
+    public function testDestroyDeletesTenant(): void
     {
         $tenant = Tenant::factory()->create();
 
