@@ -119,7 +119,7 @@ trait BelongsToTenant
 
         return $query->where('tenant_id', $tenantId);
     }
-    
+
     /**
      * Execute a callback without tenant scoping.
      *
