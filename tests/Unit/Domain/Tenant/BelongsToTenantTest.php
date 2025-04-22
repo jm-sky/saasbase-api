@@ -4,7 +4,7 @@ namespace Tests\Unit\Domain\Tenant;
 
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
-use App\Exceptions\TenantNotFoundException;
+use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
