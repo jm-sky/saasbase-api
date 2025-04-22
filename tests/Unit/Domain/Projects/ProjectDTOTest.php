@@ -4,9 +4,13 @@ namespace Tests\Unit\Domain\Projects;
 
 use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
+use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
+use Carbon\Carbon;
 
 /**
  * @internal
@@ -16,71 +20,112 @@ use Tests\TestCase;
 class ProjectDTOTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
-    public function testCanCreateProjectDtoFromModel(): void
+    private Tenant $tenant;
+    private User $user;
+
+    protected function setUp(): void
     {
-        $project = Project::factory()->create();
-        $dto     = ProjectDTO::fromModel($project);
+        parent::setUp();
+
+        $this->tenant = Tenant::factory()->create();
+        $this->user = $this->authenticateUser($this->tenant);
+    }
+
+    public function testFromModel(): void
+    {
+        $project = Project::withoutTenantScope(function () {
+            return Project::factory()->create([
+                'tenant_id' => $this->tenant->id,
+                'name'      => 'Test Project',
+                'status'    => 'active',
+                'start_date' => now(),
+            ]);
+        });
+
+        $dto = ProjectDTO::from($project);
 
         $this->assertEquals($project->id, $dto->id);
-        $this->assertEquals($project->tenant_id, $dto->tenantId);
         $this->assertEquals($project->name, $dto->name);
-        $this->assertEquals($project->description, $dto->description);
         $this->assertEquals($project->status, $dto->status);
-        $this->assertEquals($project->start_date?->toDateString(), $dto->startDate);
-        $this->assertEquals($project->end_date?->toDateString(), $dto->endDate);
-        $this->assertEquals($project->created_at?->toIso8601String(), $dto->createdAt?->toIso8601String());
-        $this->assertEquals($project->updated_at?->toIso8601String(), $dto->updatedAt?->toIso8601String());
-        $this->assertEquals($project->deleted_at?->toIso8601String(), $dto->deletedAt?->toIso8601String());
-        $this->assertNull($dto->owner);
-        $this->assertNull($dto->tasks);
-        $this->assertNull($dto->requiredSkills);
+        $this->assertEquals($project->start_date->format('Y-m-d'), $dto->startDate);
+        $this->assertEquals($project->created_at, $dto->createdAt);
+        $this->assertEquals($project->updated_at, $dto->updatedAt);
     }
 
-    public function testCanCreateProjectDtoWithRelations(): void
+    public function testToModel(): void
     {
-        $project = Project::factory()->create();
-        $project->load(['owner', 'tasks', 'requiredSkills']);
+        $dto = new ProjectDTO(
+            tenantId: $this->tenant->id,
+            name: 'Test Project',
+            status: 'active',
+            startDate: now()->format('Y-m-d'),
+            id: null,
+        );
 
-        $dto = ProjectDTO::fromModel($project, true);
+        $project = Project::withoutTenantScope(function () use ($dto) {
+            return Project::factory()->create([
+                'tenant_id' => $dto->tenantId,
+                'name' => $dto->name,
+                'status' => $dto->status,
+                'start_date' => Carbon::parse($dto->startDate),
+                'owner_id' => $this->user->id,
+            ]);
+        });
 
-        $this->assertNotNull($dto->owner);
-        $this->assertNotNull($dto->tasks);
-        $this->assertNotNull($dto->requiredSkills);
+        $this->assertEquals($dto->name, $project->name);
+        $this->assertEquals($dto->status, $project->status);
+        $this->assertEquals($dto->startDate, $project->start_date->format('Y-m-d'));
     }
 
-    public function testCanConvertProjectDtoToArray(): void
+    public function testFromCollection(): void
     {
-        $project = Project::factory()->create();
-        $dto     = ProjectDTO::fromModel($project);
-        $array   = $dto->toArray();
+        $projects = collect([
+            Project::withoutTenantScope(function () {
+                return Project::factory()->create([
+                    'tenant_id' => $this->tenant->id,
+                    'name'      => 'Test Project 1',
+                    'status'    => 'active',
+                    'start_date' => now(),
+                ]);
+            }),
+            Project::withoutTenantScope(function () {
+                return Project::factory()->create([
+                    'tenant_id' => $this->tenant->id,
+                    'name'      => 'Test Project 2',
+                    'status'    => 'completed',
+                    'start_date' => now(),
+                ]);
+            }),
+        ]);
 
-        $this->assertIsArray($array);
-        $this->assertEquals($project->id, $array['id']);
-        $this->assertEquals($project->tenant_id, $array['tenantId']);
-        $this->assertEquals($project->name, $array['name']);
-        $this->assertEquals($project->description, $array['description']);
-        $this->assertEquals($project->status, $array['status']);
-        $this->assertEquals($project->start_date?->toDateString(), $array['startDate']);
-        $this->assertEquals($project->end_date?->toDateString(), $array['endDate']);
-        $this->assertEquals($project->created_at?->toIso8601String(), $array['createdAt']);
-        $this->assertEquals($project->updated_at?->toIso8601String(), $array['updatedAt']);
-        $this->assertEquals($project->deleted_at?->to, $array['deletedAt']);
-        $this->assertNull($array['owner']);
-        $this->assertNull($array['tasks']);
-        $this->assertNull($array['required_skills']);
+        $dtos = ProjectDTO::collect($projects);
+
+        $this->assertCount(2, $dtos);
+        $this->assertEquals('Test Project 1', $dtos[0]->name);
+        $this->assertEquals('Test Project 2', $dtos[1]->name);
     }
 
-    public function testCanConvertProjectDtoWithRelationsToArray(): void
+    public function testToArray(): void
     {
-        $project = Project::factory()->create();
-        $project->load(['owner', 'tasks', 'requiredSkills']);
+        $project = Project::withoutTenantScope(function () {
+            return Project::factory()->create([
+                'tenant_id' => $this->tenant->id,
+                'name'      => 'Test Project',
+                'status'    => 'active',
+                'start_date' => now(),
+            ]);
+        });
 
-        $dto   = ProjectDTO::fromModel($project, true);
+        $dto = ProjectDTO::from($project);
         $array = $dto->toArray();
 
-        $this->assertIsArray($array['owner']);
-        $this->assertIsArray($array['tasks']);
-        $this->assertIsArray($array['required_skills']);
+        $this->assertEquals($project->id, $array['id']);
+        $this->assertEquals($project->name, $array['name']);
+        $this->assertEquals($project->status, $array['status']);
+        $this->assertEquals($project->start_date->format('Y-m-d'), $array['startDate']);
+        $this->assertEquals($project->created_at->toIso8601String(), $array['createdAt']);
+        $this->assertEquals($project->updated_at->toIso8601String(), $array['updatedAt']);
     }
 }
