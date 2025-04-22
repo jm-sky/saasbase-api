@@ -5,11 +5,12 @@ namespace Tests\Feature\Domain\Skills;
 use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -19,6 +20,7 @@ use Tests\TestCase;
 class UserSkillApiTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     private string $baseUrl = '/api/v1/user-skills';
 
@@ -26,12 +28,14 @@ class UserSkillApiTest extends TestCase
 
     private Skill $skill;
 
+    private Tenant $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user  = User::factory()->create();
-        $this->skill = Skill::factory()->create();
-        Sanctum::actingAs($this->user);
+        $this->tenant = Tenant::factory()->create();
+        $this->user   = $this->authenticateUser($this->tenant);
+        $this->skill  = Skill::factory()->create();
     }
 
     public function testCanListUserSkills(): void

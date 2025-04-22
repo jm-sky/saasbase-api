@@ -8,10 +8,10 @@ use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -21,6 +21,7 @@ use Tests\TestCase;
 class ProductApiTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     private string $baseUrl = '/api/v1/products';
 
@@ -36,17 +37,10 @@ class ProductApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user   = User::factory()->create();
-
-        // Create tenant membership and set as current tenant
-        $this->user->tenants()->attach($this->tenant->id, ['role' => 'member']);
-        session(['current_tenant_id' => $this->tenant->id]);
+        $this->user   = $this->authenticateUser($this->tenant);
 
         $this->unit    = MeasurementUnit::factory()->create();
         $this->vatRate = VatRate::factory()->create();
-
-        // Authenticate user after setting up tenant
-        Sanctum::actingAs($this->user);
     }
 
     public function testCanListProducts(): void
@@ -135,23 +129,24 @@ class ProductApiTest extends TestCase
         ;
 
         $this->assertDatabaseHas('products', [
-            'tenant_id'   => $this->tenant->id,
+            'tenant_id'   => $productData['tenantId'],
             'name'        => $productData['name'],
             'description' => $productData['description'],
-            'unit_id'     => $this->unit->id,
+            'unit_id'     => $productData['unitId'],
             'price_net'   => $productData['priceNet'],
-            'vat_rate_id' => $this->vatRate->id,
+            'vat_rate_id' => $productData['vatRateId'],
         ]);
     }
 
     public function testCannotCreateProductWithInvalidData(): void
     {
         $productData = [
-            'tenantId'  => 'invalid-uuid',
-            'name'      => '',
-            'unitId'    => 'invalid-uuid',
-            'priceNet'  => -100,
-            'vatRateId' => 'invalid-uuid',
+            'tenantId'    => 'invalid-uuid',
+            'name'        => '',
+            'description' => '',
+            'unitId'      => 'invalid-uuid',
+            'priceNet'    => 'invalid-price',
+            'vatRateId'   => 'invalid-uuid',
         ];
 
         $response = $this->postJson($this->baseUrl, $productData);
