@@ -4,10 +4,11 @@ namespace Tests\Feature\Domain\Common;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Country;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -17,16 +18,19 @@ use Tests\TestCase;
 class CountryApiTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     private string $baseUrl = '/api/v1/countries';
 
     private User $user;
 
+    private Tenant $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
-        Sanctum::actingAs($this->user);
+        $this->tenant = Tenant::factory()->create();
+        $this->user   = $this->authenticateUser($this->tenant);
     }
 
     public function testCanListCountries(): void

@@ -17,9 +17,10 @@ class ContractorDTOTest extends TestCase
 {
     public function testCanCreateContractorDtoFromModel(): void
     {
-        $tenant     = Tenant::factory()->create();
+        $tenant = Tenant::factory()->create();
+        session(['current_tenant_id' => $tenant->id]);
+
         $contractor = Contractor::factory()->create([
-            'tenant_id'   => $tenant->id,
             'name'        => 'Test Contractor',
             'email'       => 'test@example.com',
             'phone'       => '1234567890',

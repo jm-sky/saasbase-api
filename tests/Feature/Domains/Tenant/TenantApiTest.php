@@ -5,9 +5,9 @@ namespace Tests\Feature\Domains\Tenant;
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -17,16 +17,19 @@ use Tests\TestCase;
 class TenantApiTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     private string $baseUrl = '/api/v1/tenants';
 
     private User $user;
 
+    private Tenant $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
-        Sanctum::actingAs($this->user);
+        $this->tenant = Tenant::factory()->create();
+        $this->user   = $this->authenticateUser($this->tenant);
     }
 
     public function testCanListTenants(): void
