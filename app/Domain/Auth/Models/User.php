@@ -112,7 +112,7 @@ class User extends Authenticatable implements JWTSubject
      * Priority order:
      * 1. JWT token claims
      * 2. Session
-     * 3. First active membership
+     * 3. First active membership.
      */
     public function getTenantId(): ?string
     {
@@ -123,15 +123,18 @@ class User extends Authenticatable implements JWTSubject
 
         // Then try session
         $tenantId = Session::get('current_tenant_id');
+
         if ($tenantId) {
             return $tenantId;
         }
 
         // Finally, try first active membership
         $membership = $this->tenantMemberships()->first();
+
         if ($membership) {
             // Store in session for future use
             Session::put('current_tenant_id', $membership->tenant_id);
+
             return $membership->tenant_id;
         }
 

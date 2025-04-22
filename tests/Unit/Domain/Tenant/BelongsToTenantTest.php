@@ -8,21 +8,28 @@ use App\Exceptions\TenantNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;
 
     private Contractor $model;
+
     private Tenant $tenant;
+
     private Tenant $otherTenant;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tenant = Tenant::factory()->create();
+        $this->tenant      = Tenant::factory()->create();
         $this->otherTenant = Tenant::factory()->create();
-        $this->model = new Contractor();
+        $this->model       = new Contractor();
 
         // Set current tenant context
         session(['current_tenant_id' => $this->tenant->id]);
@@ -33,12 +40,12 @@ class BelongsToTenantTest extends TestCase
         // Create records for both tenants
         Contractor::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'name' => 'Test Model',
+            'name'      => 'Test Model',
         ]);
 
         Contractor::factory()->create([
             'tenant_id' => $this->otherTenant->id,
-            'name' => 'Other Tenant Model',
+            'name'      => 'Other Tenant Model',
         ]);
 
         // Should only see records for current tenant
@@ -59,16 +66,16 @@ class BelongsToTenantTest extends TestCase
 
         Contractor::factory()->create([
             'tenant_id' => $this->otherTenant->id,
-            'name' => 'Test Model',
+            'name'      => 'Test Model',
         ]);
     }
 
     public function testThrowsExceptionWhenTenantContextNotFound(): void
     {
         session()->forget('current_tenant_id');
-        
+
         $this->expectException(TenantNotFoundException::class);
-        
+
         Contractor::factory()->create(['name' => 'Test Model']);
     }
 
@@ -77,13 +84,13 @@ class BelongsToTenantTest extends TestCase
         // Create records for both tenants
         Contractor::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'name' => 'Test Model',
+            'name'      => 'Test Model',
         ]);
 
         Contractor::withoutTenantScope(function () {
             Contractor::factory()->create([
                 'tenant_id' => $this->otherTenant->id,
-                'name' => 'Other Tenant Model',
+                'name'      => 'Other Tenant Model',
             ]);
         });
 
@@ -99,19 +106,20 @@ class BelongsToTenantTest extends TestCase
         // Create records for both tenants
         Contractor::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'name' => 'Test Model',
+            'name'      => 'Test Model',
         ]);
 
         Contractor::factory()->create([
             'tenant_id' => $this->otherTenant->id,
-            'name' => 'Other Tenant Model',
+            'name'      => 'Other Tenant Model',
         ]);
 
         $otherTenantModels = Contractor::withoutTenant()
             ->where('tenant_id', $this->otherTenant->id)
-            ->get();
+            ->get()
+        ;
 
         $this->assertCount(1, $otherTenantModels);
         $this->assertEquals('Other Tenant Model', $otherTenantModels->first()->name);
     }
-} 
+}

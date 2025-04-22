@@ -3,8 +3,8 @@
 namespace App\Domain\Tenant\Concerns;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Exceptions\TenantNotFoundException;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,18 +12,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 /**
- * Trait BelongsToTenant
- * 
+ * Trait BelongsToTenant.
+ *
  * This trait implements multi-tenancy at the model level by:
  * 1. Automatically scoping queries to the current tenant
  * 2. Ensuring new records are assigned to the current tenant
  * 3. Preventing access to records from other tenants
- * 
+ *
  * Usage:
  * ```php
  * use BelongsToTenant;
  * ```
- * 
+ *
  * To temporarily disable tenant scoping:
  * ```php
  * Model::withoutTenantScope(function () {
@@ -40,12 +40,12 @@ trait BelongsToTenant
 
     /**
      * Get the current tenant ID from various sources.
-     * 
+     *
      * Priority:
      * 1. JWT token claims
      * 2. Session
      * 3. User's first tenant
-     * 
+     *
      * @throws TenantNotFoundException
      */
     protected static function getCurrentTenantId(): string
@@ -71,6 +71,7 @@ trait BelongsToTenant
         if ($user && $user->tenants()->first()?->id) {
             $tenantId = $user->tenants()->first()->id;
             Session::put('current_tenant_id', $tenantId);
+
             return $tenantId;
         }
 
@@ -79,7 +80,7 @@ trait BelongsToTenant
 
     /**
      * Boot the trait.
-     * 
+     *
      * This method:
      * 1. Adds a global scope to filter by tenant
      * 2. Ensures new records are assigned to current tenant
@@ -112,13 +113,15 @@ trait BelongsToTenant
 
     /**
      * Execute a callback without tenant scoping.
-     * 
+     *
      * @param callable $callback The callback to execute
+     *
      * @return mixed The callback result
      */
     public static function withoutTenantScope(callable $callback): mixed
     {
         static::$bypassTenantScope = true;
+
         try {
             return $callback();
         } finally {
