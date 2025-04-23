@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Domains\Tenant;
+namespace Tests\Feature\Domain\Tenant;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
