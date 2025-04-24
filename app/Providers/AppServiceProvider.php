@@ -11,6 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->register(\App\Domain\Tenant\TenantEventServiceProvider::class);
     }
 
     /**
