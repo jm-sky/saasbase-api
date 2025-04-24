@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Auth\Controllers\OAuthController;
 use App\Domain\Auth\Controllers\UserSettingsController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
@@ -30,6 +31,11 @@ Route::post('/v1/auth/logout', [AuthController::class, 'logout']);
 Route::post('/v1/auth/register', [AuthController::class, 'register']);
 
 Route::middleware('auth:api')->post('/v1/auth/refresh', [AuthController::class, 'refresh']);
+
+Route::prefix('v1/oauth')->group(function () {
+    Route::get('{provider}/redirect', [OAuthController::class, 'redirect']);
+    Route::get('{provider}/callback', [OAuthController::class, 'callback']);
+});
 
 Route::prefix('v1')->group(function () {
     Route::apiResource('tenants', TenantController::class);
