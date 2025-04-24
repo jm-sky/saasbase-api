@@ -30,12 +30,12 @@ Route::prefix('v1')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('register', [AuthController::class, 'register']);
     });
-    
+
     Route::prefix('oauth')->group(function () {
         Route::get('{provider}/redirect', [OAuthController::class, 'redirect']);
         Route::get('{provider}/callback', [OAuthController::class, 'callback']);
     });
-    
+
     Route::apiResource('tenants', TenantController::class);
 
     Route::middleware('auth:api')->group(function () {

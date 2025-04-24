@@ -15,7 +15,7 @@ use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 class AuthController extends Controller
 {
     use RespondsWithToken;
-    
+
     public function __construct(
         private readonly RegisterUserAction $registerUserAction
     ) {

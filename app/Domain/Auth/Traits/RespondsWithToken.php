@@ -23,6 +23,7 @@ trait RespondsWithToken
                 true,        // httpOnly
                 false,       // raw
                 'Strict'     // SameSite
-            ));
+            ))
+        ;
     }
 }
