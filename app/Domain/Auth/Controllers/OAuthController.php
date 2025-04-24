@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Traits\RespondWithToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -10,6 +11,8 @@ use Laravel\Socialite\Facades\Socialite;
 
 class OAuthController extends Controller
 {
+    use RespondsWithToken;
+
     public function redirect(string $provider)
     {
         return Socialite::driver($provider)->stateless()->redirect();
@@ -22,7 +25,7 @@ class OAuthController extends Controller
         $user = User::firstOrCreate(
             ['email' => $socialUser->getEmail()],
             [
-                'first_name' => $this->extractFirstName($socialUser->getName()),
+                'first_name' => $this->extractFirstName($socialUser->getName(), $socialUser->getEmail()),
                 'last_name' => $this->extractLastName($socialUser->getName()),
                 'email' => $socialUser->getEmail(),
                 'password' => bcrypt(Str::random(40)),
@@ -34,39 +37,25 @@ class OAuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-    protected function respondWithToken($token)
+    private function extractFirstName(?string $fullName, ?string $fallback = null): string
     {
-        return response()
-            ->json([
-                'accessToken' => $token,
-                'tokenType'   => 'bearer',
-                'expiresIn'   => auth()->factory()->getTTL() * 60,
-                'user'        => auth()->user(),
-            ])
-            ->withCookie(cookie(
-                'refresh_token',
-                $token,
-                60 * 24 * 7, // 7 dni
-                '/',         // ścieżka
-                null,        // domena
-                true,        // secure
-                true,        // httpOnly
-                false,       // raw
-                'Strict'     // SameSite
-            ));
+    if (empty(trim($fullName))) {
+        return $fallback ? explode('@', $fallback)[0] : 'OAuth';
     }
 
-    private function extractFirstName(?string $fullName): string
-    {
-        if (!$fullName) return 'NoName';
-        return explode(' ', trim($fullName))[0];
+    $parts = preg_split('/\s+/', trim($fullName));
+    return $parts[0] ?? 'OAuth';
     }
 
     private function extractLastName(?string $fullName): string
     {
-        if (!$fullName) return '';
-        $parts = explode(' ', trim($fullName));
-        array_shift($parts);
-        return implode(' ', $parts); // everything after the first name
+    if (empty(trim($fullName))) {
+        return '';
+    }
+
+    $parts = preg_split('/\s+/', trim($fullName));
+    array_shift($parts); // Remove the first name
+
+    return count($parts) > 0 ? implode(' ', $parts) : '';
     }
 }
