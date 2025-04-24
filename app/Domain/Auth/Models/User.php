@@ -108,6 +108,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
 
         if ($membership) {
             Session::put('current_tenant_id', $membership->tenant_id);
+
             return $membership->tenant_id;
         }
 
@@ -138,7 +139,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     {
         return $this->belongsToMany(Tenant::class, 'tenant_users')
             ->withPivot(['role'])
-            ->withTimestamps();
+            ->withTimestamps()
+        ;
     }
 
     protected static function newFactory()
@@ -152,14 +154,16 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     {
         $this->addMediaCollection('profile')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
+        ;
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->fit(Manipulations::FIT_CROP, 100, 100)
-            ->nonQueued();
+            ->nonQueued()
+        ;
     }
 
     // Optional accessor

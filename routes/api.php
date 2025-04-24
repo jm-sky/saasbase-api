@@ -46,7 +46,7 @@ Route::prefix('v1')->group(function () {
             Route::get('profile-image', [UserProfileImageController::class, 'show']);
             Route::delete('profile-image', [UserProfileImageController::class, 'delete']);
         });
-        
+
         Route::apiResource('contractors', ContractorController::class);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('skills', SkillController::class);

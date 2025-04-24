@@ -2,8 +2,8 @@
 
 namespace App\Domain\Auth\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class UserProfileImageController extends Controller
 {
@@ -18,30 +18,31 @@ class UserProfileImageController extends Controller
         $user->clearMediaCollection('profile');
 
         $user->addMediaFromRequest('image')
-             ->toMediaCollection('profile');
+            ->toMediaCollection('profile')
+        ;
 
         return response()->json([
-            'message' => 'Profile image uploaded successfully.',
+            'message'     => 'Profile image uploaded successfully.',
             'originalUrl' => $user->getFirstMediaUrl('profile'),
-            'thumbUrl' => $user->getFirstMediaUrl('profile', 'thumb'),
+            'thumbUrl'    => $user->getFirstMediaUrl('profile', 'thumb'),
         ]);
     }
 
     public function show(Request $request)
     {
-        $user = $request->user();
+        $user  = $request->user();
         $media = $user->getFirstMedia('profile');
 
-        if (! $media) {
+        if (!$media) {
             return response()->json(['message' => 'No profile image found.'], 404);
         }
 
         return response()->json([
             'originalUrl' => $media->getUrl(),
-            'thumbUrl' => $media->getUrl('thumb'),
-            'name' => $media->file_name,
-            'size' => $media->size,
-            'mimeType' => $media->mime_type,
+            'thumbUrl'    => $media->getUrl('thumb'),
+            'name'        => $media->file_name,
+            'size'        => $media->size,
+            'mimeType'    => $media->mime_type,
         ]);
     }
 

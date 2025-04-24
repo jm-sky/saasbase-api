@@ -5,8 +5,7 @@ return [
 
     'prefix' => '',
 
-    'path_generator' => 
-Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
+    'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
 
     'url_generator' => null,
 
