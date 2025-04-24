@@ -3,7 +3,7 @@
 namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Auth\Traits\RespondWithToken;
+use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
