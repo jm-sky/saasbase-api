@@ -22,7 +22,8 @@ class OAuthController extends Controller
         $user = User::firstOrCreate(
             ['email' => $socialUser->getEmail()],
             [
-                'first_name' => $socialUser->getName() ?? 'NoName',
+                'first_name' => $this->extractFirstName($socialUser->getName()),
+                'last_name' => $this->extractLastName($socialUser->getName()),
                 'email' => $socialUser->getEmail(),
                 'password' => bcrypt(Str::random(40)),
             ]
@@ -53,5 +54,19 @@ class OAuthController extends Controller
                 false,       // raw
                 'Strict'     // SameSite
             ));
+    }
+
+    private function extractFirstName(?string $fullName): string
+    {
+        if (!$fullName) return 'NoName';
+        return explode(' ', trim($fullName))[0];
+    }
+
+    private function extractLastName(?string $fullName): string
+    {
+        if (!$fullName) return '';
+        $parts = explode(' ', trim($fullName));
+        array_shift($parts);
+        return implode(' ', $parts); // everything after the first name
     }
 }
