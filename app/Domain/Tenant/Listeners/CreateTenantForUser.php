@@ -3,9 +3,9 @@
 namespace App\Domain\Tenant\Listeners;
 
 use App\Domain\Auth\Events\UserCreated;
+use App\Domain\Tenant\Events\TenantCreated;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Support\Str;
-use App\Domain\Tenant\Events\TenantCreated;
 
 class CreateTenantForUser
 {
@@ -14,9 +14,9 @@ class CreateTenantForUser
         $user = $event->user;
 
         $tenant = Tenant::create([
-            'id' => Str::uuid(),
+            'id'       => Str::uuid(),
             'owner_id' => $user->id,
-            'name' => $user->name . "'s Workspace", // adjust as needed
+            'name'     => $user->name . "'s Workspace", // adjust as needed
         ]);
 
         event(new TenantCreated($tenant));
