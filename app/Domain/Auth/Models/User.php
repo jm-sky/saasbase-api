@@ -18,6 +18,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -40,19 +45,15 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
  * @property Collection<int, Tenant>                              $tenants
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, HasMedia
 {
     use HasApiTokens;
     use HasFactory;
     use HasUuids;
     use Notifiable;
     use SoftDeletes;
+    use InteractsWithMedia;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'first_name',
         'last_name',
@@ -65,21 +66,11 @@ class User extends Authenticatable implements JWTSubject
         'avatar_url',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
@@ -87,17 +78,11 @@ class User extends Authenticatable implements JWTSubject
         'is_admin'          => 'boolean',
     ];
 
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     */
     public function getJWTIdentifier(): string
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     */
     public function getJWTCustomClaims(): array
     {
         return [
@@ -107,32 +92,21 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    /**
-     * Get the user's current tenant ID from JWT payload, session, or active membership.
-     * Priority order:
-     * 1. JWT token claims
-     * 2. Session
-     * 3. First active membership.
-     */
     public function getTenantId(): ?string
     {
-        // First try to get from JWT token if available
         if (Auth::check() && Auth::payload()?->get('tenant_id')) {
             return Auth::payload()->get('tenant_id');
         }
 
-        // Then try session
         $tenantId = Session::get('current_tenant_id');
 
         if ($tenantId) {
             return $tenantId;
         }
 
-        // Finally, try first active membership
         $membership = $this->tenantMemberships()->first();
 
         if ($membership) {
-            // Store in session for future use
             Session::put('current_tenant_id', $membership->tenant_id);
 
             return $membership->tenant_id;
@@ -141,33 +115,21 @@ class User extends Authenticatable implements JWTSubject
         return null;
     }
 
-    /**
-     * Get the user's settings.
-     */
     public function settings(): HasOne
     {
         return $this->hasOne(UserSettings::class);
     }
 
-    /**
-     * Get the user's OAuth accounts.
-     */
     public function oauthAccounts(): HasMany
     {
         return $this->hasMany(OAuthAccount::class);
     }
 
-    /**
-     * Get the user's tenant memberships.
-     */
     public function tenantMemberships(): HasMany
     {
         return $this->hasMany(UserTenant::class);
     }
 
-    /**
-     * Get the user's skills.
-     */
     public function skills(): HasMany
     {
         return $this->hasMany(\App\Domain\Skills\Models\UserSkill::class);
@@ -184,5 +146,34 @@ class User extends Authenticatable implements JWTSubject
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+
+    // === MEDIA LIBRARY CONFIG ===
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile')
+            ->singleFile()
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
+        ;
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->fit(Manipulations::FIT_CROP, 100, 100)
+            ->nonQueued()
+        ;
+    }
+
+    // Optional accessor
+    public function getAvatarThumbUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('profile', 'thumb');
+    }
+
+    public function getAvatarOriginalUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('profile');
     }
 }

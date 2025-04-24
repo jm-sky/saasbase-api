@@ -15,9 +15,11 @@
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.7",
         "laravel/tinker": "^2.10.1",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "lorisleiva/laravel-actions": "^2.9",
         "ramsey/uuid": "^4.7",
         "spatie/laravel-data": "^4.15",
+        "spatie/laravel-medialibrary": "^11.0",
         "spatie/laravel-query-builder": "^6.3",
         "tymon/jwt-auth": "^2.2"
     },
