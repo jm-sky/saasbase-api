@@ -2,8 +2,8 @@
 
 namespace App\Domain\Auth\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Domain\Auth\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -23,7 +23,6 @@ class OAuthController extends Controller
             ['email' => $socialUser->getEmail()],
             [
                 'first_name' => $socialUser->getName() ?? 'NoName',
-                'last_name' => '',
                 'email' => $socialUser->getEmail(),
                 'password' => bcrypt(Str::random(40)),
             ]
@@ -31,9 +30,28 @@ class OAuthController extends Controller
 
         $token = auth()->login($user); // JWT
 
-        return response()->json([
-            'token' => $token,
-            'user' => $user,
-        ]);
+        return $this->respondWithToken($token);
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()
+            ->json([
+                'accessToken' => $token,
+                'tokenType'   => 'bearer',
+                'expiresIn'   => auth()->factory()->getTTL() * 60,
+                'user'        => auth()->user(),
+            ])
+            ->withCookie(cookie(
+                'refresh_token',
+                $token,
+                60 * 24 * 7, // 7 dni
+                '/',         // ścieżka
+                null,        // domena
+                true,        // secure
+                true,        // httpOnly
+                false,       // raw
+                'Strict'     // SameSite
+            ));
     }
 }
