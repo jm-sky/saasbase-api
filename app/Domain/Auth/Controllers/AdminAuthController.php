@@ -20,7 +20,7 @@ class AdminAuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('web')->attempt($credentials)) {
             $user = Auth::user();
 
             if (!$user->isAdmin()) {
