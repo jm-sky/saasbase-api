@@ -48,12 +48,12 @@ class DatabaseSeeder extends Seeder
             MeasurementUnitSeeder::class,
         ]);
 
-        Contractor::factory(5)->create([
-            'tenant_id' => $tenant->id,
-        ]);
+        // Contractor::factory(5)->create([
+        //     'tenant_id' => $tenant->id,
+        // ]);
 
-        Product::factory(5)->create([
-            'tenant_id' => $tenant->id,
-        ]);
+        // Product::factory(5)->create([
+        //     'tenant_id' => $tenant->id,
+        // ]);
     }
 }
