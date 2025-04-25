@@ -12,10 +12,10 @@ Route::get('/', function () {
 
 Route::get('admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('admin/login', [AdminAuthController::class, 'login']);
-Route::post('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+Route::any('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 Route::get('/debug-admin', function () {
-    $user = Auth::user();
+    $user = Auth::guard('web')->user();
 
     if (!$user) {
         return response('Not logged in.', 403);
