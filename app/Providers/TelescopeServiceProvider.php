@@ -9,6 +9,13 @@ use Laravel\Telescope\TelescopeApplicationServiceProvider;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
+    public function boot(): void
+    {
+        parent::boot();
+
+        $this->gate();
+    }
+    
     /**
      * Register any application services.
      */
