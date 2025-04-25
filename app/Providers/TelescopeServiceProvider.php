@@ -10,13 +10,6 @@ use Laravel\Telescope\TelescopeApplicationServiceProvider;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
-    public function boot(): void
-    {
-        parent::boot();
-
-        $this->gate();
-    }
-
     /**
      * Register any application services.
      */
@@ -65,10 +58,19 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewTelescope', function () {
-            $user = Auth::guard('web')->user();
+        Gate::define('viewTelescope', function ($user) {
+            return $user->isAdmin();
+        });
+    }
 
-            return $user && $user->isAdmin(); // Check if the user is an admin
+    protected function authorization()
+    {
+        $this->gate();
+
+        Telescope::auth(function ($request) {
+            return app()->environment('local') ||
+                   Auth::guard('web')->user()?->isAdmin() ||
+                   Gate::check('viewTelescope', [$request->user()]);
         });
     }
 }
