@@ -29,7 +29,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         // Ensure that Telescope uses the correct guard
         Telescope::auth(function ($request) {
-            return auth()->guard('web')->check() && auth()->user()->isAdmin(); // Use 'web' guard and check if user is admin
+            return auth()->guard('web')->check() && auth()->guard('web')->user()->isAdmin(); // Use 'web' guard and check if user is admin
         });
     }
 
