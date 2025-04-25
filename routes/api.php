@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Auth\Controllers\OAuthController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
 use App\Domain\Common\Controllers\CountryController;
@@ -24,18 +25,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/v1/auth/login', [AuthController::class, 'login']);
-
-Route::post('/v1/auth/logout', [AuthController::class, 'logout']);
-
-Route::post('/v1/auth/register', [AuthController::class, 'register']);
-
-Route::middleware('auth:api')->post('/v1/auth/refresh', [AuthController::class, 'refresh']);
-
 Route::prefix('v1')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('login', [AuthController::class, 'login']);
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('register', [AuthController::class, 'register']);
+    });
+
+    Route::prefix('oauth')->group(function () {
+        Route::get('{provider}/redirect', [OAuthController::class, 'redirect']);
+        Route::get('{provider}/callback', [OAuthController::class, 'callback']);
+    });
+
     Route::apiResource('tenants', TenantController::class);
 
     Route::middleware('auth:api')->group(function () {
+        Route::post('auth/refresh', [AuthController::class, 'refresh']);
         Route::get('user', [AuthController::class, 'getUser']);
 
         Route::prefix('user')->group(function () {
