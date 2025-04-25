@@ -1,12 +1,8 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
-
-
 use App\Domain\Auth\Controllers\OAuthController;
-
 use App\Domain\Auth\Controllers\UserProfileImageController;
-
 use App\Domain\Auth\Controllers\UserSettingsController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
