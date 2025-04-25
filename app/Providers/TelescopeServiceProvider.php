@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
