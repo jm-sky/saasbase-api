@@ -82,7 +82,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     {
         return $this->is_admin;
     }
-    
+
     public function getJWTIdentifier(): string
     {
         return $this->getKey();
