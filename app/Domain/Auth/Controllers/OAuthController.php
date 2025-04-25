@@ -27,6 +27,7 @@ class OAuthController extends Controller
                 'first_name' => $this->extractFirstName($socialUser->getName(), $socialUser->getEmail()),
                 'last_name'  => $this->extractLastName($socialUser->getName()),
                 'email'      => $socialUser->getEmail(),
+                'email_verified_at' => now(),
                 'password'   => bcrypt(Str::random(40)),
             ]
         );
