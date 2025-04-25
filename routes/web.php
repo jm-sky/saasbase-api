@@ -1,8 +1,8 @@
 <?php
 
 use App\Domain\Auth\Controllers\AdminAuthController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth; 
 
 Route::get('/', function () {
     return response()->json([
@@ -22,10 +22,10 @@ Route::get('/debug-admin', function () {
     }
 
     return [
-        'id' => $user->id,
-        'email' => $user->email,
-        'is_admin' => $user->is_admin ?? false,
-        'guard' => Auth::getDefaultDriver(),
-        'can_view_telescope' => app()->make(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewTelescope'),
+        'id'                 => $user->id,
+        'email'              => $user->email,
+        'is_admin'           => $user->is_admin ?? false,
+        'guard'              => Auth::getDefaultDriver(),
+        'can_view_telescope' => app()->make(Illuminate\Contracts\Auth\Access\Gate::class)->check('viewTelescope'),
     ];
 });
