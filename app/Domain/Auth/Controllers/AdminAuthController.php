@@ -21,10 +21,10 @@ class AdminAuthController extends Controller
         ]);
 
         if (Auth::guard('web')->attempt($credentials)) {
-            $user = Auth::user();
+            $user = Auth::guard('web')->user();
 
             if (!$user->isAdmin()) {
-                Auth::logout();
+                Auth::guard('web')->logout();
 
                 return back()->withErrors(['email' => 'Unauthorized']);
             }
@@ -37,7 +37,7 @@ class AdminAuthController extends Controller
 
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         return redirect()->route('admin.login');
     }
