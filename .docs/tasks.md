@@ -538,7 +538,8 @@ Add tests.
   - Tag admin routes accordingly in OpenAPI documentation for visibility and clarity. 
 
 ---
-## 22. Refresh Token Support in JWTAuth
+
+## 22. [x] Refresh Token Support in JWTAuth
 
 ### Goal
 Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-auth` package.
@@ -574,7 +575,7 @@ Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-
 
 --
 
-### Task: Implement Exchange and ExchangeRate Models with Read-Only Endpoints
+### [] Task: Implement Exchange and ExchangeRate Models with Read-Only Endpoints
 
 **Goal:**  
 Allow users to view currency exchange rates.
@@ -605,7 +606,7 @@ Allow users to view currency exchange rates.
 
 --
 
-### Task: Create Invoice Numbering Template System
+### [] Task: Create Invoice Numbering Template System
 
 **Goal:**  
 Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `INV-YYYY-MM/NNNN`).
@@ -719,7 +720,7 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
 
 --
 
-### Task: Implement Contractor Preferences
+### [] Task: Implement Contractor Preferences
 
 **Objective:** Enable the system to store and manage contractor-specific preferences for language, currency exchange rate, invoice format, and payment method.
 
@@ -736,7 +737,7 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
 
 ---
 
-### Task: Integrate Exchange Rates from Multiple Sources
+### [] Task: Integrate Exchange Rates from Multiple Sources
 
 **Objective:** Integrate exchange rate data from at least two sources (e.g., Polish NBP and another API) for daily exchange rate import.
 
