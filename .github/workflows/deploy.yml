@@ -1,6 +1,10 @@
 name: Deploy Laravel App
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.docs/**'
   workflow_dispatch:  # ręczne uruchamianie z GitHub UI
 
 jobs:
