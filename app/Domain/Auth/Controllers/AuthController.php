@@ -6,6 +6,7 @@ use App\Domain\Auth\Actions\RegisterUserAction;
 use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Requests\RegisterRequest;
+use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -13,6 +14,8 @@ use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class AuthController extends Controller
 {
+    use RespondsWithToken;
+
     public function __construct(
         private readonly RegisterUserAction $registerUserAction
     ) {
@@ -87,28 +90,5 @@ class AuthController extends Controller
         return response()->json([
             'user' => $userDTO,
         ]);
-    }
-
-    protected function respondWithToken($token)
-    {
-        return response()
-            ->json([
-                'accessToken' => $token,
-                'tokenType'   => 'bearer',
-                'expiresIn'   => auth()->factory()->getTTL() * 60,
-                'user'        => auth()->user(),
-            ])
-            ->withCookie(cookie(
-                'refresh_token',
-                $token,
-                60 * 24 * 7, // 7 days
-                '/',         // path
-                null,        // domain (set if needed)
-                true,        // secure
-                true,        // httpOnly
-                false,       // raw
-                'Strict'     // SameSite
-            ))
-        ;
     }
 }
