@@ -9,6 +9,7 @@ use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,9 +25,11 @@ class DatabaseSeeder extends Seeder
 
         // Create default user
         $user = User::factory()->create([
-            'first_name' => 'Test',
-            'last_name'  => 'User',
-            'email'      => 'test@example.com',
+            'first_name' => env('DEFAULT_USER_FIRST_NAME', 'Test'),
+            'last_name'  => env('DEFAULT_USER_LAST_NAME', 'User'),
+            'email'      => env('DEFAULT_USER_EMAIL', 'test@example.com'),
+            'password'   => Hash::make(env('DEFAULT_USER_PASSWORD', 'Secret123!')),
+            'id_admin'   => true,
         ]);
 
         // Attach user to tenant

@@ -78,6 +78,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         'is_admin'          => 'boolean',
     ];
 
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
+
     public function getJWTIdentifier(): string
     {
         return $this->getKey();
