@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             'last_name'  => env('DEFAULT_USER_LAST_NAME', 'User'),
             'email'      => env('DEFAULT_USER_EMAIL', 'test@example.com'),
             'password'   => Hash::make(env('DEFAULT_USER_PASSWORD', 'Secret123!')),
-            'id_admin'   => true,
+            'is_admin'   => true,
         ]);
 
         // Attach user to tenant
