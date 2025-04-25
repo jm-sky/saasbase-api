@@ -16,7 +16,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         $this->gate();
     }
-    
+
     /**
      * Register any application services.
      */
@@ -67,6 +67,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     {
         Gate::define('viewTelescope', function () {
             $user = Auth::guard('web')->user();
+
             return $user && $user->isAdmin(); // Check if the user is an admin
         });
     }
