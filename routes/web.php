@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', function () {
     return response()->json([
@@ -12,9 +13,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('admin/login', [AdminAuthController::class, 'login']);
-Route::any('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-
-Route::get('admin/logs', 
-[\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+Route::prefix('admin')->group(function () {
+    Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('login', [AdminAuthController::class, 'login']);
+    Route::any('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+    Route::middleware('auth:web')->group(function () {
+      Route::get('logs', [LogViewerController::class, 'index']);
+    });
+});
