@@ -65,7 +65,7 @@ class BelongsToTenantTest extends TestCase
     public function testModelAutomaticallySetsTenantIdOnCreate(): void
     {
         // $this->authenticateUser($this->tenant);
-        $this->mockTenantId($this->tenant->id);
+        // $this->mockTenantId($this->tenant->id); TODO: Use instead of sessions
         $model = Contractor::factory()->create(['name' => 'Test Model']);
 
         $this->assertEquals($this->tenant->id, $model->tenant_id);
