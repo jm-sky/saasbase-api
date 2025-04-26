@@ -7,6 +7,8 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
+use Tests\Traits\WithMockedJwtPayload;
 
 /**
  * @internal
@@ -15,11 +17,15 @@ use Tests\TestCase;
  */
 class ContractorDTOTest extends TestCase
 {
+    use WithMockedJwtPayload;
+    use WithAuthenticatedUser;
+    
     public function testCanCreateContractorDtoFromModel(): void
     {
         $tenant = Tenant::factory()->create();
-        session(['current_tenant_id' => $tenant->id]);
-
+        $this->authenticateUser($tenant);
+        $this->mockTenantId($tenant->id);
+        
         $contractor = Contractor::factory()->create([
             'name'        => 'Test Contractor',
             'email'       => 'test@example.com',
