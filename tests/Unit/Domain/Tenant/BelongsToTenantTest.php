@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Domain\Tenant;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
@@ -19,6 +20,8 @@ class BelongsToTenantTest extends TestCase
 
     private Contractor $model;
 
+    private User $user;
+    
     private Tenant $tenant;
 
     private Tenant $otherTenant;
@@ -27,12 +30,14 @@ class BelongsToTenantTest extends TestCase
     {
         parent::setUp();
 
+        $this->user        = User::factory()->create();
         $this->tenant      = Tenant::factory()->create();
         $this->otherTenant = Tenant::factory()->create();
         $this->model       = new Contractor();
 
         // Set current tenant context
         session(['current_tenant_id' => $this->tenant->id]);
+        $this->actingAs($this->user);
     }
 
     public function testModelIsScopedToTenant(): void
