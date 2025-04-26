@@ -112,8 +112,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         $membership = $this->tenantMemberships()->first();
 
         if ($membership) {
-            Session::put('current_tenant_id', $membership->tenant_id);
-
             return $membership->tenant_id;
         }
 
