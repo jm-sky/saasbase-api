@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
  * Trait BelongsToTenant.
@@ -24,7 +25,11 @@ trait BelongsToTenant
     {
         static::creating(function (Model $model) {
             if (!$model->tenant_id) {
-                $model->tenant_id = Auth::user()?->getTenantId();
+                try {
+                    $model->tenant_id = Auth::user()?->getTenantId();
+                } catch (JWTException) {
+                    throw new TenantNotFoundException();
+                }      
             }
 
             if (!$model->tenant_id) {
