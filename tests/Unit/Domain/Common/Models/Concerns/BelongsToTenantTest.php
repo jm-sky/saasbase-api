@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Domain\Common\Models\Concerns;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,15 +22,19 @@ class BelongsToTenantTest extends TestCase
 
     private Tenant $tenant;
 
+    private User $user;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
         $this->model  = new Contractor();
-
+        $this->user   = User::factory()->create();
+        
         // Set current tenant context
         session(['current_tenant_id' => $this->tenant->id]);
+        $this->actingAs($this->user);
     }
 
     public function testModelIsScopedToTenant(): void
