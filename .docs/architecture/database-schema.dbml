@@ -148,6 +148,7 @@ Table project_statuses {
 // Tasks
 Table tasks {
   id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
   project_id uuid [ref: > projects.id]
   title varchar
   description text [note: 'nullable']
@@ -193,6 +194,7 @@ Table contractors {
 // Contractor Addresses
 Table contractor_addresses {
   id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
   contractor_id uuid [ref: > contractors.id]
   label varchar
   country_code varchar
@@ -205,6 +207,7 @@ Table contractor_addresses {
 // Contractor Bank Accounts
 Table contractor_bank_accounts {
   id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
   contractor_id uuid [ref: > contractors.id]
   bank_name varchar
   iban varchar
@@ -217,6 +220,7 @@ Table contractor_bank_accounts {
 // Contractor Contact Persons
 Table contractor_contact_persons {
   id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
   contractor_id uuid [ref: > contractors.id]
   name varchar
   email varchar [note: 'nullable']
