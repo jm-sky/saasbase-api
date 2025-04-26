@@ -39,6 +39,7 @@ class ContractorRequest extends FormRequest
         $validated = parent::validated();
 
         return [
+            'tenant_id'   => auth()->user()->getTenantId(),
             'name'        => $validated['name'],
             'email'       => $validated['email'],
             'phone'       => $validated['phone'] ?? null,
@@ -49,5 +50,5 @@ class ContractorRequest extends FormRequest
             'is_buyer'    => $validated['isBuyer'] ?? false,
             'is_supplier' => $validated['isSupplier'] ?? false,
         ];
-    }
+     }
 }
