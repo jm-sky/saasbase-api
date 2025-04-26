@@ -65,7 +65,7 @@ class BelongsToTenantTest extends TestCase
             'tenant_id' => $this->otherTenant->id,
             'name'      => 'Test Model',
         ]);
-        
+
         $this->assertEquals($this->otherTenant->id, $model->tenant_id);
     }
 
