@@ -3,6 +3,7 @@
 namespace App\Domain\CompanyLookup\Services;
 
 use App\Domain\CompanyLookup\DTOs\CompanyLookupResultDTO;
+use App\Domain\CompanyLookup\Exceptions\CompanyLookupException;
 use App\Domain\CompanyLookup\Integrations\MfApiConnector;
 use App\Domain\CompanyLookup\Integrations\Requests\SearchByNipRequest;
 use Illuminate\Support\Facades\Cache;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class CompanyLookupService
 {
+    protected const DEFAULT_CACHE_HOURS = 12;
+
     protected MfApiConnector $connector;
 
     public function __construct()
@@ -19,9 +22,12 @@ class CompanyLookupService
 
     public function findByNip(string $nip): ?CompanyLookupResultDTO
     {
-        $nip = preg_replace('/[^0-9]/', '', $nip); // Czyścimy NIP z myślników itp.
+        $nip = preg_replace('/[^0-9]/', '', $nip);
 
-        return Cache::remember("company_lookup_nip_{$nip}", now()->addHours(6), function () use ($nip) {
+        $cacheKey = "company_lookup_nip_{$nip}";
+        $cacheTtl = $this->getCacheExpiration();
+
+        return Cache::remember($cacheKey, $cacheTtl, function () use ($nip) {
             try {
                 $request = new SearchByNipRequest($nip);
                 $response = $this->connector->send($request);
@@ -29,19 +35,35 @@ class CompanyLookupService
                 if ($response->successful()) {
                     $subject = $response->json('result.subject');
 
-                    if ($subject) {
+                    if (!empty($subject)) {
                         return CompanyLookupResultDTO::fromApiResponse($subject);
                     }
+
+                    return null;
                 }
 
-                return null;
+                throw new CompanyLookupException('Unsuccessful API response.');
             } catch (\Throwable $e) {
                 Log::error('CompanyLookupService error: ' . $e->getMessage(), [
                     'nip' => $nip,
                 ]);
 
-                return null;
+                throw new CompanyLookupException('Failed to lookup company details.', 0, $e);
             }
         });
+    }
+
+    protected function getCacheExpiration(): \DateTimeInterface|\DateInterval|int
+    {
+        $cacheMode = config('company_lookup.cache_mode', 'hours');
+
+        if ($cacheMode === 'week') {
+            $nextSunday = now()->next('Sunday')->startOfDay();
+            return $nextSunday;
+        }
+
+        $hours = (int) config('company_lookup.cache_hours', self::DEFAULT_CACHE_HOURS);
+
+        return now()->addHours ($hours);
     }
 }
