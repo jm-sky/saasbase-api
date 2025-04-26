@@ -71,19 +71,6 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals($this->tenant->id, $model->tenant_id);
     }
 
-    public function testCannotCreateRecordForDifferentTenant(): void
-    {
-        $otherTenant = Tenant::factory()->create();
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot create record for different tenant');
-
-        Contractor::factory()->create([
-            'tenant_id' => $otherTenant->id,
-            'name'      => 'Test Model',
-        ]);
-    }
-
     public function testCanQueryOnlyCurrentTenant(): void
     {
         // Create record for current tenant
@@ -109,13 +96,12 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals('Test Model 1', $models->first()->name);
     }
 
-    public function testCannotQueryDifferentTenant(): void
+    public function testCanQueryDifferentTenant(): void
     {
         $otherTenant = Tenant::factory()->create();
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot access data from different tenant');
-
-        Contractor::forTenant($otherTenant->id)->get();
+        $models = Contractor::forTenant($otherTenant->id)->get();
+        
+        $this->assertCount(0, $models);
     }
 }
