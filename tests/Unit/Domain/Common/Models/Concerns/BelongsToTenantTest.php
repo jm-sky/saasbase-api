@@ -31,7 +31,7 @@ class BelongsToTenantTest extends TestCase
         $this->tenant = Tenant::factory()->create();
         $this->model  = new Contractor();
         $this->user   = User::factory()->create();
-        
+
         // Set current tenant context
         session(['current_tenant_id' => $this->tenant->id]);
         $this->actingAs($this->user);
