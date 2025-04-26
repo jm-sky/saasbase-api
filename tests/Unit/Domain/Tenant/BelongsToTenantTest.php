@@ -43,12 +43,10 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Test Model',
         ]);
 
-        Contractor::withoutTenantScope(function () {
-            Contractor::factory()->create([
-                'tenant_id' => $this->otherTenant->id,
-                'name'      => 'Other Tenant Model',
-            ]);
-        });
+        Contractor::factory()->create([
+             'tenant_id' => $this->otherTenant->id,
+             'name'      => 'Other Tenant Model',
+        ]);
 
         // Should only see records for current tenant
         $this->assertCount(1, Contractor::all());
@@ -89,12 +87,10 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Test Model',
         ]);
 
-        Contractor::withoutTenantScope(function () {
-            Contractor::factory()->create([
-                'tenant_id' => $this->otherTenant->id,
-                'name'      => 'Other Tenant Model',
-            ]);
-        });
+        Contractor::factory()->create([
+            'tenant_id' => $this->otherTenant->id,
+            'name'      => 'Other Tenant Model',
+        ]);
 
         // Normal query should still be scoped
         $this->assertCount(1, Contractor::all());
@@ -111,12 +107,10 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Test Model',
         ]);
 
-        Contractor::withoutTenantScope(function () {
-            Contractor::factory()->create([
+        Contractor::factory()->create([
                 'tenant_id' => $this->otherTenant->id,
                 'name'      => 'Other Tenant Model',
             ]);
-        });
 
         $otherTenantModels = Contractor::withoutTenant()
             ->where('tenant_id', $this->otherTenant->id)
