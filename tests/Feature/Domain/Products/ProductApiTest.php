@@ -57,16 +57,13 @@ class ProductApiTest extends TestCase
 
         // Create products for a different tenant
         $otherTenant = Tenant::factory()->create();
-        Product::withoutTenantScope(function () use ($otherTenant) {
-            Product::factory()
+        Product::factory()
                 ->count(2)
                 ->create([
                     'tenant_id'   => $otherTenant->id,
                     'unit_id'     => $this->unit->id,
                     'vat_rate_id' => $this->vatRate->id,
-                ])
-            ;
-        });
+                ]);
 
         $response = $this->getJson($this->baseUrl);
 
