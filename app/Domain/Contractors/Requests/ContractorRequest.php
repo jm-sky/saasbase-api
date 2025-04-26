@@ -50,5 +50,5 @@ class ContractorRequest extends FormRequest
             'is_buyer'    => $validated['isBuyer'] ?? false,
             'is_supplier' => $validated['isSupplier'] ?? false,
         ];
-     }
+    }
 }

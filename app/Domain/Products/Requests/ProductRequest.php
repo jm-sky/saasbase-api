@@ -61,6 +61,6 @@ class ProductRequest extends FormRequest
             'unit_id'     => $validated['unitId'],
             'price_net'   => $validated['priceNet'],
             'vat_rate_id' => $validated['vatRateId'],
-         ];
+        ];
     }
 }

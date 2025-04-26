@@ -109,6 +109,7 @@ class AdminProductController extends Controller
             ->allowedFilters($this->filters)
             ->allowedSorts($this->sorts)
             ->defaultSort($this->defaultSort)
-            ->with(['unit', 'vatRate']);
+            ->with(['unit', 'vatRate'])
+        ;
     }
 }
