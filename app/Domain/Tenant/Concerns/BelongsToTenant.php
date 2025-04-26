@@ -29,7 +29,7 @@ trait BelongsToTenant
                     $model->tenant_id = Auth::user()?->getTenantId();
                 } catch (JWTException) {
                     throw new TenantNotFoundException();
-                }      
+                }
             }
 
             if (!$model->tenant_id) {
