@@ -94,6 +94,6 @@ class AdminContractorController extends Controller
 
         $contractor->delete();
 
-        return response()->json(null, Response::HTTP_ NO_CONTENT);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
