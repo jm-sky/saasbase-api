@@ -4,6 +4,8 @@ use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Auth\Controllers\OAuthController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Admin\Contractors\Controllers\AdminContractorController;
+use App\Domain\Admin\Products\Controllers\AdminProductController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
@@ -62,5 +64,10 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
+    });
+
+    Route::prefix('admin')->middleware(['auth:api', 'is_admin'])->group(function () {
+        Route::apiResource('contractors', AdminContractorController::class);
+        Route::apiResource('products', AdminProductController::class);
     });
 });
