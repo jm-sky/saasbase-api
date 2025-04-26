@@ -16,7 +16,7 @@ use Tests\TestCase;
 class TenantControllerTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,7 +26,7 @@ class TenantControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
     }
-    
+
     public function testIndexReturnsAllTenants(): void
     {
         // Clear any existing tenants
