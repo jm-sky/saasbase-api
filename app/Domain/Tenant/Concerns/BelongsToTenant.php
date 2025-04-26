@@ -26,9 +26,10 @@ trait BelongsToTenant
             if (!$model->tenant_id) {
                 $model->tenant_id = Auth::user()?->getTenantId();
             }
+
             if (!$model->tenant_id) {
                 throw new TenantNotFoundException();
-            }      
+            }
         });
 
         static::addGlobalScope(new TenantScope());

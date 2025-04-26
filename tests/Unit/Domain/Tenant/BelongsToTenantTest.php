@@ -44,8 +44,8 @@ class BelongsToTenantTest extends TestCase
         ]);
 
         Contractor::factory()->create([
-             'tenant_id' => $this->otherTenant->id,
-             'name'      => 'Other Tenant Model',
+            'tenant_id' => $this->otherTenant->id,
+            'name'      => 'Other Tenant Model',
         ]);
 
         // Should only see records for current tenant
@@ -108,9 +108,9 @@ class BelongsToTenantTest extends TestCase
         ]);
 
         Contractor::factory()->create([
-                'tenant_id' => $this->otherTenant->id,
-                'name'      => 'Other Tenant Model',
-            ]);
+            'tenant_id' => $this->otherTenant->id,
+            'name'      => 'Other Tenant Model',
+        ]);
 
         $otherTenantModels = Contractor::withoutTenant()
             ->where('tenant_id', $this->otherTenant->id)
