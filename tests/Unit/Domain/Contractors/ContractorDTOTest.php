@@ -24,7 +24,7 @@ class ContractorDTOTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         $this->actingAs($this->authenticateUser($tenant));
-        $this->mockTenantId($tenant->id);
+        // $this->mockTenantId($tenant->id); TODO: Use instead of sessions
 
         $contractor = Contractor::factory()->create([
             'name'        => 'Test Contractor',
