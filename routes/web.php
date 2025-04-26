@@ -1,10 +1,7 @@
 <?php
 
 use App\Domain\Auth\Controllers\AdminAuthController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', function () {
@@ -18,6 +15,6 @@ Route::prefix('admin')->group(function () {
     Route::post('login', [AdminAuthController::class, 'login']);
     Route::any('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     Route::middleware('auth:web')->group(function () {
-      Route::get('logs', [LogViewerController::class, 'index']);
+        Route::get('logs', [LogViewerController::class, 'index']);
     });
 });

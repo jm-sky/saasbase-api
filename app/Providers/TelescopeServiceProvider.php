@@ -68,9 +68,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         $this->gate();
 
         Telescope::auth(function ($request) {
-            return app()->environment('local') ||
-                   Auth::guard('web')->user()?->isAdmin() ||
-                   Gate::check('viewTelescope', [$request->user()]);
+            return app()->environment('local')
+                   || Auth::guard('web')->user()?->isAdmin()
+                   || Gate::check('viewTelescope', [$request->user()]);
         });
     }
 }
