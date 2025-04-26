@@ -16,7 +16,7 @@ Route::prefix('admin')->group(function () {
     Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('login', [AdminAuthController::class, 'login']);
     Route::any('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-    Route::middleware('auth:web')->group(function () {
+    Route::middleware(['auth:web', 'is_admin'])->group(function () {
         Route::get('logs', [LogViewerController::class, 'index']);
     });
 });

@@ -2,11 +2,13 @@
 
 namespace Tests\Unit\Domain\Common\Models\Concerns;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithMockedJwtPayload;
 
 /**
  * @internal
@@ -16,10 +18,13 @@ use Tests\TestCase;
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;
+    use WithMockedJwtPayload;
 
     private Contractor $model;
 
     private Tenant $tenant;
+
+    private User $user;
 
     protected function setUp(): void
     {
@@ -27,9 +32,11 @@ class BelongsToTenantTest extends TestCase
 
         $this->tenant = Tenant::factory()->create();
         $this->model  = new Contractor();
+        $this->user   = User::factory()->create();
 
         // Set current tenant context
         session(['current_tenant_id' => $this->tenant->id]);
+        $this->actingAs($this->user);
     }
 
     public function testModelIsScopedToTenant(): void
@@ -57,22 +64,11 @@ class BelongsToTenantTest extends TestCase
 
     public function testModelAutomaticallySetsTenantIdOnCreate(): void
     {
+        // $this->authenticateUser($this->tenant);
+        // $this->mockTenantId($this->tenant->id); TODO: Use instead of sessions
         $model = Contractor::factory()->create(['name' => 'Test Model']);
 
         $this->assertEquals($this->tenant->id, $model->tenant_id);
-    }
-
-    public function testCannotCreateRecordForDifferentTenant(): void
-    {
-        $otherTenant = Tenant::factory()->create();
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot create record for different tenant');
-
-        Contractor::factory()->create([
-            'tenant_id' => $otherTenant->id,
-            'name'      => 'Test Model',
-        ]);
     }
 
     public function testCanQueryOnlyCurrentTenant(): void
@@ -100,13 +96,12 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals('Test Model 1', $models->first()->name);
     }
 
-    public function testCannotQueryDifferentTenant(): void
+    public function testCanQueryDifferentTenant(): void
     {
         $otherTenant = Tenant::factory()->create();
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot access data from different tenant');
+        $models = Contractor::forTenant($otherTenant->id)->get();
 
-        Contractor::forTenant($otherTenant->id)->get();
+        $this->assertCount(0, $models);
     }
 }

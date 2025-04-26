@@ -99,21 +99,19 @@ class User extends Authenticatable implements JWTSubject, HasMedia
 
     public function getTenantId(): ?string
     {
-        if (Auth::check() && Auth::payload()?->get('tenant_id')) {
-            return Auth::payload()->get('tenant_id');
-        }
-
         $tenantId = Session::get('current_tenant_id');
 
         if ($tenantId) {
             return $tenantId;
         }
 
+        if (Auth::check() && Auth::payload()?->get('tenant_id')) {
+            return Auth::payload()->get('tenant_id');
+        }
+
         $membership = $this->tenantMemberships()->first();
 
         if ($membership) {
-            Session::put('current_tenant_id', $membership->tenant_id);
-
             return $membership->tenant_id;
         }
 

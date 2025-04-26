@@ -3,6 +3,7 @@
 namespace App\Domain\Products\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class ProductRequest extends FormRequest
 {
@@ -53,11 +54,22 @@ class ProductRequest extends FormRequest
         ];
     }
 
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $user     = auth()->user();
+            $tenantId = $this->input('tenantId');
+
+            if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {
+                $validator->errors()->add('tenantId', 'You are not allowed to use this tenant ID.');
+            }
+        });
+    }
+
     public function validated($key = null, $default = null): array
     {
         $validated = parent::validated();
 
-        // Transform camelCase to snake_case for database
         return [
             'tenant_id'   => $validated['tenantId'],
             'name'        => $validated['name'],

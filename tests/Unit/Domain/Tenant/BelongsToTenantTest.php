@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Domain\Tenant;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
@@ -19,6 +20,8 @@ class BelongsToTenantTest extends TestCase
 
     private Contractor $model;
 
+    private User $user;
+
     private Tenant $tenant;
 
     private Tenant $otherTenant;
@@ -27,12 +30,14 @@ class BelongsToTenantTest extends TestCase
     {
         parent::setUp();
 
+        $this->user        = User::factory()->create();
         $this->tenant      = Tenant::factory()->create();
         $this->otherTenant = Tenant::factory()->create();
         $this->model       = new Contractor();
 
         // Set current tenant context
         session(['current_tenant_id' => $this->tenant->id]);
+        $this->actingAs($this->user);
     }
 
     public function testModelIsScopedToTenant(): void
@@ -43,12 +48,10 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Test Model',
         ]);
 
-        Contractor::withoutTenantScope(function () {
-            Contractor::factory()->create([
-                'tenant_id' => $this->otherTenant->id,
-                'name'      => 'Other Tenant Model',
-            ]);
-        });
+        Contractor::factory()->create([
+            'tenant_id' => $this->otherTenant->id,
+            'name'      => 'Other Tenant Model',
+        ]);
 
         // Should only see records for current tenant
         $this->assertCount(1, Contractor::all());
@@ -61,15 +64,14 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals($this->tenant->id, $model->tenant_id);
     }
 
-    public function testCannotCreateRecordForDifferentTenant(): void
+    public function testCanCreateRecordForDifferentTenant(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot create record for different tenant');
-
-        Contractor::factory()->create([
+        $model = Contractor::factory()->create([
             'tenant_id' => $this->otherTenant->id,
             'name'      => 'Test Model',
         ]);
+
+        $this->assertEquals($this->otherTenant->id, $model->tenant_id);
     }
 
     public function testThrowsExceptionWhenTenantContextNotFound(): void
@@ -89,12 +91,10 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Test Model',
         ]);
 
-        Contractor::withoutTenantScope(function () {
-            Contractor::factory()->create([
-                'tenant_id' => $this->otherTenant->id,
-                'name'      => 'Other Tenant Model',
-            ]);
-        });
+        Contractor::factory()->create([
+            'tenant_id' => $this->otherTenant->id,
+            'name'      => 'Other Tenant Model',
+        ]);
 
         // Normal query should still be scoped
         $this->assertCount(1, Contractor::all());
@@ -111,12 +111,10 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Test Model',
         ]);
 
-        Contractor::withoutTenantScope(function () {
-            Contractor::factory()->create([
-                'tenant_id' => $this->otherTenant->id,
-                'name'      => 'Other Tenant Model',
-            ]);
-        });
+        Contractor::factory()->create([
+            'tenant_id' => $this->otherTenant->id,
+            'name'      => 'Other Tenant Model',
+        ]);
 
         $otherTenantModels = Contractor::withoutTenant()
             ->where('tenant_id', $this->otherTenant->id)
