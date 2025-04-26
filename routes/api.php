@@ -1,11 +1,6 @@
 <?php
 
-use App\Domain\Admin\Contractors\Controllers\AdminContractorController;
-use App\Domain\Admin\Products\Controllers\AdminProductController;
 use App\Domain\Auth\Controllers\AuthController;
-use App\Domain\Auth\Controllers\OAuthController;
-use App\Domain\Auth\Controllers\UserProfileImageController;
-use App\Domain\Auth\Controllers\UserSettingsController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
@@ -28,17 +23,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
-    require __DIR__.'/api/auth.php';
+    require __DIR__ . '/api/auth.php';
 
     Route::middleware('auth:api')->group(function () {
         Route::post('auth/refresh', [AuthController::class, 'refresh']);
         Route::get('user', [AuthController::class, 'getUser']);
 
-        require __DIR__.'/api/user.php';
+        require __DIR__ . '/api/user.php';
 
         Route::apiResource('tenants', TenantController::class);
         Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
-        
+
         Route::apiResource('contractors', ContractorController::class);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('skills', SkillController::class);
@@ -47,5 +42,5 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
     });
 
-    require __DIR__.'/api/admin.php';
+    require __DIR__ . '/api/admin.php';
 });

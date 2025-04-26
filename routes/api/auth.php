@@ -13,4 +13,4 @@ Route::prefix('auth')->group(function () {
 Route::prefix('oauth')->group(function () {
     Route::get('{provider}/redirect', [OAuthController::class, 'redirect']);
     Route::get('{provider}/callback', [OAuthController::class, 'callback']);
- });
+});
