@@ -29,7 +29,7 @@ class CompanyLookupService
 
         return Cache::remember($cacheKey, $cacheTtl, function () use ($nip) {
             try {
-                $request = new SearchByNipRequest($nip);
+                $request  = new SearchByNipRequest($nip);
                 $response = $this->connector->send($request);
 
                 if ($response->successful()) {
@@ -57,13 +57,12 @@ class CompanyLookupService
     {
         $cacheMode = config('company_lookup.cache_mode', 'hours');
 
-        if ($cacheMode === 'week') {
-            $nextSunday = now()->next('Sunday')->startOfDay();
-            return $nextSunday;
+        if ('week' === $cacheMode) {
+            return now()->next('Sunday')->startOfDay();
         }
 
         $hours = (int) config('company_lookup.cache_hours', self::DEFAULT_CACHE_HOURS);
 
-        return now()->addHours ($hours);
+        return now()->addHours($hours);
     }
 }

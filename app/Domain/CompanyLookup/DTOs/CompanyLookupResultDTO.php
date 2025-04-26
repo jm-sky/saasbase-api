@@ -10,7 +10,8 @@ class CompanyLookupResultDTO
         public readonly ?string $regon,
         public readonly ?string $address,
         public readonly ?string $vatStatus,
-    ) {}
+    ) {
+    }
 
     public static function fromApiResponse(array $data): self
     {

@@ -2,9 +2,9 @@
 
 namespace App\Domain\CompanyLookup\Integrations\Requests;
 
-use Saloon\Http\Request;
-use Saloon\Enums\Method;
 use Carbon\Carbon;
+use Saloon\Enums\Method;
+use Saloon\Http\Request;
 
 class SearchByNipRequest extends Request
 {
@@ -12,7 +12,8 @@ class SearchByNipRequest extends Request
 
     public function __construct(
         protected string $nip,
-    ) {}
+    ) {
+    }
 
     public function resolveEndpoint(): string
     {
