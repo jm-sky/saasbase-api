@@ -104,7 +104,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         if ($tenantId) {
             return $tenantId;
         }
-        
+
         if (Auth::check() && Auth::payload()?->get('tenant_id')) {
             return Auth::payload()->get('tenant_id');
         }
