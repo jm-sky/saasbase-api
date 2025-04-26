@@ -19,13 +19,13 @@ class ContractorDTOTest extends TestCase
 {
     use WithMockedJwtPayload;
     use WithAuthenticatedUser;
-    
+
     public function testCanCreateContractorDtoFromModel(): void
     {
         $tenant = Tenant::factory()->create();
         $this->authenticateUser($tenant);
         $this->mockTenantId($tenant->id);
-        
+
         $contractor = Contractor::factory()->create([
             'name'        => 'Test Contractor',
             'email'       => 'test@example.com',
