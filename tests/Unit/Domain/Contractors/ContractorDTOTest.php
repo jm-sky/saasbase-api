@@ -23,7 +23,7 @@ class ContractorDTOTest extends TestCase
     public function testCanCreateContractorDtoFromModel(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->authenticateUser($tenant);
+        $this->actingAs($this->authenticateUser($tenant));
         $this->mockTenantId($tenant->id);
 
         $contractor = Contractor::factory()->create([
