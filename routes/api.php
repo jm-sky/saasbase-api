@@ -1,11 +1,11 @@
 <?php
 
+use App\Domain\Admin\Contractors\Controllers\AdminContractorController;
+use App\Domain\Admin\Products\Controllers\AdminProductController;
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Auth\Controllers\OAuthController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
-use App\Domain\Admin\Contractors\Controllers\AdminContractorController;
-use App\Domain\Admin\Products\Controllers\AdminProductController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;

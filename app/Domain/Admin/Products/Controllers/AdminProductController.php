@@ -69,7 +69,8 @@ class AdminProductController extends Controller
     {
         $product = Product::withoutGlobalScope(TenantScope::class)
             ->with(['unit', 'vatRate'])
-            ->findOrFail($product->getKey());
+            ->findOrFail($product->getKey())
+        ;
 
         return response()->json(
             ProductDTO::fromModel($product)
@@ -79,7 +80,8 @@ class AdminProductController extends Controller
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
         $product = Product::withoutGlobalScope(TenantScope::class)
-            ->findOrFail($product->getKey());
+            ->findOrFail($product->getKey())
+        ;
 
         $product->update($request->validated());
         $product->load(['unit', 'vatRate']);
@@ -93,7 +95,8 @@ class AdminProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $product = Product::withoutGlobalScope(TenantScope::class)
-            ->findOrFail($product->getKey());
+            ->findOrFail($product->getKey())
+        ;
 
         $product->delete();
 
