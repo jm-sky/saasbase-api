@@ -37,11 +37,11 @@ class ProjectDTOTest extends TestCase
     public function testFromModel(): void
     {
         $project = Project::factory()->create([
-                'tenant_id'  => $this->tenant->id,
-                'name'       => 'Test Project',
-                'status'     => 'active',
-                'start_date' => now(),
-            ]);
+            'tenant_id'  => $this->tenant->id,
+            'name'       => 'Test Project',
+            'status'     => 'active',
+            'start_date' => now(),
+        ]);
 
         $dto = ProjectDTO::from($project);
 
@@ -64,12 +64,12 @@ class ProjectDTOTest extends TestCase
         );
 
         $project = Project::factory()->create([
-                'tenant_id'  => $dto->tenantId,
-                'name'       => $dto->name,
-                'status'     => $dto->status,
-                'start_date' => Carbon::parse($dto->startDate),
-                'owner_id'   => $this->user->id,
-            ]);
+            'tenant_id'  => $dto->tenantId,
+            'name'       => $dto->name,
+            'status'     => $dto->status,
+            'start_date' => Carbon::parse($dto->startDate),
+            'owner_id'   => $this->user->id,
+        ]);
 
         $this->assertEquals($dto->name, $project->name);
         $this->assertEquals($dto->status, $project->status);
@@ -79,18 +79,18 @@ class ProjectDTOTest extends TestCase
     public function testFromCollection(): void
     {
         $projects = collect([
-                Project::factory()->create([
-                    'tenant_id'  => $this->tenant->id,
-                    'name'       => 'Test Project 1',
-                    'status'     => 'active',
-                    'start_date' => now(),
-                ]),
-                Project::factory()->create([
-                    'tenant_id'  => $this->tenant->id,
-                    'name'       => 'Test Project 2',
-                    'status'     => 'completed',
-                    'start_date' => now(),
-                ]),
+            Project::factory()->create([
+                'tenant_id'  => $this->tenant->id,
+                'name'       => 'Test Project 1',
+                'status'     => 'active',
+                'start_date' => now(),
+            ]),
+            Project::factory()->create([
+                'tenant_id'  => $this->tenant->id,
+                'name'       => 'Test Project 2',
+                'status'     => 'completed',
+                'start_date' => now(),
+            ]),
         ]);
 
         $dtos = ProjectDTO::collect($projects);
@@ -103,11 +103,11 @@ class ProjectDTOTest extends TestCase
     public function testToArray(): void
     {
         $project = Project::factory()->create([
-                'tenant_id'  => $this->tenant->id,
-                'name'       => 'Test Project',
-                'status'     => 'active',
-                'start_date' => now(),
-            ]);
+            'tenant_id'  => $this->tenant->id,
+            'name'       => 'Test Project',
+            'status'     => 'active',
+            'start_date' => now(),
+        ]);
 
         $dto   = ProjectDTO::from($project);
         $array = $dto->toArray();
