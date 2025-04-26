@@ -8,6 +8,7 @@ use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithMockedJwtPayload;
 
 /**
  * @internal
@@ -17,6 +18,7 @@ use Tests\TestCase;
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;
+    use WithMockedJwtPayload;
 
     private Contractor $model;
 
@@ -62,6 +64,8 @@ class BelongsToTenantTest extends TestCase
 
     public function testModelAutomaticallySetsTenantIdOnCreate(): void
     {
+        // $this->authenticateUser($this->tenant);
+        $this->mockTenantId($this->tenant->id);
         $model = Contractor::factory()->create(['name' => 'Test Model']);
 
         $this->assertEquals($this->tenant->id, $model->tenant_id);
