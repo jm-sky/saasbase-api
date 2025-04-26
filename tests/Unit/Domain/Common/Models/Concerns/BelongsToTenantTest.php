@@ -101,7 +101,7 @@ class BelongsToTenantTest extends TestCase
         $otherTenant = Tenant::factory()->create();
 
         $models = Contractor::forTenant($otherTenant->id)->get();
-        
+
         $this->assertCount(0, $models);
     }
 }
