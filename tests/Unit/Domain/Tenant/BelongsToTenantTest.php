@@ -21,7 +21,7 @@ class BelongsToTenantTest extends TestCase
     private Contractor $model;
 
     private User $user;
-    
+
     private Tenant $tenant;
 
     private Tenant $otherTenant;
