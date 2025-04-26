@@ -4,7 +4,6 @@ namespace App\Domain\Products\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
-use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
@@ -58,7 +57,7 @@ class ProductRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            $user = auth()->user();
+            $user     = auth()->user();
             $tenantId = $this->input('tenantId');
 
             if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {

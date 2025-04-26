@@ -43,7 +43,7 @@ class ContractorRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            $user = auth()->user();
+            $user     = auth()->user();
             $tenantId = $this->input('tenantId');
 
             if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {
