@@ -49,11 +49,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Contractor::factory(5)->create([
-             'tenant_id' => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         Product::factory(5)->create([
-             'tenant_id' => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
     }
 }

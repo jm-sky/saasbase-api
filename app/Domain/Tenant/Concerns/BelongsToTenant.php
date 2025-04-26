@@ -52,5 +52,5 @@ trait BelongsToTenant
     public static function withoutTenant(): Builder
     {
         return static::withoutGlobalScope(TenantScope::class);
-     }
+    }
 }

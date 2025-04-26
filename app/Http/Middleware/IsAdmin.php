@@ -2,19 +2,18 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class IsAdmin
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, \Closure $next): Response
     {
         $user = $request->user();
 
         if (!$user || !$user->isAdmin()) {
             return response()->json([
-                'message' => 'Unauthorized. Admins only.'
+                'message' => 'Unauthorized. Admins only.',
             ], Response::HTTP_FORBIDDEN); // zamiast 403
         }
 
