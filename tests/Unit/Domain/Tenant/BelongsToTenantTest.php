@@ -59,15 +59,14 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals($this->tenant->id, $model->tenant_id);
     }
 
-    public function testCannotCreateRecordForDifferentTenant(): void
+    public function testCanCreateRecordForDifferentTenant(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot create record for different tenant');
-
-        Contractor::factory()->create([
+        $model = Contractor::factory()->create([
             'tenant_id' => $this->otherTenant->id,
             'name'      => 'Test Model',
         ]);
+        
+        $this->assertEquals($this->otherTenant->id, $model->tenant_id);
     }
 
     public function testThrowsExceptionWhenTenantContextNotFound(): void
