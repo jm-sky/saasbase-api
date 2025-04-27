@@ -74,21 +74,4 @@ class AuthController extends Controller
             return response()->json(['error' => 'Token not provided or expired'], 401);
         }
     }
-
-    // New getUser method to return authenticated user's data
-    public function getUser()
-    {
-        $user = auth()->user(); // Get the authenticated user
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        // Transform the user model into a UserDTO
-        $userDTO = UserDTO::fromModel($user);
-
-        return response()->json([
-            'user' => $userDTO,
-        ]);
-    }
 }
