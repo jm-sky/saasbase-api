@@ -10,7 +10,8 @@ class ViesLookupResultDTO
         public readonly bool $valid,
         public readonly ?string $name,
         public readonly ?string $address,
-    ) {}
+    ) {
+    }
 
     public static function fromApiResponse(array $data): self
     {

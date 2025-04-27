@@ -2,8 +2,8 @@
 
 namespace App\Domain\ViesLookup\Integrations\Requests;
 
-use Saloon\Http\Request;
 use Saloon\Enums\Method;
+use Saloon\Http\Request;
 
 class CheckVatRequest extends Request
 {
@@ -12,7 +12,8 @@ class CheckVatRequest extends Request
     public function __construct(
         protected string $countryCode,
         protected string $vatNumber,
-    ) {}
+    ) {
+    }
 
     public function resolveEndpoint(): string
     {
@@ -23,7 +24,7 @@ class CheckVatRequest extends Request
     {
         return [
             'countryCode' => $this->countryCode,
-            'vatNumber' => $this->vatNumber,
+            'vatNumber'   => $this->vatNumber,
         ];
     }
 
@@ -31,7 +32,7 @@ class CheckVatRequest extends Request
     {
         return [
             'Content-Type' => 'text/xml; charset=utf-8',
-            'SOAPAction' => '',
+            'SOAPAction'   => '',
         ];
     }
 
