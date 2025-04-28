@@ -4,18 +4,18 @@ namespace App\Domain\CompanyLookup\Enums;
 
 enum VatStatusEnum: string
 {
-    case ACTIVE = 'Czynny';
-    case EXEMPT = 'Zwolniony';
+    case ACTIVE   = 'Czynny';
+    case EXEMPT   = 'Zwolniony';
     case INACTIVE = 'Nieczynny';
-    case UNKNOWN = 'Unknown'; // fallback when API gives unexpected value
+    case UNKNOWN  = 'Unknown'; // fallback when API gives unexpected value
 
     public static function fromString(?string $value): self
     {
         return match ($value) {
-            'Czynny' => self::ACTIVE,
+            'Czynny'    => self::ACTIVE,
             'Zwolniony' => self::EXEMPT,
             'Nieczynny' => self::INACTIVE,
-            default => self::UNKNOWN,
+            default     => self::UNKNOWN,
         };
     }
 }

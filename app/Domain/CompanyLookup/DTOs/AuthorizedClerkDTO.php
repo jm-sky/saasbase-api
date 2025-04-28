@@ -3,7 +3,7 @@
 namespace App\Domain\CompanyLookup\DTOs;
 
 /**
- * Authorized Clerk Data Transfer Object
+ * Authorized Clerk Data Transfer Object.
  */
 class AuthorizedClerkDTO
 {

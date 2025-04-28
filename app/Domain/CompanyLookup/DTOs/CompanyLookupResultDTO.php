@@ -5,21 +5,21 @@ namespace App\Domain\CompanyLookup\DTOs;
 use App\Domain\CompanyLookup\Enums\VatStatusEnum;
 
 /**
- * Company Lookup Result Data Transfer Object
+ * Company Lookup Result Data Transfer Object.
  *
- * @property string $name Example: "Example Company Sp. z o.o."
- * @property string $nip Example: "1234567890"
- * @property string|null $regon Example: "123456789"
- * @property string|null $krs Example: "0000123456"
- * @property string|null $residenceAddress Example: "ul. Kwiatowa 15, 00-001 Warszawa"
- * @property string|null $workingAddress Example: "ul. Słoneczna 7, 00-002 Warszawa"
- * @property string[] $accountNumbers Example: ["PL10105000997603123456789123", "PL60102010260000160201111111"]
- * @property VatStatusEnum $vatStatus Example: VatStatusEnum::ACTIVE
- * @property bool $hasVirtualAccounts Example: false
- * @property RepresentativeDTO[] $representatives Example: [{"name": "Jan Kowalski", "nip": null, "pesel": "85010112345"}]
- * @property AuthorizedClerkDTO[] $authorizedClerks Example: [{"name": "Anna Nowak", "nip": null, "pesel": "90020256789"}]
- * @property PartnerDTO[] $partners Example: [{"name": "Michał Wiśniewski", "nip": "9876543210", "pesel": null}]
- * @property string|null $registrationLegalDate Example: "2015-01-01"
+ * @property string               $name                  Example: "Example Company Sp. z o.o."
+ * @property string               $nip                   Example: "1234567890"
+ * @property string|null          $regon                 Example: "123456789"
+ * @property string|null          $krs                   Example: "0000123456"
+ * @property string|null          $residenceAddress      Example: "ul. Kwiatowa 15, 00-001 Warszawa"
+ * @property string|null          $workingAddress        Example: "ul. Słoneczna 7, 00-002 Warszawa"
+ * @property string[]             $accountNumbers        Example: ["PL10105000997603123456789123", "PL60102010260000160201111111"]
+ * @property VatStatusEnum        $vatStatus             Example: VatStatusEnum::ACTIVE
+ * @property bool                 $hasVirtualAccounts    Example: false
+ * @property RepresentativeDTO[]  $representatives       Example: [{"name": "Jan Kowalski", "nip": null, "pesel": "85010112345"}]
+ * @property AuthorizedClerkDTO[] $authorizedClerks      Example: [{"name": "Anna Nowak", "nip": null, "pesel": "90020256789"}]
+ * @property PartnerDTO[]         $partners              Example: [{"name": "Michał Wiśniewski", "nip": "9876543210", "pesel": null}]
+ * @property string|null          $registrationLegalDate Example: "2015-01-01"
  */
 class CompanyLookupResultDTO
 {

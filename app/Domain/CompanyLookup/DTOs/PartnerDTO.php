@@ -3,7 +3,7 @@
 namespace App\Domain\CompanyLookup\DTOs;
 
 /**
- * Partner Data Transfer Object
+ * Partner Data Transfer Object.
  */
 class PartnerDTO
 {

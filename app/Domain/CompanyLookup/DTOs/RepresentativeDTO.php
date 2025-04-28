@@ -3,7 +3,7 @@
 namespace App\Domain\CompanyLookup\DTOs;
 
 /**
- * Representative Data Transfer Object
+ * Representative Data Transfer Object.
  */
 class RepresentativeDTO
 {
