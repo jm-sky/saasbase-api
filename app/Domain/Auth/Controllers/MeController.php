@@ -2,9 +2,9 @@
 
 namespace App\Domain\Auth\Controllers;
 
-use Illuminate\Http\Request;
 use App\Domain\Auth\DTOs\UserDTO;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class MeController extends Controller
 {

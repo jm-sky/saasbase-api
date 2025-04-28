@@ -4,7 +4,6 @@ namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\Actions\RegisterUserAction;
 use App\Domain\Auth\DTOs\RegisterUserDTO;
-use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Requests\RegisterRequest;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
