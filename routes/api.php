@@ -30,7 +30,8 @@ Route::prefix('v1')->group(function () {
         Route::get('user', [AuthController::class, 'getUser']);
 
         require __DIR__ . '/api/user.php';
-
+        require __DIR__ . '/api/feeds.php';
+        
         Route::apiResource('tenants', TenantController::class);
         Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
 
