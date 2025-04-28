@@ -11,5 +11,5 @@ class Kernel extends ConsoleKernel
         $this->load(base_path('app/Domain/CompanyLookup/Commands'));
         // Load other domain commands if needed
         require base_path('routes/console.php');
-     }
+    }
 }
