@@ -3,8 +3,10 @@
 namespace App\Domain\Feeds\Models;
 
 use App\Domain\Users\Models\User;
+use App\Domain\Common\Models\Comment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Domain\Tenants\Concerns\BelongsToTenant;
 use League\CommonMark\CommonMarkConverter;
 use Mews\Purifier\Facades\Purifier;
@@ -22,7 +24,7 @@ use Mews\Purifier\Facades\Purifier;
  * @property \Illuminate\Support\Carbon|null $updated_at
  *
  * @property-read User $user
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Domain\Feeds\Models\FeedComment[] $comments
+ * @property-read \Illuminate\Database\Eloquent\Collection|Comment[] $comments
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Feed query()
  */
@@ -57,8 +59,8 @@ class Feed extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function comments()
+    public function comments(): MorphMany
     {
-        return $this->hasMany(FeedComment::class);
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }
