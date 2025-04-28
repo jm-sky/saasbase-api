@@ -24,7 +24,7 @@ class CompanyLookupService
     {
         $nip = preg_replace('/[^0-9]/', '', $nip);
 
-        $cacheKey = "company_lookup_nip_{$nip}";
+        $cacheKey = "company_lookup_nip.{$nip}";
         $cacheTtl = $this->getCacheExpiration();
 
         return Cache::remember($cacheKey, $cacheTtl, function () use ($nip) {
