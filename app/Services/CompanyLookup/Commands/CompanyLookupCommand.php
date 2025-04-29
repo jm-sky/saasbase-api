@@ -35,6 +35,7 @@ class CompanyLookupCommand extends Command
 
             if (!empty($company->accountNumbers)) {
                 $this->line('Account Numbers:');
+
                 foreach ($company->accountNumbers as $account) {
                     $this->line('  - ' . $account);
                 }

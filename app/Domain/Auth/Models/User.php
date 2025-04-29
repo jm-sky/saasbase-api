@@ -83,6 +83,12 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         return $this->is_admin;
     }
 
+    // TODO: Implement this
+    public function isTwoFactorEnabled(): string
+    {
+        return false;
+    }
+
     public function getJWTIdentifier(): string
     {
         return $this->getKey();

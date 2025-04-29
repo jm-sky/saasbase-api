@@ -14,13 +14,14 @@ class ViesLookupCommand extends Command
     public function handle(ViesLookupService $service): int
     {
         $countryCode = $this->argument('country_code');
-        $vatNumber = $this->argument('vat_number');
+        $vatNumber   = $this->argument('vat_number');
 
         try {
             $result = $service->findByVat($countryCode, $vatNumber);
 
             if (null === $result) {
                 $this->warn('No VAT details found.');
+
                 return self::FAILURE;
             }
 

@@ -22,7 +22,7 @@ class CompanyLookupService
 
     public function findByNip(string $nip): ?CompanyLookupResultDTO
     {
-        $nip = $this->sanitizeAndValidateNip($nip);
+        $nip      = $this->sanitizeAndValidateNip($nip);
         $cacheKey = "company_lookup_nip.{$nip}";
         $cacheTtl = $this->getCacheExpiration();
 
@@ -44,7 +44,7 @@ class CompanyLookupService
                 throw new CompanyLookupException('Unsuccessful API response.');
             } catch (\Throwable $e) {
                 Log::error('CompanyLookupService error: ' . $e->getMessage(), [
-                    'nip' => $nip,
+                    'nip'       => $nip,
                     'exception' => get_class($e),
                 ]);
 
@@ -57,7 +57,7 @@ class CompanyLookupService
     {
         $nip = preg_replace('/[^0-9]/', '', $nip);
 
-        if (strlen($nip) !== 10) {
+        if (10 !== strlen($nip)) {
             throw new CompanyLookupException('Invalid NIP format. NIP must be 10 digits.');
         }
 
