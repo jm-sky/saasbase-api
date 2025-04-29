@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\ViesLookup\Integrations\Requests;
+namespace App\Services\ViesLookup\Integrations\Requests;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

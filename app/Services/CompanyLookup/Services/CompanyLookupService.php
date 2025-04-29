@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\CompanyLookup\Services;
+namespace App\Services\CompanyLookup\Services;
 
-use App\Domain\CompanyLookup\DTOs\CompanyLookupResultDTO;
-use App\Domain\CompanyLookup\Exceptions\CompanyLookupException;
-use App\Domain\CompanyLookup\Integrations\MfApiConnector;
-use App\Domain\CompanyLookup\Integrations\Requests\SearchByNipRequest;
+use App\Services\CompanyLookup\DTOs\CompanyLookupResultDTO;
+use App\Services\CompanyLookup\Exceptions\CompanyLookupException;
+use App\Services\CompanyLookup\Integrations\MfApiConnector;
+use App\Services\CompanyLookup\Integrations\Requests\SearchByNipRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 

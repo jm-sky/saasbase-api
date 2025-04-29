@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\ViesLookup\Integrations;
+namespace App\Services\ViesLookup\Integrations;
 
 use Saloon\Http\Connector;
 

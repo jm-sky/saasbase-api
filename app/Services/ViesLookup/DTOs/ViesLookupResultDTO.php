@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\ViesLookup\DTOs;
+namespace App\Services\ViesLookup\DTOs;
 
 class ViesLookupResultDTO
 {

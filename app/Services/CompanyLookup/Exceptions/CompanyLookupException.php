@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\CompanyLookup\Exceptions;
+namespace App\Services\CompanyLookup\Exceptions;
 
 class CompanyLookupException extends \Exception
 {

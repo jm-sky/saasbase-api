@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\CompanyLookup\Commands;
+namespace App\Services\CompanyLookup\Commands;
 
-use App\Domain\CompanyLookup\Services\CompanyLookupService;
+use App\Services\CompanyLookup\Services\CompanyLookupService;
 use Illuminate\Console\Command;
 
 class CompanyLookupCommand extends Command

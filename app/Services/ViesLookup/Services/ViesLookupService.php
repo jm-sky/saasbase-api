@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\ViesLookup\Services;
+namespace App\Services\ViesLookup\Services;
 
-use App\Domain\ViesLookup\DTOs\ViesLookupResultDTO;
-use App\Domain\ViesLookup\Exceptions\ViesLookupException;
-use App\Domain\ViesLookup\Integrations\Requests\CheckVatRequest;
-use App\Domain\ViesLookup\Integrations\ViesConnector;
+use App\Services\ViesLookup\DTOs\ViesLookupResultDTO;
+use App\Services\ViesLookup\Exceptions\ViesLookupException;
+use App\Services\ViesLookup\Integrations\Requests\CheckVatRequest;
+use App\Services\ViesLookup\Integrations\ViesConnector;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 

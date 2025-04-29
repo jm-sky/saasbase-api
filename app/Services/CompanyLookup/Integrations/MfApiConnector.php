@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\CompanyLookup\Integrations;
+namespace App\Services\CompanyLookup\Integrations;
 
 use Saloon\Http\Connector;
 
