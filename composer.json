@@ -19,6 +19,7 @@
         "lorisleiva/laravel-actions": "^2.9",
         "ramsey/uuid": "^4.7",
         "rap2hpoutre/laravel-log-viewer": "^2.5",
+        "saloonphp/saloon": "^3.11",
         "spatie/laravel-data": "^4.15",
         "spatie/laravel-medialibrary": "^11.0",
         "spatie/laravel-query-builder": "^6.3",

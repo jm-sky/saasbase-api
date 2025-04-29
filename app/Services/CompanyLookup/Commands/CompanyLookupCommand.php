@@ -27,7 +27,18 @@ class CompanyLookupCommand extends Command
             $this->info('Company Details:');
             $this->line('Name: ' . $company->name);
             $this->line('NIP: ' . $company->nip);
-            $this->line('Address: ' . $company->address);
+            $this->line('REGON: ' . ($company->regon ?? 'N/A'));
+            $this->line('KRS: ' . ($company->krs ?? 'N/A'));
+            $this->line('Residence Address: ' . ($company->residenceAddress ?? 'N/A'));
+            $this->line('Working Address: ' . ($company->workingAddress ?? 'N/A'));
+            $this->line('VAT Status: ' . $company->vatStatus->value);
+
+            if (!empty($company->accountNumbers)) {
+                $this->line('Account Numbers:');
+                foreach ($company->accountNumbers as $account) {
+                    $this->line('  - ' . $account);
+                }
+            }
 
             return self::SUCCESS;
         } catch (\Throwable $e) {

@@ -22,8 +22,7 @@ class CompanyLookupService
 
     public function findByNip(string $nip): ?CompanyLookupResultDTO
     {
-        $nip = preg_replace('/[^0-9]/', '', $nip);
-
+        $nip = $this->sanitizeAndValidateNip($nip);
         $cacheKey = "company_lookup_nip.{$nip}";
         $cacheTtl = $this->getCacheExpiration();
 
@@ -46,11 +45,23 @@ class CompanyLookupService
             } catch (\Throwable $e) {
                 Log::error('CompanyLookupService error: ' . $e->getMessage(), [
                     'nip' => $nip,
+                    'exception' => get_class($e),
                 ]);
 
                 throw new CompanyLookupException('Failed to lookup company details.', 0, $e);
             }
         });
+    }
+
+    protected function sanitizeAndValidateNip(string $nip): string
+    {
+        $nip = preg_replace('/[^0-9]/', '', $nip);
+
+        if (strlen($nip) !== 10) {
+            throw new CompanyLookupException('Invalid NIP format. NIP must be 10 digits.');
+        }
+
+        return $nip;
     }
 
     protected function getCacheExpiration(): \DateTimeInterface|\DateInterval|int
