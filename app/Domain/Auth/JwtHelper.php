@@ -60,10 +60,14 @@ class JwtHelper
 
     public static function createRefreshToken(User $user): string
     {
-        $ttl     = self::getRefreshTokenTTL();
+        $ttl = self::getRefreshTokenTTL();
+        Config::set('jwt.ttl', $ttl);
         $payload = self::getDefaultPayload($user);
 
-        return JWTAuth::claims($payload)->setTTL($ttl)->fromUser($user);
+        $token = JWTAuth::fromUser($user, $payload);
+        Config::set('jwt.ttl', config('jwt.ttl')); // Restore original TTL
+
+        return $token;
     }
 
     public static function getRefreshTokenTTL(): int

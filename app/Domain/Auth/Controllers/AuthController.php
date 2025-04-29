@@ -37,7 +37,7 @@ class AuthController extends Controller
         $user  = Auth::user();
         $token = JwtHelper::createTokenWithoutTenant($user);
 
-        return $this->respondWithToken($token, $user);
+        return $this->respondWithToken($token, $user, remember: $request->boolean('remember'));
     }
 
     public function logout(): JsonResponse
@@ -68,7 +68,7 @@ class AuthController extends Controller
 
         $token = JwtHelper::createTokenWithoutTenant($user);
 
-        return $this->respondWithToken($token, $user);
+        return $this->respondWithToken($token, $user, remember: $request->boolean('remember'));
     }
 
     public function refresh(): JsonResponse
@@ -95,7 +95,8 @@ class AuthController extends Controller
                 ? JwtHelper::createTokenWithTenant($user, $tenantId)
                 : JwtHelper::createTokenWithoutTenant($user);
 
-            return $this->respondWithToken($newToken, $user);
+            // TODO: Implement $remember
+            return $this->respondWithToken($newToken, $user, tenantId: $tenantId);
         } catch (TokenInvalidException $e) {
             return response()->json(['error' => 'Invalid token'], 401);
         } catch (JWTException $e) {

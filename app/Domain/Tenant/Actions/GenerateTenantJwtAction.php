@@ -33,7 +33,7 @@ class GenerateTenantJwtAction
         try {
             $token = $this->handle($user, $tenant);
 
-            return response()->json($this->tokenResponseData($token));
+            return $this->respondWithToken($token, $user, tenantId: $tenant->id);
         } catch (\RuntimeException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -57,7 +57,7 @@ class GenerateTenantJwtAction
         }
 
         // Verify user belongs to tenant
-        if (!$user->tenants()->where('tenant_id', $tenant->id)->exists()) {
+        if (!$user->tenants()->where('id', $tenant->id)->exists()) {
             throw new UserNotBelongToTenantException();
         }
     }
