@@ -2,10 +2,13 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -39,13 +42,14 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Carbon                                               $created_at
  * @property Carbon                                               $updated_at
  * @property ?Carbon                                              $deleted_at
+ * @property ?Carbon                                              $email_verified_at
  * @property UserSettings|null                                    $settings
  * @property Collection<int, OAuthAccount>                        $oauthAccounts
  * @property Collection<int, UserTenant>                          $tenantMemberships
  * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
  * @property Collection<int, Tenant>                              $tenants
  */
-class User extends Authenticatable implements JWTSubject, HasMedia
+class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -53,6 +57,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
+    use MustVerifyEmailTrait;
 
     protected $fillable = [
         'first_name',
@@ -184,5 +189,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     public function getAvatarOriginalUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('profile');
+    }
+
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification());
     }
 }
