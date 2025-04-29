@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenant\Actions;
 
+use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\JsonResponse;
@@ -18,15 +19,7 @@ class GenerateTenantJwtAction
     {
         $this->authorize($user, $tenant);
 
-        // Create custom claims with tenant context
-        $customClaims = [
-            'tenant_id'   => $tenant->id,
-            'tenant_slug' => $tenant->slug,
-            'user_role'   => $user->tenants()->where('tenant_id', $tenant->id)->first()?->pivot->role,
-        ];
-
-        // Generate token with custom claims
-        return JWTAuth::claims($customClaims)->fromUser($user);
+        return JwtHelper::createTokenWithTenant($user, $tenant->id);
     }
 
     public function asController(Tenant $tenant): JsonResponse

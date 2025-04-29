@@ -2,27 +2,47 @@
 
 namespace App\Domain\Auth\Traits;
 
+use App\Domain\Auth\JwtHelper;
+use App\Domain\Auth\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 trait RespondsWithToken
 {
-    protected function respondWithToken($token)
+    protected function respondWithToken(string $token, ?User $user = null): \Illuminate\Http\JsonResponse
     {
+        $user = $user ?? Auth::user();
+
+        if (!$user) {
+            throw new \RuntimeException('User not found');
+        }
+
+        // Check if current token has tenant context
+        $payload  = JWTAuth::decode(JWTAuth::getToken());
+        $tenantId = $payload->get('tid');
+
+        // Create refresh token with the same tenant context as access token
+        $refreshToken = $tenantId
+            ? JwtHelper::createTokenWithTenant($user, $tenantId)
+            : JwtHelper::createRefreshToken($user);
+
         return response()
             ->json([
                 'accessToken' => $token,
                 'tokenType'   => 'bearer',
-                'expiresIn'   => auth()->factory()->getTTL() * 60,
-                'user'        => auth()->user(),
+                'expiresIn'   => JWTAuth::factory()->getTTL() * 60,
+                'user'        => $user,
             ])
             ->withCookie(cookie(
                 'refresh_token',
-                $token,
-                60 * 24 * 7, // 7 dni
-                '/',         // ścieżka
-                null,        // domena
-                true,        // secure
-                true,        // httpOnly
-                false,       // raw
-                'Strict'     // SameSite
+                $refreshToken,
+                60 * 24 * 7, // 7 days
+                '/',        // path
+                null,       // domain
+                true,      // secure
+                true,      // httpOnly
+                false,     // raw
+                'Strict'   // SameSite
             ))
         ;
     }
