@@ -9,6 +9,15 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait RespondsWithToken
 {
+    protected function tokenResponseData(string $token): array
+    {
+        return [
+            'accessToken' => $token,
+            'tokenType'   => 'bearer',
+            'expiresIn'   => JWTAuth::factory()->getTTL() * 60,
+        ];
+    }
+
     protected function respondWithToken(string $token, ?User $user = null): \Illuminate\Http\JsonResponse
     {
         $user = $user ?? Auth::user();
@@ -27,12 +36,7 @@ trait RespondsWithToken
             : JwtHelper::createRefreshToken($user);
 
         return response()
-            ->json([
-                'accessToken' => $token,
-                'tokenType'   => 'bearer',
-                'expiresIn'   => JWTAuth::factory()->getTTL() * 60,
-                'user'        => $user,
-            ])
+            ->json($this->responseData($token))
             ->withCookie(cookie(
                 'refresh_token',
                 $refreshToken,

@@ -35,8 +35,8 @@ class BelongsToTenantTest extends TestCase
         $this->user   = User::factory()->create();
 
         // Set current tenant context
-        session(['current_tenant_id' => $this->tenant->id]);
         $this->actingAs($this->user);
+        $this->mockTenantId($this->tenant->id);
     }
 
     public function testModelIsScopedToTenant(): void

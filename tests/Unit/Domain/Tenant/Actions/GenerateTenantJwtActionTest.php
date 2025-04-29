@@ -44,9 +44,8 @@ class GenerateTenantJwtActionTest extends TestCase
         $payload = JWTAuth::setToken($token)->getPayload();
 
         // Assert
-        $this->assertEquals($tenant->id, $payload->get('tenant_id'));
-        $this->assertEquals($tenant->slug, $payload->get('tenant_slug'));
-        $this->assertEquals($role, $payload->get('user_role'));
+        $this->assertEquals($tenant->id, $payload->get('tid'));
+        $this->assertEquals($role, $payload->get('role'));
     }
 
     public function testThrowsExceptionWhenUserDoesNotBelongToTenant(): void

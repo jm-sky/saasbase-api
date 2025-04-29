@@ -7,15 +7,14 @@ use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class TenantController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $tenants = Tenant::query()
-            ->orderBy('created_at')
-            ->get()
-        ;
+        $tenants = $request->user()->tenants()->orderBy('created_at')->get();
 
         return response()->json(
             TenantDTO::collect($tenants)
@@ -25,10 +24,11 @@ class TenantController extends Controller
     public function store(TenantRequest $request): JsonResponse
     {
         $tenant = Tenant::create($request->validated());
+        $request->user()->tenants()->attach($tenant);
 
         return response()->json(
             TenantDTO::from($tenant),
-            201
+            Response::HTTP_CREATED,
         );
     }
 
@@ -41,6 +41,7 @@ class TenantController extends Controller
 
     public function update(TenantRequest $request, Tenant $tenant): JsonResponse
     {
+        $tenant = $request->user()->tenants()->where('id', $tenant->id)->firstOrFail();
         $tenant->update($request->validated());
 
         return response()->json(
@@ -48,10 +49,11 @@ class TenantController extends Controller
         );
     }
 
-    public function destroy(Tenant $tenant): JsonResponse
+    public function destroy(Request $request, Tenant $tenant): JsonResponse
     {
+        $tenant = $request->user()->tenants()->where('id', $tenant->id)->firstOrFail();
         $tenant->delete();
 
-        return response()->json(null, 204);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

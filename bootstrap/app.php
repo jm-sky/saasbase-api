@@ -12,7 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->appendToGroup('api', [
+            \App\Http\Middleware\SetLocaleFromHeader::class,
+        ]);
+
+        $middleware->alias([
+            'is_admin' => \App\Http\Middleware\IsAdmin::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
