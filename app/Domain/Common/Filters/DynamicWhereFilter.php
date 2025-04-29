@@ -4,7 +4,6 @@ namespace App\Domain\Common\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\Filters\Filter;
-use Illuminate\Support\Arr;
 
 class DynamicWhereFilter implements Filter
 {
@@ -17,13 +16,11 @@ class DynamicWhereFilter implements Filter
 
     public function __invoke(Builder $query, $value, string $property): Builder
     {
-        // If value is an array, operator is defined, e.g. ['gt' => 100]
         if (is_array($value)) {
             foreach ($value as $operator => $val) {
-                $query->where($property, $this->mapOperator($operator), $val);
+                $this->applyOperator($query, $property, $operator, $val);
             }
         } else {
-            // Use default operator depending on column type
             $type = $this->columnTypes[$property] ?? 'string';
 
             if ($type === 'string') {
@@ -36,17 +33,129 @@ class DynamicWhereFilter implements Filter
         return $query;
     }
 
+    protected function applyOperator(Builder $query, string $column, string $operator, $value): void
+    {
+        $mapped = $this->mapOperator($operator);
+
+        match ($mapped) {
+            'in'     => $query->whereIn($column, $this->splitToArray($value)),
+            'not in' => $query->whereNotIn($column, $this->splitToArray($value)),
+            'like'   => $query->where($column, 'like', "%{$value}%"),
+            'not like' => $query->where($column, 'not like', "%{$value}%"),
+            'between' => $this->applyBetween($query, $column, $value),
+            default  => $query->where($column, $mapped, $value),
+        };
+    }
+
     protected function mapOperator(string $op): string
     {
-        return match ($op) {
+        return match (strtolower($op)) {
             'eq' => '=',
-            'neq', 'ne' => '!=',
+            'ne', 'neq' => '!=',
             'gt' => '>',
             'gte' => '>=',
             'lt' => '<',
             'lte' => '<=',
+            'in' => 'in',
+            'nin', 'notin' => 'not in',
             'like' => 'like',
-            default => '='
+            'nlike', 'notlike' => 'not like',
+            'between' => 'between',
+            default => '=',
         };
+    }
+
+    protected function applyBetween(Builder $query, string $column, $value): void
+    {
+        $parts = $this->splitToArray($value);
+
+        if (count($parts) === 2) {
+            $query->whereBetween($column, [$parts[0], $parts[1]]);
+        }
+    }
+
+    protected function splitToArray(string|array $value): array
+    {
+        if (is_array($value)) return $value;
+        return explode( ',', $value);
+    }
+} App\Filters;
+
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\QueryBuilder\Filters\Filter;
+
+class CustomWhereFilter implements Filter
+{
+    protected array $columnTypes;
+
+    public function __construct(array $columnTypes = [])
+    {
+        $this->columnTypes = $columnTypes;
+    }
+
+    public function __invoke(Builder $query, $value, string $property): Builder
+    {
+        if (is_array($value)) {
+            foreach ($value as $operator => $val) {
+                $this->applyOperator($query, $property, $operator, $val);
+            }
+        } else {
+            $type = $this->columnTypes[$property] ?? 'string';
+
+            if ($type === 'string') {
+                $query->where($property, 'like', "%{$value}%");
+            } else {
+                $query->where($property, '=', $value);
+            }
+        }
+
+        return $query;
+    }
+
+    protected function applyOperator(Builder $query, string $column, string $operator, $value): void
+    {
+        $mapped = $this->mapOperator($operator);
+
+        match ($mapped) {
+            'in'     => $query->whereIn($column, $this->splitToArray($value)),
+            'not in' => $query->whereNotIn($column, $this->splitToArray($value)),
+            'like'   => $query->where($column, 'like', "%{$value}%"),
+            'not like' => $query->where($column, 'not like', "%{$value}%"),
+            'between' => $this->applyBetween($query, $column, $value),
+            default  => $query->where($column, $mapped, $value),
+        };
+    }
+
+    protected function mapOperator(string $op): string
+    {
+        return match (strtolower($op)) {
+            'eq' => '=',
+            'ne', 'neq' => '!=',
+            'gt' => '>',
+            'gte' => '>=',
+            'lt' => '<',
+            'lte' => '<=',
+            'in' => 'in',
+            'nin', 'notin' => 'not in',
+            'like' => 'like',
+            'nlike', 'notlike' => 'not like',
+            'between' => 'between',
+            default => '=',
+        };
+    }
+
+    protected function applyBetween(Builder $query, string $column, $value): void
+    {
+        $parts = $this->splitToArray($value);
+
+        if (count($parts) === 2) {
+            $query->whereBetween($column, [$parts[0], $parts[1]]);
+        }
+    }
+
+    protected function splitToArray(string|array $value): array
+    {
+        if (is_array($value)) return $value;
+        return explode(',', $value);
     }
 }
