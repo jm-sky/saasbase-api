@@ -4,7 +4,6 @@ namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\Actions\RegisterUserAction;
 use App\Domain\Auth\DTOs\RegisterUserDTO;
-use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Requests\RegisterRequest;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
@@ -73,22 +72,5 @@ class AuthController extends Controller
         } catch (JWTException $e) {
             return response()->json(['error' => 'Token not provided or expired'], 401);
         }
-    }
-
-    // New getUser method to return authenticated user's data
-    public function getUser()
-    {
-        $user = auth()->user(); // Get the authenticated user
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        // Transform the user model into a UserDTO
-        $userDTO = UserDTO::fromModel($user);
-
-        return response()->json([
-            'user' => $userDTO,
-        ]);
     }
 }
