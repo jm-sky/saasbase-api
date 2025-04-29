@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\CompanyLookup\Integrations\Requests;
+namespace App\Services\CompanyLookup\Integrations\Requests;
 
 use Carbon\Carbon;
 use Saloon\Enums\Method;

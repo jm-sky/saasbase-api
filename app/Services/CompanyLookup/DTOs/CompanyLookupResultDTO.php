@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\CompanyLookup\DTOs;
+namespace App\Services\CompanyLookup\DTOs;
 
-use App\Domain\CompanyLookup\Enums\VatStatusEnum;
+use App\Services\CompanyLookup\Enums\VatStatusEnum;
 
 /**
  * Company Lookup Result Data Transfer Object.

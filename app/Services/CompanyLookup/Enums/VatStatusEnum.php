@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\CompanyLookup\Enums;
+namespace App\Services\CompanyLookup\Enums;
 
 enum VatStatusEnum: string
 {

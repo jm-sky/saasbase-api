@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\CompanyLookup\DTOs;
+namespace App\Services\CompanyLookup\DTOs;
 
 /**
- * Partner Data Transfer Object.
+ * Representative Data Transfer Object.
  */
-class PartnerDTO
+class RepresentativeDTO
 {
     public function __construct(
         public readonly ?string $name,

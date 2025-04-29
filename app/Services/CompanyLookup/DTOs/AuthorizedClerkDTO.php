@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\CompanyLookup\DTOs;
+namespace App\Services\CompanyLookup\DTOs;
 
 /**
  * Authorized Clerk Data Transfer Object.
