@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Auth\Controllers\MeController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
@@ -27,7 +28,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('auth/refresh', [AuthController::class, 'refresh']);
-        Route::get('user', [AuthController::class, 'getUser']);
+        Route::get('me', MeController::class);
 
         require __DIR__ . '/api/user.php';
 
