@@ -16,10 +16,10 @@ Route::prefix('oauth')->group(function () {
     Route::get('{provider}/callback', [OAuthController::class, 'callback']);
 });
 
-
 // Email Verification Routes
 Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
-    ->name('verification.verify');
+    ->name('verification.verify')
+;
 
 Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])
     ->middleware(['auth:api', 'throttle:6,1'])
