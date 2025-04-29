@@ -24,6 +24,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use App\Domain\Auth\Notifications\VerifyEmailNotification;
 
 /**
  * @property string                                               $id
@@ -39,13 +42,14 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Carbon                                               $created_at
  * @property Carbon                                               $updated_at
  * @property ?Carbon                                              $deleted_at
+ * @property ?Carbon                                              $email_verified_at
  * @property UserSettings|null                                    $settings
  * @property Collection<int, OAuthAccount>                        $oauthAccounts
  * @property Collection<int, UserTenant>                          $tenantMemberships
  * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
  * @property Collection<int, Tenant>                              $tenants
  */
-class User extends Authenticatable implements JWTSubject, HasMedia
+class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -53,6 +57,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
+    use MustVerifyEmailTrait;
 
     protected $fillable = [
         'first_name',
@@ -184,5 +189,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     public function getAvatarOriginalUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('profile');
+    }
+
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification());
     }
 }
