@@ -4,9 +4,9 @@ namespace App\Domain\Auth\Traits;
 
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Cookie;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 trait RespondsWithToken
 {
@@ -21,11 +21,9 @@ trait RespondsWithToken
 
     protected function getRefreshToken(User $user, ?string $tenantId)
     {
-        $refreshToken = $tenantId
+        return $tenantId
             ? JwtHelper::createTokenWithTenant($user, $tenantId)
             : JwtHelper::createRefreshToken($user);
-
-        return $refreshToken;
     }
 
     protected function respondWithToken(string $token, ?User $user = null, ?string $tenantId = null, bool $remember = false): \Illuminate\Http\JsonResponse
@@ -41,7 +39,8 @@ trait RespondsWithToken
 
         return response()
             ->json($this->tokenResponseData($token))
-            ->withCookie($this->getRefreshTokenCookie($refreshToken, remember: $remember));
+            ->withCookie($this->getRefreshTokenCookie($refreshToken, remember: $remember))
+        ;
     }
 
     protected function getRefreshTokenCookie(string $refreshToken, bool $remember = false): Cookie

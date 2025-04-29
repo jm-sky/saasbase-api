@@ -101,7 +101,8 @@ class TenantApiTest extends TestCase
         $response = $this->postJson($this->baseUrl, $tenantData);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['slug']);
+            ->assertJsonValidationErrors(['slug'])
+        ;
     }
 
     public function testCanShowTenant(): void
