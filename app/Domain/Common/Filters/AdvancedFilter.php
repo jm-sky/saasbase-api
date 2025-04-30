@@ -5,7 +5,7 @@ namespace App\Domain\Common\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\Filters\Filter;
 
-class DynamicWhereFilter implements Filter
+class AdvancedFilter implements Filter
 {
     protected array $columnTypes;
 
