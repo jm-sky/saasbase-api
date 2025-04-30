@@ -20,7 +20,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
@@ -123,14 +122,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function getTenantId(): ?string
     {
-        $tenantId = Session::get('current_tenant_id');
-
-        if ($tenantId) {
-            return $tenantId;
-        }
-
-        if (Auth::check() && Auth::payload()?->get('tenant_id')) {
-            return Auth::payload()->get('tenant_id');
+        if (Auth::check() && Auth::payload()?->get('tid')) {
+            return Auth::payload()->get('tid');
         }
 
         $membership = $this->tenantMemberships()->first();

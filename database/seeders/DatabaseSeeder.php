@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
             'role'      => 'admin',
         ]);
 
+        $user->tenants()->attach($tenant);
+
         $this->call([
             CountrySeeder::class,
             VatRateSeeder::class,
