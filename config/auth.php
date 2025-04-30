@@ -114,4 +114,20 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Two Factor Authentication
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify various two-factor authentication settings.
+    | The window value determines how many time slices to check when validating
+    | a TOTP code. A larger window means more lenient timing validation.
+    |
+    */
+
+    '2fa' => [
+        'window' => env('AUTH_2FA_WINDOW', 1),
+        'issuer' => env('AUTH_2FA_ISSUER', env('APP_NAME')),
+    ],
 ];
