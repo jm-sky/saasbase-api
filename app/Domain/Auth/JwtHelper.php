@@ -75,6 +75,7 @@ class JwtHelper
             ->setTTL($ttl)
             ->claims($customClaims)
             ->fromUser($user)
+            ->make()
         ;
     }
 

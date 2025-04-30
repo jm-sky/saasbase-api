@@ -54,6 +54,7 @@ composer install
 
 ```bash
 php artisan key:generate
+php artisan jwt:secret
 ```
 
 6. Run database migrations:
