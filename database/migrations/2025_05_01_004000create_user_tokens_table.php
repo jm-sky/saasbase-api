@@ -10,7 +10,7 @@ class CreateUserTokensTable extends Migration
     {
         Schema::create('user_tokens', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->uuid('user_id');
             $table->uuid('token_id')->unique(); // UUID tied to refresh token
             $table->string('user_agent')->nullable();
             $table->ipAddress('ip_address')->nullable();
@@ -19,6 +19,8 @@ class CreateUserTokensTable extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->boolean('revoked')->default(false);
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
