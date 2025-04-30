@@ -25,9 +25,9 @@ class TwoFactorAuthController extends Controller
         $setup = $this->twoFactorAuthService->generateTwoFactorSetup($user);
 
         return response()->json([
-            'secret'         => $setup['secret'],
-            'qr_code_url'    => $setup['qr_code_url'],
-            'recovery_codes' => $setup['recovery_codes'],
+            'secret'        => $setup['secret'],
+            'qrCodeUrl'     => $setup['qr_code_url'],
+            'recoveryCodes' => $setup['recovery_codes'],
         ]);
     }
 
@@ -94,8 +94,8 @@ class TwoFactorAuthController extends Controller
         $token = JwtHelper::createTokenWithoutTenant($user, true);
 
         return response()->json([
-            'access_token' => $token,
-            'token_type'   => 'bearer',
+            'accessToken' => $token,
+            'tokenType'   => 'bearer',
         ]);
     }
 }
