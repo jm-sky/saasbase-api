@@ -10,9 +10,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class UserDTOTest extends TestCase
 {
     public function testCanCreateUserDtoFromModel(): void

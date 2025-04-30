@@ -5,6 +5,7 @@ namespace App\Domain\Common\Support;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ColumnTypeCache
 {
@@ -43,10 +44,10 @@ class ColumnTypeCache
 
     public static function clearAll(): void
     {
-        $tables = DB::getDoctrineSchemaManager()->listTableNames();
+        $tables = Schema::getTables();
 
         foreach ($tables as $table) {
-            self::clear($table);
+            self::clear($table['name']);
         }
     }
 }

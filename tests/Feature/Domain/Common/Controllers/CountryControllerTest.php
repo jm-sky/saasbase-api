@@ -11,9 +11,8 @@ use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class CountryControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -34,7 +33,7 @@ class CountryControllerTest extends TestCase
 
         $response = $this->getJson($this->baseUrl);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
                 'data' => [

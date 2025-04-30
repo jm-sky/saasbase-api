@@ -1,15 +1,12 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
-use App\Domain\Auth\Controllers\MeController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Skills\Controllers\SkillCategoryController;
 use App\Domain\Skills\Controllers\SkillController;
 use App\Domain\Skills\Controllers\UserSkillController;
-use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
-use App\Domain\Tenant\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,19 +25,19 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('auth/refresh', [AuthController::class, 'refresh']);
-        Route::get('me', MeController::class);
 
         require __DIR__ . '/api/user.php';
+        require __DIR__ . '/api/tenants.php';
 
-        Route::apiResource('tenants', TenantController::class);
-        Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
-
-        Route::apiResource('contractors', ContractorController::class);
-        Route::apiResource('products', ProductController::class);
-        Route::apiResource('skills', SkillController::class);
-        Route::apiResource('skill-categories', SkillCategoryController::class);
-        Route::apiResource('user-skills', UserSkillController::class);
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+
+        Route::middleware(['is_active'])->group(function () {
+            Route::apiResource('contractors', ContractorController::class);
+            Route::apiResource('products', ProductController::class);
+            Route::apiResource('skills', SkillController::class);
+            Route::apiResource('skill-categories', SkillCategoryController::class);
+            Route::apiResource('user-skills', UserSkillController::class);
+        });
     });
 
     require __DIR__ . '/api/admin.php';

@@ -14,9 +14,8 @@ use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class SkillApiTest extends TestCase
 {
     use RefreshDatabase;

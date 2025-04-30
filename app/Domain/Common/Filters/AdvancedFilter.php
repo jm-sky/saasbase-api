@@ -23,7 +23,7 @@ class AdvancedFilter implements Filter
         } else {
             $type = $this->columnTypes[$property] ?? 'string';
 
-            if ($type === 'string') {
+            if ('string' === $type) {
                 $query->where($property, 'like', "%{$value}%");
             } else {
                 $query->where($property, '=', $value);
@@ -48,8 +48,8 @@ class AdvancedFilter implements Filter
             'nlike', 'notlike' => $query->where($column, 'not like', "%{$value}%"),
             'startswith' => $query->where($column, 'like', "{$value}%"),
             'endswith'   => $query->where($column, 'like', "%{$value}"),
-            'regex'     => $query->whereRaw("{$column} REGEXP ?", [$value]),
-            default     => $query->where($column, $this->mapOperator($op), $value),
+            'regex'      => $query->whereRaw("{$column} REGEXP ?", [$value]),
+            default      => $query->where($column, $this->mapOperator($op), $value),
         };
     }
 
@@ -58,10 +58,10 @@ class AdvancedFilter implements Filter
         return match ($op) {
             'eq'  => '=',
             'ne', 'neq' => '!=',
-            'gt'  => '>',
-            'gte' => '>=',
-            'lt'  => '<',
-            'lte' => '<=',
+            'gt'    => '>',
+            'gte'   => '>=',
+            'lt'    => '<',
+            'lte'   => '<=',
             default => '=',
         };
     }
@@ -70,7 +70,7 @@ class AdvancedFilter implements Filter
     {
         $parts = $this->splitToArray($value);
 
-        if (count($parts) === 2) {
+        if (2 === count($parts)) {
             $query->whereBetween($column, [$parts[0], $parts[1]]);
         }
     }

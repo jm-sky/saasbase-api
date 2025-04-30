@@ -10,9 +10,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class ProjectRoleSeederTest extends TestCase
 {
     use RefreshDatabase;

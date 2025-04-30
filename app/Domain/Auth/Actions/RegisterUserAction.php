@@ -3,7 +3,9 @@
 namespace App\Domain\Auth\Actions;
 
 use App\Domain\Auth\DTOs\RegisterUserDTO;
+use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Models\User;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterUserAction
@@ -13,6 +15,12 @@ class RegisterUserAction
      */
     public function execute(RegisterUserDTO $dto): User
     {
+        $requiresApproval = Config::get('users.registration.require_admin_approval', true);
+
+        $status = $requiresApproval
+            ? UserStatus::PENDING
+            : UserStatus::ACTIVE;
+
         return User::create([
             'first_name'  => $dto->firstName,
             'last_name'   => $dto->lastName,
@@ -21,6 +29,7 @@ class RegisterUserAction
             'description' => $dto->description,
             'birth_date'  => $dto->birthDate,
             'phone'       => $dto->phone,
+            'status'      => $status,
         ]);
     }
 }
