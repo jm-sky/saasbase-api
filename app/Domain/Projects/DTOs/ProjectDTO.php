@@ -77,4 +77,18 @@ class ProjectDTO extends Data
             requiredSkills: $withRelations && $model->relationLoaded('requiredSkills') ? $model->requiredSkills->map(fn ($skill) => ProjectRequiredSkillDTO::fromModel($skill))->toArray() : null,
         );
     }
+
+    public function toArray(): array
+    {
+        $data = parent::toArray();
+
+        // Ensure dates are properly formatted
+        $data['startDate'] = $this->startDate?->format('Y-m-d');
+        $data['endDate']   = $this->endDate?->format('Y-m-d');
+        $data['createdAt'] = $this->createdAt?->toIso8601String();
+        $data['updatedAt'] = $this->updatedAt?->toIso8601String();
+        $data['deletedAt'] = $this->deletedAt?->toIso8601String();
+
+        return $data;
+    }
 }
