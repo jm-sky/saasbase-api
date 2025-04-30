@@ -23,4 +23,5 @@ Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify']
 
 Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])
     ->middleware(['auth:api', 'throttle:6,1'])
-    ->name('verification.send');
+    ->name('verification.send')
+;

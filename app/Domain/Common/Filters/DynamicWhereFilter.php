@@ -23,7 +23,7 @@ class DynamicWhereFilter implements Filter
         } else {
             $type = $this->columnTypes[$property] ?? 'string';
 
-            if ($type === 'string') {
+            if ('string' === $type) {
                 $query->where($property, 'like', "%{$value}%");
             } else {
                 $query->where($property, '=', $value);
@@ -38,12 +38,12 @@ class DynamicWhereFilter implements Filter
         $mapped = $this->mapOperator($operator);
 
         match ($mapped) {
-            'in'     => $query->whereIn($column, $this->splitToArray($value)),
-            'not in' => $query->whereNotIn($column, $this->splitToArray($value)),
-            'like'   => $query->where($column, 'like', "%{$value}%"),
+            'in'       => $query->whereIn($column, $this->splitToArray($value)),
+            'not in'   => $query->whereNotIn($column, $this->splitToArray($value)),
+            'like'     => $query->where($column, 'like', "%{$value}%"),
             'not like' => $query->where($column, 'not like', "%{$value}%"),
-            'between' => $this->applyBetween($query, $column, $value),
-            default  => $query->where($column, $mapped, $value),
+            'between'  => $this->applyBetween($query, $column, $value),
+            default    => $query->where($column, $mapped, $value),
         };
     }
 
@@ -52,16 +52,16 @@ class DynamicWhereFilter implements Filter
         return match (strtolower($op)) {
             'eq' => '=',
             'ne', 'neq' => '!=',
-            'gt' => '>',
+            'gt'  => '>',
             'gte' => '>=',
-            'lt' => '<',
+            'lt'  => '<',
             'lte' => '<=',
-            'in' => 'in',
+            'in'  => 'in',
             'nin', 'notin' => 'not in',
             'like' => 'like',
             'nlike', 'notlike' => 'not like',
             'between' => 'between',
-            default => '=',
+            default   => '=',
         };
     }
 
@@ -69,15 +69,18 @@ class DynamicWhereFilter implements Filter
     {
         $parts = $this->splitToArray($value);
 
-        if (count($parts) === 2) {
+        if (2 === count($parts)) {
             $query->whereBetween($column, [$parts[0], $parts[1]]);
         }
     }
 
     protected function splitToArray(string|array $value): array
     {
-        if (is_array($value)) return $value;
-        return explode( ',', $value);
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return explode(',', $value);
     }
 } App\Filters;
 
@@ -102,7 +105,7 @@ class CustomWhereFilter implements Filter
         } else {
             $type = $this->columnTypes[$property] ?? 'string';
 
-            if ($type === 'string') {
+            if ('string' === $type) {
                 $query->where($property, 'like', "%{$value}%");
             } else {
                 $query->where($property, '=', $value);
@@ -117,12 +120,12 @@ class CustomWhereFilter implements Filter
         $mapped = $this->mapOperator($operator);
 
         match ($mapped) {
-            'in'     => $query->whereIn($column, $this->splitToArray($value)),
-            'not in' => $query->whereNotIn($column, $this->splitToArray($value)),
-            'like'   => $query->where($column, 'like', "%{$value}%"),
+            'in'       => $query->whereIn($column, $this->splitToArray($value)),
+            'not in'   => $query->whereNotIn($column, $this->splitToArray($value)),
+            'like'     => $query->where($column, 'like', "%{$value}%"),
             'not like' => $query->where($column, 'not like', "%{$value}%"),
-            'between' => $this->applyBetween($query, $column, $value),
-            default  => $query->where($column, $mapped, $value),
+            'between'  => $this->applyBetween($query, $column, $value),
+            default    => $query->where($column, $mapped, $value),
         };
     }
 
@@ -131,16 +134,16 @@ class CustomWhereFilter implements Filter
         return match (strtolower($op)) {
             'eq' => '=',
             'ne', 'neq' => '!=',
-            'gt' => '>',
+            'gt'  => '>',
             'gte' => '>=',
-            'lt' => '<',
+            'lt'  => '<',
             'lte' => '<=',
-            'in' => 'in',
+            'in'  => 'in',
             'nin', 'notin' => 'not in',
             'like' => 'like',
             'nlike', 'notlike' => 'not like',
             'between' => 'between',
-            default => '=',
+            default   => '=',
         };
     }
 
@@ -148,14 +151,17 @@ class CustomWhereFilter implements Filter
     {
         $parts = $this->splitToArray($value);
 
-        if (count($parts) === 2) {
+        if (2 === count($parts)) {
             $query->whereBetween($column, [$parts[0], $parts[1]]);
         }
     }
 
     protected function splitToArray(string|array $value): array
     {
-        if (is_array($value)) return $value;
+        if (is_array($value)) {
+            return $value;
+        }
+
         return explode(',', $value);
     }
 }
