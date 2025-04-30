@@ -2,9 +2,11 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -12,15 +14,16 @@ class OAuthController extends Controller
 {
     use RespondsWithToken;
 
-    public function redirect(string $provider)
+    public function redirect(string $provider): JsonResponse
     {
         return Socialite::driver($provider)->stateless()->redirect();
     }
 
-    public function callback(string $provider)
+    public function callback(string $provider): JsonResponse
     {
         $socialUser = Socialite::driver($provider)->stateless()->user();
 
+        /** @var User $user */
         $user = User::firstOrCreate(
             ['email' => $socialUser->getEmail()],
             [
@@ -32,9 +35,9 @@ class OAuthController extends Controller
             ]
         );
 
-        $token = auth()->login($user); // JWT
+        $token = JwtHelper::createTokenWithoutTenant($user);
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, $user);
     }
 
     private function extractFirstName(?string $fullName, ?string $fallback = null): string

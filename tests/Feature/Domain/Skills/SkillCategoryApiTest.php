@@ -7,13 +7,13 @@ use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class SkillCategoryApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -36,7 +36,7 @@ class SkillCategoryApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(3)
             ->assertJsonStructure([
                 '*' => [
@@ -60,7 +60,7 @@ class SkillCategoryApiTest extends TestCase
 
         $response = $this->postJson($this->baseUrl, $categoryData);
 
-        $response->assertStatus(201)
+        $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -89,7 +89,7 @@ class SkillCategoryApiTest extends TestCase
 
         $response = $this->postJson($this->baseUrl, $categoryData);
 
-        $response->assertStatus(422)
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['name'])
         ;
     }
@@ -100,7 +100,7 @@ class SkillCategoryApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl . '/' . $category->id);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -128,7 +128,7 @@ class SkillCategoryApiTest extends TestCase
 
         $response = $this->putJson($this->baseUrl . '/' . $category->id, $updateData);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -156,7 +156,7 @@ class SkillCategoryApiTest extends TestCase
 
         $response = $this->deleteJson($this->baseUrl . '/' . $category->id);
 
-        $response->assertStatus(204);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertSoftDeleted('skill_categories', ['id' => $category->id]);
     }
 
@@ -164,6 +164,6 @@ class SkillCategoryApiTest extends TestCase
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

@@ -20,14 +20,14 @@ Flow Overview
 
   {
     "sub": "user_id",
-    "status": "pending-2fa",
+    "mfa": 1, // "pending-2fa"
     "exp": "5min"
   }
 
 - Return response:
   {
-    "2fa_required": true,
-    "token": "TEMP_JWT"
+    "2faRequired": true,
+    "accessToken": "TEMP_JWT"
   }
 
 4. Frontend
@@ -37,13 +37,13 @@ Flow Overview
 5. Verify 2FA
 - Backend validates TOTP for the user.
 - If valid:
-  - Issue real access & refresh tokens.
+  - Issue real access & refresh tokens (payload with `mfa: 2`).
 - If invalid:
   - Return error (with retry logic and throttling).
 
 6. Protecting Routes
 - Use middleware to reject requests with:
-  - status === "pending-2fa" on JWT
+  - mfa === 1 on JWT // 2fa pending
   - or missing verification
 ---
 

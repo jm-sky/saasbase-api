@@ -3,6 +3,8 @@
 namespace App\Domain\Admin\Products\Controllers;
 
 use App\Domain\Common\Concerns\HasIndexQuery;
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Models\Product;
@@ -27,11 +29,12 @@ class AdminProductController extends Controller
         $this->modelClass = Product::withoutGlobalScope(TenantScope::class);
 
         $this->filters = [
-            AllowedFilter::partial('name'),
-            AllowedFilter::partial('description'),
-            AllowedFilter::exact('unitId', 'unit_id'),
-            AllowedFilter::exact('vatRateId', 'vat_rate_id'),
-            AllowedFilter::exact('tenantId', 'tenant_id'),
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('unitId', new AdvancedFilter(), 'unit_id'),
+            AllowedFilter::custom('vatRateId', new AdvancedFilter(), 'vat_rate_id'),
+            AllowedFilter::custom('tenantId', new AdvancedFilter(), 'tenant_id'),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
         ];

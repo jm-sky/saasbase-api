@@ -98,7 +98,7 @@ return [
     |
     */
 
-    'ttl' => (int) env('JWT_TTL', 60),
+    'ttl' => (int) env('JWT_TTL', 15),
 
     /*
     |--------------------------------------------------------------------------
@@ -117,7 +117,8 @@ return [
     |
     */
 
-    'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 20160),
+    'refresh_ttl'          => (int) env('JWT_REFRESH_TTL', 4 * 60), // 4 hours
+    'refresh_ttl_remember' => (int) env('JWT_REFRESH_TTL_REMEMBER', 30 * 24 * 60), // 30 days
 
     /*
     |--------------------------------------------------------------------------
@@ -164,8 +165,10 @@ return [
     */
 
     'persistent_claims' => [
-        // 'foo',
-        // 'bar',
+        'ev',
+        'mfa',
+        'tid',
+        'rem',
     ],
 
     /*

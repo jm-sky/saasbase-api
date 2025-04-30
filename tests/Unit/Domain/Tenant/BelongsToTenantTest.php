@@ -7,6 +7,7 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
 /**
@@ -14,6 +15,7 @@ use Tests\TestCase;
  *
  * @coversNothing
  */
+#[CoversNothing]
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;

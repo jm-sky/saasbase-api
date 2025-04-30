@@ -11,9 +11,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class TenantDTOTest extends TestCase
 {
     use RefreshDatabase;

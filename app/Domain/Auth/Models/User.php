@@ -2,10 +2,14 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Auth\Enums\UserStatus;
+use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,16 +40,18 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?string                                              $phone
  * @property ?string                                              $avatar_url
  * @property bool                                                 $is_admin
+ * @property UserStatus                                           $status
  * @property Carbon                                               $created_at
  * @property Carbon                                               $updated_at
  * @property ?Carbon                                              $deleted_at
+ * @property ?Carbon                                              $email_verified_at
  * @property UserSettings|null                                    $settings
  * @property Collection<int, OAuthAccount>                        $oauthAccounts
  * @property Collection<int, UserTenant>                          $tenantMemberships
  * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
  * @property Collection<int, Tenant>                              $tenants
  */
-class User extends Authenticatable implements JWTSubject, HasMedia
+class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -53,6 +59,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
+    use MustVerifyEmailTrait;
 
     protected $fillable = [
         'first_name',
@@ -64,6 +71,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         'is_admin',
         'phone',
         'avatar_url',
+        'status',
     ];
 
     protected $hidden = [
@@ -76,11 +84,23 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         'password'          => 'hashed',
         'birth_date'        => 'date',
         'is_admin'          => 'boolean',
+        'status'            => UserStatus::class,
     ];
 
     public function isAdmin(): bool
     {
         return $this->is_admin;
+    }
+
+    public function isActive(): bool
+    {
+        return UserStatus::ACTIVE === $this->status;
+    }
+
+    // TODO: Implement this
+    public function isTwoFactorEnabled(): string
+    {
+        return $this->settings?->two_factor_enabled ?? false;
     }
 
     public function getJWTIdentifier(): string
@@ -90,11 +110,15 @@ class User extends Authenticatable implements JWTSubject, HasMedia
 
     public function getJWTCustomClaims(): array
     {
-        return [
-            'tenant_id' => $this->getTenantId() ?? $this->tenants()->first()?->id,
-            'email'     => $this->email,
-            'role'      => $this->role,
+        $claims = [
+            'ev' => $this->hasVerifiedEmail() ? 1 : 0,
         ];
+
+        if ($this->isTwoFactorEnabled()) {
+            $claims['mfa'] = 0; // Default to not passed
+        }
+
+        return $claims;
     }
 
     public function getTenantId(): ?string
@@ -178,5 +202,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     public function getAvatarOriginalUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('profile');
+    }
+
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification());
     }
 }

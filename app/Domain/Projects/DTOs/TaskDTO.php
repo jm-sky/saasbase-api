@@ -13,6 +13,7 @@ use Spatie\LaravelData\Data;
 
 /**
  * @property ?string  $id           UUID
+ * @property string   $tenantId
  * @property string   $projectId
  * @property string   $title
  * @property ?string  $description
@@ -33,6 +34,7 @@ use Spatie\LaravelData\Data;
 class TaskDTO extends Data
 {
     public function __construct(
+        public readonly string $tenantId,
         public readonly string $projectId,
         public readonly string $title,
         public readonly string $status,
@@ -59,6 +61,7 @@ class TaskDTO extends Data
     public static function fromModel(Task $model): self
     {
         return new self(
+            tenantId: $model->tenant_id,
             projectId: $model->project_id,
             title: $model->title,
             status: $model->status,

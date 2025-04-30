@@ -32,6 +32,7 @@ class Contractor extends Model
     use BelongsToTenant;
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'email',
         'phone',

@@ -12,9 +12,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class SkillSeederTest extends TestCase
 {
     use RefreshDatabase;

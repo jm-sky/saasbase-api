@@ -3,12 +3,8 @@
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
+use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Products\Controllers\ProductController;
-use App\Domain\Skills\Controllers\SkillCategoryController;
-use App\Domain\Skills\Controllers\SkillController;
-use App\Domain\Skills\Controllers\UserSkillController;
-use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
-use App\Domain\Tenant\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,20 +23,23 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('auth/refresh', [AuthController::class, 'refresh']);
-        Route::get('user', [AuthController::class, 'getUser']);
 
         require __DIR__ . '/api/user.php';
+        require __DIR__ . '/api/tenants.php';
         require __DIR__ . '/api/feeds.php';
-        
-        Route::apiResource('tenants', TenantController::class);
-        Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
 
-        Route::apiResource('contractors', ContractorController::class);
-        Route::apiResource('products', ProductController::class);
-        Route::apiResource('skills', SkillController::class);
-        Route::apiResource('skill-categories', SkillCategoryController::class);
-        Route::apiResource('user-skills', UserSkillController::class);
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+
+        Route::middleware(['is_active'])->group(function () {
+            Route::apiResource('contractors', ContractorController::class);
+            Route::apiResource('products', ProductController::class);
+
+            Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);
+            Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
+
+            require __DIR__ . '/api/projects.php';
+            require __DIR__ . '/api/skills.php';
+        });
     });
 
     require __DIR__ . '/api/admin.php';
