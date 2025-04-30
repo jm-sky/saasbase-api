@@ -743,8 +743,8 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
 
 #### Subtasks:
 1. **Data Source Integration**: 
-   - Integrate the Polish NBP API to fetch exchange rates.
-   - Integrate a secondary source (e.g., European Central Bank or a commercial API like Open Exchange Rates) for redundancy and broader currency support.
+   - [ ] Integrate the Polish NBP API to fetch exchange rates.
+   - [ ] [LATER] Integrate a secondary source (e.g., European Central Bank or a commercial API like Open Exchange Rates) for redundancy and broader currency support.
    
 2. **Daily Import**: 
    - Set up a scheduled task (e.g., using Laravel Scheduler) to import exchange rates every day.
@@ -759,6 +759,6 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
    - Ensure that the system can convert between currencies using the latest available rates.
 
 **Definition of Done:**
-- Exchange rates are automatically fetched from at least two sources daily.
+- Exchange rates are automatically fetched from at least one source daily.
 - Rates are stored correctly and used for currency conversion.
 - API failure is handled gracefully with fallback options. 
