@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
+use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
@@ -86,6 +87,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'is_admin'          => 'boolean',
         'status'            => UserStatus::class,
     ];
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 
     public function isAdmin(): bool
     {
