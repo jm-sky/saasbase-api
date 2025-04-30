@@ -2,10 +2,14 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Auth\Enums\UserStatus;
+use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,9 +28,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
-use App\Domain\Auth\Notifications\VerifyEmailNotification;
 
 /**
  * @property string                                               $id
@@ -39,6 +40,7 @@ use App\Domain\Auth\Notifications\VerifyEmailNotification;
  * @property ?string                                              $phone
  * @property ?string                                              $avatar_url
  * @property bool                                                 $is_admin
+ * @property UserStatus                                           $status
  * @property Carbon                                               $created_at
  * @property Carbon                                               $updated_at
  * @property ?Carbon                                              $deleted_at
@@ -69,6 +71,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'is_admin',
         'phone',
         'avatar_url',
+        'status',
     ];
 
     protected $hidden = [
@@ -81,6 +84,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'password'          => 'hashed',
         'birth_date'        => 'date',
         'is_admin'          => 'boolean',
+        'status'            => UserStatus::class,
     ];
 
     public function isAdmin(): bool
@@ -88,7 +92,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->is_admin;
     }
 
-    public function isTwoFactorEnabled(): bool
+    public function isActive(): bool
+    {
+        return UserStatus::ACTIVE === $this->status;
+    }
+
+    // TODO: Implement this
+    public function isTwoFactorEnabled(): string
     {
         return $this->settings?->two_factor_enabled ?? false;
     }
@@ -100,11 +110,15 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function getJWTCustomClaims(): array
     {
-        return [
-            'tenant_id' => $this->getTenantId() ?? $this->tenants()->first()?->id,
-            'email'     => $this->email,
-            'role'      => $this->role,
+        $claims = [
+            'ev' => $this->hasVerifiedEmail() ? 1 : 0,
         ];
+
+        if ($this->isTwoFactorEnabled()) {
+            $claims['mfa'] = 0; // Default to not passed
+        }
+
+        return $claims;
     }
 
     public function getTenantId(): ?string

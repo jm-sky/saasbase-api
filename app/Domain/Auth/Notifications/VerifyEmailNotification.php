@@ -20,13 +20,13 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
     protected function verificationUrl($notifiable): string
     {
         $frontendUrl = rtrim(config('app.frontend_url', config('app.url')), '/');
-        $apiUrl = rtrim(config('app.api_url', config('app.url') . '/api'), '/');
+        $apiUrl      = rtrim(config('app.api_url', config('app.url') . '/api'), '/');
 
         $verifyUrl = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
-                'id' => $notifiable->getKey(),
+                'id'   => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ],
             false // Don't encode URL
@@ -43,11 +43,12 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Verify Email Address')
             ->view('emails.verify-email', [
-                'url' => $verificationUrl,
-                'notifiable' => $notifiable
-            ]);
+                'url'        => $verificationUrl,
+                'notifiable' => $notifiable,
+            ])
+        ;
     }
 }

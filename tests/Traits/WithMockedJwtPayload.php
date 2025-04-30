@@ -17,8 +17,32 @@ trait WithMockedJwtPayload
             })
         ;
 
+        JWTAuth::shouldReceive('getToken')
+            ->andReturn('mocked-jwt-token')
+        ;
+
+        JWTAuth::shouldReceive('setToken')
+            ->with('mocked-jwt-token')
+            ->andReturnSelf()
+        ;
+
+        JWTAuth::shouldReceive('setRequest')
+            ->andReturnSelf()
+        ;
+
+        JWTAuth::shouldReceive('parser')
+            ->andReturnSelf()
+        ;
+
+        JWTAuth::shouldReceive('parseToken')
+            ->andReturnSelf()
+        ;
+
+        JWTAuth::shouldReceive('authenticate')
+            ->andReturn(true)
+        ;
+
         JWTAuth::shouldReceive('payload')
-            ->once()
             ->andReturn($payloadMock)
         ;
     }
@@ -26,7 +50,7 @@ trait WithMockedJwtPayload
     protected function mockTenantId(string $tenantId): void
     {
         $this->mockJwtPayload([
-            'tenant_id' => $tenantId,
+            'tid' => $tenantId,
         ]);
     }
 }

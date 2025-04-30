@@ -4,6 +4,7 @@ namespace App\Domain\Auth\Traits;
 
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Cookie;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -19,14 +20,7 @@ trait RespondsWithToken
         ];
     }
 
-    protected function getRefreshToken(User $user, ?string $tenantId)
-    {
-        return $tenantId
-            ? JwtHelper::createTokenWithTenant($user, $tenantId)
-            : JwtHelper::createRefreshToken($user);
-    }
-
-    protected function respondWithToken(string $token, ?User $user = null, ?string $tenantId = null, bool $remember = false): \Illuminate\Http\JsonResponse
+    protected function respondWithToken(string $token, ?User $user = null, ?string $tenantId = null, bool $remember = false): JsonResponse
     {
         $user = $user ?? Auth::user();
 
@@ -35,7 +29,7 @@ trait RespondsWithToken
         }
 
         // Create refresh token with the same tenant context as access token
-        $refreshToken = $this->getRefreshToken($user, $tenantId);
+        $refreshToken = JwtHelper::createRefreshToken($user, tenantId: $tenantId, remember: $remember);
 
         return response()
             ->json($this->tokenResponseData($token))
@@ -60,10 +54,6 @@ trait RespondsWithToken
 
     protected function getRefreshTokenCookieTtl(bool $remember = false): int
     {
-        if ($remember) {
-            return 60 * 24 * 30; // 30 days
-        }
-
-        return 60 * 12; // 12 hours
+        return JwtHelper::getRefreshTokenTTL($remember);
     }
 }

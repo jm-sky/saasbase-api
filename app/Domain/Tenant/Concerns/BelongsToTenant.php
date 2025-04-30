@@ -26,7 +26,9 @@ trait BelongsToTenant
         static::creating(function (Model $model) {
             if (!$model->tenant_id) {
                 try {
-                    $model->tenant_id = Auth::user()?->getTenantId();
+                    /** @var ?User $user */
+                    $user             = Auth::user();
+                    $model->tenant_id = $user?->getTenantId();
                 } catch (JWTException) {
                     throw new TenantNotFoundException();
                 }

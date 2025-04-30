@@ -14,9 +14,8 @@ use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class UserSkillApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -50,7 +49,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(3)
             ->assertJsonStructure([
                 '*' => [
@@ -77,7 +76,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->postJson($this->baseUrl, $userSkillData);
 
-        $response->assertStatus(201)
+        $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'userId',
                 'skillId',
@@ -131,7 +130,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl . '/' . $userSkill->id);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'userId',
                 'skillId',
@@ -165,7 +164,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->putJson($this->baseUrl . '/' . $userSkill->id, $updateData);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'userId',
                 'skillId',
@@ -197,7 +196,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->deleteJson($this->baseUrl . '/' . $userSkill->id);
 
-        $response->assertStatus(204);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertSoftDeleted('user_skills', ['id' => $userSkill->id]);
     }
 
@@ -205,6 +204,6 @@ class UserSkillApiTest extends TestCase
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

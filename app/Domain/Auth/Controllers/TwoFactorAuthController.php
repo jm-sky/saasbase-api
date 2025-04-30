@@ -25,8 +25,8 @@ class TwoFactorAuthController extends Controller
         $setup = $this->twoFactorAuthService->generateTwoFactorSetup($user);
 
         return response()->json([
-            'secret' => $setup['secret'],
-            'qr_code_url' => $setup['qr_code_url'],
+            'secret'         => $setup['secret'],
+            'qr_code_url'    => $setup['qr_code_url'],
             'recovery_codes' => $setup['recovery_codes'],
         ]);
     }
@@ -78,10 +78,10 @@ class TwoFactorAuthController extends Controller
             'code' => ['required', 'string'],
         ]);
 
-        $code = $request->input('code');
+        $code   = $request->input('code');
         $secret = decrypt($user->settings->two_factor_secret);
 
-        $isValidCode = $this->twoFactorAuthService->verifyCode($secret, $code);
+        $isValidCode         = $this->twoFactorAuthService->verifyCode($secret, $code);
         $isValidRecoveryCode = $this->twoFactorAuthService->verifyRecoveryCode($user, $code);
 
         if (!$isValidCode && !$isValidRecoveryCode) {
@@ -95,7 +95,7 @@ class TwoFactorAuthController extends Controller
 
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
+            'token_type'   => 'bearer',
         ]);
     }
 }

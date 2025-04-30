@@ -55,7 +55,7 @@ return [
 
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
 
-    'api_url' => env('API_URL', env('APP_URL').'/api'),
+    'api_url' => env('API_URL', env('APP_URL') . '/api'),
 
     /*
     |--------------------------------------------------------------------------

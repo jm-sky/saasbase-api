@@ -9,9 +9,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class MeasurementUnitSeederTest extends TestCase
 {
     use RefreshDatabase;

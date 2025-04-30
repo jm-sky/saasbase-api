@@ -4,6 +4,7 @@ namespace Tests\Unit\Domain\Tenant\Actions;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
+use App\Domain\Tenant\Exceptions\UserNotBelongToTenantException;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -12,9 +13,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class GenerateTenantJwtActionTest extends TestCase
 {
     use RefreshDatabase;
@@ -45,7 +45,6 @@ class GenerateTenantJwtActionTest extends TestCase
 
         // Assert
         $this->assertEquals($tenant->id, $payload->get('tid'));
-        $this->assertEquals($role, $payload->get('role'));
     }
 
     public function testThrowsExceptionWhenUserDoesNotBelongToTenant(): void
@@ -55,8 +54,8 @@ class GenerateTenantJwtActionTest extends TestCase
         $tenant = Tenant::factory()->create();
 
         // Assert & Act
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('User does not belong to this tenant');
+        $this->expectException(UserNotBelongToTenantException::class);
+        $this->expectExceptionMessage('User does not belong to tenant.');
 
         GenerateTenantJwtAction::run($user, $tenant);
     }

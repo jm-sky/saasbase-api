@@ -9,9 +9,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class SkillCategoryDTOTest extends TestCase
 {
     public function testCanCreateSkillCategoryDtoFromModel(): void

@@ -1,9 +1,12 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Auth\Controllers\MeController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth:api')->get('me', MeController::class);
 
 Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::get('profile', [AuthController::class, 'getUser']); // TODO: Move to UserController or sth.

@@ -6,14 +6,14 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class TenantApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -42,7 +42,7 @@ class TenantApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(3)
             ->assertJsonStructure([
                 '*' => [
@@ -71,7 +71,7 @@ class TenantApiTest extends TestCase
 
         $response = $this->postJson($this->baseUrl, $tenantData);
 
-        $response->assertStatus(201)
+        $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -100,7 +100,7 @@ class TenantApiTest extends TestCase
 
         $response = $this->postJson($this->baseUrl, $tenantData);
 
-        $response->assertStatus(422)
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['slug'])
         ;
     }
@@ -112,7 +112,7 @@ class TenantApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl . '/' . $tenant->id);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -140,7 +140,7 @@ class TenantApiTest extends TestCase
 
         $response = $this->putJson($this->baseUrl . '/' . $tenant->id, $updateData);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -165,7 +165,7 @@ class TenantApiTest extends TestCase
 
         $response = $this->deleteJson($this->baseUrl . '/' . $tenant->id);
 
-        $response->assertStatus(204);
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertSoftDeleted('tenants', ['id' => $tenant->id]);
     }
 
@@ -173,6 +173,16 @@ class TenantApiTest extends TestCase
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function testCannotAccessTenantUserDoesNotBelongTo(): void
+    {
+        $unauthorizedTenant = Tenant::factory()->create();
+        // Not attaching the tenant to the user
+
+        $response = $this->getJson($this->baseUrl . '/' . $unauthorizedTenant->id);
+
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

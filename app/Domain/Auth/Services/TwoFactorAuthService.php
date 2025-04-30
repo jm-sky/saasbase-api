@@ -3,7 +3,6 @@
 namespace App\Domain\Auth\Services;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Auth\Models\UserSettings;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use PragmaRX\Google2FA\Google2FA;
@@ -50,6 +49,7 @@ class TwoFactorAuthService
     public function verifyRecoveryCode(User $user, string $code): bool
     {
         $settings = $user->settings;
+
         if (!$settings || !$settings->two_factor_recovery_codes) {
             return false;
         }
@@ -61,7 +61,7 @@ class TwoFactorAuthService
 
         $position = array_search($code, $recoveryCodes);
 
-        if ($position === false) {
+        if (false === $position) {
             return false;
         }
 
@@ -78,6 +78,7 @@ class TwoFactorAuthService
     public function enableTwoFactor(User $user, string $code): bool
     {
         $settings = $user->settings;
+
         if (!$settings || !$settings->two_factor_secret) {
             return false;
         }
@@ -89,7 +90,7 @@ class TwoFactorAuthService
         }
 
         $settings->update([
-            'two_factor_enabled' => true,
+            'two_factor_enabled'   => true,
             'two_factor_confirmed' => true,
         ]);
 
@@ -99,14 +100,15 @@ class TwoFactorAuthService
     public function disableTwoFactor(User $user): void
     {
         $settings = $user->settings;
+
         if (!$settings) {
             return;
         }
 
         $settings->update([
-            'two_factor_enabled' => false,
-            'two_factor_confirmed' => false,
-            'two_factor_secret' => null,
+            'two_factor_enabled'        => false,
+            'two_factor_confirmed'      => false,
+            'two_factor_secret'         => null,
             'two_factor_recovery_codes' => null,
         ]);
     }
@@ -114,24 +116,25 @@ class TwoFactorAuthService
     public function generateTwoFactorSetup(User $user): array
     {
         $settings = $user->settings;
+
         if (!$settings) {
             return [];
         }
 
-        $secret = $this->generateSecretKey();
+        $secret        = $this->generateSecretKey();
         $recoveryCodes = $this->generateRecoveryCodes();
 
         $settings->update([
-            'two_factor_secret' => Crypt::encryptString($secret),
+            'two_factor_secret'         => Crypt::encryptString($secret),
             'two_factor_recovery_codes' => Crypt::encryptString(json_encode($recoveryCodes)),
-            'two_factor_enabled' => false,
-            'two_factor_confirmed' => false,
+            'two_factor_enabled'        => false,
+            'two_factor_confirmed'      => false,
         ]);
 
         return [
-            'secret' => $secret,
+            'secret'         => $secret,
             'recovery_codes' => $recoveryCodes,
-            'qr_code_url' => $this->google2fa->getQRCodeUrl(
+            'qr_code_url'    => $this->google2fa->getQRCodeUrl(
                 config('app.name'),
                 $user->email,
                 $secret

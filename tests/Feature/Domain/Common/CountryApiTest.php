@@ -7,14 +7,14 @@ use App\Domain\Common\Models\Country;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class CountryApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -39,7 +39,7 @@ class CountryApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
                 'data' => [
@@ -74,7 +74,7 @@ class CountryApiTest extends TestCase
 
         $response = $this->getJson($this->baseUrl . '/' . $country->id);
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'id',
                 'name',
@@ -107,6 +107,6 @@ class CountryApiTest extends TestCase
     {
         $response = $this->getJson($this->baseUrl . '/nonexistent-id');
 
-        $response->assertStatus(404);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

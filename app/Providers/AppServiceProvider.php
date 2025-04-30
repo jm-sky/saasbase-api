@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Domain\Common\Support\ColumnTypeCache;
+use Illuminate\Database\Events\MigrationsEnded;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,5 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(MigrationsEnded::class, function () {
+            ColumnTypeCache::clearAll();
+        });
     }
 }
