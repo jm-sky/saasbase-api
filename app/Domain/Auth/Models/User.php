@@ -88,10 +88,9 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->is_admin;
     }
 
-    // TODO: Implement this
-    public function isTwoFactorEnabled(): string
+    public function isTwoFactorEnabled(): bool
     {
-        return false;
+        return $this->settings?->two_factor_enabled ?? false;
     }
 
     public function getJWTIdentifier(): string

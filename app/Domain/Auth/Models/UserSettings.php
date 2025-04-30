@@ -24,6 +24,8 @@ class UserSettings extends Model
         'timezone',
         'two_factor_enabled',
         'two_factor_confirmed',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
         'preferences',
     ];
 
