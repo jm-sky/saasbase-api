@@ -2,6 +2,7 @@
 
 namespace App\Domain\Common\Concerns;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -50,16 +51,26 @@ trait HasIndexQuery
     public function getIndexPaginator(Request $request, ?int $perPage = null): array
     {
         $query     = $this->getIndexQuery($request);
-        $paginator = $query->paginate($perPage ?? $request->input('per_page', $this->defaultPerPage));
+        $paginator = $query->paginate($perPage ?? $this->getPaginatorPerPage($request));
 
         return [
             'data' => $paginator->items(),
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page'    => $paginator->lastPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-            ],
+            'meta' => $this->getPaginatorMeta($paginator),
+        ];
+    }
+
+    protected function getPaginatorPerPage(Request $request): int
+    {
+        return $request->input('perPage') ?? $request->input('per_page', $this->defaultPerPage);
+    }
+
+    protected function getPaginatorMeta(LengthAwarePaginator $paginator): array
+    {
+        return [
+            'current_page' => $paginator->currentPage(),
+            'last_page'    => $paginator->lastPage(),
+            'per_page'     => $paginator->perPage(),
+            'total'        => $paginator->total(),
         ];
     }
 }

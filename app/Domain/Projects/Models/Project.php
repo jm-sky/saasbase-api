@@ -13,19 +13,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string                                $id
  * @property string                                $tenant_id
  * @property string                                $name
  * @property ?string                               $description
- * @property string                                $status
+ * @property string                                $status_id
  * @property string                                $owner_id
  * @property Carbon                                $start_date
  * @property ?Carbon                               $end_date
  * @property Carbon                                $created_at
  * @property Carbon                                $updated_at
  * @property ?Carbon                               $deleted_at
+ * @property ProjectStatus                         $status
  * @property User                                  $owner
  * @property Collection<int, User>                 $users
  * @property Collection<int, Task>                 $tasks
@@ -37,21 +39,22 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Project extends BaseModel
 {
     use BelongsToTenant;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
         'name',
         'description',
-        'status',
+        'status_id',
         'owner_id',
         'start_date',
         'end_date',
     ];
 
     protected $casts = [
-        'status'     => 'string',
         'start_date' => 'datetime',
         'end_date'   => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function owner(): BelongsTo
@@ -90,5 +93,10 @@ class Project extends BaseModel
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachmentable');
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(ProjectStatus::class, 'status_id');
     }
 }

@@ -68,10 +68,8 @@ Table office_tenant_relations {
 // Exchanges
 Table exchanges {
   id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
   name varchar
-  base_currency varchar
-  target_currency varchar
+  currency varchar
   created_at timestamp
   updated_at timestamp
 }
@@ -79,9 +77,10 @@ Table exchanges {
 // Exchange Rates
 Table exchange_rates {
   id uuid [pk]
-  exchange_id uuid [ref: > exchanges.id]
   date date
   rate decimal
+  table varchar [note: 'Table name of the rate i.e. A']
+  source varchar [note: 'Provider of the rate i.e. NPB']
   created_at timestamp
 }
 
@@ -126,6 +125,8 @@ Table projects {
   tenant_id uuid [ref: > tenants.id]
   name varchar
   description text [note: 'nullable']
+  start_date date [note: 'nullable']
+  end_date date [note: 'nullable']
   status_id uuid [ref: > project_statuses.id]
   owner_id uuid [ref: > users.id]
   created_at timestamp
@@ -336,7 +337,6 @@ Table default_measurement_units {
 // Default Statuses
 Table default_project_statuses {
   id uuid [pk]
-  model varchar
   name varchar
   color varchar
   sort_order int
@@ -346,7 +346,6 @@ Table default_project_statuses {
 
 Table default_task_statuses {
   id uuid [pk]
-  model varchar
   name varchar
   color varchar
   sort_order int

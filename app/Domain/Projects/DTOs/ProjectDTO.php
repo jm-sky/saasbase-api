@@ -12,12 +12,13 @@ use Spatie\LaravelData\Data;
 
 /**
  * @property ?string  $id             UUID
- * @property string   $tenantId
+ * @property string   $tenantId       UUID
  * @property string   $name
  * @property ?string  $description
- * @property string   $status
- * @property string   $startDate
- * @property ?string  $endDate
+ * @property string   $statusId       UUID
+ * @property string   $ownerId        UUID
+ * @property ?Carbon  $startDate      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon  $endDate        Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon  $createdAt      Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon  $updatedAt      Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon  $deletedAt      Internally Carbon, accepts/serializes ISO 8601
@@ -31,16 +32,21 @@ class ProjectDTO extends Data
     public function __construct(
         public readonly string $tenantId,
         public readonly string $name,
-        public readonly string $status,
-        public readonly string $startDate,
-        public readonly ?string $id = null,
+        public readonly string $statusId,
+        public readonly string $ownerId,
         public readonly ?string $description = null,
-        public readonly ?string $endDate = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public readonly ?string $id = null,
+        #[WithCast(DateTimeInterfaceCast::class)]
+        #[MapOutputName('start_date')]
+        public ?Carbon $startDate = null,
+        #[WithCast(DateTimeInterfaceCast::class)]
+        #[MapOutputName('end_date')]
+        public ?Carbon $endDate = null,
+        #[WithCast(DateTimeInterfaceCast::class)]
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        #[WithCast(DateTimeInterfaceCast::class)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        #[WithCast(DateTimeInterfaceCast::class)]
         public ?Carbon $deletedAt = null,
         public ?UserDTO $owner = null,
         public ?array $users = null,
@@ -56,17 +62,18 @@ class ProjectDTO extends Data
         return new self(
             tenantId: $model->tenant_id,
             name: $model->name,
-            status: $model->status,
-            startDate: $model->start_date->format('Y-m-d'),
-            id: $model->id,
+            statusId: $model->status_id,
+            ownerId: $model->owner_id,
             description: $model->description,
-            endDate: $model->end_date?->format('Y-m-d'),
+            id: $model->id,
+            startDate: $model->start_date,
+            endDate: $model->end_date,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
             owner: $withRelations && $model->relationLoaded('owner') ? UserDTO::fromModel($model->owner) : null,
-            users: $withRelations && $model->relationLoaded('users') ? $model->users->map(fn ($user) => UserDTO::fromModel($user))->toArray() : null,
-            tasks: $withRelations && $model->relationLoaded('tasks') ? $model->tasks->map(fn ($task) => TaskDTO::fromModel($task))->toArray() : null,
+            users: $withRelations && $model->relationLoaded('users') ? UserDTO::collect($model->users)->toArray() : null,
+            tasks: $withRelations && $model->relationLoaded('tasks') ? TaskDTO::collect($model->tasks)->toArray() : null,
             requiredSkills: $withRelations && $model->relationLoaded('requiredSkills') ? $model->requiredSkills->map(fn ($skill) => ProjectRequiredSkillDTO::fromModel($skill))->toArray() : null,
         );
     }

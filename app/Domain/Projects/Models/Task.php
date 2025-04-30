@@ -37,6 +37,7 @@ class Task extends BaseModel
     use BelongsToTenant;
 
     protected $fillable = [
+        'tenant_id',
         'project_id',
         'title',
         'description',

@@ -5,6 +5,7 @@ namespace Tests\Unit\Domain\Projects;
 use App\Domain\Auth\Models\User;
 use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,12 +24,15 @@ class ProjectDTOTest extends TestCase
 
     private Tenant $tenant;
 
+    private ProjectStatus $status;
+
     private User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->status = ProjectStatus::factory()->create();
         $this->tenant = Tenant::factory()->create();
         $this->user   = $this->authenticateUser($this->tenant);
     }
@@ -38,7 +42,7 @@ class ProjectDTOTest extends TestCase
         $project = Project::factory()->create([
             'tenant_id'  => $this->tenant->id,
             'name'       => 'Test Project',
-            'status'     => 'active',
+            'status_id'  => $this->status->id,
             'start_date' => now(),
         ]);
 
@@ -46,7 +50,7 @@ class ProjectDTOTest extends TestCase
 
         $this->assertEquals($project->id, $dto->id);
         $this->assertEquals($project->name, $dto->name);
-        $this->assertEquals($project->status, $dto->status);
+        $this->assertEquals($project->status_id, $dto->statusId);
         $this->assertEquals($project->start_date->format('Y-m-d'), $dto->startDate);
         $this->assertEquals($project->created_at, $dto->createdAt);
         $this->assertEquals($project->updated_at, $dto->updatedAt);
@@ -57,21 +61,22 @@ class ProjectDTOTest extends TestCase
         $dto = new ProjectDTO(
             tenantId: $this->tenant->id,
             name: 'Test Project',
-            status: 'active',
-            startDate: now()->format('Y-m-d'),
+            statusId: $this->status->id,
+            ownerId: $this->user->id,
+            startDate: now(),
             id: null,
         );
 
         $project = Project::factory()->create([
             'tenant_id'  => $dto->tenantId,
             'name'       => $dto->name,
-            'status'     => $dto->status,
+            'status_id'  => $dto->statusId,
             'start_date' => Carbon::parse($dto->startDate),
             'owner_id'   => $this->user->id,
         ]);
 
         $this->assertEquals($dto->name, $project->name);
-        $this->assertEquals($dto->status, $project->status);
+        $this->assertEquals($dto->statusId, $project->status_id);
         $this->assertEquals($dto->startDate, $project->start_date->format('Y-m-d'));
     }
 
@@ -81,13 +86,14 @@ class ProjectDTOTest extends TestCase
             Project::factory()->create([
                 'tenant_id'  => $this->tenant->id,
                 'name'       => 'Test Project 1',
-                'status'     => 'active',
+                'status_id'  => $this->status->id,
                 'start_date' => now(),
             ]),
+
             Project::factory()->create([
                 'tenant_id'  => $this->tenant->id,
                 'name'       => 'Test Project 2',
-                'status'     => 'completed',
+                'status_id'  => $this->status->id,
                 'start_date' => now(),
             ]),
         ]);
@@ -104,7 +110,7 @@ class ProjectDTOTest extends TestCase
         $project = Project::factory()->create([
             'tenant_id'  => $this->tenant->id,
             'name'       => 'Test Project',
-            'status'     => 'active',
+            'status_id'  => $this->status->id,
             'start_date' => now(),
         ]);
 
