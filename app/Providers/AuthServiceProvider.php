@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Exchanges\Models\Exchange;
+use App\Domain\Exchanges\Policies\ExchangePolicy;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Policies\TenantPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -14,7 +16,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Tenant::class => TenantPolicy::class,
+        Tenant::class   => TenantPolicy::class,
+        Exchange::class => ExchangePolicy::class,
     ];
 
     /**

@@ -3,10 +3,8 @@
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Contractors\Controllers\ContractorController;
+use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Products\Controllers\ProductController;
-use App\Domain\Skills\Controllers\SkillCategoryController;
-use App\Domain\Skills\Controllers\SkillController;
-use App\Domain\Skills\Controllers\UserSkillController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,9 +32,12 @@ Route::prefix('v1')->group(function () {
         Route::middleware(['is_active'])->group(function () {
             Route::apiResource('contractors', ContractorController::class);
             Route::apiResource('products', ProductController::class);
-            Route::apiResource('skills', SkillController::class);
-            Route::apiResource('skill-categories', SkillCategoryController::class);
-            Route::apiResource('user-skills', UserSkillController::class);
+
+            Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);
+            Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
+
+            require __DIR__ . '/api/projects.php';
+            require __DIR__ . '/api/skills.php';
         });
     });
 
