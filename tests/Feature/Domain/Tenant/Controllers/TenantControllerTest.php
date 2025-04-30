@@ -10,9 +10,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class TenantControllerTest extends TestCase
 {
     use RefreshDatabase;

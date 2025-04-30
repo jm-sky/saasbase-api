@@ -14,9 +14,8 @@ use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class ProjectDTOTest extends TestCase
 {
     use RefreshDatabase;

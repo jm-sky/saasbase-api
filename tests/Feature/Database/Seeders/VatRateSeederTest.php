@@ -9,9 +9,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class VatRateSeederTest extends TestCase
 {
     use RefreshDatabase;
