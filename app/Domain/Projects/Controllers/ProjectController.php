@@ -3,12 +3,15 @@
 namespace App\Domain\Projects\Controllers;
 
 use App\Domain\Common\Concerns\HasIndexQuery;
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Requests\CreateProjectRequest;
 use App\Domain\Projects\Requests\UpdateProjectRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -17,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ProjectController extends Controller
 {
     use HasIndexQuery;
+    use AuthorizesRequests;
 
     protected int $defaultPerPage = 15;
 
@@ -25,10 +29,11 @@ class ProjectController extends Controller
         $this->modelClass = Project::class;
 
         $this->filters = [
-            AllowedFilter::partial('name'),
-            AllowedFilter::partial('description'),
-            AllowedFilter::exact('status_id'),
-            AllowedFilter::exact('owner_id'),
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('status_id', new AdvancedFilter()),
+            AllowedFilter::custom('owner_id', new AdvancedFilter()),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
         ];

@@ -3,6 +3,8 @@
 namespace App\Domain\Projects\Controllers;
 
 use App\Domain\Common\Concerns\HasIndexQuery;
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Projects\DTOs\TaskDTO;
 use App\Domain\Projects\Models\Task;
@@ -26,12 +28,13 @@ class TaskController extends Controller
         $this->modelClass = Task::class;
 
         $this->filters = [
-            AllowedFilter::exact('project_id'),
-            AllowedFilter::exact('status_id'),
-            AllowedFilter::exact('assigned_to_id'),
-            AllowedFilter::exact('priority'),
-            AllowedFilter::partial('title'),
-            AllowedFilter::partial('description'),
+            AllowedFilter::custom('search', new ComboSearchFilter(['title', 'description'])),
+            AllowedFilter::custom('projectId', new AdvancedFilter(), 'project_id'),
+            AllowedFilter::custom('statusId', new AdvancedFilter(), 'status_id'),
+            AllowedFilter::custom('assignedToId', new AdvancedFilter(), 'assigned_to_id'),
+            AllowedFilter::custom('priority', new AdvancedFilter()),
+            AllowedFilter::custom('title', new AdvancedFilter()),
+            AllowedFilter::custom('description', new AdvancedFilter()),
             AllowedFilter::custom('dueDate', new DateRangeFilter('due_date')),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
