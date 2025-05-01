@@ -9,7 +9,7 @@ return new class() extends Migration {
     {
         Schema::create('user_settings', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('language')->nullable();
             $table->string('theme')->nullable();
             $table->string('timezone')->nullable();
@@ -17,8 +17,6 @@ return new class() extends Migration {
             $table->boolean('two_factor_confirmed')->default(false);
             $table->json('preferences')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -2,13 +2,12 @@
 
 namespace App\Domain\Auth\Notifications;
 
+use App\Domain\Auth\Models\EmailVerificationToken;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
 {
@@ -19,21 +18,27 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
      */
     protected function verificationUrl($notifiable): string
     {
-        $frontendUrl = rtrim(config('app.frontend_url', config('app.url')), '/');
-        $apiUrl      = rtrim(config('app.api_url', config('app.url') . '/api'), '/');
+        // Generate a new verification token
+        $token = Str::random(64);
 
-        $verifyUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id'   => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
-            ],
-            false // Don't encode URL
+        // Store the token
+        EmailVerificationToken::updateOrCreate(
+            ['user_id' => $notifiable->id],
+            ['token' => $token]
         );
 
-        // Replace API URL with frontend URL
-        return str_replace($apiUrl, $frontendUrl . '/auth/verify-email', $verifyUrl);
+        $frontendUrl = rtrim(config('app.frontend_url', config('app.url')), '/');
+        $apiPrefix   = rtrim(config('app.api_prefix', '/api/v1'), '/');
+
+        $url = route('verification.verify', [
+            'token' => $token,
+            'email' => $notifiable->email,
+        ], absolute: false);
+
+        $url = str_replace($apiPrefix, '', $url);
+
+        // Return the frontend URL with token
+        return $frontendUrl . $url;
     }
 
     /**

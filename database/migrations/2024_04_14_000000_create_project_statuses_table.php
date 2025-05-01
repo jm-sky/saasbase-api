@@ -9,14 +9,12 @@ return new class() extends Migration {
     {
         Schema::create('project_statuses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
+            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('color', 7);
             $table->integer('sort_order');
             $table->boolean('is_default')->default(false);
             $table->timestamps();
-
-            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
         });
     }
 

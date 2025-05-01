@@ -9,14 +9,11 @@ return new class() extends Migration {
     {
         Schema::create('user_tenants', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id');
-            $table->uuid('tenant_id');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('role');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
             $table->unique(['user_id', 'tenant_id']);
         });

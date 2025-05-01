@@ -4,6 +4,11 @@ namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
+use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\Models\ProjectUser;
+use App\Domain\Projects\Models\Task;
+use App\Domain\Skills\Models\Skill;
+use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use Carbon\Carbon;
@@ -29,26 +34,29 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * @property string                                               $id
- * @property string                                               $first_name
- * @property string                                               $last_name
- * @property string                                               $email
- * @property string                                               $password
- * @property ?string                                              $description
- * @property ?string                                              $birth_date
- * @property ?string                                              $phone
- * @property ?string                                              $avatar_url
- * @property bool                                                 $is_admin
- * @property UserStatus                                           $status
- * @property Carbon                                               $created_at
- * @property Carbon                                               $updated_at
- * @property ?Carbon                                              $deleted_at
- * @property ?Carbon                                              $email_verified_at
- * @property UserSettings|null                                    $settings
- * @property Collection<int, OAuthAccount>                        $oauthAccounts
- * @property Collection<int, UserTenant>                          $tenantMemberships
- * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
- * @property Collection<int, Tenant>                              $tenants
+ * @property string                        $id
+ * @property string                        $first_name
+ * @property string                        $last_name
+ * @property string                        $email
+ * @property string                        $password
+ * @property ?string                       $description
+ * @property ?string                       $birth_date
+ * @property ?string                       $phone
+ * @property ?string                       $avatar_url
+ * @property bool                          $is_admin
+ * @property UserStatus                    $status
+ * @property Carbon                        $created_at
+ * @property Carbon                        $updated_at
+ * @property ?Carbon                       $deleted_at
+ * @property ?Carbon                       $email_verified_at
+ * @property UserSettings|null             $settings
+ * @property Collection<int, OAuthAccount> $oauthAccounts
+ * @property Collection<int, UserTenant>   $tenantMemberships
+ * @property Collection<int, Project>      $projects
+ * @property Collection<int, Task>         $tasks
+ * @property Collection<int, UserSkill>    $userSkills
+ * @property Collection<int, Skill>        $skills
+ * @property Collection<int, Tenant>       $tenants
  */
 class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {
@@ -150,9 +158,32 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->hasMany(UserTenant::class);
     }
 
-    public function skills(): HasMany
+    public function projects(): BelongsToMany
     {
-        return $this->hasMany(\App\Domain\Skills\Models\UserSkill::class);
+        return $this->belongsToMany(Project::class, 'project_users')
+            ->using(ProjectUser::class)
+            ->withPivot(['role'])
+            ->withTimestamps()
+        ;
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assignee_id');
+    }
+
+    public function userSkills(): HasMany
+    {
+        return $this->hasMany(UserSkill::class);
+    }
+
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class, 'user_skills')
+            ->using(UserSkill::class)
+            ->withPivot(['proficiency'])
+            ->withTimestamps()
+        ;
     }
 
     public function tenants(): BelongsToMany
@@ -162,6 +193,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
             ->withPivot(['role'])
             ->withTimestamps()
         ;
+    }
+
+    public function emailVerificationToken(): HasOne
+    {
+        return $this->hasOne(EmailVerificationToken::class);
     }
 
     protected static function newFactory()

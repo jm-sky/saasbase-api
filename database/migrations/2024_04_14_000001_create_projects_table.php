@@ -9,19 +9,15 @@ return new class() extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
+            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->uuid('status_id');
+            $table->foreignUuid('status_id')->constrained('project_statuses')->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->uuid('owner_id');
+            $table->foreignUuid('owner_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
-            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('status_id')->references('id')->on('project_statuses')->onDelete('restrict');
         });
     }
 

@@ -9,14 +9,13 @@ return new class() extends Migration {
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->text('content');
             $table->uuid('commentable_id');
             $table->string('commentable_type');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index(['commentable_id', 'commentable_type']);
         });
     }

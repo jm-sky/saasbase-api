@@ -9,7 +9,7 @@ return new class() extends Migration {
     {
         Schema::create('contractors', function (Blueprint $table) {
             $table->id();
-            $table->uuid('tenant_id');
+            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
