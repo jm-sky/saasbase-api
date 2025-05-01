@@ -6,7 +6,6 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Tenant\Models\UserTenant;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -32,14 +31,7 @@ class DatabaseSeeder extends Seeder
             'is_admin'   => true,
         ]);
 
-        // Attach user to tenant
-        UserTenant::create([
-            'user_id'   => $user->id,
-            'tenant_id' => $tenant->id,
-            'role'      => 'admin',
-        ]);
-
-        $user->tenants()->attach($tenant);
+        $user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $this->call([
             CountrySeeder::class,

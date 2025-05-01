@@ -110,7 +110,7 @@ Table users {
 }
 
 // Tenant Users
-Table tenant_users {
+Table user_tenants {
   tenant_id uuid [ref: > tenants.id]
   user_id uuid [ref: > users.id]
   role varchar

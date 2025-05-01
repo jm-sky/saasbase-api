@@ -157,7 +157,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function tenants(): BelongsToMany
     {
-        return $this->belongsToMany(Tenant::class, 'tenant_users')
+        return $this->belongsToMany(Tenant::class, 'user_tenants')
+            ->using(UserTenant::class)
             ->withPivot(['role'])
             ->withTimestamps()
         ;

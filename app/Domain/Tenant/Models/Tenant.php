@@ -33,7 +33,8 @@ class Tenant extends BaseModel
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'tenant_users')
+        return $this->belongsToMany(User::class, 'user_tenants')
+            ->using(UserTenant::class)
             ->withPivot(['role'])
             ->withTimestamps()
         ;
