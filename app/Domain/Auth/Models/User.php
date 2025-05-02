@@ -11,6 +11,7 @@ use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
@@ -193,6 +194,18 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
             ->withPivot(['role'])
             ->withTimestamps()
         ;
+    }
+
+    public function tenants()
+    {
+        return $this->belongsToMany(Tenant::class, 'user_tenant');
+    }
+
+    public function organizationUnits()
+    {
+        return $this->belongsToMany(OrganizationUnit::class, 'org_unit_user')
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     public function emailVerificationToken(): HasOne
