@@ -1,13 +1,12 @@
 <?php
-// app/Domain/Tenant/Models/OrgUnitUser.php
 
 namespace App\Domain\Tenant\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
-use App\Models\User;
-use App\Enums\OrgUnitRole;
+use App\Domain\Auth\Models\User;
+use App\Domain\Tenant\Enums\OrgUnitRole;
 
 class OrgUnitUser extends Model
 {
