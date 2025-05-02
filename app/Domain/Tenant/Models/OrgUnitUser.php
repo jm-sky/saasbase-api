@@ -2,18 +2,20 @@
 
 namespace App\Domain\Tenant\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Str;
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Enums\OrgUnitRole;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class OrgUnitUser extends Model
 {
     use HasFactory;
 
     protected $table = 'org_unit_user';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = ['id', 'organization_unit_id', 'user_id', 'role'];

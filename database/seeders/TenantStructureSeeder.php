@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
-use App\Models\User;
-use App\Models\Tenant;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\OrgUnitUser;
 use App\Enums\OrgUnitRole;
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TenantStructureSeeder extends Seeder
 {
@@ -18,7 +18,7 @@ class TenantStructureSeeder extends Seeder
         $user = User::firstOrCreate(
             ['email' => 'ceo@example.com'],
             [
-                'name' => 'CEO',
+                'name'     => 'CEO',
                 'password' => bcrypt('password'),
             ]
         );
@@ -36,8 +36,8 @@ class TenantStructureSeeder extends Seeder
         $rootUnit = OrganizationUnit::firstOrCreate(
             ['tenant_id' => $tenant->id, 'parent_id' => null],
             [
-                'id' => (string) Str::uuid(),
-                'name' => $tenant->name,
+                'id'         => (string) Str::uuid(),
+                'name'       => $tenant->name,
                 'short_name' => Str::slug($tenant->name),
             ]
         );
@@ -46,10 +46,10 @@ class TenantStructureSeeder extends Seeder
         OrgUnitUser::firstOrCreate(
             [
                 'organization_unit_id' => $rootUnit->id,
-                'user_id' => $user->id,
+                'user_id'              => $user->id,
             ],
             [
-                'id' => (string) Str::uuid(),
+                'id'   => (string) Str::uuid(),
                 'role' => OrgUnitRole::CEO,
             ]
         );

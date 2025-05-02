@@ -1,19 +1,21 @@
 <?php
+
 // app/Domain/Tenant/Models/OrganizationUnit.php
 
 namespace App\Domain\Tenant\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Str;
-use App\Models\User;
 use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class OrganizationUnit extends Model
 {
     use HasFactory;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = ['id', 'tenant_id', 'parent_id', 'name', 'short_name'];
@@ -50,6 +52,7 @@ class OrganizationUnit extends Model
     {
         return $this->belongsToMany(User::class, 'org_unit_user')
             ->withPivot('role')
-            ->withTimestamps ();
+            ->withTimestamps()
+        ;
     }
 }
