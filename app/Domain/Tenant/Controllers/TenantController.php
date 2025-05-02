@@ -19,9 +19,9 @@ class TenantController extends Controller
     {
         $tenants = $request->user()->tenants()->orderBy('created_at')->get();
 
-        return response()->json(
-            TenantDTO::collect($tenants)
-        );
+        return response()->json([
+            'data' => TenantDTO::collect($tenants),
+        ]);
     }
 
     public function store(TenantRequest $request): JsonResponse
