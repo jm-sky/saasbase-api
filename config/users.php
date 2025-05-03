@@ -22,7 +22,7 @@ return [
 
     'registration' => [
         'require_admin_approval' => env('USER_REQUIRE_ADMIN_APPROVAL', true),
-        'create_tenant' => env('USER_CREATE_TENANT', false),
+        'create_tenant' => env('USER_CREATE_TENANT_ON_CREATE', false),
     ],
 
     /*
