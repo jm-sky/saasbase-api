@@ -42,10 +42,16 @@ class GenerateTenantJwtAction
     }
 
     /**
+     * @throws TenantNotFoundException
+     * @throws UserNotBelongToTenantException
      * @throws \RuntimeException
      */
-    private function authorize(User $user, Tenant $tenant): void
+    public function authorize(User $user, Tenant $tenant): void
     {
+        if (!$tenant->exists) {
+            $tenant = request()->route('tenant');
+        }
+
         // Verify user is authenticated
         if (!$user) {
             throw new \RuntimeException('User not authenticated');
@@ -57,7 +63,7 @@ class GenerateTenantJwtAction
         }
 
         // Verify user belongs to tenant
-        if (!$user->tenants()->where('id', $tenant->id)->exists()) {
+        if (!$user->tenants()->find($tenant->id)) {
             throw new UserNotBelongToTenantException();
         }
     }

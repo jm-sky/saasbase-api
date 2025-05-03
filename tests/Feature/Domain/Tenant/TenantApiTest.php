@@ -38,7 +38,7 @@ class TenantApiTest extends TestCase
         Tenant::query()->forceDelete();
 
         $tenants = Tenant::factory()->count(3)->create();
-        $this->user->tenants()->attach($tenants);
+        $this->user->tenants()->attach($tenants, ['role' => 'admin']);
 
         $response = $this->getJson($this->baseUrl);
 
@@ -108,7 +108,7 @@ class TenantApiTest extends TestCase
     public function testCanShowTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $response = $this->getJson($this->baseUrl . '/' . $tenant->id);
 
@@ -132,7 +132,7 @@ class TenantApiTest extends TestCase
     public function testCanUpdateTenant(): void
     {
         $tenant     = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
         $updateData = [
             'name' => 'Updated Name',
             'slug' => 'updated-slug',
@@ -161,7 +161,7 @@ class TenantApiTest extends TestCase
     public function testCanDeleteTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $response = $this->deleteJson($this->baseUrl . '/' . $tenant->id);
 

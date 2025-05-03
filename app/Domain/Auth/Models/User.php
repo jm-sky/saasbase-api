@@ -95,6 +95,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'status'            => UserStatus::class,
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            event(new \App\Domain\Auth\Events\UserCreated($user));
+        });
+    }
+
     public function isAdmin(): bool
     {
         return $this->is_admin;
