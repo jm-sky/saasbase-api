@@ -21,7 +21,6 @@ class RegisterUserAction
             ? UserStatus::PENDING
             : UserStatus::ACTIVE;
 
-
         $user = User::create([
             'first_name'  => $dto->firstName,
             'last_name'   => $dto->lastName,
@@ -32,7 +31,6 @@ class RegisterUserAction
             'phone'       => $dto->phone,
             'status'      => $status,
         ]);
-
 
         $user->sendEmailVerificationNotification();
 

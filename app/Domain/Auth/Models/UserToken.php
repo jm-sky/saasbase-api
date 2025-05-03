@@ -2,7 +2,6 @@
 
 namespace App\Domain\Auth\Models;
 
-use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserToken extends Model
@@ -15,9 +14,9 @@ class UserToken extends Model
     ];
 
     protected $casts = [
-        'revoked' => 'boolean',
+        'revoked'      => 'boolean',
         'last_used_at' => 'datetime',
-        'expires_at' => 'datetime',
+        'expires_at'   => 'datetime',
     ];
 
     public function user()
