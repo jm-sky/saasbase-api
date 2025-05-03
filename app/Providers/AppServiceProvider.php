@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Auth\Events\UserCreated;
+use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Common\Support\ColumnTypeCache;
 use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Support\Facades\Event;
@@ -24,5 +26,10 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(MigrationsEnded::class, function () {
             ColumnTypeCache::clearAll();
         });
+
+        Event::listen(
+            UserCreated::class,
+            [CreateTenantForNewUser::class, 'handle']
+        );
     }
 }
