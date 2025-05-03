@@ -27,7 +27,7 @@ class TenantController extends Controller
     public function store(TenantRequest $request): JsonResponse
     {
         $tenant = Tenant::create($request->validated());
-        $request->user()->tenants()->attach($tenant);
+        $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
 
         return response()->json(
             TenantDTO::from($tenant),
