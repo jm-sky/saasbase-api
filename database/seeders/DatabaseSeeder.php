@@ -24,11 +24,11 @@ class DatabaseSeeder extends Seeder
 
         // Create default user
         $user = User::factory()->create([
-            'first_name' => config('app.default_user.first_name'),
-            'last_name'  => config('app.default_user.last_name'),
-            'email'      => config('app.default_user.email'),
-            'password'   => Hash::make(config('app.default_user.password')),
-            'is_admin'   => config('app.default_user.is_admin'),
+            'first_name' => config('users.default_user.first_name'),
+            'last_name'  => config('users.default_user.last_name'),
+            'email'      => config('users.default_user.email'),
+            'password'   => Hash::make(config('users.default_user.password')),
+            'is_admin'   => config('users.default_user.is_admin'),
         ]);
 
         $user->tenants()->attach($tenant, ['role' => 'admin']);
