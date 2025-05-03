@@ -132,7 +132,7 @@ class TenantApiTest extends TestCase
     public function testCanUpdateTenant(): void
     {
         $tenant     = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
         $updateData = [
             'name' => 'Updated Name',
             'slug' => 'updated-slug',
