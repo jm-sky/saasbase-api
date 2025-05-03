@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'default_user' => [
         'first_name' => env('DEFAULT_USER_FIRST_NAME', 'Test'),
         'last_name'  => env('DEFAULT_USER_LAST_NAME', 'User'),
@@ -9,7 +8,7 @@ return [
         'password'   => env('DEFAULT_USER_PASSWORD', 'Secret123!'),
         'is_admin'   => env('DEFAULT_USER_IS_ADMIN', true),
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Registration Settings
@@ -22,7 +21,7 @@ return [
 
     'registration' => [
         'require_admin_approval' => env('USER_REQUIRE_ADMIN_APPROVAL', true),
-        'create_tenant' => env('USER_CREATE_TENANT_ON_CREATE', false),
+        'create_tenant'          => env('USER_CREATE_TENANT_ON_CREATE', false),
     ],
 
     /*

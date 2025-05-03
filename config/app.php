@@ -137,5 +137,4 @@ return [
     |
     */
     'supported_locales' => ['en', 'pl'],
-
 ];
