@@ -10,6 +10,8 @@ class CreateTenantForNewUser
 {
     public function handle(UserCreated $event): void
     {
+        if (!config('users.registration.create_tenant')) return;
+        
         $tenant = Tenant::create([
             'name' => "{$event->user->first_name}'s workspace",
             'slug' => Str::slug(Str::before($event->user->email, '@')),
