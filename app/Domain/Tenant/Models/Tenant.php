@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Concerns\HaveAddresses;
 use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -21,6 +22,7 @@ class Tenant extends BaseModel
 {
     use HasUuids;
     use SoftDeletes;
+    use HaveAddresses;
 
     protected $fillable = [
         'name',

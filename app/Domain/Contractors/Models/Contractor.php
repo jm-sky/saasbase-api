@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Models;
 
+use App\Domain\Common\Concerns\HaveAddresses;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
@@ -30,6 +31,7 @@ class Contractor extends Model
     use SoftDeletes;
     use HasFactory;
     use BelongsToTenant;
+    use HaveAddresses;
 
     protected $fillable = [
         'tenant_id',
