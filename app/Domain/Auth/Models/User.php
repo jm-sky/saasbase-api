@@ -196,11 +196,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         ;
     }
 
-    public function tenants()
-    {
-        return $this->belongsToMany(Tenant::class, 'user_tenant');
-    }
-
     public function organizationUnits()
     {
         return $this->belongsToMany(OrganizationUnit::class, 'org_unit_user')
