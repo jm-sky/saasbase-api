@@ -11,7 +11,7 @@ trait WithAuthenticatedUser
     protected function authenticateUser(Tenant $tenant, ?User $user = null): User
     {
         $user = $user ?? User::factory()->create();
-        $user->tenants()->attach($tenant);
+        $user->tenants()->attach($tenant, ['role' => 'admin']);
 
         // Generate a JWT token for the user
         $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
