@@ -26,6 +26,7 @@ class TenantController extends Controller
 
     public function store(TenantRequest $request): JsonResponse
     {
+        // TODO: Create enum for tenant roles
         $tenant = Tenant::create($request->validated());
         $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
 
