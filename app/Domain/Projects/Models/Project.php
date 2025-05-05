@@ -3,9 +3,7 @@
 namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
-use App\Domain\Common\Models\Comment;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -33,8 +31,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Collection<int, Task>                 $tasks
  * @property Collection<int, ProjectUser>          $projectUsers
  * @property Collection<int, ProjectRequiredSkill> $requiredSkills
- * @property Collection<int, Comment>              $comments
- * @property Collection<int, Attachment>           $attachments
+ * @property Collection<int, ProjectComment>       $comments
+ * @property Collection<int, ProjectAttachment>    $attachments
  */
 class Project extends BaseModel
 {
@@ -87,12 +85,12 @@ class Project extends BaseModel
 
     public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(ProjectComment::class, 'commentable');
     }
 
     public function attachments(): MorphMany
     {
-        return $this->morphMany(Attachment::class, 'attachmentable');
+        return $this->morphMany(ProjectAttachment::class, 'attachmentable');
     }
 
     public function status(): BelongsTo
