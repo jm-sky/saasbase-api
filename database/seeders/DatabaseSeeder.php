@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Models\UserSettings;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
-use App\Domain\Tenant\Models\Tenant;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,6 +32,7 @@ class DatabaseSeeder extends Seeder
             'is_admin'   => config('users.default_user.is_admin'),
         ]);
 
+        $user->settings()->create(UserSettings::defaults());
         $user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $this->call([

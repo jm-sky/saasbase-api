@@ -5,6 +5,7 @@ namespace App\Domain\Auth\Actions;
 use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Models\UserSettings;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,6 +32,8 @@ class RegisterUserAction
             'phone'       => $dto->phone,
             'status'      => $status,
         ]);
+
+        $user->settings()->create(UserSettings::defaults());
 
         $user->sendEmailVerificationNotification();
 
