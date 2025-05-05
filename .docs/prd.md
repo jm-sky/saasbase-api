@@ -1,7 +1,7 @@
 # SaaSBase API - Product Requirements Document
 
 ## Overview
-SaaSBase API is a comprehensive backend service layer designed to support multi-tenant SaaS applications. It provides essential functionality for business applications including authentication, document/invoice management, and project management capabilities.
+SaaSBase API is a comprehensive backend service layer designed to support multi-tenant SaaS applications. It provides essential functionality for business applications including authentication, document/invoice management, project management capabilities, and advanced organizational features with cross-tenant interactions.
 
 ## Core Features
 
@@ -17,8 +17,14 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Profile information
   - Security settings
   - Notification preferences
+- **Identity Verification**
+  - Email address verification
+  - Phone number verification
+  - Legal identity verification (government database integration)
+  - Company ownership verification
+  - Document-based verification process
 
-### 2. Multi-tenancy
+### 2. Multi-tenancy & Organization
 - **Tenant Management**
   - Tenant isolation
   - Tenant-specific configurations
@@ -28,6 +34,44 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Automatic tenant context in all operations
   - Tenant-specific data access controls
   - Multi-tenant database schema
+- **Hierarchical Organization Structure**
+  - Multiple organization units within tenant
+  - Customizable hierarchy levels
+  - Role inheritance through hierarchy
+  - Unit-specific settings and configurations
+- **Professional Office Services**
+  - Professional service provider management (accounting offices, law firms, etc.)
+  - Service contract management
+    - Service package definitions
+    - Pricing models
+    - Contract terms and duration
+  - Service delivery tracking
+    - Task assignment and monitoring
+    - Service level agreements (SLAs)
+    - Performance metrics
+  - Client (Tenant) Management
+    - Multi-tenant service provision
+    - Access level configuration
+    - Client data management permissions
+  - Billing and Invoicing
+    - Automatic service billing
+    - Usage-based pricing
+    - Recurring payment handling
+  - Service-specific Features
+    - Accounting service workflows
+    - Document processing queues
+    - Client approval processes
+    - Regulatory compliance tracking
+  - Office-Tenant Communication
+    - Dedicated communication channels
+    - Document sharing
+    - Task notifications
+    - Status updates
+- **Employee Management**
+  - Employment agreements
+  - Employee onboarding workflow
+  - Contract management
+  - Employee hierarchy
 
 ### 3. Invoice/Document Management
 - **Contractor Management**
@@ -44,6 +88,13 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Template management
   - Status tracking
   - Payment tracking
+  - OCR text recognition for scanned invoices
+  - Periodic/cyclic invoices with configuration
+- **Expense Management**
+  - Hierarchical approval workflows
+  - Multi-level acceptance paths
+  - Delegation rules
+  - Budget tracking
 - **Tax Management**
   - Tax rates configuration
   - Tax calculations
@@ -52,6 +103,7 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Multiple format support (PDF, CSV, XML)
   - Batch operations
   - Data validation
+  - OCR processing for scanned documents
 - **Company Services**
   - Company information lookup
   - Verification services
@@ -61,6 +113,11 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Automatic rate updates
   - Historical rate tracking
   - Custom rate overrides
+- **Payment Processing**
+  - Online payment integration
+  - Multiple payment gateway support
+  - Payment status tracking
+  - Automatic reconciliation
 
 ### 4. Project Management
 - **Project Handling**
@@ -78,6 +135,54 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Issue tracking
   - Sprint planning
   - Agile board support
+
+### 5. Communication & Collaboration
+- **Tenant-Scoped Feeds**
+  - Announcement system
+  - Post creation and management
+  - Comment functionality
+  - Attachment support
+  - Notification system
+- **Chat System**
+  - Tenant-scoped internal chat
+  - App-scoped public chat
+  - Public user profiles
+  - Chat history and search
+  - File sharing
+- **Cross-Tenant Interactions**
+  - Friendship/contact system
+  - Automatic invoice-to-expense conversion
+  - Shared workspaces
+  - Cross-tenant notifications
+
+### 6. Subscription & Billing
+- **Subscription Plans**
+  - Tiered pricing models
+  - Feature-based plans
+  - Storage quotas
+  - Usage tracking
+- **Billing Management**
+  - Automatic billing
+  - Payment processing
+  - Invoice generation
+  - Usage reporting
+
+### 7. Administration & Tools
+- **System Administration**
+  - Global admin dashboard
+  - Entity management
+  - System health monitoring
+  - Debug tools
+- **Tenant Administration**
+  - Tenant settings management
+  - User management
+  - Resource allocation
+  - Usage monitoring
+- **Invitation System**
+  - Email-based invitations
+  - Role assignment
+  - Bulk invitations
+  - Invitation tracking
 
 ## Technical Architecture
 
@@ -115,28 +220,42 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 ## Development Roadmap
 
 ### Phase 1: Foundation
-1. Core authentication system
-2. Basic tenant management
-3. User management
+1. Core authentication system with identity verification
+2. Basic tenant management with hierarchy
+3. User management and employee system
 4. Role and permission system
 
 ### Phase 2: Document Management
 1. Contractor management
-2. Basic invoice system
+2. Basic invoice system with OCR
 3. Tax rate management
 4. Document storage
+5. Approval workflows
 
 ### Phase 3: Enhanced Features
 1. Exchange rate integration
 2. Company lookup service
 3. Advanced invoice features
 4. Import/export functionality
+5. Online payment processing
 
 ### Phase 4: Project Management
 1. Basic project structure
 2. Task management
 3. Team collaboration features
 4. Workflow automation
+
+### Phase 5: Communication
+1. Feed system
+2. Chat implementation
+3. Cross-tenant interactions
+4. Notification system
+
+### Phase 6: Advanced Features
+1. Subscription management
+2. Advanced admin tools
+3. Office management
+4. Cross-tenant operations
 
 ## Logical Dependency Chain
 

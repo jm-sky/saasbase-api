@@ -3,101 +3,156 @@
     {
       "id": 1,
       "title": "Setup Project Repository",
-      "description": "Initialize the project repository with Laravel framework.",
-      "details": "Create a new Laravel project using Composer. Set up the project structure, including directories for controllers, models, views, and migrations. Configure the environment settings in the .env file.",
-      "testStrategy": "Verify the project structure and environment configuration. Ensure all dependencies are installed and the Laravel development server can be started successfully.",
+      "description": "Initialize the project repository with Laravel framework and set up the development environment.",
+      "details": "1. Create a new Laravel project using Composer.\n2. Set up the development environment with Docker for containerization.\n3. Configure the database connection for MySQL/PostgreSQL.\n4. Set up version control with Git and push the initial commit.",
+      "testStrategy": "Verify the project structure and ensure all dependencies are installed correctly. Run basic Laravel commands to check the setup.",
       "priority": "high",
       "dependencies": [],
       "status": "pending",
       "subtasks": [
         {
           "id": 1,
-          "title": "Install Laravel using Composer",
+          "title": "Initialize Laravel Project",
           "description": "Create a new Laravel project using Composer.",
           "dependencies": [],
-          "details": "Run the command `composer create-project --prefer-dist laravel/laravel project-name` in the terminal to set up a new Laravel project.",
+          "details": "Run the command `composer create-project --prefer-dist laravel/laravel project-name` to set up a new Laravel project. Ensure Composer is installed and configured correctly.",
           "status": "pending",
-          "testStrategy": "Verify the Laravel installation by running `php artisan --version` and checking the project structure."
+          "testStrategy": "Verify the Laravel project is created by running `php artisan` and checking the output."
         },
         {
           "id": 2,
-          "title": "Set Up Project Structure",
-          "description": "Create necessary directories for controllers, models, views, and migrations.",
+          "title": "Set Up Docker Environment",
+          "description": "Configure Docker for containerization of the development environment.",
           "dependencies": [
             1
           ],
-          "details": "Ensure the following directories exist: `app/Http/Controllers`, `app/Models`, `resources/views`, and `database/migrations`. Create them if they do not exist.",
+          "details": "Create a Dockerfile and docker-compose.yml file in the project root. Define services for the Laravel application, web server, and database. Build and run the Docker containers using `docker-compose up`.",
           "status": "pending",
-          "testStrategy": "Check the file system to confirm the existence of the required directories."
+          "testStrategy": "Verify Docker containers are running by checking the output of `docker-compose ps` and accessing the application via the defined port."
         },
         {
           "id": 3,
-          "title": "Configure Environment Settings",
-          "description": "Set up the .env file with necessary environment variables.",
+          "title": "Configure Database Connection",
+          "description": "Set up the database connection for MySQL/PostgreSQL.",
           "dependencies": [
-            1
+            2
           ],
-          "details": "Copy the `.env.example` file to `.env` and configure the necessary environment variables such as `APP_NAME`, `APP_URL`, `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`.",
+          "details": "Update the `.env` file with the appropriate database connection details. Ensure the database service is defined in the `docker-compose.yml` file and is running. Run `php artisan migrate` to set up the database schema.",
           "status": "pending",
-          "testStrategy": "Verify the configuration by running `php artisan config:cache` and checking for any errors."
+          "testStrategy": "Verify the database connection by running `php artisan tinker` and executing a simple database query."
         },
         {
           "id": 4,
-          "title": "Set Up Database Configuration",
-          "description": "Configure the database settings in the .env file.",
+          "title": "Initialize Git Repository",
+          "description": "Set up version control with Git.",
           "dependencies": [
             3
           ],
-          "details": "Ensure the database connection details in the `.env` file are correct and match the database server settings. Run `php artisan migrate` to create the necessary tables.",
+          "details": "Initialize a new Git repository using `git init`. Create a `.gitignore` file to exclude unnecessary files and directories. Add the initial commit with `git add .` and `git commit -m 'Initial commit'`.",
           "status": "pending",
-          "testStrategy": "Check the database to confirm that the tables have been created successfully."
+          "testStrategy": "Verify the Git repository is set up correctly by checking the output of `git status` and `git log`."
         },
         {
           "id": 5,
-          "title": "Verify Project Setup",
-          "description": "Ensure the project is set up correctly and ready for development.",
+          "title": "Push Initial Commit to Remote Repository",
+          "description": "Push the initial commit to a remote Git repository.",
           "dependencies": [
-            2,
             4
           ],
-          "details": "Run `php artisan serve` to start the development server and navigate to `http://localhost:8000` in a web browser to verify that the Laravel welcome page is displayed.",
+          "details": "Add a remote repository using `git remote add origin <repository-url>`. Push the initial commit to the remote repository using `git push -u origin master`.",
           "status": "pending",
-          "testStrategy": "Check the browser for the Laravel welcome page and ensure there are no errors in the console or server logs."
+          "testStrategy": "Verify the initial commit is pushed to the remote repository by checking the repository on the hosting service (e.g., GitHub, GitLab)."
         }
       ]
     },
     {
       "id": 2,
-      "title": "Implement Authentication System",
-      "description": "Develop the core authentication system using JWT.",
-      "details": "Create user authentication endpoints for registration, login, and password reset. Implement JWT-based token management. Ensure password policies are enforced.",
-      "testStrategy": "Test registration, login, and password reset functionalities. Verify JWT token generation and validation. Ensure password policies are enforced.",
+      "title": "Implement Core Authentication System",
+      "description": "Develop the authentication module with email/password, JWT, and OAuth integration.",
+      "details": "1. Create user authentication routes and controllers.\n2. Implement JWT-based authentication.\n3. Integrate OAuth providers for social logins.\n4. Set up password reset functionality.\n5. Implement two-factor authentication (2FA).",
+      "testStrategy": "Test user registration, login, password reset, and 2FA. Verify JWT token generation and validation.",
       "priority": "high",
-      "dependencies": [
-        1
-      ],
+      "dependencies": [],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create User Authentication Routes and Controllers",
+          "description": "Set up the basic routes and controllers for user authentication, including registration, login, and logout.",
+          "dependencies": [],
+          "details": "Use an Express.js router to define the routes. Create controllers to handle the logic for user registration, login, and logout. Ensure that the routes are protected where necessary.",
+          "status": "pending",
+          "testStrategy": "Write unit tests for each controller method using a testing framework like Jest. Ensure that routes return the correct status codes and responses."
+        },
+        {
+          "id": 2,
+          "title": "Implement JWT-based Authentication",
+          "description": "Develop the JWT-based authentication mechanism to secure API endpoints.",
+          "dependencies": [],
+          "details": "Generate JWT tokens upon successful login. Implement middleware to verify tokens on protected routes. Store tokens securely on the client side.",
+          "status": "pending",
+          "testStrategy": "Test the generation and verification of JWT tokens. Ensure that protected routes are accessible only with valid tokens."
+        },
+        {
+          "id": 3,
+          "title": "Integrate OAuth Providers for Social Logins",
+          "description": "Add support for OAuth providers like Google, Facebook, and GitHub for social logins.",
+          "dependencies": [],
+          "details": "Use OAuth libraries to handle the authentication flow. Implement callbacks to handle the OAuth response and generate JWT tokens. Update the user model to store OAuth provider information.",
+          "status": "pending",
+          "testStrategy": "Test the OAuth flow by simulating logins with different providers. Ensure that JWT tokens are generated correctly and that users can access protected routes."
+        },
+        {
+          "id": 4,
+          "title": "Set Up Password Reset Functionality",
+          "description": "Implement the password reset feature to allow users to reset their passwords.",
+          "dependencies": [],
+          "details": "Create routes and controllers for password reset requests, token generation, and password update. Send reset emails with secure tokens. Ensure that tokens are valid and single-use.",
+          "status": "pending",
+          "testStrategy": "Test the entire password reset flow, from request to password update. Ensure that tokens are valid and that passwords are updated correctly."
+        },
+        {
+          "id": 5,
+          "title": "Implement Two-Factor Authentication (2FA)",
+          "description": "Add two-factor authentication to enhance security for user accounts.",
+          "dependencies": [],
+          "details": "Integrate a 2FA library to generate and verify OTPs. Update the user model to store 2FA settings. Implement routes and controllers to handle 2FA setup and verification.",
+          "status": "pending",
+          "testStrategy": "Test the 2FA setup and verification process. Ensure that users can enable and disable 2FA, and that OTPs are verified correctly."
+        }
+      ]
     },
     {
       "id": 3,
-      "title": "Develop Tenant Management",
-      "description": "Implement tenant management with isolation and configuration.",
-      "details": "Create tenant management endpoints for tenant creation, configuration, and resource allocation. Implement tenant-specific data access controls and automatic tenant context in all operations.",
-      "testStrategy": "Test tenant creation, configuration, and resource allocation. Verify tenant-specific data access controls and automatic tenant context.",
-      "priority": "high",
-      "dependencies": [
-        1
-      ],
+      "title": "Develop Identity Verification",
+      "description": "Implement identity verification processes including email, phone, and legal identity verification.",
+      "details": "1. Create routes and controllers for identity verification.\n2. Implement email and phone verification using OTPs.\n3. Integrate with government databases for legal identity verification.\n4. Implement document-based verification process.",
+      "testStrategy": "Test email and phone verification flows. Verify legal identity verification integration.",
+      "priority": "medium",
+      "dependencies": [],
       "status": "pending",
       "subtasks": []
     },
     {
       "id": 4,
-      "title": "Create User Management System",
-      "description": "Develop user management with profile and settings.",
-      "details": "Create user management endpoints for user profile information, preferences, security settings, and notification preferences. Implement role-based access control.",
-      "testStrategy": "Test user profile management, preferences, security settings, and notification preferences. Verify role-based access control.",
+      "title": "Implement Tenant Management",
+      "description": "Develop tenant management with isolation, configurations, and resource allocation.",
+      "details": "1. Create tenant management routes and controllers.\n2. Implement tenant isolation in the database.\n3. Set up tenant-specific configurations.\n4. Implement resource allocation per tenant.",
+      "testStrategy": "Test tenant creation, isolation, and resource allocation. Verify tenant-specific configurations.",
+      "priority": "high",
+      "dependencies": [
+        1,
+        2
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 5,
+      "title": "Develop User Settings & Profile Management",
+      "description": "Implement user settings and profile management including preferences and security settings.",
+      "details": "1. Create user settings routes and controllers.\n2. Implement user preferences and profile information management.\n3. Set up security settings and notification preferences.",
+      "testStrategy": "Test user profile updates, preferences, and security settings. Verify notification preferences.",
       "priority": "medium",
       "dependencies": [
         2
@@ -106,50 +161,37 @@
       "subtasks": []
     },
     {
-      "id": 5,
-      "title": "Implement Contractor Management",
-      "description": "Develop contractor management with profiles and categorization.",
-      "details": "Create contractor management endpoints for contractor profiles, contact information, historical data, and categorization. Implement data validation and storage.",
-      "testStrategy": "Test contractor profile management, contact information, historical data, and categorization. Verify data validation and storage.",
-      "priority": "medium",
-      "dependencies": [
-        3
-      ],
-      "status": "pending",
-      "subtasks": []
-    },
-    {
       "id": 6,
-      "title": "Develop Basic Invoice System",
-      "description": "Implement basic invoice management with creation and tracking.",
-      "details": "Create invoice management endpoints for invoice creation, template management, status tracking, and payment tracking. Implement data validation and storage.",
-      "testStrategy": "Test invoice creation, template management, status tracking, and payment tracking. Verify data validation and storage.",
+      "title": "Implement Hierarchical Organization Structure",
+      "description": "Develop hierarchical organization structure with customizable hierarchy levels and role inheritance.",
+      "details": "1. Create organization structure routes and controllers.\n2. Implement customizable hierarchy levels.\n3. Set up role inheritance through hierarchy.\n4. Implement unit-specific settings and configurations.",
+      "testStrategy": "Test organization structure creation, hierarchy levels, and role inheritance. Verify unit-specific settings.",
       "priority": "medium",
       "dependencies": [
-        5
+        4
       ],
       "status": "pending",
       "subtasks": []
     },
     {
       "id": 7,
-      "title": "Implement Tax Rate Management",
-      "description": "Develop tax rate management with configuration and calculations.",
-      "details": "Create tax rate management endpoints for tax rates configuration, tax calculations, and tax report generation. Implement data validation and storage.",
-      "testStrategy": "Test tax rates configuration, tax calculations, and tax report generation. Verify data validation and storage.",
+      "title": "Develop Basic Invoice System",
+      "description": "Implement basic invoice management with creation, template management, and status tracking.",
+      "details": "1. Create invoice management routes and controllers.\n2. Implement invoice creation and template management.\n3. Set up status tracking and payment tracking.\n4. Implement OCR text recognition for scanned invoices.",
+      "testStrategy": "Test invoice creation, template management, and status tracking. Verify OCR text recognition.",
       "priority": "medium",
       "dependencies": [
-        6
+        4
       ],
       "status": "pending",
       "subtasks": []
     },
     {
       "id": 8,
-      "title": "Develop Project Management Structure",
-      "description": "Implement basic project structure with creation and tracking.",
-      "details": "Create project management endpoints for project creation, configuration, team assignment, and resource allocation. Implement project status tracking.",
-      "testStrategy": "Test project creation, configuration, team assignment, and resource allocation. Verify project status tracking.",
+      "title": "Implement Project Management Features",
+      "description": "Develop project management capabilities including project creation, team assignment, and task management.",
+      "details": "1. Create project management routes and controllers.\n2. Implement project creation and team assignment.\n3. Set up task creation and assignment with priority and status tracking.\n4. Implement time tracking and dependencies management.",
+      "testStrategy": "Test project creation, team assignment, and task management. Verify time tracking and dependencies.",
       "priority": "medium",
       "dependencies": [
         4
@@ -159,12 +201,13 @@
     },
     {
       "id": 9,
-      "title": "Implement Task Management",
-      "description": "Develop task management with creation, assignment, and tracking.",
-      "details": "Create task management endpoints for task creation, assignment, priority and status tracking, time tracking, and dependencies management. Implement data validation and storage.",
-      "testStrategy": "Test task creation, assignment, priority and status tracking, time tracking, and dependencies management. Verify data validation and storage.",
-      "priority": "medium",
+      "title": "Develop Communication & Collaboration Features",
+      "description": "Implement tenant-scoped feeds, chat system, and cross-tenant interactions.",
+      "details": "1. Create communication routes and controllers.\n2. Implement tenant-scoped feeds with announcement system and post management.\n3. Set up chat system with tenant-scoped internal chat and public chat.\n4. Implement cross-tenant interactions with shared workspaces and notifications.",
+      "testStrategy": "Test tenant-scoped feeds, chat system, and cross-tenant interactions. Verify notification system.",
+      "priority": "low",
       "dependencies": [
+        4,
         8
       ],
       "status": "pending",
@@ -172,12 +215,13 @@
     },
     {
       "id": 10,
-      "title": "Integrate Exchange Rate Services",
-      "description": "Implement exchange rate integration with multiple currency support.",
-      "details": "Integrate exchange rate APIs for multiple currency support, automatic rate updates, historical rate tracking, and custom rate overrides. Implement data validation and storage.",
-      "testStrategy": "Test exchange rate integration, multiple currency support, automatic rate updates, historical rate tracking, and custom rate overrides. Verify data validation and storage.",
+      "title": "Implement Subscription & Billing Management",
+      "description": "Develop subscription plans, billing management, and payment processing.",
+      "details": "1. Create subscription and billing routes and controllers.\n2. Implement tiered pricing models and feature-based plans.\n3. Set up automatic billing and payment processing.\n4. Implement usage tracking and reporting.",
+      "testStrategy": "Test subscription plans, billing management, and payment processing. Verify usage tracking and reporting.",
       "priority": "low",
       "dependencies": [
+        4,
         7
       ],
       "status": "pending",

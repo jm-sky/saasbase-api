@@ -1,11 +1,14 @@
 # Task ID: 6
-# Title: Develop Basic Invoice System
+# Title: Implement Hierarchical Organization Structure
 # Status: pending
-# Dependencies: 5
+# Dependencies: 4
 # Priority: medium
-# Description: Implement basic invoice management with creation and tracking.
+# Description: Develop hierarchical organization structure with customizable hierarchy levels and role inheritance.
 # Details:
-Create invoice management endpoints for invoice creation, template management, status tracking, and payment tracking. Implement data validation and storage.
+1. Create organization structure routes and controllers.
+2. Implement customizable hierarchy levels.
+3. Set up role inheritance through hierarchy.
+4. Implement unit-specific settings and configurations.
 
 # Test Strategy:
-Test invoice creation, template management, status tracking, and payment tracking. Verify data validation and storage.
+Test organization structure creation, hierarchy levels, and role inheritance. Verify unit-specific settings.

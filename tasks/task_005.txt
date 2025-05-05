@@ -1,11 +1,13 @@
 # Task ID: 5
-# Title: Implement Contractor Management
+# Title: Develop User Settings & Profile Management
 # Status: pending
-# Dependencies: 3
+# Dependencies: 2
 # Priority: medium
-# Description: Develop contractor management with profiles and categorization.
+# Description: Implement user settings and profile management including preferences and security settings.
 # Details:
-Create contractor management endpoints for contractor profiles, contact information, historical data, and categorization. Implement data validation and storage.
+1. Create user settings routes and controllers.
+2. Implement user preferences and profile information management.
+3. Set up security settings and notification preferences.
 
 # Test Strategy:
-Test contractor profile management, contact information, historical data, and categorization. Verify data validation and storage.
+Test user profile updates, preferences, and security settings. Verify notification preferences.

@@ -1,11 +1,14 @@
 # Task ID: 7
-# Title: Implement Tax Rate Management
+# Title: Develop Basic Invoice System
 # Status: pending
-# Dependencies: 6
+# Dependencies: 4
 # Priority: medium
-# Description: Develop tax rate management with configuration and calculations.
+# Description: Implement basic invoice management with creation, template management, and status tracking.
 # Details:
-Create tax rate management endpoints for tax rates configuration, tax calculations, and tax report generation. Implement data validation and storage.
+1. Create invoice management routes and controllers.
+2. Implement invoice creation and template management.
+3. Set up status tracking and payment tracking.
+4. Implement OCR text recognition for scanned invoices.
 
 # Test Strategy:
-Test tax rates configuration, tax calculations, and tax report generation. Verify data validation and storage.
+Test invoice creation, template management, and status tracking. Verify OCR text recognition.

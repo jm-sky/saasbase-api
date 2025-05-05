@@ -1,11 +1,14 @@
 # Task ID: 9
-# Title: Implement Task Management
+# Title: Develop Communication & Collaboration Features
 # Status: pending
-# Dependencies: 8
-# Priority: medium
-# Description: Develop task management with creation, assignment, and tracking.
+# Dependencies: 4, 8
+# Priority: low
+# Description: Implement tenant-scoped feeds, chat system, and cross-tenant interactions.
 # Details:
-Create task management endpoints for task creation, assignment, priority and status tracking, time tracking, and dependencies management. Implement data validation and storage.
+1. Create communication routes and controllers.
+2. Implement tenant-scoped feeds with announcement system and post management.
+3. Set up chat system with tenant-scoped internal chat and public chat.
+4. Implement cross-tenant interactions with shared workspaces and notifications.
 
 # Test Strategy:
-Test task creation, assignment, priority and status tracking, time tracking, and dependencies management. Verify data validation and storage.
+Test tenant-scoped feeds, chat system, and cross-tenant interactions. Verify notification system.
