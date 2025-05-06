@@ -11,12 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string  $id
- * @property string  $name
- * @property string  $slug
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property ?Carbon $deleted_at
+ * @property string      $id
+ * @property string      $name
+ * @property string      $slug
+ * @property string|null $owner_id
+ * @property Carbon      $created_at
+ * @property Carbon      $updated_at
+ * @property ?Carbon     $deleted_at
+ * @property ?User       $owner
  */
 class Tenant extends BaseModel
 {
@@ -27,6 +29,7 @@ class Tenant extends BaseModel
     protected $fillable = [
         'name',
         'slug',
+        'owner_id',
     ];
 
     protected $casts = [
@@ -40,5 +43,10 @@ class Tenant extends BaseModel
             ->withPivot(['role'])
             ->withTimestamps()
         ;
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

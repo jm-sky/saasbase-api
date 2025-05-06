@@ -65,20 +65,20 @@ class ContractorDTO implements Arrayable
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'tenantId' => $this->tenantId,
-            'name' => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'country' => $this->country,
-            'taxId' => $this->taxId,
+            'id'          => $this->id,
+            'tenantId'    => $this->tenantId,
+            'name'        => $this->name,
+            'email'       => $this->email,
+            'phone'       => $this->phone,
+            'country'     => $this->country,
+            'taxId'       => $this->taxId,
             'description' => $this->description,
-            'isActive' => $this->isActive,
-            'isBuyer' => $this->isBuyer,
-            'isSupplier' => $this->isSupplier,
-            'createdAt' => $this->createdAt->toIso8601String(),
-            'updatedAt' => $this->updatedAt->toIso8601String(),
-            'deletedAt' => $this->deletedAt->toIso8601String(),
+            'isActive'    => $this->isActive,
+            'isBuyer'     => $this->isBuyer,
+            'isSupplier'  => $this->isSupplier,
+            'createdAt'   => $this->createdAt->toIso8601String(),
+            'updatedAt'   => $this->updatedAt->toIso8601String(),
+            'deletedAt'   => $this->deletedAt->toIso8601String(),
         ];
     }
 }
