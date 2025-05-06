@@ -17,7 +17,6 @@ class ContractorAddressRequest extends FormRequest
         return [
             'street'      => ['nullable', 'string', 'max:255'],
             'city'        => ['required', 'string', 'max:255'],
-            'state'       => ['required', 'string', 'max:255'],
             'postalCode'  => ['nullable', 'string', 'max:20'],
             'country'     => ['required', 'string', 'max:2'],
             'tenantId'    => ['required', 'uuid', 'exists:tenants,id'],
@@ -36,7 +35,6 @@ class ContractorAddressRequest extends FormRequest
         return [
             'street'      => $validated['street'] ?? null,
             'city'        => $validated['city'],
-            'state'       => $validated['state'],
             'postal_code' => $validated['postalCode'] ?? null,
             'country'     => $validated['country'],
             'tenant_id'   => $validated['tenantId'],

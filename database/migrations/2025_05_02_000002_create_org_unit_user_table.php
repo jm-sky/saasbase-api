@@ -1,5 +1,7 @@
 <?php
 
+// database/migrations/2025_05_02_000002_create_org_unit_user_table.php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -7,22 +9,19 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration {
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('org_unit_user', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignUuid('organization_unit_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->text('content');
-            $table->uuid('commentable_id');
-            $table->string('commentable_type');
+            $table->string('role');
             $table->timestamps();
-            $table->softDeletes();
 
-            $table->index(['commentable_id', 'commentable_type']);
+            $table->unique(['organization_unit_id', 'user_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('org_unit_user');
     }
 };

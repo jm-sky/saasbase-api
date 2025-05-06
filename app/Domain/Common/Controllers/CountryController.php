@@ -2,11 +2,11 @@
 
 namespace App\Domain\Common\Controllers;
 
-use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Domain\Common\DTOs\CountryDTO;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Models\Country;
 use App\Domain\Common\Requests\SearchCountryRequest;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\AllowedFilter;

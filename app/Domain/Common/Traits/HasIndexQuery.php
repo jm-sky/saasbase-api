@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Common\Concerns;
+namespace App\Domain\Common\Traits;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
@@ -50,7 +50,9 @@ trait HasIndexQuery
      */
     public function getIndexPaginator(Request $request, ?int $perPage = null): array
     {
-        $query     = $this->getIndexQuery($request);
+        $query = $this->getIndexQuery($request);
+
+        /** @var LengthAwarePaginator $paginator */
         $paginator = $query->paginate($perPage ?? $this->getPaginatorPerPage($request));
 
         return [

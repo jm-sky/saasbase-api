@@ -2,6 +2,8 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Common\DTOs\AddressDTO;
+use App\Domain\Common\Models\Address;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorAddress;
 use App\Domain\Contractors\Requests\ContractorAddressRequest;
@@ -16,7 +18,13 @@ class ContractorAddressController extends Controller
         $addresses = $contractor->addresses()->paginate();
 
         return response()->json([
-            'data' => $addresses,
+            'data' => collect($addresses->items())->map(fn (Address $address) => AddressDTO::fromModel($address)),
+            'meta' => [
+                'current_page' => $addresses->currentPage(),
+                'last_page'    => $addresses->lastPage(),
+                'per_page'     => $addresses->perPage(),
+                'total'        => $addresses->total(),
+            ],
         ]);
     }
 
@@ -25,7 +33,7 @@ class ContractorAddressController extends Controller
         $address = $contractor->addresses()->create($request->validated());
 
         return response()->json([
-            'data' => $address,
+            'data' => AddressDTO::fromModel($address),
         ], Response::HTTP_CREATED);
     }
 
@@ -34,7 +42,7 @@ class ContractorAddressController extends Controller
         abort_if($address->addressable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         return response()->json([
-            'data' => $address,
+            'data' => AddressDTO::fromModel($address),
         ]);
     }
 
@@ -45,7 +53,7 @@ class ContractorAddressController extends Controller
         $address->update($request->validated());
 
         return response()->json([
-            'data' => $address,
+            'data' => AddressDTO::fromModel($address->fresh()),
         ]);
     }
 

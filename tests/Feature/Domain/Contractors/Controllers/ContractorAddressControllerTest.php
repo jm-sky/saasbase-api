@@ -8,6 +8,7 @@ use App\Domain\Contractors\Models\ContractorAddress;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -18,15 +19,21 @@ class ContractorAddressControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    use WithAuthenticatedUser;
+
     private Tenant $tenant;
 
     private Contractor $contractor;
+
+    private string $baseUrl = '/api/v1/contractors';
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->tenant     = Tenant::factory()->create();
         $this->contractor = Contractor::factory()->create(['tenant_id' => $this->tenant->id]);
+
+        $this->authenticateUser($this->tenant);
     }
 
     public function testCanListContractorAddresses(): void
@@ -37,13 +44,13 @@ class ContractorAddressControllerTest extends TestCase
             'addressable_type' => Contractor::class,
         ]);
 
-        $response = $this->getJson("/api/contractors/{$this->contractor->id}/addresses");
+        $response = $this->getJson("{$this->baseUrl}/{$this->contractor->id}/addresses");
 
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
-                        'id', 'street', 'city', 'state', 'postalCode', 'country', 'tenantId',
+                        'id', 'street', 'city', 'postalCode', 'country', 'tenantId',
                         'building', 'flat', 'description', 'type', 'isDefault',
                     ],
                 ],
@@ -56,7 +63,6 @@ class ContractorAddressControllerTest extends TestCase
         $data = [
             'street'      => '123 Main St',
             'city'        => 'Test City',
-            'state'       => 'Test State',
             'postalCode'  => '12345',
             'country'     => 'US',
             'tenantId'    => $this->tenant->id,
@@ -67,12 +73,12 @@ class ContractorAddressControllerTest extends TestCase
             'isDefault'   => true,
         ];
 
-        $response = $this->postJson("/api/contractors/{$this->contractor->id}/addresses", $data);
+        $response = $this->postJson("{$this->baseUrl}/{$this->contractor->id}/addresses", $data);
 
         $response->assertCreated()
             ->assertJsonStructure([
                 'data' => [
-                    'id', 'street', 'city', 'state', 'postalCode', 'country', 'tenantId',
+                    'id', 'street', 'city', 'postalCode', 'country', 'tenantId',
                     'building', 'flat', 'description', 'type', 'isDefault',
                 ],
             ])
@@ -97,12 +103,12 @@ class ContractorAddressControllerTest extends TestCase
             'addressable_type' => Contractor::class,
         ]);
 
-        $response = $this->getJson("/api/contractors/{$this->contractor->id}/addresses/{$address->id}");
+        $response = $this->getJson("{$this->baseUrl}/{$this->contractor->id}/addresses/{$address->id}");
 
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    'id', 'street', 'city', 'state', 'postalCode', 'country', 'tenantId',
+                    'id', 'street', 'city', 'postalCode', 'country', 'tenantId',
                     'building', 'flat', 'description', 'type', 'isDefault',
                 ],
             ])
@@ -118,7 +124,7 @@ class ContractorAddressControllerTest extends TestCase
             'addressable_type' => Contractor::class,
         ]);
 
-        $response = $this->getJson("/api/contractors/{$this->contractor->id}/addresses/{$address->id}");
+        $response = $this->getJson("{$this->baseUrl}/{$this->contractor->id}/addresses/{$address->id}");
 
         $response->assertNotFound();
     }
@@ -134,7 +140,6 @@ class ContractorAddressControllerTest extends TestCase
         $data = [
             'street'      => '456 Updated St',
             'city'        => 'Updated City',
-            'state'       => 'Updated State',
             'postalCode'  => '54321',
             'country'     => 'CA',
             'tenantId'    => $this->tenant->id,
@@ -145,12 +150,12 @@ class ContractorAddressControllerTest extends TestCase
             'isDefault'   => false,
         ];
 
-        $response = $this->putJson("/api/contractors/{$this->contractor->id}/addresses/{$address->id}", $data);
+        $response = $this->putJson("{$this->baseUrl}/{$this->contractor->id}/addresses/{$address->id}", $data);
 
         $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    'id', 'street', 'city', 'state', 'postalCode', 'country', 'tenantId',
+                    'id', 'street', 'city', 'postalCode', 'country', 'tenantId',
                     'building', 'flat', 'description', 'type', 'isDefault',
                 ],
             ])
@@ -180,14 +185,13 @@ class ContractorAddressControllerTest extends TestCase
         $data = [
             'street'     => '456 Updated St',
             'city'       => 'Updated City',
-            'state'      => 'Updated State',
             'postalCode' => '54321',
             'country'    => 'CA',
             'tenantId'   => $this->tenant->id,
             'type'       => AddressType::CORRESPONDENCE->value,
         ];
 
-        $response = $this->putJson("/api/contractors/{$this->contractor->id}/addresses/{$address->id}", $data);
+        $response = $this->putJson("{$this->baseUrl}/{$this->contractor->id}/addresses/{$address->id}", $data);
 
         $response->assertNotFound();
     }
@@ -200,7 +204,7 @@ class ContractorAddressControllerTest extends TestCase
             'addressable_type' => Contractor::class,
         ]);
 
-        $response = $this->deleteJson("/api/contractors/{$this->contractor->id}/addresses/{$address->id}");
+        $response = $this->deleteJson("{$this->baseUrl}/{$this->contractor->id}/addresses/{$address->id}");
 
         $response->assertNoContent();
         $this->assertDatabaseMissing('addresses', ['id' => $address->id]);
@@ -215,7 +219,7 @@ class ContractorAddressControllerTest extends TestCase
             'addressable_type' => Contractor::class,
         ]);
 
-        $response = $this->deleteJson("/api/contractors/{$this->contractor->id}/addresses/{$address->id}");
+        $response = $this->deleteJson("{$this->baseUrl}/{$this->contractor->id}/addresses/{$address->id}");
 
         $response->assertNotFound();
         $this->assertDatabaseHas('addresses', ['id' => $address->id]);

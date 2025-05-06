@@ -4,12 +4,13 @@ namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
-use App\Domain\Common\Concerns\HaveAddresses;
+use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use Carbon\Carbon;
@@ -204,6 +205,14 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->belongsToMany(Tenant::class, 'user_tenants')
             ->using(UserTenant::class)
             ->withPivot(['role'])
+            ->withTimestamps()
+        ;
+    }
+
+    public function organizationUnits()
+    {
+        return $this->belongsToMany(OrganizationUnit::class, 'org_unit_user')
+            ->withPivot('role')
             ->withTimestamps()
         ;
     }
