@@ -44,9 +44,13 @@ This document tracks the implementation status of our models and highlights any 
   - [x] Soft deletes enabled
   - [x] UUID support
 
-- [ ] OrganizationUnit
-  - [ ] Implementation missing
-  - [ ] Migration needed
+- [x] OrganizationUnit
+  - [x] Implementation in Domain/Tenant/Models/OrganizationUnit.php
+  - [x] Migration exists (2025_05_02_000001_create_organization_units_table.php)
+  - [x] Relationships set up (parent, children, tenant, users)
+  - [x] UUID support
+  - [x] Hierarchical structure implemented
+  - [x] User role assignments through org_unit_user table
 
 ## Project Management Models
 
