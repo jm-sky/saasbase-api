@@ -84,12 +84,29 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Custom units
   - Unit conversions
 - **Invoice Management**
-  - Invoice creation
-  - Template management
-  - Status tracking
-  - Payment tracking
+  - Invoice creation and numbering
+    - Customizable numbering templates
+    - Template-based generation
+    - Multiple invoice types support
+  - Financial tracking
+    - Net, tax, and gross amount calculations
+    - Multiple currency support
+    - Exchange rate integration
+    - Payment status tracking
+  - Status management
+    - Draft, issued, paid, cancelled states
+    - Status change tracking
+    - Payment date tracking
+  - Integration features
+    - Contractor association
+    - Subscription billing support
+    - Payment method tracking
   - OCR text recognition for scanned invoices
   - Periodic/cyclic invoices with configuration
+    - Configurable billing cycles
+    - Automatic generation based on schedule
+    - Template-based generation
+    - Custom pricing rules
 - **Expense Management**
   - Hierarchical approval workflows
   - Multi-level acceptance paths
@@ -161,11 +178,16 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Feature-based plans
   - Storage quotas
   - Usage tracking
+  - Trial period support
+  - Yearly/monthly billing options
 - **Billing Management**
   - Automatic billing
   - Payment processing
   - Invoice generation
   - Usage reporting
+  - Promotional discounts and offers
+  - Price list management
+  - Multiple payment gateway support
 
 ### 7. Administration & Tools
 - **System Administration**
@@ -304,4 +326,102 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 - Exchange rate APIs
 - Company lookup services
 - OAuth providers
-- Payment gateways 
+- Payment gateways
+
+### Models & Database
+
+#### Core Models
+- **User**
+  - Authentication & authorization
+  - Profile management
+  - Role-based access control
+  - Two-factor authentication support
+  - Password reset functionality
+- **Tenant**
+  - Multi-tenant support
+  - Tenant-specific configuration
+  - Resource isolation
+- **Address** (polymorphic, nullable tenant_id)
+  - Multiple address types
+  - Address validation
+  - Geocoding support
+- **BankAccount** (polymorphic: Contractor, User, Tenant)
+  - Account validation
+  - Secure storage
+  - Multiple account types
+
+#### Media & Attachments
+- **Media** (using Spatie Media Library)
+  - File uploads
+  - Image processing
+  - Document management
+  - Secure storage
+  - Polymorphic associations
+  - User-specific records support
+
+#### Communication
+- **Comment**
+  - Threaded discussions (parent_id)
+  - Edit tracking via updated_at
+  - Markdown support
+  - Polymorphic associations
+- **ChatRoom**
+  - Direct messages
+  - Group chats
+  - Channels
+  - Room configuration
+- **ChatMessage**
+  - Markdown support
+  - Threading support
+  - Message types
+- **ChatParticipant**
+  - Room membership
+  - Role management
+  - Access control
+- **Notification**
+  - Multiple channels
+  - Template support
+  - Delivery tracking
+  - User preferences
+
+#### Time & Billing
+- **TimeEntry**
+  - Duration tracking
+  - Project association
+  - Billing integration
+  - Reporting support
+- **SubscriptionPlan**
+  - Feature definitions
+  - Pricing tiers
+  - Trial configuration
+- **Subscription**
+  - Plan management
+  - Trial handling
+  - Status tracking
+- **Invoice**
+  - Line items
+  - Tax calculation (net, tax, gross amounts)
+  - Contractor and subscription support
+  - Customizable numbering templates
+  - Multiple currencies with exchange rates
+  - Payment tracking
+  - Cyclic configuration
+  - Status workflow (draft, issued, paid, cancelled)
+- **Payment**
+  - Transaction processing
+  - Gateway integration
+  - Status tracking
+- **PriceList**
+  - Rate configuration
+  - Currency support
+  - Effective dates
+- **Discount**
+  - Promotional codes
+  - Amount/percentage
+  - Validity periods
+
+#### Access Control
+- **Invitation**
+  - Role assignment
+  - Expiration handling
+  - Multi-tenant support 

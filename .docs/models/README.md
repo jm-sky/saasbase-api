@@ -1,3 +1,93 @@
+# Models Index
+
+This directory contains documentation for all models in the system.
+
+## Polymorphic Models
+These models can be associated with multiple other models:
+
+- [Address](./Address.md) `[P]` - Polymorphic addresses (users, contractors, tenants)
+- [BankAccount](./BankAccount.md) `[P]` - Polymorphic bank accounts (users, contractors, tenants)
+- [Media](./Media.md) `[P]` - File uploads and attachments (using Spatie Media Library)
+- [Comment](./Comment.md) `[P]` - User comments on various entities
+
+## Core Models
+
+- [User](./User.md) - User account and authentication
+  - Uses: `[P]` Address, BankAccount, Media, Comment
+- [UserSettings](./UserSettings.md) - User preferences and configuration
+- [UserOAuthAccount](./UserOAuthAccount.md) - OAuth provider accounts
+- [ActionLog](./ActionLog.md) - System-wide audit trail
+- [Notification](./Notification.md) - System notifications and preferences
+
+## Organization Models
+
+- [Tenant](./Tenant.md) - Organization/company entity
+  - Uses: `[P]` Address, BankAccount, Media, Comment
+- [OrganizationUnit](./OrganizationUnit.md) - Organizational structure
+  - Uses: `[P]` Media, Comment
+- [OrgUnitUser](./OrgUnitUser.md) - User assignments to org units
+- [Invitation](./Invitation.md) - User invitations to organizations
+
+## Office Management Models
+
+- [OfficeAgreement](./OfficeAgreement.md) - Office rental agreements
+  - Uses: `[P]` Media, Comment
+- [OfficeServiceType](./OfficeServiceType.md) - Available office services
+- [OfficeTenantRelation](./OfficeTenantRelation.md) - Tenant-office relationships
+
+## Project Management Models
+
+- [Project](./Project.md) - Project management
+  - Uses: `[P]` Media, Comment
+- [Task](./Task.md) - Task tracking
+  - Uses: `[P]` Media, Comment
+- [Sprint](./Sprint.md) - Sprint planning
+  - Uses: `[P]` Comment
+- [TimeEntry](./TimeEntry.md) - Time tracking and billing
+  - Uses: `[P]` Comment
+
+## Contractor Models
+
+- [Contractor](./Contractor.md) - External contractors and suppliers
+  - Uses: `[P]` Address, BankAccount, Media, Comment
+- [ContractorContactPerson](./ContractorContactPerson.md) - Contractor contacts
+  - Uses: `[P]` Media
+
+## Chat System Models
+
+- [ChatRoom](./ChatRoom.md) - Chat spaces (direct, group, channel)
+  - Uses: `[P]` Media
+- [ChatMessage](./ChatMessage.md) - Individual chat messages
+  - Uses: `[P]` Media
+- [ChatParticipant](./ChatParticipant.md) - Chat room members and roles
+
+## Subscription & Billing Models
+
+- [SubscriptionPlan](./SubscriptionPlan.md) - Available subscription tiers
+  - Uses: `[P]` Media
+- [Subscription](./Subscription.md) - Tenant subscriptions
+  - Uses: `[P]` Comment
+- [Invoice](./Invoice.md) - Billing invoices
+  - Uses: `[P]` Media, Comment
+- [Payment](./Payment.md) - Payment transactions
+  - Uses: `[P]` Comment
+- [PriceList](./PriceList.md) - Product/service pricing
+- [Discount](./Discount.md) - Discount codes and rules
+
+## System & Localization Models
+
+- [Country](./Country.md) - List of countries
+- [VatRate](./VatRate.md) - VAT rates
+- [Unit](./Unit.md) - Units of measurement
+
+## Notes
+
+- Two-Factor Authentication is implemented as a service/feature
+- Password Reset is implemented as a service/feature
+- Administration features are implemented through policies and services
+- Models marked with `[P]` are polymorphic and can be associated with multiple other models
+- The "Uses:" sections indicate which polymorphic models can be associated with each model
+
 # SaaSBase – Data Model Index
 
 This document provides a high-level overview of all models in the SaaSBase project. Each entry includes a brief description and a link to the full specification of the model, which includes attributes, relationships, behaviors, and relevant API endpoints or use cases.
@@ -20,6 +110,8 @@ This document provides a high-level overview of all models in the SaaSBase proje
   Manages 2FA settings and verification codes for users.
 - **[PasswordReset](./PasswordReset.md)**  
   Handles password reset tokens and processes.
+- **[Address](./Address.md)**  
+  Polymorphic addresses for users, contractors, and tenants.
 
 ---
 
@@ -35,7 +127,7 @@ This document provides a high-level overview of all models in the SaaSBase proje
   User-provided discussion on tasks or other entities.
 - **[Tag](./Tag.md)**  
   Labeling system for categorizing tasks and projects.
-- **[Attachment](./Attachment.md)**  
+- **[Media](./Media.md)**  
   Files related to tasks, comments, etc.
 - **[Skill](./Skill.md)**  
   Used to describe required or available skills.
