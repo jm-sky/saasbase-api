@@ -2,10 +2,10 @@
 
 namespace App\Domain\Contractors\Controllers;
 
-use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorRequest;

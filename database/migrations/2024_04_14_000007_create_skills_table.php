@@ -9,7 +9,7 @@ return new class() extends Migration {
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('category');
+            $table->string('category')->nullable();
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->timestamps();

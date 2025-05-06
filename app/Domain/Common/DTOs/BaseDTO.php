@@ -4,7 +4,10 @@ namespace App\Domain\Common\DTOs;
 
 use App\Domain\Common\Concerns\CreatedFromModelOrArray;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * @template TModel of Model
@@ -54,8 +57,28 @@ abstract class BaseDTO implements Arrayable, CreatedFromModelOrArray
      *
      * @return array<static>
      */
-    public static function collect(array $items): array
+    public static function collect(array|Model|Collection|EloquentCollection|LengthAwarePaginator $items): array|Collection
     {
-        return $items;
+        if ($items instanceof Model) {
+            return collect([static::fromModel($items)]);
+        }
+
+        if ($items instanceof Collection) {
+            return $items->map(fn (Model $model) => static::fromModel($model));
+        }
+
+        if ($items instanceof EloquentCollection) {
+            return $items->map(fn (Model $model) => static::fromModel($model));
+        }
+
+        if ($items instanceof LengthAwarePaginator) {
+            return $items->items();
+        }
+
+        if (is_array($items)) {
+            return collect($items)->map(fn (mixed $data) => static::from($data));
+        }
+
+        return collect([static::fromModel($items)]);
     }
 }

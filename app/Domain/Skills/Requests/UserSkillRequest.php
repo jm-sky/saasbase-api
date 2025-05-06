@@ -44,10 +44,10 @@ class UserSkillRequest extends FormRequest
 
         // Keep camelCase for DTO and add snake_case for database
         return [
-            'userId'     => $validated['userId'],
-            'skillId'    => $validated['skillId'],
-            'level'      => $validated['level'],
-            'acquiredAt' => $validated['acquiredAt'] ?? null,
+            'user_id'     => $validated['userId'],
+            'skill_id'    => $validated['skillId'],
+            'level'       => $validated['level'],
+            'acquired_at' => $validated['acquiredAt'] ?? null,
         ];
     }
 }
