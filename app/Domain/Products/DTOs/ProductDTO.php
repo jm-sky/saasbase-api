@@ -90,9 +90,4 @@ class ProductDTO extends BaseDTO
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
         ];
     }
-
-    public static function collect(array $items): array
-    {
-        return $items;
-    }
 }
