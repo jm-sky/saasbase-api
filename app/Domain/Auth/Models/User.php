@@ -4,6 +4,7 @@ namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
+use App\Domain\Common\Concerns\HaveAddresses;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
@@ -64,6 +65,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use HasApiTokens;
     use HasFactory;
     use HasUuids;
+    use HaveAddresses;
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
@@ -112,7 +114,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return UserStatus::ACTIVE === $this->status;
     }
 
-    // TODO: Implement this
+    public function isEmailVerified(): string
+    {
+        return null !== $this->email_verified_at;
+    }
+
     public function isTwoFactorEnabled(): string
     {
         return $this->settings?->two_factor_enabled ?? false;

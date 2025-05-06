@@ -93,6 +93,28 @@ Table tenants {
   updated_at timestamp
 }
 
+Table addresses {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  addressable_id uuid
+  addressable_type varchar [note: 'users, contractors, tenants']
+  type varchar [note: 'residence, billing, correspondence']
+  description varchar [note: 'nullable']
+  country_code varchar
+  city varchar
+  postal_code varchar [note: 'nullable']
+  street varchar [note: 'nullable']
+  building varchar [note: 'nullable']
+  flat varchar [note: 'nullable']
+  is_default boolean
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (addressable_type, addressable_id)
+  }
+}
+
 // Users
 Table users {
   id uuid [pk]
@@ -196,13 +218,19 @@ Table contractors {
 Table contractor_addresses {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
-  contractor_id uuid [ref: > contractors.id]
-  label varchar
+  addressable_id uuid [ref: > contractors.id]
+  addressable_type varchar
+  type varchar [note: 'registered_office, billing, correspondence']
+  description varchar [note: 'nullable']
   country_code varchar
-  street varchar
   city varchar
-  zip varchar [note: 'nullable']
+  postal_code varchar [note: 'nullable']
+  street varchar [note: 'nullable']
+  building varchar [note: 'nullable']
+  flat varchar [note: 'nullable']
   is_default boolean
+  created_at timestamp
+  updated_at timestamp
 }
 
 // Contractor Bank Accounts
@@ -235,18 +263,29 @@ Table invoices {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
   contractor_id uuid [ref: > contractors.id]
+  subscription_id uuid [ref: > subscriptions.id, note: 'nullable']
   invoice_type_id uuid [ref: > invoice_types.id]
   invoice_numbering_template_id uuid [ref: > invoice_numbering_templates.id, note: 'nullable']
-  invoice_number varchar
+  number varchar
+  status varchar [note: 'draft, issued, paid, cancelled']
   issue_date date
   due_date date
+  payment_date date [note: 'nullable']
+  payment_method varchar [note: 'nullable']
+  currency varchar
+  exchange_rate_id uuid [ref: > exchange_rates.id, note: 'nullable']
   total_net decimal
   total_tax decimal
   total_gross decimal
-  status varchar
-  exchange_rate_id uuid [ref: > exchange_rates.id, note: 'nullable']
+  notes text [note: 'nullable']
   created_at timestamp
   updated_at timestamp
+
+  indexes {
+    (tenant_id)
+    number [unique]
+    status
+  }
 }
 
 // Invoice Items
@@ -356,11 +395,18 @@ Table default_task_statuses {
 // Comments
 Table comments {
   id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
   user_id uuid [ref: > users.id]
-  content text
+  parent_id uuid [ref: > comments.id, note: 'nullable, for threaded comments']
+  content text [note: 'markdown content']
   commentable_id uuid
   commentable_type varchar
   created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (commentable_type, commentable_id)
+  }
 }
 
 // Tags
@@ -377,27 +423,33 @@ Table taggables {
   [pk: tag_id, taggable_id, taggable_type]
 }
 
-// Attachments
-Table attachments {
+// Media (Attachments, using Spatie Media Library)
+Table media {
   id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  tenant_id uuid [ref: > tenants.id, note: 'nullable for user-specific media']
   model_type varchar
   model_id uuid
-  collection_name varchar
-  name varchar
-  file_name varchar
+  uuid varchar [note: 'unique identifier for the media item']
+  collection_name varchar [note: 'e.g., avatar, logo, documents']
+  name varchar [note: 'original file name']
+  file_name varchar [note: 'name on disk']
   mime_type varchar [note: 'nullable']
-  size int
-  disk varchar
+  disk varchar [note: 'storage disk identifier']
+  conversions_disk varchar [note: 'disk for storing image conversions']
+  size int [note: 'file size in bytes']
+  manipulations json [note: 'image manipulation settings']
+  custom_properties json [note: 'additional metadata']
+  generated_conversions json [note: 'status of image conversions']
+  responsive_images json [note: 'responsive image data']
+  order_column int [note: 'for custom ordering']
   created_at timestamp
   updated_at timestamp
-}
 
-Table attachmentables {
-  attachment_id uuid [ref: > attachments.id]
-  attachmentable_id uuid
-  attachmentable_type varchar
-  [pk: attachment_id, attachmentable_id, attachmentable_type]
+  indexes {
+    (model_type, model_id)
+    uuid
+    collection_name
+  }
 }
 
 // Skills
@@ -452,12 +504,17 @@ Table user_oauth_accounts {
 // User Addresses
 Table user_addresses {
   id uuid [pk]
-  user_id uuid [ref: > users.id]
-  label varchar
+  tenant_id uuid [ref: > tenants.id]
+  addressable_id uuid [ref: > users.id]
+  addressable_type varchar
+  type varchar [note: 'residence, billing, correspondence']
+  description varchar [note: 'nullable']
   country_code varchar
-  street varchar
   city varchar
-  zip varchar [note: 'nullable']
+  postal_code varchar [note: 'nullable']
+  street varchar [note: 'nullable']
+  building varchar [note: 'nullable']
+  flat varchar [note: 'nullable']
   is_default boolean
   created_at timestamp
   updated_at timestamp
@@ -496,4 +553,245 @@ Table employee_agreements {
   salary decimal [note: 'nullable']
   created_at timestamp
   updated_at timestamp
+}
+
+Table organization_units {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  parent_id uuid [ref: > organization_units.id, note: 'nullable']
+  name varchar
+  short_name varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table org_unit_user {
+  id uuid [pk]
+  organization_unit_id uuid [ref: > organization_units.id]
+  user_id uuid [ref: > users.id]
+  role varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Bank Accounts
+Table bank_accounts {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, note: 'nullable for user-specific accounts']
+  bankable_id uuid
+  bankable_type varchar
+  name varchar [note: 'account name/label']
+  bank_name varchar
+  account_number varchar [note: 'IBAN format']
+  swift varchar [note: 'nullable']
+  is_default boolean [default: false]
+  currency varchar [note: 'ISO 4217 currency code']
+  description text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (bankable_type, bankable_id)
+    (tenant_id, bankable_type, bankable_id, is_default) [name: 'bank_accounts_default_idx']
+    account_number
+  }
+}
+
+// Time Tracking
+Table time_entries {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  user_id uuid [ref: > users.id]
+  project_id uuid [ref: > projects.id, note: 'nullable']
+  task_id uuid [ref: > tasks.id, note: 'nullable']
+  description text [note: 'nullable']
+  started_at timestamp
+  ended_at timestamp [note: 'nullable']
+  duration int [note: 'in minutes']
+  is_billable boolean [default: false]
+  hourly_rate decimal [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id, user_id)
+    (project_id)
+    (task_id)
+    started_at
+  }
+}
+
+// Notifications
+Table notifications {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id, note: 'nullable']
+  type varchar [note: 'notification class name']
+  notifiable_type varchar
+  notifiable_id uuid
+  data json
+  read_at timestamp [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (notifiable_type, notifiable_id)
+    (tenant_id, notifiable_type, notifiable_id)
+  }
+}
+
+// Chat System
+Table chat_rooms {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  type varchar [note: 'direct, group, channel']
+  description text [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id)
+  }
+}
+
+Table chat_participants {
+  id uuid [pk]
+  chat_room_id uuid [ref: > chat_rooms.id]
+  user_id uuid [ref: > users.id]
+  role varchar [note: 'admin, moderator, member']
+  joined_at timestamp
+  last_read_at timestamp [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (chat_room_id)
+    (user_id)
+    (chat_room_id, user_id) [unique]
+  }
+}
+
+Table chat_messages {
+  id uuid [pk]
+  chat_room_id uuid [ref: > chat_rooms.id]
+  user_id uuid [ref: > users.id]
+  parent_id uuid [ref: > chat_messages.id, note: 'nullable, for threads']
+  content text [note: 'markdown content']
+  edited_at timestamp [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (chat_room_id)
+    (user_id)
+    (parent_id)
+  }
+}
+
+// Subscription & Billing
+Table subscription_plans {
+  id uuid [pk]
+  name varchar
+  description text [note: 'nullable']
+  price decimal
+  billing_period varchar [note: 'monthly, yearly']
+  features json
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table subscriptions {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  plan_id uuid [ref: > subscription_plans.id]
+  status varchar [note: 'active, cancelled, expired']
+  trial_ends_at timestamp [note: 'nullable']
+  starts_at timestamp
+  ends_at timestamp [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id)
+    (plan_id)
+    status
+  }
+}
+
+Table payments {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  invoice_id uuid [ref: > invoices.id]
+  amount decimal
+  payment_method varchar
+  transaction_id varchar [note: 'payment provider reference']
+  status varchar [note: 'pending, completed, failed']
+  paid_at timestamp [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id)
+    (invoice_id)
+    transaction_id
+  }
+}
+
+Table price_lists {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  name varchar
+  description text [note: 'nullable']
+  is_active boolean [default: true]
+  valid_from date
+  valid_to date [note: 'nullable']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id)
+  }
+}
+
+Table discounts {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  code varchar
+  type varchar [note: 'percentage, fixed']
+  value decimal
+  description text [note: 'nullable']
+  starts_at timestamp
+  ends_at timestamp [note: 'nullable']
+  max_uses int [note: 'nullable']
+  times_used int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id)
+    code [unique]
+  }
+}
+
+// Invitation System
+Table invitations {
+  id uuid [pk]
+  tenant_id uuid [ref: > tenants.id]
+  inviter_id uuid [ref: > users.id]
+  email varchar
+  role varchar
+  token varchar [unique]
+  status varchar [note: 'pending, accepted, expired']
+  accepted_at timestamp [note: 'nullable']
+  expires_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (tenant_id)
+    email
+    token
+    status
+  }
 }

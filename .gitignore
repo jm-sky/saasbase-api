@@ -26,3 +26,31 @@ yarn-error.log
 storage/test_jwt.key
 storage/test_jwt.pub
 .php-cs-fixer.cache
+
+# Added by Claude Task Master
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+
+# Dependency directories
+node_modules/
+
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS specific
+.DS_Store
+
+# Cursor MCP configuration with sensitive data
+.cursor/mcp.json

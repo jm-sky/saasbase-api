@@ -9,6 +9,7 @@ return new class() extends Migration {
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete()->nullable();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->text('content');
             $table->uuid('commentable_id');

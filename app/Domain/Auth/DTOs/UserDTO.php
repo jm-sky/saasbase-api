@@ -9,7 +9,7 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 
 /**
- * @property ?string $id          UUID
+ * @property ?string $id                 UUID
  * @property string  $firstName
  * @property string  $lastName
  * @property string  $email
@@ -17,10 +17,12 @@ use Spatie\LaravelData\Data;
  * @property ?string $description
  * @property ?string $birthDate
  * @property ?string $phone
+ * @property bool    $isEmailVerified
+ * @property bool    $isTwoFactorEnabled
  * @property bool    $isAdmin
- * @property ?Carbon $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt          Internally Carbon, accepts/serializes ISO 8601
  */
 class UserDTO extends Data
 {
@@ -34,6 +36,8 @@ class UserDTO extends Data
         public readonly ?string $birthDate = null,
         public readonly ?string $phone = null,
         public readonly bool $isAdmin = false,
+        public readonly bool $isEmailVerified = false,
+        public readonly bool $isTwoFactorEnabled = false,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $createdAt = null,
         #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
@@ -67,6 +71,8 @@ class UserDTO extends Data
             birthDate: $model->birth_date,
             phone: $model->phone,
             isAdmin: $model->is_admin,
+            isEmailVerified: $model->isEmailVerified(),
+            isTwoFactorEnabled: $model->isTwoFactorEnabled(),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
