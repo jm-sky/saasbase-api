@@ -4,6 +4,7 @@ namespace App\Domain\Common\Models;
 
 use App\Domain\Common\Enums\AddressType;
 use Carbon\Carbon;
+use Database\Factories\AddressFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -50,5 +51,10 @@ class Address extends BaseModel
     public function addressable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    protected static function newFactory()
+    {
+        return AddressFactory::new();
     }
 }

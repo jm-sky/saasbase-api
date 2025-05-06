@@ -2,12 +2,11 @@
 
 namespace App\Domain\Contractors\Models;
 
-use App\Domain\Common\Concerns\HaveAddresses;
+use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -26,10 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon  $updated_at
  * @property ?Carbon $deleted_at
  */
-class Contractor extends Model
+class Contractor extends BaseModel
 {
     use SoftDeletes;
-    use HasFactory;
     use BelongsToTenant;
     use HaveAddresses;
 

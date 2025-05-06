@@ -2,11 +2,14 @@
 
 namespace App\Domain\Contractors\DTOs;
 
+use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Contractors\Models\Contractor;
 use Carbon\Carbon;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @extends BaseDTO<Contractor>
+ *
  * @property ?string $id          UUID
  * @property string  $tenantId    UUID
  * @property string  $name
@@ -22,7 +25,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
-class ContractorDTO implements Arrayable
+class ContractorDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $tenantId,
@@ -42,23 +45,47 @@ class ContractorDTO implements Arrayable
     ) {
     }
 
-    public static function fromModel(Contractor $contractor): self
+    public static function fromArray(array $data): static
     {
         return new self(
-            tenantId: $contractor->tenant_id,
-            name: $contractor->name,
-            email: $contractor->email,
-            id: $contractor->id,
-            phone: $contractor->phone,
-            country: $contractor->country,
-            taxId: $contractor->tax_id,
-            description: $contractor->description,
-            isActive: $contractor->is_active,
-            isBuyer: $contractor->is_buyer,
-            isSupplier: $contractor->is_supplier,
-            createdAt: $contractor->created_at,
-            updatedAt: $contractor->updated_at,
-            deletedAt: $contractor->deleted_at,
+            tenantId: $data['tenant_id'],
+            name: $data['name'],
+            email: $data['email'],
+            id: $data['id'],
+            phone: $data['phone'],
+            country: $data['country'],
+            taxId: $data['tax_id'],
+            description: $data['description'],
+            isActive: $data['is_active'],
+            isBuyer: $data['is_buyer'],
+            isSupplier: $data['is_supplier'],
+            createdAt: $data['created_at'],
+            updatedAt: $data['updated_at'],
+            deletedAt: $data['deleted_at'],
+        );
+    }
+
+    public static function fromModel(Model $model): static
+    {
+        if (!$model instanceof Contractor) {
+            throw new \InvalidArgumentException('Model must be instance of Contractor');
+        }
+
+        return new self(
+            tenantId: $model->tenant_id,
+            name: $model->name,
+            email: $model->email,
+            id: $model->id,
+            phone: $model->phone,
+            country: $model->country,
+            taxId: $model->tax_id,
+            description: $model->description,
+            isActive: $model->is_active,
+            isBuyer: $model->is_buyer,
+            isSupplier: $model->is_supplier,
+            createdAt: $model->created_at,
+            updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
     }
 
@@ -76,9 +103,9 @@ class ContractorDTO implements Arrayable
             'isActive'    => $this->isActive,
             'isBuyer'     => $this->isBuyer,
             'isSupplier'  => $this->isSupplier,
-            'createdAt'   => $this->createdAt->toIso8601String(),
-            'updatedAt'   => $this->updatedAt->toIso8601String(),
-            'deletedAt'   => $this->deletedAt->toIso8601String(),
+            'createdAt'   => $this->createdAt?->toIso8601String(),
+            'updatedAt'   => $this->updatedAt?->toIso8601String(),
+            'deletedAt'   => $this->deletedAt?->toIso8601String(),
         ];
     }
 }

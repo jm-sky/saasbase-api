@@ -3,8 +3,8 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Concerns\HaveAddresses;
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Traits\HaveAddresses;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,6 +25,8 @@ class Tenant extends BaseModel
     use HasUuids;
     use SoftDeletes;
     use HaveAddresses;
+
+    public static ?string $PUBLIC_TENANT_ID = null;
 
     protected $fillable = [
         'name',

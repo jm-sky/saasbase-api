@@ -4,7 +4,7 @@ namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
-use App\Domain\Common\Concerns\HaveAddresses;
+use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;

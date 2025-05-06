@@ -28,7 +28,7 @@ trait BelongsToTenant
                 try {
                     /** @var ?User $user */
                     $user             = Auth::user();
-                    $model->tenant_id = $user?->getTenantId();
+                    $model->tenant_id = $user?->getTenantId() ?? Tenant::$PUBLIC_TENANT_ID;
                 } catch (JWTException) {
                     throw new TenantNotFoundException();
                 }

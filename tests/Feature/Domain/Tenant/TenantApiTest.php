@@ -43,21 +43,23 @@ class TenantApiTest extends TestCase
         $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'name',
-                    'slug',
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'slug',
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
+                    ],
                 ],
             ])
         ;
 
         // Verify we got exactly the tenants we created
-        $responseIds = collect($response->json())->pluck('id')->sort()->values();
+        $responseIds = collect($response->json('data'))->pluck('id')->sort()->values();
         $expectedIds = $tenants->pluck('id')->sort()->values();
         $this->assertEquals($expectedIds, $responseIds);
     }
