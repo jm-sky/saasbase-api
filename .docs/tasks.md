@@ -575,37 +575,6 @@ Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-
 
 --
 
-### [] Task: Implement Exchange and ExchangeRate Models with Read-Only Endpoints
-
-**Goal:**  
-Allow users to view currency exchange rates.
-
-**Scope:**  
-- Models:
-  - `Exchange` – Represents a currency (e.g., USD, EUR).
-  - `ExchangeRate` – Represents the rate for a specific day between two currencies.
-- Relationships:
-  - `ExchangeRate` belongs to `Exchange` (for both base and target currency).
-- Fields:
-  - `Exchange`: `id`, `code` (e.g., "USD"), `name` (e.g., "US Dollar")
-  - `ExchangeRate`: `id`, `exchange_id`, `target_exchange_id`, `rate`, `date`
-- Endpoints:
-  - `GET /api/exchanges`
-  - `GET /api/exchanges/{id}`
-  - `GET /api/exchange-rates`
-  - `GET /api/exchange-rates/{id}`
-- Notes:
-  - Read-only (no create/update/delete)
-  - Optional: Seed with basic currencies and rates
-
-**Definition of Done:**
-- Models and migrations created
-- Read-only API routes and controllers implemented
-- Proper resource classes for JSON output
-- Seeders for major currencies and sample rates
-
---
-
 ### [] Task: Create Invoice Numbering Template System
 
 **Goal:**  

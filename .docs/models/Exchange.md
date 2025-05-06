@@ -1,6 +1,6 @@
 # Exchange Model
 
-Represents a currency exchange entity in the system, used for managing different currencies and their exchange rates.
+The Exchange model represents a currency in the system. It maintains basic currency information and provides relationships to track exchange rates where this currency is either the base or target currency.
 
 ## Attributes
 - `id` (uuid) - Primary key
@@ -27,3 +27,5 @@ The Exchange model is used to:
 1. Currency codes must be unique
 2. Currency codes should follow ISO 4217 standard
 3. Exchange rates must be updated daily via scheduled task 
+
+See also: [ExchangeRate Model](./ExchangeRate.md) for rate-specific documentation.
