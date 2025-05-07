@@ -1,0 +1,43 @@
+# Task ID: 8
+# Title: Implement Exchange Rate Integration
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Integrate exchange rate services for currency conversion.
+# Details:
+Set up services to import currency rates from NBP and ECB. Implement fallback, error handling, and admin notifications. Ensure exchange rates are used in invoice calculations.
+
+# Test Strategy:
+Test exchange rate import, fallback, and error handling. Verify exchange rate usage in invoice calculations.
+
+# Subtasks:
+## 1. Set Up API Clients for NBP and ECB [pending]
+### Dependencies: None
+### Description: Create API clients to fetch exchange rates from NBP and ECB.
+### Details:
+Use HTTP client libraries to create clients for NBP and ECB APIs. Implement methods to fetch the latest exchange rates.
+
+## 2. Implement Data Parsing and Storage [pending]
+### Dependencies: 8.1
+### Description: Parse the API responses and store the exchange rates in the database.
+### Details:
+Create data models for exchange rates. Implement parsing logic to extract relevant data from API responses and save it to the database.
+
+## 3. Develop Fallback Mechanism [pending]
+### Dependencies: 8.2
+### Description: Create a fallback mechanism to use the last known exchange rates if the APIs are unavailable.
+### Details:
+Implement logic to check the availability of the APIs. If unavailable, use the last stored exchange rates from the database.
+
+## 4. Implement Error Handling and Admin Notifications [pending]
+### Dependencies: 8.3
+### Description: Handle errors in API requests and notify administrators.
+### Details:
+Implement error handling for API requests. Set up a notification system to alert administrators of any issues with the exchange rate services.
+
+## 5. Integrate Exchange Rates into Invoice Calculations [pending]
+### Dependencies: 8.4
+### Description: Ensure that the exchange rates are used in invoice calculations.
+### Details:
+Modify the invoice calculation logic to use the stored exchange rates. Ensure that the system can handle different currencies correctly.
+

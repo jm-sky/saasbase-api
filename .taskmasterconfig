@@ -3,7 +3,7 @@
     "main": {
       "provider": "openrouter",
       "modelId": "mistralai/mistral-small-3.1-24b-instruct",
-      "maxTokens": 120000,
+      "maxTokens": 100000,
       "temperature": 0.2
     },
     "research": {

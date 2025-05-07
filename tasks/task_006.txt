@@ -1,0 +1,43 @@
+# Task ID: 6
+# Title: Implement Basic Invoice System
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Develop the basic invoice management system.
+# Details:
+Create Invoice model and migration. Implement invoice creation, numbering, and status management. Ensure integration with contractor profiles and subscription billing.
+
+# Test Strategy:
+Test invoice creation, numbering, and status management. Verify integration with contractor profiles and subscription billing.
+
+# Subtasks:
+## 1. Create Invoice Model and Migration [pending]
+### Dependencies: None
+### Description: Define the Invoice model with necessary fields and create the database migration.
+### Details:
+Use an ORM like Sequelize or TypeORM to define the Invoice model with fields such as id, number, status, contractorId, subscriptionId, amount, and createdAt. Generate the migration script to create the corresponding table in the database.
+
+## 2. Implement Invoice Numbering [pending]
+### Dependencies: 6.1
+### Description: Develop a mechanism to generate unique invoice numbers.
+### Details:
+Create a service or utility function to generate unique invoice numbers. This can be based on a sequence, UUID, or a combination of date and a counter. Ensure the numbering is consistent and unique.
+
+## 3. Develop Invoice Creation Endpoint [pending]
+### Dependencies: 6.1, 6.2
+### Description: Create an API endpoint to handle invoice creation.
+### Details:
+Implement a RESTful API endpoint (e.g., POST /invoices) that accepts invoice data, validates it, and saves it to the database using the Invoice model. Use the invoice numbering service to assign a unique number to each invoice.
+
+## 4. Integrate with Contractor Profiles [pending]
+### Dependencies: 6.1, 6.3
+### Description: Ensure invoices are associated with the correct contractor profiles.
+### Details:
+Modify the Invoice model and creation endpoint to include a reference to the contractor profile. Validate that the contractor ID exists and is associated with the correct profile before creating the invoice.
+
+## 5. Implement Invoice Status Management [pending]
+### Dependencies: 6.1, 6.3, 6.4
+### Description: Add functionality to manage the status of invoices.
+### Details:
+Extend the Invoice model to include status management (e.g., draft, pending, paid). Implement API endpoints to update the status of an invoice and ensure proper validation and transitions between statuses.
+
