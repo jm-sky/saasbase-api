@@ -51,7 +51,6 @@ class SkillApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'current_page',
                 'data' => [
                     '*' => [
                         'id',
@@ -62,11 +61,7 @@ class SkillApiTest extends TestCase
                         'updatedAt',
                     ],
                 ],
-                'from',
-                'links' => [],
-                'per_page',
-                'to',
-                'total',
+                'meta',
             ])
             ->assertJsonCount(3, 'data')
         ;

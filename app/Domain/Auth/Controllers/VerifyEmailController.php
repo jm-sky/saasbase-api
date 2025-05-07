@@ -13,29 +13,21 @@ class VerifyEmailController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
 
     /**
      * Mark the authenticated user's email address as verified.
      */
-    public function verify(Request $request, string $id): JsonResponse
+    public function verify(Request $request): JsonResponse
     {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email',
+        ]);
+
         /** @var User|null $user */
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found.',
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
-            return response()->json([
-                'message' => 'Invalid verification link.',
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        $user = User::where('email', $request->email)->firstOrFail();
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
@@ -43,8 +35,17 @@ class VerifyEmailController extends Controller
             ], Response::HTTP_OK);
         }
 
+        $token = $user->emailVerificationToken;
+
+        if (!$token || $token->token !== $request->token) {
+            return response()->json([
+                'message' => 'Invalid verification token.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
+            $token->delete(); // Remove the used token
         }
 
         return response()->json([
@@ -65,6 +66,9 @@ class VerifyEmailController extends Controller
                 'message' => 'Email already verified.',
             ], Response::HTTP_BAD_REQUEST);
         }
+
+        // Delete any existing token
+        $user->emailVerificationToken()->delete();
 
         $user->sendEmailVerificationNotification();
 

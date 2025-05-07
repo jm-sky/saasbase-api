@@ -2,14 +2,18 @@
 
 namespace App\Domain\Auth\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Common\Models\BaseModel;
 
-class UserToken extends Model
+class UserToken extends BaseModel
 {
     protected $fillable = [
         'user_id',
-        'token_id', 'user_agent', 'ip_address',
-        'device_name', 'last_used_at', 'expires_at',
+        'token_id',
+        'user_agent',
+        'ip_address',
+        'device_name',
+        'last_used_at',
+        'expires_at',
         'revoked',
     ];
 

@@ -5,22 +5,22 @@ namespace App\Domain\Common\DTOs;
 use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Common\Models\Comment;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property ?string  $id              UUID
+ * @extends BaseDTO<Comment>
+ *
  * @property string   $userId
  * @property string   $content
  * @property string   $commentableId
  * @property string   $commentableType
+ * @property ?string  $id              UUID
  * @property ?Carbon  $createdAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon  $updatedAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon  $deletedAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $user
  */
-class CommentDTO extends Data
+class CommentDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $userId,
@@ -28,19 +28,17 @@ class CommentDTO extends Data
         public readonly string $commentableId,
         public readonly string $commentableType,
         public readonly ?string $id = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
     ) {
     }
 
-    public static function fromModel(Comment $model): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
+        /* @var Comment $model */
+        return new static(
             userId: $model->user_id,
             content: $model->content,
             commentableId: $model->commentable_id,
@@ -51,5 +49,35 @@ class CommentDTO extends Data
             deletedAt: $model->deleted_at,
             user: $model->user ? UserDTO::fromModel($model->user) : null,
         );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            userId: $data['user_id'],
+            content: $data['content'],
+            commentableId: $data['commentable_id'],
+            commentableType: $data['commentable_type'],
+            id: $data['id'] ?? null,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+            user: isset($data['user']) ? UserDTO::fromArray($data['user']) : null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'              => $this->id,
+            'userId'          => $this->userId,
+            'content'         => $this->content,
+            'commentableId'   => $this->commentableId,
+            'commentableType' => $this->commentableType,
+            'createdAt'       => $this->createdAt?->toIso8601String(),
+            'updatedAt'       => $this->updatedAt?->toIso8601String(),
+            'deletedAt'       => $this->deletedAt?->toIso8601String(),
+            'user'            => $this->user?->toArray(),
+        ];
     }
 }

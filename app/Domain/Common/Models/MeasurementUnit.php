@@ -3,11 +3,13 @@
 namespace App\Domain\Common\Models;
 
 use App\Domain\Products\Models\Product;
+use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string                                                 $id
+ * @property string                                                 $tenant_id
  * @property string                                                 $code
  * @property string                                                 $name
  * @property Carbon                                                 $created_at
@@ -16,7 +18,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class MeasurementUnit extends BaseModel
 {
+    use BelongsToTenant;
+
     protected $fillable = [
+        'tenant_id',
         'code',
         'name',
     ];

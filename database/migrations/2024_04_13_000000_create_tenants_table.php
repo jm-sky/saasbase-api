@@ -11,6 +11,7 @@ return new class() extends Migration {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->foreignUuid('owner_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

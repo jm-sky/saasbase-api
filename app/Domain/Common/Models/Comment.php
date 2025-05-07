@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string  $id
+ * @property ?string $tenant_id
  * @property string  $user_id
  * @property string  $content
  * @property string  $commentable_id
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Comment extends BaseModel
 {
     protected $fillable = [
+        'tenant_id',
         'user_id',
         'content',
         'commentable_id',

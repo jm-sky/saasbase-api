@@ -12,16 +12,16 @@ class TenantPolicy
 
     public function view(User $user, Tenant $tenant): bool
     {
-        return $user->tenants()->where('id', $tenant->id)->exists();
+        return $user->tenants()->where('tenants.id', $tenant->id)->exists();
     }
 
     public function update(User $user, Tenant $tenant): bool
     {
-        return $user->tenants()->where('id', $tenant->id)->exists();
+        return $user->tenants()->where('tenants.id', $tenant->id)->exists();
     }
 
     public function delete(User $user, Tenant $tenant): bool
     {
-        return $user->tenants()->where('id', $tenant->id)->exists();
+        return $user->tenants()->where('tenants.id', $tenant->id)->exists();
     }
 }

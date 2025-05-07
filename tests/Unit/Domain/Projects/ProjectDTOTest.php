@@ -130,7 +130,7 @@ class ProjectDTOTest extends TestCase
         $this->assertEquals($project->id, $array['id']);
         $this->assertEquals($project->name, $array['name']);
         $this->assertEquals($project->status_id, $array['statusId']);
-        $this->assertEquals($project->start_date->format('Y-m-d'), $array['startDate']);
+        $this->assertEquals($project->start_date->toDateString(), $array['startDate']);
         $this->assertEquals($project->created_at->toIso8601String(), $array['createdAt']);
         $this->assertEquals($project->updated_at->toIso8601String(), $array['updatedAt']);
     }

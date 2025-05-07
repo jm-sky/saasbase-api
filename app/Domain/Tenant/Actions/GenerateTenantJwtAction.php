@@ -20,8 +20,6 @@ class GenerateTenantJwtAction
 
     public function handle(User $user, Tenant $tenant): string
     {
-        $this->authorize($user, $tenant);
-
         return JwtHelper::createTokenWithTenant($user, $tenant->id);
     }
 
@@ -42,10 +40,18 @@ class GenerateTenantJwtAction
     }
 
     /**
+     * @throws TenantNotFoundException
+     * @throws UserNotBelongToTenantException
      * @throws \RuntimeException
      */
-    private function authorize(User $user, Tenant $tenant): void
+    public function authorize(): bool
     {
+        /** @var User $user */
+        $user = Auth::user();
+
+        /** @var Tenant $tenant */
+        $tenant = request()->route('tenant');
+
         // Verify user is authenticated
         if (!$user) {
             throw new \RuntimeException('User not authenticated');
@@ -57,19 +63,10 @@ class GenerateTenantJwtAction
         }
 
         // Verify user belongs to tenant
-        if (!$user->tenants()->where('id', $tenant->id)->exists()) {
+        if (!$user->tenants()->find($tenant->id)) {
             throw new UserNotBelongToTenantException();
         }
-    }
 
-    public function rules(): array
-    {
-        return [
-            'tenant' => [
-                'required',
-                'uuid',
-                'exists:tenants,id,deleted_at,NULL',
-            ],
-        ];
+        return true;
     }
 }

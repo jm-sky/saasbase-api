@@ -2,8 +2,8 @@
 
 namespace App\Domain\Projects\Controllers;
 
-use App\Domain\Common\Concerns\HasIndexQuery;
 use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Projects\DTOs\ProjectStatusDTO;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Projects\Requests\ProjectStatusRequest;
