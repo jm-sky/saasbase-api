@@ -2,14 +2,15 @@
 
 namespace App\Domain\Projects\DTOs;
 
+use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Projects\Models\ProjectRequiredSkill;
 use App\Domain\Skills\DTOs\SkillDTO;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @extends BaseDTO<ProjectRequiredSkill>
+ *
  * @property ?string   $id            UUID
  * @property string    $projectId
  * @property string    $skillId
@@ -19,26 +20,24 @@ use Spatie\LaravelData\Data;
  * @property ?Carbon   $deletedAt     Internally Carbon, accepts/serializes ISO 8601
  * @property ?SkillDTO $skill
  */
-class ProjectRequiredSkillDTO extends Data
+class ProjectRequiredSkillDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $projectId,
         public readonly string $skillId,
         public readonly int $requiredLevel,
         public readonly ?string $id = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
         public ?SkillDTO $skill = null,
     ) {
     }
 
-    public static function fromModel(ProjectRequiredSkill $model): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
+        /* @var ProjectRequiredSkill $model */
+        return new static(
             projectId: $model->project_id,
             skillId: $model->skill_id,
             requiredLevel: $model->required_level,
@@ -48,5 +47,33 @@ class ProjectRequiredSkillDTO extends Data
             deletedAt: $model->deleted_at,
             skill: $model->skill ? SkillDTO::fromModel($model->skill) : null,
         );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            projectId: $data['project_id'],
+            skillId: $data['skill_id'],
+            requiredLevel: $data['required_level'],
+            id: $data['id'] ?? null,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+            skill: isset($data['skill']) ? SkillDTO::fromArray($data['skill']) : null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'            => $this->id,
+            'projectId'     => $this->projectId,
+            'skillId'       => $this->skillId,
+            'requiredLevel' => $this->requiredLevel,
+            'createdAt'     => $this->createdAt?->toIso8601String(),
+            'updatedAt'     => $this->updatedAt?->toIso8601String(),
+            'deletedAt'     => $this->deletedAt?->toIso8601String(),
+            'skill'         => $this->skill?->toArray(),
+        ];
     }
 }

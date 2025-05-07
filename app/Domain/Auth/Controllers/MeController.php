@@ -19,8 +19,6 @@ class MeController extends Controller
         // Transform the user model into a UserDTO
         $userDTO = UserDTO::fromModel($user);
 
-        return response()->json([
-            'user' => $userDTO,
-        ]);
+        return response()->json($userDTO);
     }
 }

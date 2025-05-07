@@ -1,4 +1,3 @@
-
 # SaaSBase API
 
 A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a modular architecture. Includes GitHub Actions for CI, static analysis (Larastan), and tests (PHPUnit).
@@ -54,6 +53,7 @@ composer install
 
 ```bash
 php artisan key:generate
+php artisan jwt:secret
 ```
 
 6. Run database migrations:
@@ -111,6 +111,20 @@ The default `docker-compose.yml` includes:
 - `minio`: S3-compatible storage
 - `mailpit`: Dev SMTP server
 - `soketi`: WebSocket server
+
+---
+
+## Development Setup
+
+### Cursor MCP Configuration
+
+For Task Master integration with Cursor, you need to:
+
+1. Copy `.cursor/mcp.json.example` to `.cursor/mcp.json`
+2. Add your API keys to `.cursor/mcp.json`
+3. Never commit `.cursor/mcp.json` to the repository (it's gitignored)
+
+Required API keys depend on which AI model you're using with Task Master. Currently configured for OpenRouter.
 
 ---
 

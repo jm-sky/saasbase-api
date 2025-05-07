@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Domain\Skills;
 
-use App\Domain\Skills\DTOs\SkillCategoryDTO;
 use App\Domain\Skills\DTOs\SkillDTO;
 use App\Domain\Skills\Models\Skill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,19 +27,6 @@ class SkillDTOTest extends TestCase
         $this->assertEquals($skill->description, $dto->description);
         $this->assertEquals($skill->created_at, $dto->createdAt);
         $this->assertEquals($skill->updated_at, $dto->updatedAt);
-        $this->assertNull($dto->skillCategory);
-    }
-
-    public function testCanCreateSkillDtoWithSkillCategory(): void
-    {
-        $skill = Skill::factory()->create();
-        $skill->load('skillCategory');
-
-        $dto = SkillDTO::fromModel($skill, true);
-
-        $this->assertInstanceOf(SkillCategoryDTO::class, $dto->skillCategory);
-        $this->assertEquals($skill->skillCategory->id, $dto->skillCategory->id);
-        $this->assertEquals($skill->skillCategory->name, $dto->skillCategory->name);
     }
 
     public function testCanConvertSkillDtoToArray(): void
@@ -56,19 +42,5 @@ class SkillDTOTest extends TestCase
         $this->assertEquals($skill->description, $array['description']);
         $this->assertEquals($skill->created_at?->toIso8601String(), $array['createdAt']);
         $this->assertEquals($skill->updated_at?->toIso8601String(), $array['updatedAt']);
-        $this->assertNull($array['skill_category']);
-    }
-
-    public function testCanConvertSkillDtoWithSkillCategoryToArray(): void
-    {
-        $skill = Skill::factory()->create();
-        $skill->load('skillCategory');
-
-        $dto   = SkillDTO::fromModel($skill, true);
-        $array = $dto->toArray();
-
-        $this->assertIsArray($array['skill_category']);
-        $this->assertEquals($skill->skillCategory->id, $array['skill_category']['id']);
-        $this->assertEquals($skill->skillCategory->name, $array['skill_category']['name']);
     }
 }

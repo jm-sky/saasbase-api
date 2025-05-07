@@ -2,9 +2,11 @@
 
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\CountryController;
+use App\Domain\Contractors\Controllers\ContractorAddressController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Products\Controllers\ProductController;
+use App\Domain\Users\Controllers\PublicUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,7 +33,9 @@ Route::prefix('v1')->group(function () {
 
         Route::middleware(['is_active'])->group(function () {
             Route::apiResource('contractors', ContractorController::class);
+            Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
             Route::apiResource('products', ProductController::class);
+            Route::apiResource('users', PublicUserController::class)->only(['index', 'show']);
 
             Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);
             Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);

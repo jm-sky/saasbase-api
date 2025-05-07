@@ -47,4 +47,18 @@ class UserSettings extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function defaults(): array
+    {
+        return [
+            'language'                  => null,
+            'theme'                     => null,
+            'timezone'                  => null,
+            'two_factor_enabled'        => false,
+            'two_factor_confirmed'      => false,
+            'two_factor_secret'         => null,
+            'two_factor_recovery_codes' => null,
+            'preferences'               => null,
+        ];
+    }
 }

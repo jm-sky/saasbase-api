@@ -4,17 +4,17 @@ namespace App\Domain\Common\DTOs;
 
 use App\Domain\Common\Models\Country;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property ?string $id             UUID
+ * @extends BaseDTO<Country>
+ *
  * @property string  $name
  * @property string  $code
  * @property string  $code3
  * @property string  $numericCode
  * @property string  $phoneCode
+ * @property ?string $id             UUID
  * @property ?string $capital
  * @property ?string $currency
  * @property ?string $currencyCode
@@ -27,36 +27,37 @@ use Spatie\LaravelData\Data;
  * @property ?string $emojiU
  * @property ?Carbon $createdAt      Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt      Internally Carbon, accepts/serializes ISO 8601
  */
-class CountryDTO extends Data
+class CountryDTO extends BaseDTO
 {
     public function __construct(
-        public string $name,
-        public string $code,
-        public string $code3,
-        public string $numericCode,
-        public string $phoneCode,
-        public ?string $id = null,
-        public ?string $capital = null,
-        public ?string $currency = null,
-        public ?string $currencyCode = null,
-        public ?string $currencySymbol = null,
-        public ?string $tld = null,
-        public ?string $native = null,
-        public ?string $region = null,
-        public ?string $subregion = null,
-        public ?string $emoji = null,
-        public ?string $emojiU = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public readonly string $name,
+        public readonly string $code,
+        public readonly string $code3,
+        public readonly string $numericCode,
+        public readonly string $phoneCode,
+        public readonly ?string $id = null,
+        public readonly ?string $capital = null,
+        public readonly ?string $currency = null,
+        public readonly ?string $currencyCode = null,
+        public readonly ?string $currencySymbol = null,
+        public readonly ?string $tld = null,
+        public readonly ?string $native = null,
+        public readonly ?string $region = null,
+        public readonly ?string $subregion = null,
+        public readonly ?string $emoji = null,
+        public readonly ?string $emojiU = null,
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
+        public ?Carbon $deletedAt = null,
     ) {
     }
 
-    public static function fromModel(Country $model): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
+        /* @var Country $model */
+        return new static(
             name: $model->name,
             code: $model->code,
             code3: $model->code3,
@@ -72,9 +73,60 @@ class CountryDTO extends Data
             region: $model->region,
             subregion: $model->subregion,
             emoji: $model->emoji,
-            emojiU: $model->emojiU,
+            emojiU: $model->emoji_u,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
+            deletedAt: $model->deleted_at,
         );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            name: $data['name'],
+            code: $data['code'],
+            code3: $data['code3'],
+            numericCode: $data['numeric_code'],
+            phoneCode: $data['phone_code'],
+            id: $data['id'] ?? null,
+            capital: $data['capital'] ?? null,
+            currency: $data['currency'] ?? null,
+            currencyCode: $data['currency_code'] ?? null,
+            currencySymbol: $data['currency_symbol'] ?? null,
+            tld: $data['tld'] ?? null,
+            native: $data['native'] ?? null,
+            region: $data['region'] ?? null,
+            subregion: $data['subregion'] ?? null,
+            emoji: $data['emoji'] ?? null,
+            emojiU: $data['emoji_u'] ?? null,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'             => $this->id,
+            'name'           => $this->name,
+            'code'           => $this->code,
+            'code3'          => $this->code3,
+            'numericCode'    => $this->numericCode,
+            'phoneCode'      => $this->phoneCode,
+            'capital'        => $this->capital,
+            'currency'       => $this->currency,
+            'currencyCode'   => $this->currencyCode,
+            'currencySymbol' => $this->currencySymbol,
+            'tld'            => $this->tld,
+            'native'         => $this->native,
+            'region'         => $this->region,
+            'subregion'      => $this->subregion,
+            'emoji'          => $this->emoji,
+            'emojiU'         => $this->emojiU,
+            'createdAt'      => $this->createdAt?->toIso8601String(),
+            'updatedAt'      => $this->updatedAt?->toIso8601String(),
+            'deletedAt'      => $this->deletedAt?->toIso8601String(),
+        ];
     }
 }

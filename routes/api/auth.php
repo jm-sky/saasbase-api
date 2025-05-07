@@ -28,7 +28,7 @@ Route::prefix('oauth')->group(function () {
 });
 
 // Email Verification Routes
-Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+Route::post('/email/verify', [VerifyEmailController::class, 'verify'])
     ->name('verification.verify')
 ;
 

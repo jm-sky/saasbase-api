@@ -3,26 +3,29 @@
 namespace App\Domain\Auth\DTOs;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\DTOs\BaseDTO;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property ?string $id          UUID
+ * @extends BaseDTO<User>
+ *
  * @property string  $firstName
  * @property string  $lastName
  * @property string  $email
+ * @property ?string $id                 UUID
  * @property ?string $avatarUrl
  * @property ?string $description
  * @property ?string $birthDate
  * @property ?string $phone
  * @property bool    $isAdmin
- * @property ?Carbon $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property bool    $isEmailVerified
+ * @property bool    $isTwoFactorEnabled
+ * @property ?Carbon $createdAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt          Internally Carbon, accepts/serializes ISO 8601
  */
-class UserDTO extends Data
+class UserDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $firstName,
@@ -34,30 +37,18 @@ class UserDTO extends Data
         public readonly ?string $birthDate = null,
         public readonly ?string $phone = null,
         public readonly bool $isAdmin = false,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
+        public readonly bool $isEmailVerified = false,
+        public readonly bool $isTwoFactorEnabled = false,
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
     ) {
-        // Convert string timestamps to Carbon objects if needed
-        if (is_string($this->createdAt)) {
-            $this->createdAt = Carbon::parse($this->createdAt);
-        }
-
-        if (is_string($this->updatedAt)) {
-            $this->updatedAt = Carbon::parse($this->updatedAt);
-        }
-
-        if (is_string($this->deletedAt)) {
-            $this->deletedAt = Carbon::parse($this->deletedAt);
-        }
     }
 
-    public static function fromModel(User $model): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
+        /* @var User $model */
+        return new static(
             firstName: $model->first_name,
             lastName: $model->last_name,
             email: $model->email,
@@ -67,9 +58,51 @@ class UserDTO extends Data
             birthDate: $model->birth_date,
             phone: $model->phone,
             isAdmin: $model->is_admin,
+            isEmailVerified: $model->isEmailVerified(),
+            isTwoFactorEnabled: $model->isTwoFactorEnabled(),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
         );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            firstName: $data['first_name'],
+            lastName: $data['last_name'],
+            email: $data['email'],
+            id: $data['id'] ?? null,
+            avatarUrl: $data['avatar_url'] ?? null,
+            description: $data['description'] ?? null,
+            birthDate: $data['birth_date'] ?? null,
+            phone: $data['phone'] ?? null,
+            isAdmin: $data['is_admin'] ?? false,
+            isEmailVerified: $data['is_email_verified'] ?? false,
+            isTwoFactorEnabled: $data['is_two_factor_enabled'] ?? false,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'                 => $this->id,
+            'firstName'          => $this->firstName,
+            'lastName'           => $this->lastName,
+            'email'              => $this->email,
+            'avatarUrl'          => $this->avatarUrl,
+            'description'        => $this->description,
+            'birthDate'          => $this->birthDate,
+            'phone'              => $this->phone,
+            'isAdmin'            => $this->isAdmin,
+            'isEmailVerified'    => $this->isEmailVerified,
+            'isTwoFactorEnabled' => $this->isTwoFactorEnabled,
+            'createdAt'          => $this->createdAt?->toIso8601String(),
+            'updatedAt'          => $this->updatedAt?->toIso8601String(),
+            'deletedAt'          => $this->deletedAt?->toIso8601String(),
+        ];
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Domain\Projects\DTOs;
 
+use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Projects\Models\ProjectRole;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @extends BaseDTO<ProjectRole>
+ *
  * @property ?string $id          UUID
  * @property string  $name
  * @property ?string $description
@@ -17,25 +18,23 @@ use Spatie\LaravelData\Data;
  * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
-class ProjectRoleDTO extends Data
+class ProjectRoleDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
         public readonly ?string $id = null,
         public readonly ?string $description = null,
         public readonly ?array $permissions = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
     ) {
     }
 
-    public static function fromModel(ProjectRole $model): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
+        /* @var ProjectRole $model */
+        return new static(
             name: $model->name,
             id: $model->id,
             description: $model->description,
@@ -44,5 +43,31 @@ class ProjectRoleDTO extends Data
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
         );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            name: $data['name'],
+            id: $data['id'] ?? null,
+            description: $data['description'] ?? null,
+            permissions: $data['permissions'] ?? null,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'          => $this->id,
+            'name'        => $this->name,
+            'description' => $this->description,
+            'permissions' => $this->permissions,
+            'createdAt'   => $this->createdAt?->toIso8601String(),
+            'updatedAt'   => $this->updatedAt?->toIso8601String(),
+            'deletedAt'   => $this->deletedAt?->toIso8601String(),
+        ];
     }
 }
