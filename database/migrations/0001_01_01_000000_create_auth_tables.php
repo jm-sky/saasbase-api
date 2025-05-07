@@ -24,6 +24,7 @@ return new class() extends Migration {
             $table->string('password');
             $table->string('avatar_url')->nullable();
             $table->string('status')->default(UserStatus::PENDING->value);
+            $table->json('config')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
