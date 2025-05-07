@@ -1,7 +1,7 @@
 <?php
 
-use App\Domain\Feeds\Controllers\FeedController;
 use App\Domain\Feeds\Controllers\FeedCommentController;
+use App\Domain\Feeds\Controllers\FeedController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api'])->group(function () {

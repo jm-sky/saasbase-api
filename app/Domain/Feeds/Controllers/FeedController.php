@@ -2,54 +2,59 @@
 
 namespace App\Domain\Feeds\Controllers;
 
+use App\Domain\Feeds\DTOs\FeedDTO;
 use App\Domain\Feeds\Models\Feed;
 use App\Domain\Feeds\Requests\StoreFeedRequest;
-use App\Domain\Feeds\Resources\FeedResource;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use App\Http\Controllers\Controller;
 
 /**
  * Controller for managing user feeds.
  */
 class FeedController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $feeds = Feed::with('user')
             ->withCount('comments')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+        ;
 
-        return FeedResource::collection($feeds);
+        return response()->json([
+            'data' => FeedDTO::collect($feeds),
+        ]);
     }
 
-    public function store(StoreFeedRequest $request): FeedResource
+    public function store(StoreFeedRequest $request): JsonResponse
     {
         $feed = Feed::create([
-            'tenant_id' => tenant()->id,
-            'user_id' => Auth::id(),
-            'title' => $request->input('title'),
-            'content' => $request->input('content'),
+            'tenant_id' => $request->user()->getTenantId(),
+            'user_id'   => Auth::id(),
+            'title'     => $request->input('title'),
+            'content'   => $request->input('content'),
         ]);
 
-        return new FeedResource($feed);
+        return response()->json(FeedDTO::from($feed));
     }
 
-    public function show(Feed $feed): FeedResource
+    public function show(Feed $feed): JsonResponse
     {
-        $this->authorize('view', $feed);
+        // TODO: Add authorization
+        // $this->authorize('view', $feed);
 
         $feed->load(['user', 'comments.user']);
 
-        return new FeedResource($feed);
+        return response()->json(FeedDTO::from($feed));
     }
 
     public function destroy(Feed $feed): Response
     {
-        $this->authorize('delete', $feed);
+        // TODO: Add authorization
+        // $this->authorize('delete', $feed);
 
         $feed->delete();
 
