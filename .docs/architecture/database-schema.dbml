@@ -356,8 +356,8 @@ Table vat_rates {
 Table measurement_units {
   id uuid [pk]
   tenant_id uuid [ref: > tenants.id]
+  code varchar
   name varchar
-  shortcut varchar
   category varchar [note: 'nullable']
   is_default boolean
   created_at timestamp
@@ -367,9 +367,9 @@ Table measurement_units {
 // Default Measurement Units
 Table default_measurement_units {
   id uuid [pk]
+  code varchar  [note: 'unique']
   name varchar
-  shortcut varchar
-  category varchar [note: 'nullable']
+  category varchar
   is_default boolean
 }
 

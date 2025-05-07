@@ -7,17 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration {
     public function up(): void
     {
-        Schema::create('measurement_units', function (Blueprint $table) {
+        Schema::create('default_measurement_units', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('code')->unique();
             $table->string('name');
+            $table->string('category');
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('measurement_units');
+        Schema::dropIfExists('default_measurement_units');
     }
 };

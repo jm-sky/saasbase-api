@@ -14,7 +14,7 @@ return new class() extends Migration {
             $table->text('description')->nullable();
             $table->uuid('unit_id');
             $table->decimal('price_net', 10, 2);
-            $table->uuid('vat_rate_id');
+            $table->uuid('vat_rate_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

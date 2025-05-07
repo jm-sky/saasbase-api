@@ -6,7 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\UserSettings;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $user->settings()->create(UserSettings::defaults());
+
+        // Event listener will create the tenant for the user
         $user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $this->call([
@@ -41,8 +43,10 @@ class DatabaseSeeder extends Seeder
             SkillCategorySeeder::class,
             SkillSeeder::class,
             ProjectRoleSeeder::class,
-            MeasurementUnitSeeder::class,
+            DefaultMeasurementUnitSeeder::class,
         ]);
+
+        (new InitializeTenantDefaults())->execute($tenant, $user);
 
         Contractor::factory(5)->create([
             'tenant_id' => $tenant->id,

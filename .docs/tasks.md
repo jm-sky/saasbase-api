@@ -109,7 +109,7 @@
   - [x] Create `MeasurementUnit` model with the following fields:
     - `tenant_id` (**required**)
     - `name` (e.g. "hour")
-    - `shortcut` (e.g. "h")
+    - `code` (e.g. "h")
     - `category` (e.g. "time", "length", "energy")
     - `is_default` (boolean to distinguish system defaults)
   - [ ] Seed default units (e.g., hour, day, km, liter) categorized properly.
@@ -119,7 +119,7 @@
     - Create new custom units
     - Add more predefined units from a selected category
   - Add API endpoints/actions to manage units (CRUD).
-  - Add validation for name/shortcut uniqueness per tenant.
+  - Add validation for name/code uniqueness per tenant.
   - Use the `MeasurementUnit` model in invoice items and other relevant models.
   - Add automated tests for:
     - Default seeding
