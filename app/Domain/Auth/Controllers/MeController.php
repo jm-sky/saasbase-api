@@ -3,22 +3,26 @@
 namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\DTOs\UserDTO;
+use App\Domain\Auth\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class MeController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $user = auth()->user();
+        /** @var User $user */
+        $user = Auth::user();
 
         if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return response()->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
         // Transform the user model into a UserDTO
         $userDTO = UserDTO::fromModel($user);
 
-        return response()->json($userDTO);
+        return response()->json(['data' => $userDTO]);
     }
 }

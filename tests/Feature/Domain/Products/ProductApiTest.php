@@ -112,21 +112,25 @@ class ProductApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                'id',
-                'tenantId',
-                'name',
-                'description',
-                'unitId',
-                'priceNet',
-                'vatRateId',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'tenantId',
+                    'name',
+                    'description',
+                    'unitId',
+                    'priceNet',
+                    'vatRateId',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'name'        => $productData['name'],
-                'description' => $productData['description'],
-                'priceNet'    => $productData['priceNet'],
+                'data' => [
+                    'name'        => $productData['name'],
+                    'description' => $productData['description'],
+                    'priceNet'    => $productData['priceNet'],
+                ],
             ])
         ;
 
@@ -176,22 +180,26 @@ class ProductApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'id',
-                'tenantId',
-                'name',
-                'description',
-                'unitId',
-                'priceNet',
-                'vatRateId',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'tenantId',
+                    'name',
+                    'description',
+                    'unitId',
+                    'priceNet',
+                    'vatRateId',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'id'          => $product->id,
-                'name'        => $product->name,
-                'description' => $product->description,
-                'priceNet'    => $product->price_net,
+                'data' => [
+                    'id'          => $product->id,
+                    'name'        => $product->name,
+                    'description' => $product->description,
+                    'priceNet'    => $product->price_net,
+                ],
             ])
         ;
     }
@@ -217,21 +225,25 @@ class ProductApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'id',
-                'tenantId',
-                'name',
-                'description',
-                'unitId',
-                'priceNet',
-                'vatRateId',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'tenantId',
+                    'name',
+                    'description',
+                    'unitId',
+                    'priceNet',
+                    'vatRateId',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'name'        => $updateData['name'],
-                'description' => $updateData['description'],
-                'priceNet'    => $updateData['priceNet'],
+                'data' => [
+                    'name'        => $updateData['name'],
+                    'description' => $updateData['description'],
+                    'priceNet'    => $updateData['priceNet'],
+                ],
             ])
         ;
 

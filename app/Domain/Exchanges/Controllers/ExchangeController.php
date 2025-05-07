@@ -28,7 +28,7 @@ class ExchangeController extends Controller
 
     public function show(Exchange $exchange): JsonResponse
     {
-        return response()->json(ExchangeDTO::fromModel($exchange));
+        return response()->json(['data' => ExchangeDTO::fromModel($exchange)]);
     }
 
     public function getRates(Request $request, Exchange $exchange): JsonResponse

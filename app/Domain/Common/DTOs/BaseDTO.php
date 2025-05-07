@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
  *
  * @implements CreatedFromModelOrArray<TModel>
  */
-abstract class BaseDTO implements Arrayable, CreatedFromModelOrArray
+abstract class BaseDTO implements Arrayable, \JsonSerializable, CreatedFromModelOrArray
 {
     /**
      * Create a DTO instance from a model or array.
@@ -80,5 +80,10 @@ abstract class BaseDTO implements Arrayable, CreatedFromModelOrArray
         }
 
         return collect([static::fromModel($items)]);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

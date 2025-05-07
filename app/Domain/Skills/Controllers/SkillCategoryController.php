@@ -29,7 +29,7 @@ class SkillCategoryController extends Controller
         ]);
 
         return response()->json(
-            SkillCategoryDTO::fromModel($category),
+            ['data' => SkillCategoryDTO::fromModel($category)],
             Response::HTTP_CREATED
         );
     }
@@ -40,9 +40,7 @@ class SkillCategoryController extends Controller
 
         $category->load('skills');
 
-        return response()->json(
-            SkillCategoryDTO::fromModel($category)
-        );
+        return response()->json(['data' => SkillCategoryDTO::fromModel($category)]);
     }
 
     public function update(SkillCategoryRequest $request, SkillCategory $category): JsonResponse
@@ -55,9 +53,7 @@ class SkillCategoryController extends Controller
             'description' => $dto->description,
         ]);
 
-        return response()->json(
-            SkillCategoryDTO::fromModel($category)
-        );
+        return response()->json(['data' => SkillCategoryDTO::fromModel($category)]);
     }
 
     public function destroy(SkillCategory $category): JsonResponse

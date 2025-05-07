@@ -55,16 +55,14 @@ class TaskStatusController extends Controller
         $status = TaskStatus::create((array) $dto);
 
         return response()->json(
-            TaskStatusDTO::from($status),
+            ['data' => TaskStatusDTO::from($status)],
             Response::HTTP_CREATED
         );
     }
 
     public function show(TaskStatus $taskStatus): JsonResponse
     {
-        return response()->json(
-            TaskStatusDTO::from($taskStatus)
-        );
+        return response()->json(['data' => TaskStatusDTO::from($taskStatus)]);
     }
 
     public function update(TaskStatusRequest $request, TaskStatus $taskStatus): JsonResponse
@@ -72,9 +70,7 @@ class TaskStatusController extends Controller
         $dto = TaskStatusDTO::from($request->validated());
         $taskStatus->update((array) $dto);
 
-        return response()->json(
-            TaskStatusDTO::from($taskStatus)
-        );
+        return response()->json(['data' => TaskStatusDTO::from($taskStatus)]);
     }
 
     public function destroy(TaskStatus $taskStatus): JsonResponse

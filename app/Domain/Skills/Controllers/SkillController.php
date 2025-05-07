@@ -60,7 +60,7 @@ class SkillController extends Controller
         $skill = Skill::create((array) $dto);
 
         return response()->json(
-            SkillDTO::from($skill),
+            ['data' => SkillDTO::from($skill)],
             Response::HTTP_CREATED
         );
     }
@@ -69,9 +69,7 @@ class SkillController extends Controller
     {
         $skill->load('skillCategory');
 
-        return response()->json(
-            SkillDTO::from($skill)
-        );
+        return response()->json(['data' => SkillDTO::from($skill)]);
     }
 
     public function update(SkillRequest $request, Skill $skill): JsonResponse
@@ -79,9 +77,7 @@ class SkillController extends Controller
         $dto = SkillDTO::from($request->validated());
         $skill->update((array) $dto);
 
-        return response()->json(
-            SkillDTO::from($skill)
-        );
+        return response()->json(['data' => SkillDTO::from($skill)]);
     }
 
     public function destroy(Skill $skill): JsonResponse

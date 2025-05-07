@@ -63,7 +63,7 @@ class ProjectController extends Controller
         $project = Project::create((array) $dto);
 
         return response()->json(
-            ProjectDTO::fromModel($project),
+            ['data' => ProjectDTO::fromModel($project)],
             Response::HTTP_CREATED
         );
     }
@@ -72,7 +72,7 @@ class ProjectController extends Controller
     {
         $this->authorize('view', $project);
 
-        return response()->json(ProjectDTO::fromModel($project, true));
+        return response()->json(['data' => ProjectDTO::fromModel($project, true)]);
     }
 
     public function update(UpdateProjectRequest $request, Project $project): JsonResponse
@@ -81,7 +81,7 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
-        return response()->json(ProjectDTO::fromModel($project));
+        return response()->json(['data' => ProjectDTO::fromModel($project)]);
     }
 
     public function destroy(Project $project): JsonResponse

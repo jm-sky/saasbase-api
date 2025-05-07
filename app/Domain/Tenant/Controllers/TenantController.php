@@ -30,19 +30,18 @@ class TenantController extends Controller
         $tenant = Tenant::create($request->validated());
         $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
 
-        return response()->json(
-            TenantDTO::from($tenant),
-            Response::HTTP_CREATED,
-        );
+        return response()->json([
+            'data' => TenantDTO::from($tenant),
+        ], Response::HTTP_CREATED);
     }
 
     public function show(Request $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('view', $tenant);
 
-        return response()->json(
-            TenantDTO::from($tenant)
-        );
+        return response()->json([
+            'data' => TenantDTO::from($tenant),
+        ]);
     }
 
     public function update(TenantRequest $request, Tenant $tenant): JsonResponse
@@ -50,9 +49,9 @@ class TenantController extends Controller
         $this->authorize('update', $tenant);
         $tenant->update($request->validated());
 
-        return response()->json(
-            TenantDTO::from($tenant)
-        );
+        return response()->json([
+            'data' => TenantDTO::from($tenant),
+        ]);
     }
 
     public function destroy(Request $request, Tenant $tenant): JsonResponse

@@ -93,8 +93,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     protected $hidden = [
         'password',
         'remember_token',
-        'updated_at',
-        'deleted_at',
     ];
 
     protected $casts = [
@@ -297,20 +295,5 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
-    }
-
-    public function getEmailAttribute($value)
-    {
-        return ($this->config && $this->config->isEmailPublic) ? $value : null;
-    }
-
-    public function getBirthDateAttribute($value)
-    {
-        return ($this->config && $this->config->isBirthDatePublic) ? $value : null;
-    }
-
-    public function getPhoneAttribute($value)
-    {
-        return ($this->config && $this->config->isPhonePublic) ? $value : null;
     }
 }

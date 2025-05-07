@@ -35,8 +35,6 @@ class PublicUserController extends Controller
 
     public function show(User $user): JsonResponse
     {
-        return response()->json(
-            PublicUserDTO::from($user)
-        );
+        return response()->json(['data' => PublicUserDTO::from($user)]);
     }
 }

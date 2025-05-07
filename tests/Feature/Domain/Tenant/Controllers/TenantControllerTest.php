@@ -36,20 +36,22 @@ class TenantControllerTest extends TestCase
         $response = $this->getJson('/api/v1/tenants');
 
         $response->assertOk()
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'name',
-                    'slug',
-                    'createdAt',
-                    'updatedAt',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'slug',
+                        'createdAt',
+                        'updatedAt',
+                    ],
                 ],
             ])
         ;
 
         // Verify we got exactly the tenants we created
-        $responseIds = collect($response->json())->pluck('id')->sort()->values();
+        $responseIds = collect($response->json('data'))->pluck('id')->sort()->values();
         $expectedIds = $tenants->pluck('id')->sort()->values();
         $this->assertEquals($expectedIds, $responseIds);
     }
@@ -65,13 +67,20 @@ class TenantControllerTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonStructure([
-                'id',
-                'name',
-                'slug',
-                'createdAt',
-                'updatedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'slug',
+                    'createdAt',
+                    'updatedAt',
+                ],
             ])
-            ->assertJson($data)
+            ->assertJson([
+                'data' => [
+                    'name' => $data['name'],
+                    'slug' => $data['slug'],
+                ],
+            ])
         ;
 
         $this->assertDatabaseHas('tenants', $data);
@@ -85,16 +94,20 @@ class TenantControllerTest extends TestCase
 
         $response->assertOk()
             ->assertJsonStructure([
-                'id',
-                'name',
-                'slug',
-                'createdAt',
-                'updatedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'slug',
+                    'createdAt',
+                    'updatedAt',
+                ],
             ])
             ->assertJson([
-                'id'   => $tenant->id,
-                'name' => $tenant->name,
-                'slug' => $tenant->slug,
+                'data' => [
+                    'id'   => $tenant->id,
+                    'name' => $tenant->name,
+                    'slug' => $tenant->slug,
+                ],
             ])
         ;
     }
@@ -111,13 +124,20 @@ class TenantControllerTest extends TestCase
 
         $response->assertOk()
             ->assertJsonStructure([
-                'id',
-                'name',
-                'slug',
-                'createdAt',
-                'updatedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'slug',
+                    'createdAt',
+                    'updatedAt',
+                ],
             ])
-            ->assertJson($data)
+            ->assertJson([
+                'data' => [
+                    'name' => $data['name'],
+                    'slug' => $data['slug'],
+                ],
+            ])
         ;
 
         $this->assertDatabaseHas('tenants', $data);

@@ -62,16 +62,20 @@ class SkillCategoryApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'description',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'description',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'name'        => $categoryData['name'],
-                'description' => $categoryData['description'],
+                'data' => [
+                    'name'        => $categoryData['name'],
+                    'description' => $categoryData['description'],
+                ],
             ])
         ;
 
@@ -102,17 +106,21 @@ class SkillCategoryApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'description',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'description',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'id'          => $category->id,
-                'name'        => $category->name,
-                'description' => $category->description,
+                'data' => [
+                    'id'          => $category->id,
+                    'name'        => $category->name,
+                    'description' => $category->description,
+                ],
             ])
         ;
     }
@@ -130,16 +138,20 @@ class SkillCategoryApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'description',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'description',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'name'        => $updateData['name'],
-                'description' => $updateData['description'],
+                'data' => [
+                    'name'        => $updateData['name'],
+                    'description' => $updateData['description'],
+                ],
             ])
         ;
 

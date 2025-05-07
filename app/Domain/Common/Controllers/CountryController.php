@@ -69,8 +69,6 @@ class CountryController extends Controller
 
     public function show(Country $country): JsonResponse
     {
-        return response()->json(
-            CountryDTO::from($country)
-        );
+        return response()->json(['data' => CountryDTO::from($country)]);
     }
 }

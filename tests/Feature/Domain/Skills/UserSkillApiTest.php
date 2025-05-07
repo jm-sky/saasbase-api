@@ -50,16 +50,18 @@ class UserSkillApiTest extends TestCase
         $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'userId',
-                    'skillId',
-                    'level',
-                    'acquiredAt',
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt',
+                'data' => [
+                    '*' => [
+                        'userId',
+                        'skillId',
+                        'level',
+                        'acquiredAt',
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
+                    ],
                 ],
             ])
         ;
@@ -78,17 +80,21 @@ class UserSkillApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                'userId',
-                'skillId',
-                'level',
-                'acquiredAt',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'userId',
+                    'skillId',
+                    'level',
+                    'acquiredAt',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'level'      => $userSkillData['level'],
-                'acquiredAt' => $userSkillData['acquiredAt'],
+                'data' => [
+                    'level'      => $userSkillData['level'],
+                    'acquiredAt' => $userSkillData['acquiredAt'],
+                ],
             ])
         ;
 
@@ -132,18 +138,22 @@ class UserSkillApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'userId',
-                'skillId',
-                'level',
-                'acquiredAt',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'userId',
+                    'skillId',
+                    'level',
+                    'acquiredAt',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'userId'  => $this->user->id,
-                'skillId' => $this->skill->id,
-                'level'   => $userSkill->level,
+                'data' => [
+                    'userId'  => $this->user->id,
+                    'skillId' => $this->skill->id,
+                    'level'   => $userSkill->level,
+                ],
             ])
         ;
     }
@@ -166,17 +176,21 @@ class UserSkillApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'userId',
-                'skillId',
-                'level',
-                'acquiredAt',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'userId',
+                    'skillId',
+                    'level',
+                    'acquiredAt',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'level'      => $updateData['level'],
-                'acquiredAt' => $updateData['acquiredAt'],
+                'data' => [
+                    'level'      => $updateData['level'],
+                    'acquiredAt' => $updateData['acquiredAt'],
+                ],
             ])
         ;
 

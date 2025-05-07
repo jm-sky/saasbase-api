@@ -64,16 +64,14 @@ class ContractorController extends Controller
         $contractor = Contractor::create((array) $dto);
 
         return response()->json(
-            ContractorDTO::from($contractor),
+            ['data' => ContractorDTO::from($contractor)],
             Response::HTTP_CREATED
         );
     }
 
     public function show(Contractor $contractor): JsonResponse
     {
-        return response()->json(
-            ContractorDTO::from($contractor)
-        );
+        return response()->json(['data' => ContractorDTO::from($contractor)]);
     }
 
     public function update(ContractorRequest $request, Contractor $contractor): JsonResponse
@@ -81,9 +79,7 @@ class ContractorController extends Controller
         $dto = ContractorDTO::from($request->validated());
         $contractor->update((array) $dto);
 
-        return response()->json(
-            ContractorDTO::from($contractor)
-        );
+        return response()->json(['data' => ContractorDTO::from($contractor)]);
     }
 
     public function destroy(Contractor $contractor): JsonResponse

@@ -75,16 +75,20 @@ class TenantApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'slug',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'slug',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'name' => $tenantData['name'],
-                'slug' => $tenantData['slug'],
+                'data' => [
+                    'name' => $tenantData['name'],
+                    'slug' => $tenantData['slug'],
+                ],
             ])
         ;
 
@@ -116,17 +120,21 @@ class TenantApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'slug',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'slug',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'id'   => $tenant->id,
-                'name' => $tenant->name,
-                'slug' => $tenant->slug,
+                'data' => [
+                    'id'   => $tenant->id,
+                    'name' => $tenant->name,
+                    'slug' => $tenant->slug,
+                ],
             ])
         ;
     }
@@ -144,16 +152,20 @@ class TenantApiTest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'slug',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
+                'data' => [
+                    'id',
+                    'name',
+                    'slug',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                ],
             ])
             ->assertJson([
-                'name' => $updateData['name'],
-                'slug' => $updateData['slug'],
+                'data' => [
+                    'name' => $updateData['name'],
+                    'slug' => $updateData['slug'],
+                ],
             ])
         ;
 

@@ -15,9 +15,9 @@ class UserSkillController extends Controller
     {
         $userSkills = UserSkill::with(['user', 'skill'])->get();
 
-        return response()->json(
-            $userSkills->map(fn (UserSkill $skill) => UserSkillDTO::fromModel($skill))
-        );
+        return response()->json([
+            'data' => $userSkills->map(fn (UserSkill $skill) => UserSkillDTO::fromModel($skill)),
+        ]);
     }
 
     public function store(UserSkillRequest $request): JsonResponse
@@ -30,19 +30,18 @@ class UserSkillController extends Controller
             'acquired_at' => $dto->acquiredAt,
         ]);
 
-        return response()->json(
-            UserSkillDTO::fromModel($userSkill),
-            Response::HTTP_CREATED
-        );
+        return response()->json([
+            'data' => UserSkillDTO::fromModel($userSkill),
+        ], Response::HTTP_CREATED);
     }
 
     public function show(UserSkill $userSkill): JsonResponse
     {
         $userSkill->load(['user', 'skill']);
 
-        return response()->json(
-            UserSkillDTO::fromModel($userSkill)
-        );
+        return response()->json([
+            'data' => UserSkillDTO::fromModel($userSkill),
+        ]);
     }
 
     public function update(UserSkillRequest $request, UserSkill $userSkill): JsonResponse
@@ -55,9 +54,9 @@ class UserSkillController extends Controller
             'acquired_at' => $dto->acquiredAt,
         ]);
 
-        return response()->json(
-            UserSkillDTO::fromModel($userSkill)
-        );
+        return response()->json([
+            'data' => UserSkillDTO::fromModel($userSkill),
+        ]);
     }
 
     public function destroy(UserSkill $userSkill): JsonResponse

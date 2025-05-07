@@ -55,16 +55,14 @@ class ProjectStatusController extends Controller
         $status = ProjectStatus::create((array) $dto);
 
         return response()->json(
-            ProjectStatusDTO::from($status),
+            ['data' => ProjectStatusDTO::from($status)],
             Response::HTTP_CREATED
         );
     }
 
     public function show(ProjectStatus $projectStatus): JsonResponse
     {
-        return response()->json(
-            ProjectStatusDTO::from($projectStatus)
-        );
+        return response()->json(['data' => ProjectStatusDTO::from($projectStatus)]);
     }
 
     public function update(ProjectStatusRequest $request, ProjectStatus $projectStatus): JsonResponse
@@ -72,9 +70,7 @@ class ProjectStatusController extends Controller
         $dto = ProjectStatusDTO::from($request->validated());
         $projectStatus->update((array) $dto);
 
-        return response()->json(
-            ProjectStatusDTO::from($projectStatus)
-        );
+        return response()->json(['data' => ProjectStatusDTO::from($projectStatus)]);
     }
 
     public function destroy(ProjectStatus $projectStatus): JsonResponse

@@ -1,0 +1,37 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+- **All DTOs must extend `BaseDTO` and implement `fromModel`, `fromArray`, and `toArray` methods.**
+  - Use `fromModel(Model $model): static` to create a DTO from an Eloquent model.
+  - Use `fromArray(array $data): static` to create a DTO from an array (e.g., request data).
+  - Use `toArray(): array` to serialize the DTO for API responses, always using camelCase keys for frontend compatibility.
+- **DTOs should be immutable where possible.**
+  - Use `public readonly` properties for DTO fields.
+- **DTOs should handle nested objects and collections using their own DTOs.**
+  - For related models, use the corresponding DTO and call `toArray()` recursively.
+- **Date/time fields should be serialized as ISO 8601 strings.**
+  - Use `$date?->toIso8601String()` in `toArray()`.
+- **DO:**
+  ```php
+  class UserDTO extends BaseDTO {
+      public function __construct(
+          public readonly string $firstName,
+          public readonly string $lastName,
+          // ...
+      ) {}
+      public static function fromModel(Model $model): static { /* ... */ }
+      public static function fromArray(array $data): static { /* ... */ }
+      public function toArray(): array {
+          return [
+              'firstName' => $this->firstName,
+              // ...
+          ];
+      }
+  }
+  ```
+- **DON'T:**
+  - Omit `toArray()` or use snake_case keys in API output.
+  - Mutate DTO properties after construction.
+- **Reference:** See [BaseDTO.php](mdc:app/Domain/Common/DTOs/BaseDTO.php) for the base implementation and [UserDTO.php](mdc:app/Domain/Auth/DTOs/UserDTO.php) for a concrete example.

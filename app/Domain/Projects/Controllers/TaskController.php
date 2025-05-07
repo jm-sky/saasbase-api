@@ -11,6 +11,7 @@ use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Requests\CreateTaskRequest;
 use App\Domain\Projects\Requests\UpdateTaskRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 class TaskController extends Controller
 {
     use HasIndexQuery;
+    use AuthorizesRequests;
 
     protected int $defaultPerPage = 15;
 
@@ -75,7 +77,7 @@ class TaskController extends Controller
         ]);
 
         return response()->json(
-            TaskDTO::fromModel($task),
+            ['data' => TaskDTO::fromModel($task)],
             Response::HTTP_CREATED
         );
     }
@@ -84,7 +86,7 @@ class TaskController extends Controller
     {
         $this->authorize('view', $task);
 
-        return response()->json(TaskDTO::fromModel($task));
+        return response()->json(['data' => TaskDTO::fromModel($task)]);
     }
 
     public function update(UpdateTaskRequest $request, Task $task): JsonResponse
@@ -93,7 +95,7 @@ class TaskController extends Controller
 
         $task->update($request->validated());
 
-        return response()->json(TaskDTO::fromModel($task));
+        return response()->json(['data' => TaskDTO::fromModel($task)]);
     }
 
     public function destroy(Task $task): JsonResponse
