@@ -3,11 +3,13 @@
 ## Phase 1: Foundation
 - [ ] **Core Authentication System**
   - [x] Basic JWT authentication
-  - [ ] Password reset functionality
-  - [ ] Two-factor authentication (2FA)
-  - [ ] OAuth provider integration
-  - [ ] User settings and preferences
+  - [x] Password reset functionality
+  - [x] Two-factor authentication (2FA) with JWT, TOTP, recovery codes
+  - [x] OAuth provider integration (Google, GitHub, etc.)
+  - [x] User settings and preferences
   - [ ] Security hardening (rate limiting, session management)
+  - [ ] Profil Zaufany (Polish eID) integration via OIDC/SAML
+  - [ ] ActionLog and AuditLog for compliance and traceability
 
 - [ ] **Multi-tenancy Implementation**
   - [x] Tenant model and migrations
@@ -15,13 +17,17 @@
   - [ ] Tenant isolation testing
   - [ ] Cross-tenant operations for admins
   - [ ] Resource allocation per tenant
+  - [ ] Dictionary tables with string primary keys for VAT, countries, units
+  - [ ] Exception handling for tenant context
 
 - [ ] **User Management**
   - [x] Basic user CRUD
   - [ ] User profile management
-  - [ ] Role-based access control
+  - [ ] Role-based access control (RBAC) with roles, permissions, policies
   - [ ] Permission system
+  - [ ] User invitations
   - [ ] User settings and preferences
+  - [ ] OAuth/social login (Google, GitHub, etc.)
 
 ## Phase 2: Document Management
 - [ ] **Contractor Management**
@@ -30,6 +36,9 @@
   - [ ] Historical data tracking
   - [ ] Contractor categorization
   - [ ] Address management
+  - [ ] Contractor Data Import
+  - [ ] VAT Number Validation
+  - [ ] Bank Account Validation
 
 - [ ] **Basic Invoice System**
   - [ ] Invoice creation and templates
@@ -37,6 +46,9 @@
   - [ ] Payment tracking
   - [ ] Basic reporting
   - [ ] PDF generation
+  - [ ] Invoice Generation Service
+  - [ ] Invoice Numbering Service
+  - [ ] Invoice PDF Generation Service
 
 - [ ] **Tax Management**
   - [ ] Tax rates configuration
@@ -46,19 +58,25 @@
   - [ ] Tax rules by region
 
 - [ ] **Document Storage**
-  - [ ] File upload system
+  - [ ] File upload system (per-model attachments)
   - [ ] Document versioning
   - [ ] Access control
   - [ ] Preview generation
   - [ ] Search functionality
+  - [ ] MinIO integration for file storage
+  - [ ] Media conversions (thumbnails, previews)
+  - [ ] Security: MIME type validation, size limits, tenant isolation
+  - [ ] API endpoints for file management
+  - [ ] Testing: upload, deletion, conversions, MinIO, API
 
 ## Phase 3: Enhanced Features
 - [ ] **Exchange Rate Integration**
   - [ ] Multiple currency support
-  - [ ] Automatic rate updates
+  - [ ] Automatic rate updates (NBP, ECB integration)
   - [ ] Historical rate tracking
   - [ ] Custom rate overrides
   - [ ] Currency conversion
+  - [ ] Exchange Rate Import Service (scheduling, error handling, admin notifications)
 
 - [ ] **Company Lookup Service**
   - [ ] Integration with external providers
@@ -88,6 +106,7 @@
   - [ ] Project status tracking
   - [ ] Resource allocation
   - [ ] Project templates
+  - [ ] Project Status Management Service
 
 - [ ] **Task Management**
   - [ ] Task creation and assignment
@@ -95,11 +114,13 @@
   - [ ] Time tracking
   - [ ] Dependencies management
   - [ ] Task templates
+  - [ ] Task Assignment Service
+  - [ ] Time Tracking Service
 
 - [ ] **Team Collaboration**
   - [ ] Comments and discussions
   - [ ] Activity tracking
-  - [ ] Notifications
+  - [ ] Notifications (Notification model, user preferences)
   - [ ] File sharing
   - [ ] @mentions
 
@@ -110,30 +131,38 @@
   - [ ] Notifications
   - [ ] Integration hooks
 
-## Technical Improvements
-- [ ] **Performance Optimization**
-  - [ ] Query optimization
-  - [ ] Caching implementation
-  - [ ] Background job processing
-  - [ ] API response time improvements
+## API Features
+- [ ] Standardized filtering and sorting for all endpoints (Spatie Query Builder, custom filters/operators, combo search)
+- [ ] Consistent query parameter structure
+- [ ] Extensible filtering and sorting per model
 
-- [ ] **Security Enhancements**
-  - [ ] Security audit
-  - [ ] Penetration testing
-  - [ ] Compliance checks
-  - [ ] Access control review
+## System Logging & Auditing
+- [ ] ActionLog and AuditLog for compliance and traceability
 
-- [ ] **API Documentation**
-  - [ ] OpenAPI/Swagger documentation
-  - [ ] Integration guides
-  - [ ] Code examples
-  - [ ] Postman collections
+## Tagging & Skills
+- [ ] Tag and Skill models for categorization
 
-- [ ] **Testing Coverage**
-  - [ ] Unit tests
-  - [ ] Integration tests
-  - [ ] Performance tests
-  - [ ] Security tests
+## Pricing & Discounts
+- [ ] PriceList, Discount, MeasurementUnit models
+
+## Dictionary/Customizable Values
+- [ ] DictionaryEntry model
+
+## Chat System
+- [ ] ChatRoom, ChatMessage, ChatParticipant
+
+## Employee Management
+- [ ] Employee and EmployeeAgreement models
+
+## Admin/Compliance
+- [ ] Security audit
+- [ ] Penetration testing
+- [ ] Compliance checks
+- [ ] Access control review
+- [ ] Audit logs
+
+## Notes
+For detailed requirements and technical implementation, see the `.docs/features/`, `.docs/models/`, and `.docs/services/` directories. However, all major requirements are listed above for Task Master parsing.
 
 ## Module Template
 For each new module, follow this checklist:

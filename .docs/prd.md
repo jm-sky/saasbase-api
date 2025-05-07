@@ -3,7 +3,107 @@
 ## Overview
 SaaSBase API is a comprehensive backend service layer designed to support multi-tenant SaaS applications. It provides essential functionality for business applications including authentication, document/invoice management, project management capabilities, and advanced organizational features with cross-tenant interactions.
 
-## Core Features
+---
+
+## API Features
+- All list/index endpoints implement standardized filtering and sorting using Spatie Query Builder.
+- Supported filtering operators: eq, ne, gt, gte, lt, lte, in, nin, between, like, nlike, startswith, endswith, null, notnull, nullish, regex.
+- Combo search is available via the `search` parameter, searching across multiple fields.
+- Sorting is available on all allowed fields, with ascending/descending order.
+- Query parameter structure is consistent across all endpoints.
+- Filtering and sorting can be extended per model as needed.
+
+---
+
+## Identity & Security
+- Two-factor authentication (2FA) uses JWT-based temporary tokens and TOTP codes. If 2FA is enabled, users receive a temporary JWT and must verify with a TOTP code before receiving a full access token. Recovery codes are supported.
+- Profil Zaufany (Polish eID) integration via OIDC/SAML allows users to verify their identity using the national Login.gov.pl gateway. The system stores verified user data (PESEL, name, etc.) and ensures GDPR compliance.
+- Security hardening includes rate limiting on sensitive endpoints, session management, strong password policies, and regular audit logging of authentication and authorization events.
+
+---
+
+## Multi-tenancy
+- All data is tenant-scoped using a global query scope. The `BelongsToTenant` trait ensures tenant isolation for all relevant models.
+- Dictionary tables (e.g., VAT rates, countries, units) use meaningful string primary keys for clarity and maintainability.
+- Custom exceptions are thrown if tenant context is missing or invalid, returning a 403 error.
+- Tenant ID is stored in JWT claims and request context for secure, automatic scoping.
+
+---
+
+## System Logging & Auditing
+- All critical actions (authentication, data changes, permission changes) are logged in the ActionLog and AuditLog models.
+- Audit logs are immutable and used for compliance, security reviews, and troubleshooting.
+- Logs include user, timestamp, action type, and before/after data where applicable.
+
+---
+
+## User & Access Management
+- Role-based access control (RBAC) is implemented using Role and Permission models. Policies enforce access at the model and action level.
+- OAuth/social login supports Google, GitHub, and other providers via OAuthProvider and UserOAuthAccount models.
+- Users can be invited via email, with role assignment and invitation tracking.
+
+---
+
+## Employee Management
+- Employees are managed via the Employee model, with onboarding workflows and contract management handled by the EmployeeAgreement model.
+- Supports employment agreements, contract dates, and salary details.
+
+---
+
+## Tagging & Skills
+- Tag and Skill models allow categorization of tasks, projects, and users for better organization and searchability.
+
+---
+
+## Pricing & Discounts
+- PriceList and Discount models manage product/service pricing, promotional codes, and discount rules.
+- MeasurementUnit model supports standard and custom units, with conversion logic.
+
+---
+
+## Dictionary/Customizable Values
+- DictionaryEntry model allows for customizable system values (e.g., statuses, types) that can be managed by admins.
+
+---
+
+## Chat System
+- Internal chat supports direct messages, group chats, and channels using ChatRoom, ChatMessage, and ChatParticipant models.
+- Features include file sharing, message threading, markdown support, and chat search.
+
+---
+
+## Notifications
+- Notification model supports multiple delivery channels (email, in-app, etc.), template-based messages, and user preferences for notification types.
+- Delivery tracking ensures reliable notification delivery and auditability.
+
+---
+
+## Admin/Compliance
+- Regular security audits and penetration testing are performed.
+- Compliance checks for GDPR and other regulations.
+- Access control reviews and audit logs are maintained for all sensitive actions.
+
+---
+
+## Document Storage
+- File attachments are supported on multiple models (User, Project, Task, Contractor, etc.) using Spatie Media Library.
+- MinIO is used for S3-compatible object storage.
+- Media conversions (thumbnails, previews) are generated for images and documents.
+- Security: strict MIME type validation, file size limits, tenant isolation, signed URLs for access.
+- API endpoints allow upload, deletion, and retrieval of files.
+- Automated tests cover upload, deletion, conversion, and access control.
+
+---
+
+## Services
+- **Exchange Rate Import Service**: Imports currency rates from NBP and ECB, with fallback, error handling, and admin notifications. Runs on a schedule.
+- **Invoice Services**: Automated invoice generation, numbering, and PDF creation.
+- **Project/Task/Time Services**: Project status management, task assignment, and time tracking are handled by dedicated services.
+- **Contractor Services**: Data import, VAT number validation, and bank account validation for contractors.
+
+---
+
+## Core Features (Legacy Section, for completeness)
 
 ### 1. Authentication Module
 - **User Authentication**
@@ -206,6 +306,8 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Bulk invitations
   - Invitation tracking
 
+---
+
 ## Technical Architecture
 
 ### System Components
@@ -238,6 +340,8 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 - Follows tenant isolation patterns
 - Implements soft deletes
 - Maintains audit logs
+
+---
 
 ## Development Roadmap
 
@@ -312,6 +416,8 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 - Implement basic invoice management
 - Add project management features incrementally
 - Prioritize essential integrations
+
+---
 
 ## Appendix
 
