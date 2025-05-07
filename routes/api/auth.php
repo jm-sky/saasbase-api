@@ -2,6 +2,7 @@
 
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Auth\Controllers\OAuthController;
+use App\Domain\Auth\Controllers\PasswordResetController;
 use App\Domain\Auth\Controllers\TwoFactorAuthController;
 use App\Domain\Auth\Controllers\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,14 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('register', [AuthController::class, 'register']);
+
+    // Password Reset Routes
+    Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
+        ->name('password.email')
+    ;
+    Route::post('reset-password', [PasswordResetController::class, 'reset'])
+        ->name('password.reset')
+    ;
 });
 
 // OAuth Routes
@@ -19,7 +28,7 @@ Route::prefix('oauth')->group(function () {
 });
 
 // Email Verification Routes
-Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+Route::post('/email/verify', [VerifyEmailController::class, 'verify'])
     ->name('verification.verify')
 ;
 

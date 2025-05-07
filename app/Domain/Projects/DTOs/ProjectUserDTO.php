@@ -3,13 +3,14 @@
 namespace App\Domain\Projects\DTOs;
 
 use App\Domain\Auth\DTOs\UserDTO;
+use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Projects\Models\ProjectUser;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @extends BaseDTO<ProjectUser>
+ *
  * @property ?string         $id            UUID
  * @property string          $projectId
  * @property string          $userId
@@ -20,27 +21,25 @@ use Spatie\LaravelData\Data;
  * @property ?UserDTO        $user
  * @property ?ProjectRoleDTO $role
  */
-class ProjectUserDTO extends Data
+class ProjectUserDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $projectId,
         public readonly string $userId,
         public readonly string $projectRoleId,
         public readonly ?string $id = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: \DateTimeInterface::ATOM)]
         public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
         public ?ProjectRoleDTO $role = null,
     ) {
     }
 
-    public static function fromModel(ProjectUser $model): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
+        /* @var ProjectUser $model */
+        return new static(
             projectId: $model->project_id,
             userId: $model->user_id,
             projectRoleId: $model->project_role_id,
@@ -51,5 +50,35 @@ class ProjectUserDTO extends Data
             user: $model->user ? UserDTO::fromModel($model->user) : null,
             role: $model->role ? ProjectRoleDTO::fromModel($model->role) : null,
         );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            projectId: $data['project_id'],
+            userId: $data['user_id'],
+            projectRoleId: $data['project_role_id'],
+            id: $data['id'] ?? null,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+            user: isset($data['user']) ? UserDTO::fromArray($data['user']) : null,
+            role: isset($data['role']) ? ProjectRoleDTO::fromArray($data['role']) : null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'            => $this->id,
+            'projectId'     => $this->projectId,
+            'userId'        => $this->userId,
+            'projectRoleId' => $this->projectRoleId,
+            'createdAt'     => $this->createdAt?->toIso8601String(),
+            'updatedAt'     => $this->updatedAt?->toIso8601String(),
+            'deletedAt'     => $this->deletedAt?->toIso8601String(),
+            'user'          => $this->user?->toArray(),
+            'role'          => $this->role?->toArray(),
+        ];
     }
 }

@@ -8,7 +8,6 @@ use App\Domain\Common\Models\VatRate;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -19,17 +18,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string         $description
  * @property string          $unit_id
  * @property float           $price_net
- * @property string          $vat_rate_id
+ * @property ?string         $vat_rate_id
  * @property Carbon          $created_at
  * @property Carbon          $updated_at
  * @property ?Carbon         $deleted_at
  * @property MeasurementUnit $unit
- * @property VatRate         $vatRate
+ * @property ?VatRate        $vatRate
  */
 class Product extends BaseModel
 {
     use SoftDeletes;
-    use HasFactory;
     use BelongsToTenant;
 
     protected $fillable = [

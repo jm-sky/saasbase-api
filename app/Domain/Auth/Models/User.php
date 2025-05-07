@@ -3,7 +3,15 @@
 namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
+use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
+use App\Domain\Common\Traits\HaveAddresses;
+use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\Models\ProjectUser;
+use App\Domain\Projects\Models\Task;
+use App\Domain\Skills\Models\Skill;
+use App\Domain\Skills\Models\UserSkill;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use Carbon\Carbon;
@@ -20,7 +28,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
@@ -30,32 +37,36 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * @property string                                               $id
- * @property string                                               $first_name
- * @property string                                               $last_name
- * @property string                                               $email
- * @property string                                               $password
- * @property ?string                                              $description
- * @property ?string                                              $birth_date
- * @property ?string                                              $phone
- * @property ?string                                              $avatar_url
- * @property bool                                                 $is_admin
- * @property UserStatus                                           $status
- * @property Carbon                                               $created_at
- * @property Carbon                                               $updated_at
- * @property ?Carbon                                              $deleted_at
- * @property ?Carbon                                              $email_verified_at
- * @property UserSettings|null                                    $settings
- * @property Collection<int, OAuthAccount>                        $oauthAccounts
- * @property Collection<int, UserTenant>                          $tenantMemberships
- * @property Collection<int, \App\Domain\Skills\Models\UserSkill> $skills
- * @property Collection<int, Tenant>                              $tenants
+ * @property string                        $id
+ * @property string                        $first_name
+ * @property string                        $last_name
+ * @property string                        $email
+ * @property string                        $password
+ * @property ?string                       $description
+ * @property ?string                       $birth_date
+ * @property ?string                       $phone
+ * @property ?string                       $avatar_url
+ * @property bool                          $is_admin
+ * @property UserStatus                    $status
+ * @property Carbon                        $created_at
+ * @property Carbon                        $updated_at
+ * @property ?Carbon                       $deleted_at
+ * @property ?Carbon                       $email_verified_at
+ * @property UserSettings|null             $settings
+ * @property Collection<int, OAuthAccount> $oauthAccounts
+ * @property Collection<int, UserTenant>   $tenantMemberships
+ * @property Collection<int, Project>      $projects
+ * @property Collection<int, Task>         $tasks
+ * @property Collection<int, UserSkill>    $userSkills
+ * @property Collection<int, Skill>        $skills
+ * @property Collection<int, Tenant>       $tenants
  */
 class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
     use HasUuids;
+    use HaveAddresses;
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
@@ -87,6 +98,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'status'            => UserStatus::class,
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            event(new \App\Domain\Auth\Events\UserCreated($user));
+        });
+    }
+
     public function isAdmin(): bool
     {
         return $this->is_admin;
@@ -97,7 +115,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return UserStatus::ACTIVE === $this->status;
     }
 
-    // TODO: Implement this
+    public function isEmailVerified(): string
+    {
+        return null !== $this->email_verified_at;
+    }
+
     public function isTwoFactorEnabled(): string
     {
         return $this->settings?->two_factor_enabled ?? false;
@@ -123,14 +145,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function getTenantId(): ?string
     {
-        $tenantId = Session::get('current_tenant_id');
-
-        if ($tenantId) {
-            return $tenantId;
-        }
-
-        if (Auth::check() && Auth::payload()?->get('tenant_id')) {
-            return Auth::payload()->get('tenant_id');
+        if (Auth::check() && Auth::payload()?->get('tid')) {
+            return Auth::payload()->get('tid');
         }
 
         $membership = $this->tenantMemberships()->first();
@@ -157,17 +173,54 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->hasMany(UserTenant::class);
     }
 
-    public function skills(): HasMany
+    public function projects(): BelongsToMany
     {
-        return $this->hasMany(\App\Domain\Skills\Models\UserSkill::class);
+        return $this->belongsToMany(Project::class, 'project_users')
+            ->using(ProjectUser::class)
+            ->withPivot(['role'])
+            ->withTimestamps()
+        ;
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assignee_id');
+    }
+
+    public function userSkills(): HasMany
+    {
+        return $this->hasMany(UserSkill::class);
+    }
+
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class, 'user_skills')
+            ->using(UserSkill::class)
+            ->withPivot(['proficiency'])
+            ->withTimestamps()
+        ;
     }
 
     public function tenants(): BelongsToMany
     {
-        return $this->belongsToMany(Tenant::class, 'tenant_users')
+        return $this->belongsToMany(Tenant::class, 'user_tenants')
+            ->using(UserTenant::class)
             ->withPivot(['role'])
             ->withTimestamps()
         ;
+    }
+
+    public function organizationUnits()
+    {
+        return $this->belongsToMany(OrganizationUnit::class, 'org_unit_user')
+            ->withPivot('role')
+            ->withTimestamps()
+        ;
+    }
+
+    public function emailVerificationToken(): HasOne
+    {
+        return $this->hasOne(EmailVerificationToken::class);
     }
 
     protected static function newFactory()
@@ -210,5 +263,10 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmailNotification());
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

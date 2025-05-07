@@ -15,6 +15,7 @@ class ContractorFactory extends Factory
     public function definition(): array
     {
         return [
+            'id'          => fake()->uuid(),
             'name'        => fake()->company(),
             'email'       => fake()->companyEmail(),
             'phone'       => fake()->phoneNumber(),

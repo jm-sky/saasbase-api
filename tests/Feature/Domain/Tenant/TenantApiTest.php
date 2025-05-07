@@ -38,26 +38,28 @@ class TenantApiTest extends TestCase
         Tenant::query()->forceDelete();
 
         $tenants = Tenant::factory()->count(3)->create();
-        $this->user->tenants()->attach($tenants);
+        $this->user->tenants()->attach($tenants, ['role' => 'admin']);
 
         $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'name',
-                    'slug',
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'slug',
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
+                    ],
                 ],
             ])
         ;
 
         // Verify we got exactly the tenants we created
-        $responseIds = collect($response->json())->pluck('id')->sort()->values();
+        $responseIds = collect($response->json('data'))->pluck('id')->sort()->values();
         $expectedIds = $tenants->pluck('id')->sort()->values();
         $this->assertEquals($expectedIds, $responseIds);
     }
@@ -108,7 +110,7 @@ class TenantApiTest extends TestCase
     public function testCanShowTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $response = $this->getJson($this->baseUrl . '/' . $tenant->id);
 
@@ -132,7 +134,7 @@ class TenantApiTest extends TestCase
     public function testCanUpdateTenant(): void
     {
         $tenant     = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
         $updateData = [
             'name' => 'Updated Name',
             'slug' => 'updated-slug',
@@ -161,7 +163,7 @@ class TenantApiTest extends TestCase
     public function testCanDeleteTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant);
+        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $response = $this->deleteJson($this->baseUrl . '/' . $tenant->id);
 

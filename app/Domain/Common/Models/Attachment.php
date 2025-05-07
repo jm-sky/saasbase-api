@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string  $id
+ * @property ?string $tenant_id
  * @property string  $file_name
  * @property string  $file_url
  * @property string  $file_type
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Attachment extends BaseModel
 {
     protected $fillable = [
+        'tenant_id',
         'file_name',
         'file_url',
         'file_type',

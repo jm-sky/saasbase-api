@@ -3,14 +3,14 @@
 namespace App\Domain\Projects\DTOs;
 
 use App\Domain\Auth\DTOs\UserDTO;
+use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Projects\Models\Project;
 use Carbon\Carbon;
-use Spatie\LaravelData\Attributes\MapOutputName;
-use Spatie\LaravelData\Attributes\WithCast;
-use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
+use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @extends BaseDTO<Project>
+ *
  * @property ?string  $id             UUID
  * @property string   $tenantId       UUID
  * @property string   $name
@@ -27,68 +27,88 @@ use Spatie\LaravelData\Data;
  * @property ?array   $tasks
  * @property ?array   $requiredSkills
  */
-class ProjectDTO extends Data
+class ProjectDTO extends BaseDTO
 {
     public function __construct(
-        public readonly string $tenantId,
         public readonly string $name,
+        public readonly string $tenantId,
         public readonly string $statusId,
         public readonly string $ownerId,
-        public readonly ?string $description = null,
         public readonly ?string $id = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
-        #[MapOutputName('start_date')]
-        public ?Carbon $startDate = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
-        #[MapOutputName('end_date')]
-        public ?Carbon $endDate = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
+        public readonly ?string $description = null,
+        public readonly ?Carbon $startDate = null,
+        public readonly ?Carbon $endDate = null,
         public ?Carbon $createdAt = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
         public ?Carbon $updatedAt = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
         public ?Carbon $deletedAt = null,
         public ?UserDTO $owner = null,
         public ?array $users = null,
-        #[MapOutputName('tasks')]
         public ?array $tasks = null,
-        #[MapOutputName('required_skills')]
         public ?array $requiredSkills = null,
     ) {
     }
 
-    public static function fromModel(Project $model, bool $withRelations = false): self
+    public static function fromModel(Model $model): static
     {
-        return new self(
-            tenantId: $model->tenant_id,
+        /* @var Project $model */
+        return new static(
             name: $model->name,
+            tenantId: $model->tenant_id,
             statusId: $model->status_id,
             ownerId: $model->owner_id,
-            description: $model->description,
             id: $model->id,
+            description: $model->description,
             startDate: $model->start_date,
             endDate: $model->end_date,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
-            owner: $withRelations && $model->relationLoaded('owner') ? UserDTO::fromModel($model->owner) : null,
-            users: $withRelations && $model->relationLoaded('users') ? UserDTO::collect($model->users)->toArray() : null,
-            tasks: $withRelations && $model->relationLoaded('tasks') ? TaskDTO::collect($model->tasks)->toArray() : null,
-            requiredSkills: $withRelations && $model->relationLoaded('requiredSkills') ? $model->requiredSkills->map(fn ($skill) => ProjectRequiredSkillDTO::fromModel($skill))->toArray() : null,
+            owner: $model->relationLoaded('owner') ? UserDTO::fromModel($model->owner) : null,
+            users: $model->relationLoaded('users') ? $model->users?->map(fn ($user) => UserDTO::fromModel($user))->toArray() : null,
+            tasks: $model->relationLoaded('tasks') ? $model->tasks?->toArray() : null,
+            requiredSkills: $model->relationLoaded('requiredSkills') ? $model->requiredSkills?->toArray() : null,
+        );
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            name: $data['name'],
+            tenantId: $data['tenant_id'],
+            statusId: $data['status_id'],
+            ownerId: $data['owner_id'],
+            id: $data['id'] ?? null,
+            description: $data['description'] ?? null,
+            startDate: isset($data['start_date']) ? Carbon::parse($data['start_date']) : null,
+            endDate: isset($data['end_date']) ? Carbon::parse($data['end_date']) : null,
+            createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
+            updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
+            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
+            owner: isset($data['owner']) ? UserDTO::fromArray($data['owner']) : null,
+            users: isset($data['users']) ? array_map(fn ($user) => UserDTO::fromArray($user), $data['users']) : null,
+            tasks: $data['tasks'] ?? null,
+            requiredSkills: $data['required_skills'] ?? null,
         );
     }
 
     public function toArray(): array
     {
-        $data = parent::toArray();
-
-        // Ensure dates are properly formatted
-        $data['startDate'] = $this->startDate?->format('Y-m-d');
-        $data['endDate']   = $this->endDate?->format('Y-m-d');
-        $data['createdAt'] = $this->createdAt?->toIso8601String();
-        $data['updatedAt'] = $this->updatedAt?->toIso8601String();
-        $data['deletedAt'] = $this->deletedAt?->toIso8601String();
-
-        return $data;
+        return [
+            'id'             => $this->id,
+            'tenantId'       => $this->tenantId,
+            'name'           => $this->name,
+            'description'    => $this->description,
+            'statusId'       => $this->statusId,
+            'ownerId'        => $this->ownerId,
+            'startDate'      => $this->startDate?->toDateString(),
+            'endDate'        => $this->endDate?->toDateString(),
+            'createdAt'      => $this->createdAt?->toIso8601String(),
+            'updatedAt'      => $this->updatedAt?->toIso8601String(),
+            'deletedAt'      => $this->deletedAt?->toIso8601String(),
+            'owner'          => $this->owner?->toArray(),
+            'users'          => $this->users,
+            'tasks'          => $this->tasks,
+            'requiredSkills' => $this->requiredSkills,
+        ];
     }
 }

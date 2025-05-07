@@ -20,12 +20,12 @@ class TenantDTOTest extends TestCase
     public function testCanCreateTenantDto(): void
     {
         $data = [
-            'id'        => fake()->uuid(),
-            'name'      => 'Test Tenant',
-            'slug'      => 'test-tenant',
-            'createdAt' => now()->toIso8601String(),
-            'updatedAt' => now()->toIso8601String(),
-            'deletedAt' => null,
+            'id'         => fake()->uuid(),
+            'name'       => 'Test Tenant',
+            'slug'       => 'test-tenant',
+            'created_at' => now()->toIso8601String(),
+            'updated_at' => now()->toIso8601String(),
+            'deleted_at' => null,
         ];
 
         $dto = TenantDTO::from($data);
@@ -33,9 +33,9 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($data['id'], $dto->id);
         $this->assertEquals($data['name'], $dto->name);
         $this->assertEquals($data['slug'], $dto->slug);
-        $this->assertEquals($data['createdAt'], $dto->createdAt->toIso8601String());
-        $this->assertEquals($data['updatedAt'], $dto->updatedAt->toIso8601String());
-        $this->assertEquals($data['deletedAt'], $dto->deletedAt);
+        $this->assertEquals($data['created_at'], $dto->createdAt?->toIso8601String());
+        $this->assertEquals($data['updated_at'], $dto->updatedAt?->toIso8601String());
+        $this->assertEquals($data['deleted_at'], $dto->deletedAt);
     }
 
     public function testCanCreateTenantDtoWithMinimalData(): void

@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "doctrine/dbal": "^4.2",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.31",
@@ -19,10 +19,10 @@
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
         "lorisleiva/laravel-actions": "^2.9",
+        "pragmarx/google2fa": "^8.0",
         "ramsey/uuid": "^4.7",
         "rap2hpoutre/laravel-log-viewer": "^2.5",
         "saloonphp/saloon": "^3.11",
-        "spatie/laravel-data": "^4.15",
         "spatie/laravel-medialibrary": "^11.0",
         "spatie/laravel-query-builder": "^6.3",
         "tymon/jwt-auth": "^2.2"

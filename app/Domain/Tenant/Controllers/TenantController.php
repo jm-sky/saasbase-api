@@ -19,15 +19,16 @@ class TenantController extends Controller
     {
         $tenants = $request->user()->tenants()->orderBy('created_at')->get();
 
-        return response()->json(
-            TenantDTO::collect($tenants)
-        );
+        return response()->json([
+            'data' => TenantDTO::collect($tenants),
+        ]);
     }
 
     public function store(TenantRequest $request): JsonResponse
     {
+        // TODO: Create enum for tenant roles
         $tenant = Tenant::create($request->validated());
-        $request->user()->tenants()->attach($tenant);
+        $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
 
         return response()->json(
             TenantDTO::from($tenant),

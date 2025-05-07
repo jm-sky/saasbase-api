@@ -3,9 +3,7 @@
 namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
-use App\Domain\Common\Models\Comment;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,24 +11,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * @property string                                                     $id
- * @property string                                                     $project_id
- * @property string                                                     $title
- * @property ?string                                                    $description
- * @property string                                                     $status
- * @property string                                                     $priority
- * @property ?string                                                    $assigned_to_id
- * @property string                                                     $created_by_id
- * @property ?Carbon                                                    $due_date
- * @property Carbon                                                     $created_at
- * @property Carbon                                                     $updated_at
- * @property ?Carbon                                                    $deleted_at
- * @property Project                                                    $project
- * @property ?User                                                      $assignedTo
- * @property User                                                       $createdBy
- * @property \Illuminate\Database\Eloquent\Collection<int, TaskWatcher> $watchers
- * @property \Illuminate\Database\Eloquent\Collection<int, Comment>     $comments
- * @property \Illuminate\Database\Eloquent\Collection<int, Attachment>  $attachments
+ * @property string                                                        $id
+ * @property string                                                        $project_id
+ * @property string                                                        $title
+ * @property ?string                                                       $description
+ * @property string                                                        $status
+ * @property string                                                        $priority
+ * @property ?string                                                       $assigned_to_id
+ * @property string                                                        $created_by_id
+ * @property ?Carbon                                                       $due_date
+ * @property Carbon                                                        $created_at
+ * @property Carbon                                                        $updated_at
+ * @property ?Carbon                                                       $deleted_at
+ * @property Project                                                       $project
+ * @property ?User                                                         $assignedTo
+ * @property User                                                          $createdBy
+ * @property \Illuminate\Database\Eloquent\Collection<int, TaskWatcher>    $watchers
+ * @property \Illuminate\Database\Eloquent\Collection<int, TaskComment>    $comments
+ * @property \Illuminate\Database\Eloquent\Collection<int, TaskAttachment> $attachments
  */
 class Task extends BaseModel
 {
@@ -81,11 +79,11 @@ class Task extends BaseModel
 
     public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(TaskComment::class, 'commentable');
     }
 
     public function attachments(): MorphMany
     {
-        return $this->morphMany(Attachment::class, 'attachmentable');
+        return $this->morphMany(TaskAttachment::class, 'attachmentable');
     }
 }

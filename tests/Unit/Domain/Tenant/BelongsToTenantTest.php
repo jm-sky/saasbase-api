@@ -4,7 +4,6 @@ namespace Tests\Unit\Domain\Tenant;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -37,14 +36,13 @@ class BelongsToTenantTest extends TestCase
         $this->otherTenant = Tenant::factory()->create();
         $this->model       = new Contractor();
 
-        // Set current tenant context
-        session(['current_tenant_id' => $this->tenant->id]);
-        $this->actingAs($this->user);
+        $this->user->tenants()->attach($this->tenant, ['role' => 'admin']);
+
+        Tenant::$PUBLIC_TENANT_ID = $this->tenant->id;
     }
 
     public function testModelIsScopedToTenant(): void
     {
-        // Create records for both tenants
         Contractor::factory()->create([
             'tenant_id' => $this->tenant->id,
             'name'      => 'Test Model',
@@ -55,7 +53,6 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Other Tenant Model',
         ]);
 
-        // Should only see records for current tenant
         $this->assertCount(1, Contractor::all());
         $this->assertEquals('Test Model', Contractor::first()->name);
     }
@@ -76,15 +73,6 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals($this->otherTenant->id, $model->tenant_id);
     }
 
-    public function testThrowsExceptionWhenTenantContextNotFound(): void
-    {
-        session()->forget('current_tenant_id');
-
-        $this->expectException(TenantNotFoundException::class);
-
-        Contractor::factory()->create(['name' => 'Test Model']);
-    }
-
     public function testCanBypassTenantScopeWithCallback(): void
     {
         // Create records for both tenants
@@ -98,7 +86,6 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Other Tenant Model',
         ]);
 
-        // Normal query should still be scoped
         $this->assertCount(1, Contractor::all());
 
         // But we can see all records when bypassing scope

@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Models\UserSettings;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
+use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Tenant\Models\UserTenant;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,19 +25,17 @@ class DatabaseSeeder extends Seeder
 
         // Create default user
         $user = User::factory()->create([
-            'first_name' => env('DEFAULT_USER_FIRST_NAME', 'Test'),
-            'last_name'  => env('DEFAULT_USER_LAST_NAME', 'User'),
-            'email'      => env('DEFAULT_USER_EMAIL', 'test@example.com'),
-            'password'   => Hash::make(env('DEFAULT_USER_PASSWORD', 'Secret123!')),
-            'is_admin'   => true,
+            'first_name' => config('users.default_user.first_name'),
+            'last_name'  => config('users.default_user.last_name'),
+            'email'      => config('users.default_user.email'),
+            'password'   => Hash::make(config('users.default_user.password')),
+            'is_admin'   => config('users.default_user.is_admin'),
         ]);
 
-        // Attach user to tenant
-        UserTenant::create([
-            'user_id'   => $user->id,
-            'tenant_id' => $tenant->id,
-            'role'      => 'admin',
-        ]);
+        $user->settings()->create(UserSettings::defaults());
+
+        // Event listener will create the tenant for the user
+        $user->tenants()->attach($tenant, ['role' => 'admin']);
 
         $this->call([
             CountrySeeder::class,
@@ -45,8 +43,10 @@ class DatabaseSeeder extends Seeder
             SkillCategorySeeder::class,
             SkillSeeder::class,
             ProjectRoleSeeder::class,
-            MeasurementUnitSeeder::class,
+            DefaultMeasurementUnitSeeder::class,
         ]);
+
+        (new InitializeTenantDefaults())->execute($tenant, $user);
 
         Contractor::factory(5)->create([
             'tenant_id' => $tenant->id,

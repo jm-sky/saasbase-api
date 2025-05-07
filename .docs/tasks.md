@@ -1,194 +1,6 @@
 # Tasks
 
-## Task: Implement Multi-Tenancy with Global Tenant Scope and `BelongsToTenant` Trait
-
-### Objective:
-We need to implement a multi-tenancy system using a global scope to filter data based on the tenant ID. The `BelongsToTenant` trait will be used in models to automatically apply the tenant scope, while also allowing the scope to be bypassed when necessary (for example, in tests or seeding). If the tenant context is not available or invalid, a custom exception will be raised to ensure security.
-
-### Steps:
-1. Create a custom exception `TenantNotFoundException` that will be thrown when the tenant context is not found.
-2. Implement the `TenantScope` class that adds a global scope to filter models by `tenant_id`.
-3. Define the `BelongsToTenant` trait which applies the `TenantScope` to models.
-4. Allow the scope to be bypassed by providing a method `withoutTenantScope()` in the trait.
-
----
-
-```php
-<?php
-
-// In app/Exceptions/TenantNotFoundException.php
-namespace App\Exceptions;
-
-use Exception;
-
-class TenantNotFoundException extends Exception
-{
-    protected $message = 'Tenant context not found. Please ensure the user is properly authenticated for the correct tenant.';
-
-    public function render($request)
-    {
-        return response()->json([
-            'error' => $this->message,
-        ], 403);  // You can customize the HTTP status code (403 is a good default for "Forbidden")
-    }
-}
-
-namespace App\Domain\Tenant\Scopes;
-
-use Illuminate\Database\Eloquent\Scope;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use App\Exceptions\TenantNotFoundException;
-
-class TenantScope implements Scope
-{
-    public function apply(Builder $builder, Model $model)
-    {
-        // Retrieve the tenant ID from the authenticated user
-        $tenantId = auth()->user()?->getTenantId();
-
-        // If tenant_id is not present or invalid, throw a custom exception
-        if (!$tenantId) {
-            throw new TenantNotFoundException();
-        }
-
-        // Apply the tenant_id condition to the query
-        $builder->where('tenant_id', $tenantId);
-    }
-}
-
-// In app/Domain/Tenant/Concerns/BelongsToTenant.php
-namespace App\Domain\Tenant\Concerns;
-
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Scopes\TenantScope;
-
-trait BelongsToTenant
-{
-    protected static function bootBelongsToTenant(): void
-    {
-        static::addGlobalScope(new TenantScope);
-    }
-
-    public function tenant(): BelongsTo
-    {
-        return $this->belongsTo(Tenant::class);
-    }
-
-    // Disable the global scope for the query
-    public static function withoutTenantScope(): Builder
-    {
-        return static::withoutGlobalScope(TenantScope::class);
-    }
-}
-```
-
-## 1. [x] Add middleware to set locale based on Accept Language header. 
-
-```php
-<?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Config;
-
-class SetLocaleFromHeader
-{
-    public function handle(Request $request, Closure $next)
-    {
-        // Pobierz listę z configu
-        $supportedLocales = Config::get('app.supported_locales', ['en']);
-
-        // Laravelowy helper do analizy Accept-Language
-        $locale = $request->getPreferredLanguage($supportedLocales);
-
-        if ($locale) {
-            App::setLocale($locale);
-        }
-
-        return $next($request);
-    }
-}
-```
-
----
-
-## 2. [x] Add seeders for all models. I need seeder for skill categories and skills, let's start with IT area. I want to have a demo with few users, few tenants, some contractors, products, projects & tasks.
-
-- **Subtasks**:
-  - Create seeder for skill categories and skills (IT area).
-  - Create seeder for users (demo users, include users with different roles).
-  - Create seeder for tenants (few tenants).
-  - Create seeder for contractors (few contractors).
-  - Create seeder for products (demo products).
-  - Create seeder for projects (few demo projects).
-  - Create seeder for tasks (few tasks related to projects).
-  - Create seeder for Vat rates - use Polish vat rates as example.
-   ```jsonc
-   // database/seeders/data/polish_vat_rates.json
-   [
-     { "rate": 0.23, "name": "23%",     "is_default": true },
-     { "rate": 0.08,  "name": "8%",       "is_default": false },
-     { "rate": 0.05,  "name": "5%", "is_default": false },
-     { "rate": 0.0,  "name": "0%",          "is_default": false }
-   ]
-   ```
-
----
-
-## 3. [x] Add countries to Country seeders JSON file (European countries, and most large countries).
-- **Note**: We can include all countries if performance is not impacted.
-- **Subtasks**:
-  - Review existing Country seeder.
-  - Add all countries (Europe and large countries) to the seeder.
-  - Test seeding functionality.
-
----
-
-## 4. [x] Add routes & actions for current user - change settings, reset password etc.
-- **Suggested**: Use Actions instead of controller methods for better organization.
-- **Subtasks**:
-  - Create actions for changing user settings (username, email, etc.).
-  - Create action for resetting password.
-  - Create action for updating user profile. 
-  - Create action for updating timezone. 
-  - Create action for updating notified preferences.
-  - Implement action for changing language preference.
-  - Implement validation for user settings actions.
-
-   ```php
-   // routes/api.php
-   // Use actions instead of controllers 
-   // Add timezone & notification prefs. 
-   Route::middleware('auth:sanctum')->group(function () {
-       Route::put('user/settings', [UserSettingsController::class, 'update']);
-       Route::patch('user/language', [UserSettingsController::class, 'changeLanguage']);
-   });
-   Route::post('user/password-reset', [PasswordResetController::class, 'sendResetLink']);
-   Route::put('user/password', [PasswordResetController::class, 'resetPassword']);
-   ```
-   **Done when:**  
-   - All four endpoints accept and return JSON, apply validation via FormRequest or Actions, and return appropriate HTTP codes.  
-   - Tests cover success and failure cases.
-
----
-
-## 5. [x] Add trait (BelongsToTenant) that applies a global scope for models with `tenant_id`. We'll store `tenant_id` in session or JWT for security.  
-- **Note**: User does not have tenant_id; a user can belong to many tenants, not just one.
-- **Subtasks**:
-  - Create a `BelongsToTenant` trait that applies a global scope for models.
-  - Implement session or JWT storage for tenant identification.
-  - Refactor models that should be tenant-scoped.
-  - Add unit tests for tenant scoping.
-
----
-
-## 6. [ ] Refactor foreign keys. i.e. refer to country code (pl, de) instead of id. Analyse.  
+## [ ] Refactor foreign keys. i.e. refer to country code (pl, de) instead of id.  
 - **Note**: It may not be more efficient, but we would immediately see the country name instead of an anonymous ID.
 - **Subtasks**:
   - Review foreign key usage for countries.
@@ -199,113 +11,7 @@ class SetLocaleFromHeader
 
 ---
 
-## 7. [x] Implement standardized filtering and sorting with Spatie Query Builder to index method in all CRUD controllers. 
-
-Create trait
-```php
-namespace App\Http\Controllers\Concerns;
-
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
-
-trait HasIndexQuery
-{
-    /**
-     * The model class to query.
-     */
-    protected string $modelClass;
-
-    /**
-     * Allowed filters for the query.
-     */
-    protected array $filters = [];
-
-    /**
-     * Allowed sorts for the query.
-     */
-    protected array $sorts = [];
-
-    /**
-     * Default sort option.
-     */
-    protected string $defaultSort = '-id';
-
-    /**
-     * Create the base query using Spatie QueryBuilder.
-     */
-    public function getIndexQuery(Request $request): Builder
-    {
-        return QueryBuilder::for($this->modelClass)
-            ->allowedFilters($this->filters)
-            ->allowedSorts($this->sorts)
-            ->defaultSort($this->defaultSort);
-    }
-
-    /**
-     * Return paginated results.
-     */
-    public function getIndexPaginator(Request $request): LengthAwarePaginator
-    {
-        return $this->getIndexQuery($request)->paginate()->appends($request->query());
-    }
-}
-```
-
-Create DateRangeFilter
-```php
-namespace App\Filters;
-
-use Spatie\QueryBuilder\Filters\Filter;
-use Illuminate\Database\Eloquent\Builder;
-
-class DateRangeFilter implements Filter
-{
-    protected string $column;
-
-    public function __construct(string $column = 'date')
-    {
-        $this->column = $column;
-    }
-
-    public function __invoke(Builder $query, $value, string $property)
-    {
-        $dates = explode(',', $value);
-        $from = $dates[0] ?? null;
-        $to = $dates[1] ?? null;
-
-        if ($from && !$to) {
-            $query->whereDate($this->column, '=', $from);
-        } elseif ($from && $to) {
-            $query->whereDate($this->column, '>=', $from)
-                  ->whereDate($this->column, '<=', $to);
-        }
-    }
-}
-```
-
-Use this trait in controllers, fill `$filters` with all columns of domain model, and some relations if needed. Use DateRangeFilter for date fields.
-
-Create something like `Search[model]Request` with validation for those filters.
-
-Add tests.
-
----
-
-## 9. [ ] Implement task-based notifications for users (e.g., for project deadlines, task assignments).
-
-- **Subtasks**:
-  - Define task-related notifications.
-  - Set up notification system using Laravel Notifications.
-  - Trigger notifications based on task events (task created, updated, etc.).
-  - Allow users to customize notification preferences.
-  - Add tests for notification functionality.
-
----
-
-## 10. [ ] Add multi-language support for user interface.
+## [ ] Add multi-language support for user interface.
 
 - **Subtasks**:
   - Implement language files for UI translations.
@@ -315,7 +21,7 @@ Add tests.
 
 ---
 
-## 11. [ ] Refactor dictionary-like tables (e.g. VAT rates) to use meaningful string primary keys
+## [ ] Refactor dictionary-like tables (e.g. VAT rates) to use meaningful string primary keys
 
 - **Goal**: Improve readability and maintainability by using string values (e.g., `'5%'`, `'PL'`, `'kg'`) as primary keys instead of UUIDs for static/dictionary data.
 
@@ -337,63 +43,7 @@ Add tests.
 
 ---
 
-## 12. [ ] Implement file attachments using Spatie Media Library
-
-- **Goal**: Allow models to support file attachments (e.g., for tasks, invoices, products, etc.) using the Spatie Media Library package.
-
-- **Subtasks**:
-  - **Install and configure**: Install and configure [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary).
-  - **Set up media storage**:
-    - Configure the media disk in `config/filesystems.php` and `.env` for MinIO integration.
-  - **Create a reusable trait**:
-    - Create a trait `HasAttachments` to handle media logic across models.
-  - **Update models to use media**:
-    - Add `InteractsWithMedia` and `HasMedia` to models like `User`, `Project`, `Task`, `Contractor`, `Comment`, `Tenant`, `Invoice`, and `Product`.
-  - **Define media collections**:
-    - Allow models to handle multiple collections such as `profile_images`, `task_attachments`, `product_images`, `invoice_pdfs`, etc.
-    - Define media conversions for thumbnails, PDF previews, etc.
-  - **Implement attachment CRUD**:
-    - Create controllers (e.g., `ProductAttachmentsController`, `InvoiceAttachmentsController`) for handling file upload, update, deletion, and retrieval.
-    - Support single and multiple file uploads.
-    - Implement actions or API endpoints to upload, update, delete, and retrieve attachments.
-  - **Update API Resources or Transformers**:
-    - Ensure media URLs are included in API responses (e.g., `profile_image_url`, `task_attachments_url`).
-  - **Handle file types and previews**:
-    - Implement preview generation for common file types (e.g., PDF thumbnails, image resizing).
-  - **Testing**:
-    - Write unit and feature tests for uploading and retrieving media across all models.
-    - Test the integration of MinIO for file storage. 
-
----
-
-## 13. [ ] Integrate company data lookup via NIP using the Polish White List API (MF)
-
-- **Goal**: Allow fetching contractor details (e.g., name, address, VAT status) using NIP via the official [White List of VAT Taxpayers API](https://www.podatki.gov.pl/wykaz-podatnikow-vat).
-- **Use cases**: 
-  - API endpoint for user lookup (manual input)
-  - Internal processes (e.g., invoice imports, contractor matching)
-- **Caching**: Use configurable cache (default until midnight, but can be overridden to e.g. next month)
-- **HTTP Client**: Use [Saloon](https://docs.saloon.dev) for integration.
-
-- **Subtasks**:
-  - Install and configure Saloon HTTP client package
-  - Create connector class for MF White List API using Saloon
-  - Create request class for NIP lookup via Saloon
-  - Build service class `CompanyLookupService` to fetch and parse data from API
-  - Add configurable caching logic:
-    - Default: cache until midnight
-    - Accept override for next-day / next-month expiration
-  - Create API endpoint `GET /api/contractors/lookup-by-nip/{nip}`:
-    - Validate NIP format
-    - Call `CompanyLookupService`
-    - Return company name, address, VAT status, REGON, bank accounts, etc.
-  - Log lookup results and errors (optional: store audit log)
-  - Write tests for API and service class
-  - Use internally in processes like invoice import or contractor auto-fill 
-
----
-
-## 14. [ ] Generate PDF files from invoices
+## [ ] Generate PDF files from invoices
 
 - **Goal**: Automatically generate PDF representations of invoices for downloading, sending, and archiving purposes.
 
@@ -411,7 +61,18 @@ Add tests.
 
 ---
 
-## 16. [ ] Handle notifications for project/task updates and invoices waiting for payment
+## [ ] Implement task-based notifications for users (e.g., for project deadlines, task assignments).
+
+- **Subtasks**:
+  - Define task-related notifications.
+  - Set up notification system using Laravel Notifications.
+  - Trigger notifications based on task events (task created, updated, etc.).
+  - Allow users to customize notification preferences.
+  - Add tests for notification functionality.
+
+---
+
+## [ ] Handle notifications for project/task updates and invoices waiting for payment
 
 - **Goal**: Implement a notification system to inform users of project/task changes and invoices that are pending payment.
 
@@ -439,49 +100,26 @@ Add tests.
     - Implement user preferences for notification settings (e.g., frequency of reminders, channels).
     - Add retry logic for failed notifications and ensure proper logging for debugging.
 
----
 
-## 17. [ ] Implement customizable statuses per model with admin-managed defaults
-
-- **Goal**: Allow each tenant to define their own statuses per domain model (e.g., tasks, projects), with a shared set of admin-managed default statuses.
-
-- **Subtasks**:
-  - Create separate status models, e.g. `ProjectStatus`, `TaskStatus`.
-  - For each status model:
-    - Add `tenant_id` (**required**).
-    - Add `is_default` boolean flag (used to distinguish default records copied to new tenants).
-    - Include fields like `name`, `color`, `order`, etc.
-  - Create seeders for `DefaultProjectStatus` and `DefaultTaskStatus` managed by the system.
-  - On tenant creation, copy default statuses into tenant-specific records with proper `tenant_id`.
-  - Create API endpoints/actions to manage statuses per tenant (CRUD).
-  - Ensure each related domain model (`Project`, `Task`, etc.) uses the appropriate status model via relationship.
-  - Add UI and validation rules for status management.
-  - Include automated tests for:
-    - Default seeding
-    - Tenant customization
-    - Relationship with domain models 
-
----
-
-## 18. [ ] Implement tenant-specific measurement units for invoice items (e.g. hour, day, km)
+## [ ] Implement tenant-specific measurement units for invoice items (e.g. hour, day, km)
 
 - **Goal**: Allow tenants to manage their own units of measurement (e.g., hours, kilometers), with admin-managed defaults categorized by type.
 
 - **Subtasks**:
-  - Create `MeasurementUnit` model with the following fields:
+  - [x] Create `MeasurementUnit` model with the following fields:
     - `tenant_id` (**required**)
     - `name` (e.g. "hour")
-    - `shortcut` (e.g. "h")
+    - `code` (e.g. "h")
     - `category` (e.g. "time", "length", "energy")
     - `is_default` (boolean to distinguish system defaults)
-  - Seed default units (e.g., hour, day, km, liter) categorized properly.
-  - On tenant creation, copy default units to tenant with `is_default = true`.
+  - [ ] Seed default units (e.g., hour, day, km, liter) categorized properly.
+  - [ ] On tenant creation, copy default units to tenant with `is_default = true`.
   - Allow tenants to:
     - View their unit list
     - Create new custom units
     - Add more predefined units from a selected category
   - Add API endpoints/actions to manage units (CRUD).
-  - Add validation for name/shortcut uniqueness per tenant.
+  - Add validation for name/code uniqueness per tenant.
   - Use the `MeasurementUnit` model in invoice items and other relevant models.
   - Add automated tests for:
     - Default seeding
@@ -491,7 +129,7 @@ Add tests.
 
 ---
 
-## 19.[] **Invitation System**
+## [] **Invitation System**
   - Implement a system allowing users with appropriate permissions to send invitations to join a tenant.
   - Each invitation should include:
     - Recipient email address.
@@ -509,102 +147,13 @@ Add tests.
 
 ---
 
-## 20. [] **Generate OpenAPI YAML Specification**
+## [] **Generate OpenAPI YAML Specification**
   - Automatically generate OpenAPI documentation in YAML format for the entire API.
   - Include all endpoints, models, request/response schemas, authentication details.
   - Ensure compatibility with tools like Swagger UI and Postman.
   - Preferably automate via Artisan command or during CI build.
 
 ---
-
-## 21. [] **Migrate UUID to ULID**
-  - Replace UUID identifiers with ULID across all models that currently use UUID.
-  - Check latest Laravel documentation (v12) for native Laravel support for ULID (in migration, validation, model trait) 
-  - Create a new Laravel trait similar to `HasUuid` but using ULID (e.g. `HasUlid`) (if needed).
-  - Update model factories, migrations, and any related seeding logic to use ULID.
-  - Ensure compatibility with existing tools like Spatie Media Library, Horizon, etc.
-  - Validate sortability and uniqueness of ULIDs across tenants and environments.
-    - Migrations update PK types to `ulid()`.  
-    - Factories use `Str::ulid()`.  
-
----
-
-## 22. [] **Add Admin API Endpoints**
-  - Introduce new API namespace: `/api/v1/admin/...`.
-  - Allow full CRUD access to global models and dictionary tables outside of tenant scope.
-  - Example resources: tenants, users, invoices, default project/task statuses, units, VAT rates, etc.
-  - Ensure all admin endpoints are protected by proper authorization middleware (e.g. `is_admin`).
-  - Use separate controllers or route groups to avoid conflicts with tenant-scoped logic.
-  - Tag admin routes accordingly in OpenAPI documentation for visibility and clarity. 
-
----
-
-## 22. [x] Refresh Token Support in JWTAuth
-
-### Goal
-Implement full support for refresh tokens in a Laravel app using the `tymon/jwt-auth` package.
-
-### Requirements
-
-1. **TTL Configuration**:
-   - Access token: 15 minutes
-   - Refresh token: 7 days (10080 minutes)
-
-2. **Endpoints**:
-   - `POST /api/auth/login` — returns access token and refresh token
-   - `POST /api/auth/refresh` — accepts refresh token and returns new access token
-   - `POST /api/auth/logout` — invalidates current access token (and optionally the refresh token)
-
-3. **Security**:
-   - Refresh token should be stored on the client side (preferably in an HttpOnly cookie, or as a returned JSON field)
-   - Stateless approach: no server-side storage of refresh tokens unless explicitly extended
-
-4. **Middleware**:
-   - Every request should validate the access token
-   - Handle "token expired" errors with a clear path to refresh
-
-### Extras
-- Add unit and integration tests for login, refresh, and logout flows.
-- Optionally create a dedicated service (e.g., `AuthService`) to encapsulate token logic.
-
-### Definition of Done
-- All endpoints work as described.
-- Tokens are issued and refreshed respecting their TTLs.
-- Tests cover the main use cases.
-- API documentation updated (OpenAPI/Swagger or README). 
-
---
-
-### [] Task: Implement Exchange and ExchangeRate Models with Read-Only Endpoints
-
-**Goal:**  
-Allow users to view currency exchange rates.
-
-**Scope:**  
-- Models:
-  - `Exchange` – Represents a currency (e.g., USD, EUR).
-  - `ExchangeRate` – Represents the rate for a specific day between two currencies.
-- Relationships:
-  - `ExchangeRate` belongs to `Exchange` (for both base and target currency).
-- Fields:
-  - `Exchange`: `id`, `code` (e.g., "USD"), `name` (e.g., "US Dollar")
-  - `ExchangeRate`: `id`, `exchange_id`, `target_exchange_id`, `rate`, `date`
-- Endpoints:
-  - `GET /api/exchanges`
-  - `GET /api/exchanges/{id}`
-  - `GET /api/exchange-rates`
-  - `GET /api/exchange-rates/{id}`
-- Notes:
-  - Read-only (no create/update/delete)
-  - Optional: Seed with basic currencies and rates
-
-**Definition of Done:**
-- Models and migrations created
-- Read-only API routes and controllers implemented
-- Proper resource classes for JSON output
-- Seeders for major currencies and sample rates
-
---
 
 ### [] Task: Create Invoice Numbering Template System
 
@@ -632,7 +181,7 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
 
 ---
 
-## xx. [ ] LATER. Integrate OCR functionality using Tesseract for document text extraction
+## [ ] Integrate OCR functionality using Tesseract for document text extraction
 
 - **Goal**: Enable text extraction from images and PDFs (e.g., invoices, ID documents, scanned agreements) using the Tesseract OCR engine.
 
@@ -737,14 +286,13 @@ Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `I
 
 ---
 
-### [] Task: Integrate Exchange Rates from Multiple Sources
+### [] Task: Integrate Exchange Rates from NBP API
 
-**Objective:** Integrate exchange rate data from at least two sources (e.g., Polish NBP and another API) for daily exchange rate import.
+**Objective:** Integrate exchange rate data from Polish NBP for daily exchange rate import.
 
 #### Subtasks:
 1. **Data Source Integration**: 
    - [ ] Integrate the Polish NBP API to fetch exchange rates.
-   - [ ] [LATER] Integrate a secondary source (e.g., European Central Bank or a commercial API like Open Exchange Rates) for redundancy and broader currency support.
    
 2. **Daily Import**: 
    - Set up a scheduled task (e.g., using Laravel Scheduler) to import exchange rates every day.
