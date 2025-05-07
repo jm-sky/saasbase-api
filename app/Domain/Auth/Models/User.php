@@ -2,9 +2,11 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Auth\Casts\UserConfigCast;
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
+use App\Domain\Auth\ValueObjects\UserConfig;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
@@ -18,6 +20,7 @@ use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -29,7 +32,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Image\Manipulations;
+use Spatie\Image\Enums\CropPosition;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
@@ -48,11 +51,12 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?string                       $avatar_url
  * @property bool                          $is_admin
  * @property UserStatus                    $status
+ * @property UserConfig                    $config
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  * @property ?Carbon                       $deleted_at
  * @property ?Carbon                       $email_verified_at
- * @property UserSettings|null             $settings
+ * @property ?UserSettings                 $settings
  * @property Collection<int, OAuthAccount> $oauthAccounts
  * @property Collection<int, UserTenant>   $tenantMemberships
  * @property Collection<int, Project>      $projects
@@ -83,11 +87,14 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'phone',
         'avatar_url',
         'status',
+        'config',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'updated_at',
+        'deleted_at',
     ];
 
     protected $casts = [
@@ -96,6 +103,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'birth_date'        => 'date',
         'is_admin'          => 'boolean',
         'status'            => UserStatus::class,
+        'config'            => UserConfigCast::class,
     ];
 
     protected static function booted(): void
@@ -103,6 +111,27 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         static::created(function (User $user) {
             event(new \App\Domain\Auth\Events\UserCreated($user));
         });
+    }
+
+    protected function publicEmail(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->config?->isEmailPublic ? $this->email : null,
+        );
+    }
+
+    protected function publicBirthDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->config?->isBirthDatePublic ? $this->birth_date : null,
+        );
+    }
+
+    protected function publicPhone(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->config?->isPhonePublic ? $this->phone : null,
+        );
     }
 
     public function isAdmin(): bool
@@ -241,7 +270,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->fit(Manipulations::FIT_CROP, 100, 100)
+            ->crop(100, 100, CropPosition::Center)
             ->nonQueued()
         ;
     }
@@ -268,5 +297,20 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function getEmailAttribute($value)
+    {
+        return ($this->config && $this->config->isEmailPublic) ? $value : null;
+    }
+
+    public function getBirthDateAttribute($value)
+    {
+        return ($this->config && $this->config->isBirthDatePublic) ? $value : null;
+    }
+
+    public function getPhoneAttribute($value)
+    {
+        return ($this->config && $this->config->isPhonePublic) ? $value : null;
     }
 }
