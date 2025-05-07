@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Enums\UserStatus;
+use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Projects\Models\Project;
@@ -262,5 +263,10 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmailNotification());
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
