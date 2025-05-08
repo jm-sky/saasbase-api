@@ -28,6 +28,7 @@ services:
             - mailpit
             - soketi
             - redis
+
     pgsql:
         image: 'postgres:17'
         ports:
@@ -53,6 +54,7 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+
     minio:
         image: 'minio/minio:latest'
         ports:
@@ -74,6 +76,7 @@ services:
                 - local
             retries: 3
             timeout: 5s
+
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
@@ -109,9 +112,11 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+
 networks:
     sail:
         driver: bridge
+
 volumes:
     sail-pgsql:
         driver: local

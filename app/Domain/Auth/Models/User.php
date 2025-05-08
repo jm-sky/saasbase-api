@@ -257,7 +257,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->crop(100, 100, CropPosition::Center)
+            ->crop(256, 256, CropPosition::Center)
             ->nonQueued()
         ;
     }
