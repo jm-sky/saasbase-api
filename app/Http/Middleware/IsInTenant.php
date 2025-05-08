@@ -16,8 +16,6 @@ class IsInTenant
             ], Response::HTTP_FORBIDDEN);
         }
 
-        dd(Auth::payload());
-
         return $next($request);
     }
 }
