@@ -25,14 +25,17 @@ class UserProfileImageController extends Controller
             ->toMediaCollection('profile')
         ;
 
+        $avatarUrl = route('user.profile-image.showForUser', ['user' => $user->id], absolute: false);
+        $thumbUrl  = route('user.profile-image.showForUser', ['user' => $user->id, 'thumb' => true], absolute: false);
+
         $user->update([
-            'avatar_url' => route('user.profile-image.showForUser', ['user' => $user->id], absolute: false),
+            'avatar_url' => $avatarUrl,
         ]);
 
         return response()->json([
             'message'     => 'Profile image uploaded successfully.',
-            'originalUrl' => route('user.profile-image.showForUser', ['user' => $user->id], absolute: false),
-            'thumbUrl'    => route('user.profile-image.showForUser', ['user' => $user->id, 'thumb' => true], absolute: false),
+            'originalUrl' => $avatarUrl,
+            'thumbUrl'    => $thumbUrl,
         ]);
     }
 
@@ -89,6 +92,10 @@ class UserProfileImageController extends Controller
     {
         $user = $request->user();
         $user->clearMediaCollection('profile');
+
+        $user->update([
+            'avatar_url' => null,
+        ]);
 
         return response()->json(['message' => 'Profile image deleted.'], HttpResponse::HTTP_NO_CONTENT);
     }

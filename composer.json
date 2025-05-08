@@ -22,6 +22,7 @@
         "lorisleiva/laravel-actions": "^2.9",
         "mews/purifier": "^3.4",
         "pragmarx/google2fa": "^8.0",
+        "pusher/pusher-php-server": "^7.2",
         "ramsey/uuid": "^4.7",
         "rap2hpoutre/laravel-log-viewer": "^2.5",
         "saloonphp/saloon": "^3.11",

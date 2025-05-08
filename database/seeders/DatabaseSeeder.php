@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+    public const BOT_USER_ID = 'd99468d6-2153-5493-95dc-7cf06043f471';
+
     /**
      * Seed the application's database.
      */
@@ -37,6 +39,8 @@ class DatabaseSeeder extends Seeder
         // Event listener will create the tenant for the user
         $user->tenants()->attach($tenant, ['role' => 'admin']);
 
+        $this->createBotUser($tenant);
+
         $this->call([
             CountrySeeder::class,
             VatRateSeeder::class,
@@ -55,5 +59,18 @@ class DatabaseSeeder extends Seeder
         Product::factory(5)->create([
             'tenant_id' => $tenant->id,
         ]);
+    }
+
+    protected function createBotUser(Tenant $tenant): void
+    {
+        $botUser = User::factory()->create([
+            'id'         => self::BOT_USER_ID,
+            'first_name' => 'Botto',
+            'last_name'  => 'Bot',
+            'email'      => 'bot@example.com',
+            'password'   => Hash::make(config('users.default_user.password')),
+        ]);
+
+        $botUser->tenants()->attach($tenant, ['role' => 'user']);
     }
 }
