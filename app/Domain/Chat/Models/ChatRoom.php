@@ -47,4 +47,9 @@ class ChatRoom extends BaseModel
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function isUserParticipant(string $userId): bool
+    {
+        return $this->participants()->where('user_id', $userId)->exists();
+    }
 }

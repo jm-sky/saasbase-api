@@ -9,12 +9,20 @@ use App\Domain\Chat\Models\ChatMessage;
 use App\Domain\Chat\Models\ChatRoom;
 use App\Domain\Chat\Requests\SendMessageRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MessageController extends Controller
 {
+    public static bool $sendDummyMessages = true;
+
+    public function __construct()
+    {
+        self::$sendDummyMessages = 'local' === config('app.env');
+    }
+
     /**
      * Send a message in a chat room.
      */
@@ -24,7 +32,7 @@ class MessageController extends Controller
         $currentUser = $request->user();
 
         // Authorization: ensure user is a participant
-        if (!$room->participants()->where('user_id', $currentUser->id)->exists()) {
+        if (!$room->isUserParticipant($currentUser->id)) {
             return response()->json(['message' => 'Forbidden'], Response::HTTP_FORBIDDEN);
         }
 
@@ -35,16 +43,32 @@ class MessageController extends Controller
             'user_id'      => $currentUser->id,
             'parent_id'    => $data['parentId'] ?? null,
             'content'      => $data['content'],
-            // 'tenant_id'    => $room->tenant_id,
+            'tenant_id'    => $room->tenant_id,
         ]);
 
         event(new MessageSent($message));
+
+        if (self::$sendDummyMessages) {
+            $this->sendDummyMessage($room, $currentUser->id);
+        }
 
         $dto = ChatMessageDTO::fromModel($message);
 
         return response()->json([
             'data' => $dto->toArray(),
         ], Response::HTTP_CREATED);
+    }
+
+    protected function sendDummyMessage(ChatRoom $room, string $userId): void
+    {
+        $message = ChatMessage::create([
+            'chat_room_id' => $room->id,
+            'user_id'      => $userId,
+            'content'      => 'Yes, that\'s right! But what do You think about this? ' . Inspiring::quotes()->random(),
+            'tenant_id'    => $room->tenant_id,
+        ]);
+
+        event(new MessageSent($message));
     }
 
     /**
