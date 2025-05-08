@@ -17,8 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'is_admin' => \App\Http\Middleware\IsAdmin::class,
             'is_active' => \App\Http\Middleware\IsActive::class,
+            'is_in_tenant' => \App\Http\Middleware\IsInTenant::class,
+            'is_admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

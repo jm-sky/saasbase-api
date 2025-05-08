@@ -23,27 +23,28 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/auth.php';
 
-    Route::middleware('auth:api')->group(function () {
-        Route::post('auth/refresh', [AuthController::class, 'refresh']);
+    Route::post('auth/token/refresh', [AuthController::class, 'refresh']);
 
+    Route::middleware(['auth:api', 'is_active'])->group(function () {
         require __DIR__ . '/api/user.php';
         require __DIR__ . '/api/tenants.php';
         require __DIR__ . '/api/feeds.php';
 
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
 
-        Route::middleware(['is_active'])->group(function () {
+        Route::middleware('is_in_tenant')->group(function () {
             Route::apiResource('contractors', ContractorController::class);
             Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
             Route::apiResource('products', ProductController::class);
+            // TODO: move outside tenant middleware and check only for public users
             Route::apiResource('users', PublicUserController::class)->only(['index', 'show']);
-
-            Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);
-            Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
-
             require __DIR__ . '/api/projects.php';
-            require __DIR__ . '/api/skills.php';
         });
+
+        Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);
+        Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
+
+        require __DIR__ . '/api/skills.php';
     });
 
     require __DIR__ . '/api/admin.php';

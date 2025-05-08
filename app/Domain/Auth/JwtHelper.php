@@ -71,12 +71,13 @@ class JwtHelper
 
         $customClaims = self::getCustomClaims($user, tenantId: $tenantId, remember: $remember);
 
-        return JWTAuth::factory()
+        $payload = JWTAuth::factory()
             ->setTTL($ttl)
             ->claims($customClaims)
-            ->fromUser($user)
             ->make()
         ;
+
+        return JWTAuth::manager()->encode($payload)->get();
     }
 
     public static function getRefreshTokenTTL(bool $remember = false): int

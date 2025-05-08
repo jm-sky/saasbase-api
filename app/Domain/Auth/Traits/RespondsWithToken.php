@@ -42,7 +42,7 @@ trait RespondsWithToken
         return cookie(
             'refresh_token',
             value: $refreshToken,
-            minutes: $this->getRefreshTokenCookieTtl($remember),
+            minutes: $this->getRefreshTokenCookieTTL($remember),
             path: '/',
             domain: null,
             secure: true,
@@ -52,7 +52,7 @@ trait RespondsWithToken
         );
     }
 
-    protected function getRefreshTokenCookieTtl(bool $remember = false): int
+    protected function getRefreshTokenCookieTTL(bool $remember = false): int
     {
         return JwtHelper::getRefreshTokenTTL($remember);
     }

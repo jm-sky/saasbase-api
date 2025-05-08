@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -74,13 +75,17 @@ class AuthController extends Controller
     public function refresh(): JsonResponse
     {
         try {
-            $token = JWTAuth::getToken();
+            $refreshToken = request()->cookie('refresh_token');
 
-            if (!$token) {
+            if (!$refreshToken) {
                 throw new JWTException('Token not provided');
             }
 
-            $user = JWTAuth::parseToken()->authenticate();
+            // Set the refresh token for JWTAuth to use
+            JWTAuth::setToken($refreshToken);
+
+            // Authenticate the user using the refresh token
+            $user = JWTAuth::authenticate();
 
             if (!$user) {
                 throw new TokenInvalidException('User not found');
@@ -98,9 +103,9 @@ class AuthController extends Controller
             // TODO: Implement $remember
             return $this->respondWithToken($newToken, $user, tenantId: $tenantId);
         } catch (TokenInvalidException $e) {
-            return response()->json(['error' => 'Invalid token'], 401);
+            return response()->json(['error' => 'Invalid token'], Response::HTTP_UNAUTHORIZED);
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Token not provided or expired'], 401);
+            return response()->json(['error' => 'Token not provided or expired'], Response::HTTP_UNAUTHORIZED);
         }
     }
 }

@@ -21,7 +21,7 @@ class PublicUserController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $this->tenant = $user->tenants()->firstWhere('id', $user->getTenantId());
+        $this->tenant = $user->tenants()->firstWhere('tenants.id', $user->getTenantId());
     }
 
     public function index(Request $request): JsonResponse

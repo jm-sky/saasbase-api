@@ -176,12 +176,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
             return Auth::payload()->get('tid');
         }
 
-        $membership = $this->tenantMemberships()->first();
-
-        if ($membership) {
-            return $membership->tenant_id;
-        }
-
         return null;
     }
 
@@ -193,11 +187,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function oauthAccounts(): HasMany
     {
         return $this->hasMany(OAuthAccount::class);
-    }
-
-    public function tenantMemberships(): HasMany
-    {
-        return $this->hasMany(UserTenant::class);
     }
 
     public function projects(): BelongsToMany
