@@ -7,6 +7,7 @@ use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Users\Controllers\PublicUserController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Broadcast::routes([
+    'middleware' => ['auth:api'],
+    'prefix'     => 'v1',
+    'as'         => 'broadcast.',
+]);
+
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/auth.php';
 
@@ -29,6 +36,7 @@ Route::prefix('v1')->group(function () {
         require __DIR__ . '/api/user.php';
         require __DIR__ . '/api/tenants.php';
         require __DIR__ . '/api/feeds.php';
+        require __DIR__ . '/api/chat.php';
 
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
 
