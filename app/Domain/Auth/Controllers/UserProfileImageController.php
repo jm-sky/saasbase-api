@@ -4,6 +4,7 @@ namespace App\Domain\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserProfileImageController extends Controller
 {
@@ -21,20 +22,29 @@ class UserProfileImageController extends Controller
             ->toMediaCollection('profile')
         ;
 
+        $user->update([
+            'avatar_url' => route('user.profile-image.show', absolute: false),
+        ]);
+
         return response()->json([
             'message'     => 'Profile image uploaded successfully.',
-            'originalUrl' => $user->getFirstMediaUrl('profile'),
-            'thumbUrl'    => $user->getFirstMediaUrl('profile', 'thumb'),
+            'originalUrl' => route('user.profile-image.show', absolute: false),
+            'thumbUrl'    => route('user.profile-image.show', ['thumb' => true], absolute: false),
         ]);
     }
 
     public function show(Request $request)
     {
         $user  = $request->user();
-        $media = $user->getFirstMedia('profile');
+        $thumb = $request->query('thumb', false);
+        $media = $thumb ? $user->getFirstMedia('profile', 'thumb') : $user->getFirstMedia('profile');
+
+        if ($thumb & !$media) {
+            $media = $user->getFirstMedia('profile');
+        }
 
         if (!$media) {
-            return response()->json(['message' => 'No profile image found.'], 404);
+            return response()->json(['message' => 'No profile image found.'], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json([
@@ -51,6 +61,6 @@ class UserProfileImageController extends Controller
         $user = $request->user();
         $user->clearMediaCollection('profile');
 
-        return response()->json(['message' => 'Profile image deleted.']);
+        return response()->json(['message' => 'Profile image deleted.'], Response::HTTP_NO_CONTENT);
     }
 }

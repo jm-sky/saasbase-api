@@ -13,7 +13,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::get('settings', [UserSettingsController::class, 'show']);
     Route::put('settings', [UserSettingsController::class, 'update']);
     Route::patch('settings/language', [UserSettingsController::class, 'updateLanguage']);
-    Route::post('profile-image', [UserProfileImageController::class, 'upload']);
-    Route::get('profile-image', [UserProfileImageController::class, 'show']);
-    Route::delete('profile-image', [UserProfileImageController::class, 'delete']);
+    Route::post('profile-image', [UserProfileImageController::class, 'upload'])->name('user.profile-image.upload');
+    Route::get('profile-image', [UserProfileImageController::class, 'show'])->name('user.profile-image.show');
+    Route::delete('profile-image', [UserProfileImageController::class, 'delete'])->name('user.profile-image.delete');
 });

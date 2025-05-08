@@ -1,0 +1,32 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+- **Use short type syntax in PHP**
+  - Always use `?type` instead of `type|null` for nullable types.
+  - Example:
+    ```php
+    // ✅ DO:
+    public function foo(): ?string {}
+    // ❌ DON'T:
+    public function foo(): string|null {}
+    ```
+
+- **Import dependencies for short class names**
+  - Always import classes (e.g., `use Carbon\Carbon;`) and use the short name in type hints and docblocks.
+  - Example:
+    ```php
+    use Carbon\Carbon;
+    // ✅ DO:
+    /** @var Carbon $date */
+    // ❌ DON'T:
+    /** @var \Carbon\Carbon $date */
+    ```
+
+- **Rationale:**
+  - Improves code readability and consistency.
+  - Matches modern PHP and Laravel best practices.
+
+- **References:**
+  - See [ChatRoom.php](mdc:app/Domain/Chat/Models/ChatRoom.php) for correct usage.
