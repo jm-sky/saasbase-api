@@ -2,9 +2,12 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class UserProfileImageController extends Controller
 {
@@ -23,13 +26,13 @@ class UserProfileImageController extends Controller
         ;
 
         $user->update([
-            'avatar_url' => route('user.profile-image.show', absolute: false),
+            'avatar_url' => route('user.profile-image.showForUser', ['user' => $user->id], absolute: false),
         ]);
 
         return response()->json([
             'message'     => 'Profile image uploaded successfully.',
-            'originalUrl' => route('user.profile-image.show', absolute: false),
-            'thumbUrl'    => route('user.profile-image.show', ['thumb' => true], absolute: false),
+            'originalUrl' => route('user.profile-image.showForUser', ['user' => $user->id], absolute: false),
+            'thumbUrl'    => route('user.profile-image.showForUser', ['user' => $user->id, 'thumb' => true], absolute: false),
         ]);
     }
 
@@ -44,15 +47,41 @@ class UserProfileImageController extends Controller
         }
 
         if (!$media) {
-            return response()->json(['message' => 'No profile image found.'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'No profile image found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
-        return response()->json([
-            'originalUrl' => $media->getUrl(),
-            'thumbUrl'    => $media->getUrl('thumb'),
-            'name'        => $media->file_name,
-            'size'        => $media->size,
-            'mimeType'    => $media->mime_type,
+        $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+        return Response::stream(function () use ($stream) {
+            fpassthru($stream);
+        }, HttpResponse::HTTP_OK, [
+            'Content-Type'        => $media->mime_type,
+            'Content-Length'      => $media->size,
+            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+        ]);
+    }
+
+    public function showForUser(User $user, Request $request)
+    {
+        $thumb = $request->query('thumb', false);
+        $media = $thumb ? $user->getFirstMedia('profile', 'thumb') : $user->getFirstMedia('profile');
+
+        if ($thumb & !$media) {
+            $media = $user->getFirstMedia('profile');
+        }
+
+        if (!$media) {
+            return response()->json(['message' => 'No profile image found.'], HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+        return Response::stream(function () use ($stream) {
+            fpassthru($stream);
+        }, HttpResponse::HTTP_OK, [
+            'Content-Type'        => $media->mime_type,
+            'Content-Length'      => $media->size,
+            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
         ]);
     }
 
@@ -61,6 +90,6 @@ class UserProfileImageController extends Controller
         $user = $request->user();
         $user->clearMediaCollection('profile');
 
-        return response()->json(['message' => 'Profile image deleted.'], Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Profile image deleted.'], HttpResponse::HTTP_NO_CONTENT);
     }
 }
