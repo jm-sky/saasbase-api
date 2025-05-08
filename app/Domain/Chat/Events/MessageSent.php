@@ -32,6 +32,6 @@ class MessageSent implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'Chat\\MessageSent';
+        return 'ChatMessageSent';
     }
 }

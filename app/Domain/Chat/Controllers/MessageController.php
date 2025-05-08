@@ -9,6 +9,7 @@ use App\Domain\Chat\Models\ChatMessage;
 use App\Domain\Chat\Models\ChatRoom;
 use App\Domain\Chat\Requests\SendMessageRequest;
 use App\Http\Controllers\Controller;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,7 +50,7 @@ class MessageController extends Controller
         event(new MessageSent($message));
 
         if (self::$sendDummyMessages) {
-            $this->sendDummyMessage($room, $currentUser->id);
+            $this->sendDummyMessage($room);
         }
 
         $dto = ChatMessageDTO::fromModel($message);
@@ -59,11 +60,11 @@ class MessageController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    protected function sendDummyMessage(ChatRoom $room, string $userId): void
+    protected function sendDummyMessage(ChatRoom $room): void
     {
         $message = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'user_id'      => $userId,
+            'user_id'      => DatabaseSeeder::BOT_USER_ID,
             'content'      => 'Yes, that\'s right! But what do You think about this? ' . Inspiring::quotes()->random(),
             'tenant_id'    => $room->tenant_id,
         ]);
