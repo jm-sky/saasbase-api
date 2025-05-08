@@ -54,6 +54,7 @@ class DirectMessageController extends Controller
 
         $rooms = ChatRoom::where('tenant_id', $tenantId)
             ->where('type', 'direct')
+            ->with('participants.user')
             ->whereHas('participants', function ($q) use ($currentUser) {
                 $q->where('user_id', $currentUser->id);
             })
