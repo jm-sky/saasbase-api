@@ -40,6 +40,13 @@ class ContractorRequest extends FormRequest
         ];
     }
 
+    public function prepareForValidation(): void
+    {
+        $this->merge([
+            'tenantId' => $this->input('tenantId') ?? auth()->user()->getTenantId(),
+        ]);
+    }
+
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
