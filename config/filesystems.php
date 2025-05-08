@@ -58,12 +58,12 @@ return [
         ],
 
         'minio' => [
-            'driver'    => 's3',
-            'key'       => env('MINIO_ROOT_USER', 'sail'),
-            'secret'    => env('MINIO_ROOT_PASSWORD', 'password'),
-            'endpoint'  => env('MINIO_ENDPOINT_URL', 'http://minio:9000'),
-            'region'    => 'us-east-1',
-            'bucket'    => env('MINIO_BUCKET', 'saasbase'),
+            'driver'                  => 's3',
+            'key'                     => env('MINIO_ROOT_USER', 'sail'),
+            'secret'                  => env('MINIO_ROOT_PASSWORD', 'password'),
+            'endpoint'                => env('MINIO_ENDPOINT_URL', 'http://minio:9000'),
+            'region'                  => 'us-east-1',
+            'bucket'                  => env('MINIO_BUCKET', 'saasbase'),
             'use_path_style_endpoint' => true,
             'throw'                   => false,
             'report'                  => false,
