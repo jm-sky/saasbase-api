@@ -54,3 +54,5 @@ node_modules/
 
 # Cursor MCP configuration with sensitive data
 .cursor/mcp.json
+.scribe/*
+public/vendor/scribe/*

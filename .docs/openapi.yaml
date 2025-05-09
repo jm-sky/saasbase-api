@@ -1,0 +1,3747 @@
+openapi: 3.0.3
+info:
+  title: 'SaaSBase API API Documentation'
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8989'
+tags:
+  -
+    name: Endpoints
+    description: ''
+paths:
+  /api/v1/broadcasting/auth:
+    get:
+      summary: 'Authenticate the request for channel access.'
+      operationId: authenticateTheRequestForChannelAccess
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/auth/login:
+    post:
+      summary: ''
+      operationId: postApiV1AuthLogin
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/auth/logout:
+    post:
+      summary: ''
+      operationId: postApiV1AuthLogout
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/auth/register:
+    post:
+      summary: ''
+      operationId: postApiV1AuthRegister
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                lastName:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: ashly64@example.com
+                  nullable: false
+                password:
+                  type: string
+                  description: 'Must be at least 8 characters.'
+                  example: pBNvYg
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                birthDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+                phone:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: vdljnikhwaykcmyu
+                  nullable: true
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+      security: []
+  /api/v1/auth/forgot-password:
+    post:
+      summary: 'Send a reset link to the given user.'
+      operationId: sendAResetLinkToTheGivenUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: gbailey@example.net
+                  nullable: false
+              required:
+                - email
+      security: []
+  /api/v1/auth/reset-password:
+    post:
+      summary: "Reset the given user's password."
+      operationId: resetTheGivenUsersPassword
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: zbailey@example.net
+                  nullable: false
+                password:
+                  type: string
+                  description: 'Must be at least 8 characters.'
+                  example: '-0pBNvYgxw'
+                  nullable: false
+              required:
+                - token
+                - email
+                - password
+      security: []
+  '/api/v1/oauth/{provider}/redirect':
+    get:
+      summary: ''
+      operationId: getApiV1OauthProviderRedirect
+      description: ''
+      parameters: []
+      responses:
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Server Error'
+                properties:
+                  message:
+                    type: string
+                    example: 'Server Error'
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: provider
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/oauth/{provider}/callback':
+    get:
+      summary: ''
+      operationId: getApiV1OauthProviderCallback
+      description: ''
+      parameters: []
+      responses:
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Server Error'
+                properties:
+                  message:
+                    type: string
+                    example: 'Server Error'
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: provider
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/email/verify:
+    post:
+      summary: "Mark the authenticated user's email address as verified."
+      operationId: markTheAuthenticatedUsersEmailAddressAsVerified
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: zbailey@example.net
+                  nullable: false
+              required:
+                - token
+                - email
+      security: []
+  /api/v1/email/verification-notification:
+    post:
+      summary: 'Resend the email verification notification.'
+      operationId: resendTheEmailVerificationNotification
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/2fa/setup:
+    post:
+      summary: ''
+      operationId: postApiV12faSetup
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/2fa/enable:
+    post:
+      summary: ''
+      operationId: postApiV12faEnable
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 'Must be 6 characters.'
+                  example: bngzmi
+                  nullable: false
+              required:
+                - code
+      security: []
+  /api/v1/2fa/disable:
+    post:
+      summary: ''
+      operationId: postApiV12faDisable
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/2fa/verify:
+    post:
+      summary: ''
+      operationId: postApiV12faVerify
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+              required:
+                - code
+      security: []
+  /api/v1/auth/token/refresh:
+    post:
+      summary: ''
+      operationId: postApiV1AuthTokenRefresh
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/user/profile-image/{user_id}':
+    get:
+      summary: ''
+      operationId: getApiV1UserProfileImageUser_id
+      description: ''
+      parameters: []
+      responses:
+        404:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'No profile image found.'
+                properties:
+                  message:
+                    type: string
+                    example: 'No profile image found.'
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: user_id
+        description: 'The ID of the user.'
+        example: 904be08d-5538-30f6-9f5a-e43ef3ec7e72
+        required: true
+        schema:
+          type: string
+  /api/v1/me:
+    get:
+      summary: ''
+      operationId: getApiV1Me
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/user/profile:
+    put:
+      summary: ''
+      operationId: putApiV1UserProfile
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: 'Must be at least 2 characters. Must not be greater than 50 characters.'
+                  example: b
+                  nullable: false
+                lastName:
+                  type: string
+                  description: 'Must be at least 2 characters. Must not be greater than 50 characters.'
+                  example: 'n'
+                  nullable: false
+                description:
+                  type: string
+                  description: 'Must be at least 2 characters. Must not be greater than 255 characters.'
+                  example: 'Animi quos velit et fugiat.'
+                  nullable: true
+                birthDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+                phone:
+                  type: string
+                  description: 'Must be at least 2 characters. Must not be greater than 20 characters.'
+                  example: dljnikhwaykcmyuw
+                  nullable: true
+              required:
+                - firstName
+                - lastName
+      security: []
+  /api/v1/user/settings:
+    get:
+      summary: ''
+      operationId: getApiV1UserSettings
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1UserSettings
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  description: 'Must not be greater than 10 characters.'
+                  example: bngzmi
+                  nullable: false
+                theme:
+                  type: string
+                  description: ''
+                  example: light
+                  nullable: false
+                  enum:
+                    - light
+                    - dark
+                    - system
+                timezone:
+                  type: string
+                  description: 'Must be a valid time zone, such as <code>Africa/Accra</code>.'
+                  example: Europe/Dublin
+                  nullable: false
+                preferences:
+                  type: array
+                  description: ''
+                  example:
+                    - architecto
+                  items:
+                    type: string
+      security: []
+  /api/v1/user/settings/language:
+    patch:
+      summary: ''
+      operationId: patchApiV1UserSettingsLanguage
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  description: 'Must not be greater than 10 characters.'
+                  example: bngzmi
+                  nullable: false
+              required:
+                - language
+      security: []
+  /api/v1/user/profile-image:
+    post:
+      summary: ''
+      operationId: postApiV1UserProfileImage
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: 'Must be an image. Must not be greater than 2048 kilobytes.'
+                  nullable: false
+              required:
+                - image
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1UserProfileImage
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    get:
+      summary: ''
+      operationId: getApiV1UserProfileImage
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/tenants:
+    get:
+      summary: ''
+      operationId: getApiV1Tenants
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Tenants
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                slug:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+              required:
+                - name
+                - slug
+      security: []
+  '/api/v1/tenants/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1TenantsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1TenantsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                slug:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+              required:
+                - name
+                - slug
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1TenantsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the tenant.'
+        example: 0196b1ed-4f42-721e-8580-c8fadd5de616
+        required: true
+        schema:
+          type: string
+  '/api/v1/tenants/{tenant_id}/switch':
+    post:
+      summary: ''
+      operationId: postApiV1TenantsTenant_idSwitch
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: tenant_id
+        description: 'The ID of the tenant.'
+        example: 0196b1ed-4f42-721e-8580-c8fadd5de616
+        required: true
+        schema:
+          type: string
+  /api/v1/feeds:
+    get:
+      summary: ''
+      operationId: getApiV1Feeds
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Feeds
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                content:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+              required:
+                - title
+                - content
+      security: []
+  '/api/v1/feeds/{feed_id}':
+    get:
+      summary: ''
+      operationId: getApiV1FeedsFeed_id
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1FeedsFeed_id
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: feed_id
+        description: 'The ID of the feed.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/feeds/{feed_id}/comments':
+    post:
+      summary: ''
+      operationId: postApiV1FeedsFeed_idComments
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+              required:
+                - content
+      security: []
+    parameters:
+      -
+        in: path
+        name: feed_id
+        description: 'The ID of the feed.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/feed-comments/{comment_id}':
+    delete:
+      summary: ''
+      operationId: deleteApiV1FeedCommentsComment_id
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: comment_id
+        description: 'The ID of the comment.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/chat/rooms:
+    get:
+      summary: 'List all direct message rooms for the current user.'
+      operationId: listAllDirectMessageRoomsForTheCurrentUser
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: 'Create or get a direct message room for the current user and another user.'
+      operationId: createOrGetADirectMessageRoomForTheCurrentUserAndAnotherUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the users table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+              required:
+                - userId
+      security: []
+  '/api/v1/chat/rooms/{room_id}/messages':
+    post:
+      summary: 'Send a message in a chat room.'
+      operationId: sendAMessageInAChatRoom
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+                parentId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the chat_messages table.'
+                  example: a4855dc5-0acb-33c3-b921-f4291f719ca0
+                  nullable: true
+              required:
+                - content
+      security: []
+    get:
+      summary: 'List messages in a chat room (optionally paginated).'
+      operationId: listMessagesInAChatRoomoptionallyPaginated
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: room_id
+        description: 'The ID of the room.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/countries:
+    get:
+      summary: ''
+      operationId: getApiV1Countries
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    code:
+                      type: string
+                      description: 'Must be 2 characters.'
+                      example: ng
+                      nullable: false
+                    code3:
+                      type: string
+                      description: 'Must be 3 characters.'
+                      example: zmi
+                      nullable: false
+                    numericCode:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    phoneCode:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    capital:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    currency:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    currencyCode:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    currencySymbol:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    tld:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    native:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    region:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    subregion:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    emoji:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    emojiU:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.createdAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.updatedAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                sort:
+                  type: string
+                  description: ''
+                  example: '-numericCode'
+                  nullable: false
+                  enum:
+                    - name
+                    - '-name'
+                    - code
+                    - '-code'
+                    - code3
+                    - '-code3'
+                    - numericCode
+                    - '-numericCode'
+                    - phoneCode
+                    - '-phoneCode'
+                    - capital
+                    - '-capital'
+                    - currency
+                    - '-currency'
+                    - currencyCode
+                    - '-currencyCode'
+                    - region
+                    - '-region'
+                    - subregion
+                    - '-subregion'
+                    - createdAt
+                    - '-createdAt'
+                    - updatedAt
+                    - '-updatedAt'
+      security: []
+  '/api/v1/countries/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1CountriesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the country.'
+        example: 0196b1ed-51f0-7228-88fe-af9a9c3b1395
+        required: true
+        schema:
+          type: string
+  /api/v1/contractors:
+    get:
+      summary: ''
+      operationId: getApiV1Contractors
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    email:
+                      type: string
+                      description: ''
+                      example: gbailey@example.net
+                      nullable: false
+                    phone:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    address:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    city:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    state:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    zipCode:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    country:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    taxId:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    notes:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    isActive:
+                      type: boolean
+                      description: ''
+                      example: false
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.createdAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.updatedAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                sort:
+                  type: string
+                  description: ''
+                  example: '-country'
+                  nullable: false
+                  enum:
+                    - name
+                    - '-name'
+                    - email
+                    - '-email'
+                    - city
+                    - '-city'
+                    - country
+                    - '-country'
+                    - isActive
+                    - '-isActive'
+                    - createdAt
+                    - '-createdAt'
+                    - updatedAt
+                    - '-updatedAt'
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Contractors
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: rowan.gulgowski@example.com
+                  nullable: true
+                phone:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: dljnikhwaykcmyuw
+                  nullable: true
+                country:
+                  type: string
+                  description: 'Must not be greater than 100 characters.'
+                  example: p
+                  nullable: true
+                taxId:
+                  type: string
+                  description: 'Must not be greater than 50 characters.'
+                  example: w
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                isActive:
+                  type: boolean
+                  description: ''
+                  example: true
+                  nullable: false
+                isBuyer:
+                  type: boolean
+                  description: ''
+                  example: true
+                  nullable: false
+                isSupplier:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - tenantId
+                - name
+      security: []
+  '/api/v1/contractors/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ContractorsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ContractorsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: rowan.gulgowski@example.com
+                  nullable: true
+                phone:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: dljnikhwaykcmyuw
+                  nullable: true
+                country:
+                  type: string
+                  description: 'Must not be greater than 100 characters.'
+                  example: p
+                  nullable: true
+                taxId:
+                  type: string
+                  description: 'Must not be greater than 50 characters.'
+                  example: w
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                isActive:
+                  type: boolean
+                  description: ''
+                  example: true
+                  nullable: false
+                isBuyer:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+                isSupplier:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - tenantId
+                - name
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ContractorsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the contractor.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/contractors/{contractor_id}/addresses':
+    get:
+      summary: ''
+      operationId: getApiV1ContractorsContractor_idAddresses
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1ContractorsContractor_idAddresses
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                street:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: true
+                city:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+                postalCode:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: gzmiyvdljnikhway
+                  nullable: true
+                country:
+                  type: string
+                  description: 'Must not be greater than 2 characters.'
+                  example: kc
+                  nullable: false
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: a232abbe-3006-3f67-bed4-124abab91dce
+                  nullable: false
+                building:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: u
+                  nullable: true
+                flat:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: w
+                  nullable: true
+                description:
+                  type: string
+                  description: 'Must not be greater than 1000 characters.'
+                  example: 'Nostrum qui commodi incidunt iure.'
+                  nullable: true
+                type:
+                  type: string
+                  description: ''
+                  example: registered_office
+                  nullable: false
+                  enum:
+                    - residence
+                    - billing
+                    - registered_office
+                    - correspondence
+                    - domicile
+                isDefault:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - city
+                - country
+                - tenantId
+                - type
+      security: []
+    parameters:
+      -
+        in: path
+        name: contractor_id
+        description: 'The ID of the contractor.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/contractors/{contractor_id}/addresses/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ContractorsContractor_idAddressesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ContractorsContractor_idAddressesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                street:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: true
+                city:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+                postalCode:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: gzmiyvdljnikhway
+                  nullable: true
+                country:
+                  type: string
+                  description: 'Must not be greater than 2 characters.'
+                  example: kc
+                  nullable: false
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: a232abbe-3006-3f67-bed4-124abab91dce
+                  nullable: false
+                building:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: u
+                  nullable: true
+                flat:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: w
+                  nullable: true
+                description:
+                  type: string
+                  description: 'Must not be greater than 1000 characters.'
+                  example: 'Nostrum qui commodi incidunt iure.'
+                  nullable: true
+                type:
+                  type: string
+                  description: ''
+                  example: correspondence
+                  nullable: false
+                  enum:
+                    - residence
+                    - billing
+                    - registered_office
+                    - correspondence
+                    - domicile
+                isDefault:
+                  type: boolean
+                  description: ''
+                  example: true
+                  nullable: false
+              required:
+                - city
+                - country
+                - tenantId
+                - type
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ContractorsContractor_idAddressesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: contractor_id
+        description: 'The ID of the contractor.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+      -
+        in: path
+        name: id
+        description: 'The ID of the address.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/products:
+    get:
+      summary: ''
+      operationId: getApiV1Products
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    description:
+                      type: string
+                      description: ''
+                      example: 'Eius et animi quos velit et.'
+                      nullable: false
+                    unitId:
+                      type: string
+                      description: 'Must be a valid UUID. The <code>id</code> of an existing record in the measurement_units table.'
+                      example: 21c4122b-d554-3723-966c-6d723ea5293f
+                      nullable: false
+                    vatRateId:
+                      type: string
+                      description: 'Must be a valid UUID. The <code>id</code> of an existing record in the vat_rates table.'
+                      example: add3503c-ebff-3875-93af-b8c6a695762b
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.createdAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.updatedAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                sort:
+                  type: string
+                  description: ''
+                  example: createdAt
+                  nullable: false
+                  enum:
+                    - name
+                    - '-name'
+                    - createdAt
+                    - '-createdAt'
+                    - updatedAt
+                    - '-updatedAt'
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Products
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                description:
+                  type: string
+                  description: 'Must not be greater than 1000 characters.'
+                  example: 'Quos velit et fugiat sunt nihil accusantium harum.'
+                  nullable: true
+                unitId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the measurement_units table.'
+                  example: cd1eb1ea-4697-3b9a-9dd0-988044a83af6
+                  nullable: false
+                priceNet:
+                  type: number
+                  description: 'Must be at least 0. Must not be greater than 999999.99.'
+                  example: 14
+                  nullable: false
+                vatRateId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the vat_rates table.'
+                  example: d207102d-bce0-31f9-8c36-aa9cf4cfe75a
+                  nullable: false
+              required:
+                - tenantId
+                - name
+                - unitId
+                - priceNet
+                - vatRateId
+      security: []
+  '/api/v1/products/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ProductsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ProductsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                description:
+                  type: string
+                  description: 'Must not be greater than 1000 characters.'
+                  example: 'Quos velit et fugiat sunt nihil accusantium harum.'
+                  nullable: true
+                unitId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the measurement_units table.'
+                  example: cd1eb1ea-4697-3b9a-9dd0-988044a83af6
+                  nullable: false
+                priceNet:
+                  type: number
+                  description: 'Must be at least 0. Must not be greater than 999999.99.'
+                  example: 14
+                  nullable: false
+                vatRateId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the vat_rates table.'
+                  example: d207102d-bce0-31f9-8c36-aa9cf4cfe75a
+                  nullable: false
+              required:
+                - tenantId
+                - name
+                - unitId
+                - priceNet
+                - vatRateId
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ProductsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the product.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/users:
+    get:
+      summary: ''
+      operationId: getApiV1Users
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/users/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1UsersId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the user.'
+        example: 904be08d-5538-30f6-9f5a-e43ef3ec7e72
+        required: true
+        schema:
+          type: string
+  /api/v1/projects:
+    get:
+      summary: ''
+      operationId: getApiV1Projects
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Projects
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                statusId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the project_statuses table.'
+                  example: 21c4122b-d554-3723-966c-6d723ea5293f
+                  nullable: false
+                startDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+                endDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+              required:
+                - name
+                - statusId
+      security: []
+  '/api/v1/projects/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ProjectsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ProjectsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                statusId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the project_statuses table.'
+                  example: 21c4122b-d554-3723-966c-6d723ea5293f
+                  nullable: false
+                startDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+                endDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ProjectsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the project.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/project-statuses:
+    get:
+      summary: ''
+      operationId: getApiV1ProjectStatuses
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    isDefault:
+                      type: boolean
+                      description: ''
+                      example: true
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties: {  }
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties: {  }
+                sort:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+                per_page:
+                  type: integer
+                  description: 'Must be at least 1.'
+                  example: 22
+                  nullable: false
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1ProjectStatuses
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                color:
+                  type: string
+                  description: 'Must not be greater than 7 characters.'
+                  example: ngzmiyv
+                  nullable: false
+                sortOrder:
+                  type: integer
+                  description: ''
+                  example: 16
+                  nullable: false
+                isDefault:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - name
+                - color
+      security: []
+  '/api/v1/project-statuses/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ProjectStatusesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1ProjectStatusesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                color:
+                  type: string
+                  description: 'Must not be greater than 7 characters.'
+                  example: ngzmiyv
+                  nullable: false
+                sortOrder:
+                  type: integer
+                  description: ''
+                  example: 16
+                  nullable: false
+                isDefault:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - name
+                - color
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1ProjectStatusesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the project status.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/tasks:
+    get:
+      summary: ''
+      operationId: getApiV1Tasks
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Tasks
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the projects table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                title:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                statusId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the task_statuses table.'
+                  example: 21c4122b-d554-3723-966c-6d723ea5293f
+                  nullable: false
+                priority:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: true
+                assignedToId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the users table.'
+                  example: a4855dc5-0acb-33c3-b921-f4291f719ca0
+                  nullable: true
+                dueDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+              required:
+                - projectId
+                - title
+                - statusId
+      security: []
+  '/api/v1/tasks/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1TasksId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1TasksId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                statusId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the task_statuses table.'
+                  example: 21c4122b-d554-3723-966c-6d723ea5293f
+                  nullable: false
+                priority:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: true
+                assignedToId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the users table.'
+                  example: a4855dc5-0acb-33c3-b921-f4291f719ca0
+                  nullable: true
+                dueDate:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1TasksId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the task.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/task-statuses:
+    get:
+      summary: ''
+      operationId: getApiV1TaskStatuses
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    isDefault:
+                      type: boolean
+                      description: ''
+                      example: true
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties: {  }
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties: {  }
+                sort:
+                  type: string
+                  description: ''
+                  example: architecto
+                  nullable: false
+                per_page:
+                  type: integer
+                  description: 'Must be at least 1.'
+                  example: 22
+                  nullable: false
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1TaskStatuses
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                color:
+                  type: string
+                  description: 'Must not be greater than 7 characters.'
+                  example: ngzmiyv
+                  nullable: false
+                sortOrder:
+                  type: integer
+                  description: ''
+                  example: 16
+                  nullable: false
+                isDefault:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - name
+                - color
+      security: []
+  '/api/v1/task-statuses/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1TaskStatusesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1TaskStatusesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                color:
+                  type: string
+                  description: 'Must not be greater than 7 characters.'
+                  example: ngzmiyv
+                  nullable: false
+                sortOrder:
+                  type: integer
+                  description: ''
+                  example: 16
+                  nullable: false
+                isDefault:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - name
+                - color
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1TaskStatusesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the task status.'
+        example: 16
+        required: true
+        schema:
+          type: integer
+  /api/v1/exchanges:
+    get:
+      summary: ''
+      operationId: getApiV1Exchanges
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  '/api/v1/exchanges/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1ExchangesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the exchange.'
+        example: 16
+        required: true
+        schema:
+          type: integer
+  '/api/v1/exchanges/{exchange_id}/rates':
+    get:
+      summary: ''
+      operationId: getApiV1ExchangesExchange_idRates
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: exchange_id
+        description: 'The ID of the exchange.'
+        example: 16
+        required: true
+        schema:
+          type: integer
+  /api/v1/skills:
+    get:
+      summary: ''
+      operationId: getApiV1Skills
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Skills
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  description: 'The <code>name</code> of an existing record in the skill_categories table.'
+                  example: architecto
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+              required:
+                - category
+                - name
+      security: []
+  '/api/v1/skills/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1SkillsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1SkillsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  description: 'The <code>name</code> of an existing record in the skill_categories table.'
+                  example: architecto
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+              required:
+                - category
+                - name
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1SkillsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the skill.'
+        example: 0196b1ed-520f-732c-b2cc-82b3483d4add
+        required: true
+        schema:
+          type: string
+  /api/v1/skill-categories:
+    get:
+      summary: ''
+      operationId: getApiV1SkillCategories
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1SkillCategories
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+              required:
+                - name
+      security: []
+  '/api/v1/skill-categories/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1SkillCategoriesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1SkillCategoriesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                  nullable: false
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+              required:
+                - name
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1SkillCategoriesId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the skill category.'
+        example: 0196b1ed-5204-701a-89f9-adb2b06d503f
+        required: true
+        schema:
+          type: string
+  /api/v1/user-skills:
+    get:
+      summary: ''
+      operationId: getApiV1UserSkills
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1UserSkills
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the users table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                skillId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the skills table.'
+                  example: 6b72fe4a-5b40-307c-bc24-f79acf9a1bb9
+                  nullable: false
+                level:
+                  type: integer
+                  description: 'Must be at least 1. Must not be greater than 5.'
+                  example: 2
+                  nullable: false
+                acquiredAt:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+              required:
+                - userId
+                - skillId
+                - level
+      security: []
+  '/api/v1/user-skills/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1UserSkillsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1UserSkillsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the users table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                skillId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the skills table.'
+                  example: 6b72fe4a-5b40-307c-bc24-f79acf9a1bb9
+                  nullable: false
+                level:
+                  type: integer
+                  description: 'Must be at least 1. Must not be greater than 5.'
+                  example: 2
+                  nullable: false
+                acquiredAt:
+                  type: string
+                  description: 'Must be a valid date.'
+                  example: '2025-05-09T14:55:20'
+                  nullable: true
+              required:
+                - userId
+                - skillId
+                - level
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1UserSkillsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the user skill.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/admin/contractors:
+    get:
+      summary: ''
+      operationId: getApiV1AdminContractors
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    email:
+                      type: string
+                      description: ''
+                      example: gbailey@example.net
+                      nullable: false
+                    phone:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    address:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    city:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    state:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    zipCode:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    country:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    taxId:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    notes:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    isActive:
+                      type: boolean
+                      description: ''
+                      example: false
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.createdAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:20'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.updatedAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                sort:
+                  type: string
+                  description: ''
+                  example: country
+                  nullable: false
+                  enum:
+                    - name
+                    - '-name'
+                    - email
+                    - '-email'
+                    - city
+                    - '-city'
+                    - country
+                    - '-country'
+                    - isActive
+                    - '-isActive'
+                    - createdAt
+                    - '-createdAt'
+                    - updatedAt
+                    - '-updatedAt'
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1AdminContractors
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: rowan.gulgowski@example.com
+                  nullable: true
+                phone:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: dljnikhwaykcmyuw
+                  nullable: true
+                country:
+                  type: string
+                  description: 'Must not be greater than 100 characters.'
+                  example: p
+                  nullable: true
+                taxId:
+                  type: string
+                  description: 'Must not be greater than 50 characters.'
+                  example: w
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                isActive:
+                  type: boolean
+                  description: ''
+                  example: true
+                  nullable: false
+                isBuyer:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+                isSupplier:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - tenantId
+                - name
+      security: []
+  '/api/v1/admin/contractors/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1AdminContractorsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1AdminContractorsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: rowan.gulgowski@example.com
+                  nullable: true
+                phone:
+                  type: string
+                  description: 'Must not be greater than 20 characters.'
+                  example: dljnikhwaykcmyuw
+                  nullable: true
+                country:
+                  type: string
+                  description: 'Must not be greater than 100 characters.'
+                  example: p
+                  nullable: true
+                taxId:
+                  type: string
+                  description: 'Must not be greater than 50 characters.'
+                  example: w
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                isActive:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+                isBuyer:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+                isSupplier:
+                  type: boolean
+                  description: ''
+                  example: false
+                  nullable: false
+              required:
+                - tenantId
+                - name
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1AdminContractorsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the contractor.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/v1/admin/products:
+    get:
+      summary: ''
+      operationId: getApiV1AdminProducts
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: ''
+                  example: []
+                  nullable: false
+                  properties:
+                    name:
+                      type: string
+                      description: ''
+                      example: architecto
+                      nullable: false
+                    description:
+                      type: string
+                      description: ''
+                      example: 'Eius et animi quos velit et.'
+                      nullable: false
+                    unitId:
+                      type: string
+                      description: 'Must be a valid UUID. The <code>id</code> of an existing record in the measurement_units table.'
+                      example: 21c4122b-d554-3723-966c-6d723ea5293f
+                      nullable: false
+                    vatRateId:
+                      type: string
+                      description: 'Must be a valid UUID. The <code>id</code> of an existing record in the vat_rates table.'
+                      example: add3503c-ebff-3875-93af-b8c6a695762b
+                      nullable: false
+                    createdAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:21'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.createdAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                    updatedAt:
+                      type: object
+                      description: ''
+                      example: null
+                      nullable: false
+                      properties:
+                        from:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date.'
+                          example: '2025-05-09T14:55:21'
+                          nullable: false
+                        to:
+                          type: string
+                          description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.updatedAt.from</code>.'
+                          example: '2051-06-02'
+                          nullable: false
+                sort:
+                  type: string
+                  description: ''
+                  example: '-name'
+                  nullable: false
+                  enum:
+                    - name
+                    - '-name'
+                    - createdAt
+                    - '-createdAt'
+                    - updatedAt
+                    - '-updatedAt'
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1AdminProducts
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                description:
+                  type: string
+                  description: 'Must not be greater than 1000 characters.'
+                  example: 'Quos velit et fugiat sunt nihil accusantium harum.'
+                  nullable: true
+                unitId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the measurement_units table.'
+                  example: cd1eb1ea-4697-3b9a-9dd0-988044a83af6
+                  nullable: false
+                priceNet:
+                  type: number
+                  description: 'Must be at least 0. Must not be greater than 999999.99.'
+                  example: 14
+                  nullable: false
+                vatRateId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the vat_rates table.'
+                  example: d207102d-bce0-31f9-8c36-aa9cf4cfe75a
+                  nullable: false
+              required:
+                - tenantId
+                - name
+                - unitId
+                - priceNet
+                - vatRateId
+      security: []
+  '/api/v1/admin/products/{id}':
+    get:
+      summary: ''
+      operationId: getApiV1AdminProductsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    put:
+      summary: ''
+      operationId: putApiV1AdminProductsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the tenants table.'
+                  example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+                  nullable: false
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: false
+                description:
+                  type: string
+                  description: 'Must not be greater than 1000 characters.'
+                  example: 'Quos velit et fugiat sunt nihil accusantium harum.'
+                  nullable: true
+                unitId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the measurement_units table.'
+                  example: cd1eb1ea-4697-3b9a-9dd0-988044a83af6
+                  nullable: false
+                priceNet:
+                  type: number
+                  description: 'Must be at least 0. Must not be greater than 999999.99.'
+                  example: 14
+                  nullable: false
+                vatRateId:
+                  type: string
+                  description: 'Must be a valid UUID. The <code>id</code> of an existing record in the vat_rates table.'
+                  example: d207102d-bce0-31f9-8c36-aa9cf4cfe75a
+                  nullable: false
+              required:
+                - tenantId
+                - name
+                - unitId
+                - priceNet
+                - vatRateId
+      security: []
+    delete:
+      summary: ''
+      operationId: deleteApiV1AdminProductsId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the product.'
+        example: architecto
+        required: true
+        schema:
+          type: string
