@@ -13,7 +13,7 @@ class DirectMessageService
     /**
      * Find or create a direct message room for two users in a tenant.
      */
-    public function findOrCreateRoom(string $tenantId, User $userA, User $userB): ChatRoom
+    public function findOrCreateRoom(?string $tenantId, User $userA, User $userB): ChatRoom
     {
         // Always order user IDs to ensure uniqueness
         $userIds = [$userA->id, $userB->id];
