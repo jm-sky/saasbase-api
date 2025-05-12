@@ -4,30 +4,33 @@ namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
- * @property string  $id
- * @property string  $tenant_id
- * @property string  $name
- * @property string  $email
- * @property ?string $phone
- * @property ?string $country
- * @property ?string $tax_id
- * @property ?string $description
- * @property bool    $is_active
- * @property bool    $is_buyer
- * @property bool    $is_supplier
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property ?Carbon $deleted_at
+ * @property string              $id
+ * @property string              $tenant_id
+ * @property string              $name
+ * @property string              $email
+ * @property ?string             $phone
+ * @property ?string             $country
+ * @property ?string             $tax_id
+ * @property ?string             $description
+ * @property bool                $is_active
+ * @property bool                $is_buyer
+ * @property bool                $is_supplier
+ * @property Carbon              $created_at
+ * @property Carbon              $updated_at
+ * @property ?Carbon             $deleted_at
+ * @property Collection|string[] $tags
  */
 class Contractor extends BaseModel implements HasMedia
 {
@@ -35,6 +38,7 @@ class Contractor extends BaseModel implements HasMedia
     use BelongsToTenant;
     use HaveAddresses;
     use InteractsWithMedia;
+    use HasTags;
 
     protected $fillable = [
         'tenant_id',

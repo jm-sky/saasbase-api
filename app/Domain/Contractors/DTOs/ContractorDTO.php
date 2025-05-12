@@ -11,20 +11,21 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Contractor>
  *
- * @property ?string $id          UUID
- * @property string  $tenantId    UUID
- * @property string  $name
- * @property string  $email
- * @property ?string $phone
- * @property ?string $country
- * @property ?string $taxId
- * @property ?string $description
- * @property ?bool   $isActive
- * @property ?bool   $isBuyer
- * @property ?bool   $isSupplier
- * @property ?Carbon $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string       $id          UUID
+ * @property string        $tenantId    UUID
+ * @property string        $name
+ * @property string        $email
+ * @property ?string       $phone
+ * @property ?string       $country
+ * @property ?string       $taxId
+ * @property ?string       $description
+ * @property ?bool         $isActive
+ * @property ?bool         $isBuyer
+ * @property ?bool         $isSupplier
+ * @property ?Carbon       $createdAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon       $updatedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon       $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property string[]|null $tags
  */
 class ContractorDTO extends BaseDTO
 {
@@ -44,6 +45,7 @@ class ContractorDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
         public readonly ?MediaDTO $logo = null,
+        public readonly ?array $tags = null,
     ) {
     }
 
@@ -65,6 +67,7 @@ class ContractorDTO extends BaseDTO
             updatedAt: $data['updated_at'] ?? null,
             deletedAt: $data['deleted_at'] ?? null,
             logo: null,
+            tags: $data['tags'] ?? [],
         );
     }
 
@@ -92,6 +95,7 @@ class ContractorDTO extends BaseDTO
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
             logo: $logoMedia ? MediaDTO::fromModel($logoMedia) : null,
+            tags: method_exists($model, 'getTagNames') ? $model->getTagNames() : [],
         );
     }
 
@@ -113,6 +117,7 @@ class ContractorDTO extends BaseDTO
             'updatedAt'   => $this->updatedAt?->toIso8601String(),
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
             'logo'        => $this->logo?->toArray(),
+            'tags'        => $this->tags ?? [],
         ];
     }
 }

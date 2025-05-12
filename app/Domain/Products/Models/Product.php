@@ -6,6 +6,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\VatRate;
+use App\Domain\Common\Traits\HasTags;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
@@ -16,24 +17,26 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
- * @property string          $id
- * @property string          $tenant_id
- * @property string          $name
- * @property ?string         $description
- * @property string          $unit_id
- * @property float           $price_net
- * @property ?string         $vat_rate_id
- * @property Carbon          $created_at
- * @property Carbon          $updated_at
- * @property ?Carbon         $deleted_at
- * @property MeasurementUnit $unit
- * @property ?VatRate        $vatRate
+ * @property string                                  $id
+ * @property string                                  $tenant_id
+ * @property string                                  $name
+ * @property ?string                                 $description
+ * @property string                                  $unit_id
+ * @property float                                   $price_net
+ * @property ?string                                 $vat_rate_id
+ * @property Carbon                                  $created_at
+ * @property Carbon                                  $updated_at
+ * @property ?Carbon                                 $deleted_at
+ * @property MeasurementUnit                         $unit
+ * @property ?VatRate                                $vatRate
+ * @property \Illuminate\Support\Collection|string[] $tags
  */
 class Product extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
     use InteractsWithMedia;
+    use HasTags;
 
     protected $fillable = [
         'tenant_id',

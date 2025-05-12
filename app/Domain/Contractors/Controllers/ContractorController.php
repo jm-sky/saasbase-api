@@ -21,6 +21,8 @@ class ContractorController extends Controller
 
     protected int $defaultPerPage = 15;
 
+    protected array $defaultWith = ['tags'];
+
     public function __construct()
     {
         $this->modelClass = Contractor::class;
