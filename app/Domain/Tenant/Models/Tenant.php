@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string      $id
@@ -20,11 +22,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon     $deleted_at
  * @property ?User       $owner
  */
-class Tenant extends BaseModel
+class Tenant extends BaseModel implements HasMedia
 {
     use HasUuids;
     use SoftDeletes;
     use HaveAddresses;
+    use InteractsWithMedia;
 
     public static ?string $PUBLIC_TENANT_ID = null;
 
@@ -50,5 +53,10 @@ class Tenant extends BaseModel
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
     }
 }

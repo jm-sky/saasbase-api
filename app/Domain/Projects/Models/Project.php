@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string                                $id
@@ -32,12 +34,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Collection<int, ProjectUser>          $projectUsers
  * @property Collection<int, ProjectRequiredSkill> $requiredSkills
  * @property Collection<int, ProjectComment>       $comments
- * @property Collection<int, ProjectAttachment>    $attachments
  */
-class Project extends BaseModel
+class Project extends BaseModel implements HasMedia
 {
     use BelongsToTenant;
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -88,13 +90,13 @@ class Project extends BaseModel
         return $this->morphMany(ProjectComment::class, 'commentable');
     }
 
-    public function attachments(): MorphMany
-    {
-        return $this->morphMany(ProjectAttachment::class, 'attachmentable');
-    }
-
     public function status(): BelongsTo
     {
         return $this->belongsTo(ProjectStatus::class, 'status_id');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
     }
 }

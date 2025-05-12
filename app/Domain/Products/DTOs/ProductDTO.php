@@ -3,6 +3,7 @@
 namespace App\Domain\Products\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
+use App\Domain\Common\DTOs\MediaDTO;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
@@ -36,6 +37,7 @@ class ProductDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
+        public readonly ?MediaDTO $logo = null,
     ) {
     }
 
@@ -52,6 +54,7 @@ class ProductDTO extends BaseDTO
             createdAt: $data['created_at'],
             updatedAt: $data['updated_at'],
             deletedAt: $data['deleted_at'],
+            logo: null,
         );
     }
 
@@ -60,6 +63,8 @@ class ProductDTO extends BaseDTO
         if (!$model instanceof Product) {
             throw new \InvalidArgumentException('Model must be instance of Product');
         }
+
+        $logoMedia = $model->getFirstMedia('logo');
 
         return new self(
             tenantId: $model->tenant_id,
@@ -72,6 +77,7 @@ class ProductDTO extends BaseDTO
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
+            logo: $logoMedia ? MediaDTO::fromModel($logoMedia) : null,
         );
     }
 
@@ -88,6 +94,7 @@ class ProductDTO extends BaseDTO
             'createdAt'   => $this->createdAt?->toIso8601String(),
             'updatedAt'   => $this->updatedAt?->toIso8601String(),
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
+            'logo'        => $this->logo?->toArray(),
         ];
     }
 }

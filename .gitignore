@@ -25,6 +25,8 @@ yarn-error.log
 # Test files
 storage/test_jwt.key
 storage/test_jwt.pub
+storage/media-library/temp/*
+storage/media-library/temp/
 .php-cs-fixer.cache
 
 # Added by Claude Task Master

@@ -1,19 +1,15 @@
 <?php
 
-use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
-use App\Domain\Tenant\Controllers\TenantAttachmentsController;
-use App\Domain\Tenant\Controllers\TenantController;
+use App\Domain\Products\Controllers\ProductAttachmentsController;
+use App\Domain\Products\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:api')->group(function () {
-    Route::apiResource('tenants', TenantController::class);
-    Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
-});
-
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
-    Route::controller(TenantAttachmentsController::class)
-        ->prefix('tenants/{tenant}/attachments')
-        ->name('tenants.attachments.')
+    Route::apiResource('products', ProductController::class);
+
+    Route::controller(ProductAttachmentsController::class)
+        ->prefix('products/{product}/attachments')
+        ->name('products.attachments.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');

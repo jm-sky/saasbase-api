@@ -3,11 +3,15 @@
 namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
  * @property string  $id
@@ -25,11 +29,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon  $updated_at
  * @property ?Carbon $deleted_at
  */
-class Contractor extends BaseModel
+class Contractor extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
     use HaveAddresses;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -53,5 +58,24 @@ class Contractor extends BaseModel
     protected static function newFactory()
     {
         return ContractorFactory::new();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('logo')
+            ->singleFile()
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
+        ;
+
+        $this->addMediaCollection('attachments');
+    }
+
+    public function registerAllMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(config('domains.contractors.logo.size', 256))
+            ->height(config('domains.contractors.logo.size', 256))
+            ->nonQueued()
+        ;
     }
 }
