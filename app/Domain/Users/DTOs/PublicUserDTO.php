@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string  $lastName
  * @property ?string $email
  * @property ?string $phone
+ * @property ?string $avatarUrl
  */
 class PublicUserDTO extends BaseDTO
 {
@@ -23,6 +24,7 @@ class PublicUserDTO extends BaseDTO
         public readonly ?string $email,
         public readonly ?string $phone,
         public readonly ?string $id = null,
+        public readonly ?string $avatarUrl = null,
     ) {
     }
 
@@ -35,6 +37,7 @@ class PublicUserDTO extends BaseDTO
             email: $model->public_email,
             phone: $model->public_phone,
             id: $model->id,
+            avatarUrl: $model->avatar_url,
         );
     }
 
@@ -46,6 +49,7 @@ class PublicUserDTO extends BaseDTO
             email: $data['email'] ?? null,
             phone: $data['phone'] ?? null,
             id: $data['id'] ?? null,
+            avatarUrl: $data['avatar_url'] ?? null,
         );
     }
 
@@ -57,6 +61,7 @@ class PublicUserDTO extends BaseDTO
             'lastName'  => $this->lastName,
             'email'     => $this->email,
             'phone'     => $this->phone,
+            'avatarUrl' => $this->avatarUrl,
         ];
     }
 }
