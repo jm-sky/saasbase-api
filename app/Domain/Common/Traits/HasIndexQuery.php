@@ -34,6 +34,11 @@ trait HasIndexQuery
     protected int $defaultPerPage = 15;
 
     /**
+     * Default with option.
+     */
+    protected array $defaultWith = [];
+
+    /**
      * Create the base query using Spatie QueryBuilder.
      */
     public function getIndexQuery(Request $request): QueryBuilder
@@ -42,6 +47,7 @@ trait HasIndexQuery
             ->allowedFilters($this->filters)
             ->allowedSorts($this->sorts)
             ->defaultSort($this->defaultSort)
+            ->with($this->defaultWith)
         ;
     }
 

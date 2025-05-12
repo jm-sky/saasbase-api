@@ -3,6 +3,7 @@
 use App\Domain\Contractors\Controllers\ContractorAddressController;
 use App\Domain\Contractors\Controllers\ContractorAttachmentsController;
 use App\Domain\Contractors\Controllers\ContractorController;
+use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
@@ -19,6 +20,16 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::get('{media}/download', 'download')->name('download');
             Route::get('{media}/preview', 'preview')->name('preview');
             Route::delete('{media}', 'destroy')->name('destroy');
+        })
+    ;
+
+    Route::prefix('contractors/{contractor}/tags')
+        ->name('contractors.tags.')
+        ->group(function () {
+            Route::get('/', [ContractorTagsController::class, 'index'])->name('index');
+            Route::post('/', [ContractorTagsController::class, 'store'])->name('store');
+            Route::patch('/', [ContractorTagsController::class, 'sync'])->name('sync');
+            Route::delete('{tag}', [ContractorTagsController::class, 'destroy'])->name('destroy');
         })
     ;
 });

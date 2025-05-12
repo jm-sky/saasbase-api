@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon          $createdAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon          $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon          $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property string[]|null    $tags
  */
 class ProductDTO extends BaseDTO
 {
@@ -38,6 +39,7 @@ class ProductDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
         public readonly ?MediaDTO $logo = null,
+        public readonly ?array $tags = null,
     ) {
     }
 
@@ -55,6 +57,7 @@ class ProductDTO extends BaseDTO
             updatedAt: $data['updated_at'],
             deletedAt: $data['deleted_at'],
             logo: null,
+            tags: $data['tags'] ?? [],
         );
     }
 
@@ -78,6 +81,7 @@ class ProductDTO extends BaseDTO
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
             logo: $logoMedia ? MediaDTO::fromModel($logoMedia) : null,
+            tags: method_exists($model, 'getTagNames') ? $model->getTagNames() : [],
         );
     }
 
@@ -95,6 +99,7 @@ class ProductDTO extends BaseDTO
             'updatedAt'   => $this->updatedAt?->toIso8601String(),
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
             'logo'        => $this->logo?->toArray(),
+            'tags'        => $this->tags ?? [],
         ];
     }
 }
