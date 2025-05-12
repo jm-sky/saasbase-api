@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string          $description
  * @property float            $priceNet
  * @property string           $unitId
- * @property string           $vatRateId
+ * @property ?string          $vatRateId
  * @property ?MeasurementUnit $unit
  * @property ?Carbon          $createdAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon          $updatedAt   Internally Carbon, accepts/serializes ISO 8601
@@ -30,7 +30,7 @@ class ProductDTO extends BaseDTO
         public readonly string $name,
         public readonly string $unitId,
         public readonly float $priceNet,
-        public readonly string $vatRateId,
+        public readonly ?string $vatRateId,
         public readonly ?string $id = null,
         public readonly ?string $description = null,
         public ?Carbon $createdAt = null,
