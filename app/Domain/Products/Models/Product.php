@@ -4,12 +4,16 @@ namespace App\Domain\Products\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
  * @property string          $id
@@ -25,10 +29,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property MeasurementUnit $unit
  * @property ?VatRate        $vatRate
  */
-class Product extends BaseModel
+class Product extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -61,5 +66,24 @@ class Product extends BaseModel
     protected static function newFactory()
     {
         return ProductFactory::new();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('logo')
+            ->singleFile()
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
+        ;
+
+        $this->addMediaCollection('attachments');
+    }
+
+    public function registerAllMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(config('domains.products.logo.size', 256))
+            ->height(config('domains.products.logo.size', 256))
+            ->nonQueued()
+        ;
     }
 }

@@ -7,6 +7,7 @@ use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Auth\ValueObjects\UserConfig;
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
@@ -36,7 +37,6 @@ use Spatie\Image\Enums\CropPosition;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -254,10 +254,14 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         ;
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function registerAllMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->crop(256, 256, CropPosition::Center)
+            ->crop(
+                config('domains.users.avatar.size', 256),
+                config('domains.users.avatar.size', 256),
+                CropPosition::Center,
+            )
             ->nonQueued()
         ;
     }

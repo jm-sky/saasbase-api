@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
+use App\Domain\Common\DTOs\MediaDTO;
 use App\Domain\Contractors\Models\Contractor;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +43,7 @@ class ContractorDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
+        public readonly ?MediaDTO $logo = null,
     ) {
     }
 
@@ -62,6 +64,7 @@ class ContractorDTO extends BaseDTO
             createdAt: $data['created_at'] ?? null,
             updatedAt: $data['updated_at'] ?? null,
             deletedAt: $data['deleted_at'] ?? null,
+            logo: null,
         );
     }
 
@@ -70,6 +73,8 @@ class ContractorDTO extends BaseDTO
         if (!$model instanceof Contractor) {
             throw new \InvalidArgumentException('Model must be instance of Contractor');
         }
+
+        $logoMedia = $model->getFirstMedia('logo');
 
         return new self(
             tenantId: $model->tenant_id,
@@ -86,6 +91,7 @@ class ContractorDTO extends BaseDTO
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
+            logo: $logoMedia ? MediaDTO::fromModel($logoMedia) : null,
         );
     }
 
@@ -106,6 +112,7 @@ class ContractorDTO extends BaseDTO
             'createdAt'   => $this->createdAt?->toIso8601String(),
             'updatedAt'   => $this->updatedAt?->toIso8601String(),
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
+            'logo'        => $this->logo?->toArray(),
         ];
     }
 }

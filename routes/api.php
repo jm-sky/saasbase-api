@@ -2,10 +2,7 @@
 
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\CountryController;
-use App\Domain\Contractors\Controllers\ContractorAddressController;
-use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
-use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Users\Controllers\PublicUserController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -41,12 +38,12 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
 
         Route::middleware('is_in_tenant')->group(function () {
-            Route::apiResource('contractors', ContractorController::class);
-            Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
-            Route::apiResource('products', ProductController::class);
             // TODO: move outside tenant middleware and check only for public users
             Route::apiResource('users', PublicUserController::class)->only(['index', 'show']);
+
             require __DIR__ . '/api/projects.php';
+            require __DIR__ . '/api/contractors.php';
+            require __DIR__ . '/api/products.php';
         });
 
         Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);

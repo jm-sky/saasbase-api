@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string                                                        $id
@@ -30,9 +32,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property \Illuminate\Database\Eloquent\Collection<int, TaskComment>    $comments
  * @property \Illuminate\Database\Eloquent\Collection<int, TaskAttachment> $attachments
  */
-class Task extends BaseModel
+class Task extends BaseModel implements HasMedia
 {
     use BelongsToTenant;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -82,8 +85,8 @@ class Task extends BaseModel
         return $this->morphMany(TaskComment::class, 'commentable');
     }
 
-    public function attachments(): MorphMany
+    public function registerMediaCollections(): void
     {
-        return $this->morphMany(TaskAttachment::class, 'attachmentable');
+        $this->addMediaCollection('attachments');
     }
 }
