@@ -23,7 +23,7 @@ class ContractorController extends Controller
 
     public function __construct()
     {
-        $this->modelClass = Contractor::class;
+        $this->modelClass  = Contractor::class;
         $this->defaultWith = ['tags'];
 
         $this->filters = [

@@ -23,10 +23,9 @@ class ProductController extends Controller
 
     protected int $defaultPerPage = 15;
 
-
     public function __construct()
     {
-        $this->modelClass = Product::class;
+        $this->modelClass  = Product::class;
         $this->defaultWith = ['tags'];
 
         $this->filters = [

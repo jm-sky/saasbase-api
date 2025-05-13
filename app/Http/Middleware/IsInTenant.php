@@ -12,7 +12,7 @@ class IsInTenant
     {
         if (!Auth::check() || !Auth::payload()?->get('tid')) {
             return response()->json([
-                'message' => 'Tenant context required',
+                'message'        => 'Tenant context required',
                 'actionRequired' => 'select-tenant',
             ], Response::HTTP_FORBIDDEN);
         }
