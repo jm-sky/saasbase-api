@@ -8,3 +8,7 @@ Broadcast::channel('chat.room.{roomId}', function ($user, $roomId) {
         ->exists()
     ;
 });
+
+Broadcast::channel('chat.ai.{userId}', function ($user, $userId) {
+    return (string) $user->id === (string) $userId;
+});
