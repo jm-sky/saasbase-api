@@ -53,4 +53,6 @@ Route::prefix('v1')->group(function () {
     });
 
     require __DIR__ . '/api/admin.php';
+
+    Route::post('ai/chat', [App\Domain\Ai\Controllers\AiChatController::class, 'chat']);
 });
