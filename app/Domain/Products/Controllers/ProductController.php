@@ -23,11 +23,11 @@ class ProductController extends Controller
 
     protected int $defaultPerPage = 15;
 
-    protected array $defaultWith = ['tags'];
 
     public function __construct()
     {
         $this->modelClass = Product::class;
+        $this->defaultWith = ['tags'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),

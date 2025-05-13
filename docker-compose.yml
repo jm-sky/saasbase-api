@@ -99,7 +99,6 @@ services:
         networks:
             - sail
 
-
     redis:
         image: 'redis:alpine'
         ports:
