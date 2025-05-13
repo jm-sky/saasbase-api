@@ -2,6 +2,7 @@
 
 namespace App\Domain\Ai\Events;
 
+use App\Domain\Ai\DTOs\StreamDeltaData;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -14,7 +15,7 @@ class AiChatMessageStreamed implements ShouldBroadcastNow
 
     public function __construct(
         public string $userId,
-        public string $content,
+        public StreamDeltaData $delta,
         public int $index
     ) {
     }
@@ -26,10 +27,7 @@ class AiChatMessageStreamed implements ShouldBroadcastNow
 
     public function broadcastWith(): array
     {
-        return [
-            'content' => $this->content,
-            'index'   => $this->index,
-        ];
+        return $this->delta->toArray();
     }
 
     public function broadcastAs(): string
