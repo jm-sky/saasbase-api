@@ -2,7 +2,9 @@
 
 use App\Domain\Contractors\Controllers\ContractorAddressController;
 use App\Domain\Contractors\Controllers\ContractorAttachmentsController;
+use App\Domain\Contractors\Controllers\ContractorBankAccountController;
 use App\Domain\Contractors\Controllers\ContractorCommentsController;
+use App\Domain\Contractors\Controllers\ContractorContactController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::apiResource('contractors', ContractorController::class);
     Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
+    Route::apiResource('contractors/{contractor}/bank-accounts', ContractorBankAccountController::class);
+    Route::apiResource('contractors/{contractor}/contacts', ContractorContactController::class);
 
     Route::controller(ContractorAttachmentsController::class)
         ->prefix('contractors/{contractor}/attachments')

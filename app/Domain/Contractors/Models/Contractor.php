@@ -12,6 +12,7 @@ use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\HasMedia;
@@ -90,5 +91,10 @@ class Contractor extends BaseModel implements HasMedia
             ->height(config('domains.contractors.logo.size', 256))
             ->nonQueued()
         ;
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(ContractorContactPerson::class);
     }
 }
