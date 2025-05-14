@@ -14,6 +14,7 @@ return new class() extends Migration {
             $table->text('content');
             $table->uuid('commentable_id');
             $table->string('commentable_type');
+            $table->jsonb('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

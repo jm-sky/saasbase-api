@@ -2,6 +2,7 @@
 
 namespace App\Domain\Common\Models;
 
+use App\Domain\Common\DTOs\AddressMeta;
 use App\Domain\Common\Enums\AddressType;
 use Carbon\Carbon;
 use Database\Factories\AddressFactory;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Model       $addressable
  * @property ?Carbon     $created_at
  * @property ?Carbon     $updated_at
+ * @property AddressMeta $meta
  */
 class Address extends BaseModel
 {
@@ -41,11 +43,13 @@ class Address extends BaseModel
         'description',
         'type',
         'is_default',
+        'meta',
     ];
 
     protected $casts = [
         'is_default' => 'boolean',
         'type'       => AddressType::class,
+        'meta'       => AddressMeta::class,
     ];
 
     public function addressable(): MorphTo

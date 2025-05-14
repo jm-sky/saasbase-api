@@ -23,6 +23,7 @@ return new class() extends Migration {
             $table->string('flat')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_default')->default(false);
+            $table->jsonb('meta')->nullable();
 
             // Polymorphic relationship fields
             $table->uuidMorphs('addressable');

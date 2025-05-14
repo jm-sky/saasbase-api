@@ -12,6 +12,7 @@ return new class() extends Migration {
             $table->uuid('tenant_id')->nullable();
             $table->string('name');
             $table->string('slug');
+            $table->jsonb('meta')->nullable();
             $table->timestamps();
             $table->unique(['tenant_id', 'slug']);
         });

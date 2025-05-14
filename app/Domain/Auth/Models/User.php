@@ -7,8 +7,10 @@ use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Auth\ValueObjects\UserConfig;
+use App\Domain\Common\Model\BankAccount;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HaveAddresses;
+use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
@@ -57,24 +59,27 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?Carbon                       $deleted_at
  * @property ?Carbon                       $email_verified_at
  * @property ?UserSettings                 $settings
+ * @property Collection<int, Address>      $addresses
+ * @property Collection<int, BankAccount>  $bankAccounts
+ * @property Collection<int, Media>        $media
  * @property Collection<int, OAuthAccount> $oauthAccounts
- * @property Collection<int, UserTenant>   $tenantMemberships
  * @property Collection<int, Project>      $projects
- * @property Collection<int, Task>         $tasks
- * @property Collection<int, UserSkill>    $userSkills
  * @property Collection<int, Skill>        $skills
+ * @property Collection<int, Task>         $tasks
  * @property Collection<int, Tenant>       $tenants
+ * @property Collection<int, UserSkill>    $userSkills
  */
 class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
     use HasUuids;
-    use HaveAddresses;
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
     use MustVerifyEmailTrait;
+    use HaveBankAccounts;
+    use HaveAddresses;
 
     protected $fillable = [
         'first_name',

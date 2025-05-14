@@ -7,6 +7,8 @@ use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
+use App\Domain\Common\Traits\HaveBankAccounts;
+use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
@@ -17,29 +19,34 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
- * @property string               $id
- * @property string               $tenant_id
- * @property string               $name
- * @property string               $email
- * @property ?string              $phone
- * @property ?string              $country
- * @property ?string              $tax_id
- * @property ?string              $description
- * @property bool                 $is_active
- * @property bool                 $is_buyer
- * @property bool                 $is_supplier
- * @property Carbon               $created_at
- * @property Carbon               $updated_at
- * @property ?Carbon              $deleted_at
- * @property Collection|string[]  $tags
- * @property Collection|Comment[] $comments
+ * @property string                   $id
+ * @property string                   $tenant_id
+ * @property string                   $name
+ * @property string                   $email
+ * @property ?string                  $phone
+ * @property ?string                  $country
+ * @property ?string                  $tax_id
+ * @property ?string                  $description
+ * @property bool                     $is_active
+ * @property bool                     $is_buyer
+ * @property bool                     $is_supplier
+ * @property Carbon                   $created_at
+ * @property Carbon                   $updated_at
+ * @property ?Carbon                  $deleted_at
+ * @property Collection|Address[]     $addresses
+ * @property Collection|BankAccount[] $bankAccounts
+ * @property Collection|Comment[]     $comments
+ * @property Collection|Media[]       $media
+ * @property Collection|string[]      $tags
  */
 class Contractor extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
-    use HaveAddresses;
     use InteractsWithMedia;
+    use HaveAddresses;
+    use HaveBankAccounts;
+    use HaveComments;
     use HasTags;
 
     protected $fillable = [
@@ -83,10 +90,5 @@ class Contractor extends BaseModel implements HasMedia
             ->height(config('domains.contractors.logo.size', 256))
             ->nonQueued()
         ;
-    }
-
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'commentable');
     }
 }

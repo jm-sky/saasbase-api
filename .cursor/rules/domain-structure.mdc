@@ -7,7 +7,7 @@ alwaysApply: false
 - Each domain resides in `app/Domain/DomainName/`.
 - Should typically include:
   - `Model.php` with Doctrine-style annotations (for documentation, IDE support, etc.).
-  - `DTOs/` using `Spatie\LaravelData\Data` (camelCase properties).
+  - `DTOs/` with camelCase properties.
   - `Requests/` for input validation.
   - `Controllers/` with RESTful CRUD logic.
   - `Actions/` for custom operations outside basic CRUD.
