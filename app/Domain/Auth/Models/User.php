@@ -147,14 +147,14 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return UserStatus::ACTIVE === $this->status;
     }
 
-    public function isEmailVerified(): string
+    public function isEmailVerified(): bool
     {
         return null !== $this->email_verified_at;
     }
 
-    public function isTwoFactorEnabled(): string
+    public function isTwoFactorEnabled(): bool
     {
-        return $this->settings?->two_factor_enabled ?? false;
+        return !!$this->settings?->two_factor_enabled ?? false;
     }
 
     public function getJWTIdentifier(): string
