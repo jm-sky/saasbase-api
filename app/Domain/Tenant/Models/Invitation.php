@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Domain\Tenant\Models;
+
+use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Invitation extends BaseModel
+{
+    protected $table = 'invitations';
+
+    protected $fillable = [
+        'tenant_id',
+        'inviter_id',
+        'email',
+        'role',
+        'token',
+        'status',
+        'accepted_at',
+        'expires_at',
+    ];
+
+    protected $casts = [
+        'accepted_at' => 'datetime',
+        'expires_at'  => 'datetime',
+    ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    public function inviter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'inviter_id');
+    }
+}
