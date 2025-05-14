@@ -71,9 +71,9 @@ class ProductController extends Controller
     {
         $product->load(['unit', 'vatRate']);
 
-        return response()->json(
-            ProductDTO::fromModel($product)
-        );
+        return response()->json([
+            'data' => ProductDTO::fromModel($product),
+        ]);
     }
 
     public function update(ProductRequest $request, Product $product): JsonResponse

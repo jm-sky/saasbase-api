@@ -72,7 +72,9 @@ class ProjectController extends Controller
     {
         $this->authorize('view', $project);
 
-        return response()->json(['data' => ProjectDTO::fromModel($project, true)]);
+        return response()->json([
+            'data' => ProjectDTO::fromModel($project, true),
+        ]);
     }
 
     public function update(UpdateProjectRequest $request, Project $project): JsonResponse
