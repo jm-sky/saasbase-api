@@ -5,6 +5,40 @@ namespace App\Domain\Common\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\Filters\Filter;
 
+/**
+ * Class AdvancedFilter
+ *
+ * Supported filter operators:
+ *
+ * Comparison:
+ *   - eq: Equal ( = )
+ *   - ne, neq: Not equal ( != )
+ *   - gt: Greater than ( > )
+ *   - gte: Greater than or equal ( >= )
+ *   - lt: Less than ( < )
+ *   - lte: Less than or equal ( <= )
+ *
+ * String:
+ *   - like: Contains (LIKE %value%)
+ *   - nlike, notlike: Not contains (NOT LIKE %value%)
+ *   - startswith: Starts with (LIKE value%)
+ *   - endswith: Ends with (LIKE %value)
+ *   - regex: Regular expression (REGEXP)
+ *
+ * Null checks:
+ *   - null: Is NULL
+ *   - notnull: Is NOT NULL
+ *   - nullish: Is NULL or empty string
+ *
+ * Set membership:
+ *   - in: In array/list
+ *   - nin, notin: Not in array/list
+ *   - between: Between two values (comma-separated or array)
+ *
+ * Usage:
+ *   Pass an associative array of operators and values as the filter value.
+ *   Example: ['gt' => 5, 'lt' => 10]
+ */
 class AdvancedFilter implements Filter
 {
     protected array $columnTypes;
