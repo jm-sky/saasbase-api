@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\Filters\Filter;
 
 /**
- * Class AdvancedFilter
+ * Class AdvancedFilter.
  *
  * Supported filter operators:
  *

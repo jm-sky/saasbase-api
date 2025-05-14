@@ -54,7 +54,19 @@ class DatabaseSeeder extends Seeder
 
         Contractor::factory(5)->create([
             'tenant_id' => $tenant->id,
-        ]);
+        ])->each(function ($contractor) use ($tenant) {
+            // Dodaj 2 adresy
+            \Database\Factories\AddressFactory::new()->count(2)->create([
+                'tenant_id'        => $tenant->id,
+                'addressable_id'   => $contractor->id,
+                'addressable_type' => \App\Domain\Contractors\Models\Contractor::class,
+            ]);
+            // Dodaj 1-2 tagi
+            $tags = collect(['VIP', 'Partner', 'Nowy', 'Kluczowy', 'Testowy'])->random(rand(1, 2))->all();
+            foreach ($tags as $tag) {
+                $contractor->addTag($tag, $tenant->id);
+            }
+        });
 
         Product::factory(5)->create([
             'tenant_id' => $tenant->id,

@@ -2,6 +2,7 @@
 
 use App\Domain\Contractors\Controllers\ContractorAddressController;
 use App\Domain\Contractors\Controllers\ContractorAttachmentsController;
+use App\Domain\Contractors\Controllers\ContractorCommentsController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
@@ -32,4 +33,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::delete('{tag}', [ContractorTagsController::class, 'destroy'])->name('destroy');
         })
     ;
+
+    Route::apiResource('contractors/{contractor}/comments', ContractorCommentsController::class);
 });
