@@ -15,8 +15,8 @@ return new class() extends Migration {
             $table->string('role');
             $table->string('token')->unique();
             $table->string('status'); // pending, accepted, expired
-            $table->timestamp('accepted_at')->nullable();
-            $table->timestamp('expires_at');
+            $table->dateTime('accepted_at')->nullable(); // was timestamp
+            $table->dateTime('expires_at'); // was timestamp
             $table->timestamps();
             $table->index('tenant_id');
             $table->index('email');
