@@ -8,10 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('media', function (Blueprint $table) {
-            $table->id();
-            // TODO: Implement when registerMediaConversions wouldn't throw an error
-            // $table->uuid('id')->primary();
-            // $table->uuid('tenant_id')->nullable()->index();
+            $table->uuid('id');
+            $table->uuid('tenant_id')->nullable()->index();
 
             $table->uuidMorphs('model');
             $table->uuid()->nullable()->unique();

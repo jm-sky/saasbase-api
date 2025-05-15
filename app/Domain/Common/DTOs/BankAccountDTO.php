@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @extends BaseDTO<BankAccount>
  *
  * @property string  $id           UUID
- * @property ?string $tenantId    UUID
+ * @property ?string $tenantId     UUID
  * @property string  $bankableId   UUID
  * @property string  $bankableType
  * @property string  $iban

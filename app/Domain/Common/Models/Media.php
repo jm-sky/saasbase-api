@@ -2,6 +2,7 @@
 
 namespace App\Domain\Common\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as MediaLibraryMedia;
 
@@ -35,6 +36,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as MediaLibraryMedia;
  */
 class Media extends MediaLibraryMedia
 {
+    use HasUuids;
+
     protected $fillable = [
         'tenant_id',
     ];
