@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @extends BaseDTO<BankAccount>
  *
  * @property string  $id           UUID
- * @property string  $tenantId     UUID
+ * @property ?string $tenantId    UUID
  * @property string  $bankableId   UUID
  * @property string  $bankableType
  * @property string  $iban
@@ -25,10 +25,10 @@ use Illuminate\Database\Eloquent\Model;
 class BankAccountDTO extends BaseDTO
 {
     public function __construct(
-        public readonly string $tenantId,
         public readonly string $bankableId,
         public readonly string $bankableType,
         public readonly string $iban,
+        public readonly ?string $tenantId = null,
         public readonly ?string $swift = null,
         public readonly ?string $bankName = null,
         public readonly bool $isDefault = false,
@@ -43,7 +43,7 @@ class BankAccountDTO extends BaseDTO
     public static function fromArray(array $data): static
     {
         return new self(
-            tenantId: $data['tenant_id'],
+            tenantId: $data['tenant_id'] ?? null,
             bankableId: $data['bankable_id'],
             bankableType: $data['bankable_type'],
             iban: $data['iban'],
@@ -65,15 +65,15 @@ class BankAccountDTO extends BaseDTO
         }
 
         return new self(
-            tenantId: $model->tenant_id,
+            tenantId: $model->tenant_id ?? null,
             bankableId: $model->bankable_id,
             bankableType: $model->bankable_type,
-            bankName: $model->bank_name,
+            bankName: $model->bank_name ?? null,
             iban: $model->iban,
-            swift: $model->swift,
+            swift: $model->swift ?? null,
             isDefault: $model->is_default,
-            currency: $model->currency,
-            description: $model->description,
+            currency: $model->currency ?? null,
+            description: $model->description ?? null,
             id: $model->id,
             createdAt: $model->created_at ? Carbon::parse($model->created_at) : null,
             updatedAt: $model->updated_at ? Carbon::parse($model->updated_at) : null,

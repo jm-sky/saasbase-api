@@ -14,7 +14,7 @@ class ContractorBankAccountController extends Controller
 {
     public function index(Contractor $contractor): JsonResponse
     {
-        $bankAccounts = $contractor->bankAccounts()->paginate();
+        $bankAccounts = $contractor->bankAccounts()->orderBy('is_default', 'desc')->paginate();
 
         return response()->json([
             'data' => collect($bankAccounts->items())->map(fn (BankAccount $bankAccount) => BankAccountDTO::fromModel($bankAccount)),
@@ -38,7 +38,7 @@ class ContractorBankAccountController extends Controller
 
     public function show(Contractor $contractor, BankAccount $bankAccount): JsonResponse
     {
-        abort_if($bankAccount->bank_accountable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         return response()->json([
             'data' => BankAccountDTO::fromModel($bankAccount),
@@ -47,7 +47,7 @@ class ContractorBankAccountController extends Controller
 
     public function update(ContractorBankAccountRequest $request, Contractor $contractor, BankAccount $bankAccount): JsonResponse
     {
-        abort_if($bankAccount->bank_accountable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         $bankAccount->update($request->validated());
 
@@ -58,7 +58,7 @@ class ContractorBankAccountController extends Controller
 
     public function destroy(Contractor $contractor, BankAccount $bankAccount): JsonResponse
     {
-        abort_if($bankAccount->bank_accountable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         $bankAccount->delete();
 

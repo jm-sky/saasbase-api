@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string                 $id
- * @property string                 $tenant_id
+ * @property ?string                $tenant_id
  * @property string                 $bankable_id
  * @property string                 $bankable_type
  * @property string                 $iban
