@@ -28,7 +28,7 @@ class AddressFactory extends Factory
             'city'        => fake()->city(),
             'street'      => fake()->optional()->streetAddress(),
             'building'    => fake()->optional()->buildingNumber(),
-            'flat'        => fake()->optional()->secondaryAddress(),
+            'flat'        => fake()->optional()->numberBetween(1, 100),
             'description' => fake()->optional()->sentence(),
             'type'        => fake()->randomElement(AddressType::cases()),
             'is_default'  => false,
