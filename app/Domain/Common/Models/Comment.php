@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property string      $id
@@ -46,5 +47,15 @@ class Comment extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function canEdit(): bool
+    {
+        return Auth::user()?->id === $this->user_id;
+    }
+
+    public function canDelete(): bool
+    {
+        return Auth::user()?->id === $this->user_id;
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string         $commentableId
  * @property string         $commentableType
  * @property ?string        $id              UUID
+ * @property ?array         $meta            (canEdit, canDelete)
  * @property ?Carbon        $createdAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon        $updatedAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon        $deletedAt       Internally Carbon, accepts/serializes ISO 8601
@@ -32,6 +33,7 @@ class CommentDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
         public ?PublicUserDTO $user = null,
+        public ?array $meta = null,
     ) {
     }
 
@@ -48,6 +50,10 @@ class CommentDTO extends BaseDTO
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
             user: $model->user ? PublicUserDTO::fromModel($model->user) : null,
+            meta: [
+                'canEdit'   => $model->canEdit(),
+                'canDelete' => $model->canDelete(),
+            ],
         );
     }
 
@@ -63,6 +69,7 @@ class CommentDTO extends BaseDTO
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
             deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
             user: isset($data['user']) ? PublicUserDTO::fromArray($data['user']) : null,
+            meta: isset($data['meta']) ? $data['meta'] : null,
         );
     }
 
@@ -78,6 +85,7 @@ class CommentDTO extends BaseDTO
             'updatedAt'       => $this->updatedAt?->toIso8601String(),
             'deletedAt'       => $this->deletedAt?->toIso8601String(),
             'user'            => $this->user?->toArray(),
+            'meta'            => $this->meta,
         ];
     }
 }

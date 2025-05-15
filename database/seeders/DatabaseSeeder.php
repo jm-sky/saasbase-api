@@ -10,6 +10,7 @@ use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Models\Tenant;
 use Database\Factories\AddressFactory;
 use Database\Factories\BankAccountFactory;
+use Database\Factories\CommentFactory;
 use Database\Factories\ContractorContactPersonFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -78,11 +79,19 @@ class DatabaseSeeder extends Seeder
                 foreach ($tags as $tag) {
                     $contractor->addTag($tag, $tenant->id);
                 }
-            });
 
-            Product::factory(5)->create([
-                'tenant_id' => $tenant->id,
-            ]);
+                // Add some random comments for each contractor
+                CommentFactory::new()->count(rand(1, 3))->create([
+                    'tenant_id'        => $tenant->id,
+                    'user_id'          => self::BOT_USER_ID,
+                    'commentable_id'   => $contractor->id,
+                    'commentable_type' => Contractor::class,
+                ]);
+
+                Product::factory(5)->create([
+                    'tenant_id' => $tenant->id,
+                ]);
+            });
         });
     }
 
