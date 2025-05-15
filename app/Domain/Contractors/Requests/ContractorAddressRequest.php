@@ -28,6 +28,14 @@ class ContractorAddressRequest extends FormRequest
         ];
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'tenantId'  => $this->user()->getTenantId(),
+            'isDefault' => $this->input('isDefault', false),
+        ]);
+    }
+
     public function validated($key = null, $default = null): array
     {
         $validated = parent::validated();

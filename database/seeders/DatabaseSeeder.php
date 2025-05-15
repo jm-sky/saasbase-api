@@ -8,6 +8,9 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Models\Tenant;
+use Database\Factories\AddressFactory;
+use Database\Factories\BankAccountFactory;
+use Database\Factories\ContractorContactPersonFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -52,24 +55,35 @@ class DatabaseSeeder extends Seeder
 
         (new InitializeTenantDefaults())->execute($tenant, $user);
 
-        Contractor::factory(5)->create([
-            'tenant_id' => $tenant->id,
-        ])->each(function ($contractor) use ($tenant) {
-            \Database\Factories\AddressFactory::new()->count(2)->create([
-                'tenant_id'        => $tenant->id,
-                'addressable_id'   => $contractor->id,
-                'addressable_type' => Contractor::class,
-            ]);
-            // Dodaj 1-2 tagi
-            // $tags = collect(['VIP', 'Partner', 'Nowy', 'Kluczowy', 'Testowy'])->random(rand(1, 2))->all();
-            // foreach ($tags as $tag) {
-            //     $contractor->addTag($tag, $tenant->id);
-            // }
-        });
+        Tenant::bypassTenant($tenant->id, function () use ($tenant) {
+            Contractor::factory(5)->create([
+                'tenant_id' => $tenant->id,
+            ])->each(function ($contractor) use ($tenant) {
+                AddressFactory::new()->count(3)->create([
+                    'tenant_id'        => $tenant->id,
+                    'addressable_id'   => $contractor->id,
+                    'addressable_type' => Contractor::class,
+                ]);
+                BankAccountFactory::new()->count(3)->create([
+                    'tenant_id'     => $tenant->id,
+                    'bankable_id'   => $contractor->id,
+                    'bankable_type' => Contractor::class,
+                ]);
+                ContractorContactPersonFactory::new()->count(3)->create([
+                    'tenant_id'     => $tenant->id,
+                    'contractor_id' => $contractor->id,
+                ]);
+                $tags = collect(['VIP', 'Partner', 'Nowy', 'Kluczowy', 'Testowy'])->random(rand(1, 2))->all();
 
-        Product::factory(5)->create([
-            'tenant_id' => $tenant->id,
-        ]);
+                foreach ($tags as $tag) {
+                    $contractor->addTag($tag, $tenant->id);
+                }
+            });
+
+            Product::factory(5)->create([
+                'tenant_id' => $tenant->id,
+            ]);
+        });
     }
 
     protected function createBotUser(Tenant $tenant): void

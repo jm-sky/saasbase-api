@@ -6,7 +6,7 @@ enum AddressType: string
 {
     case RESIDENCE         = 'residence';
     case BILLING           = 'billing';
-    case REGISTERED_OFFICE = 'registered_office';
+    case REGISTERED_OFFICE = 'registeredOffice';
     case CORRESPONDENCE    = 'correspondence';
-    case DOMICILE          = 'domicile';
+    case CONTACT           = 'contact';
 }

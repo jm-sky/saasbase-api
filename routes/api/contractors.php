@@ -11,8 +11,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::apiResource('contractors', ContractorController::class);
+
     Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
+    Route::post('contractors/{contractor}/addresses/{address}/set-default', [ContractorAddressController::class, 'setDefault'])->name('contractors.addresses.setDefault');
+
     Route::apiResource('contractors/{contractor}/bank-accounts', ContractorBankAccountController::class);
+    Route::post('contractors/{contractor}/bank-accounts/{bankAccount}/set-default', [ContractorBankAccountController::class, 'setDefault'])->name('contractors.bankAccounts.setDefault');
+
     Route::apiResource('contractors/{contractor}/contacts', ContractorContactController::class);
 
     Route::controller(ContractorAttachmentsController::class)

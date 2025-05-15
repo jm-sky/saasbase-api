@@ -65,4 +65,12 @@ class ContractorAddressController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function setDefault(Contractor $contractor, ContractorAddress $address): JsonResponse
+    {
+        $contractor->addresses()->update(['is_default' => false]);
+        $address->update(['is_default' => true]);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
 }

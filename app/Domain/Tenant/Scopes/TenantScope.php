@@ -15,7 +15,7 @@ class TenantScope implements Scope
     {
         /** @var ?User $user */
         $user     = Auth::user();
-        $tenantId = $user?->getTenantId() ?? Tenant::$PUBLIC_TENANT_ID;
+        $tenantId = $user?->getTenantId() ?? Tenant::$BYPASSED_TENANT_ID;
 
         $builder->where('tenant_id', $tenantId);
     }

@@ -30,7 +30,7 @@ class BankAccountDTO extends BaseDTO
         public readonly string $bankableType,
         public readonly string $iban,
         public readonly ?string $swift = null,
-        public readonly string $bankName,
+        public readonly ?string $bankName = null,
         public readonly bool $isDefault = false,
         public readonly ?string $currency = null,
         public readonly ?string $description = null,

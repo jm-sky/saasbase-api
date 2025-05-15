@@ -38,7 +38,7 @@ class BelongsToTenantTest extends TestCase
 
         $this->user->tenants()->attach($this->tenant, ['role' => 'admin']);
 
-        Tenant::$PUBLIC_TENANT_ID = $this->tenant->id;
+        Tenant::$BYPASSED_TENANT_ID = $this->tenant->id;
     }
 
     public function testModelIsScopedToTenant(): void

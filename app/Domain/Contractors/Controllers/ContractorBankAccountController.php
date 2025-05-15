@@ -64,4 +64,12 @@ class ContractorBankAccountController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function setDefault(Contractor $contractor, BankAccount $bankAccount): JsonResponse
+    {
+        $contractor->bankAccounts()->update(['is_default' => false]);
+        $bankAccount->update(['is_default' => true]);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
 }

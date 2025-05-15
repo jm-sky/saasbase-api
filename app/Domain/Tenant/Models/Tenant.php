@@ -34,7 +34,7 @@ class Tenant extends BaseModel implements HasMedia
     use HaveAddresses;
     use HaveBankAccounts;
 
-    public static ?string $PUBLIC_TENANT_ID = null;
+    public static ?string $BYPASSED_TENANT_ID = null;
 
     protected $fillable = [
         'name',
@@ -63,5 +63,13 @@ class Tenant extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('attachments');
+    }
+
+    public static function bypassTenant(string $tenantId, \Closure $callback): void
+    {
+        $previousTenantId         = self::$BYPASSED_TENANT_ID;
+        self::$BYPASSED_TENANT_ID = $tenantId;
+        $callback();
+        self::$BYPASSED_TENANT_ID = $previousTenantId;
     }
 }

@@ -154,7 +154,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function isTwoFactorEnabled(): bool
     {
-        return !!$this->settings?->two_factor_enabled ?? false;
+        return (bool) $this->settings?->two_factor_enabled ?? false;
     }
 
     public function getJWTIdentifier(): string
