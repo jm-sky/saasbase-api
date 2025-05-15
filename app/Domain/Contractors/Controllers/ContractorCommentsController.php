@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Common\DTOs\CommentDTO;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorCommentRequest;
@@ -12,10 +13,10 @@ class ContractorCommentsController
 {
     public function index(Contractor $contractor): JsonResponse
     {
-        $comments = $contractor->comments()->latest()->paginate();
+        $comments = $contractor->comments()->with('user')->latest()->paginate();
 
         return response()->json([
-            'data' => $comments->items(),
+            'data' => CommentDTO::collect($comments->items()),
             'meta' => [
                 'current_page' => $comments->currentPage(),
                 'last_page'    => $comments->lastPage(),
@@ -30,7 +31,7 @@ class ContractorCommentsController
         abort_if($comment->commentable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         return response()->json([
-            'data' => $comment,
+            'data' => CommentDTO::fromModel($comment),
         ]);
     }
 
@@ -44,7 +45,7 @@ class ContractorCommentsController
         ]);
 
         return response()->json([
-            'data' => $comment,
+            'data' => CommentDTO::fromModel($comment),
         ], Response::HTTP_CREATED);
     }
 
@@ -55,7 +56,7 @@ class ContractorCommentsController
         $comment->update($validated);
 
         return response()->json([
-            'data' => $comment->fresh(),
+            'data' => CommentDTO::fromModel($comment->fresh()),
         ]);
     }
 
