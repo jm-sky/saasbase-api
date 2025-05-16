@@ -2,6 +2,7 @@
 
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
 use App\Domain\Tenant\Controllers\InvitationController;
+use App\Domain\Tenant\Controllers\TenantActivityLogController;
 use App\Domain\Tenant\Controllers\TenantAddressController;
 use App\Domain\Tenant\Controllers\TenantAttachmentsController;
 use App\Domain\Tenant\Controllers\TenantBankAccountController;
@@ -50,6 +51,8 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     // Invitation routes
     Route::post('tenants/{tenant}/invite', [InvitationController::class, 'send']);
+
+    Route::get('/tenants/{tenant}/logs', [TenantActivityLogController::class, 'index']);
 });
 
 // Accept invitation (public, no auth required)

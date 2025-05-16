@@ -46,5 +46,5 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::apiResource('products.comments', ProductCommentsController::class)->names('products.comments');
 
-    Route::get('/{product}/logs', [ProductActivityLogController::class, 'index']);
+    Route::get('/products/{product}/logs', [ProductActivityLogController::class, 'index']);
 });

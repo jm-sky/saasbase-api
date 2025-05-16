@@ -61,5 +61,5 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::apiResource('contractors/{contractor}/comments', ContractorCommentsController::class)->names('contractors.comments');
 
-    Route::get('/{contractor}/logs', [ContractorActivityLogController::class, 'index']);
+    Route::get('/contractors/{contractor}/logs', [ContractorActivityLogController::class, 'index']);
 });
