@@ -3,9 +3,12 @@
 namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Enums\AddressType;
-use App\Domain\Common\Models\Address;
+use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -28,9 +31,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property ?Carbon     $created_at
  * @property ?Carbon     $updated_at
  */
-class ContractorAddress extends Address
+class ContractorAddress extends Model
 {
     use BelongsToTenant;
+    use HasActivityLog;
 
     /**
      * The table associated with the model.
@@ -39,6 +43,20 @@ class ContractorAddress extends Address
      * @var string
      */
     protected $table = 'addresses';
+
+    protected $fillable = [
+        'contractor_id',
+        'street',
+        'city',
+        'state',
+        'postal_code',
+        'country',
+        'is_default',
+    ];
+
+    protected $casts = [
+        'is_default' => 'boolean',
+    ];
 
     /**
      * Get the parent addressable model.
@@ -58,6 +76,50 @@ class ContractorAddress extends Address
 
         static::creating(function (self $address) {
             $address->addressable_type = Contractor::class;
+        });
+    }
+
+    public function contractor(): BelongsTo
+    {
+        return $this->belongsTo(Contractor::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($address) {
+            activity()
+                ->performedOn($address->contractor)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'address_id' => $address->id,
+                ])
+                ->event(ContractorActivityType::ADDRESS_CREATED->value)
+                ->log('Contractor address created')
+            ;
+        });
+
+        static::updated(function ($address) {
+            activity()
+                ->performedOn($address->contractor)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'address_id' => $address->id,
+                ])
+                ->event(ContractorActivityType::ADDRESS_UPDATED->value)
+                ->log('Contractor address updated')
+            ;
+        });
+
+        static::deleted(function ($address) {
+            activity()
+                ->performedOn($address->contractor)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'address_id' => $address->id,
+                ])
+                ->event(ContractorActivityType::ADDRESS_DELETED->value)
+                ->log('Contractor address deleted')
+            ;
         });
     }
 }

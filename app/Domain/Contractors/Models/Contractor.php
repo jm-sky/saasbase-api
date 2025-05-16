@@ -5,11 +5,13 @@ namespace App\Domain\Contractors\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Common\Traits\HaveComments;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
@@ -52,6 +54,7 @@ class Contractor extends BaseModel implements HasMedia
     use HaveBankAccounts;
     use HaveComments;
     use HasTags;
+    use HasActivityLog;
 
     protected $fillable = [
         'tenant_id',
@@ -108,5 +111,35 @@ class Contractor extends BaseModel implements HasMedia
     protected static function newFactory()
     {
         return ContractorFactory::new();
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($contractor) {
+            activity()
+                ->performedOn($contractor)
+                ->withProperties(['tenant_id' => request()->user()->tenant_id])
+                ->event(ContractorActivityType::CREATED->value)
+                ->log('Contractor created')
+            ;
+        });
+
+        static::updated(function ($contractor) {
+            activity()
+                ->performedOn($contractor)
+                ->withProperties(['tenant_id' => request()->user()->tenant_id])
+                ->event(ContractorActivityType::UPDATED->value)
+                ->log('Contractor updated')
+            ;
+        });
+
+        static::deleted(function ($contractor) {
+            activity()
+                ->performedOn($contractor)
+                ->withProperties(['tenant_id' => request()->user()->tenant_id])
+                ->event(ContractorActivityType::DELETED->value)
+                ->log('Contractor deleted')
+            ;
+        });
     }
 }
