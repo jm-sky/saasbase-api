@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorAttachmentRequest;
 use App\Http\Controllers\Controller;
@@ -31,8 +32,20 @@ class ContractorAttachmentsController extends Controller
         $file  = $request->file('file');
         $media = $contractor->addMedia($file)->toMediaCollection('attachments');
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'contractor_id' => $contractor->id,
+                'attachment_id' => $media->id,
+            ])
+            ->event(ContractorActivityType::AttachmentCreated->value)
+            ->log('Contractor attachment created')
+        ;
+
         return response()->json([
-            'data' => MediaDTO::fromModel($media)->toArray(),
+            'message' => 'Attachment uploaded successfully.',
+            'data'    => MediaDTO::fromModel($media)->toArray(),
         ], Response::HTTP_CREATED);
     }
 
@@ -89,9 +102,20 @@ class ContractorAttachmentsController extends Controller
 
         $this->authorizeMedia($contractor, $media);
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'contractor_id' => $contractor->id,
+                'attachment_id' => $media->id,
+            ])
+            ->event(ContractorActivityType::AttachmentDeleted->value)
+            ->log('Contractor attachment deleted')
+        ;
+
         $media->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Attachment deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 
     /**

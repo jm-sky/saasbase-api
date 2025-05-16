@@ -2,12 +2,15 @@
 
 namespace App\Domain\Products\Controllers;
 
-use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductAttachmentRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class ProductAttachmentsController extends Controller
 {
@@ -16,10 +19,17 @@ class ProductAttachmentsController extends Controller
      */
     public function index(Product $product)
     {
-        $media = $product->getMedia('attachments');
+        $attachments = $product->getMedia('attachments');
 
         return response()->json([
-            'data' => MediaDTO::collection($media),
+            'data' => $attachments->map(fn ($media) => [
+                'id'        => $media->id,
+                'name'      => $media->name,
+                'file_name' => $media->file_name,
+                'mime_type' => $media->mime_type,
+                'size'      => $media->size,
+                'url'       => route('product.attachments.show', ['product' => $product->id, 'attachment' => $media->id], absolute: false),
+            ]),
         ]);
     }
 
@@ -28,65 +38,121 @@ class ProductAttachmentsController extends Controller
      */
     public function store(ProductAttachmentRequest $request, Product $product)
     {
-        $file  = $request->file('file');
-        $media = $product->addMedia($file)->toMediaCollection('attachments');
+        $media = $product->addMediaFromRequest('file')
+            ->toMediaCollection('attachments')
+        ;
+
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'product_id'    => $product->id,
+                'attachment_id' => $media->id,
+            ])
+            ->event(ProductActivityType::AttachmentCreated->value)
+            ->log('Product attachment created')
+        ;
 
         return response()->json([
-            'data' => MediaDTO::fromModel($media)->toArray(),
-        ], Response::HTTP_CREATED);
+            'message' => 'Attachment uploaded successfully.',
+            'data'    => [
+                'id'        => $media->id,
+                'name'      => $media->name,
+                'file_name' => $media->file_name,
+                'mime_type' => $media->mime_type,
+                'size'      => $media->size,
+                'url'       => route('product.attachments.show', ['product' => $product->id, 'attachment' => $media->id], absolute: false),
+            ],
+        ], HttpResponse::HTTP_CREATED);
     }
 
     /**
      * Show metadata for a single attachment.
      */
-    public function show(Product $product, Media $media)
+    public function show(Product $product, Request $request, $attachmentId)
     {
-        $this->authorizeMedia($product, $media);
+        $media = $product->getMedia('attachments')->firstWhere('id', $attachmentId);
 
-        return response()->json([
-            'data' => MediaDTO::fromModel($media)->toArray(),
+        if (!$media) {
+            return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+        return Response::stream(function () use ($stream) {
+            fpassthru($stream);
+        }, HttpResponse::HTTP_OK, [
+            'Content-Type'        => $media->mime_type,
+            'Content-Length'      => $media->size,
+            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
         ]);
     }
 
     /**
-     * Download an attachment.
+     * Update an attachment.
      */
-    public function download(Product $product, Media $media)
+    public function update(ProductAttachmentRequest $request, Product $product, $attachmentId)
     {
-        $this->authorizeMedia($product, $media);
-        $path    = $media->getPath();
-        $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
-        ];
+        $media = $product->getMedia('attachments')->firstWhere('id', $attachmentId);
 
-        return response()->download($path, $media->file_name, $headers);
-    }
+        if (!$media) {
+            return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
+        }
 
-    /**
-     * Preview an attachment (inline).
-     */
-    public function preview(Product $product, Media $media)
-    {
-        $this->authorizeMedia($product, $media);
-        $path    = $media->getPath();
-        $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
-        ];
+        $media->delete();
+        $newMedia = $product->addMediaFromRequest('file')
+            ->toMediaCollection('attachments')
+        ;
 
-        return response()->file($path, $headers);
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'product_id'    => $product->id,
+                'attachment_id' => $newMedia->id,
+            ])
+            ->event(ProductActivityType::AttachmentUpdated->value)
+            ->log('Product attachment updated')
+        ;
+
+        return response()->json([
+            'message' => 'Attachment updated successfully.',
+            'data'    => [
+                'id'        => $newMedia->id,
+                'name'      => $newMedia->name,
+                'file_name' => $newMedia->file_name,
+                'mime_type' => $newMedia->mime_type,
+                'size'      => $newMedia->size,
+                'url'       => route('product.attachments.show', ['product' => $product->id, 'attachment' => $newMedia->id], absolute: false),
+            ],
+        ]);
     }
 
     /**
      * Delete an attachment.
      */
-    public function destroy(Product $product, Media $media)
+    public function destroy(Product $product, $attachmentId)
     {
-        $this->authorizeMedia($product, $media);
+        $media = $product->getMedia('attachments')->firstWhere('id', $attachmentId);
+
+        if (!$media) {
+            return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
+        }
+
         $media->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'product_id'    => $product->id,
+                'attachment_id' => $media->id,
+            ])
+            ->event(ProductActivityType::AttachmentDeleted->value)
+            ->log('Product attachment deleted')
+        ;
+
+        return response()->json(null, HttpResponse::HTTP_NO_CONTENT);
     }
 
     /**

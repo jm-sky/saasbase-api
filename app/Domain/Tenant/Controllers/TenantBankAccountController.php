@@ -4,6 +4,7 @@ namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\Models\BankAccount;
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantBankAccountRequest;
 use App\Http\Controllers\Controller;
@@ -31,6 +32,16 @@ class TenantBankAccountController extends Controller
     {
         $bankAccount = $tenant->bankAccounts()->create($request->validated());
 
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'       => $tenant->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(TenantActivityType::BankAccountCreated->value)
+            ->log('Tenant bank account created')
+        ;
+
         return response()->json([
             'data' => BankAccountDTO::fromModel($bankAccount),
         ], Response::HTTP_CREATED);
@@ -51,6 +62,16 @@ class TenantBankAccountController extends Controller
 
         $bankAccount->update($request->validated());
 
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'       => $tenant->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(TenantActivityType::BankAccountUpdated->value)
+            ->log('Tenant bank account updated')
+        ;
+
         return response()->json([
             'data' => BankAccountDTO::fromModel($bankAccount->fresh()),
         ]);
@@ -59,6 +80,16 @@ class TenantBankAccountController extends Controller
     public function destroy(Tenant $tenant, BankAccount $bankAccount): JsonResponse
     {
         abort_if($bankAccount->bankable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'       => $tenant->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(TenantActivityType::BankAccountDeleted->value)
+            ->log('Tenant bank account deleted')
+        ;
 
         $bankAccount->delete();
 
@@ -69,6 +100,16 @@ class TenantBankAccountController extends Controller
     {
         $tenant->bankAccounts()->update(['is_default' => false]);
         $bankAccount->update(['is_default' => true]);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'       => $tenant->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(TenantActivityType::BankAccountSetDefault->value)
+            ->log('Tenant bank account set as default')
+        ;
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

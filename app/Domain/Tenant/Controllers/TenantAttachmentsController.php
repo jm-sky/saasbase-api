@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantAttachmentRequest;
 use App\Http\Controllers\Controller;
@@ -24,6 +25,16 @@ class TenantAttachmentsController extends Controller
     {
         $file  = $request->file('file');
         $media = $tenant->addMedia($file)->toMediaCollection('attachments');
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'     => $tenant->id,
+                'attachment_id' => $media->id,
+            ])
+            ->event(TenantActivityType::AttachmentCreated->value)
+            ->log('Tenant attachment created')
+        ;
 
         return response()->json([
             'data' => MediaDTO::fromModel($media)->toArray(),
@@ -66,6 +77,17 @@ class TenantAttachmentsController extends Controller
     public function destroy(Tenant $tenant, Media $media)
     {
         $this->authorizeMedia($tenant, $media);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'     => $tenant->id,
+                'attachment_id' => $media->id,
+            ])
+            ->event(TenantActivityType::AttachmentDeleted->value)
+            ->log('Tenant attachment deleted')
+        ;
+
         $media->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

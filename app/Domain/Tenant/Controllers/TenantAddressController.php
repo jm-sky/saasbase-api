@@ -4,6 +4,7 @@ namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\Models\Address;
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantAddress;
 use App\Domain\Tenant\Requests\TenantAddressRequest;
@@ -32,6 +33,16 @@ class TenantAddressController extends Controller
     {
         $address = $tenant->addresses()->create($request->validated());
 
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'  => $tenant->id,
+                'address_id' => $address->id,
+            ])
+            ->event(TenantActivityType::AddressCreated->value)
+            ->log('Tenant address created')
+        ;
+
         return response()->json([
             'data' => AddressDTO::fromModel($address),
         ], Response::HTTP_CREATED);
@@ -52,6 +63,16 @@ class TenantAddressController extends Controller
 
         $address->update($request->validated());
 
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'  => $tenant->id,
+                'address_id' => $address->id,
+            ])
+            ->event(TenantActivityType::AddressUpdated->value)
+            ->log('Tenant address updated')
+        ;
+
         return response()->json([
             'data' => AddressDTO::fromModel($address->fresh()),
         ]);
@@ -60,6 +81,16 @@ class TenantAddressController extends Controller
     public function destroy(Tenant $tenant, TenantAddress $address): JsonResponse
     {
         abort_if($address->addressable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'  => $tenant->id,
+                'address_id' => $address->id,
+            ])
+            ->event(TenantActivityType::AddressDeleted->value)
+            ->log('Tenant address deleted')
+        ;
 
         $address->delete();
 
@@ -70,6 +101,16 @@ class TenantAddressController extends Controller
     {
         $tenant->addresses()->update(['is_default' => false]);
         $address->update(['is_default' => true]);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'  => $tenant->id,
+                'address_id' => $address->id,
+            ])
+            ->event(TenantActivityType::AddressSetDefault->value)
+            ->log('Tenant address set as default')
+        ;
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

@@ -4,6 +4,9 @@ namespace App\Domain\Common\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\DTOs\CommentMeta;
+use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Contractors\Enums\ContractorActivityType;
+use App\Domain\Contractors\Models\Contractor;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +29,8 @@ use Illuminate\Support\Facades\Auth;
  */
 class Comment extends BaseModel
 {
+    use HasActivityLog;
+
     protected $fillable = [
         'tenant_id',
         'user_id',
@@ -57,5 +62,50 @@ class Comment extends BaseModel
     public function canDelete(): bool
     {
         return Auth::user()?->id === $this->user_id;
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($comment) {
+            if (Contractor::class === $comment->commentable_type) {
+                activity()
+                    ->performedOn($comment->commentable)
+                    ->withProperties([
+                        'tenant_id'  => request()->user()->tenant_id,
+                        'comment_id' => $comment->id,
+                    ])
+                    ->event(ContractorActivityType::CommentCreated->value)
+                    ->log('Contractor comment created')
+                ;
+            }
+        });
+
+        static::updated(function ($comment) {
+            if (Contractor::class === $comment->commentable_type) {
+                activity()
+                    ->performedOn($comment->commentable)
+                    ->withProperties([
+                        'tenant_id'  => request()->user()->tenant_id,
+                        'comment_id' => $comment->id,
+                    ])
+                    ->event(ContractorActivityType::CommentUpdated->value)
+                    ->log('Contractor comment updated')
+                ;
+            }
+        });
+
+        static::deleted(function ($comment) {
+            if (Contractor::class === $comment->commentable_type) {
+                activity()
+                    ->performedOn($comment->commentable)
+                    ->withProperties([
+                        'tenant_id'  => request()->user()->tenant_id,
+                        'comment_id' => $comment->id,
+                    ])
+                    ->event(ContractorActivityType::CommentDeleted->value)
+                    ->log('Contractor comment deleted')
+                ;
+            }
+        });
     }
 }

@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\Models\Address;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorAddress;
 use App\Domain\Contractors\Requests\ContractorAddressRequest;
@@ -32,6 +33,16 @@ class ContractorAddressController extends Controller
     {
         $address = $contractor->addresses()->create($request->validated());
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'contractor_id' => $contractor->id,
+                'address_id'    => $address->id,
+            ])
+            ->event(ContractorActivityType::AddressCreated->value)
+            ->log('Contractor address created')
+        ;
+
         return response()->json([
             'data' => AddressDTO::fromModel($address),
         ], Response::HTTP_CREATED);
@@ -52,6 +63,16 @@ class ContractorAddressController extends Controller
 
         $address->update($request->validated());
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'contractor_id' => $contractor->id,
+                'address_id'    => $address->id,
+            ])
+            ->event(ContractorActivityType::AddressUpdated->value)
+            ->log('Contractor address updated')
+        ;
+
         return response()->json([
             'data' => AddressDTO::fromModel($address->fresh()),
         ]);
@@ -60,6 +81,16 @@ class ContractorAddressController extends Controller
     public function destroy(Contractor $contractor, ContractorAddress $address): JsonResponse
     {
         abort_if($address->addressable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'contractor_id' => $contractor->id,
+                'address_id'    => $address->id,
+            ])
+            ->event(ContractorActivityType::AddressDeleted->value)
+            ->log('Contractor address deleted')
+        ;
 
         $address->delete();
 
@@ -70,6 +101,16 @@ class ContractorAddressController extends Controller
     {
         $contractor->addresses()->update(['is_default' => false]);
         $address->update(['is_default' => true]);
+
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'contractor_id' => $contractor->id,
+                'address_id'    => $address->id,
+            ])
+            ->event(ContractorActivityType::AddressSetDefault->value)
+            ->log('Contractor address set as default')
+        ;
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

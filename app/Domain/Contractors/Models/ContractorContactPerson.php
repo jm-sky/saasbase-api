@@ -3,6 +3,8 @@
 namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ContractorContactPerson extends BaseModel
 {
     use BelongsToTenant;
+    use HasActivityLog;
 
     protected $fillable = [
         'name',
@@ -36,5 +39,44 @@ class ContractorContactPerson extends BaseModel
     public function contractor(): BelongsTo
     {
         return $this->belongsTo(Contractor::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($contact) {
+            activity()
+                ->performedOn($contact->contractor)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'contact_id' => $contact->id,
+                ])
+                ->event(ContractorActivityType::ContactCreated->value)
+                ->log('Contractor contact created')
+            ;
+        });
+
+        static::updated(function ($contact) {
+            activity()
+                ->performedOn($contact->contractor)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'contact_id' => $contact->id,
+                ])
+                ->event(ContractorActivityType::ContactUpdated->value)
+                ->log('Contractor contact updated')
+            ;
+        });
+
+        static::deleted(function ($contact) {
+            activity()
+                ->performedOn($contact->contractor)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'contact_id' => $contact->id,
+                ])
+                ->event(ContractorActivityType::ContactDeleted->value)
+                ->log('Contractor contact deleted')
+            ;
+        });
     }
 }
