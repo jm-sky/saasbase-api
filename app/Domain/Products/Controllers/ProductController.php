@@ -26,7 +26,7 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->modelClass  = Product::class;
-        $this->defaultWith = ['tags'];
+        $this->defaultWith = ['tags', 'unit', 'vatRate'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),

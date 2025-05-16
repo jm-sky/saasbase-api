@@ -19,11 +19,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property float            $priceNet
  * @property string           $unitId
  * @property ?string          $vatRateId
- * @property ?MeasurementUnit $unit
  * @property ?Carbon          $createdAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon          $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon          $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property string[]|null    $tags
+ * @property ?MeasurementUnitDTO $unit
+ * @property ?VatRateDTO      $vatRate
+ * @property ?MediaDTO        $logo
  */
 class ProductDTO extends BaseDTO
 {
@@ -40,6 +42,8 @@ class ProductDTO extends BaseDTO
         public ?Carbon $deletedAt = null,
         public readonly ?MediaDTO $logo = null,
         public readonly ?array $tags = null,
+        public readonly ?MeasurementUnitDTO $unit = null,
+        public readonly ?VatRateDTO $vatRate = null,
     ) {
     }
 
@@ -58,6 +62,8 @@ class ProductDTO extends BaseDTO
             deletedAt: $data['deleted_at'],
             logo: null,
             tags: $data['tags'] ?? [],
+            unit: null,
+            vatRate: null,
         );
     }
 
@@ -82,6 +88,8 @@ class ProductDTO extends BaseDTO
             deletedAt: $model->deleted_at,
             logo: $logoMedia ? MediaDTO::fromModel($logoMedia) : null,
             tags: method_exists($model, 'getTagNames') ? $model->getTagNames() : [],
+            unit: $model->unit ? MeasurementUnitDTO::fromModel($model->unit) : null,
+            vatRate: $model->vatRate ? VatRateDTO::fromModel($model->vatRate) : null,
         );
     }
 
@@ -100,6 +108,8 @@ class ProductDTO extends BaseDTO
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
             'logo'        => $this->logo?->toArray(),
             'tags'        => $this->tags ?? [],
+            'unit'        => $this->unit?->toArray(),
+            'vatRate'     => $this->vatRate?->toArray(),
         ];
     }
 }
