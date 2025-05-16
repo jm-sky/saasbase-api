@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string        $name
  * @property string        $email
  * @property ?string       $phone
+ * @property ?string       $website
  * @property ?string       $country
  * @property ?string       $taxId
  * @property ?string       $description
@@ -27,15 +28,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon       $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon       $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property string[]|null $tags
+ * @property ?MediaDTO     $logo
  */
 class ContractorDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $tenantId,
         public readonly string $name,
-        public readonly ?string $email = null,
         public readonly ?string $id = null,
+        public readonly ?string $email = null,
         public readonly ?string $phone = null,
+        public readonly ?string $website = null,
         public readonly ?string $country = null,
         public readonly ?string $taxId = null,
         public readonly ?string $description = null,
@@ -56,9 +59,10 @@ class ContractorDTO extends BaseDTO
         return new self(
             tenantId: $data['tenant_id'],
             name: $data['name'],
-            email: $data['email'] ?? null,
             id: $data['id'] ?? null,
+            email: $data['email'] ?? null,
             phone: $data['phone'] ?? null,
+            website: $data['website'] ?? null,
             country: $data['country'] ?? null,
             taxId: $data['tax_id'] ?? null,
             description: $data['description'] ?? null,
@@ -82,11 +86,12 @@ class ContractorDTO extends BaseDTO
         $logoMedia = $model->getFirstMedia('logo');
 
         return new self(
+            id: $model->id,
             tenantId: $model->tenant_id,
             name: $model->name,
             email: $model->email,
-            id: $model->id,
             phone: $model->phone,
+            website: $model->website,
             country: $model->country,
             taxId: $model->tax_id,
             description: $model->description,
@@ -110,6 +115,7 @@ class ContractorDTO extends BaseDTO
             'name'        => $this->name,
             'email'       => $this->email,
             'phone'       => $this->phone,
+            'website'     => $this->website,
             'country'     => $this->country,
             'taxId'       => $this->taxId,
             'description' => $this->description,

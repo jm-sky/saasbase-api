@@ -26,6 +26,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string                   $name
  * @property string                   $email
  * @property ?string                  $phone
+ * @property ?string                  $website
  * @property ?string                  $country
  * @property ?string                  $tax_id
  * @property ?string                  $description

@@ -18,8 +18,15 @@ class TenantFactory extends Factory
         $name = fake()->company();
 
         return [
-            'name' => $name,
-            'slug' => Str::slug($name),
+            'name'        => $name,
+            'slug'        => Str::slug($name),
+            'owner_id'    => null,
+            'tax_id'      => fake()->numerify('##########'),
+            'description' => fake()->sentence(),
+            'email'       => fake()->email(),
+            'phone'       => fake()->phoneNumber(),
+            'website'     => fake()->url(),
+            'country'     => fake()->country(),
         ];
     }
 }
