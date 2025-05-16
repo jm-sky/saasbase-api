@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Products\Controllers\ProductAttachmentsController;
+use App\Domain\Products\Controllers\ProductCommentsController;
 use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Products\Controllers\ProductLogoController;
 use App\Domain\Products\Controllers\ProductTagsController;
@@ -41,4 +42,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::delete('{tag}', [ProductTagsController::class, 'destroy'])->name('destroy');
         })
     ;
+
+    Route::apiResource('products.comments', ProductCommentsController::class);
 });

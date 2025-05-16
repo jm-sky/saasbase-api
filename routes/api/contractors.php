@@ -18,6 +18,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         ->name('contractors.logo.')
         ->group(function () {
             Route::post('/', 'upload')->name('upload');
+            Route::delete('/', 'show')->name('show');
             Route::delete('/', 'delete')->name('delete');
         })
     ;

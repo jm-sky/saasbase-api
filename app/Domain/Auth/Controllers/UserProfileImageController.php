@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Requests\UploadProfileImageRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -11,12 +12,9 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class UserProfileImageController extends Controller
 {
-    public function upload(Request $request)
+    public function upload(UploadProfileImageRequest $request)
     {
-        $request->validate([
-            'image' => ['required', 'image', 'max:2048'],
-        ]);
-
+        /** @var User $user */
         $user = $request->user();
 
         $user->clearMediaCollection('profile');
@@ -25,6 +23,8 @@ class UserProfileImageController extends Controller
             ->toMediaCollection('profile')
         ;
 
+        // TODO: Add signed url
+        // $logoUrl = $user->getMediaSignedUrl('profile', $fileName);
         $avatarUrl = route('user.profile-image.showForUser', ['user' => $user->id], absolute: false);
         $thumbUrl  = route('user.profile-image.showForUser', ['user' => $user->id, 'thumb' => true], absolute: false);
 

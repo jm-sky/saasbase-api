@@ -4,7 +4,6 @@ namespace App\Domain\Products\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Common\DTOs\MediaDTO;
-use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -12,20 +11,20 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Product>
  *
- * @property ?string          $id          UUID
- * @property string           $tenantId    UUID
- * @property string           $name
- * @property ?string          $description
- * @property float            $priceNet
- * @property string           $unitId
- * @property ?string          $vatRateId
- * @property ?Carbon          $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon          $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon          $deletedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property string[]|null    $tags
+ * @property ?string             $id          UUID
+ * @property string              $tenantId    UUID
+ * @property string              $name
+ * @property ?string             $description
+ * @property float               $priceNet
+ * @property string              $unitId
+ * @property ?string             $vatRateId
+ * @property ?Carbon             $createdAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon             $updatedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon             $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property string[]|null       $tags
  * @property ?MeasurementUnitDTO $unit
- * @property ?VatRateDTO      $vatRate
- * @property ?MediaDTO        $logo
+ * @property ?VatRateDTO         $vatRate
+ * @property ?MediaDTO           $logo
  */
 class ProductDTO extends BaseDTO
 {
