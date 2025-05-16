@@ -32,6 +32,8 @@ Route::prefix('v1')->group(function () {
 
     Route::post('auth/token/refresh', [AuthController::class, 'refresh']);
 
+    require __DIR__ . '/api/images.php';
+
     Route::middleware(['auth:api', 'is_active'])->group(function () {
         require __DIR__ . '/api/user.php';
         require __DIR__ . '/api/tenants.php';

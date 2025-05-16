@@ -294,4 +294,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
+    public function getMediaUrl(string $collectionName, string $fileName): string
+    {
+        if ('profile' === $collectionName) {
+            return route('user.profile-image.showForUser', ['user' => $this->id], absolute: false);
+        }
+
+        return $this->getFirstMediaUrl($collectionName, $fileName);
+    }
 }

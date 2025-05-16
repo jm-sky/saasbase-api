@@ -6,7 +6,9 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\VatRate;
+use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
+use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
@@ -36,7 +38,9 @@ class Product extends BaseModel implements HasMedia
     use SoftDeletes;
     use BelongsToTenant;
     use InteractsWithMedia;
+    use HasMediaSignedUrls;
     use HasTags;
+    use HaveComments;
 
     protected $fillable = [
         'tenant_id',
@@ -88,5 +92,14 @@ class Product extends BaseModel implements HasMedia
             ->height(config('domains.products.logo.size', 256))
             ->nonQueued()
         ;
+    }
+
+    public function getMediaUrl(string $collectionName, string $fileName): string
+    {
+        if ('logo' === $collectionName) {
+            return $this->getMediaSignedUrl($collectionName, $fileName);
+        }
+
+        return $this->getFirstMediaUrl($collectionName, $fileName);
     }
 }

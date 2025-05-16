@@ -5,6 +5,7 @@ namespace App\Domain\Contractors\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
@@ -45,6 +46,7 @@ class Contractor extends BaseModel implements HasMedia
     use SoftDeletes;
     use BelongsToTenant;
     use InteractsWithMedia;
+    use HasMediaSignedUrls;
     use HaveAddresses;
     use HaveBankAccounts;
     use HaveComments;
@@ -69,9 +71,9 @@ class Contractor extends BaseModel implements HasMedia
         'is_supplier' => 'boolean',
     ];
 
-    protected static function newFactory()
+    public function contacts(): HasMany
     {
-        return ContractorFactory::new();
+        return $this->hasMany(ContractorContactPerson::class);
     }
 
     public function registerMediaCollections(): void
@@ -93,8 +95,17 @@ class Contractor extends BaseModel implements HasMedia
         ;
     }
 
-    public function contacts(): HasMany
+    public function getMediaUrl(string $collectionName, string $fileName): string
     {
-        return $this->hasMany(ContractorContactPerson::class);
+        if ('logo' === $collectionName) {
+            return $this->getMediaSignedUrl($collectionName, $fileName);
+        }
+
+        return $this->getFirstMediaUrl($collectionName, $fileName);
+    }
+
+    protected static function newFactory()
+    {
+        return ContractorFactory::new();
     }
 }

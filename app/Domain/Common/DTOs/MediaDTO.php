@@ -2,11 +2,16 @@
 
 namespace App\Domain\Common\DTOs;
 
+use App\Domain\Common\Traits\HasMediaSignedUrls;
 use Carbon\Carbon;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class MediaDTO
+class MediaDTO implements Arrayable, \JsonSerializable
 {
+    public const TEMPORARY_URL_EXPIRATION_TIME = 15;
+
     public function __construct(
         public readonly string $id,
         public readonly string $fileName,
@@ -19,12 +24,20 @@ class MediaDTO
     ) {
     }
 
-    public static function fromModel(Media $media): static
+    public static function fromModel(Media $media, ?Model $parent = null): static
     {
+        if ($parent && $parent instanceof HasMediaSignedUrls) {
+            $url = $parent->getMediaSignedUrl($media->collection_name, $media->file_name);
+        }
+
+        if ($parent) {
+            $url = $parent->getMediaUrl($media->collection_name, $media->file_name);
+        }
+
         return new static(
             id: $media->uuid ?? (string) $media->id,
             fileName: $media->file_name,
-            fileUrl: $media->getFullUrl(),
+            fileUrl: $url ?? $media->getUrl(),
             mimeType: $media->mime_type,
             size: $media->size,
             collectionName: $media->collection_name,
@@ -53,5 +66,10 @@ class MediaDTO
     public static function collection($mediaItems): array
     {
         return collect($mediaItems)->map(fn ($media) => static::fromModel($media)->toArray())->all();
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?bool         $isActive
  * @property ?bool         $isBuyer
  * @property ?bool         $isSupplier
+ * @property ?string       $logoUrl
  * @property ?Carbon       $createdAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon       $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon       $deletedAt   Internally Carbon, accepts/serializes ISO 8601
@@ -41,6 +42,7 @@ class ContractorDTO extends BaseDTO
         public readonly ?bool $isActive = null,
         public readonly ?bool $isBuyer = null,
         public readonly ?bool $isSupplier = null,
+        public readonly ?string $logoUrl = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
@@ -94,7 +96,8 @@ class ContractorDTO extends BaseDTO
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
-            logo: $logoMedia ? MediaDTO::fromModel($logoMedia) : null,
+            logoUrl: $logoMedia ? $model->getMediaUrl('logo', $logoMedia->file_name) : null,
+            logo: $logoMedia ? MediaDTO::fromModel($logoMedia, parent: $model) : null,
             tags: method_exists($model, 'getTagNames') ? $model->getTagNames() : [],
         );
     }
@@ -116,6 +119,7 @@ class ContractorDTO extends BaseDTO
             'createdAt'   => $this->createdAt?->toIso8601String(),
             'updatedAt'   => $this->updatedAt?->toIso8601String(),
             'deletedAt'   => $this->deletedAt?->toIso8601String(),
+            'logoUrl'     => $this->logoUrl,
             'logo'        => $this->logo?->toArray(),
             'tags'        => $this->tags ?? [],
         ];

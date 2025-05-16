@@ -38,7 +38,7 @@ class ContractorContactController extends Controller
 
     public function show(Contractor $contractor, ContractorContactPerson $contact): JsonResponse
     {
-        abort_if($contact->contactable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        abort_if($contact->contractor_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         return response()->json([
             'data' => ContractorContactPersonDTO::fromModel($contact),
@@ -47,7 +47,7 @@ class ContractorContactController extends Controller
 
     public function update(ContractorContactPersonRequest $request, Contractor $contractor, ContractorContactPerson $contact): JsonResponse
     {
-        abort_if($contact->contactable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        abort_if($contact->contractor_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         $contact->update($request->validated());
 
@@ -58,7 +58,7 @@ class ContractorContactController extends Controller
 
     public function destroy(Contractor $contractor, ContractorContactPerson $contact): JsonResponse
     {
-        abort_if($contact->contactable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        abort_if($contact->contractor_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
         $contact->delete();
 

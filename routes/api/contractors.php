@@ -15,19 +15,22 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::controller(ContractorLogoController::class)
         ->prefix('contractors/{contractor}/logo')
-        ->name('contractor.logo.')
+        ->name('contractors.logo.')
         ->group(function () {
             Route::post('/', 'upload')->name('upload');
-            Route::get('/', 'show')->name('show');
             Route::delete('/', 'delete')->name('delete');
         })
     ;
 
     Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
-    Route::post('contractors/{contractor}/addresses/{address}/set-default', [ContractorAddressController::class, 'setDefault'])->name('contractors.addresses.setDefault');
+    Route::post('contractors/{contractor}/addresses/{address}/set-default', [ContractorAddressController::class, 'setDefault'])
+        ->name('contractors.addresses.setDefault')
+    ;
 
     Route::apiResource('contractors/{contractor}/bank-accounts', ContractorBankAccountController::class);
-    Route::post('contractors/{contractor}/bank-accounts/{bankAccount}/set-default', [ContractorBankAccountController::class, 'setDefault'])->name('contractors.bankAccounts.setDefault');
+    Route::post('contractors/{contractor}/bank-accounts/{bankAccount}/set-default', [ContractorBankAccountController::class, 'setDefault'])
+        ->name('contractors.bankAccounts.setDefault')
+    ;
 
     Route::apiResource('contractors/{contractor}/contacts', ContractorContactController::class);
 
