@@ -70,7 +70,7 @@ class HealthController extends Controller
         $status = [];
 
         try {
-            Storage::disk('s3')->exists('/');
+            Storage::disk('s3')->listContents('', 1);
             $status['status'] = 'ok';
         } catch (\Exception $e) {
             $status['status'] = 'error: ' . $e->getMessage();
