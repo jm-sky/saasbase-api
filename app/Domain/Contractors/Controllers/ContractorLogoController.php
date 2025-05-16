@@ -20,6 +20,8 @@ class ContractorLogoController extends Controller
             ->toMediaCollection('logo')
         ;
 
+        // TODO: Add signed url
+        // $logoUrl = $contractor->getMediaSignedUrl('logo', $fileName);
         $logoUrl  = route('contractor.logo.show', ['contractor' => $contractor->id], absolute: false);
         $thumbUrl = route('contractor.logo.show', ['contractor' => $contractor->id, 'thumb' => true], absolute: false);
 
