@@ -6,11 +6,22 @@ use App\Domain\Contractors\Controllers\ContractorBankAccountController;
 use App\Domain\Contractors\Controllers\ContractorCommentsController;
 use App\Domain\Contractors\Controllers\ContractorContactController;
 use App\Domain\Contractors\Controllers\ContractorController;
+use App\Domain\Contractors\Controllers\ContractorLogoController;
 use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::apiResource('contractors', ContractorController::class);
+
+    Route::controller(ContractorLogoController::class)
+        ->prefix('contractors/{contractor}/logo')
+        ->name('contractor.logo.')
+        ->group(function () {
+            Route::post('/', 'upload')->name('upload');
+            Route::get('/', 'show')->name('show');
+            Route::delete('/', 'delete')->name('delete');
+        })
+    ;
 
     Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class);
     Route::post('contractors/{contractor}/addresses/{address}/set-default', [ContractorAddressController::class, 'setDefault'])->name('contractors.addresses.setDefault');

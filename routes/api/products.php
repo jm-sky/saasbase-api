@@ -2,11 +2,22 @@
 
 use App\Domain\Products\Controllers\ProductAttachmentsController;
 use App\Domain\Products\Controllers\ProductController;
+use App\Domain\Products\Controllers\ProductLogoController;
 use App\Domain\Products\Controllers\ProductTagsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::apiResource('products', ProductController::class);
+
+    Route::controller(ProductLogoController::class)
+        ->prefix('products/{product}/logo')
+        ->name('product.logo.')
+        ->group(function () {
+            Route::post('/', 'upload')->name('upload');
+            Route::get('/', 'show')->name('show');
+            Route::delete('/', 'delete')->name('delete');
+        })
+    ;
 
     Route::controller(ProductAttachmentsController::class)
         ->prefix('products/{product}/attachments')

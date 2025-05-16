@@ -4,7 +4,13 @@ return [
     'domains' => [
         'contractors' => [
             'logo' => [
-                'size' => 256,
+                'size'          => 256,
+                'max_size'      => 2048, // 2MB
+                'allowed_mimes' => [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                ],
             ],
             'attachments' => [
                 'max_size' => 10240, // 10MB
@@ -12,7 +18,13 @@ return [
         ],
         'products' => [
             'logo' => [
-                'size' => 256,
+                'size'          => 256,
+                'max_size'      => 2048, // 2MB
+                'allowed_mimes' => [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                ],
             ],
         ],
         'users' => [
