@@ -25,12 +25,12 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         })
     ;
 
-    Route::apiResource('tenants/{tenant}/addresses', TenantAddressController::class)->name('tenants.addresses');
+    Route::apiResource('tenants/{tenant}/addresses', TenantAddressController::class)->names('tenants.addresses');
     Route::post('tenants/{tenant}/addresses/{address}/set-default', [TenantAddressController::class, 'setDefault'])
         ->name('tenants.addresses.setDefault')
     ;
 
-    Route::apiResource('tenants/{tenant}/bank-accounts', TenantBankAccountController::class)->name('tenants.bankAccounts');
+    Route::apiResource('tenants/{tenant}/bank-accounts', TenantBankAccountController::class)->names('tenants.bankAccounts');
     Route::post('tenants/{tenant}/bank-accounts/{bankAccount}/set-default', [TenantBankAccountController::class, 'setDefault'])
         ->name('tenants.bankAccounts.setDefault')
     ;
