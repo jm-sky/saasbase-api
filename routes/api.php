@@ -4,6 +4,7 @@ use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Users\Controllers\PublicUserController;
+use App\Http\Controllers\HealthController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ Broadcast::routes([
     'prefix'     => 'v1',
     'as'         => 'broadcast.',
 ]);
+
+Route::get('/health', [HealthController::class, 'health']);
 
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/auth.php';

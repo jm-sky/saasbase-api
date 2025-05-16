@@ -22,11 +22,16 @@ class AiChatService
 
     protected Client $guzzleClient;
 
+    public static function getOpenRouterUrl(): string
+    {
+        return config('services.openrouter.url', self::DEFAULT_OPENROUTER_URL);
+    }
+
     public function __construct(
         protected AiConversationService $conversationService,
         ?string $openRouterUrl = null
     ) {
-        $this->openRouterUrl = $openRouterUrl ?? config('services.openrouter.url', self::DEFAULT_OPENROUTER_URL);
+        $this->openRouterUrl = $openRouterUrl ?? self::getOpenRouterUrl();
 
         $this->model        = config('services.openrouter.model', 'openai/gpt-3.5-turbo');
         $this->apiKey       = config('services.openrouter.key');
