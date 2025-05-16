@@ -4,6 +4,7 @@ namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Tenant\DTOs\TenantDTO;
 use App\Domain\Tenant\DTOs\TenantSimpleDTO;
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantRequest;
 use App\Http\Controllers\Controller;
@@ -31,8 +32,18 @@ class TenantController extends Controller
         $tenant = Tenant::create($request->validated());
         $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
 
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id' => $tenant->id,
+            ])
+            ->event(TenantActivityType::Created->value)
+            ->log('Tenant created')
+        ;
+
         return response()->json([
-            'data' => TenantDTO::from($tenant),
+            'message' => 'Tenant created successfully.',
+            'data'    => TenantDTO::from($tenant),
         ], Response::HTTP_CREATED);
     }
 
@@ -50,16 +61,36 @@ class TenantController extends Controller
         $this->authorize('update', $tenant);
         $tenant->update($request->validated());
 
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id' => $tenant->id,
+            ])
+            ->event(TenantActivityType::Updated->value)
+            ->log('Tenant updated')
+        ;
+
         return response()->json([
-            'data' => TenantDTO::from($tenant),
+            'message' => 'Tenant updated successfully.',
+            'data'    => TenantDTO::from($tenant),
         ]);
     }
 
     public function destroy(Request $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('delete', $tenant);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id' => $tenant->id,
+            ])
+            ->event(TenantActivityType::Deleted->value)
+            ->log('Tenant deleted')
+        ;
+
         $tenant->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Tenant deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 }

@@ -7,6 +7,7 @@ use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Products\DTOs\ProductDTO;
+use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
@@ -61,10 +62,20 @@ class ProductController extends Controller
         $product = Product::create($request->validated());
         $product->load(['unit', 'vatRate']);
 
-        return response()->json(
-            ProductDTO::fromModel($product),
-            Response::HTTP_CREATED
-        );
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'  => request()->user()->tenant_id,
+                'product_id' => $product->id,
+            ])
+            ->event(ProductActivityType::Created->value)
+            ->log('Product created')
+        ;
+
+        return response()->json([
+            'message' => 'Product created successfully.',
+            'data'    => ProductDTO::fromModel($product),
+        ], Response::HTTP_CREATED);
     }
 
     public function show(Product $product): JsonResponse
@@ -82,16 +93,37 @@ class ProductController extends Controller
         $product->load(['unit', 'vatRate']);
         $product = $product->fresh();
 
-        return response()->json(
-            ProductDTO::fromModel($product)
-        );
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'  => request()->user()->tenant_id,
+                'product_id' => $product->id,
+            ])
+            ->event(ProductActivityType::Updated->value)
+            ->log('Product updated')
+        ;
+
+        return response()->json([
+            'message' => 'Product updated successfully.',
+            'data'    => ProductDTO::fromModel($product),
+        ]);
     }
 
     public function destroy(Product $product): JsonResponse
     {
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'  => request()->user()->tenant_id,
+                'product_id' => $product->id,
+            ])
+            ->event(ProductActivityType::Deleted->value)
+            ->log('Product deleted')
+        ;
+
         $product->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Product deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 
     protected function getIndexQuery(Request $request): QueryBuilder

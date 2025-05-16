@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\Controllers;
 
+use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductLogoUploadRequest;
 use App\Http\Controllers\Controller;
@@ -16,8 +17,19 @@ class ProductLogoController extends Controller
     {
         $product->clearMediaCollection('logo');
 
-        $product->addMediaFromRequest('image')
+        $media = $product->addMediaFromRequest('image')
             ->toMediaCollection('logo')
+        ;
+
+        activity()
+            ->performedOn($product)
+            ->withProperties([
+                'tenant_id'  => request()->user()->tenant_id,
+                'product_id' => $product->id,
+                'logo_id'    => $media->id,
+            ])
+            ->event(ProductActivityType::LogoCreated->value)
+            ->log('Product logo uploaded')
         ;
 
         $logoUrl  = route('product.logo.show', ['product' => $product->id], absolute: false);
@@ -56,7 +68,21 @@ class ProductLogoController extends Controller
 
     public function delete(Product $product)
     {
+        $media = $product->getFirstMedia('logo');
         $product->clearMediaCollection('logo');
+
+        if ($media) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'logo_id'    => $media->id,
+                ])
+                ->event(ProductActivityType::LogoDeleted->value)
+                ->log('Product logo deleted')
+            ;
+        }
 
         return response()->json(['message' => 'Product logo deleted.'], HttpResponse::HTTP_NO_CONTENT);
     }

@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\Models\BankAccount;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorBankAccountRequest;
 use App\Http\Controllers\Controller;
@@ -31,8 +32,20 @@ class ContractorBankAccountController extends Controller
     {
         $bankAccount = $contractor->bankAccounts()->create($request->validated());
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'       => request()->user()->tenant_id,
+                'contractor_id'   => $contractor->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(ContractorActivityType::BankAccountCreated->value)
+            ->log('Contractor bank account created')
+        ;
+
         return response()->json([
-            'data' => BankAccountDTO::fromModel($bankAccount),
+            'message' => 'Bank account created successfully.',
+            'data'    => BankAccountDTO::fromModel($bankAccount),
         ], Response::HTTP_CREATED);
     }
 
@@ -51,8 +64,20 @@ class ContractorBankAccountController extends Controller
 
         $bankAccount->update($request->validated());
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'       => request()->user()->tenant_id,
+                'contractor_id'   => $contractor->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(ContractorActivityType::BankAccountUpdated->value)
+            ->log('Contractor bank account updated')
+        ;
+
         return response()->json([
-            'data' => BankAccountDTO::fromModel($bankAccount->fresh()),
+            'message' => 'Bank account updated successfully.',
+            'data'    => BankAccountDTO::fromModel($bankAccount->fresh()),
         ]);
     }
 
@@ -60,16 +85,40 @@ class ContractorBankAccountController extends Controller
     {
         abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'       => request()->user()->tenant_id,
+                'contractor_id'   => $contractor->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(ContractorActivityType::BankAccountDeleted->value)
+            ->log('Contractor bank account deleted')
+        ;
+
         $bankAccount->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Bank account deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 
     public function setDefault(Contractor $contractor, BankAccount $bankAccount): JsonResponse
     {
+        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+
         $contractor->bankAccounts()->update(['is_default' => false]);
         $bankAccount->update(['is_default' => true]);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'       => request()->user()->tenant_id,
+                'contractor_id'   => $contractor->id,
+                'bank_account_id' => $bankAccount->id,
+            ])
+            ->event(ContractorActivityType::BankAccountSetDefault->value)
+            ->log('Contractor bank account set as default')
+        ;
+
+        return response()->json(['message' => 'Bank account set as default successfully.'], Response::HTTP_NO_CONTENT);
     }
 }

@@ -5,7 +5,9 @@ namespace App\Domain\Tenant\Controllers;
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\DTOs\InvitationDTO;
 use App\Domain\Tenant\Enums\InvitationStatus;
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Invitation;
+use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use App\Domain\Tenant\Notifications\InvitationNotification;
 use App\Domain\Tenant\Requests\SendInvitationRequest;
@@ -42,6 +44,18 @@ class InvitationController extends Controller
 
         // Send notification (email)
         $invitation->notify(new InvitationNotification($invitation));
+
+        activity()
+            ->performedOn(Tenant::find($tenantId))
+            ->withProperties([
+                'tenant_id'     => $tenantId,
+                'invitation_id' => $invitation->id,
+                'email'         => $invitation->email,
+                'role'          => $invitation->role,
+            ])
+            ->event(TenantActivityType::InvitationSent->value)
+            ->log('Tenant invitation sent')
+        ;
 
         return response()->json([
             'data'    => InvitationDTO::fromModel($invitation)->toArray(),
@@ -88,6 +102,18 @@ class InvitationController extends Controller
             'status'      => InvitationStatus::ACCEPTED->value,
             'accepted_at' => now(),
         ]);
+
+        activity()
+            ->performedOn(Tenant::find($invitation->tenant_id))
+            ->withProperties([
+                'tenant_id'     => $invitation->tenant_id,
+                'invitation_id' => $invitation->id,
+                'user_id'       => $user->id,
+                'role'          => $invitation->role,
+            ])
+            ->event(TenantActivityType::InvitationAccepted->value)
+            ->log('Tenant invitation accepted')
+        ;
 
         return response()->json([
             'message' => 'Invitation accepted.',

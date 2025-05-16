@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenant\Controllers;
 
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantLogoUploadRequest;
 use App\Http\Controllers\Controller;
@@ -16,8 +17,18 @@ class TenantLogoController extends Controller
     {
         $tenant->clearMediaCollection('logo');
 
-        $tenant->addMediaFromRequest('image')
+        $media = $tenant->addMediaFromRequest('image')
             ->toMediaCollection('logo')
+        ;
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id' => $tenant->id,
+                'logo_id'   => $media->id,
+            ])
+            ->event(TenantActivityType::LogoCreated->value)
+            ->log('Tenant logo created')
         ;
 
         $logoUrl  = route('tenant.logo.show', ['tenant' => $tenant->id], absolute: false);
@@ -56,7 +67,20 @@ class TenantLogoController extends Controller
 
     public function delete(Tenant $tenant)
     {
+        $media = $tenant->getFirstMedia('logo');
         $tenant->clearMediaCollection('logo');
+
+        if ($media) {
+            activity()
+                ->performedOn($tenant)
+                ->withProperties([
+                    'tenant_id' => $tenant->id,
+                    'logo_id'   => $media->id,
+                ])
+                ->event(TenantActivityType::LogoDeleted->value)
+                ->log('Tenant logo deleted')
+            ;
+        }
 
         return response()->json(['message' => 'Tenant logo deleted.'], HttpResponse::HTTP_NO_CONTENT);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorLogoUploadRequest;
 use App\Http\Controllers\Controller;
@@ -16,8 +17,19 @@ class ContractorLogoController extends Controller
     {
         $contractor->clearMediaCollection('logo');
 
-        $contractor->addMediaFromRequest('image')
+        $media = $contractor->addMediaFromRequest('image')
             ->toMediaCollection('logo')
+        ;
+
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'contractor_id' => $contractor->id,
+                'logo_id'       => $media->id,
+            ])
+            ->event(ContractorActivityType::LogoCreated->value)
+            ->log('Contractor logo created')
         ;
 
         // TODO: Add signed url
@@ -58,7 +70,21 @@ class ContractorLogoController extends Controller
 
     public function delete(Contractor $contractor)
     {
+        $media = $contractor->getFirstMedia('logo');
         $contractor->clearMediaCollection('logo');
+
+        if ($media) {
+            activity()
+                ->performedOn($contractor)
+                ->withProperties([
+                    'tenant_id'     => request()->user()->tenant_id,
+                    'contractor_id' => $contractor->id,
+                    'logo_id'       => $media->id,
+                ])
+                ->event(ContractorActivityType::LogoDeleted->value)
+                ->log('Contractor logo deleted')
+            ;
+        }
 
         return response()->json(['message' => 'Contractor logo deleted.'], HttpResponse::HTTP_NO_CONTENT);
     }

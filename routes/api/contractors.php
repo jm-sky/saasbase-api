@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Contractors\Controllers\ContractorActivityLogController;
 use App\Domain\Contractors\Controllers\ContractorAddressController;
 use App\Domain\Contractors\Controllers\ContractorAttachmentsController;
 use App\Domain\Contractors\Controllers\ContractorBankAccountController;
@@ -59,4 +60,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
     ;
 
     Route::apiResource('contractors/{contractor}/comments', ContractorCommentsController::class)->names('contractors.comments');
+
+    Route::get('/{contractor}/logs', [ContractorActivityLogController::class, 'index']);
 });

@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Contractors\DTOs\ContractorContactPersonDTO;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorContactPerson;
 use App\Domain\Contractors\Requests\ContractorContactPersonRequest;
@@ -31,8 +32,20 @@ class ContractorContactController extends Controller
     {
         $contact = $contractor->contacts()->create($request->validated());
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'contractor_id' => $contractor->id,
+                'contact_id'    => $contact->id,
+            ])
+            ->event(ContractorActivityType::ContactCreated->value)
+            ->log('Contractor contact created')
+        ;
+
         return response()->json([
-            'data' => ContractorContactPersonDTO::fromModel($contact),
+            'message' => 'Contact created successfully.',
+            'data'    => ContractorContactPersonDTO::fromModel($contact),
         ], Response::HTTP_CREATED);
     }
 
@@ -51,8 +64,20 @@ class ContractorContactController extends Controller
 
         $contact->update($request->validated());
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'contractor_id' => $contractor->id,
+                'contact_id'    => $contact->id,
+            ])
+            ->event(ContractorActivityType::ContactUpdated->value)
+            ->log('Contractor contact updated')
+        ;
+
         return response()->json([
-            'data' => ContractorContactPersonDTO::fromModel($contact->fresh()),
+            'message' => 'Contact updated successfully.',
+            'data'    => ContractorContactPersonDTO::fromModel($contact->fresh()),
         ]);
     }
 
@@ -60,8 +85,19 @@ class ContractorContactController extends Controller
     {
         abort_if($contact->contractor_id !== $contractor->id, Response::HTTP_NOT_FOUND);
 
+        activity()
+            ->performedOn($contractor)
+            ->withProperties([
+                'tenant_id'     => request()->user()->tenant_id,
+                'contractor_id' => $contractor->id,
+                'contact_id'    => $contact->id,
+            ])
+            ->event(ContractorActivityType::ContactDeleted->value)
+            ->log('Contractor contact deleted')
+        ;
+
         $contact->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Contact deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 }

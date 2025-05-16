@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Products\Controllers\ProductActivityLogController;
 use App\Domain\Products\Controllers\ProductAttachmentsController;
 use App\Domain\Products\Controllers\ProductCommentsController;
 use App\Domain\Products\Controllers\ProductController;
@@ -44,4 +45,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
     ;
 
     Route::apiResource('products.comments', ProductCommentsController::class)->names('products.comments');
+
+    Route::get('/{product}/logs', [ProductActivityLogController::class, 'index']);
 });

@@ -1,7 +1,9 @@
 <?php
 
 use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
+use App\Domain\Contractors\Controllers\ContractorActivityLogController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
@@ -49,6 +51,10 @@ Route::prefix('v1')->group(function () {
             require __DIR__ . '/api/projects.php';
             require __DIR__ . '/api/contractors.php';
             require __DIR__ . '/api/products.php';
+
+            // Activity logs
+            Route::get('/logs', [ActivityLogController::class, 'index']);
+            Route::get('/contractors/{contractor}/logs', [ContractorActivityLogController::class, 'index']);
         });
 
         Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);

@@ -9,6 +9,7 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
 
 /**
  * @property string                                             $id
+ * @property ?string                                            $tenant_id
  * @property ?string                                            $log_name
  * @property string                                             $description
  * @property ?string                                            $subject_type
@@ -27,4 +28,23 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
 class Activity extends BaseActivity
 {
     use HasUuids;
+
+    protected $fillable = [
+        'log_name',
+        'description',
+        'subject_type',
+        'subject_id',
+        'causer_type',
+        'causer_id',
+        'event',
+        'batch_uuid',
+        'properties',
+        'tenant_id',
+    ];
+
+    protected $casts = [
+        'properties' => 'collection',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 }

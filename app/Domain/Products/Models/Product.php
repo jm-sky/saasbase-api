@@ -2,17 +2,23 @@
 
 namespace App\Domain\Products\Models;
 
+use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\VatRate;
+use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
+use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Tenant\Concerns\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -41,6 +47,7 @@ class Product extends BaseModel implements HasMedia
     use HasMediaSignedUrls;
     use HasTags;
     use HaveComments;
+    use HasActivityLog;
 
     protected $fillable = [
         'tenant_id',
@@ -101,5 +108,179 @@ class Product extends BaseModel implements HasMedia
         }
 
         return $this->getFirstMediaUrl($collectionName, $fileName);
+    }
+
+    public function logo(): MorphOne
+    {
+        return $this->morphOne(Attachment::class, 'attachable');
+    }
+
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($product) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                ])
+                ->event(ProductActivityType::Created->value)
+                ->log('Product created')
+            ;
+        });
+
+        static::updated(function ($product) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                ])
+                ->event(ProductActivityType::Updated->value)
+                ->log('Product updated')
+            ;
+        });
+
+        static::deleted(function ($product) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                ])
+                ->event(ProductActivityType::Deleted->value)
+                ->log('Product deleted')
+            ;
+        });
+
+        // Logo events
+        static::morphOneCreated('logo', function ($product, $logo) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'logo_id'    => $logo->id,
+                ])
+                ->event(ProductActivityType::LogoCreated->value)
+                ->log('Product logo created')
+            ;
+        });
+
+        static::morphOneUpdated('logo', function ($product, $logo) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'logo_id'    => $logo->id,
+                ])
+                ->event(ProductActivityType::LogoUpdated->value)
+                ->log('Product logo updated')
+            ;
+        });
+
+        static::morphOneDeleted('logo', function ($product, $logo) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'logo_id'    => $logo->id,
+                ])
+                ->event(ProductActivityType::LogoDeleted->value)
+                ->log('Product logo deleted')
+            ;
+        });
+
+        // Attachment events
+        static::morphManyCreated('attachments', function ($product, $attachment) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'     => request()->user()->tenant_id,
+                    'product_id'    => $product->id,
+                    'attachment_id' => $attachment->id,
+                ])
+                ->event(ProductActivityType::AttachmentCreated->value)
+                ->log('Product attachment created')
+            ;
+        });
+
+        static::morphManyUpdated('attachments', function ($product, $attachment) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'     => request()->user()->tenant_id,
+                    'product_id'    => $product->id,
+                    'attachment_id' => $attachment->id,
+                ])
+                ->event(ProductActivityType::AttachmentUpdated->value)
+                ->log('Product attachment updated')
+            ;
+        });
+
+        static::morphManyDeleted('attachments', function ($product, $attachment) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'     => request()->user()->tenant_id,
+                    'product_id'    => $product->id,
+                    'attachment_id' => $attachment->id,
+                ])
+                ->event(ProductActivityType::AttachmentDeleted->value)
+                ->log('Product attachment deleted')
+            ;
+        });
+
+        // Comment events
+        static::morphManyCreated('comments', function ($product, $comment) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'comment_id' => $comment->id,
+                ])
+                ->event(ProductActivityType::CommentCreated->value)
+                ->log('Product comment created')
+            ;
+        });
+
+        static::morphManyUpdated('comments', function ($product, $comment) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'comment_id' => $comment->id,
+                ])
+                ->event(ProductActivityType::CommentUpdated->value)
+                ->log('Product comment updated')
+            ;
+        });
+
+        static::morphManyDeleted('comments', function ($product, $comment) {
+            activity()
+                ->performedOn($product)
+                ->withProperties([
+                    'tenant_id'  => request()->user()->tenant_id,
+                    'product_id' => $product->id,
+                    'comment_id' => $comment->id,
+                ])
+                ->event(ProductActivityType::CommentDeleted->value)
+                ->log('Product comment deleted')
+            ;
+        });
     }
 }
