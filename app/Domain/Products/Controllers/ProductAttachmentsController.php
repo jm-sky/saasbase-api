@@ -45,7 +45,7 @@ class ProductAttachmentsController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'product_id'    => $product->id,
                 'attachment_id' => $media->id,
             ])
@@ -107,7 +107,7 @@ class ProductAttachmentsController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'product_id'    => $product->id,
                 'attachment_id' => $newMedia->id,
             ])
@@ -144,7 +144,7 @@ class ProductAttachmentsController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'product_id'    => $product->id,
                 'attachment_id' => $media->id,
             ])

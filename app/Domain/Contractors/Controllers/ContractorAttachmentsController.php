@@ -35,7 +35,7 @@ class ContractorAttachmentsController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'attachment_id' => $media->id,
             ])
@@ -105,7 +105,7 @@ class ContractorAttachmentsController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'attachment_id' => $media->id,
             ])

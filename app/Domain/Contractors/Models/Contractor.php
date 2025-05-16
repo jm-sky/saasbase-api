@@ -131,7 +131,7 @@ class Contractor extends BaseModel implements HasMedia
             activity()
                 ->performedOn($contractor)
                 ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
+                    'tenant_id'     => request()->user()?->getTenantId(),
                     'contractor_id' => $contractor->id,
                 ])
                 ->event(ContractorActivityType::Created->value)
@@ -143,7 +143,7 @@ class Contractor extends BaseModel implements HasMedia
             activity()
                 ->performedOn($contractor)
                 ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
+                    'tenant_id'     => request()->user()?->getTenantId(),
                     'contractor_id' => $contractor->id,
                 ])
                 ->event(ContractorActivityType::Updated->value)
@@ -155,91 +155,11 @@ class Contractor extends BaseModel implements HasMedia
             activity()
                 ->performedOn($contractor)
                 ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
+                    'tenant_id'     => request()->user()?->getTenantId(),
                     'contractor_id' => $contractor->id,
                 ])
                 ->event(ContractorActivityType::Deleted->value)
                 ->log('Contractor deleted')
-            ;
-        });
-
-        // Logo events
-        static::morphOneCreated('logo', function ($contractor, $logo) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'contractor_id' => $contractor->id,
-                    'logo_id'       => $logo->id,
-                ])
-                ->event(ContractorActivityType::LogoCreated->value)
-                ->log('Contractor logo created')
-            ;
-        });
-
-        static::morphOneUpdated('logo', function ($contractor, $logo) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'contractor_id' => $contractor->id,
-                    'logo_id'       => $logo->id,
-                ])
-                ->event(ContractorActivityType::LogoUpdated->value)
-                ->log('Contractor logo updated')
-            ;
-        });
-
-        static::morphOneDeleted('logo', function ($contractor, $logo) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'contractor_id' => $contractor->id,
-                    'logo_id'       => $logo->id,
-                ])
-                ->event(ContractorActivityType::LogoDeleted->value)
-                ->log('Contractor logo deleted')
-            ;
-        });
-
-        // Attachment events
-        static::morphManyCreated('attachments', function ($contractor, $attachment) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'contractor_id' => $contractor->id,
-                    'attachment_id' => $attachment->id,
-                ])
-                ->event(ContractorActivityType::AttachmentCreated->value)
-                ->log('Contractor attachment created')
-            ;
-        });
-
-        static::morphManyUpdated('attachments', function ($contractor, $attachment) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'contractor_id' => $contractor->id,
-                    'attachment_id' => $attachment->id,
-                ])
-                ->event(ContractorActivityType::AttachmentUpdated->value)
-                ->log('Contractor attachment updated')
-            ;
-        });
-
-        static::morphManyDeleted('attachments', function ($contractor, $attachment) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'contractor_id' => $contractor->id,
-                    'attachment_id' => $attachment->id,
-                ])
-                ->event(ContractorActivityType::AttachmentDeleted->value)
-                ->log('Contractor attachment deleted')
             ;
         });
     }

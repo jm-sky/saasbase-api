@@ -131,7 +131,7 @@ class Product extends BaseModel implements HasMedia
             activity()
                 ->performedOn($product)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'product_id' => $product->id,
                 ])
                 ->event(ProductActivityType::Created->value)
@@ -143,7 +143,7 @@ class Product extends BaseModel implements HasMedia
             activity()
                 ->performedOn($product)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'product_id' => $product->id,
                 ])
                 ->event(ProductActivityType::Updated->value)
@@ -155,131 +155,11 @@ class Product extends BaseModel implements HasMedia
             activity()
                 ->performedOn($product)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'product_id' => $product->id,
                 ])
                 ->event(ProductActivityType::Deleted->value)
                 ->log('Product deleted')
-            ;
-        });
-
-        // Logo events
-        static::morphOneCreated('logo', function ($product, $logo) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
-                    'product_id' => $product->id,
-                    'logo_id'    => $logo->id,
-                ])
-                ->event(ProductActivityType::LogoCreated->value)
-                ->log('Product logo created')
-            ;
-        });
-
-        static::morphOneUpdated('logo', function ($product, $logo) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
-                    'product_id' => $product->id,
-                    'logo_id'    => $logo->id,
-                ])
-                ->event(ProductActivityType::LogoUpdated->value)
-                ->log('Product logo updated')
-            ;
-        });
-
-        static::morphOneDeleted('logo', function ($product, $logo) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
-                    'product_id' => $product->id,
-                    'logo_id'    => $logo->id,
-                ])
-                ->event(ProductActivityType::LogoDeleted->value)
-                ->log('Product logo deleted')
-            ;
-        });
-
-        // Attachment events
-        static::morphManyCreated('attachments', function ($product, $attachment) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'product_id'    => $product->id,
-                    'attachment_id' => $attachment->id,
-                ])
-                ->event(ProductActivityType::AttachmentCreated->value)
-                ->log('Product attachment created')
-            ;
-        });
-
-        static::morphManyUpdated('attachments', function ($product, $attachment) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'product_id'    => $product->id,
-                    'attachment_id' => $attachment->id,
-                ])
-                ->event(ProductActivityType::AttachmentUpdated->value)
-                ->log('Product attachment updated')
-            ;
-        });
-
-        static::morphManyDeleted('attachments', function ($product, $attachment) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
-                    'product_id'    => $product->id,
-                    'attachment_id' => $attachment->id,
-                ])
-                ->event(ProductActivityType::AttachmentDeleted->value)
-                ->log('Product attachment deleted')
-            ;
-        });
-
-        // Comment events
-        static::morphManyCreated('comments', function ($product, $comment) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
-                    'product_id' => $product->id,
-                    'comment_id' => $comment->id,
-                ])
-                ->event(ProductActivityType::CommentCreated->value)
-                ->log('Product comment created')
-            ;
-        });
-
-        static::morphManyUpdated('comments', function ($product, $comment) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
-                    'product_id' => $product->id,
-                    'comment_id' => $comment->id,
-                ])
-                ->event(ProductActivityType::CommentUpdated->value)
-                ->log('Product comment updated')
-            ;
-        });
-
-        static::morphManyDeleted('comments', function ($product, $comment) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
-                    'product_id' => $product->id,
-                    'comment_id' => $comment->id,
-                ])
-                ->event(ProductActivityType::CommentDeleted->value)
-                ->log('Product comment deleted')
             ;
         });
     }

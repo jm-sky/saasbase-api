@@ -90,7 +90,7 @@ class ContractorAddress extends Model
             activity()
                 ->performedOn($address->contractor)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'address_id' => $address->id,
                 ])
                 ->event(ContractorActivityType::ADDRESS_CREATED->value)
@@ -102,7 +102,7 @@ class ContractorAddress extends Model
             activity()
                 ->performedOn($address->contractor)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'address_id' => $address->id,
                 ])
                 ->event(ContractorActivityType::ADDRESS_UPDATED->value)
@@ -114,7 +114,7 @@ class ContractorAddress extends Model
             activity()
                 ->performedOn($address->contractor)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'address_id' => $address->id,
                 ])
                 ->event(ContractorActivityType::ADDRESS_DELETED->value)

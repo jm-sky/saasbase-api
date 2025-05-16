@@ -49,7 +49,7 @@ class ContractorCommentsController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'comment_id'    => $comment->id,
             ])
@@ -72,7 +72,7 @@ class ContractorCommentsController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'comment_id'    => $comment->id,
             ])
@@ -94,7 +94,7 @@ class ContractorCommentsController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'comment_id'    => $comment->id,
             ])

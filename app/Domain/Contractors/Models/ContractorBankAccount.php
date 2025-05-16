@@ -35,7 +35,7 @@ class ContractorBankAccount extends Model
             activity()
                 ->performedOn($bankAccount->contractor)
                 ->withProperties([
-                    'tenant_id'       => request()->user()->tenant_id,
+                    'tenant_id'       => request()->user()?->tenant_id,
                     'bank_account_id' => $bankAccount->id,
                 ])
                 ->event(ContractorActivityType::BankAccountCreated->value)
@@ -47,7 +47,7 @@ class ContractorBankAccount extends Model
             activity()
                 ->performedOn($bankAccount->contractor)
                 ->withProperties([
-                    'tenant_id'       => request()->user()->tenant_id,
+                    'tenant_id'       => request()->user()?->tenant_id,
                     'bank_account_id' => $bankAccount->id,
                 ])
                 ->event(ContractorActivityType::BankAccountUpdated->value)
@@ -59,7 +59,7 @@ class ContractorBankAccount extends Model
             activity()
                 ->performedOn($bankAccount->contractor)
                 ->withProperties([
-                    'tenant_id'       => request()->user()->tenant_id,
+                    'tenant_id'       => request()->user()?->tenant_id,
                     'bank_account_id' => $bankAccount->id,
                 ])
                 ->event(ContractorActivityType::BankAccountDeleted->value)
@@ -76,7 +76,7 @@ class ContractorBankAccount extends Model
         activity()
             ->performedOn($this->contractor)
             ->withProperties([
-                'tenant_id'       => request()->user()->tenant_id,
+                'tenant_id'       => request()->user()?->tenant_id,
                 'bank_account_id' => $this->id,
             ])
             ->event(ContractorActivityType::BankAccountSetDefault->value)

@@ -65,7 +65,7 @@ class ProductController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'  => request()->user()->tenant_id,
+                'tenant_id'  => request()->user()?->tenant_id,
                 'product_id' => $product->id,
             ])
             ->event(ProductActivityType::Created->value)
@@ -96,7 +96,7 @@ class ProductController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'  => request()->user()->tenant_id,
+                'tenant_id'  => request()->user()?->tenant_id,
                 'product_id' => $product->id,
             ])
             ->event(ProductActivityType::Updated->value)
@@ -114,7 +114,7 @@ class ProductController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'  => request()->user()->tenant_id,
+                'tenant_id'  => request()->user()?->tenant_id,
                 'product_id' => $product->id,
             ])
             ->event(ProductActivityType::Deleted->value)

@@ -47,7 +47,7 @@ class ContractorContactPerson extends BaseModel
             activity()
                 ->performedOn($contact->contractor)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'contact_id' => $contact->id,
                 ])
                 ->event(ContractorActivityType::ContactCreated->value)
@@ -59,7 +59,7 @@ class ContractorContactPerson extends BaseModel
             activity()
                 ->performedOn($contact->contractor)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'contact_id' => $contact->id,
                 ])
                 ->event(ContractorActivityType::ContactUpdated->value)
@@ -71,7 +71,7 @@ class ContractorContactPerson extends BaseModel
             activity()
                 ->performedOn($contact->contractor)
                 ->withProperties([
-                    'tenant_id'  => request()->user()->tenant_id,
+                    'tenant_id'  => request()->user()?->tenant_id,
                     'contact_id' => $contact->id,
                 ])
                 ->event(ContractorActivityType::ContactDeleted->value)

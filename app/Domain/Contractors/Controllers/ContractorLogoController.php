@@ -24,7 +24,7 @@ class ContractorLogoController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'logo_id'       => $media->id,
             ])
@@ -77,7 +77,7 @@ class ContractorLogoController extends Controller
             activity()
                 ->performedOn($contractor)
                 ->withProperties([
-                    'tenant_id'     => request()->user()->tenant_id,
+                    'tenant_id'     => request()->user()?->getTenantId(),
                     'contractor_id' => $contractor->id,
                     'logo_id'       => $media->id,
                 ])

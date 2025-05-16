@@ -35,7 +35,7 @@ class ContractorBankAccountController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'       => request()->user()->tenant_id,
+                'tenant_id'       => request()->user()?->tenant_id,
                 'contractor_id'   => $contractor->id,
                 'bank_account_id' => $bankAccount->id,
             ])
@@ -67,7 +67,7 @@ class ContractorBankAccountController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'       => request()->user()->tenant_id,
+                'tenant_id'       => request()->user()?->tenant_id,
                 'contractor_id'   => $contractor->id,
                 'bank_account_id' => $bankAccount->id,
             ])
@@ -88,7 +88,7 @@ class ContractorBankAccountController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'       => request()->user()->tenant_id,
+                'tenant_id'       => request()->user()?->tenant_id,
                 'contractor_id'   => $contractor->id,
                 'bank_account_id' => $bankAccount->id,
             ])
@@ -111,7 +111,7 @@ class ContractorBankAccountController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'       => request()->user()->tenant_id,
+                'tenant_id'       => request()->user()?->tenant_id,
                 'contractor_id'   => $contractor->id,
                 'bank_account_id' => $bankAccount->id,
             ])

@@ -35,7 +35,7 @@ class ContractorContactController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'contact_id'    => $contact->id,
             ])
@@ -67,7 +67,7 @@ class ContractorContactController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'contact_id'    => $contact->id,
             ])
@@ -88,7 +88,7 @@ class ContractorContactController extends Controller
         activity()
             ->performedOn($contractor)
             ->withProperties([
-                'tenant_id'     => request()->user()->tenant_id,
+                'tenant_id'     => request()->user()?->getTenantId(),
                 'contractor_id' => $contractor->id,
                 'contact_id'    => $contact->id,
             ])
