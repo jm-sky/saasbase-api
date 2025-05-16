@@ -23,17 +23,17 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         })
     ;
 
-    Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class)->name('contractors.');
+    Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class)->name('contractors.addresses');
     Route::post('contractors/{contractor}/addresses/{address}/set-default', [ContractorAddressController::class, 'setDefault'])
         ->name('contractors.addresses.setDefault')
     ;
 
-    Route::apiResource('contractors/{contractor}/bank-accounts', ContractorBankAccountController::class)->name('contractors.');
+    Route::apiResource('contractors/{contractor}/bank-accounts', ContractorBankAccountController::class)->name('contractors.bankAccounts');
     Route::post('contractors/{contractor}/bank-accounts/{bankAccount}/set-default', [ContractorBankAccountController::class, 'setDefault'])
         ->name('contractors.bankAccounts.setDefault')
     ;
 
-    Route::apiResource('contractors/{contractor}/contacts', ContractorContactController::class)->name('contractors.');
+    Route::apiResource('contractors/{contractor}/contacts', ContractorContactController::class)->name('contractors.contacts');
 
     Route::controller(ContractorAttachmentsController::class)
         ->prefix('contractors/{contractor}/attachments')
@@ -58,5 +58,5 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         })
     ;
 
-    Route::apiResource('contractors/{contractor}/comments', ContractorCommentsController::class)->name('contractors.');
+    Route::apiResource('contractors/{contractor}/comments', ContractorCommentsController::class)->name('contractors.comments');
 });
