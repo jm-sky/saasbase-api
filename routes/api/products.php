@@ -43,5 +43,5 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         })
     ;
 
-    Route::apiResource('products.comments', ProductCommentsController::class)->name('products.comments');
+    Route::apiResource('products.comments', ProductCommentsController::class)->names('products.comments');
 });
