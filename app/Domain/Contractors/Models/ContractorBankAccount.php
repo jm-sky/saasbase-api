@@ -80,6 +80,7 @@ class ContractorBankAccount extends Model
                 'bank_account_id' => $this->id,
             ])
             ->event(ContractorActivityType::BankAccountSetDefault->value)
-            ->log('Contractor bank account set as default');
+            ->log('Contractor bank account set as default')
+        ;
     }
 }

@@ -279,7 +279,8 @@ class Product extends BaseModel implements HasMedia
                     'comment_id' => $comment->id,
                 ])
                 ->event(ProductActivityType::CommentDeleted->value)
-                ->log('Product comment deleted');
+                ->log('Product comment deleted')
+            ;
         });
     }
 }
