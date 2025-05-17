@@ -14,6 +14,7 @@ use App\Domain\Tenant\Enums\TenantActivityType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,6 +40,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection|Address[]     $addresses
  * @property Collection|BankAccount[] $bankAccounts
  * @property Collection|Media[]       $media
+ * @property Collection|Invitation[]  $invitations
  */
 class Tenant extends BaseModel implements HasMedia
 {
@@ -74,6 +76,11 @@ class Tenant extends BaseModel implements HasMedia
             ->withPivot(['role'])
             ->withTimestamps()
         ;
+    }
+
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(Invitation::class);
     }
 
     public function owner()

@@ -12,6 +12,7 @@ use App\Domain\Tenant\Models\UserTenant;
 use App\Domain\Tenant\Notifications\InvitationNotification;
 use App\Domain\Tenant\Requests\SendInvitationRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -19,6 +20,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InvitationController extends Controller
 {
+    use AuthorizesRequests;
+
+    /**
+     * List all invitations for a tenant.
+     */
+    public function index(Request $request, Tenant $tenant): JsonResponse
+    {
+        $this->authorize('view', $tenant);
+
+        $invitations = $tenant->invitations()
+            ->orderBy('created_at', 'desc')
+            ->get()
+        ;
+
+        return response()->json([
+            'data' => InvitationDTO::collect($invitations),
+        ]);
+    }
+
     /**
      * Send an invitation to join a tenant.
      */

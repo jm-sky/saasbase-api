@@ -51,6 +51,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     // Invitation routes
     Route::post('tenants/{tenant}/invite', [InvitationController::class, 'send']);
+    Route::get('tenants/{tenant}/invitations', [InvitationController::class, 'index']);
 
     Route::get('/tenants/{tenant}/logs', [TenantActivityLogController::class, 'index']);
 });

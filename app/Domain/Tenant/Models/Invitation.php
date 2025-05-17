@@ -5,9 +5,12 @@ namespace App\Domain\Tenant\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
 
 class Invitation extends BaseModel
 {
+    use Notifiable;
+
     protected $table = 'invitations';
 
     protected $fillable = [
@@ -34,5 +37,13 @@ class Invitation extends BaseModel
     public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inviter_id');
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     */
+    public function routeNotificationForMail(): string
+    {
+        return $this->email;
     }
 }
