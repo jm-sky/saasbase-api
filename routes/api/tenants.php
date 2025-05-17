@@ -57,8 +57,3 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::get('/tenants/{tenant}/logs', [TenantActivityLogController::class, 'index']);
 });
-
-// Accept invitation (public, no auth required)
-Route::withoutMiddleware(['auth:api', 'is_active', 'is_in_tenant'])
-    ->get('invitations/{token}', [InvitationController::class, 'accept'])
-;
