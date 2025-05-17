@@ -2,6 +2,7 @@
 
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\ActivityLogController;
+use App\Domain\Tenant\Controllers\InvitationController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Tenant\Controllers\TenantActivityLogController;
