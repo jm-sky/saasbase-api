@@ -23,4 +23,6 @@ enum TenantActivityType: string
     case AddressSetDefault     = 'tenant.address.set_default';
     case InvitationSent        = 'tenant.invitation.sent';
     case InvitationAccepted    = 'tenant.invitation.accepted';
+    case InvitationCanceled    = 'tenant.invitation.canceled';
+    case InvitationResent      = 'tenant.invitation.resent';
 }

@@ -140,4 +140,70 @@ class InvitationController extends Controller
             'data'    => InvitationDTO::fromModel($invitation)->toArray(),
         ]);
     }
+
+    /**
+     * Cancel an invitation.
+     */
+    public function cancel(Request $request, Tenant $tenant, Invitation $invitation): JsonResponse
+    {
+        $this->authorize('view', $tenant);
+        abort_if($invitation->tenant_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+        abort_if($invitation->status !== InvitationStatus::PENDING->value, Response::HTTP_BAD_REQUEST, 'Only pending invitations can be canceled.');
+
+        $invitation->update([
+            'status' => InvitationStatus::CANCELED->value,
+        ]);
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'     => $tenant->id,
+                'invitation_id' => $invitation->id,
+                'email'         => $invitation->email,
+                'role'          => $invitation->role,
+            ])
+            ->event(TenantActivityType::InvitationCanceled->value)
+            ->log('Tenant invitation canceled')
+        ;
+
+        return response()->json([
+            'message' => 'Invitation canceled.',
+            'data'    => InvitationDTO::fromModel($invitation)->toArray(),
+        ]);
+    }
+
+    /**
+     * Resend an invitation.
+     */
+    public function resend(Request $request, Tenant $tenant, Invitation $invitation): JsonResponse
+    {
+        $this->authorize('view', $tenant);
+        abort_if($invitation->tenant_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+        abort_if($invitation->status !== InvitationStatus::PENDING->value, Response::HTTP_BAD_REQUEST, 'Only pending invitations can be resent.');
+
+        // Update expiration date
+        $invitation->update([
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        // Resend notification
+        $invitation->notify(new InvitationNotification($invitation));
+
+        activity()
+            ->performedOn($tenant)
+            ->withProperties([
+                'tenant_id'     => $tenant->id,
+                'invitation_id' => $invitation->id,
+                'email'         => $invitation->email,
+                'role'          => $invitation->role,
+            ])
+            ->event(TenantActivityType::InvitationResent->value)
+            ->log('Tenant invitation resent')
+        ;
+
+        return response()->json([
+            'message' => 'Invitation resent.',
+            'data'    => InvitationDTO::fromModel($invitation)->toArray(),
+        ]);
+    }
 }
