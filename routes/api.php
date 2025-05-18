@@ -34,7 +34,8 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/auth.php';
 
     // Accept invitation (public, no auth required)
-    Route::get('invitations/{token}', [InvitationController::class, 'accept']);
+    Route::get('invitations/{token}', [InvitationController::class, 'show']);
+    Route::post('invitations/{token}', [InvitationController::class, 'accept']);
     
     Route::post('auth/token/refresh', [AuthController::class, 'refresh']);
 
