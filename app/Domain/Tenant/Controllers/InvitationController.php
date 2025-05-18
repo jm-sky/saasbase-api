@@ -83,6 +83,19 @@ class InvitationController extends Controller
         ], Response::HTTP_CREATED);
     }
 
+    public function show(Request $request, $token): JsonResponse
+    {
+        $invitation = Invitation::where('token', $token)
+            ->where('status', InvitationStatus::PENDING->value)
+            ->where('expires_at', '>', now())
+            ->firstOrFail()
+        ;
+
+        return response()->json([
+            'data' => InvitationDTO::fromModel($invitation)->toArray(),
+        ]);
+    }
+    
     /**
      * Accept an invitation by token.
      */
