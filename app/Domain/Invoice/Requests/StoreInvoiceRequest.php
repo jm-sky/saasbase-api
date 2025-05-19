@@ -2,7 +2,9 @@
 
 namespace App\Domain\Invoice\Requests;
 
+use App\Domain\Invoice\Enums\InvoiceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreInvoiceRequest extends FormRequest
 {
@@ -14,7 +16,7 @@ class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'                  => ['required', 'string'],
+            'type'                  => ['required', new Enum(InvoiceType::class)],
             'issue_date'            => ['required', 'date'],
             'status'                => ['required', 'string'],
             'number'                => ['required', 'string'],

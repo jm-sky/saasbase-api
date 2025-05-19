@@ -2,7 +2,9 @@
 
 namespace App\Domain\Invoice\Requests;
 
+use App\Domain\Invoice\Enums\InvoiceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateInvoiceRequest extends FormRequest
 {
@@ -14,7 +16,7 @@ class UpdateInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'                  => ['sometimes', 'string'],
+            'type'                  => ['sometimes', new Enum(InvoiceType::class)],
             'issue_date'            => ['sometimes', 'date'],
             'status'                => ['sometimes', 'string'],
             'number'                => ['sometimes', 'string'],

@@ -8,6 +8,21 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string              $id
+ * @property string              $tenant_id
+ * @property string              $name
+ * @property string              $invoice_type
+ * @property string              $format
+ * @property int                 $next_number
+ * @property ResetPeriod         $reset_period
+ * @property string              $prefix
+ * @property string              $suffix
+ * @property bool                $is_default
+ * @property Carbon              $created_at
+ * @property Carbon              $updated_at
+ * @property Collection<Invoice> $invoices
+ */
 class NumberingTemplate extends Model
 {
     use HasUuids;

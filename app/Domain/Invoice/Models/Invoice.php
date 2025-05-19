@@ -12,6 +12,7 @@ use App\Domain\Invoice\DTOs\InvoiceDataDTO;
 use App\Domain\Invoice\DTOs\InvoiceOptionsDTO;
 use App\Domain\Invoice\DTOs\InvoicePaymentDTO;
 use App\Domain\Invoice\DTOs\InvoiceSellerDTO;
+use App\Domain\Invoice\Enums\InvoiceType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property string            $id
  * @property string            $tenant_id
- * @property string            $type
+ * @property InvoiceType       $type
  * @property string            $status
  * @property string            $number
  * @property string            $numbering_template_id
@@ -62,6 +63,7 @@ class Invoice extends Model
     ];
 
     protected $casts = [
+        'type'          => InvoiceType::class,
         'issue_date'    => 'date',
         'total_net'     => BigDecimal::class,
         'total_tax'     => BigDecimal::class,
