@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Auth\Controllers\ApiKeyController;
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
@@ -63,6 +64,8 @@ Route::prefix('v1')->group(function () {
 
         // Roles and Permissions
         Route::apiResource('roles', RoleController::class);
+
+        Route::apiResource('api-keys', ApiKeyController::class);
     });
 
     require __DIR__ . '/api/admin.php';
