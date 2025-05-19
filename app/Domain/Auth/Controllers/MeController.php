@@ -20,6 +20,8 @@ class MeController extends Controller
             return response()->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
+        $user->load('roles');
+
         // Transform the user model into a UserDTO
         $userDTO = UserDTO::fromModel($user);
 

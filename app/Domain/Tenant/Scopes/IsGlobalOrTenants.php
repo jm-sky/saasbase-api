@@ -17,9 +17,11 @@ class IsGlobalOrTenants implements Scope
 
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where(function ($query) {
-            $query->whereNull('tenant_id')
-                ->orWhere('tenant_id', $this->tenantId)
+        $table = $model->getTable();
+
+        $builder->where(function ($query) use ($table) {
+            $query->whereNull("{$table}.tenant_id")
+                ->orWhere("{$table}.tenant_id", $this->tenantId)
             ;
         });
     }
