@@ -4,23 +4,26 @@ namespace App\Domain\Tenant\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Tenant\Models\Invitation;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends BaseDTO<Invitation>
  *
- * @property string  $id
- * @property string  $tenantId
- * @property string  $inviterId
- * @property string  $email
- * @property string  $role
- * @property string  $token
- * @property string  $status
- * @property ?Carbon $acceptedAt
- * @property Carbon  $expiresAt
- * @property ?Carbon $createdAt
- * @property ?Carbon $updatedAt
+ * @property string           $id
+ * @property string           $tenantId
+ * @property string           $inviterId
+ * @property string           $email
+ * @property string           $role
+ * @property string           $token
+ * @property string           $status
+ * @property ?Carbon          $acceptedAt
+ * @property Carbon           $expiresAt
+ * @property ?Carbon          $createdAt
+ * @property ?Carbon          $updatedAt
+ * @property TenantPreviewDTO $tenant
+ * @property UserPreviewDTO   $inviter
  */
 class InvitationDTO extends BaseDTO
 {
@@ -36,6 +39,8 @@ class InvitationDTO extends BaseDTO
         public readonly Carbon $expiresAt,
         public readonly ?Carbon $createdAt = null,
         public readonly ?Carbon $updatedAt = null,
+        public readonly TenantPreviewDTO $tenant,
+        public readonly UserPreviewDTO $inviter,
     ) {
     }
 
@@ -53,6 +58,8 @@ class InvitationDTO extends BaseDTO
             expiresAt: $data['expiresAt'],
             createdAt: $data['createdAt'],
             updatedAt: $data['updatedAt'],
+            tenant: TenantPreviewDTO::fromArray($data['tenant']),
+            inviter: UserPreviewDTO::fromArray($data['inviter']),
         );
     }
 
@@ -71,6 +78,8 @@ class InvitationDTO extends BaseDTO
             expiresAt: $model->expires_at,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
+            tenant: TenantPreviewDTO::fromModel($model->tenant),
+            inviter: UserPreviewDTO::fromModel($model->inviter),
         );
     }
 
@@ -84,6 +93,8 @@ class InvitationDTO extends BaseDTO
             'role'       => $this->role,
             'token'      => $this->token,
             'status'     => $this->status,
+            'tenant'     => $this->tenant->toArray(),
+            'inviter'    => $this->inviter->toArray(),
             'acceptedAt' => $this->acceptedAt?->toIso8601String(),
             'expiresAt'  => $this->expiresAt?->toIso8601String(),
             'createdAt'  => $this->createdAt?->toIso8601String(),

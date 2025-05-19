@@ -2,10 +2,9 @@
 
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\ActivityLogController;
-use App\Domain\Tenant\Controllers\InvitationController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
-use App\Domain\Tenant\Controllers\TenantActivityLogController;
+use App\Domain\Tenant\Controllers\InvitationController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
 use Illuminate\Support\Facades\Broadcast;
@@ -36,7 +35,7 @@ Route::prefix('v1')->group(function () {
     // Accept invitation (public, no auth required)
     Route::get('invitations/{token}', [InvitationController::class, 'show']);
     Route::post('invitations/{token}', [InvitationController::class, 'accept']);
-    
+
     Route::post('auth/token/refresh', [AuthController::class, 'refresh']);
 
     require __DIR__ . '/api/images.php';

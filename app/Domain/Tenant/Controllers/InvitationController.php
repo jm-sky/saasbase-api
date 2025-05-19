@@ -95,7 +95,7 @@ class InvitationController extends Controller
             'data' => InvitationDTO::fromModel($invitation)->toArray(),
         ]);
     }
-    
+
     /**
      * Accept an invitation by token.
      */

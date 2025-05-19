@@ -4,7 +4,7 @@ namespace App\Domain\Feeds\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Feeds\Models\Feed;
-use App\Domain\Users\DTOs\PublicUserDTO;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,7 +35,7 @@ class FeedDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
-        public readonly ?PublicUserDTO $user = null,
+        public readonly ?UserPreviewDTO $user = null,
         public readonly ?int $commentsCount = null,
     ) {
     }
@@ -66,7 +66,7 @@ class FeedDTO extends BaseDTO
         $user = null;
 
         if ($model->relationLoaded('user') && $model->user) {
-            $user = PublicUserDTO::fromModel($model->user);
+            $user = UserPreviewDTO::fromModel($model->user);
         }
 
         return new self(

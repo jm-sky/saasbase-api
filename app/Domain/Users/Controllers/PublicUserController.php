@@ -4,7 +4,7 @@ namespace App\Domain\Users\Controllers;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Users\DTOs\PublicUserDTO;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,13 +28,13 @@ class PublicUserController extends Controller
     {
         $users          = $this->tenant->users()->get();
         $result         = [];
-        $result['data'] = array_map(fn (array $user) => PublicUserDTO::fromArray($user), $users->toArray());
+        $result['data'] = array_map(fn (array $user) => UserPreviewDTO::fromArray($user), $users->toArray());
 
         return response()->json($result);
     }
 
     public function show(User $user): JsonResponse
     {
-        return response()->json(['data' => PublicUserDTO::from($user)]);
+        return response()->json(['data' => UserPreviewDTO::from($user)]);
     }
 }
