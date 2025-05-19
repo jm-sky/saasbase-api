@@ -4,6 +4,7 @@ use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Auth\Controllers\OAuthController;
 use App\Domain\Auth\Controllers\PasswordResetController;
 use App\Domain\Auth\Controllers\TwoFactorAuthController;
+use App\Domain\Auth\Controllers\UserSessionController;
 use App\Domain\Auth\Controllers\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,4 +44,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('2fa/enable', [TwoFactorAuthController::class, 'enable']);
     Route::post('2fa/disable', [TwoFactorAuthController::class, 'disable']);
     Route::post('2fa/verify', [TwoFactorAuthController::class, 'verify']);
+
+    // User Sessions Routes
+    Route::get('sessions', [UserSessionController::class, 'index']);
 });

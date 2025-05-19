@@ -7,6 +7,7 @@ use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Requests\RegisterRequest;
+use App\Domain\Auth\Services\UserSessionService;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -26,7 +27,7 @@ class AuthController extends Controller
     ) {
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(Request $request, UserSessionService $userSessionService): JsonResponse
     {
         $credentials = $request->only(['email', 'password']);
 
@@ -38,19 +39,23 @@ class AuthController extends Controller
         $user  = Auth::user();
         $token = JwtHelper::createTokenWithoutTenant($user);
 
+        $userSessionService->createSession($user, $request, $token);
+
         return $this->respondWithToken($token, $user, remember: $request->boolean('remember'));
     }
 
-    public function logout(): JsonResponse
+    public function logout(UserSessionService $userSessionService): JsonResponse
     {
         JWTAuth::invalidate(JWTAuth::getToken());
+
+        $userSessionService->revokeCurrentSession();
 
         return response()->json(['message' => 'Logged out'])->withCookie(
             cookie()->forget('refresh_token')
         );
     }
 
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request, UserSessionService $userSessionService): JsonResponse
     {
         $validated = $request->validated();
 
@@ -68,6 +73,8 @@ class AuthController extends Controller
         $user = $this->registerUserAction->execute($dto);
 
         $token = JwtHelper::createTokenWithoutTenant($user);
+
+        $userSessionService->createSession($user, $request, $token);
 
         return $this->respondWithToken($token, $user, remember: $request->boolean('remember'));
     }

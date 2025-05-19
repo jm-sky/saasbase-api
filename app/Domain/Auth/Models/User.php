@@ -248,6 +248,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->hasOne(EmailVerificationToken::class);
     }
 
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(UserSession::class);
+    }
+
     protected static function newFactory()
     {
         return UserFactory::new();
