@@ -9,6 +9,7 @@ use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Auth\ValueObjects\UserConfig;
 use App\Domain\Common\Model\BankAccount;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Projects\Models\Project;
@@ -77,6 +78,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
+    use HasMediaSignedUrls;
     use MustVerifyEmailTrait;
     use HaveBankAccounts;
     use HaveAddresses;

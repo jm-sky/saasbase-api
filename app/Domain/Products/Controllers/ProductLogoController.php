@@ -32,8 +32,8 @@ class ProductLogoController extends Controller
             ->log('Product logo uploaded')
         ;
 
-        $logoUrl  = route('product.logo.show', ['product' => $product->id], absolute: false);
-        $thumbUrl = route('product.logo.show', ['product' => $product->id, 'thumb' => true], absolute: false);
+        $logoUrl  = $product->getMediaSignedUrl('logo');
+        $thumbUrl = $product->getMediaSignedUrl('logo', 'thumb');
 
         return response()->json([
             'message'     => 'Product logo uploaded successfully.',

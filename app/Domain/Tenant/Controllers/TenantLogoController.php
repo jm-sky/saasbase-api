@@ -31,8 +31,8 @@ class TenantLogoController extends Controller
             ->log('Tenant logo created')
         ;
 
-        $logoUrl  = route('tenant.logo.show', ['tenant' => $tenant->id], absolute: false);
-        $thumbUrl = route('tenant.logo.show', ['tenant' => $tenant->id, 'thumb' => true], absolute: false);
+        $logoUrl  = $tenant->getMediaSignedUrl('logo');
+        $thumbUrl = $tenant->getMediaSignedUrl('logo', 'thumb');
 
         return response()->json([
             'message'     => 'Tenant logo uploaded successfully.',

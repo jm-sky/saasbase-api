@@ -32,10 +32,8 @@ class ContractorLogoController extends Controller
             ->log('Contractor logo created')
         ;
 
-        // TODO: Add signed url
-        // $logoUrl = $contractor->getMediaSignedUrl('logo', $fileName);
-        $logoUrl  = route('contractor.logo.show', ['contractor' => $contractor->id], absolute: false);
-        $thumbUrl = route('contractor.logo.show', ['contractor' => $contractor->id, 'thumb' => true], absolute: false);
+        $logoUrl  = $contractor->getMediaSignedUrl('logo');
+        $thumbUrl = $contractor->getMediaSignedUrl('logo', 'thumb');
 
         return response()->json([
             'message'     => 'Contractor logo uploaded successfully.',

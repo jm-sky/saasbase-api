@@ -2,9 +2,9 @@
 
 namespace App\Domain\Users\DTOs;
 
-use Carbon\Carbon;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\DTOs\BaseDTO;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**

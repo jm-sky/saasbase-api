@@ -101,13 +101,13 @@ class Contractor extends BaseModel implements HasMedia
         ;
     }
 
-    public function getMediaUrl(string $collectionName, string $fileName): string
+    public function getMediaUrl(string $collectionName, string $conversionName): string
     {
         if ('logo' === $collectionName) {
-            return $this->getMediaSignedUrl($collectionName, $fileName);
+            return $this->getMediaSignedUrl($collectionName, $conversionName);
         }
 
-        return $this->getFirstMediaUrl($collectionName, $fileName);
+        return $this->getFirstMediaUrl($collectionName, $conversionName);
     }
 
     public function logo(): MorphOne

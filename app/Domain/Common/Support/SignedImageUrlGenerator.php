@@ -6,9 +6,16 @@ use App\Domain\Common\Models\Media;
 
 class SignedImageUrlGenerator
 {
-    public static function generate(Media $media, $modelName, $modelId, string $fileName, int $expiration = 15): string
-    {
+    public static function generate(
+        Media $media,
+        string $modelName,
+        string $modelId,
+        string $fileName,
+        int $expiration = 15,
+        array $params = []
+    ): string {
         $params = [
+            ...$params,
             'modelName' => $modelName,
             'modelId'   => $modelId,
             'mediaId'   => $media->id,
