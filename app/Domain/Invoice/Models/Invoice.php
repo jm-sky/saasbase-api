@@ -2,22 +2,22 @@
 
 namespace App\Domain\Invoice\Models;
 
-use Brick\Math\BigDecimal;
-use Illuminate\Database\Eloquent\Model;
-use App\Domain\Invoice\DTOs\InvoiceDataDTO;
-use App\Domain\Invoice\DTOs\InvoiceBuyerDTO;
-use App\Domain\Invoice\Casts\InvoiceDataCast;
-use App\Domain\Invoice\DTOs\InvoiceSellerDTO;
-use App\Domain\Tenant\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Domain\Invoice\Casts\InvoiceBuyerCast;
-use App\Domain\Invoice\DTOs\InvoiceOptionsDTO;
-use App\Domain\Invoice\DTOs\InvoicePaymentDTO;
-use App\Domain\Invoice\Casts\InvoiceSellerCast;
+use App\Domain\Invoice\Casts\InvoiceDataCast;
 use App\Domain\Invoice\Casts\InvoiceOptionsCast;
 use App\Domain\Invoice\Casts\InvoicePaymentCast;
+use App\Domain\Invoice\Casts\InvoiceSellerCast;
+use App\Domain\Invoice\DTOs\InvoiceBuyerDTO;
+use App\Domain\Invoice\DTOs\InvoiceDataDTO;
+use App\Domain\Invoice\DTOs\InvoiceOptionsDTO;
+use App\Domain\Invoice\DTOs\InvoicePaymentDTO;
+use App\Domain\Invoice\DTOs\InvoiceSellerDTO;
+use App\Domain\Tenant\Traits\BelongsToTenant;
+use Brick\Math\BigDecimal;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string            $id
