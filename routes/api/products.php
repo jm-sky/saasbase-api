@@ -13,7 +13,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::controller(ProductLogoController::class)
         ->prefix('products/{product}/logo')
-        ->name('product.logo.')
+        ->name('products.logo.')
         ->group(function () {
             Route::post('/', 'upload')->name('upload');
             Route::get('/', 'show')->name('show');

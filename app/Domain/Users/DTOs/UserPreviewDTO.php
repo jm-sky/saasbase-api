@@ -4,27 +4,26 @@ namespace App\Domain\Users\DTOs;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\DTOs\BaseDTO;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends BaseDTO<User>
  *
  * @property ?string $id        UUID
- * @property string  $firstName
- * @property string  $lastName
+ * @property string  $name
  * @property ?string $email
- * @property ?string $phone
  * @property ?string $avatarUrl
+ * @property ?Carbon $createdAt
  */
-class PublicUserDTO extends BaseDTO
+class UserPreviewDTO extends BaseDTO
 {
     public function __construct(
-        public readonly string $firstName,
-        public readonly string $lastName,
+        public readonly string $name,
         public readonly ?string $email,
-        public readonly ?string $phone,
         public readonly ?string $id = null,
         public readonly ?string $avatarUrl = null,
+        public readonly ?Carbon $createdAt = null,
     ) {
     }
 
@@ -32,24 +31,22 @@ class PublicUserDTO extends BaseDTO
     {
         /* @var User $model */
         return new static(
-            firstName: $model->first_name,
-            lastName: $model->last_name,
+            name: trim("{$model->first_name} {$model->last_name}"),
             email: $model->public_email,
-            phone: $model->public_phone,
             id: $model->id,
             avatarUrl: $model->avatar_url,
+            createdAt: $model->created_at,
         );
     }
 
     public static function fromArray(array $data): static
     {
         return new static(
-            firstName: $data['first_name'],
-            lastName: $data['last_name'],
+            name: trim("{$data['first_name']} {$data['last_name']}"),
             email: $data['email'] ?? null,
-            phone: $data['phone'] ?? null,
             id: $data['id'] ?? null,
             avatarUrl: $data['avatar_url'] ?? null,
+            createdAt: $data['created_at'] ? Carbon::parse($data['created_at']) : null,
         );
     }
 
@@ -57,11 +54,10 @@ class PublicUserDTO extends BaseDTO
     {
         return [
             'id'        => $this->id,
-            'firstName' => $this->firstName,
-            'lastName'  => $this->lastName,
+            'name'      => $this->name,
             'email'     => $this->email,
-            'phone'     => $this->phone,
             'avatarUrl' => $this->avatarUrl,
+            'createdAt' => $this->createdAt?->toIso8601String(),
         ];
     }
 }

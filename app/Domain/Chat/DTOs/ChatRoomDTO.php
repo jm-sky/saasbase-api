@@ -4,7 +4,7 @@ namespace App\Domain\Chat\DTOs;
 
 use App\Domain\Chat\Models\ChatRoom;
 use App\Domain\Common\DTOs\BaseDTO;
-use App\Domain\Users\DTOs\PublicUserDTO;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use Illuminate\Database\Eloquent\Model;
 
 class ChatRoomDTO extends BaseDTO
@@ -27,7 +27,7 @@ class ChatRoomDTO extends BaseDTO
             $model->id,
             $model->name,
             $model->type,
-            participants: $model->participants->map(fn ($participant) => PublicUserDTO::fromModel($participant->user))->all(),
+            participants: $model->participants->map(fn ($participant) => UserPreviewDTO::fromModel($participant->user))->all(),
         );
     }
 

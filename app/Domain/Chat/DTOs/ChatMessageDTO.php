@@ -4,7 +4,7 @@ namespace App\Domain\Chat\DTOs;
 
 use App\Domain\Chat\Models\ChatMessage;
 use App\Domain\Common\DTOs\BaseDTO;
-use App\Domain\Users\DTOs\PublicUserDTO;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use Illuminate\Database\Eloquent\Model;
 
 class ChatMessageDTO extends BaseDTO
@@ -12,7 +12,7 @@ class ChatMessageDTO extends BaseDTO
     public function __construct(
         public string $id,
         public string $userId,
-        public PublicUserDTO $user,
+        public UserPreviewDTO $user,
         public string $content,
         public ?string $parentId,
         public string $createdAt,
@@ -29,7 +29,7 @@ class ChatMessageDTO extends BaseDTO
         return new static(
             $model->id,
             $model->user_id,
-            user: PublicUserDTO::fromModel($model->user),
+            user: UserPreviewDTO::fromModel($model->user),
             content: $model->content,
             parentId: $model->parent_id,
             createdAt: $model->created_at->toIso8601String(),
@@ -42,7 +42,7 @@ class ChatMessageDTO extends BaseDTO
         return new static(
             $data['id'],
             $data['user_id'] ?? $data['userId'],
-            user: PublicUserDTO::fromArray($data['user']),
+            user: UserPreviewDTO::fromArray($data['user']),
             content: $data['content'],
             parentId: $data['parent_id'] ?? $data['parentId'] ?? null,
             createdAt: $data['created_at'] ?? $data['createdAt'],

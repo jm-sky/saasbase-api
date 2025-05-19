@@ -3,23 +3,23 @@
 namespace App\Domain\Common\DTOs;
 
 use App\Domain\Common\Models\Comment;
-use App\Domain\Users\DTOs\PublicUserDTO;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends BaseDTO<Comment>
  *
- * @property string         $userId
- * @property string         $content
- * @property string         $commentableId
- * @property string         $commentableType
- * @property ?string        $id              UUID
- * @property ?array         $meta            (canEdit, canDelete)
- * @property ?Carbon        $createdAt       Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon        $updatedAt       Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon        $deletedAt       Internally Carbon, accepts/serializes ISO 8601
- * @property ?PublicUserDTO $user
+ * @property string          $userId
+ * @property string          $content
+ * @property string          $commentableId
+ * @property string          $commentableType
+ * @property ?string         $id              UUID
+ * @property ?array          $meta            (canEdit, canDelete)
+ * @property ?Carbon         $createdAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon         $updatedAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon         $deletedAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property ?UserPreviewDTO $user
  */
 class CommentDTO extends BaseDTO
 {
@@ -32,7 +32,7 @@ class CommentDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
-        public ?PublicUserDTO $user = null,
+        public ?UserPreviewDTO $user = null,
         public ?array $meta = null,
     ) {
     }
@@ -49,7 +49,7 @@ class CommentDTO extends BaseDTO
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
-            user: $model->user ? PublicUserDTO::fromModel($model->user) : null,
+            user: $model->user ? UserPreviewDTO::fromModel($model->user) : null,
             meta: [
                 'canEdit'   => $model->canEdit(),
                 'canDelete' => $model->canDelete(),
@@ -68,7 +68,7 @@ class CommentDTO extends BaseDTO
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
             deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
-            user: isset($data['user']) ? PublicUserDTO::fromArray($data['user']) : null,
+            user: isset($data['user']) ? UserPreviewDTO::fromArray($data['user']) : null,
             meta: isset($data['meta']) ? $data['meta'] : null,
         );
     }

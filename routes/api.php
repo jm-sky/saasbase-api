@@ -5,6 +5,7 @@ use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Rights\Controllers\RoleController;
+use App\Domain\Tenant\Controllers\InvitationController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
 use Illuminate\Support\Facades\Broadcast;

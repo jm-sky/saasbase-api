@@ -3,7 +3,7 @@
 namespace App\Domain\Common\DTOs;
 
 use App\Domain\Common\Models\Activity;
-use App\Domain\Users\DTOs\PublicUserDTO;
+use App\Domain\Users\DTOs\UserPreviewDTO;
 use Illuminate\Support\Carbon;
 
 class ActivityLogDTO
@@ -23,7 +23,7 @@ class ActivityLogDTO
         public readonly ?Carbon $createdAt,
         public readonly ?Carbon $updatedAt,
         public readonly ?array $changes,
-        public readonly ?PublicUserDTO $causer,
+        public readonly ?UserPreviewDTO $causer,
         public readonly mixed $subject,
     ) {
     }
@@ -45,7 +45,7 @@ class ActivityLogDTO
             createdAt: $activity->created_at,
             updatedAt: $activity->updated_at,
             changes: $activity->changes?->toArray(),
-            causer: $activity->causer ? PublicUserDTO::from($activity->causer) : null,
+            causer: $activity->causer ? UserPreviewDTO::from($activity->causer) : null,
             subject: $activity->subject,
         );
     }

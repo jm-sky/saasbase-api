@@ -10,7 +10,7 @@ trait HasMediaSignedUrls
 {
     public const TEMPORARY_URL_EXPIRATION_TIME = 15;
 
-    public function getMediaSignedUrl(string $collectionName, string $fileName): ?string
+    public function getMediaSignedUrl(string $collectionName, ?string $conversionName = null): ?string
     {
         /** @var Media $media */
         $media = $this->getFirstMedia($collectionName);
@@ -25,8 +25,11 @@ trait HasMediaSignedUrls
             media: $media,
             modelName: $modelName,
             modelId: $this->id,
-            fileName: $fileName,
+            fileName: $media->file_name,
             expiration: self::TEMPORARY_URL_EXPIRATION_TIME,
+            params: [
+                'conversion' => $conversionName,
+            ],
         );
     }
 }

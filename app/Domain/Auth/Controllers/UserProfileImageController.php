@@ -23,10 +23,8 @@ class UserProfileImageController extends Controller
             ->toMediaCollection('profile')
         ;
 
-        // TODO: Add signed url
-        // $logoUrl = $user->getMediaSignedUrl('profile', $fileName);
-        $avatarUrl = route('user.profile-image.showForUser', ['user' => $user->id], absolute: false);
-        $thumbUrl  = route('user.profile-image.showForUser', ['user' => $user->id, 'thumb' => true], absolute: false);
+        $avatarUrl = $user->getMediaSignedUrl('profile');
+        $thumbUrl  = $user->getMediaSignedUrl('profile', 'thumb');
 
         $user->update([
             'avatar_url' => $avatarUrl,

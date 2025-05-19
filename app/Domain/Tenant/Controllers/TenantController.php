@@ -3,7 +3,7 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Tenant\DTOs\TenantDTO;
-use App\Domain\Tenant\DTOs\TenantSimpleDTO;
+use App\Domain\Tenant\DTOs\TenantPreviewDTO;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantRequest;
@@ -22,7 +22,7 @@ class TenantController extends Controller
         $tenants = $request->user()->tenants()->orderBy('created_at')->get();
 
         return response()->json([
-            'data' => TenantSimpleDTO::collect($tenants),
+            'data' => TenantPreviewDTO::collect($tenants),
         ]);
     }
 
