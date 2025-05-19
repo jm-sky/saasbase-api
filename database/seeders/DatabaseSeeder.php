@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             ProjectRoleSeeder::class,
             DefaultMeasurementUnitSeeder::class,
+            RolesAndPermissionsSeeder::class,
         ]);
 
         (new InitializeTenantDefaults())->execute($tenant, $user);

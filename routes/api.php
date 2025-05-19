@@ -4,6 +4,7 @@ use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
+use App\Domain\Rights\Controllers\RoleController;
 use App\Domain\Tenant\Controllers\InvitationController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
@@ -30,14 +31,10 @@ Broadcast::routes([
 Route::get('/health', [HealthController::class, 'health']);
 
 Route::prefix('v1')->group(function () {
-    require __DIR__ . '/api/auth.php';
-
-    // Accept invitation (public, no auth required)
-    Route::get('invitations/{token}', [InvitationController::class, 'show']);
-    Route::post('invitations/{token}', [InvitationController::class, 'accept']);
-
     Route::post('auth/token/refresh', [AuthController::class, 'refresh']);
 
+    require __DIR__ . '/api/auth.php';
+    require __DIR__ . '/api/invitations.php';
     require __DIR__ . '/api/images.php';
 
     Route::middleware(['auth:api', 'is_active'])->group(function () {
@@ -64,6 +61,9 @@ Route::prefix('v1')->group(function () {
         Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
 
         require __DIR__ . '/api/skills.php';
+
+        // Roles and Permissions
+        Route::apiResource('roles', RoleController::class);
     });
 
     require __DIR__ . '/api/admin.php';

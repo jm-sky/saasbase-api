@@ -3,7 +3,7 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Common\Models\BaseModel;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TenantBankAccount extends BaseModel

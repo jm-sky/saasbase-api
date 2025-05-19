@@ -13,7 +13,7 @@ use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Products\Enums\ProductActivityType;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

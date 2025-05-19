@@ -4,7 +4,7 @@ namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

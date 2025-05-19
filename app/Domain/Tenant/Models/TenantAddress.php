@@ -4,7 +4,7 @@ namespace App\Domain\Tenant\Models;
 
 use App\Domain\Common\Enums\AddressType;
 use App\Domain\Common\Models\Address;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 

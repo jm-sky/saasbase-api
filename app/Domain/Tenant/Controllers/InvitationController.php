@@ -83,77 +83,6 @@ class InvitationController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function show(Request $request, $token): JsonResponse
-    {
-        $invitation = Invitation::where('token', $token)
-            ->where('status', InvitationStatus::PENDING->value)
-            ->where('expires_at', '>', now())
-            ->firstOrFail()
-        ;
-
-        return response()->json([
-            'data' => InvitationDTO::fromModel($invitation)->toArray(),
-        ]);
-    }
-
-    /**
-     * Accept an invitation by token.
-     */
-    public function accept(Request $request, $token): JsonResponse
-    {
-        $invitation = Invitation::where('token', $token)
-            ->where('status', InvitationStatus::PENDING->value)
-            ->where('expires_at', '>', now())
-            ->firstOrFail()
-        ;
-
-        // If user is authenticated, link to existing user; else, register new user
-        $user = $request->user();
-
-        if (!$user) {
-            // Optionally, handle registration flow here (not implemented)
-            return response()->json([
-                'message' => 'User registration required to accept invitation.',
-            ], Response::HTTP_UNAUTHORIZED);
-        }
-
-        // Attach user to tenant with role if not already attached
-        $alreadyMember = UserTenant::where('user_id', $user->id)
-            ->where('tenant_id', $invitation->tenant_id)
-            ->exists()
-        ;
-
-        if (!$alreadyMember) {
-            UserTenant::create([
-                'user_id'   => $user->id,
-                'tenant_id' => $invitation->tenant_id,
-                'role'      => $invitation->role,
-            ]);
-        }
-
-        $invitation->update([
-            'status'      => InvitationStatus::ACCEPTED->value,
-            'accepted_at' => now(),
-        ]);
-
-        activity()
-            ->performedOn(Tenant::find($invitation->tenant_id))
-            ->withProperties([
-                'tenant_id'     => $invitation->tenant_id,
-                'invitation_id' => $invitation->id,
-                'user_id'       => $user->id,
-                'role'          => $invitation->role,
-            ])
-            ->event(TenantActivityType::InvitationAccepted->value)
-            ->log('Tenant invitation accepted')
-        ;
-
-        return response()->json([
-            'message' => 'Invitation accepted.',
-            'data'    => InvitationDTO::fromModel($invitation)->toArray(),
-        ]);
-    }
-
     /**
      * Cancel an invitation.
      */
@@ -218,5 +147,96 @@ class InvitationController extends Controller
             'message' => 'Invitation resent.',
             'data'    => InvitationDTO::fromModel($invitation)->toArray(),
         ]);
+    }
+
+    /**
+     * Accept an invitation by token.
+     */
+    public function accept(Request $request, $token): JsonResponse
+    {
+        abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
+
+        $user       = $request->user();
+        $invitation = $this->getPendingInvitation($token);
+
+        // Attach user to tenant with role if not already attached
+        if ($this->isUserMemberOfTenant($user, $invitation->tenant)) {
+            UserTenant::create([
+                'user_id'   => $user->id,
+                'tenant_id' => $invitation->tenant_id,
+                'role'      => $invitation->role,
+            ]);
+        }
+
+        $invitation->update([
+            'status'      => InvitationStatus::ACCEPTED->value,
+            'accepted_at' => now(),
+        ]);
+
+        activity()
+            ->performedOn(Tenant::find($invitation->tenant_id))
+            ->withProperties([
+                'tenant_id'     => $invitation->tenant_id,
+                'invitation_id' => $invitation->id,
+                'user_id'       => $user->id,
+                'role'          => $invitation->role,
+            ])
+            ->event(TenantActivityType::InvitationAccepted->value)
+            ->log('Tenant invitation accepted')
+        ;
+
+        return response()->json([
+            'message' => 'Invitation accepted.',
+            'data'    => InvitationDTO::fromModel($invitation)->toArray(),
+        ]);
+    }
+
+    /**
+     * Accept an invitation by token.
+     */
+    public function reject(Request $request, $token): JsonResponse
+    {
+        abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
+
+        $user       = $request->user();
+        $invitation = $this->getPendingInvitation($token);
+
+        $invitation->update([
+            'status'      => InvitationStatus::REJECTED->value,
+            'accepted_at' => now(),
+        ]);
+
+        activity()
+            ->performedOn(Tenant::find($invitation->tenant_id))
+            ->withProperties([
+                'tenant_id'     => $invitation->tenant_id,
+                'invitation_id' => $invitation->id,
+                'user_id'       => $user->id,
+                'role'          => $invitation->role,
+            ])
+            ->event(TenantActivityType::InvitationRejected->value)
+            ->log('Tenant invitation rejected')
+        ;
+
+        return response()->json([
+            'message' => 'Invitation rejected.',
+        ]);
+    }
+
+    protected function getPendingInvitation(string $token): Invitation
+    {
+        return Invitation::where('token', $token)
+            ->where('status', InvitationStatus::PENDING->value)
+            ->where('expires_at', '>', now())
+            ->firstOrFail()
+        ;
+    }
+
+    protected function isUserMemberOfTenant(User $user, Tenant $tenant): bool
+    {
+        return UserTenant::where('user_id', $user->id)
+            ->where('tenant_id', $tenant->id)
+            ->exists()
+        ;
     }
 }
