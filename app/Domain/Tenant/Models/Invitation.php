@@ -39,6 +39,11 @@ class Invitation extends BaseModel
         return $this->belongsTo(User::class, 'inviter_id');
     }
 
+    public function isValid(): bool
+    {
+        return $this->expires_at->isFuture();
+    }
+
     /**
      * Route notifications for the mail channel.
      */

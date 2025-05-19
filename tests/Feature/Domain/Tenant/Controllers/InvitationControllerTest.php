@@ -64,7 +64,7 @@ class InvitationControllerTest extends TestCase
         $invitee = User::factory()->create(['email' => 'invitee@example.com']);
         $this->actingAs($invitee);
 
-        $response = $this->getJson("/api/v1/invitations/{$token}");
+        $response = $this->postJson("/api/v1/invitations/{$token}/accept");
         $response->assertOk();
         $this->assertDatabaseHas('invitations', [
             'id'     => $invitation->id,

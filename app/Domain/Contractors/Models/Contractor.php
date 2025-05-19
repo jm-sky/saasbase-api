@@ -13,7 +13,7 @@ use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Contractors\Enums\ContractorActivityType;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;

@@ -3,8 +3,8 @@
 namespace App\Domain\Chat\Models;
 
 use App\Domain\Common\Models\BaseModel;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

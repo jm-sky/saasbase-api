@@ -5,7 +5,7 @@ namespace App\Domain\Feeds\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Database\Factories\FeedFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;

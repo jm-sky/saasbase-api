@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tenant\Concerns;
+namespace App\Domain\Tenant\Traits;
 
 use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use App\Domain\Tenant\Models\Tenant;

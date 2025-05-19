@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool    $isAdmin
  * @property bool    $isEmailVerified
  * @property bool    $isTwoFactorEnabled
+ * @property array   $roles
+ * @property array   $permissions
  * @property ?Carbon $createdAt          Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt          Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt          Internally Carbon, accepts/serializes ISO 8601
@@ -39,6 +41,8 @@ class UserDTO extends BaseDTO
         public readonly bool $isAdmin = false,
         public readonly bool $isEmailVerified = false,
         public readonly bool $isTwoFactorEnabled = false,
+        public readonly array $roles = [],
+        public readonly array $permissions = [],
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
@@ -60,6 +64,8 @@ class UserDTO extends BaseDTO
             isAdmin: $model->is_admin,
             isEmailVerified: $model->isEmailVerified(),
             isTwoFactorEnabled: $model->isTwoFactorEnabled(),
+            roles: $model->getRoleNames()->toArray(),
+            permissions: $model->getAllPermissions()->pluck('name')->toArray(),
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             deletedAt: $model->deleted_at,
@@ -80,6 +86,8 @@ class UserDTO extends BaseDTO
             isAdmin: $data['is_admin'] ?? false,
             isEmailVerified: $data['is_email_verified'] ?? false,
             isTwoFactorEnabled: $data['is_two_factor_enabled'] ?? false,
+            roles: $data['roles'] ?? [],
+            permissions: $data['permissions'] ?? [],
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
             deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
@@ -100,6 +108,8 @@ class UserDTO extends BaseDTO
             'isAdmin'            => $this->isAdmin,
             'isEmailVerified'    => $this->isEmailVerified,
             'isTwoFactorEnabled' => $this->isTwoFactorEnabled,
+            'roles'              => $this->roles,
+            'permissions'        => $this->permissions,
             'createdAt'          => $this->createdAt?->toIso8601String(),
             'updatedAt'          => $this->updatedAt?->toIso8601String(),
             'deletedAt'          => $this->deletedAt?->toIso8601String(),

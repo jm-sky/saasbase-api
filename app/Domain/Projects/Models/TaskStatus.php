@@ -3,7 +3,7 @@
 namespace App\Domain\Projects\Models;
 
 use App\Domain\Projects\Database\Factories\TaskStatusFactory;
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

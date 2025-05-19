@@ -2,7 +2,7 @@
 
 namespace App\Domain\Common\Models;
 
-use App\Domain\Tenant\Concerns\BelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Attachment extends BaseModel

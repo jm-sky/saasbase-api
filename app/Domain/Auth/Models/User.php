@@ -39,6 +39,7 @@ use Spatie\Image\Enums\CropPosition;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -80,6 +81,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use MustVerifyEmailTrait;
     use HaveBankAccounts;
     use HaveAddresses;
+    use HasRoles;
 
     protected $fillable = [
         'first_name',
