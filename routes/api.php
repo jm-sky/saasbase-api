@@ -69,13 +69,4 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/admin.php';
 
     Route::post('ai/chat', [App\Domain\Ai\Controllers\AiChatController::class, 'chat']);
-
-    // User Identity Routes
-    Route::prefix('user-identity')->group(function () {
-        Route::post('personal-data', [App\Domain\Auth\Controllers\UserIdentityController::class, 'storePersonalData']);
-        Route::get('personal-data', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getPersonalData']);
-        Route::post('documents', [App\Domain\Auth\Controllers\UserIdentityController::class, 'storeIdentityDocument']);
-        Route::get('documents', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getIdentityDocuments']);
-        Route::get('documents/{document}', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getIdentityDocument']);
-    });
 });

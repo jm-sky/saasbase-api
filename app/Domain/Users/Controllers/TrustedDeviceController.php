@@ -5,10 +5,11 @@ namespace App\Domain\Users\Controllers;
 use App\Domain\Auth\Models\User;
 use App\Domain\Users\Models\TrustedDevice;
 use App\Domain\Users\Resources\TrustedDeviceResource;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class TrustedDeviceController
+class TrustedDeviceController extends Controller
 {
     public function index(): JsonResponse
     {
@@ -22,7 +23,7 @@ class TrustedDeviceController
 
     public function destroy(TrustedDevice $device): JsonResponse
     {
-        // $this->authorize('delete', $device);
+        $this->authorize('delete', $device);
 
         $device->delete();
 

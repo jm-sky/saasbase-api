@@ -7,11 +7,11 @@ use App\Domain\Users\Models\UserTableSetting;
 use App\Domain\Users\Requests\StoreTableSettingRequest;
 use App\Domain\Users\Requests\UpdateTableSettingRequest;
 use App\Domain\Users\Resources\UserTableSettingResource;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
-class UserTableSettingController
+class UserTableSettingController extends Controller
 {
     public function index(): JsonResponse
     {
@@ -36,7 +36,7 @@ class UserTableSettingController
 
     public function update(UpdateTableSettingRequest $request, UserTableSetting $setting): JsonResponse
     {
-        // $this->authorize('update', $setting);
+        $this->authorize('update', $setting);
 
         $setting->fill($request->validated());
         $setting->save();
@@ -46,16 +46,16 @@ class UserTableSettingController
 
     public function destroy(UserTableSetting $setting): JsonResponse
     {
-        // $this->authorize('delete', $setting);
+        $this->authorize('delete', $setting);
 
         $setting->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(null, 204);
     }
 
     public function setDefault(UserTableSetting $setting): JsonResponse
     {
-        // $this->authorize('update', $setting);
+        $this->authorize('update', $setting);
 
         // Remove default flag from other settings for this entity
         /** @var User $user */

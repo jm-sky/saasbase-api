@@ -5,10 +5,11 @@ namespace App\Domain\Users\Controllers;
 use App\Domain\Auth\Models\User;
 use App\Domain\Users\Models\SecurityEvent;
 use App\Domain\Users\Resources\SecurityEventResource;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class SecurityEventController
+class SecurityEventController extends Controller
 {
     public function index(): JsonResponse
     {
@@ -22,7 +23,7 @@ class SecurityEventController
 
     public function show(SecurityEvent $event): JsonResponse
     {
-        // $this->authorize('view', $event);
+        $this->authorize('view', $event);
 
         return response()->json(new SecurityEventResource($event));
     }
