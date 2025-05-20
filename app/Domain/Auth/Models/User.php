@@ -26,6 +26,7 @@ use App\Domain\Users\Models\TrustedDevice;
 use App\Domain\Users\Models\UserPreference;
 use App\Domain\Users\Models\UserProfile;
 use App\Domain\Users\Models\UserTableSetting;
+use App\Traits\UuidNotifiable;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
@@ -38,7 +39,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
@@ -82,7 +82,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use HasApiTokens;
     use HasFactory;
     use HasUuids;
-    use Notifiable;
+    use UuidNotifiable;
     use SoftDeletes;
     use InteractsWithMedia;
     use HasMediaSignedUrls;
@@ -124,6 +124,13 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         static::created(function (User $user) {
             event(new \App\Domain\Auth\Events\UserCreated($user));
         });
+    }
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => trim("{$this->first_name} {$this->last_name}"),
+        );
     }
 
     protected function publicEmail(): Attribute
