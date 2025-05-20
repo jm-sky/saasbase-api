@@ -197,6 +197,9 @@ Każdy model zawiera: `nazwa pola`, `typ`, `opis`, `zastosowanie`. Używany jest
 - `user_id`: UUID  
   Relacja do użytkownika.
 
+- `token`: string  
+  Unique token
+
 - `device_name`: string
   Nazwa urządzenia
 
@@ -268,7 +271,9 @@ Każdy model zawiera: `nazwa pola`, `typ`, `opis`, `zastosowanie`. Używany jest
 
 ---
 
-## Model: `invitations`
+## Model: `application_invitations`
+
+> This is already implemented
 
 User can invite someone to join our app. Those invitations are outside tenants scope.
 
