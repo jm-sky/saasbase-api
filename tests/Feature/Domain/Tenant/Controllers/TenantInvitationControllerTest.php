@@ -6,30 +6,32 @@ namespace Tests\Feature\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Enums\InvitationStatus;
-use App\Domain\Tenant\Models\Invitation;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\TenantInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
  *
  * @coversNothing
  */
-class InvitationControllerTest extends TestCase
+class TenantInvitationControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     public function testCanSendInvitation(): void
     {
         /** @var User $user */
         $user   = User::factory()->create();
         $tenant = Tenant::factory()->create();
-        $this->actingAs($user);
+
+        $this->authenticateUser($tenant, $user);
 
         $response = $this->postJson(
-            "/api/v1/tenants/{$tenant->id}/invite",
+            "/api/v1/tenants/{$tenant->id}/invitations",
             [
                 'email' => 'invitee@example.com',
                 'role'  => 'member',
@@ -37,7 +39,7 @@ class InvitationControllerTest extends TestCase
         );
 
         $response->assertCreated();
-        $this->assertDatabaseHas('invitations', [
+        $this->assertDatabaseHas('tenant_invitations', [
             'tenant_id' => $tenant->id,
             'email'     => 'invitee@example.com',
             'role'      => 'member',
@@ -49,8 +51,8 @@ class InvitationControllerTest extends TestCase
     {
         $user       = User::factory()->create();
         $tenant     = Tenant::factory()->create();
-        $token      = Str::uuid()->toString();
-        $invitation = Invitation::create([
+        $token      = 'e93cae90-1111-2222-3333-c1059f16a997';
+        $invitation = TenantInvitation::create([
             'tenant_id'   => $tenant->id,
             'inviter_id'  => $user->id,
             'email'       => 'invitee@example.com',
@@ -64,9 +66,9 @@ class InvitationControllerTest extends TestCase
         $invitee = User::factory()->create(['email' => 'invitee@example.com']);
         $this->actingAs($invitee);
 
-        $response = $this->postJson("/api/v1/invitations/{$token}/accept");
+        $response = $this->postJson("/api/v1/tenants/{$tenant->id}/invitations/{$token}/accept");
         $response->assertOk();
-        $this->assertDatabaseHas('invitations', [
+        $this->assertDatabaseHas('tenant_invitations', [
             'id'     => $invitation->id,
             'status' => InvitationStatus::ACCEPTED->value,
         ]);

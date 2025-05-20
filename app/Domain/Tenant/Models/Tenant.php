@@ -23,24 +23,24 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
- * @property string                   $id
- * @property string                   $name
- * @property string                   $slug
- * @property ?string                  $taxId
- * @property ?string                  $email
- * @property ?string                  $phone
- * @property ?string                  $website
- * @property ?string                  $country
- * @property ?string                  $description
- * @property ?string                  $owner_id
- * @property Carbon                   $created_at
- * @property Carbon                   $updated_at
- * @property ?Carbon                  $deleted_at
- * @property ?User                    $owner
- * @property Collection|Address[]     $addresses
- * @property Collection|BankAccount[] $bankAccounts
- * @property Collection|Media[]       $media
- * @property Collection|Invitation[]  $invitations
+ * @property string                        $id
+ * @property string                        $name
+ * @property string                        $slug
+ * @property ?string                       $taxId
+ * @property ?string                       $email
+ * @property ?string                       $phone
+ * @property ?string                       $website
+ * @property ?string                       $country
+ * @property ?string                       $description
+ * @property ?string                       $owner_id
+ * @property Carbon                        $created_at
+ * @property Carbon                        $updated_at
+ * @property ?Carbon                       $deleted_at
+ * @property ?User                         $owner
+ * @property Collection|Address[]          $addresses
+ * @property Collection|BankAccount[]      $bankAccounts
+ * @property Collection|Media[]            $media
+ * @property Collection|TenantInvitation[] $invitations
  */
 class Tenant extends BaseModel implements HasMedia
 {

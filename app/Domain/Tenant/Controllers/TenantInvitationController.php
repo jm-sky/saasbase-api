@@ -142,7 +142,7 @@ class TenantInvitationController extends Controller
     /**
      * Accept an invitation by token.
      */
-    public function accept(Request $request, $token): JsonResponse
+    public function accept(Request $request, $tenant, $token): JsonResponse
     {
         abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 
@@ -150,7 +150,7 @@ class TenantInvitationController extends Controller
         $invitation = $this->getPendingInvitation($token);
 
         // Attach user to tenant with role if not already attached
-        if ($this->isUserMemberOfTenant($user, $invitation->tenant)) {
+        if (!$this->isUserMemberOfTenant($user, $invitation->tenant)) {
             UserTenant::create([
                 'user_id'   => $user->id,
                 'tenant_id' => $invitation->tenant_id,
@@ -179,7 +179,7 @@ class TenantInvitationController extends Controller
     /**
      * Accept an invitation by token.
      */
-    public function reject(Request $request, $token): JsonResponse
+    public function reject(Request $request, $tenant, $token): JsonResponse
     {
         abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 

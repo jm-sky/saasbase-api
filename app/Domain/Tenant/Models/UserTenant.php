@@ -11,6 +11,8 @@ class UserTenant extends Pivot
 {
     use HasUuids;
 
+    protected $table = 'user_tenants';
+
     /**
      * The attributes that are mass assignable.
      *

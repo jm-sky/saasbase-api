@@ -9,6 +9,7 @@ use App\Domain\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -18,12 +19,13 @@ use Tests\TestCase;
 class ApplicationInvitationControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     public function testCanSendInvitation(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $this->actingAs($user);
+        $this->authenticateUser(user: $user);
 
         $response = $this->postJson(
             '/api/v1/application/invitations',
@@ -91,7 +93,7 @@ class ApplicationInvitationControllerTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $this->actingAs($user);
+        $this->authenticateUser(user: $user);
 
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
@@ -113,7 +115,7 @@ class ApplicationInvitationControllerTest extends TestCase
     {
         /** @var User $user */
         $user = User::factory()->create();
-        $this->actingAs($user);
+        $this->authenticateUser(user: $user);
 
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,

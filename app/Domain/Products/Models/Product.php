@@ -131,7 +131,7 @@ class Product extends BaseModel implements HasMedia
             activity()
                 ->performedOn($product)
                 ->withProperties([
-                    'tenant_id'  => request()->user()?->tenant_id,
+                    'tenant_id'  => request()->user()?->getTenantId(),
                     'product_id' => $product->id,
                 ])
                 ->event(ProductActivityType::Created->value)
@@ -143,7 +143,7 @@ class Product extends BaseModel implements HasMedia
             activity()
                 ->performedOn($product)
                 ->withProperties([
-                    'tenant_id'  => request()->user()?->tenant_id,
+                    'tenant_id'  => request()->user()?->getTenantId(),
                     'product_id' => $product->id,
                 ])
                 ->event(ProductActivityType::Updated->value)
@@ -155,7 +155,7 @@ class Product extends BaseModel implements HasMedia
             activity()
                 ->performedOn($product)
                 ->withProperties([
-                    'tenant_id'  => request()->user()?->tenant_id,
+                    'tenant_id'  => request()->user()?->getTenantId(),
                     'product_id' => $product->id,
                 ])
                 ->event(ProductActivityType::Deleted->value)

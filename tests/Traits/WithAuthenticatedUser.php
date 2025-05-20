@@ -8,15 +8,17 @@ use App\Domain\Tenant\Models\Tenant;
 
 trait WithAuthenticatedUser
 {
-    protected function authenticateUser(Tenant $tenant, ?User $user = null): User
+    protected function authenticateUser(?Tenant $tenant = null, ?User $user = null): User
     {
         $user = $user ?? User::factory()->create();
-        $user->tenants()->attach($tenant, ['role' => 'admin']);
 
-        // Generate a JWT token for the user
-        $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
+        if (!$tenant) {
+            $token = JwtHelper::createTokenWithoutTenant($user);
+        } else {
+            $user->tenants()->attach($tenant, ['role' => 'admin']);
+            $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
+        }
 
-        // Set the token in the Authorization header for the request
         $this->withHeader('Authorization', 'Bearer ' . $token);
 
         return $user;

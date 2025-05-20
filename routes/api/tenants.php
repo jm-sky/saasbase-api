@@ -6,7 +6,6 @@ use App\Domain\Tenant\Controllers\TenantAddressController;
 use App\Domain\Tenant\Controllers\TenantAttachmentsController;
 use App\Domain\Tenant\Controllers\TenantBankAccountController;
 use App\Domain\Tenant\Controllers\TenantController;
-use App\Domain\Tenant\Controllers\TenantInvitationController;
 use App\Domain\Tenant\Controllers\TenantLogoController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,12 +47,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::delete('{media}', 'destroy')->name('destroy');
         })
     ;
-
-    // Invitation routes
-    Route::post('tenants/{tenant}/invite', [TenantInvitationController::class, 'send']);
-    Route::get('tenants/{tenant}/invitations', [TenantInvitationController::class, 'index']);
-    Route::delete('tenants/{tenant}/invitations/{invitation}', [TenantInvitationController::class, 'cancel']);
-    Route::post('tenants/{tenant}/invitations/{invitation}/resend', [TenantInvitationController::class, 'resend']);
 
     Route::get('tenants/{tenant}/logs', [TenantActivityLogController::class, 'index']);
 });

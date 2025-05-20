@@ -7,7 +7,6 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Notifications\ApplicationInvitationNotification;
 use App\Domain\Auth\Requests\SendApplicationInvitationRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,8 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ApplicationInvitationController extends Controller
 {
-    use AuthorizesRequests;
-
     public const TOKEN_EXPIRATION_DAYS = 7;
 
     /**
@@ -24,8 +21,6 @@ class ApplicationInvitationController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', ApplicationInvitation::class);
-
         $invitations = ApplicationInvitation::query()
             ->orderBy('created_at', 'desc')
             ->get()
@@ -41,8 +36,6 @@ class ApplicationInvitationController extends Controller
      */
     public function send(SendApplicationInvitationRequest $request): JsonResponse
     {
-        $this->authorize('create', ApplicationInvitation::class);
-
         /** @var User $user */
         $user = $request->user();
 
@@ -71,7 +64,6 @@ class ApplicationInvitationController extends Controller
      */
     public function cancel(Request $request, ApplicationInvitation $invitation): JsonResponse
     {
-        $this->authorize('delete', $invitation);
         abort_if('pending' !== $invitation->status, Response::HTTP_BAD_REQUEST, 'Only pending invitations can be canceled.');
 
         $invitation->update([
@@ -89,7 +81,6 @@ class ApplicationInvitationController extends Controller
      */
     public function resend(Request $request, ApplicationInvitation $invitation): JsonResponse
     {
-        $this->authorize('update', $invitation);
         abort_if('pending' !== $invitation->status, Response::HTTP_BAD_REQUEST, 'Only pending invitations can be resent.');
 
         // Update expiration date
