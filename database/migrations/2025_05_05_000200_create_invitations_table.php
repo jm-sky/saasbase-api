@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class() extends Migration {
     public function up(): void
     {
-        Schema::create('invitations', function (Blueprint $table) {
+        Schema::create('tenant_invitations', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tenant_id');
             $table->uuid('inviter_id');
@@ -15,8 +15,8 @@ return new class() extends Migration {
             $table->string('role');
             $table->string('token')->unique();
             $table->string('status'); // pending, accepted, expired
-            $table->dateTime('accepted_at')->nullable(); // was timestamp
-            $table->dateTime('expires_at'); // was timestamp
+            $table->dateTime('accepted_at')->nullable();
+            $table->dateTime('expires_at');
             $table->timestamps();
             $table->index('tenant_id');
             $table->index('email');
@@ -27,6 +27,6 @@ return new class() extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('invitations');
+        Schema::dropIfExists('tenant_invitations');
     }
 };

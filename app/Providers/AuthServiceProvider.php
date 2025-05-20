@@ -6,6 +6,12 @@ use App\Domain\Exchanges\Models\Exchange;
 use App\Domain\Exchanges\Policies\ExchangePolicy;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Policies\TenantPolicy;
+use App\Domain\Users\Models\SecurityEvent;
+use App\Domain\Users\Models\TrustedDevice;
+use App\Domain\Users\Models\UserTableSetting;
+use App\Domain\Users\Policies\SecurityEventPolicy;
+use App\Domain\Users\Policies\TrustedDevicePolicy;
+use App\Domain\Users\Policies\UserTableSettingPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -16,8 +22,11 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Tenant::class   => TenantPolicy::class,
-        Exchange::class => ExchangePolicy::class,
+        Tenant::class           => TenantPolicy::class,
+        Exchange::class         => ExchangePolicy::class,
+        UserTableSetting::class => UserTableSettingPolicy::class,
+        TrustedDevice::class    => TrustedDevicePolicy::class,
+        SecurityEvent::class    => SecurityEventPolicy::class,
     ];
 
     /**
