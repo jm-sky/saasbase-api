@@ -1,16 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Domain\Auth\Controllers\MeController;
-use App\Domain\Auth\Controllers\UserProfileController;
 use App\Domain\Auth\Controllers\NotificationController;
 use App\Domain\Auth\Controllers\UserIdentityController;
+use App\Domain\Auth\Controllers\UserProfileController;
+use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
 use App\Domain\Users\Controllers\TrustedDeviceController;
-use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Users\Controllers\UserTableSettingController;
-use App\Domain\Users\Controllers\NotificationSettingController;
+use Illuminate\Support\Facades\Route;
 
 Route::withoutMiddleware(['auth:api', 'is_active'])
     ->get('user/profile-image/{user}', [UserProfileImageController::class, 'showForUser'])

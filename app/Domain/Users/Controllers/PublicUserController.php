@@ -14,7 +14,7 @@ class PublicUserController extends Controller
 {
     protected int $defaultPerPage = 15;
 
-    protected Tenant $tenant;
+    protected ?Tenant $tenant;
 
     public function __construct()
     {

@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\UserSettings;
+use App\Domain\Auth\Notifications\PasswordChangedNotification;
+use App\Domain\Auth\Notifications\WelcomeNotification;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
@@ -38,6 +40,8 @@ class DatabaseSeeder extends Seeder
             'is_admin'   => config('users.default_user.is_admin'),
         ]);
 
+        $user->notify(new WelcomeNotification($user));
+        $user->notify(new PasswordChangedNotification($user));
         $user->settings()->create(UserSettings::defaults());
 
         // Event listener will create the tenant for the user

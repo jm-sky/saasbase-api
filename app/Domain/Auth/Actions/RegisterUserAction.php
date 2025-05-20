@@ -6,6 +6,7 @@ use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\UserSettings;
+use App\Domain\Auth\Notifications\WelcomeNotification;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,6 +37,7 @@ class RegisterUserAction
         $user->settings()->create(UserSettings::defaults());
 
         $user->sendEmailVerificationNotification();
+        $user->notify(new WelcomeNotification($user));
 
         return $user;
     }
