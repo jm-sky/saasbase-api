@@ -7,11 +7,12 @@ use App\Domain\Users\Models\NotificationSetting;
 use App\Domain\Users\Requests\UpdateNotificationSettingRequest;
 use App\Domain\Users\Requests\UpdateNotificationSettingsBulkRequest;
 use App\Domain\Users\Resources\NotificationSettingResource;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationSettingController
+class NotificationSettingController extends Controller
 {
     public function index(): JsonResponse
     {
