@@ -2,9 +2,9 @@
 
 namespace App\Domain\Ai\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class AiChatRequest extends FormRequest
+class AiChatRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

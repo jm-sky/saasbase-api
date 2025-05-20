@@ -2,10 +2,9 @@
 
 namespace App\Domain\Products\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class ProductRequest extends FormRequest
+class ProductRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

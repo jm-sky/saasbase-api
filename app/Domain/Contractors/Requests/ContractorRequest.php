@@ -2,10 +2,9 @@
 
 namespace App\Domain\Contractors\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class ContractorRequest extends FormRequest
+class ContractorRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

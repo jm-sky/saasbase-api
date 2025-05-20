@@ -6,12 +6,13 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
-use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
+use App\Domain\Contractors\Resources\ContractorResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -51,42 +52,49 @@ class ContractorController extends Controller
         $this->defaultSort = '-created_at';
     }
 
-    public function index(SearchContractorRequest $request): JsonResponse
+    public function index(SearchContractorRequest $request): AnonymousResourceCollection
     {
-        $result         = $this->getIndexPaginator($request);
-        $result['data'] = ContractorDTO::collect($result['data']);
+        $contractors = $this->getIndexPaginator($request);
 
-        return response()->json($result);
+        return ContractorResource::collection($contractors['data'])
+            ->additional(['meta' => [
+                'currentPage' => $contractors['current_page'],
+                'lastPage'    => $contractors['last_page'],
+                'perPage'     => $contractors['per_page'],
+                'total'       => $contractors['total'],
+            ]])
+        ;
     }
 
     public function store(ContractorRequest $request): JsonResponse
     {
-        $dto        = ContractorDTO::from($request->validated());
-        $contractor = Contractor::create((array) $dto);
+        $contractor = Contractor::create($request->validated());
 
-        return response()->json(
-            ['data' => ContractorDTO::from($contractor)],
-            Response::HTTP_CREATED
-        );
+        return response()->json([
+            'message' => 'Contractor created successfully.',
+            'data'    => new ContractorResource($contractor),
+        ], Response::HTTP_CREATED);
     }
 
-    public function show(Contractor $contractor): JsonResponse
+    public function show(Contractor $contractor): ContractorResource
     {
-        return response()->json(['data' => ContractorDTO::from($contractor)]);
+        return new ContractorResource($contractor);
     }
 
     public function update(ContractorRequest $request, Contractor $contractor): JsonResponse
     {
-        $dto = ContractorDTO::from($request->validated());
-        $contractor->update((array) $dto);
+        $contractor->update($request->validated());
 
-        return response()->json(['data' => ContractorDTO::from($contractor)]);
+        return response()->json([
+            'message' => 'Contractor updated successfully.',
+            'data'    => new ContractorResource($contractor),
+        ]);
     }
 
     public function destroy(Contractor $contractor): JsonResponse
     {
         $contractor->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Contractor deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 }

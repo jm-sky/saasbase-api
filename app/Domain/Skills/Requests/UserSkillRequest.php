@@ -2,9 +2,9 @@
 
 namespace App\Domain\Skills\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class UserSkillRequest extends FormRequest
+class UserSkillRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
@@ -35,19 +35,6 @@ class UserSkillRequest extends FormRequest
             'level.min'        => 'The level must be at least 1.',
             'level.max'        => 'The level may not be greater than 5.',
             'acquiredAt.date'  => 'The acquired at must be a valid date.',
-        ];
-    }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        // Keep camelCase for DTO and add snake_case for database
-        return [
-            'user_id'     => $validated['userId'],
-            'skill_id'    => $validated['skillId'],
-            'level'       => $validated['level'],
-            'acquired_at' => $validated['acquiredAt'] ?? null,
         ];
     }
 }

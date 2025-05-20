@@ -3,9 +3,9 @@
 namespace App\Domain\Tenant\Requests;
 
 use App\Domain\Common\Enums\AddressType;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class TenantAddressRequest extends FormRequest
+class TenantAddressRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

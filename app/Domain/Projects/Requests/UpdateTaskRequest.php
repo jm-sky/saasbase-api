@@ -2,9 +2,9 @@
 
 namespace App\Domain\Projects\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class UpdateTaskRequest extends FormRequest
+class UpdateTaskRequest extends BaseFormRequest
 {
     public function rules(): array
     {

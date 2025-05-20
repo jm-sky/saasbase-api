@@ -2,9 +2,9 @@
 
 namespace App\Domain\Auth\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class UploadProfileImageRequest extends FormRequest
+class UploadProfileImageRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

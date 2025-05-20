@@ -2,9 +2,9 @@
 
 namespace App\Domain\Projects\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class SearchTaskStatusRequest extends FormRequest
+class SearchTaskStatusRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

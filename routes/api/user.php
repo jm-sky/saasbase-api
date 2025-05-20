@@ -1,15 +1,16 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Domain\Auth\Controllers\MeController;
-use App\Domain\Auth\Controllers\UserIdentityController;
 use App\Domain\Auth\Controllers\UserProfileController;
-use App\Domain\Auth\Controllers\UserProfileImageController;
+use App\Domain\Auth\Controllers\NotificationController;
+use App\Domain\Auth\Controllers\UserIdentityController;
 use App\Domain\Auth\Controllers\UserSettingsController;
-use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
 use App\Domain\Users\Controllers\TrustedDeviceController;
+use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Users\Controllers\UserTableSettingController;
-use Illuminate\Support\Facades\Route;
+use App\Domain\Users\Controllers\NotificationSettingController;
 
 Route::withoutMiddleware(['auth:api', 'is_active'])
     ->get('user/profile-image/{user}', [UserProfileImageController::class, 'showForUser'])
@@ -28,40 +29,46 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::get('profile-image', [UserProfileImageController::class, 'show'])->name('user.profile-image.show');
 });
 
-// User Identity Routes
-Route::prefix('user-identity')->group(function () {
-    Route::post('personal-data', [UserIdentityController::class, 'storePersonalData']);
-    Route::get('personal-data', [UserIdentityController::class, 'getPersonalData']);
-    Route::post('documents', [UserIdentityController::class, 'storeIdentityDocument']);
-    Route::get('documents', [UserIdentityController::class, 'getIdentityDocuments']);
-    Route::get('documents/{document}', [UserIdentityController::class, 'getIdentityDocument']);
-});
+Route::middleware('auth:api')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/archive', [NotificationController::class, 'archive']);
 
-// Table settings routes
-Route::prefix('table-settings')->group(function () {
-    Route::get('/', [UserTableSettingController::class, 'index']);
-    Route::post('/', [UserTableSettingController::class, 'store']);
-    Route::put('/{setting}', [UserTableSettingController::class, 'update']);
-    Route::delete('/{setting}', [UserTableSettingController::class, 'destroy']);
-    Route::post('/{setting}/default', [UserTableSettingController::class, 'setDefault']);
-});
+    // User Identity Routes
+    Route::prefix('user-identity')->group(function () {
+        Route::post('personal-data', [UserIdentityController::class, 'storePersonalData']);
+        Route::get('personal-data', [UserIdentityController::class, 'getPersonalData']);
+        Route::post('documents', [UserIdentityController::class, 'storeIdentityDocument']);
+        Route::get('documents', [UserIdentityController::class, 'getIdentityDocuments']);
+        Route::get('documents/{document}', [UserIdentityController::class, 'getIdentityDocument']);
+    });
 
-// Notification settings routes
-Route::prefix('notification-settings')->group(function () {
-    Route::get('/', [NotificationSettingController::class, 'index']);
-    Route::put('/', [NotificationSettingController::class, 'update']);
-    Route::put('/bulk', [NotificationSettingController::class, 'updateBulk']);
-});
+    // Table settings routes
+    Route::prefix('table-settings')->group(function () {
+        Route::get('/', [UserTableSettingController::class, 'index']);
+        Route::post('/', [UserTableSettingController::class, 'store']);
+        Route::put('/{setting}', [UserTableSettingController::class, 'update']);
+        Route::delete('/{setting}', [UserTableSettingController::class, 'destroy']);
+        Route::post('/{setting}/default', [UserTableSettingController::class, 'setDefault']);
+    });
 
-// Trusted devices routes
-Route::prefix('trusted-devices')->group(function () {
-    Route::get('/', [TrustedDeviceController::class, 'index']);
-    Route::delete('/{device}', [TrustedDeviceController::class, 'destroy']);
-    Route::delete('/', [TrustedDeviceController::class, 'destroyAll']);
-});
+    // Notification settings routes
+    Route::prefix('notification-settings')->group(function () {
+        Route::get('/', [NotificationSettingController::class, 'index']);
+        Route::put('/', [NotificationSettingController::class, 'update']);
+        Route::put('/bulk', [NotificationSettingController::class, 'updateBulk']);
+    });
 
-// Security events routes
-Route::prefix('security-events')->group(function () {
-    Route::get('/', [SecurityEventController::class, 'index']);
-    Route::get('/{event}', [SecurityEventController::class, 'show']);
+    // Trusted devices routes
+    Route::prefix('trusted-devices')->group(function () {
+        Route::get('/', [TrustedDeviceController::class, 'index']);
+        Route::delete('/{device}', [TrustedDeviceController::class, 'destroy']);
+        Route::delete('/', [TrustedDeviceController::class, 'destroyAll']);
+    });
+
+    // Security events routes
+    Route::prefix('security-events')->group(function () {
+        Route::get('/', [SecurityEventController::class, 'index']);
+        Route::get('/{event}', [SecurityEventController::class, 'show']);
+    });
 });

@@ -2,34 +2,31 @@
 
 namespace App\Domain\Contractors\Controllers;
 
-use App\Domain\Common\DTOs\AddressDTO;
-use App\Domain\Common\Models\Address;
+use App\Domain\Common\Resources\AddressResource;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorAddress;
-use App\Domain\Contractors\Requests\ContractorAddressRequest;
+use App\Domain\Contractors\Requests\StoreContractorAddressRequest;
+use App\Domain\Contractors\Requests\UpdateContractorAddressRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class ContractorAddressController extends Controller
 {
-    public function index(Contractor $contractor): JsonResponse
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Contractor $contractor): AnonymousResourceCollection
     {
-        $addresses = $contractor->addresses()->paginate();
-
-        return response()->json([
-            'data' => collect($addresses->items())->map(fn (Address $address) => AddressDTO::fromModel($address)),
-            'meta' => [
-                'current_page' => $addresses->currentPage(),
-                'last_page'    => $addresses->lastPage(),
-                'per_page'     => $addresses->perPage(),
-                'total'        => $addresses->total(),
-            ],
-        ]);
+        return AddressResource::collection($contractor->addresses);
     }
 
-    public function store(ContractorAddressRequest $request, Contractor $contractor): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreContractorAddressRequest $request, Contractor $contractor): AddressResource
     {
         $address = $contractor->addresses()->create($request->validated());
 
@@ -43,24 +40,25 @@ class ContractorAddressController extends Controller
             ->log('Contractor address created')
         ;
 
-        return response()->json([
-            'data' => AddressDTO::fromModel($address),
-        ], Response::HTTP_CREATED);
+        return new AddressResource($address);
     }
 
-    public function show(Contractor $contractor, ContractorAddress $address): JsonResponse
+    /**
+     * Display the specified resource.
+     */
+    public function show(Contractor $contractor, string $addressId): AddressResource
     {
-        abort_if($address->addressable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        $address = $contractor->addresses()->findOrFail($addressId);
 
-        return response()->json([
-            'data' => AddressDTO::fromModel($address),
-        ]);
+        return new AddressResource($address);
     }
 
-    public function update(ContractorAddressRequest $request, Contractor $contractor, ContractorAddress $address): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateContractorAddressRequest $request, Contractor $contractor, string $addressId): AddressResource
     {
-        abort_if($address->addressable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
-
+        $address = $contractor->addresses()->findOrFail($addressId);
         $address->update($request->validated());
 
         activity()
@@ -73,14 +71,16 @@ class ContractorAddressController extends Controller
             ->log('Contractor address updated')
         ;
 
-        return response()->json([
-            'data' => AddressDTO::fromModel($address->fresh()),
-        ]);
+        return new AddressResource($address);
     }
 
-    public function destroy(Contractor $contractor, ContractorAddress $address): JsonResponse
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Contractor $contractor, string $addressId): Response
     {
-        abort_if($address->addressable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        $address = $contractor->addresses()->findOrFail($addressId);
+        $address->delete();
 
         activity()
             ->performedOn($contractor)
@@ -92,9 +92,7 @@ class ContractorAddressController extends Controller
             ->log('Contractor address deleted')
         ;
 
-        $address->delete();
-
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 
     public function setDefault(Contractor $contractor, ContractorAddress $address): JsonResponse

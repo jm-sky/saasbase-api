@@ -2,9 +2,9 @@
 
 namespace App\Domain\Projects\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class ProjectAttachmentRequest extends FormRequest
+class ProjectAttachmentRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

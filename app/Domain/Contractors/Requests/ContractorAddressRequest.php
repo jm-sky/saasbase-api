@@ -3,9 +3,8 @@
 namespace App\Domain\Contractors\Requests;
 
 use App\Domain\Common\Enums\AddressType;
-use Illuminate\Foundation\Http\FormRequest;
 
-class ContractorAddressRequest extends FormRequest
+class ContractorAddressRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

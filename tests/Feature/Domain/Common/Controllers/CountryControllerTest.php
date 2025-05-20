@@ -76,7 +76,7 @@ class CountryControllerTest extends TestCase
 
         $response = $this->getJson($this->baseUrl . '?filter[name]=Pol');
 
-        $response->assertStatus(Response::HTTP_OK)
+        $response->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.name', 'Poland')
         ;

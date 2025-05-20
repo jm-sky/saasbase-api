@@ -6,14 +6,15 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
-use App\Domain\Invoice\DTOs\InvoiceDTO;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Requests\StoreInvoiceRequest;
 use App\Domain\Invoice\Requests\UpdateInvoiceRequest;
+use App\Domain\Invoice\Resources\InvoiceResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -57,42 +58,51 @@ class InvoiceController extends Controller
         $this->defaultSort = '-created_at';
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $result         = $this->getIndexPaginator($request);
-        $result['data'] = InvoiceDTO::collect($result['data']);
+        $invoices = $this->getIndexPaginator($request);
 
-        return response()->json($result);
+        return InvoiceResource::collection($invoices['data'])
+            ->additional(['meta' => [
+                'currentPage' => $invoices['current_page'],
+                'lastPage'    => $invoices['last_page'],
+                'perPage'     => $invoices['per_page'],
+                'total'       => $invoices['total'],
+            ]])
+        ;
     }
 
     public function store(StoreInvoiceRequest $request): JsonResponse
     {
         $invoice = Invoice::create($request->validated());
 
-        return response()->json(
-            ['data' => InvoiceDTO::from($invoice)],
-            Response::HTTP_CREATED
-        );
+        return response()->json([
+            'message' => 'Invoice created successfully.',
+            'data'    => new InvoiceResource($invoice),
+        ], Response::HTTP_CREATED);
     }
 
-    public function show(Invoice $invoice): JsonResponse
+    public function show(Invoice $invoice): InvoiceResource
     {
         $invoice->load('numberingTemplate');
 
-        return response()->json(['data' => InvoiceDTO::from($invoice)]);
+        return new InvoiceResource($invoice);
     }
 
     public function update(UpdateInvoiceRequest $request, Invoice $invoice): JsonResponse
     {
         $invoice->update($request->validated());
 
-        return response()->json(['data' => InvoiceDTO::from($invoice)]);
+        return response()->json([
+            'message' => 'Invoice updated successfully.',
+            'data'    => new InvoiceResource($invoice),
+        ]);
     }
 
-    public function destroy(Invoice $invoice): Response
+    public function destroy(Invoice $invoice): JsonResponse
     {
         $invoice->delete();
 
-        return response()->noContent();
+        return response()->json(['message' => 'Invoice deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 }

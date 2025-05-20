@@ -2,10 +2,10 @@
 
 namespace App\Domain\Common\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Support\Str;
 
-class SearchCountryRequest extends FormRequest
+class SearchCountryRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

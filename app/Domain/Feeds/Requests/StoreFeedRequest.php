@@ -2,9 +2,9 @@
 
 namespace App\Domain\Feeds\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class StoreFeedRequest extends FormRequest
+class StoreFeedRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Common\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class TagRequest extends FormRequest
+class TagRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
