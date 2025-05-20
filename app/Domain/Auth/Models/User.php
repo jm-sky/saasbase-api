@@ -20,6 +20,12 @@ use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
+use App\Domain\Users\Models\NotificationSetting;
+use App\Domain\Users\Models\SecurityEvent;
+use App\Domain\Users\Models\TrustedDevice;
+use App\Domain\Users\Models\UserPreference;
+use App\Domain\Users\Models\UserProfile;
+use App\Domain\Users\Models\UserTableSetting;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
@@ -191,6 +197,36 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function settings(): HasOne
     {
         return $this->hasOne(UserSettings::class);
+    }
+
+    public function profile(): HasOne
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function preferences(): HasOne
+    {
+        return $this->hasOne(UserPreference::class);
+    }
+
+    public function tableSettings(): HasMany
+    {
+        return $this->hasMany(UserTableSetting::class);
+    }
+
+    public function notificationSettings(): HasMany
+    {
+        return $this->hasMany(NotificationSetting::class);
+    }
+
+    public function trustedDevices(): HasMany
+    {
+        return $this->hasMany(TrustedDevice::class);
+    }
+
+    public function securityEvents(): HasMany
+    {
+        return $this->hasMany(SecurityEvent::class);
     }
 
     public function oauthAccounts(): HasMany
