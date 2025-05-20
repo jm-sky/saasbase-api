@@ -5,6 +5,7 @@ use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
+use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Rights\Controllers\RoleController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
@@ -53,7 +54,9 @@ Route::prefix('v1')->group(function () {
             require __DIR__ . '/api/contractors.php';
             require __DIR__ . '/api/products.php';
 
-            // Activity logs
+            Route::apiResource('invoices', InvoiceController::class);
+            Route::apiResource('roles', RoleController::class);
+            Route::apiResource('api-keys', ApiKeyController::class);
             Route::get('/logs', [ActivityLogController::class, 'index']);
         });
 
@@ -61,11 +64,6 @@ Route::prefix('v1')->group(function () {
         Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
 
         require __DIR__ . '/api/skills.php';
-
-        // Roles and Permissions
-        Route::apiResource('roles', RoleController::class);
-
-        Route::apiResource('api-keys', ApiKeyController::class);
     });
 
     require __DIR__ . '/api/admin.php';
