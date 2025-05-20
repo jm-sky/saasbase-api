@@ -17,14 +17,14 @@ return new class() extends Migration {
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
-            $table->text('description')->nullable();
-            $table->date('birth_date')->nullable();
+            $table->text('description')->nullable(); // TODO: move to some profile table
+            $table->date('birth_date')->nullable(); // TODO: move to some profile table
             $table->boolean('is_admin')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('avatar_url')->nullable();
-            $table->string('status')->default(UserStatus::PENDING->value);
-            $table->json('config')->nullable();
+            $table->string('avatar_url')->nullable(); // TODO: move to some profile table
+            $table->string('status')->default(UserStatus::PENDING->value); // TODO: Make it is_active boolean
+            $table->json('config')->nullable(); // TODO: move to some profile table
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

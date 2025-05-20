@@ -80,7 +80,7 @@ class Tenant extends BaseModel implements HasMedia
 
     public function invitations(): HasMany
     {
-        return $this->hasMany(Invitation::class);
+        return $this->hasMany(TenantInvitation::class);
     }
 
     public function owner()
