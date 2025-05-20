@@ -2,33 +2,31 @@
 
 namespace App\Domain\Contractors\Controllers;
 
-use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\Models\BankAccount;
+use App\Domain\Common\Resources\BankAccountResource;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Contractors\Requests\ContractorBankAccountRequest;
+use App\Domain\Contractors\Requests\StoreContractorBankAccountRequest;
+use App\Domain\Contractors\Requests\UpdateContractorBankAccountRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class ContractorBankAccountController extends Controller
 {
-    public function index(Contractor $contractor): JsonResponse
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Contractor $contractor): AnonymousResourceCollection
     {
-        $bankAccounts = $contractor->bankAccounts()->orderBy('is_default', 'desc')->paginate();
-
-        return response()->json([
-            'data' => collect($bankAccounts->items())->map(fn (BankAccount $bankAccount) => BankAccountDTO::fromModel($bankAccount)),
-            'meta' => [
-                'current_page' => $bankAccounts->currentPage(),
-                'last_page'    => $bankAccounts->lastPage(),
-                'per_page'     => $bankAccounts->perPage(),
-                'total'        => $bankAccounts->total(),
-            ],
-        ]);
+        return BankAccountResource::collection($contractor->bankAccounts);
     }
 
-    public function store(ContractorBankAccountRequest $request, Contractor $contractor): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreContractorBankAccountRequest $request, Contractor $contractor): BankAccountResource
     {
         $bankAccount = $contractor->bankAccounts()->create($request->validated());
 
@@ -43,25 +41,25 @@ class ContractorBankAccountController extends Controller
             ->log('Contractor bank account created')
         ;
 
-        return response()->json([
-            'message' => 'Bank account created successfully.',
-            'data'    => BankAccountDTO::fromModel($bankAccount),
-        ], Response::HTTP_CREATED);
+        return new BankAccountResource($bankAccount);
     }
 
-    public function show(Contractor $contractor, BankAccount $bankAccount): JsonResponse
+    /**
+     * Display the specified resource.
+     */
+    public function show(Contractor $contractor, int $bankAccountId): BankAccountResource
     {
-        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        $bankAccount = $contractor->bankAccounts()->findOrFail($bankAccountId);
 
-        return response()->json([
-            'data' => BankAccountDTO::fromModel($bankAccount),
-        ]);
+        return new BankAccountResource($bankAccount);
     }
 
-    public function update(ContractorBankAccountRequest $request, Contractor $contractor, BankAccount $bankAccount): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateContractorBankAccountRequest $request, Contractor $contractor, int $bankAccountId): BankAccountResource
     {
-        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
-
+        $bankAccount = $contractor->bankAccounts()->findOrFail($bankAccountId);
         $bankAccount->update($request->validated());
 
         activity()
@@ -75,15 +73,16 @@ class ContractorBankAccountController extends Controller
             ->log('Contractor bank account updated')
         ;
 
-        return response()->json([
-            'message' => 'Bank account updated successfully.',
-            'data'    => BankAccountDTO::fromModel($bankAccount->fresh()),
-        ]);
+        return new BankAccountResource($bankAccount);
     }
 
-    public function destroy(Contractor $contractor, BankAccount $bankAccount): JsonResponse
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Contractor $contractor, int $bankAccountId): Response
     {
-        abort_if($bankAccount->bankable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        $bankAccount = $contractor->bankAccounts()->findOrFail($bankAccountId);
+        $bankAccount->delete();
 
         activity()
             ->performedOn($contractor)
@@ -96,9 +95,7 @@ class ContractorBankAccountController extends Controller
             ->log('Contractor bank account deleted')
         ;
 
-        $bankAccount->delete();
-
-        return response()->json(['message' => 'Bank account deleted successfully.'], Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 
     public function setDefault(Contractor $contractor, BankAccount $bankAccount): JsonResponse

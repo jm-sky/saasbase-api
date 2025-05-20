@@ -3,9 +3,8 @@
 namespace App\Domain\Common\Requests;
 
 use App\Domain\Common\Models\Country;
-use Illuminate\Foundation\Http\FormRequest;
 
-class CountryRequest extends FormRequest
+class CountryRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

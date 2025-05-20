@@ -2,9 +2,9 @@
 
 namespace App\Domain\Contractors\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class ContractorLogoUploadRequest extends FormRequest
+class ContractorLogoUploadRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

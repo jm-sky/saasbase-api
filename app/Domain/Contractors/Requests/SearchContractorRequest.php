@@ -2,10 +2,10 @@
 
 namespace App\Domain\Contractors\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Support\Str;
 
-class SearchContractorRequest extends FormRequest
+class SearchContractorRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

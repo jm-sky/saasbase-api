@@ -2,115 +2,63 @@
 
 namespace App\Domain\Tenant\Controllers;
 
-use App\Domain\Common\DTOs\BankAccountDTO;
-use App\Domain\Common\Models\BankAccount;
-use App\Domain\Tenant\Enums\TenantActivityType;
+use App\Domain\Common\Resources\BankAccountResource;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Tenant\Requests\TenantBankAccountRequest;
+use App\Domain\Tenant\Requests\StoreTenantBankAccountRequest;
+use App\Domain\Tenant\Requests\UpdateTenantBankAccountRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class TenantBankAccountController extends Controller
 {
-    public function index(Tenant $tenant): JsonResponse
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Tenant $tenant): AnonymousResourceCollection
     {
-        $bankAccounts = $tenant->bankAccounts()->orderBy('is_default', 'desc')->paginate();
-
-        return response()->json([
-            'data' => collect($bankAccounts->items())->map(fn (BankAccount $bankAccount) => BankAccountDTO::fromModel($bankAccount)),
-            'meta' => [
-                'current_page' => $bankAccounts->currentPage(),
-                'last_page'    => $bankAccounts->lastPage(),
-                'per_page'     => $bankAccounts->perPage(),
-                'total'        => $bankAccounts->total(),
-            ],
-        ]);
+        return BankAccountResource::collection($tenant->bankAccounts);
     }
 
-    public function store(TenantBankAccountRequest $request, Tenant $tenant): JsonResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreTenantBankAccountRequest $request, Tenant $tenant): BankAccountResource
     {
         $bankAccount = $tenant->bankAccounts()->create($request->validated());
 
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'       => $tenant->id,
-                'bank_account_id' => $bankAccount->id,
-            ])
-            ->event(TenantActivityType::BankAccountCreated->value)
-            ->log('Tenant bank account created')
-        ;
-
-        return response()->json([
-            'data' => BankAccountDTO::fromModel($bankAccount),
-        ], Response::HTTP_CREATED);
+        return new BankAccountResource($bankAccount);
     }
 
-    public function show(Tenant $tenant, BankAccount $bankAccount): JsonResponse
+    /**
+     * Display the specified resource.
+     */
+    public function show(Tenant $tenant, int $bankAccountId): BankAccountResource
     {
-        abort_if($bankAccount->bankable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+        $bankAccount = $tenant->bankAccounts()->findOrFail($bankAccountId);
 
-        return response()->json([
-            'data' => BankAccountDTO::fromModel($bankAccount),
-        ]);
+        return new BankAccountResource($bankAccount);
     }
 
-    public function update(TenantBankAccountRequest $request, Tenant $tenant, BankAccount $bankAccount): JsonResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateTenantBankAccountRequest $request, Tenant $tenant, int $bankAccountId): BankAccountResource
     {
-        abort_if($bankAccount->bankable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
-
+        $bankAccount = $tenant->bankAccounts()->findOrFail($bankAccountId);
         $bankAccount->update($request->validated());
 
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'       => $tenant->id,
-                'bank_account_id' => $bankAccount->id,
-            ])
-            ->event(TenantActivityType::BankAccountUpdated->value)
-            ->log('Tenant bank account updated')
-        ;
-
-        return response()->json([
-            'data' => BankAccountDTO::fromModel($bankAccount->fresh()),
-        ]);
+        return new BankAccountResource($bankAccount);
     }
 
-    public function destroy(Tenant $tenant, BankAccount $bankAccount): JsonResponse
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Tenant $tenant, int $bankAccountId): Response
     {
-        abort_if($bankAccount->bankable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'       => $tenant->id,
-                'bank_account_id' => $bankAccount->id,
-            ])
-            ->event(TenantActivityType::BankAccountDeleted->value)
-            ->log('Tenant bank account deleted')
-        ;
-
+        $bankAccount = $tenant->bankAccounts()->findOrFail($bankAccountId);
         $bankAccount->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    public function setDefault(Tenant $tenant, BankAccount $bankAccount): JsonResponse
-    {
-        $tenant->bankAccounts()->update(['is_default' => false]);
-        $bankAccount->update(['is_default' => true]);
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'       => $tenant->id,
-                'bank_account_id' => $bankAccount->id,
-            ])
-            ->event(TenantActivityType::BankAccountSetDefault->value)
-            ->log('Tenant bank account set as default')
-        ;
-
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Auth\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class UpdateApiKeyRequest extends FormRequest
+class UpdateApiKeyRequest extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

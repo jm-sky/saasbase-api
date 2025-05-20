@@ -174,7 +174,7 @@ class UserSkillApiTest extends TestCase
 
         $response = $this->putJson($this->baseUrl . '/' . $userSkill->id, $updateData);
 
-        $response->assertStatus(Response::HTTP_OK)
+        $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
                     'userId',

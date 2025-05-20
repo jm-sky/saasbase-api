@@ -2,28 +2,26 @@
 
 namespace App\Domain\Tenant\Controllers;
 
-use App\Domain\Tenant\DTOs\TenantDTO;
-use App\Domain\Tenant\DTOs\TenantPreviewDTO;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantRequest;
+use App\Domain\Tenant\Resources\TenantResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class TenantController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $tenants = $request->user()->tenants()->orderBy('created_at')->get();
 
-        return response()->json([
-            'data' => TenantPreviewDTO::collect($tenants),
-        ]);
+        return TenantResource::collection($tenants);
     }
 
     public function store(TenantRequest $request): JsonResponse
@@ -43,17 +41,15 @@ class TenantController extends Controller
 
         return response()->json([
             'message' => 'Tenant created successfully.',
-            'data'    => TenantDTO::from($tenant),
+            'data'    => new TenantResource($tenant),
         ], Response::HTTP_CREATED);
     }
 
-    public function show(Request $request, Tenant $tenant): JsonResponse
+    public function show(Request $request, Tenant $tenant): TenantResource
     {
         $this->authorize('view', $tenant);
 
-        return response()->json([
-            'data' => TenantDTO::from($tenant),
-        ]);
+        return new TenantResource($tenant);
     }
 
     public function update(TenantRequest $request, Tenant $tenant): JsonResponse
@@ -72,7 +68,7 @@ class TenantController extends Controller
 
         return response()->json([
             'message' => 'Tenant updated successfully.',
-            'data'    => TenantDTO::from($tenant),
+            'data'    => new TenantResource($tenant),
         ]);
     }
 

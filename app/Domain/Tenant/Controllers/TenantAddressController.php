@@ -2,35 +2,40 @@
 
 namespace App\Domain\Tenant\Controllers;
 
-use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\Models\Address;
+use App\Domain\Common\Resources\AddressResource;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantAddress;
-use App\Domain\Tenant\Requests\TenantAddressRequest;
+use App\Domain\Tenant\Requests\StoreTenantAddressRequest;
+use App\Domain\Tenant\Requests\UpdateTenantAddressRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class TenantAddressController extends Controller
 {
-    public function index(Tenant $tenant): JsonResponse
-    {
-        $addresses = $tenant->addresses()->paginate();
+    use AuthorizesRequests;
 
-        return response()->json([
-            'data' => collect($addresses->items())->map(fn (Address $address) => AddressDTO::fromModel($address)),
-            'meta' => [
-                'current_page' => $addresses->currentPage(),
-                'last_page'    => $addresses->lastPage(),
-                'per_page'     => $addresses->perPage(),
-                'total'        => $addresses->total(),
-            ],
-        ]);
+    public function index(Tenant $tenant): AnonymousResourceCollection
+    {
+        $this->authorize('viewAny', [Address::class, $tenant]);
+
+        $addresses = $tenant->addresses()
+            ->orderBy('is_default', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate()
+        ;
+
+        return AddressResource::collection($addresses);
     }
 
-    public function store(TenantAddressRequest $request, Tenant $tenant): JsonResponse
+    public function store(StoreTenantAddressRequest $request, Tenant $tenant): JsonResponse
     {
+        $this->authorize('create', [Address::class, $tenant]);
+
         $address = $tenant->addresses()->create($request->validated());
 
         activity()
@@ -44,22 +49,21 @@ class TenantAddressController extends Controller
         ;
 
         return response()->json([
-            'data' => AddressDTO::fromModel($address),
+            'message' => 'Address created successfully.',
+            'data'    => new AddressResource($address),
         ], Response::HTTP_CREATED);
     }
 
-    public function show(Tenant $tenant, TenantAddress $address): JsonResponse
+    public function show(Tenant $tenant, Address $address): AddressResource
     {
-        abort_if($address->addressable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+        $this->authorize('view', [$address, $tenant]);
 
-        return response()->json([
-            'data' => AddressDTO::fromModel($address),
-        ]);
+        return new AddressResource($address);
     }
 
-    public function update(TenantAddressRequest $request, Tenant $tenant, TenantAddress $address): JsonResponse
+    public function update(UpdateTenantAddressRequest $request, Tenant $tenant, Address $address): JsonResponse
     {
-        abort_if($address->addressable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+        $this->authorize('update', [$address, $tenant]);
 
         $address->update($request->validated());
 
@@ -74,13 +78,14 @@ class TenantAddressController extends Controller
         ;
 
         return response()->json([
-            'data' => AddressDTO::fromModel($address->fresh()),
+            'message' => 'Address updated successfully.',
+            'data'    => new AddressResource($address),
         ]);
     }
 
-    public function destroy(Tenant $tenant, TenantAddress $address): JsonResponse
+    public function destroy(Tenant $tenant, Address $address): JsonResponse
     {
-        abort_if($address->addressable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+        $this->authorize('delete', [$address, $tenant]);
 
         activity()
             ->performedOn($tenant)
@@ -94,7 +99,7 @@ class TenantAddressController extends Controller
 
         $address->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(['message' => 'Address deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 
     public function setDefault(Tenant $tenant, TenantAddress $address): JsonResponse

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Skills\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class SkillRequest extends FormRequest
+class SkillRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Contractors\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class ContractorBankAccountRequest extends FormRequest
+class ContractorBankAccountRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

@@ -6,14 +6,15 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
-use App\Domain\Products\DTOs\ProductDTO;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
+use App\Domain\Products\Resources\ProductResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -49,12 +50,18 @@ class ProductController extends Controller
         $this->defaultSort = '-created_at';
     }
 
-    public function index(SearchProductRequest $request): JsonResponse
+    public function index(SearchProductRequest $request): AnonymousResourceCollection
     {
-        $result         = $this->getIndexPaginator($request);
-        $result['data'] = ProductDTO::collect($result['data']);
+        $products = $this->getIndexPaginator($request);
 
-        return response()->json($result);
+        return ProductResource::collection($products['data'])
+            ->additional(['meta' => [
+                'currentPage' => $products['current_page'],
+                'lastPage'    => $products['last_page'],
+                'perPage'     => $products['per_page'],
+                'total'       => $products['total'],
+            ]])
+        ;
     }
 
     public function store(ProductRequest $request): JsonResponse
@@ -74,17 +81,15 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 'Product created successfully.',
-            'data'    => ProductDTO::fromModel($product),
+            'data'    => new ProductResource($product),
         ], Response::HTTP_CREATED);
     }
 
-    public function show(Product $product): JsonResponse
+    public function show(Product $product): ProductResource
     {
         $product->load(['unit', 'vatRate']);
 
-        return response()->json([
-            'data' => ProductDTO::fromModel($product),
-        ]);
+        return new ProductResource($product);
     }
 
     public function update(ProductRequest $request, Product $product): JsonResponse
@@ -105,7 +110,7 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 'Product updated successfully.',
-            'data'    => ProductDTO::fromModel($product),
+            'data'    => new ProductResource($product),
         ]);
     }
 

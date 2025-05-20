@@ -2,8 +2,8 @@
 
 namespace App\Domain\Auth\Controllers;
 
-use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Resources\UserResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +22,6 @@ class MeController extends Controller
 
         $user->load('roles');
 
-        // Transform the user model into a UserDTO
-        $userDTO = UserDTO::fromModel($user);
-
-        return response()->json(['data' => $userDTO]);
+        return new UserResource($user);
     }
 }

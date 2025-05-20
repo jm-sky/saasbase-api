@@ -2,9 +2,9 @@
 
 namespace App\Domain\Tenant\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class SendInvitationRequest extends FormRequest
+class SendInvitationRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

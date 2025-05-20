@@ -3,10 +3,10 @@
 namespace App\Domain\Invoice\Requests;
 
 use App\Domain\Invoice\Enums\InvoiceType;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class UpdateInvoiceRequest extends FormRequest
+class UpdateInvoiceRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

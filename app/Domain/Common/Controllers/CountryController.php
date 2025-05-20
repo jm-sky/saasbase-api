@@ -2,18 +2,21 @@
 
 namespace App\Domain\Common\Controllers;
 
-use App\Domain\Common\DTOs\CountryDTO;
-use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Models\Country;
 use App\Domain\Common\Requests\SearchCountryRequest;
+use App\Domain\Common\Resources\CountryResource;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class CountryController extends Controller
 {
     use HasIndexQuery;
+    use AuthorizesRequests;
 
     protected int $defaultPerPage = 15;
 
@@ -22,23 +25,16 @@ class CountryController extends Controller
         $this->modelClass = Country::class;
 
         $this->filters = [
-            AllowedFilter::partial('name'),
-            AllowedFilter::exact('code'),
-            AllowedFilter::exact('code3'),
-            AllowedFilter::exact('numericCode', 'numeric_code'),
-            AllowedFilter::exact('phoneCode', 'phone_code'),
-            AllowedFilter::partial('capital'),
-            AllowedFilter::exact('currency'),
-            AllowedFilter::exact('currencyCode', 'currency_code'),
-            AllowedFilter::exact('currencySymbol', 'currency_symbol'),
-            AllowedFilter::exact('tld'),
-            AllowedFilter::partial('native'),
-            AllowedFilter::partial('region'),
-            AllowedFilter::partial('subregion'),
-            AllowedFilter::exact('emoji'),
-            AllowedFilter::exact('emojiU'),
-            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
-            AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'code', 'code3'])),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('code', new AdvancedFilter()),
+            AllowedFilter::custom('code3', new AdvancedFilter()),
+            AllowedFilter::custom('numericCode', new AdvancedFilter(), 'numeric_code'),
+            AllowedFilter::custom('phoneCode', new AdvancedFilter(), 'phone_code'),
+            AllowedFilter::custom('region', new AdvancedFilter()),
+            AllowedFilter::custom('subregion', new AdvancedFilter()),
+            AllowedFilter::custom('currency', new AdvancedFilter()),
+            AllowedFilter::custom('currencyCode', new AdvancedFilter(), 'currency_code'),
         ];
 
         $this->sorts = [
@@ -47,28 +43,24 @@ class CountryController extends Controller
             'code3',
             'numericCode' => 'numeric_code',
             'phoneCode'   => 'phone_code',
-            'capital',
-            'currency',
-            'currencyCode' => 'currency_code',
             'region',
             'subregion',
-            'createdAt' => 'created_at',
-            'updatedAt' => 'updated_at',
         ];
 
         $this->defaultSort = 'name';
     }
 
-    public function index(SearchCountryRequest $request): JsonResponse
+    public function index(SearchCountryRequest $request): AnonymousResourceCollection
     {
-        $result         = $this->getIndexPaginator($request);
-        $result['data'] = CountryDTO::collect($result['data']);
+        $countries = $this->getIndexPaginator($request);
 
-        return response()->json($result);
+        return CountryResource::collection($countries['data'])
+            ->additional(['meta' => $countries['meta']])
+        ;
     }
 
-    public function show(Country $country): JsonResponse
+    public function show(Country $country): CountryResource
     {
-        return response()->json(['data' => CountryDTO::from($country)]);
+        return new CountryResource($country);
     }
 }
