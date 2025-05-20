@@ -63,12 +63,7 @@ class InvoiceController extends Controller
         $invoices = $this->getIndexPaginator($request);
 
         return InvoiceResource::collection($invoices['data'])
-            ->additional(['meta' => [
-                'currentPage' => $invoices['current_page'],
-                'lastPage'    => $invoices['last_page'],
-                'perPage'     => $invoices['per_page'],
-                'total'       => $invoices['total'],
-            ]])
+            ->additional(['meta' => $invoices['meta']])
         ;
     }
 
@@ -76,10 +71,7 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::create($request->validated());
 
-        return response()->json([
-            'message' => 'Invoice created successfully.',
-            'data'    => new InvoiceResource($invoice),
-        ], Response::HTTP_CREATED);
+        return response()->json(new InvoiceResource($invoice), Response::HTTP_CREATED);
     }
 
     public function show(Invoice $invoice): InvoiceResource
@@ -93,10 +85,7 @@ class InvoiceController extends Controller
     {
         $invoice->update($request->validated());
 
-        return response()->json([
-            'message' => 'Invoice updated successfully.',
-            'data'    => new InvoiceResource($invoice),
-        ]);
+        return response()->json(new InvoiceResource($invoice));
     }
 
     public function destroy(Invoice $invoice): JsonResponse

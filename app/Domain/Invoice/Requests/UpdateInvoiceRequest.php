@@ -3,6 +3,7 @@
 namespace App\Domain\Invoice\Requests;
 
 use App\Domain\Invoice\Enums\InvoiceType;
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
 
 class UpdateInvoiceRequest extends BaseFormRequest

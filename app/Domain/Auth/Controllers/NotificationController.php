@@ -11,14 +11,16 @@ class NotificationController extends Controller
     {
         return $request->user()->notifications()
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(20)
+        ;
     }
 
     public function markAsRead(Request $request)
     {
         $request->user()->unreadNotifications()
             ->whereIn('id', $request->input('ids', []))
-            ->update(['read_at' => now()]);
+            ->update(['read_at' => now()])
+        ;
 
         return response()->noContent();
     }
@@ -27,7 +29,8 @@ class NotificationController extends Controller
     {
         $request->user()->notifications()
             ->whereIn('id', $request->input('ids', []))
-            ->delete(); // or move to a separate table
+            ->delete() // or move to a separate table
+        ;
 
         return response()->noContent();
     }
