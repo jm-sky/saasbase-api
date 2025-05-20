@@ -59,9 +59,9 @@ class CountryControllerTest extends TestCase
                     ],
                 ],
                 'meta' => [
-                    'current_page',
-                    'last_page',
-                    'per_page',
+                    'currentPage',
+                    'lastPage',
+                    'perPage',
                     'total',
                 ],
             ])

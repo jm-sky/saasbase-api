@@ -2,17 +2,17 @@
 
 namespace App\Domain\Tenant\Notifications;
 
-use App\Domain\Tenant\Models\Invitation;
+use App\Domain\Tenant\Models\TenantInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvitationNotification extends Notification implements ShouldQueue
+class TenantInvitationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Invitation $invitation)
+    public function __construct(public TenantInvitation $invitation)
     {
     }
 
@@ -23,12 +23,17 @@ class InvitationNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable): MailMessage
     {
-        $url = url('/api/v1/invitations/' . $this->invitation->token);
+        $frontendUrl = config('app.frontend_url');
+        $url         = $frontendUrl . '/login?tenantInvitationToken=' . $this->invitation->token;
 
         return (new MailMessage())
             ->subject('You are invited to join a tenant')
             ->greeting('Hello!')
             ->line('You have been invited to join a tenant in SaaSBase.')
+            ->line('- Tenant: ' . $this->invitation->tenant->name)
+            ->line('- Role: ' . $this->invitation->role)
+            ->line('')
+            ->line('You can accept the invitation by clicking the button below.')
             ->action('Accept Invitation', $url)
             ->line('If you did not expect this invitation, you can ignore this email.')
         ;

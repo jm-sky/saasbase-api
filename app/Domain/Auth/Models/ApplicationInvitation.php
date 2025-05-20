@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Domain\Tenant\Models;
+namespace App\Domain\Auth\Models;
 
-use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
-class Invitation extends BaseModel
+class ApplicationInvitation extends BaseModel
 {
     use Notifiable;
 
-    protected $table = 'invitations';
+    protected $table = 'application_invitations';
 
     protected $fillable = [
-        'tenant_id',
         'inviter_id',
         'email',
-        'role',
         'token',
         'status',
         'accepted_at',
@@ -28,11 +25,6 @@ class Invitation extends BaseModel
         'accepted_at' => 'datetime',
         'expires_at'  => 'datetime',
     ];
-
-    public function tenant(): BelongsTo
-    {
-        return $this->belongsTo(Tenant::class);
-    }
 
     public function inviter(): BelongsTo
     {

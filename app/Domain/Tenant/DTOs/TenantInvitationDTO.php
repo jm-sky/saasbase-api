@@ -3,13 +3,13 @@
 namespace App\Domain\Tenant\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
-use App\Domain\Tenant\Models\Invitation;
+use App\Domain\Tenant\Models\TenantInvitation;
 use App\Domain\Users\DTOs\UserPreviewDTO;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @extends BaseDTO<Invitation>
+ * @extends BaseDTO<TenantInvitation>
  *
  * @property string           $id
  * @property string           $tenantId
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property TenantPreviewDTO $tenant
  * @property UserPreviewDTO   $inviter
  */
-class InvitationDTO extends BaseDTO
+class TenantInvitationDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $id,
@@ -65,7 +65,7 @@ class InvitationDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        /* @var Invitation $model */
+        /* @var TenantInvitation $model */
         return new static(
             id: $model->id,
             tenantId: $model->tenant_id,

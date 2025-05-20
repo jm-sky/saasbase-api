@@ -2,12 +2,25 @@
 
 namespace App\Domain\Contractors\Models;
 
+use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Contractors\Enums\ContractorActivityType;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ContractorBankAccount extends Model
+/**
+ * @property string     $id
+ * @property string     $tenant_id
+ * @property string     $contractor_id
+ * @property string     $bank_name
+ * @property string     $account_number
+ * @property string     $swift
+ * @property string     $iban
+ * @property bool       $is_default
+ * @property Contractor $contractor
+ *
+ * @description This model should extend the `BankAccount` model.
+ */
+class ContractorBankAccount extends BankAccount
 {
     use HasActivityLog;
 
@@ -35,7 +48,7 @@ class ContractorBankAccount extends Model
             activity()
                 ->performedOn($bankAccount->contractor)
                 ->withProperties([
-                    'tenant_id'       => request()->user()?->tenant_id,
+                    'tenant_id'       => request()->user()?->getTenantId(),
                     'bank_account_id' => $bankAccount->id,
                 ])
                 ->event(ContractorActivityType::BankAccountCreated->value)
@@ -47,7 +60,7 @@ class ContractorBankAccount extends Model
             activity()
                 ->performedOn($bankAccount->contractor)
                 ->withProperties([
-                    'tenant_id'       => request()->user()?->tenant_id,
+                    'tenant_id'       => request()->user()?->getTenantId(),
                     'bank_account_id' => $bankAccount->id,
                 ])
                 ->event(ContractorActivityType::BankAccountUpdated->value)
@@ -59,7 +72,7 @@ class ContractorBankAccount extends Model
             activity()
                 ->performedOn($bankAccount->contractor)
                 ->withProperties([
-                    'tenant_id'       => request()->user()?->tenant_id,
+                    'tenant_id'       => request()->user()?->getTenantId(),
                     'bank_account_id' => $bankAccount->id,
                 ])
                 ->event(ContractorActivityType::BankAccountDeleted->value)
@@ -76,7 +89,7 @@ class ContractorBankAccount extends Model
         activity()
             ->performedOn($this->contractor)
             ->withProperties([
-                'tenant_id'       => request()->user()?->tenant_id,
+                'tenant_id'       => request()->user()?->getTenantId(),
                 'bank_account_id' => $this->id,
             ])
             ->event(ContractorActivityType::BankAccountSetDefault->value)

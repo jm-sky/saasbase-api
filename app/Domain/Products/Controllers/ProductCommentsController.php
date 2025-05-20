@@ -49,7 +49,7 @@ class ProductCommentsController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'  => request()->user()?->tenant_id,
+                'tenant_id'  => request()->user()?->getTenantId(),
                 'product_id' => $product->id,
                 'comment_id' => $comment->id,
             ])
@@ -72,7 +72,7 @@ class ProductCommentsController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'  => request()->user()?->tenant_id,
+                'tenant_id'  => request()->user()?->getTenantId(),
                 'product_id' => $product->id,
                 'comment_id' => $comment->id,
             ])
@@ -94,7 +94,7 @@ class ProductCommentsController extends Controller
         activity()
             ->performedOn($product)
             ->withProperties([
-                'tenant_id'  => request()->user()?->tenant_id,
+                'tenant_id'  => request()->user()?->getTenantId(),
                 'product_id' => $product->id,
                 'comment_id' => $comment->id,
             ])

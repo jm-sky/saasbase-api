@@ -26,4 +26,15 @@ enum TenantActivityType: string
     case InvitationRejected    = 'tenant.invitation.rejected';
     case InvitationCanceled    = 'tenant.invitation.canceled';
     case InvitationResent      = 'tenant.invitation.resent';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::InvitationSent     => 'Tenant invitation sent',
+            self::InvitationAccepted => 'Tenant invitation accepted',
+            self::InvitationRejected => 'Tenant invitation rejected',
+            self::InvitationCanceled => 'Tenant invitation canceled',
+            self::InvitationResent   => 'Tenant invitation resent',
+        };
+    }
 }

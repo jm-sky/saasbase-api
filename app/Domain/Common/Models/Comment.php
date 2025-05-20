@@ -71,7 +71,7 @@ class Comment extends BaseModel
                 activity()
                     ->performedOn($comment->commentable)
                     ->withProperties([
-                        'tenant_id'  => request()->user()?->tenant_id,
+                        'tenant_id'  => request()->user()?->getTenantId(),
                         'comment_id' => $comment->id,
                     ])
                     ->event(ContractorActivityType::CommentCreated->value)
@@ -85,7 +85,7 @@ class Comment extends BaseModel
                 activity()
                     ->performedOn($comment->commentable)
                     ->withProperties([
-                        'tenant_id'  => request()->user()?->tenant_id,
+                        'tenant_id'  => request()->user()?->getTenantId(),
                         'comment_id' => $comment->id,
                     ])
                     ->event(ContractorActivityType::CommentUpdated->value)
@@ -99,7 +99,7 @@ class Comment extends BaseModel
                 activity()
                     ->performedOn($comment->commentable)
                     ->withProperties([
-                        'tenant_id'  => request()->user()?->tenant_id,
+                        'tenant_id'  => request()->user()?->getTenantId(),
                         'comment_id' => $comment->id,
                     ])
                     ->event(ContractorActivityType::CommentDeleted->value)
