@@ -7,6 +7,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -14,7 +15,7 @@ class OAuthController extends Controller
 {
     use RespondsWithToken;
 
-    public function redirect(string $provider): JsonResponse
+    public function redirect(string $provider): RedirectResponse
     {
         return Socialite::driver($provider)->stateless()->redirect();
     }
