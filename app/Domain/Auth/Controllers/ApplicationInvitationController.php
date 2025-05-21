@@ -115,9 +115,16 @@ class ApplicationInvitationController extends Controller
         $invitation = $this->getPendingInvitation($token);
 
         $invitation->update([
-            'status'      => 'accepted',
-            'accepted_at' => now(),
+            'status'          => 'accepted',
+            'accepted_at'     => now(),
+            'invited_user_id' => $user->id,
         ]);
+
+        if ($invitation->email === $user->email && !$user->email_verified_at) {
+            $user->update([
+                'email_verified_at' => now(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'Invitation accepted.',

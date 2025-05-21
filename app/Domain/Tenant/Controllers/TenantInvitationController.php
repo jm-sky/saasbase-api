@@ -165,9 +165,16 @@ class TenantInvitationController extends Controller
         }
 
         $invitation->update([
-            'status'      => InvitationStatus::ACCEPTED->value,
-            'accepted_at' => now(),
+            'status'          => InvitationStatus::ACCEPTED->value,
+            'invited_user_id' => $user->id,
+            'accepted_at'     => now(),
         ]);
+
+        if ($invitation->email === $user->email && !$user->email_verified_at) {
+            $user->update([
+                'email_verified_at' => now(),
+            ]);
+        }
 
         $this->logActivity(
             tenant: Tenant::find($invitation->tenant_id),

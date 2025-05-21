@@ -11,17 +11,18 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<ApplicationInvitation>
  *
- * @property string         $id
- * @property string         $inviterId
- * @property string         $email
- * @property string         $role
- * @property string         $token
- * @property string         $status
- * @property ?Carbon        $acceptedAt
- * @property Carbon         $expiresAt
- * @property ?Carbon        $createdAt
- * @property ?Carbon        $updatedAt
- * @property UserPreviewDTO $inviter
+ * @property string          $id
+ * @property string          $inviterId
+ * @property string          $email
+ * @property string          $role
+ * @property string          $token
+ * @property string          $status
+ * @property ?Carbon         $acceptedAt
+ * @property Carbon          $expiresAt
+ * @property ?Carbon         $createdAt
+ * @property ?Carbon         $updatedAt
+ * @property UserPreviewDTO  $inviter
+ * @property ?UserPreviewDTO $invitedUser
  */
 class ApplicationInvitationDTO extends BaseDTO
 {
@@ -37,6 +38,7 @@ class ApplicationInvitationDTO extends BaseDTO
         public readonly ?Carbon $createdAt = null,
         public readonly ?Carbon $updatedAt = null,
         public readonly UserPreviewDTO $inviter,
+        public readonly ?UserPreviewDTO $invitedUser = null,
     ) {
     }
 
@@ -54,6 +56,7 @@ class ApplicationInvitationDTO extends BaseDTO
             createdAt: $data['createdAt'],
             updatedAt: $data['updatedAt'],
             inviter: UserPreviewDTO::fromArray($data['inviter']),
+            invitedUser: $data['invitedUser'] ? UserPreviewDTO::fromArray($data['invitedUser']) : null,
         );
     }
 
@@ -72,23 +75,25 @@ class ApplicationInvitationDTO extends BaseDTO
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
             inviter: UserPreviewDTO::fromModel($model->inviter),
+            invitedUser: $model->invitedUser ? UserPreviewDTO::fromModel($model->invitedUser) : null,
         );
     }
 
     public function toArray(): array
     {
         return [
-            'id'         => $this->id,
-            'inviterId'  => $this->inviterId,
-            'email'      => $this->email,
-            'role'       => $this->role,
-            'token'      => $this->token,
-            'status'     => $this->status,
-            'inviter'    => $this->inviter->toArray(),
-            'acceptedAt' => $this->acceptedAt?->toIso8601String(),
-            'expiresAt'  => $this->expiresAt?->toIso8601String(),
-            'createdAt'  => $this->createdAt?->toIso8601String(),
-            'updatedAt'  => $this->updatedAt?->toIso8601String(),
+            'id'          => $this->id,
+            'inviterId'   => $this->inviterId,
+            'email'       => $this->email,
+            'role'        => $this->role,
+            'token'       => $this->token,
+            'status'      => $this->status,
+            'inviter'     => $this->inviter->toArray(),
+            'invitedUser' => $this->invitedUser?->toArray(),
+            'acceptedAt'  => $this->acceptedAt?->toIso8601String(),
+            'expiresAt'   => $this->expiresAt?->toIso8601String(),
+            'createdAt'   => $this->createdAt?->toIso8601String(),
+            'updatedAt'   => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

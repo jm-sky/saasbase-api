@@ -3,9 +3,24 @@
 namespace App\Domain\Auth\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property string  $id
+ * @property string  $inviter_id
+ * @property ?string $invited_user_id
+ * @property string  $email
+ * @property string  $token
+ * @property string  $status
+ * @property ?Carbon $accepted_at
+ * @property Carbon  $expires_at
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
+ * @property User    $inviter
+ * @property ?User   $invitedUser
+ */
 class ApplicationInvitation extends BaseModel
 {
     use Notifiable;
@@ -14,6 +29,7 @@ class ApplicationInvitation extends BaseModel
 
     protected $fillable = [
         'inviter_id',
+        'invited_user_id',
         'email',
         'token',
         'status',
@@ -29,6 +45,11 @@ class ApplicationInvitation extends BaseModel
     public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inviter_id');
+    }
+
+    public function invitedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'invited_user_id');
     }
 
     public function isValid(): bool

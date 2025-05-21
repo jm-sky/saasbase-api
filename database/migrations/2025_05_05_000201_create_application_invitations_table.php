@@ -10,6 +10,7 @@ return new class() extends Migration {
         Schema::create('application_invitations', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('inviter_id');
+            $table->uuid('invited_user_id')->nullable();
             $table->string('email');
             $table->string('token')->unique();
             $table->string('status'); // pending, accepted, rejected, expired, canceled

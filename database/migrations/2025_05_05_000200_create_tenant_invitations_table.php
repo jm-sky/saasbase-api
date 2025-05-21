@@ -11,6 +11,7 @@ return new class() extends Migration {
             $table->uuid('id')->primary();
             $table->uuid('tenant_id');
             $table->uuid('inviter_id');
+            $table->uuid('invited_user_id')->nullable();
             $table->string('email');
             $table->string('role');
             $table->string('token')->unique();
