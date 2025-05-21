@@ -67,7 +67,7 @@ class CustomTenantUserSeeder extends Seeder
         CreateTenantForNewUser::$BYPASSED = true;
 
         foreach ($users as $userData) {
-            $userPayload             = collect($userData)->except(['tenant', 'avatarUrl'])->toArray();
+            $userPayload             = collect($userData)->except(['tenant', 'meta'])->toArray();
             $user                    = User::create($userPayload);
             $user->status            = UserStatus::ACTIVE;
             $user->email_verified_at = now();
@@ -75,7 +75,7 @@ class CustomTenantUserSeeder extends Seeder
 
             $this->createUserTenant($user, Arr::get($userData, 'tenant'));
 
-            $this->createUserAvatar($user, Arr::get($userData, 'avatarUrl'));
+            $this->createUserAvatar($user, Arr::get($userData, 'meta.avatarUrl'));
 
             $this->users[$user->id] = $user;
         }

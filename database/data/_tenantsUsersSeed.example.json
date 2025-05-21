@@ -1,0 +1,27 @@
+{
+    "tenants": [
+        {
+            "id": "UUID",
+            "name": "Tenant Name",
+            "slug": "tenant-slug"
+        }
+    ],
+    "users": [
+        {
+            "id": "UUID",
+            "first_name": "FIRST NAME",
+            "last_name": "LAST NAME",
+            "email": "email@example.com",
+            "password": "BCRYPT-PASSWORD-HASH",
+            "meta": {
+                "avatarUrl": "https://AVATAR-URL",
+                "github": "https://github.com/USER-GITHUB-USERNAME"
+            },
+            "tenant": {
+                "id": "UUID",
+                "role": "admin",
+                "isOwner": true
+            }
+        }
+    ]
+}
