@@ -3,17 +3,22 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Common\Models\Media;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantAttachmentRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TenantAttachmentsController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(Tenant $tenant)
     {
+        $this->authorize('viewAny', [Media::class, $tenant]);
+
         $media = $tenant->getMedia('attachments');
 
         return response()->json([
@@ -23,6 +28,8 @@ class TenantAttachmentsController extends Controller
 
     public function store(TenantAttachmentRequest $request, Tenant $tenant)
     {
+        $this->authorize('create', [Media::class, $tenant]);
+
         $file  = $request->file('file');
         $media = $tenant->addMedia($file)->toMediaCollection('attachments');
 
@@ -43,7 +50,7 @@ class TenantAttachmentsController extends Controller
 
     public function show(Tenant $tenant, Media $media)
     {
-        $this->authorizeMedia($tenant, $media);
+        $this->authorize('view', [$media, $tenant]);
 
         return response()->json([
             'data' => MediaDTO::fromModel($media)->toArray(),
@@ -52,7 +59,8 @@ class TenantAttachmentsController extends Controller
 
     public function download(Tenant $tenant, Media $media)
     {
-        $this->authorizeMedia($tenant, $media);
+        $this->authorize('view', [$media, $tenant]);
+
         $path    = $media->getPath();
         $headers = [
             'Content-Type'        => $media->mime_type,
@@ -64,7 +72,8 @@ class TenantAttachmentsController extends Controller
 
     public function preview(Tenant $tenant, Media $media)
     {
-        $this->authorizeMedia($tenant, $media);
+        $this->authorize('view', [$media, $tenant]);
+
         $path    = $media->getPath();
         $headers = [
             'Content-Type'        => $media->mime_type,
@@ -76,7 +85,7 @@ class TenantAttachmentsController extends Controller
 
     public function destroy(Tenant $tenant, Media $media)
     {
-        $this->authorizeMedia($tenant, $media);
+        $this->authorize('delete', [$media, $tenant]);
 
         activity()
             ->performedOn($tenant)
@@ -91,12 +100,5 @@ class TenantAttachmentsController extends Controller
         $media->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    protected function authorizeMedia(Tenant $tenant, Media $media): void
-    {
-        if (Tenant::class !== $media->model_type || $media->model_id !== $tenant->id) {
-            abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this tenant.');
-        }
     }
 }

@@ -4,11 +4,26 @@ namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * TODO: Add accepted_by_user_id column and relation
+ * @property string  $id
+ * @property string  $tenant_id
+ * @property string  $inviter_id
+ * @property ?string $invited_user_id
+ * @property string  $email
+ * @property string  $role
+ * @property string  $token
+ * @property string  $status
+ * @property ?Carbon $accepted_at
+ * @property Carbon  $expires_at
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
+ * @property Tenant  $tenant
+ * @property User    $inviter
+ * @property ?User   $invitedUser
  */
 class TenantInvitation extends BaseModel
 {
@@ -19,6 +34,7 @@ class TenantInvitation extends BaseModel
     protected $fillable = [
         'tenant_id',
         'inviter_id',
+        'invited_user_id',
         'email',
         'role',
         'token',
@@ -40,6 +56,11 @@ class TenantInvitation extends BaseModel
     public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inviter_id');
+    }
+
+    public function invitedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'invited_user_id');
     }
 
     public function isValid(): bool

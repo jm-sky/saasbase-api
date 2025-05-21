@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Domain\Common\Models\Address;
+use App\Domain\Common\Models\BankAccount;
+use App\Domain\Common\Policies\AddressPolicy;
+use App\Domain\Common\Policies\BankAccountPolicy;
+use App\Domain\Common\Policies\MediaPolicy;
 use App\Domain\Exchanges\Models\Exchange;
 use App\Domain\Exchanges\Policies\ExchangePolicy;
 use App\Domain\Tenant\Models\Tenant;
@@ -13,6 +18,7 @@ use App\Domain\Users\Policies\SecurityEventPolicy;
 use App\Domain\Users\Policies\TrustedDevicePolicy;
 use App\Domain\Users\Policies\UserTableSettingPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -27,6 +33,9 @@ class AuthServiceProvider extends ServiceProvider
         UserTableSetting::class => UserTableSettingPolicy::class,
         TrustedDevice::class    => TrustedDevicePolicy::class,
         SecurityEvent::class    => SecurityEventPolicy::class,
+        Address::class          => AddressPolicy::class,
+        BankAccount::class      => BankAccountPolicy::class,
+        Media::class            => MediaPolicy::class,
     ];
 
     /**

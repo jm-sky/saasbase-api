@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\Models\Address;
+use App\Domain\Common\Policies\AddressPolicy;
 use App\Domain\Common\Resources\AddressResource;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
@@ -15,6 +16,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
+/**
+ * @uses AddressPolicy
+ */
 class TenantAddressController extends Controller
 {
     use AuthorizesRequests;

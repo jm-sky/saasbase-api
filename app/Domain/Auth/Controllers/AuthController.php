@@ -32,12 +32,18 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            return response()->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
         /** @var User $user */
         $user  = Auth::user();
-        $token = JwtHelper::createTokenWithoutTenant($user);
+
+        if ($this->shouldChooseFirstTenant($user)) {
+            $tenant = $user->tenants()->first();
+            $token  = JwtHelper::createTokenWithTenant($user, $tenant->id);
+        } else {
+            $token = JwtHelper::createTokenWithoutTenant($user);
+        }
 
         $userSessionService->createSession($user, $request, $token);
 
@@ -114,5 +120,10 @@ class AuthController extends Controller
         } catch (JWTException $e) {
             return response()->json(['error' => 'Token not provided or expired'], Response::HTTP_UNAUTHORIZED);
         }
+    }
+
+    protected function shouldChooseFirstTenant(User $user): bool
+    {
+        return 1 === $user->tenants()->count();
     }
 }

@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon          $updatedAt
  * @property TenantPreviewDTO $tenant
  * @property UserPreviewDTO   $inviter
+ * @property ?UserPreviewDTO  $invitedUser
  */
 class TenantInvitationDTO extends BaseDTO
 {
@@ -41,6 +42,7 @@ class TenantInvitationDTO extends BaseDTO
         public readonly ?Carbon $updatedAt = null,
         public readonly TenantPreviewDTO $tenant,
         public readonly UserPreviewDTO $inviter,
+        public readonly ?UserPreviewDTO $invitedUser = null,
     ) {
     }
 
@@ -60,6 +62,7 @@ class TenantInvitationDTO extends BaseDTO
             updatedAt: $data['updatedAt'],
             tenant: TenantPreviewDTO::fromArray($data['tenant']),
             inviter: UserPreviewDTO::fromArray($data['inviter']),
+            invitedUser: $data['invitedUser'] ? UserPreviewDTO::fromArray($data['invitedUser']) : null,
         );
     }
 
@@ -80,25 +83,27 @@ class TenantInvitationDTO extends BaseDTO
             updatedAt: $model->updated_at,
             tenant: TenantPreviewDTO::fromModel($model->tenant),
             inviter: UserPreviewDTO::fromModel($model->inviter),
+            invitedUser: $model->invitedUser ? UserPreviewDTO::fromModel($model->invitedUser) : null,
         );
     }
 
     public function toArray(): array
     {
         return [
-            'id'         => $this->id,
-            'tenantId'   => $this->tenantId,
-            'inviterId'  => $this->inviterId,
-            'email'      => $this->email,
-            'role'       => $this->role,
-            'token'      => $this->token,
-            'status'     => $this->status,
-            'tenant'     => $this->tenant->toArray(),
-            'inviter'    => $this->inviter->toArray(),
-            'acceptedAt' => $this->acceptedAt?->toIso8601String(),
-            'expiresAt'  => $this->expiresAt?->toIso8601String(),
-            'createdAt'  => $this->createdAt?->toIso8601String(),
-            'updatedAt'  => $this->updatedAt?->toIso8601String(),
+            'id'          => $this->id,
+            'tenantId'    => $this->tenantId,
+            'inviterId'   => $this->inviterId,
+            'email'       => $this->email,
+            'role'        => $this->role,
+            'token'       => $this->token,
+            'status'      => $this->status,
+            'tenant'      => $this->tenant->toArray(),
+            'inviter'     => $this->inviter->toArray(),
+            'invitedUser' => $this->invitedUser?->toArray(),
+            'acceptedAt'  => $this->acceptedAt?->toIso8601String(),
+            'expiresAt'   => $this->expiresAt?->toIso8601String(),
+            'createdAt'   => $this->createdAt?->toIso8601String(),
+            'updatedAt'   => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

@@ -201,6 +201,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return null;
     }
 
+    public function isCurrentTenant(Tenant $tenant): bool
+    {
+        return $this->getTenantId() === $tenant->id;
+    }
+
     public function settings(): HasOne
     {
         return $this->hasOne(UserSettings::class);
