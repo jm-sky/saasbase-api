@@ -28,7 +28,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
     {
         $appName      = Config::get('app.name');
         $frontendUrl  = Config::get('app.frontend_url');
-        $dashboardUrl = "{$frontendUrl}/dashboard";
+        $dashboardUrl = "{$frontendUrl}/";
 
         return (new MailMessage())
             ->subject("Welcome to {$appName}!")
