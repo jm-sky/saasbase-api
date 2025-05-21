@@ -7,6 +7,9 @@ use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * TODO: Add accepted_by_user_id column and relation
+ */
 class TenantInvitation extends BaseModel
 {
     use Notifiable;

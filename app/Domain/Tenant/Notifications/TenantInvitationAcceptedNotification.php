@@ -30,7 +30,7 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
         return [
             'type'    => 'tenantInvitation.accepted',
             'title'   => 'Your invitation has been accepted!',
-            'message' => "{$this->invitation->invitedUser->fullName} has joined {$this->invitation->tenant->name} as {$this->invitation->role}!",
+            'message' => "Someonehas joined {$this->invitation->tenant->name} as {$this->invitation->role}!",
             'source'  => 'System',
         ];
     }
@@ -57,7 +57,7 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
             'data'    => [
                 'type'    => 'tenantInvitation.accepted',
                 'title'   => 'Your invitation has been accepted!',
-                'message' => "{$this->invitation->invitedUser->fullName} has joined {$this->invitation->tenant->name} as {$this->invitation->role}!",
+                'message' => "Someone has joined {$this->invitation->tenant->name} as {$this->invitation->role}!",
                 'source'  => 'System',
             ],
             'readAt'    => null,
