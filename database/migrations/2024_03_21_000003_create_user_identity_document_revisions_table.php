@@ -14,9 +14,9 @@ return new class() extends Migration {
             $table->string('country', 2);
             $table->date('issued_at')->nullable();
             $table->date('expires_at');
-            $table->timestamp('changed_at');
+            $table->timestamp('changed_at')->nullable();
             $table->foreignUuid('changed_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
     }
 
