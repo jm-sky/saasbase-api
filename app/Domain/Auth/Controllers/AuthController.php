@@ -60,12 +60,12 @@ class AuthController extends Controller
         $validated = $request->validated();
 
         $dto = new RegisterUserDTO(
-            firstName: $validated['firstName'],
-            lastName: $validated['lastName'],
+            firstName: $validated['first_name'],
+            lastName: $validated['last_name'],
             email: $validated['email'],
             password: $validated['password'],
             description: $validated['description'] ?? null,
-            birthDate: isset($validated['birthDate']) ? new \DateTime($validated['birthDate']) : null,
+            birthDate: isset($validated['birth_date']) ? new \DateTime($validated['birthDate']) : null,
             phone: $validated['phone'] ?? null
         );
 

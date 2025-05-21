@@ -24,9 +24,6 @@ class TenantInvitationController extends Controller
 
     public const TOKEN_EXPIRATION_DAYS = 7;
 
-    /**
-     * List all invitations for a tenant.
-     */
     public function index(Request $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('view', $tenant);
@@ -38,6 +35,15 @@ class TenantInvitationController extends Controller
 
         return response()->json([
             'data' => TenantInvitationDTO::collect($invitations),
+        ]);
+    }
+
+    public function show($token): JsonResponse
+    {
+        $invitation = $this->getPendingInvitation($token);
+
+        return response()->json([
+            'data' => TenantInvitationDTO::fromModel($invitation),
         ]);
     }
 

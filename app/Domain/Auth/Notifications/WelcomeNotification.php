@@ -61,4 +61,26 @@ class WelcomeNotification extends Notification implements ShouldQueue
     {
         return new PrivateChannel("users.{$this->notifiable->id}.notifications");
     }
+
+    public function broadcastAs(): string
+    {
+        return 'notifications';
+    }
+
+    public function broadcastWith()
+    {
+        $appName = Config::get('app.name');
+
+        return [
+            'id'      => $this->id,
+            'data'    => [
+                'type'    => 'welcome',
+                'title'   => "Welcome to {$appName}!",
+                'message' => "Welcome {$this->notifiable->fullName}, we're glad you're here!",
+                'source'  => 'System',
+            ],
+            'readAt'    => null,
+            'createdAt' => now(),
+        ];
+    }
 }

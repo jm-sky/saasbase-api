@@ -37,9 +37,9 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/auth.php';
     require __DIR__ . '/api/invitations.php';
     require __DIR__ . '/api/images.php';
+    require __DIR__ . '/api/user.php';
 
     Route::middleware(['auth:api', 'is_active'])->group(function () {
-        require __DIR__ . '/api/user.php';
         require __DIR__ . '/api/tenants.php';
         require __DIR__ . '/api/feeds.php';
         require __DIR__ . '/api/chat.php';

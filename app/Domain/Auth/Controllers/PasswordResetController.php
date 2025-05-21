@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Notifications\PasswordChangedNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -63,6 +64,9 @@ class PasswordResetController extends Controller
                 'message' => __($status),
             ], Response::HTTP_BAD_REQUEST);
         }
+
+        $user = User::where('email', $request->email)->first();
+        $user?->notify(new PasswordChangedNotification($user));
 
         return response()->json([
             'message' => __($status),

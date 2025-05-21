@@ -25,7 +25,7 @@ class RegisterUserDTO extends BaseDTO
     /**
      * Create a new DTO from an array of data.
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
         return new self(
             firstName: $data['first_name'],

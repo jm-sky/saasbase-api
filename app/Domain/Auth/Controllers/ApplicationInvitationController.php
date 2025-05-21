@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\ApplicationInvitation;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Notifications\ApplicationInvitationNotification;
 use App\Domain\Auth\Requests\SendApplicationInvitationRequest;
+use App\Domain\Tenant\DTOs\ApplicationInvitationDTO;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,9 +17,6 @@ class ApplicationInvitationController extends Controller
 {
     public const TOKEN_EXPIRATION_DAYS = 7;
 
-    /**
-     * List all application invitations.
-     */
     public function index(Request $request): JsonResponse
     {
         $invitations = ApplicationInvitation::query()
@@ -28,6 +26,15 @@ class ApplicationInvitationController extends Controller
 
         return response()->json([
             'data' => $invitations,
+        ]);
+    }
+
+    public function show($token): JsonResponse
+    {
+        $invitation = $this->getPendingInvitation($token);
+
+        return response()->json([
+            'data' => ApplicationInvitationDTO::fromModel($invitation),
         ]);
     }
 

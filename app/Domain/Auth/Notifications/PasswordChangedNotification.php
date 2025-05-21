@@ -59,4 +59,26 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
     {
         return new PrivateChannel("users.{$this->notifiable->id}.notifications");
     }
+
+    public function broadcastAs(): string
+    {
+        return 'notifications';
+    }
+
+    public function broadcastWith()
+    {
+        $appName = Config::get('app.name');
+
+        return [
+            'id'      => $this->id,
+            'data'    => [
+                'type'    => 'security.passwordChanged',
+                'title'   => 'Password changed!',
+                'message' => "Your password has been changed for {$appName}.",
+                'source'  => 'System',
+            ],
+            'readAt'    => null,
+            'createdAt' => now(),
+        ];
+    }
 }
