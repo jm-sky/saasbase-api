@@ -54,9 +54,9 @@ trait HasIndexQuery
     /**
      * Return paginated results with metadata.
      */
-    public function getIndexPaginator(Request $request, ?int $perPage = null): array
+    public function getIndexPaginator(Request $request, ?int $perPage = null, ?$query = null): array
     {
-        $query = $this->getIndexQuery($request);
+        $query ??= $this->getIndexQuery($request);
 
         /** @var LengthAwarePaginator $paginator */
         $paginator = $query->paginate($perPage ?? $this->getPaginatorPerPage($request));
