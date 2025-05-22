@@ -9,14 +9,13 @@ use App\Domain\Tenant\Enums\InvitationStatus;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\TestDox;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
-/**
- * @internal
- *
- * @coversNothing
- */
+#[TestDox('TenantInvitationController')]
+#[CoversNothing]
 class TenantInvitationControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -64,7 +63,7 @@ class TenantInvitationControllerTest extends TestCase
 
         /** @var User $invitee */
         $invitee = User::factory()->create(['email' => 'invitee@example.com']);
-        $this->actingAs($invitee);
+        $this->authenticateUser(user: $invitee);
 
         $response = $this->postJson("/api/v1/tenants/{$tenant->id}/invitations/{$token}/accept");
         $response->assertOk();

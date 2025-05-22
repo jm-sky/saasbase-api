@@ -52,7 +52,8 @@ return new class() extends Migration {
                 ->onDelete('cascade')
             ;
 
-            $table->primary(
+            // In MySQL primary key cannot have nullable columns
+            $table->unique(
                 [$pivotPermission, $columnNames['model_morph_key'], 'model_type', 'tenant_id'],
                 'model_has_permissions_permission_model_type_primary'
             );
@@ -71,7 +72,8 @@ return new class() extends Migration {
                 ->onDelete('cascade')
             ;
 
-            $table->primary(
+            // In MySQL primary key cannot have nullable columns
+            $table->unique(
                 [$pivotRole, $columnNames['model_morph_key'], 'model_type', 'tenant_id'],
                 'model_has_roles_role_model_type_primary'
             );
