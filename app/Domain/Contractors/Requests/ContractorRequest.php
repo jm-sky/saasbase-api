@@ -2,6 +2,9 @@
 
 namespace App\Domain\Contractors\Requests;
 
+use App\Domain\Auth\Models\User;
+use App\Http\Requests\BaseFormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 
 class ContractorRequest extends BaseFormRequest
@@ -18,6 +21,7 @@ class ContractorRequest extends BaseFormRequest
             'name'        => ['required', 'string', 'max:255'],
             'email'       => ['nullable', 'email', 'max:255'],
             'phone'       => ['nullable', 'string', 'max:20'],
+            'website'     => ['nullable', 'string', 'max:255'],
             'country'     => ['nullable', 'string', 'max:100'],
             'taxId'       => ['nullable', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
@@ -41,38 +45,24 @@ class ContractorRequest extends BaseFormRequest
 
     public function prepareForValidation(): void
     {
+        /** @var User $user */
+        $user     = Auth::user();
+
         $this->merge([
-            'tenantId' => $this->input('tenantId') ?? auth()->user()->getTenantId(),
+            'tenantId' => $this->input('tenantId') ?? $user->getTenantId(),
         ]);
     }
 
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            $user     = auth()->user();
+            /** @var User $user */
+            $user     = Auth::user();
             $tenantId = $this->input('tenantId');
 
             if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {
                 $validator->errors()->add('tenantId', 'You are not allowed to use this tenant ID.');
             }
         });
-    }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'tenant_id'   => $validated['tenantId'],
-            'name'        => $validated['name'],
-            'email'       => $validated['email'] ?? null,
-            'phone'       => $validated['phone'] ?? null,
-            'country'     => $validated['country'] ?? null,
-            'tax_id'      => $validated['taxId'] ?? null,
-            'description' => $validated['description'] ?? null,
-            'is_active'   => $validated['isActive'] ?? true,
-            'is_buyer'    => $validated['isBuyer'] ?? false,
-            'is_supplier' => $validated['isSupplier'] ?? false,
-        ];
     }
 }

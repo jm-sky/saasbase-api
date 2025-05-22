@@ -65,6 +65,7 @@ class Contractor extends BaseModel implements HasMedia
         'name',
         'email',
         'phone',
+        'website',
         'country',
         'tax_id',
         'description',

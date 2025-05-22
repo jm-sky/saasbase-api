@@ -20,9 +20,7 @@ class ContractorLogoController extends Controller
     {
         $contractor->clearMediaCollection('logo');
 
-        $media = $contractor->addMediaFromRequest('image')
-            ->toMediaCollection('logo')
-        ;
+        $media = $contractor->addMediaFromRequest('image')->toMediaCollection('logo');
 
         $contractor->logModelActivity(ContractorActivityType::LogoCreated->value, $media);
 

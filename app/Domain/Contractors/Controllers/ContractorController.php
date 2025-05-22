@@ -13,7 +13,9 @@ use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Resources\ContractorResource;
 use App\Http\Controllers\Controller;
+use App\Services\LogoFetcherService\LogoFetcherService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -64,10 +66,14 @@ class ContractorController extends Controller
         ;
     }
 
-    public function store(ContractorRequest $request): JsonResponse
+    public function store(ContractorRequest $request, LogoFetcherService $logoFetcherService): JsonResponse
     {
         $contractor = Contractor::create($request->validated());
         $contractor->logModelActivity(ContractorActivityType::Created->value, $contractor);
+
+        if ($this->shouldFetchLogo($contractor, $request)) {
+            $logoFetcherService->fetchAndStore($contractor, $request->website, $request->email);
+        }
 
         return response()->json([
             'message' => 'Contractor created successfully.',
@@ -80,10 +86,14 @@ class ContractorController extends Controller
         return new ContractorResource($contractor);
     }
 
-    public function update(ContractorRequest $request, Contractor $contractor): JsonResponse
+    public function update(ContractorRequest $request, Contractor $contractor, LogoFetcherService $logoFetcherService): JsonResponse
     {
         $contractor->update($request->validated());
         $contractor->logModelActivity(ContractorActivityType::Updated->value, $contractor);
+
+        if ($this->shouldFetchLogo($contractor, $request)) {
+            $logoFetcherService->fetchAndStore($contractor, $request->website, $request->email);
+        }
 
         return response()->json([
             'message' => 'Contractor updated successfully.',
@@ -97,5 +107,18 @@ class ContractorController extends Controller
         $contractor->delete();
 
         return response()->json(['message' => 'Contractor deleted successfully.'], Response::HTTP_NO_CONTENT);
+    }
+
+    protected function shouldFetchLogo(Contractor $contractor, Request $request): bool
+    {
+        if ($contractor->hasMedia('logo')) {
+            return false;
+        }
+
+        if ($request->has('website') || $request->has('email')) {
+            return true;
+        }
+
+        return false;
     }
 }
