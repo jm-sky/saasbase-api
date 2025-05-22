@@ -150,7 +150,7 @@ class TenantInvitationController extends Controller
     /**
      * Accept an invitation by token.
      */
-    public function accept(Request $request, $tenant, $token): JsonResponse
+    public function accept(Request $request, $token): JsonResponse
     {
         abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 
@@ -194,7 +194,7 @@ class TenantInvitationController extends Controller
     /**
      * Accept an invitation by token.
      */
-    public function reject(Request $request, $tenant, $token): JsonResponse
+    public function reject(Request $request, $token): JsonResponse
     {
         abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 

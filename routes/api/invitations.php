@@ -10,6 +10,9 @@ Route::get('application/invitations/{token}', [ApplicationInvitationController::
 
 Route::middleware(['auth:api'])->group(function () {
     // Tenant invitations
+    Route::post('tenants/invitations/{token}/accept', [TenantInvitationController::class, 'accept']);
+    Route::post('tenants/invitations/{token}/reject', [TenantInvitationController::class, 'reject']);
+
     Route::prefix('tenants/{tenant}/invitations')->group(function () {
         Route::middleware(['is_active', 'is_in_tenant'])->group(function () {
             Route::post('/', [TenantInvitationController::class, 'send']);
@@ -17,9 +20,6 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('/{invitation}', [TenantInvitationController::class, 'cancel']);
             Route::post('/{invitation}/resend', [TenantInvitationController::class, 'resend']);
         });
-
-        Route::post('/{token}/accept', [TenantInvitationController::class, 'accept']);
-        Route::post('/{token}/reject', [TenantInvitationController::class, 'reject']);
     });
 
     // Application invitations
