@@ -60,12 +60,7 @@ class ContractorController extends Controller
         $contractors = $this->getIndexPaginator($request);
 
         return ContractorResource::collection($contractors['data'])
-            ->additional(['meta' => [
-                'currentPage' => $contractors['current_page'],
-                'lastPage'    => $contractors['last_page'],
-                'perPage'     => $contractors['per_page'],
-                'total'       => $contractors['total'],
-            ]])
+            ->additional(['meta' => $contractors['meta']])
         ;
     }
 

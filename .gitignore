@@ -58,4 +58,4 @@ node_modules/
 .cursor/mcp.json
 .scribe/*
 public/vendor/scribe/*
-database/data/_tenantsUsersSeed.json
+database/data/_custom.json

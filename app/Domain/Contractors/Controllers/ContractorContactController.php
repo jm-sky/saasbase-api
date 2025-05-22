@@ -23,10 +23,10 @@ class ContractorContactController extends Controller
         return response()->json([
             'data' => collect($contacts->items())->map(fn (ContractorContactPerson $contact) => ContractorContactPersonDTO::fromModel($contact)),
             'meta' => [
-                'current_page' => $contacts->currentPage(),
-                'last_page'    => $contacts->lastPage(),
-                'per_page'     => $contacts->perPage(),
-                'total'        => $contacts->total(),
+                'currentPage' => $contacts->currentPage(),
+                'lastPage'    => $contacts->lastPage(),
+                'perPage'     => $contacts->perPage(),
+                'total'       => $contacts->total(),
             ],
         ]);
     }

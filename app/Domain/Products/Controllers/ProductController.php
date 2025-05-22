@@ -57,12 +57,7 @@ class ProductController extends Controller
         $products = $this->getIndexPaginator($request);
 
         return ProductResource::collection($products['data'])
-            ->additional(['meta' => [
-                'currentPage' => $products['current_page'],
-                'lastPage'    => $products['last_page'],
-                'perPage'     => $products['per_page'],
-                'total'       => $products['total'],
-            ]])
+            ->additional(['meta' => $products['meta']])
         ;
     }
 

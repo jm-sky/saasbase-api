@@ -1,0 +1,65 @@
+{
+    "tenants": [
+        {
+            "id": "UUID",
+            "name": "Tenant Name",
+            "slug": "tenant-slug",
+            "addresses": [
+                {
+                    "type": "registeredOffice",
+                    "country": "PL",
+                    "postal_code": "00-867",
+                    "city": "Warsaw"
+                }
+            ],
+            "bankAccounts": [
+                {
+                    "iban": "PL0000000000000000000000000",
+                    "swift": "SWIFT"
+                }
+            ]
+        }
+    ],
+    "users": [
+        {
+            "id": "UUID",
+            "first_name": "FIRST NAME",
+            "last_name": "LAST NAME",
+            "email": "email@example.com",
+            "password": "BCRYPT-PASSWORD-HASH",
+            "meta": {
+                "avatarUrl": "https://AVATAR-URL",
+                "github": "https://github.com/USER-GITHUB-USERNAME"
+            },
+            "tenant": {
+                "id": "UUID",
+                "role": "admin",
+                "isOwner": true
+            }
+        }
+    ],
+    "contractors": [
+        {
+            "id": "UUID",
+            "name": "Contractor Name",
+            "tenant_id": "UUID",
+            "addresses": [
+                {
+                    "type": "registeredOffice",
+                    "country": "PL",
+                    "postal_code": "00-867",
+                    "city": "Warsaw",
+                    "street": "STREET NAME",
+                    "building": "123"
+                }
+            ],
+            "bankAccounts": [
+                {
+                    "iban": "PL0000000000000000000000000",
+                    "swift": "SWIFT",
+                    "bank_name": "Bank Name"
+                }
+            ]
+        }
+    ]
+}

@@ -23,9 +23,9 @@ class ProductCommentsController extends Controller
         return response()->json([
             'data' => CommentDTO::collect($comments->items()),
             'meta' => [
-                'current_page' => $comments->currentPage(),
-                'last_page'    => $comments->lastPage(),
-                'per_page'     => $comments->perPage(),
+                'currentPage' => $comments->currentPage(),
+                'lastPage'    => $comments->lastPage(),
+                'perPage'     => $comments->perPage(),
                 'total'        => $comments->total(),
             ],
         ]);

@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\Address;
+use App\Domain\Common\Models\BankAccount;
+use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\Tenant;
@@ -12,7 +15,7 @@ use Illuminate\Support\Arr;
 
 class CustomTenantUserSeeder extends Seeder
 {
-    protected static string $seedFile = '_tenantsUsersSeed.json';
+    protected static string $seedFile = '_custom.json';
 
     protected array $data = [];
 
@@ -32,8 +35,9 @@ class CustomTenantUserSeeder extends Seeder
             return;
         }
 
-        $this->createTenants($this->data['tenants']);
-        $this->createUsers($this->data['users']);
+        $this->createTenants(Arr::get($this->data, 'tenants', []));
+        $this->createUsers(Arr::get($this->data, 'users', []));
+        $this->createContractors(Arr::get($this->data, 'contractors', []));
     }
 
     public static function shouldRun(): bool
@@ -56,7 +60,13 @@ class CustomTenantUserSeeder extends Seeder
     protected function createTenants(array $tenants): void
     {
         foreach ($tenants as $tenantData) {
+            $tenantData   = collect($tenantData)->except(['addresses', 'bankAccounts'])->toArray();
+            $addresses    = collect(Arr::get($tenantData, 'addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
+            $bankAccounts = collect(Arr::get($tenantData, 'bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
+
             $tenant = Tenant::create($tenantData);
+            $tenant->addresses()->createMany($addresses);
+            $tenant->bankAccounts()->createMany($bankAccounts);
 
             $this->tenants[$tenant->id] = $tenant;
         }
@@ -74,7 +84,6 @@ class CustomTenantUserSeeder extends Seeder
             $user->save();
 
             $this->createUserTenant($user, Arr::get($userData, 'tenant'));
-
             $this->createUserAvatar($user, Arr::get($userData, 'meta.avatarUrl'));
 
             $this->users[$user->id] = $user;
@@ -128,6 +137,22 @@ class CustomTenantUserSeeder extends Seeder
             $this->command->error("Error creating user avatar: {$e->getMessage()}");
 
             return;
+        }
+    }
+
+    protected function createContractors(array $contractors): void
+    {
+        foreach ($contractors as $contractor) {
+            $tenantId       = Arr::get($contractor, 'tenant_id');
+            $contractorData = collect($contractor)->except(['addresses', 'bankAccounts'])->toArray();
+            $addresses      = collect(Arr::get($contractorData, 'addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
+            $bankAccounts   = collect(Arr::get($contractorData, 'bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
+
+            Tenant::bypassTenant($tenantId, function () use ($contractorData, $addresses, $bankAccounts) {
+                $contractor = Contractor::create($contractorData);
+                $contractor->addresses()->createMany($addresses);
+                $contractor->bankAccounts()->createMany($bankAccounts);
+            });
         }
     }
 }
