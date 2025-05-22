@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorLogoUploadRequest;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class ContractorLogoController extends Controller
 {
+    use HasActivityLogging;
+
     public function upload(ContractorLogoUploadRequest $request, Contractor $contractor)
     {
         $contractor->clearMediaCollection('logo');
@@ -21,16 +24,7 @@ class ContractorLogoController extends Controller
             ->toMediaCollection('logo')
         ;
 
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'logo_id'       => $media->id,
-            ])
-            ->event(ContractorActivityType::LogoCreated->value)
-            ->log('Contractor logo created')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::LogoCreated->value, $media);
 
         $logoUrl  = $contractor->getMediaSignedUrl('logo');
         $thumbUrl = $contractor->getMediaSignedUrl('logo', 'thumb');
@@ -72,16 +66,7 @@ class ContractorLogoController extends Controller
         $contractor->clearMediaCollection('logo');
 
         if ($media) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()?->getTenantId(),
-                    'contractor_id' => $contractor->id,
-                    'logo_id'       => $media->id,
-                ])
-                ->event(ContractorActivityType::LogoDeleted->value)
-                ->log('Contractor logo deleted')
-            ;
+            $contractor->logModelActivity(ContractorActivityType::LogoDeleted->value, $media);
         }
 
         return response()->json(['message' => 'Contractor logo deleted.'], HttpResponse::HTTP_NO_CONTENT);

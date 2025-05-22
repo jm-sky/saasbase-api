@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\Controllers;
 
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductLogoUploadRequest;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class ProductLogoController extends Controller
 {
+    use HasActivityLogging;
+
     public function upload(ProductLogoUploadRequest $request, Product $product)
     {
         $product->clearMediaCollection('logo');
@@ -21,16 +24,7 @@ class ProductLogoController extends Controller
             ->toMediaCollection('logo')
         ;
 
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'  => request()->user()?->getTenantId(),
-                'product_id' => $product->id,
-                'logo_id'    => $media->id,
-            ])
-            ->event(ProductActivityType::LogoCreated->value)
-            ->log('Product logo uploaded')
-        ;
+        $product->logModelActivity(ProductActivityType::LogoCreated->value, $media);
 
         $logoUrl  = $product->getMediaSignedUrl('logo');
         $thumbUrl = $product->getMediaSignedUrl('logo', 'thumb');
@@ -72,16 +66,7 @@ class ProductLogoController extends Controller
         $product->clearMediaCollection('logo');
 
         if ($media) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'product_id' => $product->id,
-                    'logo_id'    => $media->id,
-                ])
-                ->event(ProductActivityType::LogoDeleted->value)
-                ->log('Product logo deleted')
-            ;
+            $product->logModelActivity(ProductActivityType::LogoDeleted->value, $media);
         }
 
         return response()->json(['message' => 'Product logo deleted.'], HttpResponse::HTTP_NO_CONTENT);

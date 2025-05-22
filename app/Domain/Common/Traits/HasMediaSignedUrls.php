@@ -5,7 +5,11 @@ namespace App\Domain\Common\Traits;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Support\SignedImageUrlGenerator;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
 
+/**
+ * @mixin HasMedia
+ */
 trait HasMediaSignedUrls
 {
     public const TEMPORARY_URL_EXPIRATION_TIME = 15;

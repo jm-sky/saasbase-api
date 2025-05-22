@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorAttachmentRequest;
@@ -12,6 +13,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ContractorAttachmentsController extends Controller
 {
+    use HasActivityLogging;
+
     /**
      * List all attachments for a contractor.
      */
@@ -31,17 +34,7 @@ class ContractorAttachmentsController extends Controller
     {
         $file  = $request->file('file');
         $media = $contractor->addMedia($file)->toMediaCollection('attachments');
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'attachment_id' => $media->id,
-            ])
-            ->event(ContractorActivityType::AttachmentCreated->value)
-            ->log('Contractor attachment created')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
@@ -99,20 +92,8 @@ class ContractorAttachmentsController extends Controller
     public function destroy(Contractor $contractor, $mediaUuid)
     {
         $media = Media::findByUuid($mediaUuid);
-
         $this->authorizeMedia($contractor, $media);
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'attachment_id' => $media->id,
-            ])
-            ->event(ContractorActivityType::AttachmentDeleted->value)
-            ->log('Contractor attachment deleted')
-        ;
-
+        $contractor->logModelActivity(ContractorActivityType::AttachmentDeleted->value, $media);
         $media->delete();
 
         return response()->json(['message' => 'Attachment deleted successfully.'], Response::HTTP_NO_CONTENT);

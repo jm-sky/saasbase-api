@@ -27,4 +27,33 @@ enum ContractorActivityType: string
     case AttachmentCreated     = 'contractor.attachment.created';
     case AttachmentUpdated     = 'contractor.attachment.updated';
     case AttachmentDeleted     = 'contractor.attachment.deleted';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Created               => 'Contractor created',
+            self::Updated               => 'Contractor updated',
+            self::Deleted               => 'Contractor deleted',
+            self::AddressCreated        => 'Contractor address created',
+            self::AddressUpdated        => 'Contractor address updated',
+            self::AddressDeleted        => 'Contractor address deleted',
+            self::AddressSetDefault     => 'Contractor address set as default',
+            self::BankAccountCreated    => 'Contractor bank account created',
+            self::BankAccountUpdated    => 'Contractor bank account updated',
+            self::BankAccountDeleted    => 'Contractor bank account deleted',
+            self::BankAccountSetDefault => 'Contractor bank account set as default',
+            self::CommentCreated        => 'Contractor comment created',
+            self::CommentUpdated        => 'Contractor comment updated',
+            self::CommentDeleted        => 'Contractor comment deleted',
+            self::ContactCreated        => 'Contractor contact created',
+            self::ContactUpdated        => 'Contractor contact updated',
+            self::ContactDeleted        => 'Contractor contact deleted',
+            self::LogoCreated           => 'Contractor logo created',
+            self::LogoUpdated           => 'Contractor logo updated',
+            self::LogoDeleted           => 'Contractor logo deleted',
+            self::AttachmentCreated     => 'Contractor attachment created',
+            self::AttachmentUpdated     => 'Contractor attachment updated',
+            self::AttachmentDeleted     => 'Contractor attachment deleted',
+        };
+    }
 }

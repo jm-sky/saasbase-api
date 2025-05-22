@@ -4,6 +4,7 @@ namespace App\Domain\Products\Controllers;
 
 use App\Domain\Common\DTOs\CommentDTO;
 use App\Domain\Common\Models\Comment;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductCommentRequest;
@@ -13,6 +14,8 @@ use Illuminate\Http\Response;
 
 class ProductCommentsController extends Controller
 {
+    use HasActivityLogging;
+
     public function index(Product $product): JsonResponse
     {
         $comments = $product->comments()->with('user')->latest()->paginate();
@@ -46,16 +49,7 @@ class ProductCommentsController extends Controller
             'content'          => $validated['content'],
         ]);
 
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'  => request()->user()?->getTenantId(),
-                'product_id' => $product->id,
-                'comment_id' => $comment->id,
-            ])
-            ->event(ProductActivityType::CommentCreated->value)
-            ->log('Product comment created')
-        ;
+        $product->logModelActivity(ProductActivityType::CommentCreated->value, $comment);
 
         return response()->json([
             'message' => 'Comment created successfully.',
@@ -68,17 +62,7 @@ class ProductCommentsController extends Controller
         abort_if($comment->commentable_id !== $product->id, Response::HTTP_NOT_FOUND);
         $validated = $request->validated();
         $comment->update($validated);
-
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'  => request()->user()?->getTenantId(),
-                'product_id' => $product->id,
-                'comment_id' => $comment->id,
-            ])
-            ->event(ProductActivityType::CommentUpdated->value)
-            ->log('Product comment updated')
-        ;
+        $product->logModelActivity(ProductActivityType::CommentUpdated->value, $comment);
 
         return response()->json([
             'message' => 'Comment updated successfully.',
@@ -89,18 +73,8 @@ class ProductCommentsController extends Controller
     public function destroy(Product $product, Comment $comment): JsonResponse
     {
         abort_if($comment->commentable_id !== $product->id, Response::HTTP_NOT_FOUND);
+        $product->logModelActivity(ProductActivityType::CommentDeleted->value, $comment);
         $comment->delete();
-
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'  => request()->user()?->getTenantId(),
-                'product_id' => $product->id,
-                'comment_id' => $comment->id,
-            ])
-            ->event(ProductActivityType::CommentDeleted->value)
-            ->log('Product comment deleted')
-        ;
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

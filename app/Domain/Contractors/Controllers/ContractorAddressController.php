@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\Resources\AddressResource;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorAddress;
@@ -15,6 +16,8 @@ use Illuminate\Http\Response;
 
 class ContractorAddressController extends Controller
 {
+    use HasActivityLogging;
+
     /**
      * Display a listing of the resource.
      */
@@ -30,15 +33,7 @@ class ContractorAddressController extends Controller
     {
         $address = $contractor->addresses()->create($request->validated());
 
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'contractor_id' => $contractor->id,
-                'address_id'    => $address->id,
-            ])
-            ->event(ContractorActivityType::AddressCreated->value)
-            ->log('Contractor address created')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::AddressCreated->value, $address);
 
         return new AddressResource($address);
     }
@@ -61,15 +56,7 @@ class ContractorAddressController extends Controller
         $address = $contractor->addresses()->findOrFail($addressId);
         $address->update($request->validated());
 
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'contractor_id' => $contractor->id,
-                'address_id'    => $address->id,
-            ])
-            ->event(ContractorActivityType::AddressUpdated->value)
-            ->log('Contractor address updated')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::AddressUpdated->value, $address);
 
         return new AddressResource($address);
     }
@@ -82,15 +69,7 @@ class ContractorAddressController extends Controller
         $address = $contractor->addresses()->findOrFail($addressId);
         $address->delete();
 
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'contractor_id' => $contractor->id,
-                'address_id'    => $address->id,
-            ])
-            ->event(ContractorActivityType::AddressDeleted->value)
-            ->log('Contractor address deleted')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::AddressDeleted->value, $address);
 
         return response()->noContent();
     }
@@ -100,15 +79,7 @@ class ContractorAddressController extends Controller
         $contractor->addresses()->update(['is_default' => false]);
         $address->update(['is_default' => true]);
 
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'contractor_id' => $contractor->id,
-                'address_id'    => $address->id,
-            ])
-            ->event(ContractorActivityType::AddressSetDefault->value)
-            ->log('Contractor address set as default')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::AddressSetDefault->value, $address);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

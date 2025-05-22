@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\Controllers;
 
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductAttachmentRequest;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class ProductAttachmentsController extends Controller
 {
+    use HasActivityLogging;
+
     /**
      * List all attachments for a product.
      */
@@ -42,16 +45,7 @@ class ProductAttachmentsController extends Controller
             ->toMediaCollection('attachments')
         ;
 
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'product_id'    => $product->id,
-                'attachment_id' => $media->id,
-            ])
-            ->event(ProductActivityType::AttachmentCreated->value)
-            ->log('Product attachment created')
-        ;
+        $product->logModelActivity(ProductActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
@@ -104,16 +98,7 @@ class ProductAttachmentsController extends Controller
             ->toMediaCollection('attachments')
         ;
 
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'product_id'    => $product->id,
-                'attachment_id' => $newMedia->id,
-            ])
-            ->event(ProductActivityType::AttachmentUpdated->value)
-            ->log('Product attachment updated')
-        ;
+        $product->logModelActivity(ProductActivityType::AttachmentUpdated->value, $newMedia);
 
         return response()->json([
             'message' => 'Attachment updated successfully.',
@@ -139,18 +124,8 @@ class ProductAttachmentsController extends Controller
             return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
+        $product->logModelActivity(ProductActivityType::AttachmentDeleted->value, $media);
         $media->delete();
-
-        activity()
-            ->performedOn($product)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'product_id'    => $product->id,
-                'attachment_id' => $media->id,
-            ])
-            ->event(ProductActivityType::AttachmentDeleted->value)
-            ->log('Product attachment deleted')
-        ;
 
         return response()->json(null, HttpResponse::HTTP_NO_CONTENT);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\DTOs\ContractorContactPersonDTO;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ContractorContactController extends Controller
 {
+    use HasActivityLogging;
+
     public function index(Contractor $contractor): JsonResponse
     {
         $contacts = $contractor->contacts()->paginate();
@@ -31,17 +34,7 @@ class ContractorContactController extends Controller
     public function store(ContractorContactPersonRequest $request, Contractor $contractor): JsonResponse
     {
         $contact = $contractor->contacts()->create($request->validated());
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'contact_id'    => $contact->id,
-            ])
-            ->event(ContractorActivityType::ContactCreated->value)
-            ->log('Contractor contact created')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::ContactCreated->value, $contact);
 
         return response()->json([
             'message' => 'Contact created successfully.',
@@ -61,19 +54,8 @@ class ContractorContactController extends Controller
     public function update(ContractorContactPersonRequest $request, Contractor $contractor, ContractorContactPerson $contact): JsonResponse
     {
         abort_if($contact->contractor_id !== $contractor->id, Response::HTTP_NOT_FOUND);
-
         $contact->update($request->validated());
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'contact_id'    => $contact->id,
-            ])
-            ->event(ContractorActivityType::ContactUpdated->value)
-            ->log('Contractor contact updated')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::ContactUpdated->value, $contact);
 
         return response()->json([
             'message' => 'Contact updated successfully.',
@@ -84,18 +66,7 @@ class ContractorContactController extends Controller
     public function destroy(Contractor $contractor, ContractorContactPerson $contact): JsonResponse
     {
         abort_if($contact->contractor_id !== $contractor->id, Response::HTTP_NOT_FOUND);
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'contact_id'    => $contact->id,
-            ])
-            ->event(ContractorActivityType::ContactDeleted->value)
-            ->log('Contractor contact deleted')
-        ;
-
+        $contractor->logModelActivity(ContractorActivityType::ContactDeleted->value, $contact);
         $contact->delete();
 
         return response()->json(['message' => 'Contact deleted successfully.'], Response::HTTP_NO_CONTENT);

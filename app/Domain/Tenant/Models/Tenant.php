@@ -7,6 +7,7 @@ use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
@@ -51,6 +52,7 @@ class Tenant extends BaseModel implements HasMedia
     use HaveAddresses;
     use HaveBankAccounts;
     use HasActivityLog;
+    use HasActivityLogging;
 
     public static ?string $BYPASSED_TENANT_ID = null;
 
@@ -129,36 +131,15 @@ class Tenant extends BaseModel implements HasMedia
     protected static function booted()
     {
         static::created(function ($tenant) {
-            activity()
-                ->performedOn($tenant)
-                ->withProperties([
-                    'tenant_id' => $tenant->id,
-                ])
-                ->event(TenantActivityType::Created->value)
-                ->log('Tenant created')
-            ;
+            $tenant->logModelActivity(TenantActivityType::Created->value, $tenant);
         });
 
         static::updated(function ($tenant) {
-            activity()
-                ->performedOn($tenant)
-                ->withProperties([
-                    'tenant_id' => $tenant->id,
-                ])
-                ->event(TenantActivityType::Updated->value)
-                ->log('Tenant updated')
-            ;
+            $tenant->logModelActivity(TenantActivityType::Updated->value, $tenant);
         });
 
         static::deleted(function ($tenant) {
-            activity()
-                ->performedOn($tenant)
-                ->withProperties([
-                    'tenant_id' => $tenant->id,
-                ])
-                ->event(TenantActivityType::Deleted->value)
-                ->log('Tenant deleted')
-            ;
+            $tenant->logModelActivity(TenantActivityType::Deleted->value, $tenant);
         });
     }
 

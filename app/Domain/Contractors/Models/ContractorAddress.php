@@ -5,6 +5,7 @@ namespace App\Domain\Contractors\Models;
 use App\Domain\Common\Enums\AddressType;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
@@ -37,6 +38,7 @@ class ContractorAddress extends Address
 {
     use BelongsToTenant;
     use HasActivityLog;
+    use HasActivityLogging;
 
     /**
      * The table associated with the model.
@@ -72,42 +74,18 @@ class ContractorAddress extends Address
         return $this->belongsTo(Contractor::class);
     }
 
-    // protected static function booted()
-    // {
-    //     static::created(function ($address) {
-    //         activity()
-    //             ->performedOn($address->contractor)
-    //             ->withProperties([
-    //                 'tenant_id'  => request()->user()?->getTenantId(),
-    //                 'address_id' => $address->id,
-    //             ])
-    //             ->event(ContractorActivityType::AddressCreated->value)
-    //             ->log('Contractor address created')
-    //         ;
-    //     });
+    protected static function booted()
+    {
+        static::created(function ($address) {
+            $address->contractor->logModelActivity(ContractorActivityType::AddressCreated->value, $address);
+        });
 
-    //     static::updated(function ($address) {
-    //         activity()
-    //             ->performedOn($address->contractor)
-    //             ->withProperties([
-    //                 'tenant_id'  => request()->user()?->getTenantId(),
-    //                 'address_id' => $address->id,
-    //             ])
-    //             ->event(ContractorActivityType::AddressUpdated->value)
-    //             ->log('Contractor address updated')
-    //         ;
-    //     });
+        static::updated(function ($address) {
+            $address->contractor->logModelActivity(ContractorActivityType::AddressUpdated->value, $address);
+        });
 
-    //     static::deleted(function ($address) {
-    //         activity()
-    //             ->performedOn($address->contractor)
-    //             ->withProperties([
-    //                 'tenant_id'  => request()->user()?->getTenantId(),
-    //                 'address_id' => $address->id,
-    //             ])
-    //             ->event(ContractorActivityType::AddressDeleted->value)
-    //             ->log('Contractor address deleted')
-    //         ;
-    //     });
-    // }
+        static::deleted(function ($address) {
+            $address->contractor->logModelActivity(ContractorActivityType::AddressDeleted->value, $address);
+        });
+    }
 }

@@ -7,6 +7,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
@@ -57,6 +58,7 @@ class Contractor extends BaseModel implements HasMedia
     use HaveComments;
     use HasTags;
     use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'tenant_id',
@@ -128,39 +130,15 @@ class Contractor extends BaseModel implements HasMedia
     protected static function booted()
     {
         static::created(function ($contractor) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()?->getTenantId(),
-                    'contractor_id' => $contractor->id,
-                ])
-                ->event(ContractorActivityType::Created->value)
-                ->log('Contractor created')
-            ;
+            $contractor->logModelActivity(ContractorActivityType::Created->value, $contractor);
         });
 
         static::updated(function ($contractor) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()?->getTenantId(),
-                    'contractor_id' => $contractor->id,
-                ])
-                ->event(ContractorActivityType::Updated->value)
-                ->log('Contractor updated')
-            ;
+            $contractor->logModelActivity(ContractorActivityType::Updated->value, $contractor);
         });
 
         static::deleted(function ($contractor) {
-            activity()
-                ->performedOn($contractor)
-                ->withProperties([
-                    'tenant_id'     => request()->user()?->getTenantId(),
-                    'contractor_id' => $contractor->id,
-                ])
-                ->event(ContractorActivityType::Deleted->value)
-                ->log('Contractor deleted')
-            ;
+            $contractor->logModelActivity(ContractorActivityType::Deleted->value, $contractor);
         });
     }
 }

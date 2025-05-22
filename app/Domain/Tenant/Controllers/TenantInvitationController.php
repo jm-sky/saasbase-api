@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Tenant\DTOs\TenantInvitationDTO;
 use App\Domain\Tenant\Enums\InvitationStatus;
 use App\Domain\Tenant\Enums\TenantActivityType;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class TenantInvitationController extends Controller
 {
     use AuthorizesRequests;
+    use HasActivityLogging;
 
     public const TOKEN_EXPIRATION_DAYS = 7;
 
@@ -241,10 +243,7 @@ class TenantInvitationController extends Controller
         ?string $email = null,
         ?string $role = null,
     ): void {
-        $properties = [
-            'tenant_id'     => $tenant->id,
-            'invitation_id' => $invitation->id,
-        ];
+        $properties = [];
 
         if ($user) {
             $properties['user_id'] = $user->id;
@@ -258,11 +257,6 @@ class TenantInvitationController extends Controller
             $properties['role'] = $role;
         }
 
-        activity()
-            ->performedOn($tenant)
-            ->withProperties($properties)
-            ->event($activityType->value)
-            ->log($activityType->label())
-        ;
+        $tenant->logModelActivity($activityType->value, $invitation, $properties);
     }
 }

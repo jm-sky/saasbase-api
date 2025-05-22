@@ -4,6 +4,7 @@ namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantAttachmentRequest;
@@ -14,6 +15,7 @@ use Illuminate\Http\Response;
 class TenantAttachmentsController extends Controller
 {
     use AuthorizesRequests;
+    use HasActivityLogging;
 
     public function index(Tenant $tenant)
     {
@@ -32,16 +34,7 @@ class TenantAttachmentsController extends Controller
 
         $file  = $request->file('file');
         $media = $tenant->addMedia($file)->toMediaCollection('attachments');
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'     => $tenant->id,
-                'attachment_id' => $media->id,
-            ])
-            ->event(TenantActivityType::AttachmentCreated->value)
-            ->log('Tenant attachment created')
-        ;
+        $tenant->logModelActivity(TenantActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'data' => MediaDTO::fromModel($media)->toArray(),
@@ -86,17 +79,7 @@ class TenantAttachmentsController extends Controller
     public function destroy(Tenant $tenant, Media $media)
     {
         $this->authorize('delete', [$media, $tenant]);
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'     => $tenant->id,
-                'attachment_id' => $media->id,
-            ])
-            ->event(TenantActivityType::AttachmentDeleted->value)
-            ->log('Tenant attachment deleted')
-        ;
-
+        $tenant->logModelActivity(TenantActivityType::AttachmentDeleted->value, $media);
         $media->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

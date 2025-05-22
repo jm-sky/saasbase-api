@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,7 @@ class ContractorContactPerson extends BaseModel
 {
     use BelongsToTenant;
     use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'name',
@@ -44,39 +46,15 @@ class ContractorContactPerson extends BaseModel
     protected static function booted()
     {
         static::created(function ($contact) {
-            activity()
-                ->performedOn($contact->contractor)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'contact_id' => $contact->id,
-                ])
-                ->event(ContractorActivityType::ContactCreated->value)
-                ->log('Contractor contact created')
-            ;
+            $contact->contractor->logModelActivity(ContractorActivityType::ContactCreated->value, $contact);
         });
 
         static::updated(function ($contact) {
-            activity()
-                ->performedOn($contact->contractor)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'contact_id' => $contact->id,
-                ])
-                ->event(ContractorActivityType::ContactUpdated->value)
-                ->log('Contractor contact updated')
-            ;
+            $contact->contractor->logModelActivity(ContractorActivityType::ContactUpdated->value, $contact);
         });
 
         static::deleted(function ($contact) {
-            activity()
-                ->performedOn($contact->contractor)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'contact_id' => $contact->id,
-                ])
-                ->event(ContractorActivityType::ContactDeleted->value)
-                ->log('Contractor contact deleted')
-            ;
+            $contact->contractor->logModelActivity(ContractorActivityType::ContactDeleted->value, $contact);
         });
     }
 }

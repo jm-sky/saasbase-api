@@ -5,7 +5,9 @@ namespace App\Domain\Contractors\Controllers;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
@@ -19,6 +21,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 class ContractorController extends Controller
 {
     use HasIndexQuery;
+    use HasActivityLogging;
 
     protected int $defaultPerPage = 15;
 
@@ -69,6 +72,7 @@ class ContractorController extends Controller
     public function store(ContractorRequest $request): JsonResponse
     {
         $contractor = Contractor::create($request->validated());
+        $contractor->logModelActivity(ContractorActivityType::Created->value, $contractor);
 
         return response()->json([
             'message' => 'Contractor created successfully.',
@@ -84,6 +88,7 @@ class ContractorController extends Controller
     public function update(ContractorRequest $request, Contractor $contractor): JsonResponse
     {
         $contractor->update($request->validated());
+        $contractor->logModelActivity(ContractorActivityType::Updated->value, $contractor);
 
         return response()->json([
             'message' => 'Contractor updated successfully.',
@@ -93,6 +98,7 @@ class ContractorController extends Controller
 
     public function destroy(Contractor $contractor): JsonResponse
     {
+        $contractor->logModelActivity(ContractorActivityType::Deleted->value, $contractor);
         $contractor->delete();
 
         return response()->json(['message' => 'Contractor deleted successfully.'], Response::HTTP_NO_CONTENT);

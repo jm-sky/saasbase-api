@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\DTOs\CommentDTO;
 use App\Domain\Common\Models\Comment;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\ContractorCommentRequest;
@@ -13,6 +14,8 @@ use Illuminate\Http\Response;
 
 class ContractorCommentsController extends Controller
 {
+    use HasActivityLogging;
+
     public function index(Contractor $contractor): JsonResponse
     {
         $comments = $contractor->comments()->with('user')->latest()->paginate();
@@ -46,16 +49,7 @@ class ContractorCommentsController extends Controller
             'content'          => $validated['content'],
         ]);
 
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'comment_id'    => $comment->id,
-            ])
-            ->event(ContractorActivityType::CommentCreated->value)
-            ->log('Contractor comment created')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::CommentCreated->value, $comment);
 
         return response()->json([
             'message' => 'Comment created successfully.',
@@ -68,17 +62,7 @@ class ContractorCommentsController extends Controller
         abort_if($comment->commentable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
         $validated = $request->validated();
         $comment->update($validated);
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'comment_id'    => $comment->id,
-            ])
-            ->event(ContractorActivityType::CommentUpdated->value)
-            ->log('Contractor comment updated')
-        ;
+        $contractor->logModelActivity(ContractorActivityType::CommentUpdated->value, $comment);
 
         return response()->json([
             'message' => 'Comment updated successfully.',
@@ -89,18 +73,8 @@ class ContractorCommentsController extends Controller
     public function destroy(Contractor $contractor, Comment $comment): JsonResponse
     {
         abort_if($comment->commentable_id !== $contractor->id, Response::HTTP_NOT_FOUND);
+        $contractor->logModelActivity(ContractorActivityType::CommentDeleted->value, $comment);
         $comment->delete();
-
-        activity()
-            ->performedOn($contractor)
-            ->withProperties([
-                'tenant_id'     => request()->user()?->getTenantId(),
-                'contractor_id' => $contractor->id,
-                'comment_id'    => $comment->id,
-            ])
-            ->event(ContractorActivityType::CommentDeleted->value)
-            ->log('Contractor comment deleted')
-        ;
 
         return response()->json(['message' => 'Comment deleted successfully.'], Response::HTTP_NO_CONTENT);
     }

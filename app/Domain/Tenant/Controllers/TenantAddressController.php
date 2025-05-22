@@ -5,6 +5,7 @@ namespace App\Domain\Tenant\Controllers;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Policies\AddressPolicy;
 use App\Domain\Common\Resources\AddressResource;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantAddress;
@@ -22,6 +23,7 @@ use Illuminate\Http\Response;
 class TenantAddressController extends Controller
 {
     use AuthorizesRequests;
+    use HasActivityLogging;
 
     public function index(Tenant $tenant): AnonymousResourceCollection
     {
@@ -39,18 +41,8 @@ class TenantAddressController extends Controller
     public function store(StoreTenantAddressRequest $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('create', [Address::class, $tenant]);
-
         $address = $tenant->addresses()->create($request->validated());
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'  => $tenant->id,
-                'address_id' => $address->id,
-            ])
-            ->event(TenantActivityType::AddressCreated->value)
-            ->log('Tenant address created')
-        ;
+        $tenant->logModelActivity(TenantActivityType::AddressCreated->value, $address);
 
         return response()->json([
             'message' => 'Address created successfully.',
@@ -68,18 +60,8 @@ class TenantAddressController extends Controller
     public function update(UpdateTenantAddressRequest $request, Tenant $tenant, Address $address): JsonResponse
     {
         $this->authorize('update', [$address, $tenant]);
-
         $address->update($request->validated());
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'  => $tenant->id,
-                'address_id' => $address->id,
-            ])
-            ->event(TenantActivityType::AddressUpdated->value)
-            ->log('Tenant address updated')
-        ;
+        $tenant->logModelActivity(TenantActivityType::AddressUpdated->value, $address);
 
         return response()->json([
             'message' => 'Address updated successfully.',
@@ -90,17 +72,7 @@ class TenantAddressController extends Controller
     public function destroy(Tenant $tenant, Address $address): JsonResponse
     {
         $this->authorize('delete', [$address, $tenant]);
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'  => $tenant->id,
-                'address_id' => $address->id,
-            ])
-            ->event(TenantActivityType::AddressDeleted->value)
-            ->log('Tenant address deleted')
-        ;
-
+        $tenant->logModelActivity(TenantActivityType::AddressDeleted->value, $address);
         $address->delete();
 
         return response()->json(['message' => 'Address deleted successfully.'], Response::HTTP_NO_CONTENT);
@@ -110,16 +82,7 @@ class TenantAddressController extends Controller
     {
         $tenant->addresses()->update(['is_default' => false]);
         $address->update(['is_default' => true]);
-
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id'  => $tenant->id,
-                'address_id' => $address->id,
-            ])
-            ->event(TenantActivityType::AddressSetDefault->value)
-            ->log('Tenant address set as default')
-        ;
+        $tenant->logModelActivity(TenantActivityType::AddressSetDefault->value, $address);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

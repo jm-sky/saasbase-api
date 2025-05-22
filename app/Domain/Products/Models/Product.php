@@ -9,6 +9,7 @@ use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
@@ -48,6 +49,7 @@ class Product extends BaseModel implements HasMedia
     use HasTags;
     use HaveComments;
     use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'tenant_id',
@@ -128,39 +130,15 @@ class Product extends BaseModel implements HasMedia
     protected static function booted()
     {
         static::created(function ($product) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'product_id' => $product->id,
-                ])
-                ->event(ProductActivityType::Created->value)
-                ->log('Product created')
-            ;
+            $product->logModelActivity(ProductActivityType::Created->value, $product);
         });
 
         static::updated(function ($product) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'product_id' => $product->id,
-                ])
-                ->event(ProductActivityType::Updated->value)
-                ->log('Product updated')
-            ;
+            $product->logModelActivity(ProductActivityType::Updated->value, $product);
         });
 
         static::deleted(function ($product) {
-            activity()
-                ->performedOn($product)
-                ->withProperties([
-                    'tenant_id'  => request()->user()?->getTenantId(),
-                    'product_id' => $product->id,
-                ])
-                ->event(ProductActivityType::Deleted->value)
-                ->log('Product deleted')
-            ;
+            $product->logModelActivity(ProductActivityType::Deleted->value, $product);
         });
     }
 }

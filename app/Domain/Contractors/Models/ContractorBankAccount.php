@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ContractorBankAccount extends BankAccount
 {
     use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'contractor_id',
@@ -45,39 +47,15 @@ class ContractorBankAccount extends BankAccount
     protected static function booted()
     {
         static::created(function ($bankAccount) {
-            activity()
-                ->performedOn($bankAccount->contractor)
-                ->withProperties([
-                    'tenant_id'       => request()->user()?->getTenantId(),
-                    'bank_account_id' => $bankAccount->id,
-                ])
-                ->event(ContractorActivityType::BankAccountCreated->value)
-                ->log('Contractor bank account created')
-            ;
+            $bankAccount->contractor->logModelActivity(ContractorActivityType::BankAccountCreated->value, $bankAccount);
         });
 
         static::updated(function ($bankAccount) {
-            activity()
-                ->performedOn($bankAccount->contractor)
-                ->withProperties([
-                    'tenant_id'       => request()->user()?->getTenantId(),
-                    'bank_account_id' => $bankAccount->id,
-                ])
-                ->event(ContractorActivityType::BankAccountUpdated->value)
-                ->log('Contractor bank account updated')
-            ;
+            $bankAccount->contractor->logModelActivity(ContractorActivityType::BankAccountUpdated->value, $bankAccount);
         });
 
         static::deleted(function ($bankAccount) {
-            activity()
-                ->performedOn($bankAccount->contractor)
-                ->withProperties([
-                    'tenant_id'       => request()->user()?->getTenantId(),
-                    'bank_account_id' => $bankAccount->id,
-                ])
-                ->event(ContractorActivityType::BankAccountDeleted->value)
-                ->log('Contractor bank account deleted')
-            ;
+            $bankAccount->contractor->logModelActivity(ContractorActivityType::BankAccountDeleted->value, $bankAccount);
         });
     }
 
@@ -86,14 +64,6 @@ class ContractorBankAccount extends BankAccount
         $this->contractor->bankAccounts()->update(['is_default' => false]);
         $this->update(['is_default' => true]);
 
-        activity()
-            ->performedOn($this->contractor)
-            ->withProperties([
-                'tenant_id'       => request()->user()?->getTenantId(),
-                'bank_account_id' => $this->id,
-            ])
-            ->event(ContractorActivityType::BankAccountSetDefault->value)
-            ->log('Contractor bank account set as default')
-        ;
+        $this->contractor->logModelActivity(ContractorActivityType::BankAccountSetDefault->value, $this);
     }
 }

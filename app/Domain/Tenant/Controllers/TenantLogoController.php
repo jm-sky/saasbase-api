@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenant\Controllers;
 
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\TenantLogoUploadRequest;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class TenantLogoController extends Controller
 {
+    use HasActivityLogging;
+
     public function upload(TenantLogoUploadRequest $request, Tenant $tenant)
     {
         $tenant->clearMediaCollection('logo');
@@ -21,15 +24,7 @@ class TenantLogoController extends Controller
             ->toMediaCollection('logo')
         ;
 
-        activity()
-            ->performedOn($tenant)
-            ->withProperties([
-                'tenant_id' => $tenant->id,
-                'logo_id'   => $media->id,
-            ])
-            ->event(TenantActivityType::LogoCreated->value)
-            ->log('Tenant logo created')
-        ;
+        $tenant->logModelActivity(TenantActivityType::LogoCreated->value, $media);
 
         $logoUrl  = $tenant->getMediaSignedUrl('logo');
         $thumbUrl = $tenant->getMediaSignedUrl('logo', 'thumb');
@@ -71,15 +66,7 @@ class TenantLogoController extends Controller
         $tenant->clearMediaCollection('logo');
 
         if ($media) {
-            activity()
-                ->performedOn($tenant)
-                ->withProperties([
-                    'tenant_id' => $tenant->id,
-                    'logo_id'   => $media->id,
-                ])
-                ->event(TenantActivityType::LogoDeleted->value)
-                ->log('Tenant logo deleted')
-            ;
+            $tenant->logModelActivity(TenantActivityType::LogoDeleted->value, $media);
         }
 
         return response()->json(['message' => 'Tenant logo deleted.'], HttpResponse::HTTP_NO_CONTENT);
