@@ -11,42 +11,63 @@ use Intervention\Image\ImageManager;
 
 class LogoFetcherService
 {
+    protected bool $debug = false;
+
+    protected bool $duckDuckGo = false;
+
+    protected bool $clearbit = true;
+
+    protected bool $gravatar = true;
+
     protected string $tempFile;
 
     protected ImageManager $imageManager;
 
     public function __construct()
     {
+        $this->debug        = 'local' === config('app.env');
         $this->imageManager = new ImageManager(new Driver());
+    }
+
+    protected function log(string $message, array $context = []): void
+    {
+        Log::info('[LogoFetcherService] ' . $message, $context);
     }
 
     public function fetchAndStore(Contractor $contractor, ?string $website, ?string $email): bool
     {
         $url = $this->getBestLogoUrl($website, $email);
 
-        if ($url) {
-            try {
-                $response = Http::get($url);
+        if (!$url) {
+            return false;
+        }
 
-                if ($response->successful()) {
-                    $contractor->clearMediaCollection('logo');
+        try {
+            $this->log('Fetching logo', ['url' => $url]);
+            $response = Http::get($url);
 
-                    // Create a temporary file
-                    $this->saveLogoToTempFile($response->body(), $response->header('Content-Type'));
+            if (!$response->successful()) {
+                $this->log('Logo not found', ['url' => $url]);
 
-                    // Add the temporary file to media collection
-                    $media = $contractor->addMedia($this->tempFile)->toMediaCollection('logo');
-
-                    // Clean up the temporary file
-                    $this->cleanUpTempFile();
-
-                    $contractor->logModelActivity(ContractorActivityType::LogoCreated->value, $media);
-
-                    return true;
-                }
-            } catch (\Exception $e) {
-                Log::error('[LogoFetcherService] Error fetching logo', ['error' => $e->getMessage()]);
+                return false;
             }
+
+            $contractor->clearMediaCollection('logo');
+
+            // Create a temporary file
+            $this->saveLogoToTempFile($response->body(), $response->header('Content-Type'));
+
+            // Add the temporary file to media collection
+            $media = $contractor->addMedia($this->tempFile)->toMediaCollection('logo');
+
+            // Clean up the temporary file
+            $this->cleanUpTempFile();
+
+            $contractor->logModelActivity(ContractorActivityType::LogoCreated->value, $media);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('[LogoFetcherService] Error fetching logo', ['error' => $e->getMessage()]);
         }
 
         return false;
@@ -60,14 +81,14 @@ class LogoFetcherService
             // Option 1: DuckDuckGo favicon
             $duckDuckGo = "https://icons.duckduckgo.com/ip3/{$domain}.ico";
 
-            if ($this->urlExists($duckDuckGo)) {
+            if ($this->duckDuckGo && $this->urlExists($duckDuckGo)) {
                 return $duckDuckGo;
             }
 
             // Option 2: Clearbit (optional)
             $clearbit = "https://logo.clearbit.com/{$domain}";
 
-            if ($this->urlExists($clearbit)) {
+            if ($this->clearbit && $this->urlExists($clearbit)) {
                 return $clearbit;
             }
         }
@@ -76,7 +97,7 @@ class LogoFetcherService
             $hash     = md5(strtolower(trim($email)));
             $gravatar = "https://www.gravatar.com/avatar/{$hash}?d=404";
 
-            if ($this->urlExists($gravatar)) {
+            if ($this->gravatar && $this->urlExists($gravatar)) {
                 return $gravatar;
             }
         }
