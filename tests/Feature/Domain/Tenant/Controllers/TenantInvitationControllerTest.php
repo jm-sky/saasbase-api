@@ -14,6 +14,9 @@ use PHPUnit\Framework\Attributes\TestDox;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
+/**
+ * @internal
+ */
 #[TestDox('TenantInvitationController')]
 #[CoversNothing]
 class TenantInvitationControllerTest extends TestCase
