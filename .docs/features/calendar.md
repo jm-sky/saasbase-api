@@ -70,15 +70,6 @@ Reminders for calendar events.
 
 ---
 
-## 4. (optional) contact_people
-If not already existing — contractor's contact people.
-
-- id
-- contractor_id: foreignId → contractors
-- name, email, phone...
-
----
-
 ## Notes:
 - Events can relate to any model using `morphTo: related()`, e.g. project, task, deal, product.
 - Attendees use polymorphism to support users and contact people.
@@ -90,3 +81,7 @@ If not already existing — contractor's contact people.
 - All events for given project: `Event::whereMorphedTo('related', $project)->get();`
 - All events where user is attending: `EventAttendee::whereMorphedTo('attendee', $user)->with('event')->get();`
 - Upcoming events: `Event::where('start_at', '>', now())->where('status', EventStatus::SCHEDULED)->get();`
+
+---
+
+## Implementation plan:

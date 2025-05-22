@@ -2,6 +2,7 @@
 
 use App\Domain\Auth\Controllers\ApiKeyController;
 use App\Domain\Auth\Controllers\AuthController;
+use App\Domain\Calendar\Http\Controllers\EventController;
 use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
@@ -55,6 +56,7 @@ Route::prefix('v1')->group(function () {
             require __DIR__ . '/api/products.php';
 
             Route::apiResource('invoices', InvoiceController::class);
+            Route::apiResource('events', EventController::class);
             Route::apiResource('roles', RoleController::class);
             Route::apiResource('api-keys', ApiKeyController::class);
             Route::get('/logs', [ActivityLogController::class, 'index']);
