@@ -2,10 +2,10 @@
 
 namespace App\Domain\Common\Traits;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Support\SignedImageUrlGenerator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 
 /**

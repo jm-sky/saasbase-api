@@ -12,30 +12,42 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-public function show(Request $request, string $modelName, string $modelId, string $mediaId, string $fileName)
+class SignedFileController extends Controller
 {
-    $modelClass = $this->resolveModelClass($modelName);
+    public function show(Request $request, string $modelName, string $modelId, string $mediaId, string $fileName)
+    {
+        $modelClass = $this->resolveModelClass($modelName);
 
-    if (!$modelClass) {
-        abort(HttpResponse::HTTP_NOT_FOUND, 'Model not recognized');
+        $media = Media::where('id', $mediaId)
+            ->where('model_type', $modelClass)
+            ->where('model_id', $modelId)
+            ->where('file_name', $fileName)
+            ->firstOrFail()
+        ;
+
+        $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+        return Response::stream(function () use ($stream) {
+            fpassthru($stream);
+            fclose($stream);
+        }, HttpResponse::HTTP_OK, [
+            'Content-Type'        => $media->mime_type,
+            'Content-Length'      => $media->size,
+            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Cache-Control'       => 'private, max-age=900', // 15 minutes
+        ]);
     }
 
-    $media = Media::where('id', $mediaId)
-        ->where('model_type', $modelClass)
-        ->where('model_id', $modelId)
-        ->where('file_name', $fileName)
-        ->firstOrFail();
-
-    $stream = Storage::disk($media->disk)->readStream($media->getPath());
-
-    return Response::stream(function () use ($stream) {
-        fpassthru($stream);
-        fclose($stream);
-    }, HttpResponse::HTTP_OK, [
-        'Content-Type'        => $media->mime_type,
-        'Content-Length'      => $media->size,
-        'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
-        'Cache-Control'       => 'private, max-age=900', // 15 minutes
-    ]);
+    protected function resolveModelClass(string $modelName): string
+    {
+        return match ($modelName) {
+            'users'       => User::class,
+            'contractors' => Contractor::class,
+            'products'    => Product::class,
+            'tenants'     => Tenant::class,
+            default       => throw new NotFoundHttpException('Model not found'),
+        };
+    }
 }

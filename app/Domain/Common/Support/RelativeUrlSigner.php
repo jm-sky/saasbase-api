@@ -18,7 +18,7 @@ class RelativeUrlSigner
         if (config('app.trim_api_url')) {
             return Str::of($ourTemporaryUrl)->replace(config('app.api_url'), '');
         }
-        
+
         return $ourTemporaryUrl;
     }
 }

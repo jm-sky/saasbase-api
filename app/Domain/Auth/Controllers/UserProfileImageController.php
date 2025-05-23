@@ -15,32 +15,33 @@ class UserProfileImageController extends Controller
 {
     public function upload(UploadProfileImageRequest $request)
     {
-    /** @var User $user */
-    $user = $request->user();
+        /** @var User $user */
+        $user = $request->user();
 
-    // Clear old image
-    $user->clearMediaCollection('profile');
+        // Clear old image
+        $user->clearMediaCollection('profile');
 
-    $uploadedFile = $request->file('image');
+        $uploadedFile = $request->file('image');
 
-    // Sanitize filename: slugify user name + original extension
-    $extension = strtolower($uploadedFile->getClientOriginalExtension());
-    $cleanFileName = Str::slug($user->full_name) . '.' . $extension;
+        // Sanitize filename: slugify user name + original extension
+        $extension     = strtolower($uploadedFile->getClientOriginalExtension());
+        $cleanFileName = Str::slug($user->full_name) . '.' . $extension;
 
-    // Save media with custom name
-    $user->addMedia($uploadedFile)
-        ->usingFileName($cleanFileName)
-        ->toMediaCollection('profile');
+        // Save media with custom name
+        $user->addMedia($uploadedFile)
+            ->usingFileName($cleanFileName)
+            ->toMediaCollection('profile')
+        ;
 
-    // Return signed URLs
-    $avatarUrl = $user->getMediaSignedUrl('profile');
-    $thumbUrl  = $user->getMediaSignedUrl('profile', 'thumb');
+        // Return signed URLs
+        $avatarUrl = $user->getMediaSignedUrl('profile');
+        $thumbUrl  = $user->getMediaSignedUrl('profile', 'thumb');
 
-    return response()->json([
-        'message'     => 'Profile image uploaded successfully.',
-        'originalUrl' => $avatarUrl,
-        'thumbUrl'    => $thumbUrl,
-    ]);
+        return response()->json([
+            'message'     => 'Profile image uploaded successfully.',
+            'originalUrl' => $avatarUrl,
+            'thumbUrl'    => $thumbUrl,
+        ]);
     }
 
     public function show(Request $request)
