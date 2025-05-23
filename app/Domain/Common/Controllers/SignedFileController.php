@@ -13,38 +13,29 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class SignedFileController extends Controller
+public function show(Request $request, string $modelName, string $modelId, string $mediaId, string $fileName)
 {
-    public function show(Request $request, string $modelName, string $modelId, string $mediaId, string $fileName)
-    {
-        $media = Media::findOrFail($mediaId);
-        $media = Media::where('id', $mediaId)
-            ->where('model_type', $this->resolveModelClass($modelName))
-            ->where('model_id', $modelId)
-            ->where('file_name', $fileName)
-            ->firstOrFail()
-        ;
+    $modelClass = $this->resolveModelClass($modelName);
 
-        $stream = Storage::disk($media->disk)->readStream($media->getPath());
-
-        return Response::stream(function () use ($stream) {
-            fpassthru($stream);
-        }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
-        ]);
+    if (!$modelClass) {
+        abort(HttpResponse::HTTP_NOT_FOUND, 'Model not recognized');
     }
 
-    protected function resolveModelClass(string $modelName): string
-    {
-        return match ($modelName) {
-            'users'       => User::class,
-            'contractors' => Contractor::class,
-            'products'    => Product::class,
-            'tenants'     => Tenant::class,
-            // default => throw new \Exception('Model not found'),
-            default => '',
-        };
-    }
+    $media = Media::where('id', $mediaId)
+        ->where('model_type', $modelClass)
+        ->where('model_id', $modelId)
+        ->where('file_name', $fileName)
+        ->firstOrFail();
+
+    $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+    return Response::stream(function () use ($stream) {
+        fpassthru($stream);
+        fclose($stream);
+    }, HttpResponse::HTTP_OK, [
+        'Content-Type'        => $media->mime_type,
+        'Content-Length'      => $media->size,
+        'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+        'Cache-Control'       => 'private, max-age=900', // 15 minutes
+    ]);
 }
