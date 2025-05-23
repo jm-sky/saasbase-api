@@ -15,6 +15,10 @@ class RelativeUrlSigner
             expiration: now()->addMinutes($expiration),
         );
 
-        return Str::of($ourTemporaryUrl)->replace(config('app.api_url'), '');
+        if (config('app.trim_api_url')) {
+            return Str::of($ourTemporaryUrl)->replace(config('app.api_url'), '');
+        }
+        
+        return $ourTemporaryUrl;
     }
 }
