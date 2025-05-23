@@ -3,6 +3,7 @@
 namespace App\Services\CompanyLookup\DTOs;
 
 use App\Services\CompanyLookup\Enums\VatStatusEnum;
+use Illuminate\Contracts\Support\Arrayable;
 
 /**
  * Company Lookup Result Data Transfer Object.
@@ -21,7 +22,7 @@ use App\Services\CompanyLookup\Enums\VatStatusEnum;
  * @property PartnerDTO[]         $partners              Example: [{"name": "Michał Wiśniewski", "nip": "9876543210", "pesel": null}]
  * @property ?string              $registrationLegalDate Example: "2015-01-01"
  */
-class CompanyLookupResultDTO
+class CompanyLookupResultDTO implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly string $name,
@@ -55,19 +56,34 @@ class CompanyLookupResultDTO
             accountNumbers: $data['accountNumbers'] ?? [],
             vatStatus: VatStatusEnum::fromString($data['statusVat'] ?? null),
             hasVirtualAccounts: $data['hasVirtualAccounts'] ?? false,
-            representatives: array_map(
-                fn (array $item) => RepresentativeDTO::fromArray($item),
-                $data['representatives'] ?? []
-            ),
-            authorizedClerks: array_map(
-                fn (array $item) => AuthorizedClerkDTO::fromArray($item),
-                $data['authorizedClerks'] ?? []
-            ),
-            partners: array_map(
-                fn (array $item) => PartnerDTO::fromArray($item),
-                $data['partners'] ?? []
-            ),
+            representatives: RepresentativeDTO::collect($data['representatives'] ?? []),
+            authorizedClerks: AuthorizedClerkDTO::collect($data['authorizedClerks'] ?? []),
+            partners: PartnerDTO::collect($data['partners'] ?? []),
             registrationLegalDate: $data['registrationLegalDate'] ?? null,
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'name'                  => $this->name,
+            'nip'                   => $this->nip,
+            'regon'                 => $this->regon,
+            'krs'                   => $this->krs,
+            'residenceAddress'      => $this->residenceAddress,
+            'workingAddress'        => $this->workingAddress,
+            'accountNumbers'        => $this->accountNumbers,
+            'vatStatus'             => $this->vatStatus,
+            'hasVirtualAccounts'    => $this->hasVirtualAccounts,
+            'representatives'       => $this->representatives,
+            'authorizedClerks'      => $this->authorizedClerks,
+            'partners'              => $this->partners,
+            'registrationLegalDate' => $this->registrationLegalDate,
+        ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

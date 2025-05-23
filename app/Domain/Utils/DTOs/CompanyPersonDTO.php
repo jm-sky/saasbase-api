@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Services\CompanyLookup\DTOs;
+namespace App\Domain\Utils\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
- * Representative Data Transfer Object.
+ * @property ?string $name  Person's name
+ * @property ?string $nip   NIP number (if applicable)
+ * @property ?string $pesel PESEL number (if applicable)
  */
-class RepresentativeDTO extends BaseDataDTO
+class CompanyPersonDTO extends BaseDataDTO
 {
     public function __construct(
         public readonly ?string $name,

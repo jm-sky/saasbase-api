@@ -13,7 +13,7 @@ use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Resources\ContractorResource;
 use App\Http\Controllers\Controller;
-use App\Services\LogoFetcherService\LogoFetcherService;
+use App\Services\LogoFetcher\LogoFetcherService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

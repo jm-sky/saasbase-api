@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Domain\Utils\Controllers;
+namespace App\Domain\Utils\Controllers;
 
+use App\Domain\Utils\Requests\CompanyLookupRequest;
+use App\Domain\Utils\Resources\CompanyLookupResource;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Domain\Utils\Requests\CompanyLookupRequest;
 use App\Services\CompanyLookup\Services\CompanyLookupService;
 use App\Services\ViesLookup\Services\ViesLookupService;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CompanyLookupController extends Controller
 {
@@ -17,7 +18,7 @@ class CompanyLookupController extends Controller
     ) {
     }
 
-    public function lookup(CompanyLookupRequest $request): JsonResponse
+    public function lookup(CompanyLookupRequest $request): CompanyLookupResource
     {
         $vatId   = $request->input('vatId');
         $country = strtoupper($request->input('country'));
@@ -31,16 +32,12 @@ class CompanyLookupController extends Controller
             }
 
             if (!$result) {
-                return response()->json([
-                    'message' => 'Company not found',
-                ], Response::HTTP_NOT_FOUND);
+                throw new NotFoundHttpException('Company not found');
             }
 
-            return response()->json($result);
+            return new CompanyLookupResource($result);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], Response::HTTP_BAD_REQUEST);
+            throw new BadRequestHttpException($e->getMessage(), $e);
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\LogoFetcherService;
+namespace App\Services\LogoFetcher;
 
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;

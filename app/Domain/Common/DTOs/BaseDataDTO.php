@@ -15,4 +15,14 @@ abstract class BaseDataDTO implements Arrayable, \JsonSerializable
     {
         return $this->toArray();
     }
+
+    public static function collect(?array $data = null): array
+    {
+        $data ??= [];
+
+        return array_map(
+            fn (array $item) => static::fromArray($item),
+            $data
+        );
+    }
 }
