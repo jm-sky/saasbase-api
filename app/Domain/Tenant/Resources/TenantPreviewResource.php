@@ -18,7 +18,7 @@ class TenantPreviewResource extends JsonResource
     {
         /** @var Tenant $this->resource */
         $logoMedia = $this->getFirstMedia('logo');
-        $logoUrl = $this->getMediaSignedUrl('logo');
+        $logoUrl   = $this->getMediaSignedUrl('logo');
 
         return [
             'id'          => $this->id,
