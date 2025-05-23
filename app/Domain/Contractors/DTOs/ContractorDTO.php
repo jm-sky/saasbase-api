@@ -18,7 +18,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string       $phone
  * @property ?string       $website
  * @property ?string       $country
+ * @property ?string       $vatId
  * @property ?string       $taxId
+ * @property ?string       $regon
  * @property ?string       $description
  * @property ?bool         $isActive
  * @property ?bool         $isBuyer
@@ -40,7 +42,9 @@ class ContractorDTO extends BaseDTO
         public readonly ?string $phone = null,
         public readonly ?string $website = null,
         public readonly ?string $country = null,
+        public readonly ?string $vatId = null,
         public readonly ?string $taxId = null,
+        public readonly ?string $regon = null,
         public readonly ?string $description = null,
         public readonly ?bool $isActive = null,
         public readonly ?bool $isBuyer = null,
@@ -64,7 +68,9 @@ class ContractorDTO extends BaseDTO
             phone: $data['phone'] ?? null,
             website: $data['website'] ?? null,
             country: $data['country'] ?? null,
+            vatId: $data['vat_id'] ?? null,
             taxId: $data['tax_id'] ?? null,
+            regon: $data['regon'] ?? null,
             description: $data['description'] ?? null,
             isActive: $data['is_active'] ?? null,
             isBuyer: $data['is_buyer'] ?? null,
@@ -93,7 +99,9 @@ class ContractorDTO extends BaseDTO
             phone: $model->phone,
             website: $model->website,
             country: $model->country,
+            vatId: $model->vat_id,
             taxId: $model->tax_id,
+            regon: $model->regon,
             description: $model->description,
             isActive: $model->is_active,
             isBuyer: $model->is_buyer,
@@ -117,7 +125,9 @@ class ContractorDTO extends BaseDTO
             'phone'       => $this->phone,
             'website'     => $this->website,
             'country'     => $this->country,
+            'vatId'       => $this->vatId,
             'taxId'       => $this->taxId,
+            'regon'       => $this->regon,
             'description' => $this->description,
             'isActive'    => $this->isActive,
             'isBuyer'     => $this->isBuyer,

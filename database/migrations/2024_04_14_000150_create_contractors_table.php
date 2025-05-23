@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Common\Enums\DatabaseColumnLength;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,17 +12,23 @@ return new class() extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('website')->nullable();
-            $table->string('country')->nullable();
-            $table->string('tax_id')->nullable();
+            $table->string('country', DatabaseColumnLength::COUNTRY)->nullable();
+            $table->string('vat_id', DatabaseColumnLength::VAT_ID)->nullable();
+            $table->string('tax_id', DatabaseColumnLength::TAX_ID)->nullable();
+            $table->string('regon', DatabaseColumnLength::REGON)->nullable();
+            $table->string('email', DatabaseColumnLength::EMAIL)->nullable();
+            $table->string('phone', DatabaseColumnLength::PHONE)->nullable();
+            $table->string('website', DatabaseColumnLength::WEBSITE)->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_buyer')->default(true);
             $table->boolean('is_supplier')->default(true);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('name');
+            $table->index('country');
+            $table->index('vat_id');
         });
     }
 

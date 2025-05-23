@@ -9,7 +9,6 @@
 Schema::create('user_profiles', function (Blueprint $table) {
     $table->uuid('id')->primary();
     $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-    $table->string('avatar_url')->nullable();
     $table->text('bio')->nullable();
     $table->string('location')->nullable();
     $table->date('birth_date')->nullable();

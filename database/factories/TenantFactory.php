@@ -26,7 +26,7 @@ class TenantFactory extends Factory
             'email'       => fake()->email(),
             'phone'       => fake()->phoneNumber(),
             'website'     => fake()->url(),
-            'country'     => fake()->country(),
+            'country'     => fake()->countryCode(),
         ];
     }
 }

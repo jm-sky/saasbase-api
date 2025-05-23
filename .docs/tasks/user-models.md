@@ -59,9 +59,6 @@ Każdy model zawiera: `nazwa pola`, `typ`, `opis`, `zastosowanie`. Używany jest
 - `user_id`: UUID  
   Relacja do użytkownika.
 
-- `avatar_url`: string  
-  URL do avatara użytkownika. Używany w profilu.
-
 - `bio`: text  
   Opis / krótkie bio. Widoczne w profilu.
 

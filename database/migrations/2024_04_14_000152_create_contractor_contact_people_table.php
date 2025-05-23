@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Common\Enums\DatabaseColumnLength;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,11 +13,15 @@ return new class() extends Migration {
             $table->foreignUuid('tenant_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignUuid('contractor_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('email', DatabaseColumnLength::EMAIL)->nullable();
+            $table->string('phone', DatabaseColumnLength::PHONE)->nullable();
             $table->string('position')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
+
+            $table->index('name');
+            $table->index('email');
+            $table->index('phone');
         });
     }
 

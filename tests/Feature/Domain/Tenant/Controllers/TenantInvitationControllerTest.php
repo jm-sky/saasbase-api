@@ -68,7 +68,7 @@ class TenantInvitationControllerTest extends TestCase
         $invitee = User::factory()->create(['email' => 'invitee@example.com']);
         $this->authenticateUser(user: $invitee);
 
-        $response = $this->postJson("/api/v1/tenants/{$tenant->id}/invitations/{$token}/accept");
+        $response = $this->postJson("/api/v1/tenants/invitations/{$token}/accept");
         $response->assertOk();
         $this->assertDatabaseHas('tenant_invitations', [
             'id'     => $invitation->id,

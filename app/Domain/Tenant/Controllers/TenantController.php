@@ -2,17 +2,18 @@
 
 namespace App\Domain\Tenant\Controllers;
 
-use App\Domain\Common\Traits\HasActivityLogging;
-use App\Domain\Tenant\Enums\TenantActivityType;
-use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Tenant\Requests\TenantRequest;
-use App\Domain\Tenant\Resources\TenantResource;
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
+use App\Domain\Tenant\Models\Tenant;
+use App\Http\Controllers\Controller;
+use App\Domain\Tenant\Requests\TenantRequest;
 use Symfony\Component\HttpFoundation\Response;
+use App\Domain\Tenant\Enums\TenantActivityType;
+use App\Domain\Tenant\Resources\TenantResource;
+use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Tenant\Resources\TenantPreviewResource;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TenantController extends Controller
 {
@@ -24,6 +25,13 @@ class TenantController extends Controller
         $tenants = $request->user()->tenants()->orderBy('created_at')->get();
 
         return TenantResource::collection($tenants);
+    }
+
+    public function indexPreview(Request $request): AnonymousResourceCollection
+    {
+        $tenants = $request->user()->tenants()->orderBy('created_at')->get();
+
+        return TenantPreviewResource::collection($tenants);
     }
 
     public function store(TenantRequest $request): JsonResponse

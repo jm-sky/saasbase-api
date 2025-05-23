@@ -34,7 +34,7 @@ class UserPreviewDTO extends BaseDTO
             name: trim("{$model->first_name} {$model->last_name}"),
             email: $model->public_email,
             id: $model->id,
-            avatarUrl: $model->avatar_url,
+            avatarUrl: $model->getMediaSignedUrl('profile'),
             createdAt: $model->created_at,
         );
     }

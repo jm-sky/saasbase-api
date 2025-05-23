@@ -29,12 +29,14 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string                   $id
  * @property string                   $tenant_id
  * @property string                   $name
- * @property string                   $email
+ * @property ?string                  $country
+ * @property ?string                  $vat_id
+ * @property ?string                  $tax_id
+ * @property ?string                  $regon
+ * @property ?string                  $description
+ * @property ?string                  $email
  * @property ?string                  $phone
  * @property ?string                  $website
- * @property ?string                  $country
- * @property ?string                  $tax_id
- * @property ?string                  $description
  * @property bool                     $is_active
  * @property bool                     $is_buyer
  * @property bool                     $is_supplier
@@ -67,7 +69,9 @@ class Contractor extends BaseModel implements HasMedia
         'phone',
         'website',
         'country',
+        'vat_id',
         'tax_id',
+        'regon',
         'description',
         'is_active',
         'is_buyer',
@@ -111,11 +115,6 @@ class Contractor extends BaseModel implements HasMedia
         }
 
         return $this->getFirstMediaUrl($collectionName, $conversionName);
-    }
-
-    public function logo(): MorphOne
-    {
-        return $this->morphOne(Attachment::class, 'attachable');
     }
 
     public function attachments(): MorphMany

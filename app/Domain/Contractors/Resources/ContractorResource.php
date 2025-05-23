@@ -27,7 +27,9 @@ class ContractorResource extends JsonResource
             'phone'       => $this->phone,
             'website'     => $this->website,
             'country'     => $this->country,
+            'vatId'       => $this->vat_id,
             'taxId'       => $this->tax_id,
+            'regon'       => $this->regon,
             'description' => $this->description,
             'isActive'    => $this->is_active,
             'isBuyer'     => $this->is_buyer,
@@ -35,7 +37,7 @@ class ContractorResource extends JsonResource
             'createdAt'   => $this->created_at?->toIso8601String(),
             'updatedAt'   => $this->updated_at?->toIso8601String(),
             'deletedAt'   => $this->deleted_at?->toIso8601String(),
-            'logoUrl'     => $logoMedia ? $this->getMediaUrl('logo', $logoMedia->file_name) : null,
+            'logoUrl'     => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
             'logo'        => $logoMedia ? new MediaResource($logoMedia) : null,
             'tags'        => method_exists($this->resource, 'getTagNames') ? $this->getTagNames() : [],
         ];

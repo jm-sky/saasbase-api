@@ -26,10 +26,6 @@ class UserProfileImageController extends Controller
         $avatarUrl = $user->getMediaSignedUrl('profile');
         $thumbUrl  = $user->getMediaSignedUrl('profile', 'thumb');
 
-        $user->update([
-            'avatar_url' => $avatarUrl,
-        ]);
-
         return response()->json([
             'message'     => 'Profile image uploaded successfully.',
             'originalUrl' => $avatarUrl,
@@ -90,10 +86,6 @@ class UserProfileImageController extends Controller
     {
         $user = $request->user();
         $user->clearMediaCollection('profile');
-
-        $user->update([
-            'avatar_url' => null,
-        ]);
 
         return response()->json(['message' => 'Profile image deleted.'], HttpResponse::HTTP_NO_CONTENT);
     }

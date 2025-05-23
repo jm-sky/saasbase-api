@@ -14,11 +14,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string    $name
  * @property string    $slug
  * @property ?string   $id          UUID
+ * @property ?string   $country
  * @property ?string   $taxId
+ * @property ?string   $vatId
+ * @property ?string   $regon
  * @property ?string   $email
  * @property ?string   $phone
  * @property ?string   $website
- * @property ?string   $country
  * @property ?string   $description
  * @property ?Carbon   $createdAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon   $updatedAt   Internally Carbon, accepts/serializes ISO 8601
@@ -32,11 +34,13 @@ class TenantDTO extends BaseDTO
         public readonly string $name,
         public readonly string $slug,
         public readonly ?string $id = null,
+        public readonly ?string $country = null,
         public readonly ?string $taxId = null,
+        public readonly ?string $vatId = null,
+        public readonly ?string $regon = null,
         public readonly ?string $email = null,
         public readonly ?string $phone = null,
         public readonly ?string $website = null,
-        public readonly ?string $country = null,
         public readonly ?string $description = null,
         public readonly ?string $logoUrl = null,
         public ?Carbon $createdAt = null,
@@ -56,6 +60,8 @@ class TenantDTO extends BaseDTO
             name: $model->name,
             slug: $model->slug,
             taxId: $model->tax_id,
+            vatId: $model->vat_id,
+            regon: $model->regon,
             email: $model->email,
             phone: $model->phone,
             website: $model->website,
@@ -76,6 +82,8 @@ class TenantDTO extends BaseDTO
             slug: $data['slug'],
             id: $data['id'] ?? null,
             taxId: $data['tax_id'] ?? null,
+            vatId: $data['vat_id'] ?? null,
+            regon: $data['regon'] ?? null,
             email: $data['email'] ?? null,
             phone: $data['phone'] ?? null,
             website: $data['website'] ?? null,
@@ -94,6 +102,8 @@ class TenantDTO extends BaseDTO
             'name'        => $this->name,
             'slug'        => $this->slug,
             'taxId'       => $this->taxId,
+            'vatId'       => $this->vatId,
+            'regon'       => $this->regon,
             'email'       => $this->email,
             'phone'       => $this->phone,
             'website'     => $this->website,

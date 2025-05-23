@@ -27,11 +27,13 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string                        $id
  * @property string                        $name
  * @property string                        $slug
- * @property ?string                       $taxId
+ * @property ?string                       $vat_id
+ * @property ?string                       $tax_id
+ * @property ?string                       $regon
+ * @property ?string                       $country
  * @property ?string                       $email
  * @property ?string                       $phone
  * @property ?string                       $website
- * @property ?string                       $country
  * @property ?string                       $description
  * @property ?string                       $owner_id
  * @property Carbon                        $created_at
@@ -64,6 +66,12 @@ class Tenant extends BaseModel implements HasMedia
         'phone',
         'notes',
         'is_active',
+        'vat_id',
+        'tax_id',
+        'regon',
+        'website',
+        'country',
+        'description',
     ];
 
     protected $casts = [

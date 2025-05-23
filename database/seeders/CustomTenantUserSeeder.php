@@ -60,13 +60,15 @@ class CustomTenantUserSeeder extends Seeder
     protected function createTenants(array $tenants): void
     {
         foreach ($tenants as $tenantData) {
-            $tenantData   = collect($tenantData)->except(['addresses', 'bankAccounts'])->toArray();
+            $tenantData   = collect($tenantData)->except(['addresses', 'bankAccounts', 'meta'])->toArray();
             $addresses    = collect(Arr::get($tenantData, 'addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
             $bankAccounts = collect(Arr::get($tenantData, 'bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
 
             $tenant = Tenant::create($tenantData);
             $tenant->addresses()->createMany($addresses);
             $tenant->bankAccounts()->createMany($bankAccounts);
+
+            $this->createTenantLogo($tenant, Arr::get($tenantData, 'meta.logoUrl'));
 
             $this->tenants[$tenant->id] = $tenant;
         }
@@ -115,6 +117,27 @@ class CustomTenantUserSeeder extends Seeder
         }
     }
 
+    protected function createTenantLogo(Tenant $tenant, ?string $logoUrl = null): void
+    {
+        if (!$logoUrl) {
+            return;
+        }
+
+        try {
+            $stream = fopen($logoUrl, 'r');
+            $tenant->clearMediaCollection('logo');
+
+            $tenant->addMediaFromStream($stream)
+                ->usingFileName('logo.png')
+                ->toMediaCollection('logo')
+            ;
+        } catch (\Exception $e) {
+            $this->command->error("Error creating tenant logo: {$e->getMessage()}");
+
+            return;
+        }
+    }
+
     protected function createUserAvatar(User $user, ?string $avatarUrl = null): void
     {
         if (!$avatarUrl) {
@@ -129,10 +152,6 @@ class CustomTenantUserSeeder extends Seeder
                 ->usingFileName('profile.png')
                 ->toMediaCollection('profile')
             ;
-
-            $signedUrl = $user->getMediaSignedUrl('profile');
-
-            $user->update(['avatar_url' => $signedUrl]);
         } catch (\Exception $e) {
             $this->command->error("Error creating user avatar: {$e->getMessage()}");
 
@@ -144,7 +163,7 @@ class CustomTenantUserSeeder extends Seeder
     {
         foreach ($contractors as $contractor) {
             $tenantId       = Arr::get($contractor, 'tenant_id');
-            $contractorData = collect($contractor)->except(['addresses', 'bankAccounts'])->toArray();
+            $contractorData = collect($contractor)->except(['addresses', 'bankAccounts', 'meta'])->toArray();
             $addresses      = collect(Arr::get($contractorData, 'addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
             $bankAccounts   = collect(Arr::get($contractorData, 'bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
 
@@ -152,7 +171,29 @@ class CustomTenantUserSeeder extends Seeder
                 $contractor = Contractor::create($contractorData);
                 $contractor->addresses()->createMany($addresses);
                 $contractor->bankAccounts()->createMany($bankAccounts);
+                $this->createContractorLogo($contractor, Arr::get($contractor, 'meta.logoUrl'));
             });
+        }
+    }
+
+    protected function createContractorLogo(Contractor $contractor, ?string $logoUrl = null): void
+    {
+        if (!$logoUrl) {
+            return;
+        }
+
+        try {
+            $stream = fopen($logoUrl, 'r');
+            $contractor->clearMediaCollection('logo');
+
+            $contractor->addMediaFromStream($stream)
+                ->usingFileName('logo.png')
+                ->toMediaCollection('logo')
+            ;
+        } catch (\Exception $e) {
+            $this->command->error("Error creating contractor logo: {$e->getMessage()}");
+
+            return;
         }
     }
 }

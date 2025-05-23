@@ -7,7 +7,7 @@ use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TenantResource extends JsonResource
+class TenantPreviewResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,6 +18,7 @@ class TenantResource extends JsonResource
     {
         /** @var Tenant $this->resource */
         $logoMedia = $this->getFirstMedia('logo');
+        $logoUrl = $this->getMediaSignedUrl('logo');
 
         return [
             'id'          => $this->id,
@@ -26,15 +27,7 @@ class TenantResource extends JsonResource
             'vatId'       => $this->vat_id,
             'taxId'       => $this->tax_id,
             'regon'       => $this->regon,
-            'email'       => $this->email,
-            'phone'       => $this->phone,
-            'website'     => $this->website,
-            'country'     => $this->country,
-            'description' => $this->description,
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
-            'deletedAt'   => $this->deleted_at?->toIso8601String(),
-            'logoUrl'     => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
+            'logoUrl'     => $logoUrl,
             'logo'        => $logoMedia ? new MediaResource($logoMedia) : null,
         ];
     }

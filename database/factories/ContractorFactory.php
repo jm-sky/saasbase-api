@@ -20,7 +20,7 @@ class ContractorFactory extends Factory
             'tax_id'      => fake()->numerify('##########'),
             'email'       => fake()->companyEmail(),
             'phone'       => fake()->phoneNumber(),
-            'country'     => fake()->country(),
+            'country'     => fake()->countryCode(),
             'website'     => fake()->optional()->url(),
             'description' => fake()->optional()->text(),
             'is_active'   => fake()->boolean(80), // 80% chance of being active

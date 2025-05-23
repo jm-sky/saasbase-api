@@ -58,7 +58,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?string                       $description
  * @property ?string                       $birth_date
  * @property ?string                       $phone
- * @property ?string                       $avatar_url
  * @property bool                          $is_admin
  * @property UserStatus                    $status
  * @property UserConfig                    $config
@@ -100,7 +99,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         'birth_date',
         'is_admin',
         'phone',
-        'avatar_url',
         'status',
         'config',
     ];

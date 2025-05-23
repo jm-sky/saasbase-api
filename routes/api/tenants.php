@@ -10,6 +10,7 @@ use App\Domain\Tenant\Controllers\TenantLogoController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->group(function () {
+    Route::get('tenants/preview', [TenantController::class, 'indexPreview'])->name('tenants.preview');
     Route::apiResource('tenants', TenantController::class);
     Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
 });

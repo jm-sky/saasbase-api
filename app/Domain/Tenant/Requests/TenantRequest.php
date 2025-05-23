@@ -20,8 +20,16 @@ class TenantRequest extends BaseFormRequest
         }
 
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', $uniqueRule],
+            'name'        => ['required', 'string', 'max:255'],
+            'slug'        => ['required', 'string', 'max:255', $uniqueRule],
+            'vatId'       => ['nullable', 'string', 'max:20'],
+            'taxId'       => ['nullable', 'string', 'max:20'],
+            'regon'       => ['nullable', 'string', 'max:20'],
+            'email'       => ['nullable', 'email', 'max:254'],
+            'phone'       => ['nullable', 'string', 'max:20'],
+            'website'     => ['nullable', 'string', 'max:255'],
+            'country'     => ['nullable', 'string', 'max:2'],
+            'description' => ['nullable', 'string'],
         ];
     }
 
@@ -31,11 +39,8 @@ class TenantRequest extends BaseFormRequest
             'name.required' => 'The name field is required.',
             'slug.required' => 'The slug field is required.',
             'slug.unique'   => 'This slug is already taken.',
+            'email.email'   => 'The email must be a valid email address.',
+            'country.max'   => 'The country must be a 2-letter ISO code.',
         ];
-    }
-
-    public function validated($key = null, $default = null): array
-    {
-        return parent::validated();
     }
 }

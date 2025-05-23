@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string  $lastName
  * @property string  $email
  * @property ?string $id                 UUID
- * @property ?string $avatarUrl
  * @property ?string $description
  * @property ?string $birthDate
  * @property ?string $phone
@@ -34,7 +33,6 @@ class UserDTO extends BaseDTO
         public readonly string $lastName,
         public readonly string $email,
         public readonly ?string $id = null,
-        public readonly ?string $avatarUrl = null,
         public readonly ?string $description = null,
         public readonly ?string $birthDate = null,
         public readonly ?string $phone = null,
@@ -57,7 +55,6 @@ class UserDTO extends BaseDTO
             lastName: $model->last_name,
             email: $model->email,
             id: $model->id,
-            avatarUrl: $model->avatar_url,
             description: $model->description,
             birthDate: $model->birth_date,
             phone: $model->phone,
@@ -79,7 +76,6 @@ class UserDTO extends BaseDTO
             lastName: $data['last_name'],
             email: $data['email'],
             id: $data['id'] ?? null,
-            avatarUrl: $data['avatar_url'] ?? null,
             description: $data['description'] ?? null,
             birthDate: $data['birth_date'] ?? null,
             phone: $data['phone'] ?? null,
@@ -101,7 +97,6 @@ class UserDTO extends BaseDTO
             'firstName'          => $this->firstName,
             'lastName'           => $this->lastName,
             'email'              => $this->email,
-            'avatarUrl'          => $this->avatarUrl,
             'description'        => $this->description,
             'birthDate'          => $this->birthDate,
             'phone'              => $this->phone,

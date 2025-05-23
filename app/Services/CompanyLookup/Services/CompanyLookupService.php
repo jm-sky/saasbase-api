@@ -6,51 +6,78 @@ use App\Services\CompanyLookup\DTOs\CompanyLookupResultDTO;
 use App\Services\CompanyLookup\Exceptions\CompanyLookupException;
 use App\Services\CompanyLookup\Integrations\MfApiConnector;
 use App\Services\CompanyLookup\Integrations\Requests\SearchByNipRequest;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class CompanyLookupService
 {
-    protected const DEFAULT_CACHE_HOURS = 12;
-
     protected MfApiConnector $connector;
 
-    public function __construct()
+    protected string $cacheMode;
+
+    protected int $cacheHours;
+
+    public function __construct(MfApiConnector $connector)
     {
-        $this->connector = new MfApiConnector();
+        $this->connector    = $connector;
+        $this->cacheMode    = config('company_lookup.cache_mode', 'hours');
+        $this->cacheHours   = (int) config('company_lookup.cache_hours', 12);
     }
 
-    public function findByNip(string $nip): ?CompanyLookupResultDTO
+    public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null): ?CompanyLookupResultDTO
     {
         $nip      = $this->sanitizeAndValidateNip($nip);
         $cacheKey = "company_lookup_nip.{$nip}";
-        $cacheTtl = $this->getCacheExpiration();
+        $cacheTtl = $this->getCacheExpiration($now ?? now());
 
-        return Cache::remember($cacheKey, $cacheTtl, function () use ($nip) {
-            try {
-                $request  = new SearchByNipRequest($nip);
-                $response = $this->connector->send($request);
+        if ($force) {
+            return $this->lookupAndCache($nip, $cacheKey, $cacheTtl);
+        }
 
-                if ($response->successful()) {
-                    $subject = $response->json('result.subject');
+        return Cache::remember($cacheKey, $cacheTtl, fn () => $this->lookup($nip));
+    }
 
-                    if (!empty($subject)) {
-                        return CompanyLookupResultDTO::fromApiResponse($subject);
-                    }
+    protected function lookupAndCache(string $nip, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl): ?CompanyLookupResultDTO
+    {
+        $result = $this->lookup($nip);
+        Cache::put($cacheKey, $result, $cacheTtl);
 
-                    return null;
+        return $result;
+    }
+
+    protected function lookup(string $nip): ?CompanyLookupResultDTO
+    {
+        try {
+            $request  = new SearchByNipRequest($nip);
+            $response = $this->connector->send($request);
+
+            if ($response->successful()) {
+                $subject = $response->json('result.subject');
+
+                if (!empty($subject)) {
+                    return CompanyLookupResultDTO::fromApiResponse($subject);
                 }
 
-                throw new CompanyLookupException('Unsuccessful API response.');
-            } catch (\Throwable $e) {
-                Log::error('CompanyLookupService error: ' . $e->getMessage(), [
-                    'nip'       => $nip,
-                    'exception' => get_class($e),
-                ]);
-
-                throw new CompanyLookupException('Failed to lookup company details.', 0, $e);
+                return null;
             }
-        });
+
+            Log::warning('CompanyLookupService: Unsuccessful API response', [
+                'nip'      => $nip,
+                'status'   => $response->status(),
+                'body'     => $response->body(),
+            ]);
+
+            throw new CompanyLookupException('Unsuccessful API response.');
+        } catch (\Throwable $e) {
+            Log::error('CompanyLookupService error: ' . $e->getMessage(), [
+                'nip'       => $nip,
+                'exception' => get_class($e),
+                'trace'     => $e->getTraceAsString(),
+            ]);
+
+            throw new CompanyLookupException('Failed to lookup company details.', 0, $e);
+        }
     }
 
     protected function sanitizeAndValidateNip(string $nip): string
@@ -64,16 +91,12 @@ class CompanyLookupService
         return $nip;
     }
 
-    protected function getCacheExpiration(): \DateTimeInterface|\DateInterval|int
+    protected function getCacheExpiration(CarbonInterface $now): \DateTimeInterface|\DateInterval|int
     {
-        $cacheMode = config('company_lookup.cache_mode', 'hours');
-
-        if ('week' === $cacheMode) {
-            return now()->next('Sunday')->startOfDay();
+        if ('week' === $this->cacheMode) {
+            return $now->copy()->next('Sunday')->startOfDay();
         }
 
-        $hours = (int) config('company_lookup.cache_hours', self::DEFAULT_CACHE_HOURS);
-
-        return now()->addHours($hours);
+        return $now->copy()->addHours($this->cacheHours);
     }
 }
