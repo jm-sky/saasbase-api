@@ -15,5 +15,5 @@ use Illuminate\Support\Facades\Route;
 Route::withoutMiddleware(['api', 'auth:api', 'is_active', 'is_in_tenant'])
     ->get('/images/{modelName}/{modelId}/media/{mediaId}/{fileName}', [SignedFileController::class, 'show'])
     ->name('images.show')
-    // ->middleware('signed')
+    ->middleware('signed')
 ;
