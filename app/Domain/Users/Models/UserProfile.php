@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $id
+ * @property string $user_id
+ * @property ?string $bio
+ * @property ?string $location
+ * @property ?string $birth_date
+ * @property ?string $position
+ * @property ?string $website
+ * @property array $social_links
+ * @property User $user
+ */
 class UserProfile extends Model
 {
     use HasUuids;

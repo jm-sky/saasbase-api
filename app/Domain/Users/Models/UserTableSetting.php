@@ -7,6 +7,15 @@ use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $id
+ * @property string $user_id
+ * @property string $entity
+ * @property string $name
+ * @property array $config
+ * @property bool $is_default
+ * @property User $user
+ */
 class UserTableSetting extends BaseModel
 {
     use HasUuids;

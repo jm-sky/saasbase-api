@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property ?string $language
+ * @property ?string $decimal_separator
+ * @property ?string $date_format
+ * @property ?string $dark_mode
+ * @property bool    $is_sound_enabled
+ * @property bool    $is_profile_public
+ * @property array   $field_visibility
+ * @property array   $visibility_per_tenant
+ * @property User    $user
+ */
 class UserPreference extends Model
 {
     use HasUuids;
@@ -33,5 +44,65 @@ class UserPreference extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Check if a field is publicly visible.
+     */
+    public function isFieldPublic(string $field): bool
+    {
+        return 'public' === $this->getFieldVisibility($field);
+    }
+
+    /**
+     * Check if a field is visible within the tenant.
+     */
+    public function isFieldVisibleInTenant(string $field): bool
+    {
+        $visibility = $this->getFieldVisibility($field);
+
+        return 'public' === $visibility || 'tenant' === $visibility;
+    }
+
+    /**
+     * Get the visibility level for a field.
+     *
+     * @return string|null 'public', 'tenant', 'hidden', or null if not set
+     */
+    public function getFieldVisibility(string $field): ?string
+    {
+        return $this->field_visibility[$field] ?? null;
+    }
+
+    /**
+     * Set the visibility level for a field.
+     */
+    public function setFieldVisibility(string $field, string $visibility): void
+    {
+        $this->field_visibility = array_merge($this->field_visibility ?? [], [
+            $field => $visibility,
+        ]);
+    }
+
+    /**
+     * Get the visibility level for a field in a specific tenant.
+     *
+     * @return string|null 'public', 'tenant', 'hidden', or null if not set
+     */
+    public function getFieldVisibilityForTenant(string $field, string $tenantId): ?string
+    {
+        return $this->visibility_per_tenant[$tenantId][$field] ?? $this->getFieldVisibility($field);
+    }
+
+    /**
+     * Set the visibility level for a field in a specific tenant.
+     */
+    public function setFieldVisibilityForTenant(string $field, string $tenantId, string $visibility): void
+    {
+        $this->visibility_per_tenant = array_merge($this->visibility_per_tenant ?? [], [
+            $tenantId => array_merge($this->visibility_per_tenant[$tenantId] ?? [], [
+                $field => $visibility,
+            ]),
+        ]);
     }
 }
