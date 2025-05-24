@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Models\BankAccount;
@@ -17,6 +16,65 @@ class CustomTenantUserSeeder extends Seeder
 {
     protected static string $seedFile = '_custom.json';
 
+    /**
+     * @var array{
+     *     tenants?: array<array{
+     *         id: string,
+     *         name: string,
+     *         relations?: array{
+     *             addresses?: array<array{
+     *                 street: string,
+     *                 city: string,
+     *                 country: string,
+     *                 postal_code: string
+     *             }>,
+     *             bankAccounts?: array<array{
+     *                 iban: string,
+     *                 bank_name: string
+     *             }>
+     *         },
+     *         meta?: array{
+     *             logoUrl?: string
+     *         }
+     *     }>,
+     *     users?: array<array{
+     *         first_name: string,
+     *         last_name: string,
+     *         email: string,
+     *         password: string,
+     *         phone?: string,
+     *         relations?: array{
+     *             tenant?: array{
+     *                 id: string,
+     *                 role?: string,
+     *                 isOwner?: bool
+     *             }
+     *         },
+     *         meta?: array{
+     *             avatarUrl?: string
+     *         }
+     *     }>,
+     *     contractors?: array<array{
+     *         tenant_id: string,
+     *         name: string,
+     *         relations?: array{
+     *             addresses?: array<array{
+     *                 street: string,
+     *                 city: string,
+     *                 country: string,
+     *                 postal_code: string
+     *             }>,
+     *             bankAccounts?: array<array{
+     *                 iban: string,
+     *                 bank_name: string
+     *             }>
+     *         },
+     *         meta?: array{
+     *             logoUrl?: string
+     *         }
+     *     }>
+     * }
+     */
     protected array $data = [];
 
     protected array $tenants = [];
@@ -60,9 +118,9 @@ class CustomTenantUserSeeder extends Seeder
     protected function createTenants(array $tenants): void
     {
         foreach ($tenants as $tenantData) {
-            $tenantData   = collect($tenantData)->except(['addresses', 'bankAccounts', 'meta'])->toArray();
-            $addresses    = collect(Arr::get($tenantData, 'addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
-            $bankAccounts = collect(Arr::get($tenantData, 'bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
+            $tenantData   = collect($tenantData)->except(['relations', 'meta'])->toArray();
+            $addresses    = collect(Arr::get($tenantData, 'relations.addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
+            $bankAccounts = collect(Arr::get($tenantData, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
 
             $tenant = Tenant::create($tenantData);
             $tenant->addresses()->createMany($addresses);
@@ -79,13 +137,13 @@ class CustomTenantUserSeeder extends Seeder
         CreateTenantForNewUser::$BYPASSED = true;
 
         foreach ($users as $userData) {
-            $userPayload             = collect($userData)->except(['tenant', 'meta'])->toArray();
+            $userPayload             = collect($userData)->except(['relations', 'meta'])->toArray();
             $user                    = User::create($userPayload);
-            $user->status            = UserStatus::ACTIVE;
+            $user->is_active         = true;
             $user->email_verified_at = now();
             $user->save();
 
-            $this->createUserTenant($user, Arr::get($userData, 'tenant'));
+            $this->createUserTenant($user, Arr::get($userData, 'relations.tenant'));
             $this->createUserAvatar($user, Arr::get($userData, 'meta.avatarUrl'));
 
             $this->users[$user->id] = $user;
@@ -163,9 +221,9 @@ class CustomTenantUserSeeder extends Seeder
     {
         foreach ($contractors as $contractor) {
             $tenantId       = Arr::get($contractor, 'tenant_id');
-            $contractorData = collect($contractor)->except(['addresses', 'bankAccounts', 'meta'])->toArray();
-            $addresses      = collect(Arr::get($contractorData, 'addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
-            $bankAccounts   = collect(Arr::get($contractorData, 'bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
+            $contractorData = collect($contractor)->except(['relations', 'meta'])->toArray();
+            $addresses      = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
+            $bankAccounts   = collect(Arr::get($contractorData, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
 
             Tenant::bypassTenant($tenantId, function () use ($contractorData, $addresses, $bankAccounts) {
                 $contractor = Contractor::create($contractorData);

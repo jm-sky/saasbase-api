@@ -1,5 +1,7 @@
 # Modele konta użytkownika (Multi-tenant, Laravel-style)
 
+> :white_check_mark: Status: Done
+
 Każdy model zawiera: `nazwa pola`, `typ`, `opis`, `zastosowanie`. Używany jest `tenant_id` zamiast `company_id`.
 
 ---

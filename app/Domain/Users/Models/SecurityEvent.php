@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $user_id
  * @property string $event_type
  * @property string $ip_address
- * @property User $user
+ * @property User   $user
  */
 class SecurityEvent extends BaseModel
 {

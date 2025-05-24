@@ -20,6 +20,7 @@ Route::withoutMiddleware(['auth:api', 'is_active'])
 Route::middleware('auth:api')->get('me', MeController::class);
 
 Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () {
+    Route::get('profile', [UserProfileController::class, 'show']);
     Route::put('profile', [UserProfileController::class, 'update']);
     Route::get('settings', [UserSettingsController::class, 'show']);
     Route::put('settings', [UserSettingsController::class, 'update']);

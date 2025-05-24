@@ -1,5 +1,7 @@
 # Modele użytkownika – rozszerzone dane i ustawienia (lista pól)
 
+> :white_check_mark: Status: Done
+
 ---
 
 > Valid models definitions are located here: `.docs/tasks/user-models.md`

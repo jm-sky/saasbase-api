@@ -1,5 +1,7 @@
 # User Models Implementation Plan
 
+> :white_check_mark: Status: Done
+
 ## 1. Database Changes
 
 ### 1.1. New Migrations

@@ -14,7 +14,7 @@ class UserProfileResource extends JsonResource
         return [
             'id'          => $this->id,
             'userId'      => $this->user_id,
-            'avatarUrl'   => $this->getMediaSignedUrl('profile'),
+            // 'avatarUrl'   => $this->user->getMediaSignedUrl('profile'),
             'bio'         => $this->bio,
             'location'    => $this->location,
             'birthDate'   => $this->birth_date,

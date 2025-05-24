@@ -2,11 +2,8 @@
 
 namespace App\Domain\Auth\Models;
 
-use App\Domain\Auth\Casts\UserConfigCast;
-use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
-use App\Domain\Auth\ValueObjects\UserConfig;
 use App\Domain\Common\Model\BankAccount;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
@@ -55,12 +52,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string                        $last_name
  * @property string                        $email
  * @property string                        $password
- * @property ?string                       $description
- * @property ?string                       $birth_date
  * @property ?string                       $phone
  * @property bool                          $is_admin
- * @property UserStatus                    $status
- * @property UserConfig                    $config
+ * @property bool                          $is_active
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  * @property ?Carbon                       $deleted_at
@@ -90,17 +84,16 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use HaveAddresses;
     use HasRoles;
 
+    protected $with = ['preferences'];
+
     protected $fillable = [
         'first_name',
         'last_name',
         'email',
         'password',
-        'description',
-        'birth_date',
-        'is_admin',
         'phone',
-        'status',
-        'config',
+        'is_admin',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -111,10 +104,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
-        'birth_date'        => 'date',
         'is_admin'          => 'boolean',
-        'status'            => UserStatus::class,
-        'config'            => UserConfigCast::class,
+        'is_active'         => 'boolean',
     ];
 
     protected static function booted(): void
@@ -134,21 +125,21 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     protected function publicEmail(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->config?->isEmailPublic ? $this->email : null,
+            get: fn ($value) => $this->preferences?->isFieldPublic('email') ? $this->email : null,
         );
     }
 
     protected function publicBirthDate(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->config?->isBirthDatePublic ? $this->birth_date : null,
+            get: fn ($value) => $this->preferences?->isFieldPublic('birth_date') ? $this->profile?->birth_date : null,
         );
     }
 
     protected function publicPhone(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->config?->isPhonePublic ? $this->phone : null,
+            get: fn ($value) => $this->preferences?->isFieldPublic('phone') ? $this->phone : null,
         );
     }
 
@@ -159,7 +150,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function isActive(): bool
     {
-        return UserStatus::ACTIVE === $this->status;
+        return $this->is_active;
     }
 
     public function isEmailVerified(): bool

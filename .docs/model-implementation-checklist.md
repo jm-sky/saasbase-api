@@ -29,7 +29,7 @@ This document tracks the implementation status of our models and highlights any 
   - [x] Tenant_id null for user addresses
   - [x] Specialized classes (UserAddress, TenantAddress)
 
-- [ ] BankAccount (Polymorphic)
+- [x] BankAccount (Polymorphic)
   - [ ] Implementation needs verification
   - [ ] Verify polymorphic relationships
   - [ ] Test tenant_id null for user accounts

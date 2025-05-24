@@ -18,11 +18,11 @@ class TagResource extends JsonResource
         /* @var Tag $this->resource */
         return [
             'id'        => $this->id,
-            'tenantId'  => $this->tenant_id,
+            // 'tenantId'  => $this->tenant_id,
             'name'      => $this->name,
             'slug'      => $this->slug,
-            'createdAt' => $this->created_at?->toIso8601String(),
-            'updatedAt' => $this->updated_at?->toIso8601String(),
+            // 'createdAt' => $this->created_at?->toIso8601String(),
+            // 'updatedAt' => $this->updated_at?->toIso8601String(),
         ];
     }
 }

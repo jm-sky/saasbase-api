@@ -1,6 +1,5 @@
 <?php
 
-use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Common\Enums\DatabaseColumnLength;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,13 +17,10 @@ return new class() extends Migration {
             $table->string('last_name');
             $table->string('email', DatabaseColumnLength::EMAIL)->unique();
             $table->string('phone', DatabaseColumnLength::PHONE)->nullable();
-            $table->text('description')->nullable(); // TODO: move to some profile table
-            $table->date('birth_date')->nullable(); // TODO: move to some profile table
             $table->boolean('is_admin')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('status')->default(UserStatus::PENDING); // TODO: Make it is_active boolean
-            $table->json('config')->nullable(); // TODO: move to some profile table
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
@@ -54,8 +50,8 @@ return new class() extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('users');
     }
 };
