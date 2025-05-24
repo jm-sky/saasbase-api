@@ -5,6 +5,7 @@ use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Calendar\Http\Controllers\EventController;
 use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\CountryController;
+use App\Domain\Common\Controllers\TagController;
 use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Rights\Controllers\RoleController;
@@ -56,6 +57,7 @@ Route::prefix('v1')->group(function () {
             require __DIR__ . '/api/contractors.php';
             require __DIR__ . '/api/products.php';
 
+            Route::apiResource('tags', TagController::class)->only(['index']);
             Route::apiResource('invoices', InvoiceController::class);
             Route::apiResource('events', EventController::class);
             Route::apiResource('roles', RoleController::class);

@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $user_id
  * @property string $channel
  * @property string $setting_key
- * @property bool $enabled
- * @property User $user
+ * @property bool   $enabled
+ * @property User   $user
  */
 class NotificationSetting extends BaseModel
 {

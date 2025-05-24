@@ -1,5 +1,7 @@
 # Refactor Activity Logging
 
+> :white_check_mark: Status: Done
+
 ## Overview
 We need to refactor the activity logging system to use our new `HasActivityLogging` trait. This will make the code more consistent, maintainable, and reduce duplication.
 

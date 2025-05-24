@@ -2,24 +2,35 @@
 
 namespace App\Domain\Auth\Controllers;
 
-use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Requests\UpdateUserProfileRequest;
+use App\Domain\Users\Models\UserProfile;
+use App\Domain\Users\Resources\UserProfileResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class UserProfileController extends Controller
 {
-    public function update(UpdateUserProfileRequest $request): JsonResponse
+    public function show(): UserProfileResource
+    {
+        $user = Auth::user();
+
+        $user->profile ??= new UserProfile();
+
+        return new UserProfileResource($user->profile);
+    }
+
+    public function update(UpdateUserProfileRequest $request): UserProfileResource
     {
         /** @var User $user */
         $user = Auth::user();
 
-        $user->update($request->validated());
-
-        return response()->json([
-            'user' => UserDTO::fromModel($user),
+        $user->profile ??= UserProfile::create([
+            'user_id' => $user->id,
         ]);
+
+        $user->profile->update($request->validated());
+
+        return new UserProfileResource($user->profile);
     }
 }

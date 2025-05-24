@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Domain\Auth\Enums\UserStatus;
 use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +12,11 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
     protected $model = User::class;
 
     /**
@@ -23,22 +27,32 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'                => fake()->uuid(),
-            'first_name'        => fake()->firstName(),
-            'last_name'         => fake()->lastName(),
-            'email'             => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password'          => Hash::make('password'),
-            'description'       => fake()->optional()->sentence(),
-            'birth_date'        => fake()->optional()->date(),
-            'status'            => UserStatus::ACTIVE,
-            'phone'             => fake()->optional()->phoneNumber(),
-            'is_admin'          => false,
-            'remember_token'    => Str::random(10),
+            'first_name'         => fake()->firstName(),
+            'last_name'          => fake()->lastName(),
+            'email'              => fake()->unique()->safeEmail(),
+            'email_verified_at'  => now(),
+            'password'           => Hash::make('password'),
+            'remember_token'     => Str::random(10),
+            'phone'              => fake()->phoneNumber(),
+            'is_admin'           => false,
+            'is_active'          => true,
         ];
     }
 
-    public function admin(): self
+    /**
+     * Indicate that the model's email address should be unverified.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the model is an admin.
+     */
+    public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
             'is_admin' => true,
@@ -46,12 +60,12 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the model is inactive.
      */
-    public function unverified(): self
+    public function inactive(): static
     {
         return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+            'is_active' => false,
         ]);
     }
 }

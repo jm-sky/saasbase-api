@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $browser
  * @property string $os
  * @property string $location
- * @property User $user
+ * @property User   $user
  */
 class TrustedDevice extends BaseModel
 {
