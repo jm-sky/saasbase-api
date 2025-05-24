@@ -18,8 +18,7 @@ class UserPreviewResource extends JsonResource
         /* @var User $this->resource */
         return [
             'id'        => $this->id,
-            'firstName' => $this->first_name,
-            'lastName'  => $this->last_name,
+            'name'      => $this->fullName,
             'email'     => $this->email,
             'avatarUrl' => $this->getMediaSignedUrl('profile'),
         ];
