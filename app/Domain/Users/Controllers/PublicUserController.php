@@ -17,16 +17,18 @@ class PublicUserController extends Controller
 
     protected ?Tenant $tenant;
 
-    public function __construct()
+    protected function getTenant()
     {
         /** @var User $user */
         $user = Auth::user();
-
+        
         $this->tenant = $user->tenants()->firstWhere('tenants.id', $user->getTenantId());
     }
 
     public function index(Request $request): AnonymousResourceCollection
     {
+        $this->getTenant();
+        
         $users = $this->tenant->users()->get();
 
         return UserPreviewResource::collection($users);
