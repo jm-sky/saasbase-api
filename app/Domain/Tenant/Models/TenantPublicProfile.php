@@ -65,6 +65,7 @@ class TenantPublicProfile extends BaseModel implements HasMedia
         $this->addMediaConversion('banner')
             ->width(1200)
             ->height(400)
-            ->nonQueued();
+            ->nonQueued()
+        ;
     }
 }

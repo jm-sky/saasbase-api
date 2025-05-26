@@ -82,6 +82,7 @@ class TenantBranding extends BaseModel implements HasMedia
         $this->addMediaConversion('email')
             ->width(600)
             ->height(200)
-            ->nonQueued();
+            ->nonQueued()
+        ;
     }
 }
