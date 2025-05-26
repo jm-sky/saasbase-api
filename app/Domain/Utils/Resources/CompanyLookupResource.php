@@ -64,7 +64,7 @@ class CompanyLookupResource extends JsonResource
             'partners'              => CompanyPersonDTO::collect($company->partners),
             'registrationLegalDate' => $company->registrationLegalDate,
             'source'                => 'mf',
-            'data'                  => $company->toArray(),
+            // 'data'                  => $company->toArray(),
         ];
     }
 
@@ -80,7 +80,7 @@ class CompanyLookupResource extends JsonResource
             'address'   => $company->address,
             'vatStatus' => $company->valid ? 'active' : 'inactive',
             'source'    => 'vies',
-            'data'      => $company,
+            // 'data'      => $company,
         ];
     }
 }

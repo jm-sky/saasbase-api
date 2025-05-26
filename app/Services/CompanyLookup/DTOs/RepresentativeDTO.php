@@ -16,15 +16,6 @@ class RepresentativeDTO extends BaseDataDTO
     ) {
     }
 
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            name: $data['name'] ?? null,
-            nip: $data['nip'] ?? null,
-            pesel: $data['pesel'] ?? null,
-        );
-    }
-
     public function toArray(): array
     {
         return [
