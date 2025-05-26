@@ -6,7 +6,6 @@ use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -24,7 +23,7 @@ class OAuthController extends Controller
         ;
     }
 
-    public function callback(string $provider): JsonResponse
+    public function callback(string $provider): RedirectResponse
     {
         $socialUser = Socialite::driver($provider)->stateless()->user();
 
@@ -42,7 +41,9 @@ class OAuthController extends Controller
 
         $token = JwtHelper::createTokenWithoutTenant($user);
 
-        return $this->respondWithToken($token, $user);
+        $url = config('app.frontend_url') . '/oauth/callback?jwtToken=' . $token;
+
+        return response()->redirectTo($url);
     }
 
     private function extractFirstName(?string $fullName, ?string $fallback = null): string
