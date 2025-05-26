@@ -5,8 +5,10 @@ use App\Domain\Tenant\Controllers\TenantActivityLogController;
 use App\Domain\Tenant\Controllers\TenantAddressController;
 use App\Domain\Tenant\Controllers\TenantAttachmentsController;
 use App\Domain\Tenant\Controllers\TenantBankAccountController;
+use App\Domain\Tenant\Controllers\TenantBrandingController;
 use App\Domain\Tenant\Controllers\TenantController;
 use App\Domain\Tenant\Controllers\TenantLogoController;
+use App\Domain\Tenant\Controllers\TenantPublicProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->group(function () {
@@ -48,6 +50,16 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::delete('{media}', 'destroy')->name('destroy');
         })
     ;
+
+    // Tenant Branding
+    Route::get('/tenants/{tenant}/branding', [TenantBrandingController::class, 'show']);
+    Route::put('/tenants/{tenant}/branding', [TenantBrandingController::class, 'update']);
+    Route::delete('/tenants/{tenant}/branding/{collection}', [TenantBrandingController::class, 'deleteMedia']);
+
+    // Tenant Public Profile
+    Route::get('/tenants/{tenant}/public-profile', [TenantPublicProfileController::class, 'show']);
+    Route::put('/tenants/{tenant}/public-profile', [TenantPublicProfileController::class, 'update']);
+    Route::delete('/tenants/{tenant}/public-profile/{collection}', [TenantPublicProfileController::class, 'deleteMedia']);
 
     Route::get('tenants/{tenant}/logs', [TenantActivityLogController::class, 'index']);
 });

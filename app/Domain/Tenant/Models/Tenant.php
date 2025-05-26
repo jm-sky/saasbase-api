@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -134,6 +135,16 @@ class Tenant extends BaseModel implements HasMedia
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function branding(): HasOne
+    {
+        return $this->hasOne(TenantBranding::class);
+    }
+
+    public function publicProfile(): HasOne
+    {
+        return $this->hasOne(TenantPublicProfile::class);
     }
 
     protected static function booted()
