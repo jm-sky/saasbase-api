@@ -5,16 +5,20 @@ namespace App\Domain\Auth\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Lang;
 
 class ResetPasswordNotification extends Notification
 {
     use Queueable;
 
     public function __construct(
-        public string $token
+        public string $token,
+        public $locale = null
     ) {
+        if ($locale) {
+            App::setLocale($locale);
+        }
     }
 
     public function via(object $notifiable): array
@@ -31,11 +35,11 @@ class ResetPasswordNotification extends Notification
         ]);
 
         return (new MailMessage())
-            ->subject(Lang::get('Reset Password Notification'))
-            ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::get('Reset Password'), $url)
-            ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.users.expire')]))
-            ->line(Lang::get('If you did not request a password reset, no further action is required.'))
+            ->subject(__('notifications.password.reset.subject'))
+            ->line(__('notifications.password.reset.message'))
+            ->action(__('notifications.password.reset.button'), $url)
+            ->line(__('notifications.password.reset.expiry', ['count' => config('auth.passwords.users.expire')]))
+            ->line(__('notifications.password.reset.ignore'))
         ;
     }
 }

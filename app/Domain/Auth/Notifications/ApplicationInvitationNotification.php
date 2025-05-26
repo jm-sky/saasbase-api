@@ -7,13 +7,19 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 
 class ApplicationInvitationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public ApplicationInvitation $invitation)
-    {
+    public function __construct(
+        public ApplicationInvitation $invitation,
+        public $locale = null
+    ) {
+        if ($locale) {
+            App::setLocale($locale);
+        }
     }
 
     public function via($notifiable): array
@@ -27,13 +33,13 @@ class ApplicationInvitationNotification extends Notification implements ShouldQu
         $url         = $frontendUrl . '/login?applicationInvitationToken=' . $this->invitation->token;
 
         return (new MailMessage())
-            ->subject('You are invited to join SaaSBase')
-            ->greeting('Hello!')
-            ->line('You have been invited to join SaaSBase.')
+            ->subject(__('notifications.application_invitation.subject'))
+            ->greeting(__('notifications.application_invitation.greeting'))
+            ->line(__('notifications.application_invitation.intro'))
             ->line('')
-            ->line('You can accept the invitation by clicking the button below.')
-            ->action('Accept Invitation', $url)
-            ->line('If you did not expect this invitation, you can ignore this email.')
+            ->line(__('notifications.application_invitation.accept_button'))
+            ->action(__('notifications.application_invitation.accept_button'), $url)
+            ->line(__('notifications.application_invitation.ignore_info'))
         ;
     }
 }

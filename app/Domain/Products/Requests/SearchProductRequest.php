@@ -15,16 +15,12 @@ class SearchProductRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'filter.name'           => 'sometimes|string',
-            'filter.description'    => 'sometimes|string',
+            'filter.name'           => 'sometimes',
+            'filter.description'    => 'sometimes',
             'filter.unitId'         => 'sometimes|uuid|exists:measurement_units,id',
             'filter.vatRateId'      => 'sometimes|uuid|exists:vat_rates,id',
-            'filter.createdAt'      => 'sometimes|array',
-            'filter.createdAt.from' => 'required_with:filter.createdAt|date',
-            'filter.createdAt.to'   => 'required_with:filter.createdAt|date|after_or_equal:filter.createdAt.from',
-            'filter.updatedAt'      => 'sometimes|array',
-            'filter.updatedAt.from' => 'required_with:filter.updatedAt|date',
-            'filter.updatedAt.to'   => 'required_with:filter.updatedAt|date|after_or_equal:filter.updatedAt.from',
+            'filter.createdAt'      => 'sometimes',
+            'filter.updatedAt'      => 'sometimes',
             'sort'                  => ['sometimes', 'string', 'in:name,-name,createdAt,-createdAt,updatedAt,-updatedAt'],
         ];
     }

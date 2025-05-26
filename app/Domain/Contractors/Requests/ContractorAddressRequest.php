@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Requests;
 
 use App\Domain\Common\Enums\AddressType;
+use App\Http\Requests\BaseFormRequest;
 
 class ContractorAddressRequest extends BaseFormRequest
 {
@@ -29,27 +30,10 @@ class ContractorAddressRequest extends BaseFormRequest
 
     protected function prepareForValidation(): void
     {
+        $this->mergeTenantId();
+
         $this->merge([
-            'tenantId'  => $this->user()->getTenantId(),
             'isDefault' => $this->input('isDefault', false),
         ]);
-    }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'street'      => $validated['street'] ?? null,
-            'city'        => $validated['city'],
-            'postal_code' => $validated['postalCode'] ?? null,
-            'country'     => $validated['country'],
-            'tenant_id'   => $validated['tenantId'],
-            'building'    => $validated['building'] ?? null,
-            'flat'        => $validated['flat'] ?? null,
-            'description' => $validated['description'] ?? null,
-            'type'        => $validated['type'],
-            'is_default'  => $validated['isDefault'] ?? false,
-        ];
     }
 }

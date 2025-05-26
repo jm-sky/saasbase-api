@@ -20,16 +20,4 @@ class TaskStatusRequest extends BaseFormRequest
             'isDefault' => ['sometimes', 'boolean'],
         ];
     }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'name'       => $validated['name'],
-            'color'      => $validated['color'],
-            'sort_order' => $validated['sortOrder'] ?? null,
-            'is_default' => $validated['isDefault'] ?? false,
-        ];
-    }
 }

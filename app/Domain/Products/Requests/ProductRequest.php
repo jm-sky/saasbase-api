@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\Requests;
 
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Validator;
 
 class ProductRequest extends BaseFormRequest
@@ -53,29 +54,13 @@ class ProductRequest extends BaseFormRequest
         ];
     }
 
-    public function withValidator(Validator $validator): void
+    protected function prepareForValidation(): void
     {
-        $validator->after(function (Validator $validator) {
-            $user     = auth()->user();
-            $tenantId = $this->input('tenantId');
-
-            if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {
-                $validator->errors()->add('tenantId', 'You are not allowed to use this tenant ID.');
-            }
-        });
+        $this->mergeTenantId();
     }
 
-    public function validated($key = null, $default = null): array
+    public function withValidator(Validator $validator): void
     {
-        $validated = parent::validated();
-
-        return [
-            'tenant_id'   => $validated['tenantId'],
-            'name'        => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'unit_id'     => $validated['unitId'],
-            'price_net'   => $validated['priceNet'],
-            'vat_rate_id' => $validated['vatRateId'],
-        ];
+        $this->checkTenantId($validator);
     }
 }

@@ -16,17 +16,4 @@ class UpdateProjectRequest extends BaseFormRequest
             'endDate'     => ['nullable', 'date'],
         ];
     }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'name'        => $validated['name'] ?? null,
-            'description' => $validated['description'] ?? null,
-            'status_id'   => $validated['statusId'] ?? null,
-            'start_date'  => $validated['startDate'] ?? null,
-            'end_date'    => $validated['endDate'] ?? null,
-        ];
-    }
 }

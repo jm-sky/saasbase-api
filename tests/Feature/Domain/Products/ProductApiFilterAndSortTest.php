@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Domain\Products\Controllers;
+namespace Tests\Feature\Domain\Products;
 
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
@@ -16,7 +16,7 @@ use Tests\Traits\WithAuthenticatedUser;
  * @internal
  */
 #[CoversNothing]
-class ProductControllerTest extends TestCase
+class ProductApiFilterAndSortTest extends TestCase
 {
     use RefreshDatabase;
     use WithAuthenticatedUser;
@@ -31,12 +31,15 @@ class ProductControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->markTestSkipped('Fix tenancy with JWT');
-
         $this->tenant  = Tenant::factory()->create();
-        $this->unit    = MeasurementUnit::factory()->create();
-        $this->vatRate = VatRate::factory()->create();
+
         $this->authenticateUser($this->tenant);
+
+        Tenant::bypassTenant($this->tenant->id, function () {
+            $this->unit = MeasurementUnit::factory()->create();
+        });
+
+        $this->vatRate = VatRate::factory()->create();
     }
 
     #[Test]
@@ -67,7 +70,9 @@ class ProductControllerTest extends TestCase
     #[Test]
     public function itCanFilterProductsByUnitId(): void
     {
-        $unit2 = MeasurementUnit::factory()->create();
+        $unit2 = Tenant::bypassTenant($this->tenant->id, function () {
+            return $unit2 = MeasurementUnit::factory()->create();
+        });
 
         Product::factory()->create([
             'tenant_id'   => $this->tenant->id,

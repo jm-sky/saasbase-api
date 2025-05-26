@@ -21,10 +21,11 @@ class SkillCategory extends BaseModel
     protected $fillable = [
         'name',
         'description',
+        'created_at',
     ];
 
     public function skills(): HasMany
     {
-        return $this->hasMany(Skill::class, 'category_id');
+        return $this->hasMany(Skill::class, 'category', 'name');
     }
 }

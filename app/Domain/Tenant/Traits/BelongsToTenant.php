@@ -61,6 +61,14 @@ trait BelongsToTenant
     /**
      * Disable the tenant scope for the query.
      */
+    public static function forTenant(string $tenantId): Builder
+    {
+        return static::withoutGlobalScope(TenantScope::class)->where('tenant_id', $tenantId);
+    }
+
+    /**
+     * Disable the tenant scope for the query.
+     */
     public static function withoutTenant(): Builder
     {
         return static::withoutGlobalScope(TenantScope::class);

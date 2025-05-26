@@ -2,11 +2,11 @@
 
 namespace App\Domain\Skills\Resources;
 
-use App\Domain\Skills\Models\Skill;
+use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SkillResource extends JsonResource
+class SkillCategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,13 +17,14 @@ class SkillResource extends JsonResource
      */
     public function toArray($request): array
     {
-        /* @var Skill $this */
+        /* @var SkillCategory $this */
         return [
             'id'          => $this->id,
             'name'        => $this->name,
             'description' => $this->description,
             'createdAt'   => $this->created_at->toIso8601String(),
             'updatedAt'   => $this->updated_at?->toIso8601String(),
+            'skills'      => SkillResource::collection($this->whenLoaded('skills')),
         ];
     }
 }

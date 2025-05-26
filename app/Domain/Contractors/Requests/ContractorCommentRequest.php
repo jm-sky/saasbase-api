@@ -17,13 +17,4 @@ class ContractorCommentRequest extends BaseFormRequest
             'content' => ['required', 'string'],
         ];
     }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'content' => $validated['content'],
-        ];
-    }
 }

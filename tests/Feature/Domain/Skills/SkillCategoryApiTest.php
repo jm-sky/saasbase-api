@@ -5,10 +5,10 @@ namespace Tests\Feature\Domain\Skills;
 use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -17,6 +17,7 @@ use Tests\TestCase;
 class SkillCategoryApiTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     private string $baseUrl = '/api/v1/skill-categories';
 
@@ -25,27 +26,27 @@ class SkillCategoryApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        self::markTestSkipped('This test class is temporarily disabled.');
         $this->user = User::factory()->create();
-        Sanctum::actingAs($this->user);
+        $this->authenticateUser(user: $this->user);
     }
 
     public function testCanListCategories(): void
     {
-        $categories = SkillCategory::factory()->count(3)->create();
+        SkillCategory::factory()->count(3)->create();
 
         $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'name',
-                    'description',
-                    'createdAt',
-                    'updatedAt',
-                    'deletedAt',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'description',
+                        'createdAt',
+                        'updatedAt',
+                    ],
                 ],
             ])
         ;
@@ -68,7 +69,6 @@ class SkillCategoryApiTest extends TestCase
                     'description',
                     'createdAt',
                     'updatedAt',
-                    'deletedAt',
                 ],
             ])
             ->assertJson([
@@ -112,7 +112,6 @@ class SkillCategoryApiTest extends TestCase
                     'description',
                     'createdAt',
                     'updatedAt',
-                    'deletedAt',
                 ],
             ])
             ->assertJson([
@@ -144,7 +143,6 @@ class SkillCategoryApiTest extends TestCase
                     'description',
                     'createdAt',
                     'updatedAt',
-                    'deletedAt',
                 ],
             ])
             ->assertJson([
@@ -169,7 +167,7 @@ class SkillCategoryApiTest extends TestCase
         $response = $this->deleteJson($this->baseUrl . '/' . $category->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
-        $this->assertSoftDeleted('skill_categories', ['id' => $category->id]);
+        $this->assertDatabaseMissing('skill_categories', ['id' => $category->id]);
     }
 
     public function testReturns404ForNonexistentCategory(): void

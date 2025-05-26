@@ -39,16 +39,4 @@ class TenantBankAccountRequest extends BaseFormRequest
             'isDefault.boolean' => 'The is default field must be true or false.',
         ];
     }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'bank_name'      => $validated['bankName'],
-            'account_number' => $validated['accountNumber'],
-            'swift_code'     => $validated['swiftCode'],
-            'is_default'     => $validated['isDefault'] ?? false,
-        ];
-    }
 }

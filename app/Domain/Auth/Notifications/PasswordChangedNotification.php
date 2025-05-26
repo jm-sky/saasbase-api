@@ -9,14 +9,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 
 class PasswordChangedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public User $notifiable)
-    {
+    public function __construct(
+        public User $notifiable,
+        public $locale = null
+    ) {
+        if ($locale) {
+            App::setLocale($locale);
+        }
     }
 
     public function via($notifiable): array
@@ -26,15 +32,14 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable): MailMessage
     {
-        $appName      = Config::get('app.name');
-        $frontendUrl  = Config::get('app.frontend_url');
+        $appName = Config::get('app.name');
 
         return (new MailMessage())
-            ->subject("Password changed for {$appName}!")
-            ->greeting("Hi {$notifiable->fullName},")
-            ->line("Your password has been changed for {$appName}.")
-            ->line('If you did not change your password, please contact support.')
-            ->line('If you have any questions, feel free to reach out anytime.')
+            ->subject(__('notifications.password.changed.subject', ['app' => $appName]))
+            ->greeting(__('notifications.password.changed.greeting', ['name' => $notifiable->fullName]))
+            ->line(__('notifications.password.changed.message', ['app' => $appName]))
+            ->line(__('notifications.password.changed.warning'))
+            ->line(__('notifications.password.changed.help'))
         ;
     }
 
@@ -44,8 +49,8 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
 
         return [
             'type'    => 'security.passwordChanged',
-            'title'   => "Password changed for {$appName}!",
-            'message' => "Your password has been changed for {$appName}.",
+            'title'   => __('notifications.password.changed.title'),
+            'message' => __('notifications.password.changed.message', ['app' => $appName]),
             'source'  => 'System',
         ];
     }
@@ -73,8 +78,8 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
             'id'      => $this->id,
             'data'    => [
                 'type'    => 'security.passwordChanged',
-                'title'   => 'Password changed!',
-                'message' => "Your password has been changed for {$appName}.",
+                'title'   => __('notifications.password.changed.title'),
+                'message' => __('notifications.password.changed.message', ['app' => $appName]),
                 'source'  => 'System',
             ],
             'readAt'    => null,

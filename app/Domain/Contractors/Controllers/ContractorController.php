@@ -4,7 +4,6 @@ namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
-use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Contractors\Enums\ContractorActivityType;
@@ -34,15 +33,17 @@ class ContractorController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'email', 'phone', 'notes'])),
+            AllowedFilter::custom('id', new AdvancedFilter()),
             AllowedFilter::custom('name', new AdvancedFilter()),
             AllowedFilter::custom('email', new AdvancedFilter()),
             AllowedFilter::custom('phone', new AdvancedFilter()),
+            AllowedFilter::custom('website', new AdvancedFilter()),
             AllowedFilter::custom('country', new AdvancedFilter()),
             AllowedFilter::custom('taxId', new AdvancedFilter(), 'tax_id'),
             AllowedFilter::custom('notes', new AdvancedFilter()),
             AllowedFilter::custom('isActive', new AdvancedFilter(['is_active' => 'boolean']), 'is_active'),
-            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
-            AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
+            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
         ];
 
         $this->sorts = [

@@ -151,11 +151,15 @@ class Tenant extends BaseModel implements HasMedia
         });
     }
 
-    public static function bypassTenant(string $tenantId, \Closure $callback): void
+    public static function bypassTenant(string $tenantId, \Closure $callback): mixed
     {
         $previousTenantId         = self::$BYPASSED_TENANT_ID;
         self::$BYPASSED_TENANT_ID = $tenantId;
-        $callback();
+
+        $result = $callback();
+
         self::$BYPASSED_TENANT_ID = $previousTenantId;
+
+        return $result;
     }
 }

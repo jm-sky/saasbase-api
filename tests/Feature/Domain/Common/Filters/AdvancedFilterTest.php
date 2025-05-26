@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Domain\Common\Filters;
 
-use App\Domain\Auth\Models\User;
+use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
@@ -16,50 +18,57 @@ use Tests\TestCase;
 class AdvancedFilterTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
+
+    protected Tenant $tenant;
+
+    protected string $baseUrl = '/api/v1/contractors';
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->tenant = Tenant::factory()->create();
 
-        $this->markTestSkipped('Skipping this test for now');
+        $this->authenticateUser($this->tenant);
 
-        User::factory()->create([
-            'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'email'      => 'john@example.com',
-            'status'     => null,
-            'birth_date' => '1980-01-01',
-            'is_admin'   => false,
-        ]);
+        // $this->markTestSkipped('Skipping this test for now');
+        Tenant::bypassTenant($this->tenant->id, function () {
+            Contractor::factory()->create([
+                'name'       => 'John Doe Company',
+                'email'      => null,
+                'website'    => null,
+                'is_buyer'   => true,
+                'created_at' => '2000-01-01',
+            ]);
 
-        User::factory()->create([
-            'first_name' => 'Jane',
-            'last_name'  => 'Smith',
-            'email'      => '',
-            'status'     => 'active',
-            'birth_date' => '1990-05-05',
-            'is_admin'   => true,
-        ]);
+            Contractor::factory()->create([
+                'name'       => 'Jane Smith Company',
+                'email'      => '',
+                'website'    => 'https://jane-smith-company.com',
+                'is_buyer'   => false,
+                'created_at' => '2005-05-05',
+            ]);
+        });
     }
 
     public function testNullOperatorFiltersCorrectly()
     {
-        $response = $this->json('GET', '/api/users', [
+        $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
-                'status' => ['null' => 1],
+                'website' => ['null' => true],
             ],
         ]);
 
         $response->assertOk();
         $this->assertCount(1, $response->json('data'));
-        $this->assertEquals('John', $response->json('data')[0]['first_name']);
+        $this->assertEquals('John Doe Company', $response->json('data')[0]['name']);
     }
 
     public function testNullishOperatorFiltersCorrectly()
     {
-        $response = $this->json('GET', '/api/users', [
+        $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
-                'email' => ['nullish' => 1],
+                'email' => ['nullish' => true],
             ],
         ]);
 
@@ -69,25 +78,22 @@ class AdvancedFilterTest extends TestCase
 
     public function testStartsWithOperator()
     {
-        $response = $this->json('GET', '/api/users', [
+        $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
-                'first_name' => ['startsWith' => 'Jane'],
+                'name' => ['startsWith' => 'Jane'],
             ],
         ]);
 
         $response->assertOk();
         $this->assertCount(1, $response->json('data'));
-        $this->assertEquals('Jane', $response->json('data')[0]['first_name']);
+        $this->assertEquals('Jane Smith Company', $response->json('data')[0]['name']);
     }
 
     public function testBetweenOperator()
     {
-        User::factory()->create(['birth_date' => '2000-01-01']);
-        User::factory()->create(['birth_date' => '2005-05-05']);
-
-        $response = $this->json('GET', '/api/users', [
+        $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
-                'birth_date' => ['between' => '1990-01-01,2005-12-31'],
+                'createdAt' => ['between' => '1990-01-01,2005-12-31'],
             ],
         ]);
 
@@ -97,28 +103,29 @@ class AdvancedFilterTest extends TestCase
 
     public function testDefaultLikeOperatorForStrings()
     {
-        $response = $this->json('GET', '/api/users', [
+        $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
-                'last_name' => 'Doe',
+                'name' => 'Doe',
             ],
         ]);
 
         $response->assertOk();
         $this->assertCount(1, $response->json('data'));
-        $this->assertEquals('John', $response->json('data')[0]['first_name']);
+        $this->assertEquals('John Doe Company', $response->json('data')[0]['name']);
     }
 
     public function testEqOperatorForNumbers()
     {
-        $id = User::first()->id;
+        $id = Contractor::forTenant($this->tenant->id)->first()->id;
 
-        $response = $this->json('GET', '/api/users', [
+        $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
                 'id' => ['eq' => $id],
             ],
         ]);
 
         $response->assertOk();
-        $this->assertEquals('John', $response->json('data')[0]['first_name']);
+
+        $this->assertEquals('John Doe Company', $response->json('data')[0]['name']);
     }
 }

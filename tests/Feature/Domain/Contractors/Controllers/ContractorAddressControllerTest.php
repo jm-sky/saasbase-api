@@ -7,14 +7,14 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorAddress;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class ContractorAddressControllerTest extends TestCase
 {
     use RefreshDatabase;

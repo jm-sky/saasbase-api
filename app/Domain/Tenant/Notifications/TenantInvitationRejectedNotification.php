@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 
 class TenantInvitationRejectedNotification extends Notification implements ShouldQueue
 {
@@ -17,7 +18,11 @@ class TenantInvitationRejectedNotification extends Notification implements Shoul
     public function __construct(
         public User $notifiable,
         public TenantInvitation $invitation,
+        public $locale = null
     ) {
+        if ($locale) {
+            App::setLocale($locale);
+        }
     }
 
     public function via($notifiable): array
@@ -29,8 +34,12 @@ class TenantInvitationRejectedNotification extends Notification implements Shoul
     {
         return [
             'type'    => 'tenantInvitation.rejected',
-            'title'   => 'Your invitation has been rejected!',
-            'message' => "{$this->invitation->invitedUser->fullName} has rejected your invitation to join {$this->invitation->tenant->name} as {$this->invitation->role}!",
+            'title'   => __('notifications.tenant_invitation.rejected.title'),
+            'message' => __('notifications.tenant_invitation.rejected.message', [
+                'name'   => $this->invitation->invitedUser->fullName,
+                'tenant' => $this->invitation->tenant->name,
+                'role'   => $this->invitation->role,
+            ]),
             'source'  => 'System',
         ];
     }
@@ -56,8 +65,12 @@ class TenantInvitationRejectedNotification extends Notification implements Shoul
             'id'      => $this->id,
             'data'    => [
                 'type'    => 'tenantInvitation.rejected',
-                'title'   => 'Your invitation has been rejected!',
-                'message' => "{$this->invitation->invitedUser->fullName} has rejected your invitation to join {$this->invitation->tenant->name} as {$this->invitation->role}!",
+                'title'   => __('notifications.tenant_invitation.rejected.title'),
+                'message' => __('notifications.tenant_invitation.rejected.message', [
+                    'name'   => $this->invitation->invitedUser->fullName,
+                    'tenant' => $this->invitation->tenant->name,
+                    'role'   => $this->invitation->role,
+                ]),
                 'source'  => 'System',
             ],
             'readAt'    => null,

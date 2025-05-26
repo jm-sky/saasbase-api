@@ -15,6 +15,7 @@ class SkillCategoryFactory extends Factory
             'id'          => fake()->uuid(),
             'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),
+            'created_at'  => fake()->dateTime(),
         ];
     }
 }

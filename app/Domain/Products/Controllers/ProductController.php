@@ -4,7 +4,6 @@ namespace App\Domain\Products\Controllers;
 
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
-use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Products\Enums\ProductActivityType;
@@ -34,12 +33,13 @@ class ProductController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('if', new AdvancedFilter()),
             AllowedFilter::custom('name', new AdvancedFilter()),
             AllowedFilter::custom('description', new AdvancedFilter()),
             AllowedFilter::custom('unitId', new AdvancedFilter(), 'unit_id'),
             AllowedFilter::custom('vatRateId', new AdvancedFilter(), 'vat_rate_id'),
-            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
-            AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
+            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
         ];
 
         $this->sorts = [

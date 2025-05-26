@@ -7,11 +7,19 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
 {
     use Queueable;
+
+    public function __construct(?string $locale = null)
+    {
+        if ($locale) {
+            App::setLocale($locale);
+        }
+    }
 
     /**
      * Get the verification URL for the given notifiable.
@@ -49,7 +57,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
         $verificationUrl = $this->verificationUrl($notifiable);
 
         return (new MailMessage())
-            ->subject('Verify Email Address')
+            ->subject(__('notifications.email_verification.subject'))
             ->view('emails.verify-email', [
                 'url'        => $verificationUrl,
                 'notifiable' => $notifiable,

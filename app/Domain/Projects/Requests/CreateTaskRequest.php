@@ -18,19 +18,4 @@ class CreateTaskRequest extends BaseFormRequest
             'dueDate'       => ['nullable', 'date'],
         ];
     }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'project_id'     => $validated['projectId'],
-            'title'          => $validated['title'],
-            'description'    => $validated['description'] ?? null,
-            'status_id'      => $validated['statusId'],
-            'priority'       => $validated['priority'] ?? null,
-            'assigned_to_id' => $validated['assignedToId'] ?? null,
-            'due_date'       => $validated['dueDate'] ?? null,
-        ];
-    }
 }

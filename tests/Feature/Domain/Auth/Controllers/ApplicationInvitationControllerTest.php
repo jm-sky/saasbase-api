@@ -8,14 +8,14 @@ use App\Domain\Auth\Models\ApplicationInvitation;
 use App\Domain\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 class ApplicationInvitationControllerTest extends TestCase
 {
     use RefreshDatabase;

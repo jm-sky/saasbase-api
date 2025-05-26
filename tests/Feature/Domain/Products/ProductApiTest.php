@@ -36,12 +36,13 @@ class ProductApiTest extends TestCase
     {
         parent::setUp();
 
-        $this->markTestSkipped('Fix tenancy with JWT');
-
         $this->tenant = Tenant::factory()->create();
         $this->user   = $this->authenticateUser($this->tenant);
 
-        $this->unit    = MeasurementUnit::factory()->create();
+        Tenant::bypassTenant($this->tenant->id, function () {
+            $this->unit = MeasurementUnit::factory()->create();
+        });
+
         $this->vatRate = VatRate::factory()->create();
     }
 
@@ -59,14 +60,17 @@ class ProductApiTest extends TestCase
 
         // Create products for a different tenant
         $otherTenant = Tenant::factory()->create();
-        Product::factory()
-            ->count(2)
-            ->create([
-                'tenant_id'   => $otherTenant->id,
-                'unit_id'     => $this->unit->id,
-                'vat_rate_id' => $this->vatRate->id,
-            ])
-        ;
+
+        Tenant::bypassTenant($otherTenant->id, function () use ($otherTenant) {
+            Product::factory()
+                ->count(2)
+                ->create([
+                    'tenant_id'   => $otherTenant->id,
+                    'unit_id'     => $this->unit->id,
+                    'vat_rate_id' => $this->vatRate->id,
+                ])
+            ;
+        });
 
         $response = $this->getJson($this->baseUrl);
 
@@ -88,9 +92,9 @@ class ProductApiTest extends TestCase
                     ],
                 ],
                 'meta' => [
-                    'current_page',
-                    'last_page',
-                    'per_page',
+                    'currentPage',
+                    'lastPage',
+                    'perPage',
                     'total',
                 ],
             ])

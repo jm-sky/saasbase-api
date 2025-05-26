@@ -25,24 +25,10 @@ class ContractorBankAccountRequest extends BaseFormRequest
 
     public function prepareForValidation(): void
     {
+        $this->mergeTenantId();
+
         $this->merge([
             'isDefault' => $this->input('isDefault', false),
-            'tenantId'  => $this->user()->getTenantId(),
         ]);
-    }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'tenant_id'      => $validated['tenantId'] ?? null,
-            'iban'           => $validated['iban'] ?? null,
-            'swift'          => $validated['swift'] ?? null,
-            'currency'       => $validated['currency'] ?? null,
-            'bank_name'      => $validated['bankName'] ?? null,
-            'description'    => $validated['description'] ?? null,
-            'is_default'     => $validated['isDefault'] ?? false,
-        ];
     }
 }

@@ -7,13 +7,19 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 
 class TenantInvitationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public TenantInvitation $invitation)
-    {
+    public function __construct(
+        public TenantInvitation $invitation,
+        public $locale = null
+    ) {
+        if ($locale) {
+            App::setLocale($locale);
+        }
     }
 
     public function via($notifiable): array
@@ -27,15 +33,15 @@ class TenantInvitationNotification extends Notification implements ShouldQueue
         $url         = $frontendUrl . '/login?tenantInvitationToken=' . $this->invitation->token;
 
         return (new MailMessage())
-            ->subject('You are invited to join a tenant')
-            ->greeting('Hello!')
-            ->line('You have been invited to join a tenant in SaaSBase.')
-            ->line('- Tenant: ' . $this->invitation->tenant->name)
-            ->line('- Role: ' . $this->invitation->role)
+            ->subject(__('notifications.tenant_invitation.subject'))
+            ->greeting(__('notifications.tenant_invitation.greeting'))
+            ->line(__('notifications.tenant_invitation.intro'))
+            ->line(__('notifications.tenant_invitation.tenant_info', ['name' => $this->invitation->tenant->name]))
+            ->line(__('notifications.tenant_invitation.role_info', ['role' => $this->invitation->role]))
             ->line('')
-            ->line('You can accept the invitation by clicking the button below.')
-            ->action('Accept Invitation', $url)
-            ->line('If you did not expect this invitation, you can ignore this email.')
+            ->line(__('notifications.tenant_invitation.accept_button'))
+            ->action(__('notifications.tenant_invitation.accept_button'), $url)
+            ->line(__('notifications.tenant_invitation.ignore_info'))
         ;
     }
 }

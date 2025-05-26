@@ -2,65 +2,81 @@
 
 namespace App\Domain\Skills\Controllers;
 
-use App\Domain\Skills\DTOs\SkillCategoryDTO;
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
+use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Skills\Models\SkillCategory;
 use App\Domain\Skills\Requests\SkillCategoryRequest;
+use App\Domain\Skills\Resources\SkillCategoryResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class SkillCategoryController extends Controller
 {
-    public function index(): JsonResponse
-    {
-        $categories = SkillCategory::with('skills')->paginate();
+    use HasIndexQuery;
 
-        return response()->json(
-            SkillCategoryDTO::collect($categories)
-        );
+    public function __construct()
+    {
+        $this->modelClass = SkillCategory::class;
+
+        $this->filters = [
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
+        ];
+
+        $this->sorts = [
+            'name',
+            'description',
+            'createdAt',
+        ];
     }
 
-    public function store(SkillCategoryRequest $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $dto      = SkillCategoryDTO::from($request->validated());
-        $category = SkillCategory::create([
-            'name'        => $dto->name,
-            'description' => $dto->description,
-        ]);
+        $categories = $this->getIndexPaginator($request);
 
-        return response()->json(
-            ['data' => SkillCategoryDTO::fromModel($category)],
-            Response::HTTP_CREATED
-        );
+        return SkillCategoryResource::collection($categories['data'])
+            ->additional(['meta' => $categories['meta']])
+        ;
     }
 
-    public function show(SkillCategory $category): JsonResponse
+    public function store(SkillCategoryRequest $request): SkillCategoryResource
     {
-        abort_if(!$category->exists(), Response::HTTP_NOT_FOUND);
+        $skillCategory = SkillCategory::create($request->validated());
 
-        $category->load('skills');
-
-        return response()->json(['data' => SkillCategoryDTO::fromModel($category)]);
+        return new SkillCategoryResource($skillCategory);
     }
 
-    public function update(SkillCategoryRequest $request, SkillCategory $category): JsonResponse
+    public function show(SkillCategory $skillCategory): SkillCategoryResource
     {
-        abort_if(!$category->exists(), Response::HTTP_NOT_FOUND);
+        abort_if(!$skillCategory->exists(), Response::HTTP_NOT_FOUND);
 
-        $dto = SkillCategoryDTO::from($request->validated());
-        $category->update([
-            'name'        => $dto->name,
-            'description' => $dto->description,
-        ]);
+        $skillCategory->load('skills');
 
-        return response()->json(['data' => SkillCategoryDTO::fromModel($category)]);
+        return new SkillCategoryResource($skillCategory);
     }
 
-    public function destroy(SkillCategory $category): JsonResponse
+    public function update(SkillCategoryRequest $request, SkillCategory $skillCategory): SkillCategoryResource
     {
-        abort_if(!$category->exists(), Response::HTTP_NOT_FOUND);
+        abort_if(!$skillCategory->exists(), Response::HTTP_NOT_FOUND);
 
-        $category->delete();
+        $skillCategory->update($request->validated());
+
+        return new SkillCategoryResource($skillCategory);
+    }
+
+    public function destroy(SkillCategory $skillCategory): JsonResponse
+    {
+        abort_if(!$skillCategory->exists(), Response::HTTP_NOT_FOUND);
+
+        $skillCategory->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

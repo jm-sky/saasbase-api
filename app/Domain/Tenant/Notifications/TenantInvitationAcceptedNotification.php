@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 
 class TenantInvitationAcceptedNotification extends Notification implements ShouldQueue
 {
@@ -17,7 +18,11 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
     public function __construct(
         public User $notifiable,
         public TenantInvitation $invitation,
+        public $locale = null
     ) {
+        if ($locale) {
+            App::setLocale($locale);
+        }
     }
 
     public function via($notifiable): array
@@ -29,8 +34,12 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
     {
         return [
             'type'    => 'tenantInvitation.accepted',
-            'title'   => 'Your invitation has been accepted!',
-            'message' => "Someonehas joined {$this->invitation->tenant->name} as {$this->invitation->role}!",
+            'title'   => __('notifications.tenant_invitation.accepted.title'),
+            'message' => __('notifications.tenant_invitation.accepted.message', [
+                'name'   => $this->invitation->invitedUser->fullName,
+                'tenant' => $this->invitation->tenant->name,
+                'role'   => $this->invitation->role,
+            ]),
             'source'  => 'System',
         ];
     }
@@ -56,8 +65,12 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
             'id'      => $this->id,
             'data'    => [
                 'type'    => 'tenantInvitation.accepted',
-                'title'   => 'Your invitation has been accepted!',
-                'message' => "Someone has joined {$this->invitation->tenant->name} as {$this->invitation->role}!",
+                'title'   => __('notifications.tenant_invitation.accepted.title'),
+                'message' => __('notifications.tenant_invitation.accepted.message', [
+                    'name'   => $this->invitation->invitedUser->fullName,
+                    'tenant' => $this->invitation->tenant->name,
+                    'role'   => $this->invitation->role,
+                ]),
                 'source'  => 'System',
             ],
             'readAt'    => null,

@@ -28,16 +28,4 @@ class SkillRequest extends BaseFormRequest
             'name.required'     => 'The name field is required.',
         ];
     }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        // Transform camelCase to snake_case for database
-        return [
-            'category'    => $validated['category'],
-            'name'        => $validated['name'],
-            'description' => $validated['description'] ?? null,
-        ];
-    }
 }

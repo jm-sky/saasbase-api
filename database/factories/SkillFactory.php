@@ -19,6 +19,7 @@ class SkillFactory extends Factory
             'category'    => $category->name,
             'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),
+            'created_at'  => fake()->dateTime(),
         ];
     }
 }

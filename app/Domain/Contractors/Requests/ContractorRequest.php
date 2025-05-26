@@ -2,9 +2,7 @@
 
 namespace App\Domain\Contractors\Requests;
 
-use App\Domain\Auth\Models\User;
 use App\Http\Requests\BaseFormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 
 class ContractorRequest extends BaseFormRequest
@@ -47,24 +45,11 @@ class ContractorRequest extends BaseFormRequest
 
     public function prepareForValidation(): void
     {
-        /** @var User $user */
-        $user     = Auth::user();
-
-        $this->merge([
-            'tenantId' => $this->input('tenantId') ?? $user->getTenantId(),
-        ]);
+        $this->mergeTenantId();
     }
 
     public function withValidator(Validator $validator): void
     {
-        $validator->after(function (Validator $validator) {
-            /** @var User $user */
-            $user     = Auth::user();
-            $tenantId = $this->input('tenantId');
-
-            if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {
-                $validator->errors()->add('tenantId', 'You are not allowed to use this tenant ID.');
-            }
-        });
+        $this->checkTenantId($validator);
     }
 }
