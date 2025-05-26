@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\Address;
-use App\Domain\Common\Models\BankAccount;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
@@ -117,14 +115,18 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createTenants(array $tenants): void
     {
-        foreach ($tenants as $tenantData) {
-            $tenantData   = collect($tenantData)->except(['relations', 'meta'])->toArray();
-            $addresses    = collect(Arr::get($tenantData, 'relations.addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
-            $bankAccounts = collect(Arr::get($tenantData, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
+        foreach ($tenants as $tenantInput) {
+            $tenantId     = Arr::get($tenantInput, 'id');
+            $tenantData   = collect($tenantInput)->except(['relations', 'meta'])->toArray();
+            $addresses    = collect(Arr::get($tenantInput, 'relations.addresses', []))->map(fn (array $address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $bankAccounts = collect(Arr::get($tenantInput, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             $tenant = Tenant::create($tenantData);
-            $tenant->addresses()->createMany($addresses);
-            $tenant->bankAccounts()->createMany($bankAccounts);
+
+            Tenant::bypassTenant($tenant->id, function () use ($tenant, $addresses, $bankAccounts) {
+                $tenant->addresses()->createMany($addresses);
+                $tenant->bankAccounts()->createMany($bankAccounts);
+            });
 
             $this->createTenantLogo($tenant, Arr::get($tenantData, 'meta.logoUrl'));
 
@@ -222,8 +224,8 @@ class CustomTenantUserSeeder extends Seeder
         foreach ($contractors as $contractor) {
             $tenantId       = Arr::get($contractor, 'tenant_id');
             $contractorData = collect($contractor)->except(['relations', 'meta'])->toArray();
-            $addresses      = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn (array $address) => Address::create($address))->toArray();
-            $bankAccounts   = collect(Arr::get($contractorData, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => BankAccount::create($bankAccount))->toArray();
+            $addresses      = collect(Arr::get($contractor, 'relations.addresses', []))->map(fn (array $address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $bankAccounts   = collect(Arr::get($contractor, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             Tenant::bypassTenant($tenantId, function () use ($contractorData, $addresses, $bankAccounts) {
                 $contractor = Contractor::create($contractorData);
