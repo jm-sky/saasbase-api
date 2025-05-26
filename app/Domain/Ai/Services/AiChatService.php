@@ -9,18 +9,23 @@ use App\Domain\Ai\Events\AiChatMessageStreamed;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
-use Throwable;
 
 class AiChatService
 {
     public const DONE_TOKEN = '[DONE]';
+
     public const DEFAULT_OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
     protected const MAX_BUFFER_LENGTH = 10240; // 10 KB jako bezpieczny limit
 
     protected string $openRouterUrl;
+
     protected string $model;
+
     protected string $apiKey;
+
     protected Client $guzzleClient;
+
     protected bool $shouldLog;
 
     public function __construct(
@@ -31,7 +36,7 @@ class AiChatService
         $this->model         = config('services.openrouter.model', 'openai/gpt-3.5-turbo');
         $this->apiKey        = config('services.openrouter.key');
         $this->guzzleClient  = new Client();
-        $this->shouldLog     = app()->environment('local') || config('services.openrouter.log', null) === true;
+        $this->shouldLog     = app()->environment('local') || true === config('services.openrouter.log', null);
     }
 
     public function streamAiResponse(array $history, string $message, string $userId): void
@@ -45,7 +50,7 @@ class AiChatService
             Log::error('AI request failed: ' . $e->getMessage(), [
                 'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             Log::error('Unexpected error while streaming AI response', [
                 'message' => $e->getMessage(),
                 'trace'   => $e->getTraceAsString(),
