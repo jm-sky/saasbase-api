@@ -69,7 +69,18 @@ class ContractorController extends Controller
 
     public function store(ContractorRequest $request, LogoFetcherService $logoFetcherService): JsonResponse
     {
-        $contractor = Contractor::create($request->validated());
+        $validated  = $request->validated();
+
+        $contractor = Contractor::create($validated['contractor']);
+
+        if (isset($validated['address'])) {
+            $contractor->addresses()->create($validated['address']);
+        }
+
+        if (isset($validated['bank_account'])) {
+            $contractor->bankAccounts()->create($validated['bank_account']);
+        }
+
         $contractor->logModelActivity(ContractorActivityType::Created->value, $contractor);
 
         if ($this->shouldFetchLogo($contractor, $request)) {
