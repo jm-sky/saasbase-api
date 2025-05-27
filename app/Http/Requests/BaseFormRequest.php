@@ -38,6 +38,12 @@ class BaseFormRequest extends FormRequest
         $validated = parent::validated();
 
         $snakeCaseFields = collect($validated)->mapWithKeys(function ($value, $key) {
+            if (is_array($value)) {
+                $value = collect($value)->mapWithKeys(function ($value, $key) {
+                    return [Str::snake($key) => $value];
+                })->toArray();
+            }
+
             return [Str::snake($key) => $value];
         })->toArray();
 
