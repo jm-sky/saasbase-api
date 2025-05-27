@@ -3,15 +3,15 @@
 namespace App\Domain\Common\DTOs;
 
 /**
- * @property string $name
- * @property string $countryCode
- * @property ?string $vatId
- * @property ?string $regon
- * @property ?string $shortName
- * @property ?string $phoneNumber
- * @property ?string $email
- * @property ?string $website
- * @property ?AddressDTO $address
+ * @property string          $name
+ * @property string          $countryCode
+ * @property ?string         $vatId
+ * @property ?string         $regon
+ * @property ?string         $shortName
+ * @property ?string         $phoneNumber
+ * @property ?string         $email
+ * @property ?string         $website
+ * @property ?AddressDTO     $address
  * @property ?BankAccountDTO $bankAccount
  */
 class CommonCompanyLookupData extends BaseDataDTO

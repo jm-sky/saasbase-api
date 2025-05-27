@@ -92,11 +92,13 @@ class AdvancedFilter implements Filter
         return match ($op) {
             'eq'  => '=',
             'ne', 'neq' => '!=',
-            'gt'    => '>',
-            'gte'   => '>=',
-            'lt'    => '<',
-            'lte'   => '<=',
-            default => '=',
+            'gt'     => '>',
+            'gte'    => '>=',
+            'from'   => '>=',
+            'lt'     => '<',
+            'lte'    => '<=',
+            'to'     => '<=',
+            default  => '=',
         };
     }
 
