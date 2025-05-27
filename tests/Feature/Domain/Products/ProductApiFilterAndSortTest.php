@@ -97,19 +97,23 @@ class ProductApiFilterAndSortTest extends TestCase
     #[Test]
     public function itCanFilterProductsByDateRange(): void
     {
-        $product1 = Product::factory()->create([
-            'tenant_id'   => $this->tenant->id,
-            'unit_id'     => $this->unit->id,
-            'vat_rate_id' => $this->vatRate->id,
-            'created_at'  => '2024-01-01 12:00:00',
-        ]);
+        $product1 = Tenant::bypassTenant($this->tenant->id, function () {
+            $product1 = Product::factory()->create([
+                'tenant_id'   => $this->tenant->id,
+                'unit_id'     => $this->unit->id,
+                'vat_rate_id' => $this->vatRate->id,
+                'created_at'  => '2024-01-01 12:00:00',
+            ]);
 
-        $product2 = Product::factory()->create([
-            'tenant_id'   => $this->tenant->id,
-            'unit_id'     => $this->unit->id,
-            'vat_rate_id' => $this->vatRate->id,
-            'created_at'  => '2024-02-01 12:00:00',
-        ]);
+            Product::factory()->create([
+                'tenant_id'   => $this->tenant->id,
+                'unit_id'     => $this->unit->id,
+                'vat_rate_id' => $this->vatRate->id,
+                'created_at'  => '2024-02-01 12:00:00',
+            ]);
+
+            return $product1;
+        });
 
         $response = $this->getJson('/api/v1/products?filter[createdAt][from]=2024-01-01&filter[createdAt][to]=2024-01-31');
 

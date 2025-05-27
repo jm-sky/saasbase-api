@@ -127,7 +127,11 @@ class ContractorController extends Controller
             return false;
         }
 
-        if ($request->has('website') || $request->has('email')) {
+        if (false === $request->boolean('options.fetchLogo', false)) {
+            return false;
+        }
+
+        if ($request->has('contractor.website') || $request->has('contractor.email')) {
             return true;
         }
 

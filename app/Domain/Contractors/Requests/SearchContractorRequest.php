@@ -26,8 +26,12 @@ class SearchContractorRequest extends BaseFormRequest
             'filter.taxId'          => 'sometimes',
             'filter.notes'          => 'sometimes',
             'filter.isActive'       => 'sometimes',
-            'filter.createdAt'      => 'sometimes|array',
-            'filter.updatedAt'      => 'sometimes|array',
+            'filter.createdAt'      => 'sometimes',
+            'filter.createdAt.from' => 'sometimes|date',
+            'filter.createdAt.to'   => 'sometimes|date',
+            'filter.updatedAt'      => 'sometimes',
+            'filter.updatedAt.from' => 'sometimes|date',
+            'filter.updatedAt.to'   => 'sometimes|date',
             'sort'                  => ['sometimes', 'string', 'in:name,-name,email,-email,city,-city,country,-country,isActive,-isActive,createdAt,-createdAt,updatedAt,-updatedAt'],
         ];
     }

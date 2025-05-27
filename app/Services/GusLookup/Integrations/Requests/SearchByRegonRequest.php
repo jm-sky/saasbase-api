@@ -4,15 +4,15 @@ namespace App\Services\GusLookup\Integrations\Requests;
 
 use Carbon\Carbon;
 use Saloon\Enums\Method;
-use Saloon\Http\Request;
 
-class SearchByRegonRequest extends Request
+class SearchByRegonRequest extends BaseGusRequest
 {
     protected Method $method = Method::GET;
 
     public function __construct(
         protected string $regon,
     ) {
+        parent::__construct();
     }
 
     public function resolveEndpoint(): string

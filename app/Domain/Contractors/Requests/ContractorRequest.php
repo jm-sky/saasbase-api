@@ -31,6 +31,8 @@ class ContractorRequest extends BaseFormRequest
 
             'address'     => ['nullable', 'sometimes', 'array'],
             'bankAccount' => ['nullable', 'sometimes', 'array'],
+
+            'options.fetchLogo' => ['sometimes', 'nullable', 'boolean'],
         ];
 
         if ($this->input('address.street') || $this->input('address.city') || $this->input('address.postalCode')) {
