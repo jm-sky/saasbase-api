@@ -7,6 +7,7 @@ use App\Domain\Common\Support\RegonValidator\RegonValidator;
 use App\Services\GusLookup\DTOs\GusFullReportResultDTO;
 use App\Services\GusLookup\Enums\CacheMode;
 use App\Services\GusLookup\Exceptions\GusLookupException;
+use App\Services\GusLookup\GusReportResolver;
 use App\Services\GusLookup\Integrations\GusApiConnector;
 use App\Services\GusLookup\Integrations\Requests\GetFullReportRequest;
 use App\Services\GusLookup\Integrations\Requests\SearchByNipRequest;
@@ -94,7 +95,8 @@ class GusLookupService
             $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
-            $reportRequest  = new GetFullReportRequest($dto->regon);
+            $reportName     = GusReportResolver::resolve($dto->toArray());
+            $reportRequest  = new GetFullReportRequest($dto->regon, $reportName);
             $reportResponse = $this->connector->send($reportRequest);
             $this->log('[lookupByNip] Report response', ['reportResponse' => $reportResponse]);
 
@@ -118,7 +120,8 @@ class GusLookupService
             $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
-            $reportRequest  = new GetFullReportRequest($dto->regon);
+            $reportName     = GusReportResolver::resolve($dto->toArray());
+            $reportRequest  = new GetFullReportRequest($dto->regon, $reportName);
             $reportResponse = $this->connector->send($reportRequest);
 
             return $reportResponse->dtoOrFail();

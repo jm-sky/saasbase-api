@@ -20,6 +20,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property ?string    $street      Example: "ul. Kwiatowa"
  * @property ?string    $building    Example: "15"
  * @property ?string    $flat        Example: "1"
+ * @property ?string    $silosId     Example: "6"
  */
 class GusLookupResultDTO implements Arrayable, \JsonSerializable
 {
@@ -36,6 +37,7 @@ class GusLookupResultDTO implements Arrayable, \JsonSerializable
         public ?string $street,
         public ?string $building,
         public ?string $flat,
+        public ?string $silosId,
     ) {
     }
 
@@ -54,6 +56,7 @@ class GusLookupResultDTO implements Arrayable, \JsonSerializable
             street: $data['street'] ?? null,
             building: $data['building'] ?? null,
             flat: $data['flat'] ?? null,
+            silosId: $data['silosId'] ?? null,
         );
     }
 
@@ -72,6 +75,7 @@ class GusLookupResultDTO implements Arrayable, \JsonSerializable
             'street'      => $this->street,
             'building'    => $this->building,
             'flat'        => $this->flat,
+            'silosId'     => $this->silosId,
         ];
     }
 
