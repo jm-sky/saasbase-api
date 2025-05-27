@@ -27,8 +27,8 @@ class GusReportResolver
         $silosId = $record['silosId'] ?? null;
 
         return match ($silosId) {
-            '6' => GusReportName::BIR11OsFizycznaRolnicza,
-            '4' => GusReportName::BIR11OsFizycznaDzialalnoscCeidg,
+            '6'     => GusReportName::BIR11OsFizycznaRolnicza,
+            '4'     => GusReportName::BIR11OsFizycznaDzialalnoscCeidg,
             default => GusReportName::BIR11OsFizycznaDzialalnoscPozostala,
         };
     }

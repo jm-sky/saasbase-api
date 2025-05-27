@@ -8,12 +8,12 @@ enum GusReportName: string
     case BIR11OsPrawna = 'BIR11OsPrawna';
 
     // Osoby fizyczne prowadzące działalność
-    case BIR11OsFizycznaDzialalnoscCeidg = 'BIR11OsFizycznaDzialalnoscCeidg';
+    case BIR11OsFizycznaDzialalnoscCeidg     = 'BIR11OsFizycznaDzialalnoscCeidg';
     case BIR11OsFizycznaDzialalnoscPozostala = 'BIR11OsFizycznaDzialalnoscPozostala';
-    case BIR11OsFizycznaRolnicza = 'BIR11OsFizycznaRolnicza';
+    case BIR11OsFizycznaRolnicza             = 'BIR11OsFizycznaRolnicza';
 
     // Jednostki lokalne
-    case BIR11JednLokalnaOsPrawnej = 'BIR11JednLokalnaOsPrawnej';
+    case BIR11JednLokalnaOsPrawnej   = 'BIR11JednLokalnaOsPrawnej';
     case BIR11JednLokalnaOsFizycznej = 'BIR11JednLokalnaOsFizycznej';
 
     // Dobór raportu do typu jednostki
