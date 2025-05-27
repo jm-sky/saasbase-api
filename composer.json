@@ -27,6 +27,7 @@
         "pusher/pusher-php-server": "^7.2",
         "ramsey/uuid": "^4.7",
         "rap2hpoutre/laravel-log-viewer": "^2.5",
+        "saloonphp/rate-limit-plugin": "^2.0",
         "saloonphp/saloon": "^3.11",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.0",

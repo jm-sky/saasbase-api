@@ -6,6 +6,7 @@ use App\Domain\Utils\Requests\CompanyLookupRequest;
 use App\Domain\Utils\Resources\CompanyLookupResource;
 use App\Http\Controllers\Controller;
 use App\Services\CompanyLookup\Services\CompanyLookupService;
+use App\Services\GusLookup\Services\GusLookupService;
 use App\Services\ViesLookup\Services\ViesLookupService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,6 +16,7 @@ class CompanyLookupController extends Controller
     public function __construct(
         private readonly CompanyLookupService $companyLookupService,
         private readonly ViesLookupService $viesLookupService,
+        private readonly GusLookupService $gusLookupService,
     ) {
     }
 
@@ -26,7 +28,7 @@ class CompanyLookupController extends Controller
 
         try {
             if ('PL' === $country) {
-                $result = $this->companyLookupService->findByNip($vatId, $force);
+                $result = $this->findByNip($vatId, $force);
             } else {
                 $result = $this->viesLookupService->findByVat($country, $vatId);
             }
@@ -39,5 +41,18 @@ class CompanyLookupController extends Controller
         } catch (\Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
+    }
+
+    protected function findByNip(string $nip, bool $force = false): ?CompanyLookupResource
+    {
+        if (config('gus_lookup.user_key')) {
+            $report = $this->gusLookupService->findByNip($nip, $force);
+        }
+
+        $result = $this->companyLookupService->findByNip($nip, $force);
+
+        $result->name = $report?->name;
+
+        return $result;
     }
 }

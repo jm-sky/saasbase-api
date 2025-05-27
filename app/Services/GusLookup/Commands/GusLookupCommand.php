@@ -7,16 +7,17 @@ use Illuminate\Console\Command;
 
 class GusLookupCommand extends Command
 {
-    protected $signature = 'gus:lookup {nip}';
+    protected $signature = 'gus:lookup {nip} {--force}';
 
     protected $description = 'Lookup company details by NIP and print result.';
 
     public function handle(GusLookupService $service): int
     {
-        $nip = $this->argument('nip');
+        $nip   = $this->argument('nip');
+        $force = $this->option('force');
 
         try {
-            $company = $service->findByNip($nip);
+            $company = $service->findByNip($nip, force: $force);
 
             if (null === $company) {
                 $this->warn('No company found for given NIP.');
@@ -36,18 +37,6 @@ class GusLookupCommand extends Command
             $this->line('End Date: ' . ($company->endDate ?? 'N/A'));
             $this->line('Suspension Date: ' . ($company->suspensionDate ?? 'N/A'));
             $this->line('Resumption Date: ' . ($company->resumptionDate ?? 'N/A'));
-
-            if ($company->mainPkdCode) {
-                $this->line('Main PKD: ' . $company->mainPkdCode . ' - ' . $company->mainPkdName);
-            }
-
-            if (!empty($company->pkdCodes)) {
-                $this->line('PKD Codes:');
-
-                foreach ($company->pkdCodes as $index => $code) {
-                    $this->line('  - ' . $code . ' - ' . ($company->pkdNames[$index] ?? 'N/A'));
-                }
-            }
 
             return self::SUCCESS;
         } catch (\Throwable $e) {
