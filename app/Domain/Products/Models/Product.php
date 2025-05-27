@@ -66,7 +66,7 @@ class Product extends BaseModel implements HasMedia
      * @var array<string, string>
      */
     protected $casts = [
-        'price_net' => 'decimal:2',
+        'price_net' => 'float',
     ];
 
     public function unit(): BelongsTo

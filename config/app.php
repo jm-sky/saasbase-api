@@ -55,7 +55,7 @@ return [
 
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
 
-    'api_url' => env('API_URL', env('APP_URL')),
+    'api_url'      => env('API_URL', env('APP_URL')),
     'trim_api_url' => env('TRIM_API_URL', false),
 
     'api_prefix' => env('API_PREFIX', '/api/v1'),

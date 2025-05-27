@@ -12,7 +12,7 @@ return new class() extends Migration {
             $table->uuid('tenant_id');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->uuid('unit_id');
+            $table->uuid('unit_id')->nullable();
             $table->decimal('price_net', 10, 2);
             $table->uuid('vat_rate_id')->nullable();
             $table->timestamps();

@@ -18,9 +18,9 @@ class ProductRequest extends BaseFormRequest
             'tenantId'    => ['required', 'uuid', 'exists:tenants,id'],
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'unitId'      => ['required', 'uuid', 'exists:measurement_units,id'],
+            'unitId'      => ['nullable', 'uuid', 'exists:measurement_units,id'],
             'priceNet'    => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:999999.99'],
-            'vatRateId'   => ['required', 'uuid', 'exists:vat_rates,id'],
+            'vatRateId'   => ['nullable', 'uuid', 'exists:vat_rates,id'],
         ];
     }
 
