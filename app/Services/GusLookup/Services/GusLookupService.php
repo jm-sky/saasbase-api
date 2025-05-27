@@ -11,6 +11,8 @@ use App\Services\GusLookup\Integrations\GusApiConnector;
 use App\Services\GusLookup\Integrations\Requests\GetFullReportRequest;
 use App\Services\GusLookup\Integrations\Requests\SearchByNipRequest;
 use App\Services\GusLookup\Integrations\Requests\SearchByRegonRequest;
+use App\Services\GusLookup\GusReportResolver;
+use App\Services\GusLookup\Enums\GusReportName;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -94,7 +96,8 @@ class GusLookupService
             $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
-            $reportRequest  = new GetFullReportRequest($dto->regon);
+            $reportName = GusReportResolver::resolve($dto->toArray());
+            $reportRequest  = new GetFullReportRequest($dto->regon, $reportName);
             $reportResponse = $this->connector->send($reportRequest);
             $this->log('[lookupByNip] Report response', ['reportResponse' => $reportResponse]);
 
@@ -118,7 +121,8 @@ class GusLookupService
             $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
-            $reportRequest  = new GetFullReportRequest($dto->regon);
+            $reportName = GusReportResolver::resolve($dto->toArray());
+            $reportRequest  = new GetFullReportRequest($dto->regon, $reportName);
             $reportResponse = $this->connector->send($reportRequest);
 
             return $reportResponse->dtoOrFail();
