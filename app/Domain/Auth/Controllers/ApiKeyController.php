@@ -23,7 +23,7 @@ class ApiKeyController extends Controller
         $user = Auth::user();
 
         $apiKeys = ApiKey::where('user_id', $user->id)
-            ->where('tenant_id', $user->getCurrentTenantId())
+            ->where('tenant_id', $user->getTenantId())
             ->get()
         ;
 
@@ -36,7 +36,7 @@ class ApiKeyController extends Controller
         $user = Auth::user();
 
         $apiKey = ApiKey::create([
-            'tenant_id' => $user->getCurrentTenantId(),
+            'tenant_id' => $user->getTenantId(),
             'user_id'   => $user->id,
             'name'      => $request->name,
             'key'       => Str::random(64),

@@ -24,7 +24,7 @@ class ApiKeyPolicy
     public function view(User $user, ApiKey $apiKey): bool
     {
         return $user->id === $apiKey->user_id
-               && $user->getCurrentTenantId() === $apiKey->tenant_id;
+               && $user->getTenantId() === $apiKey->tenant_id;
     }
 
     /**
@@ -41,7 +41,7 @@ class ApiKeyPolicy
     public function update(User $user, ApiKey $apiKey): bool
     {
         return $user->id === $apiKey->user_id
-               && $user->getCurrentTenantId() === $apiKey->tenant_id;
+               && $user->getTenantId() === $apiKey->tenant_id;
     }
 
     /**
@@ -50,7 +50,7 @@ class ApiKeyPolicy
     public function delete(User $user, ApiKey $apiKey): bool
     {
         return $user->id === $apiKey->user_id
-               && $user->getCurrentTenantId() === $apiKey->tenant_id;
+               && $user->getTenantId() === $apiKey->tenant_id;
     }
 
     /**
