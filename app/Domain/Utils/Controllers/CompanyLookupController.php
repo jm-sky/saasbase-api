@@ -73,7 +73,7 @@ class CompanyLookupController extends Controller
             // Merge GUS data with MF data, preferring GUS data for overlapping fields
             $result = new CommonCompanyLookupData(
                 name: $gusResult->name,
-                countryCode: $result->countryCode,
+                country: $result->country,
                 vatId: $result->vatId,
                 regon: $gusResult->regon,
                 shortName: $gusResult->shortName,

@@ -149,7 +149,7 @@ class GusFullReportResultDTO implements Arrayable, \JsonSerializable
 
         return new CommonCompanyLookupData(
             name: $this->name,
-            countryCode: $this->countryCode,
+            country: $this->countryCode,
             vatId: $this->nip,
             regon: $this->regon,
             shortName: $this->shortName,

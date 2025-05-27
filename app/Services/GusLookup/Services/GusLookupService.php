@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Log;
 
 class GusLookupService
 {
+    protected bool $shouldLog = false;
+
     protected GusApiConnector $connector;
 
     protected CacheMode $cacheMode;
@@ -25,6 +27,7 @@ class GusLookupService
 
     public function __construct(GusApiConnector $connector)
     {
+        $this->shouldLog    = app()->isLocal() || config('gus_lookup.should_log', false);
         $this->connector    = $connector;
         $this->cacheMode    = CacheMode::from(config('gus_lookup.cache_mode', 'hours'));
         $this->cacheHours   = (int) config('gus_lookup.cache_hours', 12);
@@ -56,6 +59,13 @@ class GusLookupService
         return Cache::remember($cacheKey, $cacheTtl, fn () => $this->lookupByRegon($regon));
     }
 
+    protected function log(string $message, array $context = []): void
+    {
+        if ($this->shouldLog) {
+            Log::debug($message, $context);
+        }
+    }
+
     protected function lookupAndCacheByNip(string $nip, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl): ?GusFullReportResultDTO
     {
         $result = $this->lookupByNip($nip);
@@ -75,14 +85,18 @@ class GusLookupService
     protected function lookupByNip(string $nip): ?GusFullReportResultDTO
     {
         try {
+            $this->log('[lookupByNip] Looking up company by NIP', ['nip' => $nip]);
+
             // First, search for the entity by NIP
             $searchRequest  = new SearchByNipRequest($nip);
             $searchResponse = $this->connector->send($searchRequest);
+            $this->log('[lookupByNip] Search response', ['searchResponse' => $searchResponse]);
             $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
             $reportRequest  = new GetFullReportRequest($dto->regon);
             $reportResponse = $this->connector->send($reportRequest);
+            $this->log('[lookupByNip] Report response', ['reportResponse' => $reportResponse]);
 
             return $reportResponse->dtoOrFail();
         } catch (\Throwable $e) {

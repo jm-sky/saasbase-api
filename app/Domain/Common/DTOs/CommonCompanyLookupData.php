@@ -4,7 +4,7 @@ namespace App\Domain\Common\DTOs;
 
 /**
  * @property string          $name
- * @property string          $countryCode
+ * @property string          $country
  * @property ?string         $vatId
  * @property ?string         $regon
  * @property ?string         $shortName
@@ -18,7 +18,7 @@ class CommonCompanyLookupData extends BaseDataDTO
 {
     public function __construct(
         public string $name,
-        public string $countryCode,
+        public string $country,
         public ?string $vatId = null,
         public ?string $regon = null,
         public ?string $shortName = null,
@@ -34,6 +34,7 @@ class CommonCompanyLookupData extends BaseDataDTO
     {
         return [
             'name'        => $this->name,
+            'country'     => $this->country,
             'vatId'       => $this->vatId,
             'regon'       => $this->regon,
             'shortName'   => $this->shortName,

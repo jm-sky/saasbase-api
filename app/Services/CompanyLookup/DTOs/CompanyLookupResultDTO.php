@@ -126,7 +126,7 @@ class CompanyLookupResultDTO implements Arrayable, \JsonSerializable
 
         return new CommonCompanyLookupData(
             name: $this->name,
-            countryCode: 'PL',
+            country: 'PL',
             vatId: $this->nip,
             regon: $this->regon,
             address: $address,

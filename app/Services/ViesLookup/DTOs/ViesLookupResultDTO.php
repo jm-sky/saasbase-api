@@ -44,7 +44,7 @@ class ViesLookupResultDTO
 
         return new CommonCompanyLookupData(
             name: $this->name ?? '',
-            countryCode: $this->countryCode,
+            country: $this->countryCode,
             vatId: $this->vatNumber,
             address: $address,
             bankAccount: null // VIES doesn't provide bank account information
