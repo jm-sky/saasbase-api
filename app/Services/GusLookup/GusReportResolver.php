@@ -9,7 +9,7 @@ class GusReportResolver
 {
     public static function resolve(array $basicRecord): ?GusReportName
     {
-        $type = EntityType::tryFrom($basicRecord['Typ'] ?? '');
+        $type = EntityType::tryFrom($basicRecord['type'] ?? '');
 
         return match ($type) {
             EntityType::P  => GusReportName::BIR11OsPrawna,
@@ -24,7 +24,7 @@ class GusReportResolver
 
     protected static function resolveForFizyczna(array $record): GusReportName
     {
-        $silosId = $record['SilosID'] ?? null;
+        $silosId = $record['silosId'] ?? null;
 
         return match ($silosId) {
             '6' => GusReportName::BIR11OsFizycznaRolnicza,
