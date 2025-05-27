@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string     $description
  * @property AddressType $type
  * @property bool        $isDefault
- * @property string      $addressableId
- * @property string      $addressableType
+ * @property ?string     $addressableId
+ * @property ?string     $addressableType
  * @property ?Carbon     $createdAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon     $updatedAt       Internally Carbon, accepts/serializes ISO 8601
  */
@@ -33,8 +33,8 @@ class AddressDTO extends BaseDTO
         public readonly string $city,
         public readonly AddressType $type,
         public readonly bool $isDefault,
-        public readonly string $addressableId,
-        public readonly string $addressableType,
+        public readonly ?string $addressableId = null,
+        public readonly ?string $addressableType = null,
         public readonly ?string $id = null,
         public readonly ?string $tenantId = null,
         public readonly ?string $postalCode = null,
@@ -54,8 +54,8 @@ class AddressDTO extends BaseDTO
             city: $data['city'],
             type: AddressType::from($data['type']),
             isDefault: $data['is_default'],
-            addressableId: $data['addressable_id'],
-            addressableType: $data['addressable_type'],
+            addressableId: $data['addressable_id'] ?? null,
+            addressableType: $data['addressable_type'] ?? null,
             id: $data['id'] ?? null,
             tenantId: $data['tenant_id'] ?? null,
             postalCode: $data['postal_code'] ?? null,

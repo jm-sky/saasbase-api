@@ -3,6 +3,7 @@
 namespace App\Services\GusLookup\Integrations\Requests;
 
 use App\Services\GusLookup\DTOs\GusFullReportResultDTO;
+use App\Services\GusLookup\Enums\GusReportName;
 use App\Services\GusLookup\Exceptions\BusinessNotFoundException;
 use Illuminate\Support\Str;
 use Saloon\Enums\Method;
@@ -14,7 +15,7 @@ class GetFullReportRequest extends BaseGusRequest
 
     public function __construct(
         protected string $regon,
-        protected string $reportName = 'BIR11OsPrawna',
+        protected GusReportName $reportName = GusReportName::BIR11OsPrawna,
     ) {
         parent::__construct();
     }
@@ -48,8 +49,8 @@ class GetFullReportRequest extends BaseGusRequest
 
         return new GusFullReportResultDTO(
             regon: (string) $xml->xpath('praw_regon9')[0],
-            vatId: (string) $xml->xpath('praw_nip')[0],
-            vatIdStatus: (string) $xml->xpath('praw_statusNip')[0] ?: null,
+            nip: (string) $xml->xpath('praw_nip')[0],
+            nipStatus: (string) $xml->xpath('praw_statusNip')[0] ?: null,
             name: (string) $xml->xpath('praw_nazwa')[0],
             shortName: (string) $xml->xpath('praw_nazwaSkrocona')[0] ?: null,
             registrationNumber: (string) $xml->xpath('praw_numerWRejestrzeEwidencji')[0],
@@ -116,7 +117,7 @@ class GetFullReportRequest extends BaseGusRequest
                <soap:Body>
                   <ns:DanePobierzPelnyRaport>
                     <ns:pRegon>{$this->regon}</ns:pRegon>
-                    <ns:pNazwaRaportu>{$this->reportName}</ns:pNazwaRaportu>
+                    <ns:pNazwaRaportu>{$this->reportName->value}</ns:pNazwaRaportu>
                   </ns:DanePobierzPelnyRaport>
                </soap:Body>
             </soap:Envelope>

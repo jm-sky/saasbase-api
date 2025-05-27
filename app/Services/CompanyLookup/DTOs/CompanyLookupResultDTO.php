@@ -2,6 +2,10 @@
 
 namespace App\Services\CompanyLookup\DTOs;
 
+use App\Domain\Common\DTOs\AddressDTO;
+use App\Domain\Common\DTOs\BankAccountDTO;
+use App\Domain\Common\DTOs\CommonCompanyLookupData;
+use App\Domain\Common\Enums\AddressType;
 use App\Services\CompanyLookup\Enums\VatStatusEnum;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -85,5 +89,48 @@ class CompanyLookupResultDTO implements Arrayable, \JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    public function toCommonLookupData(): CommonCompanyLookupData
+    {
+        $address = null;
+
+        if ($this->workingAddress) {
+            $address = new AddressDTO(
+                country: 'PL',
+                city: '', // We don't have city in MF data
+                type: AddressType::REGISTERED_OFFICE,
+                isDefault: true,
+                street: $this->workingAddress
+            );
+        }
+
+        if (!$address && $this->residenceAddress) {
+            $address = new AddressDTO(
+                country: 'PL',
+                city: '', // We don't have city in MF data
+                type: AddressType::RESIDENCE,
+                isDefault: true,
+                street: $this->residenceAddress
+            );
+        }
+
+        $bankAccount = null;
+
+        if (!empty($this->accountNumbers)) {
+            $bankAccount = new BankAccountDTO(
+                iban: $this->accountNumbers[0],
+                isDefault: true
+            );
+        }
+
+        return new CommonCompanyLookupData(
+            name: $this->name,
+            countryCode: 'PL',
+            vatId: $this->nip,
+            regon: $this->regon,
+            address: $address,
+            bankAccount: $bankAccount
+        );
     }
 }

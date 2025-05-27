@@ -2,7 +2,10 @@
 
 namespace App\Services\GusLookup\Services;
 
+use App\Domain\Common\Support\NipValidator\NipValidator;
+use App\Domain\Common\Support\RegonValidator\RegonValidator;
 use App\Services\GusLookup\DTOs\GusFullReportResultDTO;
+use App\Services\GusLookup\Enums\CacheMode;
 use App\Services\GusLookup\Exceptions\GusLookupException;
 use App\Services\GusLookup\Integrations\GusApiConnector;
 use App\Services\GusLookup\Integrations\Requests\GetFullReportRequest;
@@ -16,20 +19,20 @@ class GusLookupService
 {
     protected GusApiConnector $connector;
 
-    protected string $cacheMode;
+    protected CacheMode $cacheMode;
 
     protected int $cacheHours;
 
     public function __construct(GusApiConnector $connector)
     {
         $this->connector    = $connector;
-        $this->cacheMode    = config('gus_lookup.cache_mode', 'hours');
+        $this->cacheMode    = CacheMode::from(config('gus_lookup.cache_mode', 'hours'));
         $this->cacheHours   = (int) config('gus_lookup.cache_hours', 12);
     }
 
     public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null): ?GusFullReportResultDTO
     {
-        $nip      = $this->sanitizeAndValidateNip($nip);
+        $nip      = NipValidator::sanitizeAndValidate($nip);
         $cacheKey = "gus_lookup_nip.{$nip}";
         $cacheTtl = $this->getCacheExpiration($now ?? now());
 
@@ -42,7 +45,7 @@ class GusLookupService
 
     public function findByRegon(string $regon, bool $force = false, ?CarbonInterface $now = null): ?GusFullReportResultDTO
     {
-        $regon    = $this->sanitizeAndValidateRegon($regon);
+        $regon    = RegonValidator::sanitizeAndValidate($regon);
         $cacheKey = "gus_lookup_regon.{$regon}";
         $cacheTtl = $this->getCacheExpiration($now ?? now());
 
@@ -75,35 +78,13 @@ class GusLookupService
             // First, search for the entity by NIP
             $searchRequest  = new SearchByNipRequest($nip);
             $searchResponse = $this->connector->send($searchRequest);
-
-            if (!$searchResponse->successful()) {
-                Log::warning('GusLookupService: Unsuccessful search response', [
-                    'nip'      => $nip,
-                    'status'   => $searchResponse->status(),
-                    'body'     => $searchResponse->body(),
-                ]);
-
-                throw new GusLookupException('Unsuccessful search response.');
-            }
-
-            $dto = $searchRequest->createDtoFromResponse($searchResponse);
+            $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
-            $reportRequest  = new GetFullReportRequest($dto->regon, 'BIR11OsPrawna');
+            $reportRequest  = new GetFullReportRequest($dto->regon);
             $reportResponse = $this->connector->send($reportRequest);
 
-            if (!$reportResponse->successful()) {
-                Log::warning('GusLookupService: Unsuccessful report response', [
-                    'regon'    => $dto->regon,
-                    'status'   => $reportResponse->status(),
-                    'body'     => $reportResponse->body(),
-                ]);
-
-                throw new GusLookupException('Unsuccessful report response.');
-            }
-
-            /** @var GusFullReportResultDTO $dto */
-            return $reportRequest->createDtoFromResponse($reportResponse);
+            return $reportResponse->dtoOrFail();
         } catch (\Throwable $e) {
             Log::error('GusLookupService error: ' . $e->getMessage(), [
                 'nip'       => $nip,
@@ -120,35 +101,13 @@ class GusLookupService
         try {
             $searchRequest  = new SearchByRegonRequest($regon);
             $searchResponse = $this->connector->send($searchRequest);
-
-            if (!$searchResponse->successful()) {
-                Log::warning('GusLookupService: Unsuccessful search response', [
-                    'regon'    => $regon,
-                    'status'   => $searchResponse->status(),
-                    'body'     => $searchResponse->body(),
-                ]);
-
-                throw new GusLookupException('Unsuccessful search response.');
-            }
-
-            $dto = $searchRequest->createDtoFromResponse($searchResponse);
+            $dto            = $searchResponse->dtoOrFail();
 
             // Get full report for the entity
-            $reportRequest  = new GetFullReportRequest($dto->regon, 'BIR11OsPrawna');
+            $reportRequest  = new GetFullReportRequest($dto->regon);
             $reportResponse = $this->connector->send($reportRequest);
 
-            if (!$reportResponse->successful()) {
-                Log::warning('GusLookupService: Unsuccessful report response', [
-                    'regon'    => $dto->regon,
-                    'status'   => $reportResponse->status(),
-                    'body'     => $reportResponse->body(),
-                ]);
-
-                throw new GusLookupException('Unsuccessful report response.');
-            }
-
-            /* @var GusFullReportResultDTO $dto */
-            return $reportRequest->createDtoFromResponse($reportResponse);
+            return $reportResponse->dtoOrFail();
         } catch (\Throwable $e) {
             Log::error('GusLookupService error: ' . $e->getMessage(), [
                 'regon'     => $regon,
@@ -160,31 +119,9 @@ class GusLookupService
         }
     }
 
-    protected function sanitizeAndValidateNip(string $nip): string
-    {
-        $nip = preg_replace('/[^0-9]/', '', $nip);
-
-        if (10 !== strlen($nip)) {
-            throw new GusLookupException('Invalid NIP format. NIP must be 10 digits.');
-        }
-
-        return $nip;
-    }
-
-    protected function sanitizeAndValidateRegon(string $regon): string
-    {
-        $regon = preg_replace('/[^0-9]/', '', $regon);
-
-        if (!in_array(strlen($regon), [9, 14])) {
-            throw new GusLookupException('Invalid REGON format. REGON must be 9 or 14 digits.');
-        }
-
-        return $regon;
-    }
-
     protected function getCacheExpiration(CarbonInterface $now): \DateTimeInterface|\DateInterval|int
     {
-        if ('week' === $this->cacheMode) {
+        if (CacheMode::WEEK === $this->cacheMode) {
             return $now->copy()->next('Sunday')->startOfDay();
         }
 

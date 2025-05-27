@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string  $id           UUID
  * @property ?string $tenantId     UUID
- * @property string  $bankableId   UUID
- * @property string  $bankableType
+ * @property ?string $bankableId   UUID
+ * @property ?string $bankableType
  * @property string  $iban
  * @property ?string $swift
  * @property bool    $isDefault
@@ -25,9 +25,9 @@ use Illuminate\Database\Eloquent\Model;
 class BankAccountDTO extends BaseDTO
 {
     public function __construct(
-        public readonly string $bankableId,
-        public readonly string $bankableType,
         public readonly string $iban,
+        public readonly ?string $bankableId = null,
+        public readonly ?string $bankableType = null,
         public readonly ?string $tenantId = null,
         public readonly ?string $swift = null,
         public readonly ?string $bankName = null,
@@ -44,8 +44,8 @@ class BankAccountDTO extends BaseDTO
     {
         return new self(
             tenantId: $data['tenant_id'] ?? null,
-            bankableId: $data['bankable_id'],
-            bankableType: $data['bankable_type'],
+            bankableId: $data['bankable_id'] ?? null,
+            bankableType: $data['bankable_type'] ?? null,
             iban: $data['iban'],
             swift: $data['swift'] ?? null,
             bankName: $data['bank_name'] ?? null,
@@ -66,8 +66,8 @@ class BankAccountDTO extends BaseDTO
 
         return new self(
             tenantId: $model->tenant_id ?? null,
-            bankableId: $model->bankable_id,
-            bankableType: $model->bankable_type,
+            bankableId: $model->bankable_id ?? null,
+            bankableType: $model->bankable_type ?? null,
             bankName: $model->bank_name ?? null,
             iban: $model->iban,
             swift: $model->swift ?? null,
