@@ -9,10 +9,44 @@ on:
     branches: [main, develop]
     paths-ignore:
       - '.docs/**'
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
-  code-quality-and-tests:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, fileinfo
+          tools: composer
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run PHP-CS-Fixer linter
+        run: composer cs
+
+      # - name: Run Larastan
+      #   run: vendor/bin/phpstan analyse --memory-limit=1G
+
+  test:
+    needs: lint
     runs-on: ubuntu-latest
 
     services:
@@ -56,14 +90,12 @@ jobs:
         with:
           path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+          restore-keys: ${{ runner.os }}-composer-
 
-      - name: Override .env DB host for CI
-        run: sed -i 's/DB_HOST=postgres/DB_HOST=127.0.0.1/' .env.example && cp .env.example .env
-
-      - name: Override .env.testing DB host for CI
-        run: sed -i 's/DB_HOST=pgsql/DB_HOST=127.0.0.1/' .env.testing
+      - name: Override .env files
+        run: |
+          sed -i 's/DB_HOST=postgres/DB_HOST=127.0.0.1/' .env.example && cp .env.example .env
+          sed -i 's/DB_HOST=pgsql/DB_HOST=127.0.0.1/' .env.testing
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -83,12 +115,6 @@ jobs:
 
       - name: Run migrations
         run: php artisan migrate --force
-
-     # - name: Run Larastan
-     #   run: vendor/bin/phpstan analyse --memory-limit=1G
-
-      - name: Run PHP-CS-Fixer linter
-        run: composer cs
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit
