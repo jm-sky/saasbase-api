@@ -11,6 +11,16 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
+/**
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $color_primary
+ * @property string $color_secondary
+ * @property string $short_name
+ * @property string $theme
+ * @property string $pdf_accent_color
+ * @property string $email_signature_html
+ */
 class TenantBranding extends BaseModel implements HasMedia
 {
     use HasUuids;
@@ -65,7 +75,7 @@ class TenantBranding extends BaseModel implements HasMedia
         ;
     }
 
-    public function registerMediaConversions(): void
+    public function registerAllMediaConversions(): void
     {
         $this->addMediaConversion('thumb')
             ->width(256)

@@ -18,7 +18,7 @@ class TenantBrandingController extends Controller
         $branding = $tenant->branding;
 
         if (!$branding) {
-            throw new NotFoundHttpException('Branding not found');
+            $branding = $tenant->branding()->create();
         }
 
         return new TenantBrandingResource($branding);

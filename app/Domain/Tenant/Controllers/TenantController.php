@@ -39,7 +39,8 @@ class TenantController extends Controller
         // TODO: Create enum for tenant roles
         $tenant = Tenant::create($request->validated());
         $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
-        $tenant->logModelActivity(TenantActivityType::Created->value, $tenant);
+        // We already log activity in Tenant model
+        // $tenant->logModelActivity(TenantActivityType::Created->value, $tenant);
 
         return response()->json([
             'message' => 'Tenant created successfully.',
@@ -58,7 +59,8 @@ class TenantController extends Controller
     {
         $this->authorize('update', $tenant);
         $tenant->update($request->validated());
-        $tenant->logModelActivity(TenantActivityType::Updated->value, $tenant);
+        // We already log activity in Tenant model
+        // $tenant->logModelActivity(TenantActivityType::Updated->value, $tenant);
 
         return response()->json([
             'message' => 'Tenant updated successfully.',
@@ -69,7 +71,8 @@ class TenantController extends Controller
     public function destroy(Request $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('delete', $tenant);
-        $tenant->logModelActivity(TenantActivityType::Deleted->value, $tenant);
+        // We already log activity in Tenant model
+        // $tenant->logModelActivity(TenantActivityType::Deleted->value, $tenant);
         $tenant->delete();
 
         return response()->json(['message' => 'Tenant deleted successfully.'], Response::HTTP_NO_CONTENT);

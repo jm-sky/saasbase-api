@@ -11,6 +11,19 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
+/**
+ * @property ?string $public_name
+ * @property ?string $description
+ * @property ?string $website_url
+ * @property ?array  $social_links
+ * @property bool    $visible
+ * @property ?string $industry
+ * @property ?string $location_city
+ * @property ?string $location_country
+ * @property ?object $address
+ * @property ?object $public_logo
+ * @property ?object $banner_image
+ */
 class TenantPublicProfile extends BaseModel implements HasMedia
 {
     use HasUuids;
@@ -54,7 +67,7 @@ class TenantPublicProfile extends BaseModel implements HasMedia
         ;
     }
 
-    public function registerMediaConversions(): void
+    public function registerAllMediaConversions(): void
     {
         $this->addMediaConversion('thumb')
             ->width(256)

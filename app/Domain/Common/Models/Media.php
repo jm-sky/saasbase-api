@@ -31,8 +31,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as MediaLibraryMedia;
  * @property array      $meta
  * @property ?Carbon    $created_at
  * @property ?Carbon    $updated_at
- *
- * @todo Implement when registerMediaConversions wouldn't throw an error "Method 'App\Domain\Auth\Models\User::registerMediaConversions()' is not compatible with method 'Spatie\MediaLibrary\HasMedia::registerMediaConversions()'"
  */
 class Media extends MediaLibraryMedia
 {
