@@ -52,5 +52,7 @@ return [
         'key'   => env('OPENROUTER_API_KEY'),
         'model' => env('OPENROUTER_MODEL', 'openai/gpt-3.5-turbo'),
         'url'   => env('OPENROUTER_URL', 'https://openrouter.ai/api/v1/chat/completions'),
+        'log'   => env('OPENROUTER_LOG', false),
+        'streaming_enabled' => env('OPENROUTER_STREAMING_ENABLED', true),
     ],
 ];
