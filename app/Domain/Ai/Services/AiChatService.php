@@ -54,6 +54,7 @@ class AiChatService
                     model: $this->model,
                     content: $content,
                 )));
+
                 return;
             }
 
@@ -115,6 +116,7 @@ class AiChatService
     private function extractFullContent($response): string
     {
         $json = json_decode($response->getBody()->getContents(), true);
+
         return $json['choices'][0]['message']['content'] ?? '[empty]';
     }
 
@@ -138,7 +140,7 @@ class AiChatService
 
             while (($pos = strpos($buffer, "\n")) !== false) {
                 // Ochrona przed nieskończoną pętlą jeśli \n jest na początku bufora
-                if ($pos === 0) {
+                if (0 === $pos) {
                     $buffer = substr($buffer, 1);
                     continue;
                 }
@@ -155,12 +157,13 @@ class AiChatService
                     }
 
                     $json = json_decode($json, true);
+
                     if (!$json || !isset($json['choices'][0]['delta']['content'])) {
                         Log::warning('Malformed stream chunk', ['line' => $line]);
                         continue;
                     }
 
-                    $data = OpenRouterStreamChunkData::fromArray($json);
+                    $data  = OpenRouterStreamChunkData::fromArray($json);
                     $delta = $data->choices[0]->delta;
 
                     if (isset($delta->content)) {
@@ -196,15 +199,17 @@ class AiChatService
     }
 
     public function getFullResponse(array $history, string $message): string
-{
-    $messages = $this->buildMessages($history, $message);
+    {
+        $messages = $this->buildMessages($history, $message);
 
-    try {
-        $response = $this->createNonStreamedResponse($messages);
-        return $this->extractFullContent($response);
-    } catch (\Throwable $e) {
-        Log::error('AI request failed (non-streamed): ' . $e->getMessage());
-        return 'Error: AI service unavailable';
+        try {
+            $response = $this->createNonStreamedResponse($messages);
+
+            return $this->extractFullContent($response);
+        } catch (\Throwable $e) {
+            Log::error('AI request failed (non-streamed): ' . $e->getMessage());
+
+            return 'Error: AI service unavailable';
+        }
     }
-}
 }
