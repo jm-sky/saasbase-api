@@ -9,7 +9,6 @@ use App\Domain\Tenant\Resources\TenantBrandingResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TenantBrandingController extends Controller
 {
