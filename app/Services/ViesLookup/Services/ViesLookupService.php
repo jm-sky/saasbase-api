@@ -35,27 +35,43 @@ class ViesLookupService
 
                 if ($response->successful()) {
                     $xml = @simplexml_load_string($response->body());
+
                     if (false === $xml) {
                         throw new ViesLookupException('Invalid VIES XML response.');
                     }
 
                     $namespaces = $xml->getNamespaces(true);
-                    $soapNS = $namespaces['soap'] ?? null;
-                    $body = $soapNS ? $xml->children($soapNS)->Body : $xml->Body;
+                    $soapNS     = $namespaces['soap'] ?? null;
+                    $body       = $soapNS ? $xml->children($soapNS)->Body : $xml->Body;
+
                     if (!$body) {
                         throw new ViesLookupException('Invalid VIES XML response: No SOAP Body.');
                     }
 
                     // Check for SOAP Fault
                     $fault = $soapNS ? $body->children($soapNS)->Fault : $body->Fault;
-                    if ($fault && $fault->faultstring) {
-                        throw new ViesLookupException((string)$fault->faultstring);
-                    } elseif ($fault) {
+
+                    if ($fault) {
+                        // Fault may be an array or object
+                        if (is_array($fault)) {
+                            $fault = $fault[0] ?? null;
+                        }
+                        $faultString = null;
+
+                        if ($fault && isset($fault->faultstring)) {
+                            $faultString = (string) $fault->faultstring;
+                        }
+
+                        if ($faultString) {
+                            throw new ViesLookupException($faultString);
+                        }
+
                         throw new ViesLookupException('Unknown SOAP fault');
                     }
 
                     // Extract checkVatResponse (with its own namespace)
                     $viesNS = null;
+
                     foreach ($namespaces as $prefix => $uri) {
                         if (str_contains($uri, 'vies:services:checkVat:types')) {
                             $viesNS = $uri;
@@ -63,16 +79,17 @@ class ViesLookupService
                         }
                     }
                     $checkVatResponse = $viesNS ? $body->children($viesNS)->checkVatResponse : $body->checkVatResponse;
+
                     if (!$checkVatResponse) {
                         throw new ViesLookupException('Invalid VIES XML response: No checkVatResponse.');
                     }
 
                     // Extract fields
-                    $countryCodeVal = (string)($checkVatResponse->countryCode ?? '');
-                    $vatNumberVal   = (string)($checkVatResponse->vatNumber ?? '');
-                    $validVal       = ((string)($checkVatResponse->valid ?? '')) === 'true';
-                    $nameVal        = (string)($checkVatResponse->name ?? null);
-                    $addressVal     = (string)($checkVatResponse->address ?? null);
+                    $countryCodeVal = (string) ($checkVatResponse->countryCode ?? '');
+                    $vatNumberVal   = (string) ($checkVatResponse->vatNumber ?? '');
+                    $validVal       = ((string) ($checkVatResponse->valid ?? '')) === 'true';
+                    $nameVal        = (string) ($checkVatResponse->name ?? null);
+                    $addressVal     = (string) ($checkVatResponse->address ?? null);
 
                     return ViesLookupResultDTO::fromApiResponse([
                         'countryCode' => $countryCodeVal,

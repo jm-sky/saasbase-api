@@ -49,7 +49,7 @@ class ViesLookupServiceTest extends TestCase
         $service = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
-        $this->expectExceptionMessage('simplexml_load_string(): Entity: line 1: parser error : Premature end of data in tag not-xml line 1');
+        $this->expectExceptionMessage('Invalid VIES XML response.');
         $service->findByVat('PL', '2222222222');
     }
 
