@@ -36,7 +36,7 @@ class AiChatService
         $this->model         = config('services.openrouter.model', 'openai/gpt-3.5-turbo');
         $this->apiKey        = config('services.openrouter.key');
         $this->guzzleClient  = new Client();
-        $this->shouldLog     = app()->environment('local') || true === config('services.openrouter.log', null);
+        $this->shouldLog     = config('services.openrouter.log', app()->environment('local'));
     }
 
     public function streamAiResponse(array $history, string $message, string $userId): void
@@ -44,6 +44,19 @@ class AiChatService
         $messages = $this->buildMessages($history, $message);
 
         try {
+            if (!config('services.openrouter.streaming_enabled', true)) {
+                $response = $this->createNonStreamedResponse($messages);
+                $content  = $this->extractFullContent($response);
+                broadcast(new AiChatMessageStreamed($userId, new StreamDeltaData(
+                    id: uniqid('static_', true),
+                    index: 0,
+                    provider: 'openrouter',
+                    model: $this->model,
+                    content: $content,
+                )));
+                return;
+            }
+
             $response = $this->createStreamedResponse($messages);
             $this->processStreamedResponse($response, $userId);
         } catch (RequestException $e) {
@@ -79,8 +92,30 @@ class AiChatService
                 'messages' => $messages,
                 'stream'   => true,
             ],
-            'stream' => true,
+            'stream'          => true,
+            'timeout'         => 60,
+            'connect_timeout' => 10,
         ]);
+    }
+
+    private function createNonStreamedResponse(array $messages)
+    {
+        return $this->guzzleClient->post($this->openRouterUrl, [
+            'headers' => $this->getOpenRouterHeaders(),
+            'json'    => [
+                'model'    => $this->model,
+                'messages' => $messages,
+                'stream'   => false,
+            ],
+            'timeout'         => 60,
+            'connect_timeout' => 10,
+        ]);
+    }
+
+    private function extractFullContent($response): string
+    {
+        $json = json_decode($response->getBody()->getContents(), true);
+        return $json['choices'][0]['message']['content'] ?? '[empty]';
     }
 
     private function processStreamedResponse($response, string $userId): void
@@ -102,6 +137,12 @@ class AiChatService
             }
 
             while (($pos = strpos($buffer, "\n")) !== false) {
+                // Ochrona przed nieskończoną pętlą jeśli \n jest na początku bufora
+                if ($pos === 0) {
+                    $buffer = substr($buffer, 1);
+                    continue;
+                }
+
                 $line   = substr($buffer, 0, $pos);
                 $buffer = substr($buffer, $pos + 1);
                 $line   = trim($line);
@@ -114,11 +155,16 @@ class AiChatService
                     }
 
                     $json = json_decode($json, true);
-                    $data = $json ? OpenRouterStreamChunkData::fromArray($json) : null;
+                    if (!$json || !isset($json['choices'][0]['delta']['content'])) {
+                        Log::warning('Malformed stream chunk', ['line' => $line]);
+                        continue;
+                    }
 
-                    if (isset($data->choices[0]->delta->content)) {
-                        $delta     = $data->choices[0]->delta;
-                        $deltaDto  = $this->buildStreamDeltaData($data, $delta, ++$index);
+                    $data = OpenRouterStreamChunkData::fromArray($json);
+                    $delta = $data->choices[0]->delta;
+
+                    if (isset($delta->content)) {
+                        $deltaDto = $this->buildStreamDeltaData($data, $delta, ++$index);
                         broadcast(new AiChatMessageStreamed($userId, $deltaDto, $index));
 
                         if ($this->shouldLog) {
@@ -148,4 +194,17 @@ class AiChatService
             'Accept'        => 'text/event-stream',
         ];
     }
+
+    public function getFullResponse(array $history, string $message): string
+{
+    $messages = $this->buildMessages($history, $message);
+
+    try {
+        $response = $this->createNonStreamedResponse($messages);
+        return $this->extractFullContent($response);
+    } catch (\Throwable $e) {
+        Log::error('AI request failed (non-streamed): ' . $e->getMessage());
+        return 'Error: AI service unavailable';
+    }
+}
 }
