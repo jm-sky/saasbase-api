@@ -15,9 +15,9 @@ class ViesLookupService
 
     protected ViesConnector $connector;
 
-    public function __construct()
+    public function __construct(?ViesConnector $connector = null)
     {
-        $this->connector = new ViesConnector();
+        $this->connector = $connector ?? new ViesConnector();
     }
 
     public function findByVat(string $countryCode, string $vatNumber): ?ViesLookupResultDTO
@@ -34,31 +34,67 @@ class ViesLookupService
                 $response = $this->connector->send($request);
 
                 if ($response->successful()) {
-                    $xml = simplexml_load_string($response->body());
-
+                    $xml = @simplexml_load_string($response->body());
                     if (false === $xml) {
                         throw new ViesLookupException('Invalid VIES XML response.');
                     }
 
-                    $result = json_decode(json_encode($xml), true);
+                    $namespaces = $xml->getNamespaces(true);
+                    $soapNS = $namespaces['soap'] ?? null;
+                    $body = $soapNS ? $xml->children($soapNS)->Body : $xml->Body;
+                    if (!$body) {
+                        throw new ViesLookupException('Invalid VIES XML response: No SOAP Body.');
+                    }
+
+                    // Check for SOAP Fault
+                    $fault = $soapNS ? $body->children($soapNS)->Fault : $body->Fault;
+                    if ($fault && $fault->faultstring) {
+                        throw new ViesLookupException((string)$fault->faultstring);
+                    } elseif ($fault) {
+                        throw new ViesLookupException('Unknown SOAP fault');
+                    }
+
+                    // Extract checkVatResponse (with its own namespace)
+                    $viesNS = null;
+                    foreach ($namespaces as $prefix => $uri) {
+                        if (str_contains($uri, 'vies:services:checkVat:types')) {
+                            $viesNS = $uri;
+                            break;
+                        }
+                    }
+                    $checkVatResponse = $viesNS ? $body->children($viesNS)->checkVatResponse : $body->checkVatResponse;
+                    if (!$checkVatResponse) {
+                        throw new ViesLookupException('Invalid VIES XML response: No checkVatResponse.');
+                    }
+
+                    // Extract fields
+                    $countryCodeVal = (string)($checkVatResponse->countryCode ?? '');
+                    $vatNumberVal   = (string)($checkVatResponse->vatNumber ?? '');
+                    $validVal       = ((string)($checkVatResponse->valid ?? '')) === 'true';
+                    $nameVal        = (string)($checkVatResponse->name ?? null);
+                    $addressVal     = (string)($checkVatResponse->address ?? null);
 
                     return ViesLookupResultDTO::fromApiResponse([
-                        'countryCode' => $result['soap:Body']['checkVatResponse']['countryCode'] ?? '',
-                        'vatNumber'   => $result['soap:Body']['checkVatResponse']['vatNumber'] ?? '',
-                        'valid'       => $result['soap:Body']['checkVatResponse']['valid'] ?? false,
-                        'name'        => $result['soap:Body']['checkVatResponse']['name'] ?? null,
-                        'address'     => $result['soap:Body']['checkVatResponse']['address'] ?? null,
+                        'countryCode' => $countryCodeVal,
+                        'vatNumber'   => $vatNumberVal,
+                        'valid'       => $validVal,
+                        'name'        => $nameVal,
+                        'address'     => $addressVal,
                     ]);
                 }
 
-                throw new ViesLookupException('Unsuccessful VIES API response.');
+                throw new ViesLookupException('Unsuccessful VIES API response: ' . $response->status());
             } catch (\Throwable $e) {
                 Log::error('ViesLookupService error: ' . $e->getMessage(), [
                     'countryCode' => $countryCode,
                     'vatNumber'   => $vatNumber,
                 ]);
 
-                throw new ViesLookupException('Failed to lookup VAT number.', 0, $e);
+                if ($e instanceof ViesLookupException) {
+                    throw $e;
+                }
+
+                throw new ViesLookupException($e->getMessage(), 0, $e);
             }
         });
     }

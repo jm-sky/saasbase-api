@@ -2,13 +2,11 @@
 
 namespace App\Services\ViesLookup\Integrations\Requests;
 
-use Saloon\Enums\Method;
-use Saloon\Http\Request;
+use App\Services\ViesLookup\DTOs\ViesCheckResultDTO;
+use Saloon\Http\Response;
 
-class CheckVatRequest extends Request
+class CheckVatRequest extends BaseViesRequest
 {
-    protected Method $method = Method::POST;
-
     public function __construct(
         protected string $countryCode,
         protected string $vatNumber,
@@ -20,34 +18,30 @@ class CheckVatRequest extends Request
         return ''; // Base URL is enough for SOAP service
     }
 
-    public function defaultBody(): array
+    protected function defaultBody(): string
     {
-        return [
-            'countryCode' => $this->countryCode,
-            'vatNumber'   => $this->vatNumber,
-        ];
-    }
-
-    public function defaultHeaders(): array
-    {
-        return [
-            'Content-Type' => 'text/xml; charset=utf-8',
-            'SOAPAction'   => '',
-        ];
-    }
-
-    protected function defaultBodyAsString(): string
-    {
-        return <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
-  <soap:Body>
-    <tns:checkVat>
-      <tns:countryCode>{$this->countryCode}</tns:countryCode>
-      <tns:vatNumber>{$this->vatNumber}</tns:vatNumber>
-    </tns:checkVat>
-  </soap:Body>
-</soap:Envelope>
+        $body = <<<XML
+<tns:checkVat>
+  <tns:countryCode>{$this->countryCode}</tns:countryCode>
+  <tns:vatNumber>{$this->vatNumber}</tns:vatNumber>
+</tns:checkVat>
 XML;
+
+        return $this->getSoapEnvelope($body);
+    }
+
+    public function createDtoFromResponse(Response $response): ViesCheckResultDTO
+    {
+        $response = $this->handleResponse($response);
+        $data     = json_decode(json_encode(simplexml_load_string($response->body())), true);
+
+        return ViesCheckResultDTO::fromApiResponse([
+            'valid'       => $data['soap:Body']['checkVatResponse']['valid'] ?? false,
+            'countryCode' => $data['soap:Body']['checkVatResponse']['countryCode'] ?? '',
+            'vatNumber'   => $data['soap:Body']['checkVatResponse']['vatNumber'] ?? '',
+            'requestDate' => $data['soap:Body']['checkVatResponse']['requestDate'] ?? '',
+            'name'        => $data['soap:Body']['checkVatResponse']['name'] ?? null,
+            'address'     => $data['soap:Body']['checkVatResponse']['address'] ?? null,
+        ]);
     }
 }
