@@ -25,236 +25,203 @@ app/Domain/Subscription/
 └── Traits/           # Reusable traits
 ```
 
-Key files to implement:
-1. `Models/`
-   - `BillingCustomer.php`
-   - `BillingInfo.php`
-   - `SubscriptionPlan.php`
-   - `Subscription.php`
-   - `AddonPackage.php`
-   - `AddonPurchase.php`
-   - `SubscriptionInvoice.php`
-
-2. `Services/`
-   - `StripeCustomerService.php`
-   - `StripeSubscriptionService.php`
-   - `StripeAddonService.php`
-   - `StripeInvoiceService.php`
-
-3. `Actions/`
-   - `CreateSubscriptionAction.php`
-   - `UpdateSubscriptionAction.php`
-   - `CancelSubscriptionAction.php`
-   - `PurchaseAddonAction.php`
-
-4. `Events/`
-   - `SubscriptionCreated.php`
-   - `SubscriptionUpdated.php`
-   - `SubscriptionCancelled.php`
-   - `AddonPurchased.php`
-
-5. `Listeners/`
-   - `HandleStripeWebhook.php`
-   - `SendSubscriptionNotification.php`
-   - `UpdateBillingStatus.php`
-
-6. `Policies/`
-   - `SubscriptionPolicy.php`
-   - `AddonPolicy.php`
-
-7. `Requests/`
-   - `StoreSubscriptionRequest.php`
-   - `UpdateSubscriptionRequest.php`
-   - `PurchaseAddonRequest.php`
-
-8. `Resources/`
-   - `SubscriptionResource.php`
-   - `AddonResource.php`
-   - `InvoiceResource.php`
-
-9. `DTOs/`
-   - `SubscriptionData.php`
-   - `BillingInfoData.php`
-   - `AddonPurchaseData.php`
-
-10. `Enums/`
-    - `SubscriptionStatus.php`
-    - `AddonType.php`
-    - `BillingInterval.php`
+**Key files to implement:**
+- [ ] Models/
+    - [ ] BillingCustomer.php
+    - [ ] BillingInfo.php
+    - [ ] SubscriptionPlan.php
+    - [ ] Subscription.php
+    - [ ] AddonPackage.php
+    - [ ] AddonPurchase.php
+    - [ ] SubscriptionInvoice.php
+- [ ] Services/
+    - [ ] StripeCustomerService.php
+    - [ ] StripeSubscriptionService.php
+    - [ ] StripeAddonService.php
+    - [ ] StripeInvoiceService.php
+- [ ] Actions/
+    - [ ] CreateSubscriptionAction.php
+    - [ ] UpdateSubscriptionAction.php
+    - [ ] CancelSubscriptionAction.php
+    - [ ] PurchaseAddonAction.php
+- [ ] Events/
+    - [ ] SubscriptionCreated.php
+    - [ ] SubscriptionUpdated.php
+    - [ ] SubscriptionCancelled.php
+    - [ ] AddonPurchased.php
+- [ ] Listeners/
+    - [ ] HandleStripeWebhook.php
+    - [ ] SendSubscriptionNotification.php
+    - [ ] UpdateBillingStatus.php
+- [ ] Policies/
+    - [ ] SubscriptionPolicy.php
+    - [ ] AddonPolicy.php
+- [ ] Requests/
+    - [ ] StoreSubscriptionRequest.php
+    - [ ] UpdateSubscriptionRequest.php
+    - [ ] PurchaseAddonRequest.php
+- [ ] Resources/
+    - [ ] SubscriptionResource.php
+    - [ ] AddonResource.php
+    - [ ] InvoiceResource.php
+- [ ] DTOs/
+    - [ ] SubscriptionData.php
+    - [ ] BillingInfoData.php
+    - [ ] AddonPurchaseData.php
+- [ ] Enums/
+    - [ ] SubscriptionStatus.php
+    - [ ] AddonType.php
+    - [ ] BillingInterval.php
 
 ## 1. Database Schema Updates
 
 ### New Tables
-1. `billing_customers`
-   - UUID primary key
-   - Polymorphic billable relationship (uuidMorphs) (User/Tenant)
-   - Stripe customer ID
-   - Timestamps
-
-2. `billing_info`
-   - UUID primary key
-   - Polymorphic billable relationship (uuidMorphs)
-   - Billing address fields
-   - Tax/VAT information
-   - Email and notes
-   - Timestamps
-
-3. `subscription_plans`
-   - UUID primary key
-   - Name and description
-   - Stripe product and price IDs
-   - Interval (monthly/yearly)
-   - Price (display)
-   - Features (JSON)
-   - Timestamps
-
-4. `subscriptions`
-   - UUID primary key
-   - Polymorphic billable relationship (uuidMorphs)
-   - Plan reference
-   - Stripe subscription ID
-   - Status and period tracking
-   - Timestamps
-
-5. `addon_packages`
-   - UUID primary key
-   - Name and description
-   - Stripe price ID
-   - Type (one-time/recurring)
-   - Price (display)
-   - Timestamps
-
-6. `addon_purchases`
-   - UUID primary key
-   - Polymorphic billable relationship (uuidMorphs)
-   - Package reference
-   - Stripe invoice item ID
-   - Purchase and expiry dates
-   - Timestamps
-
-7. `subscription_invoices`
-   - UUID primary key
-   - Polymorphic billable relationship (uuidMorphs)
-   - Stripe invoice ID
-   - Amount and status
-   - URLs for hosted invoice and PDF
-   - Issue and payment dates
-   - Timestamps
+- [ ] billing_customers
+    - [ ] UUID primary key
+    - [ ] Polymorphic billable relationship (uuidMorphs) (User/Tenant)
+    - [ ] Stripe customer ID
+    - [ ] Timestamps
+- [ ] billing_info
+    - [ ] UUID primary key
+    - [ ] Polymorphic billable relationship (uuidMorphs)
+    - [ ] Billing address fields
+    - [ ] Tax/VAT information
+    - [ ] Email and notes
+    - [ ] Timestamps
+- [ ] subscription_plans
+    - [ ] UUID primary key
+    - [ ] Name and description
+    - [ ] Stripe product and price IDs
+    - [ ] Interval (monthly/yearly)
+    - [ ] Price (display)
+    - [ ] Features (JSON)
+    - [ ] Timestamps
+- [ ] subscriptions
+    - [ ] UUID primary key
+    - [ ] Polymorphic billable relationship (uuidMorphs)
+    - [ ] Plan reference
+    - [ ] Stripe subscription ID
+    - [ ] Status and period tracking
+    - [ ] Timestamps
+- [ ] addon_packages
+    - [ ] UUID primary key
+    - [ ] Name and description
+    - [ ] Stripe price ID
+    - [ ] Type (one-time/recurring)
+    - [ ] Price (display)
+    - [ ] Timestamps
+- [ ] addon_purchases
+    - [ ] UUID primary key
+    - [ ] Polymorphic billable relationship (uuidMorphs)
+    - [ ] Package reference
+    - [ ] Stripe invoice item ID
+    - [ ] Purchase and expiry dates
+    - [ ] Timestamps
+- [ ] subscription_invoices
+    - [ ] UUID primary key
+    - [ ] Polymorphic billable relationship (uuidMorphs)
+    - [ ] Stripe invoice ID
+    - [ ] Amount and status
+    - [ ] URLs for hosted invoice and PDF
+    - [ ] Issue and payment dates
+    - [ ] Timestamps
 
 ## 2. Stripe Integration
 
 ### Configuration
-1. Add Stripe configuration to `.env`:
-   ```
-   STRIPE_KEY=sk_test_...
-   STRIPE_SECRET=sk_test_...
-   STRIPE_WEBHOOK_SECRET=whsec_...
-   ```
-
-2. Create Stripe service provider:
-   - Register Stripe client
-   - Configure webhook handling
-   - Set up error handling
+- [ ] Add Stripe configuration to `.env`:
+    - [ ] STRIPE_KEY
+    - [ ] STRIPE_SECRET
+    - [ ] STRIPE_WEBHOOK_SECRET
+- [ ] Create Stripe service provider:
+    - [ ] Register Stripe client
+    - [ ] Configure webhook handling
+    - [ ] Set up error handling
 
 ### Core Services
-1. `StripeCustomerService`
-   - Create/update Stripe customers
-   - Manage billing information
-   - Handle customer deletion
-
-2. `StripeSubscriptionService`
-   - Create/manage subscriptions
-   - Handle plan changes
-   - Process cancellations
-   - Manage trial periods
-
-3. `StripeAddonService`
-   - Process one-time purchases
-   - Handle recurring addons
-   - Manage addon expiration
-
-4. `StripeInvoiceService`
-   - Sync Stripe invoices
-   - Generate PDFs
-   - Handle payment status
+- [ ] StripeCustomerService
+    - [ ] Create/update Stripe customers
+    - [ ] Manage billing information
+    - [ ] Handle customer deletion
+- [ ] StripeSubscriptionService
+    - [ ] Create/manage subscriptions
+    - [ ] Handle plan changes
+    - [ ] Process cancellations
+    - [ ] Manage trial periods
+- [ ] StripeAddonService
+    - [ ] Process one-time purchases
+    - [ ] Handle recurring addons
+    - [ ] Manage addon expiration
+- [ ] StripeInvoiceService
+    - [ ] Sync Stripe invoices
+    - [ ] Generate PDFs
+    - [ ] Handle payment status
 
 ## 3. API Endpoints
 
 ### Customer Management
-1. `POST /api/v1/billing/customers`
-   - Create Stripe customer
-   - Link to User/Tenant
-
-2. `PUT /api/v1/billing/customers/{id}`
-   - Update billing information
-   - Modify Stripe customer
+- [ ] POST /api/v1/billing/customers
+    - [ ] Create Stripe customer
+    - [ ] Link to User/Tenant
+- [ ] PUT /api/v1/billing/customers/{id}
+    - [ ] Update billing information
+    - [ ] Modify Stripe customer
 
 ### Subscription Management
-1. `GET /api/v1/subscription-plans`
-   - List available plans
-   - Include pricing and features
-
-2. `POST /api/v1/subscriptions`
-   - Create new subscription
-   - Handle trial periods
-
-3. `PUT /api/v1/subscriptions/{id}`
-   - Update subscription
-   - Change plans
-   - Modify billing cycle
-
-4. `DELETE /api/v1/subscriptions/{id}`
-   - Cancel subscription
-   - Handle immediate/end-of-period
+- [ ] GET /api/v1/subscription-plans
+    - [ ] List available plans
+    - [ ] Include pricing and features
+- [ ] POST /api/v1/subscriptions
+    - [ ] Create new subscription
+    - [ ] Handle trial periods
+- [ ] PUT /api/v1/subscriptions/{id}
+    - [ ] Update subscription
+    - [ ] Change plans
+    - [ ] Modify billing cycle
+- [ ] DELETE /api/v1/subscriptions/{id}
+    - [ ] Cancel subscription
+    - [ ] Handle immediate/end-of-period
 
 ### Addon Management
-1. `GET /api/v1/addon-packages`
-   - List available addons
-   - Show pricing and details
-
-2. `POST /api/v1/addon-purchases`
-   - Purchase addon
-   - Handle one-time/recurring
-
-3. `GET /api/v1/addon-purchases`
-   - List active addons
-   - Show expiration dates
+- [ ] GET /api/v1/addon-packages
+    - [ ] List available addons
+    - [ ] Show pricing and details
+- [ ] POST /api/v1/addon-purchases
+    - [ ] Purchase addon
+    - [ ] Handle one-time/recurring
+- [ ] GET /api/v1/addon-purchases
+    - [ ] List active addons
+    - [ ] Show expiration dates
 
 ### Invoice Management
-1. `GET /api/v1/subscription-invoices`
-   - List invoices
-   - Filter by status/date
-
-2. `GET /api/v1/subscription-invoices/{id}`
-   - Get invoice details
-   - Access PDF/hosted URL
+- [ ] GET /api/v1/subscription-invoices
+    - [ ] List invoices
+    - [ ] Filter by status/date
+- [ ] GET /api/v1/subscription-invoices/{id}
+    - [ ] Get invoice details
+    - [ ] Access PDF/hosted URL
 
 ## 4. Webhook Handling
 
 ### Required Webhooks
-1. `customer.subscription.created`
-   - Create local subscription
-   - Set up trial period
-
-2. `customer.subscription.updated`
-   - Update subscription status
-   - Handle plan changes
-
-3. `customer.subscription.deleted`
-   - Mark subscription as cancelled
-   - Handle cleanup
-
-4. `invoice.created`
-   - Create local invoice
-   - Set up payment tracking
-
-5. `invoice.paid`
-   - Update invoice status
-   - Trigger post-payment actions
-
-6. `invoice.payment_failed`
-   - Handle failed payments
-   - Send notifications
+- [ ] customer.subscription.created
+    - [ ] Create local subscription
+    - [ ] Set up trial period
+- [ ] customer.subscription.updated
+    - [ ] Update subscription status
+    - [ ] Handle plan changes
+- [ ] customer.subscription.deleted
+    - [ ] Mark subscription as cancelled
+    - [ ] Handle cleanup
+- [ ] invoice.created
+    - [ ] Create local invoice
+    - [ ] Set up payment tracking
+- [ ] invoice.paid
+    - [ ] Update invoice status
+    - [ ] Trigger post-payment actions
+- [ ] invoice.payment_failed
+    - [ ] Handle failed payments
+    - [ ] Send notifications
 
 ## 5. Frontend Components
 
