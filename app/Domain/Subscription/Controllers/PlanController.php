@@ -11,7 +11,7 @@ class PlanController extends Controller
     public function index(Request $request)
     {
         // TODO: Add filtering, pagination, etc.
-        return SubscriptionPlan::where('interval', 'monthly')->get();
+        return SubscriptionPlan::paginate();
     }
 
     public function show(string $id)
