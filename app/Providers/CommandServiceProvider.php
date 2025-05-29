@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domain\Bank\Commands\IbanInfoCommand;
 use App\Services\MfLookup\Commands\MfLookupCommand;
 use App\Services\RegonLookup\Commands\RegonLookupCommand;
 use App\Services\ViesLookup\Commands\ViesLookupCommand;
@@ -16,6 +17,7 @@ class CommandServiceProvider extends ServiceProvider
                 RegonLookupCommand::class,
                 ViesLookupCommand::class,
                 MfLookupCommand::class,
+                IbanInfoCommand::class,
             ]);
         }
     }

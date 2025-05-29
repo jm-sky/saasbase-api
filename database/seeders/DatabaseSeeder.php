@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             ProjectRoleSeeder::class,
             DefaultMeasurementUnitSeeder::class,
             RolesAndPermissionsSeeder::class,
+            BankSeeder::class,
         ]);
     }
 }

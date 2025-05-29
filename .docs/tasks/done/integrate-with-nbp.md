@@ -8,10 +8,11 @@ We will import bank routing data (numer rozliczeniowy) and provide a service to 
 
 ## ✅ Step 1: Create `Bank` domain
 
-Create model: `Domain/Bank/Models/BankRouting.php`
+Create model: `Domain/Bank/Models/Bank.php`
 
 ### Fields:
 - `id`: ULID
+- `country`: string ("PL")
 - `bank_name`: string
 - `bank_code`: string (first 4 digits of routing code)
 - `routing_code`: string (8 digits), indexed  
@@ -22,9 +23,9 @@ Create model: `Domain/Bank/Models/BankRouting.php`
 
 ## ✅ Step 2: Seed data from `nbp_banks.json`
 
-- Create `BankRoutingSeeder`:
+- Create `BankSeeder`:
   - Parse JSON
-  - Save entries in DB
+  - Save entries in DB for "PL" country
 
 ---
 
@@ -35,6 +36,7 @@ Create service: `BankRoutingService`:
 - On boot or cache warmup, cache all routing codes as key-value (`routing_code → BankRouting`)
 - IBAN lookup:
   1. Validate IBAN 
+      - Sanitize - remove spaces
       - Polish IBAN (starts with `PL`, has 28 chars, digits only after PL).
       - Other IBAN's (use *globalcitizen/php-iban*)
   2. Lookup routing code in cache.
@@ -50,12 +52,9 @@ Create service: `BankRoutingService`:
   - Starts with `PL`
   - Has exactly 28 characters
   - Checksum could be validated (optional)
-- Return JSON with:
-  - `bank_name`
+- Return Resource with:
+  - `bankName`
   - `swift`
-  - `routing_code`
-  - `bank_code` (first 4 digits)
-  - `branch_code` (last 4 digits)
 
 ---
 
@@ -67,6 +66,8 @@ Create service: `BankRoutingService`:
 - **Routing code = 8 digits at position 3–10 in IBAN**  
   ```php
   $routingCode = substr($iban, 4, 8);
+
+--- 
 
 ## NBP API Integration (maybe later)
 ### Steps

@@ -15,6 +15,7 @@ class UserPreferenceResource extends JsonResource
             'id'                  => $this->id,
             'userId'              => $this->user_id,
             'language'            => $this->language,
+            'timezone'            => $this->timezone,
             'decimalSeparator'    => $this->decimal_separator,
             'dateFormat'          => $this->date_format,
             'darkMode'            => $this->dark_mode,
