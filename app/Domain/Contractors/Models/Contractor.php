@@ -15,6 +15,7 @@ use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
+use App\Domain\Utils\Models\RegistryConfirmation;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -86,6 +87,11 @@ class Contractor extends BaseModel implements HasMedia
     public function contacts(): HasMany
     {
         return $this->hasMany(ContractorContactPerson::class);
+    }
+
+    public function registryConfirmations(): MorphMany
+    {
+        return $this->morphMany(RegistryConfirmation::class, 'confirmable');
     }
 
     public function registerMediaCollections(): void

@@ -12,11 +12,11 @@ return new class() extends Migration {
     {
         Schema::create('registry_confirmations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->morphs('confirmable');
+            $table->uuidMorphs('confirmable');
             $table->string('type'); // 'GUS', 'VIES', 'WhiteList'
-            $table->json('payload');
-            $table->json('result');
-            $table->boolean('success');
+            $table->json('payload')->nullable();
+            $table->json('result')->nullable();
+            $table->boolean('success')->default(false);
             $table->timestamp('checked_at');
             $table->timestamps();
         });
