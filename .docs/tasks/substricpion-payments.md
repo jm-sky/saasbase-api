@@ -1,5 +1,13 @@
 # Subscription Payments
 
+## About
+
+### What I want
+
+I want to allow users and tenants to buy something in my app. It could be a one-time addon (i.e.extra GB storage), or recurring plans (i.e. Basic, Pro, Enterprise, FinancialBasic, ProjectsBasic). Buying would involve online payments with Stripe.
+
+### Description
+
 This module supports both **tenant-scoped** and **user-scoped** billing via Stripe.  
 It allows:
 - Subscriptions tied to either a `User` or `Tenant`
