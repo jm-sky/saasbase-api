@@ -31,6 +31,7 @@ class UserPreferenceController
         $preferences = Auth::user()->preferences ?? new UserPreference(['user_id' => Auth::id()]);
         $preferences->fill([
             'language'              => null,
+            'timezone'              => null,
             'decimal_separator'     => null,
             'date_format'           => null,
             'dark_mode'             => null,
