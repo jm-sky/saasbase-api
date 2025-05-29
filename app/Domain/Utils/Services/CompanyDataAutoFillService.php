@@ -40,6 +40,7 @@ class CompanyDataAutoFillService
         if ($nip) {
             try {
                 $mfData = $this->mfLookupService->findByNip($nip, $force);
+                $mfData = $mfData->toCommonLookupData();
             } catch (\Throwable $e) {
                 $mfData = null;
             }
@@ -48,21 +49,14 @@ class CompanyDataAutoFillService
         if ($nip && $country) {
             try {
                 $viesData = $this->viesLookupService->findByVat($country, $nip, $force);
+                $viesData = $viesData->toCommonLookupData();
             } catch (\Throwable $e) {
                 $viesData = null;
             }
         }
 
-        if (!$regonData && !$mfData) {
+        if (!$regonData && !$mfData && !$viesData) {
             return null;
-        }
-
-        if (!$mfData && $regonData) {
-            return $regonData->toCommonLookupData();
-        }
-
-        if (!$regonData && $mfData) {
-            return $mfData->toCommonLookupData();
         }
 
         if ($regonData) {
@@ -70,16 +64,16 @@ class CompanyDataAutoFillService
 
             // Merge REGON data with MF data, preferring REGON for company info, MF for bank account
             return new CommonCompanyLookupData(
-                name: $regonResult->name,
-                country: $regonResult->country,
-                vatId: $regonResult->vatId,
-                regon: $regonResult->regon,
-                shortName: $regonResult->shortName,
-                phoneNumber: $regonResult->phoneNumber,
-                email: $regonResult->email,
-                website: $regonResult->website,
-                address: $regonResult->address,
-                bankAccount: $regonResult->bankAccount,
+                name: $regonResult?->name ?? $mfData?->name ?? $viesData?->name,
+                country: $regonResult?->country ?? $mfData?->country ?? $viesData?->country,
+                vatId: $regonResult?->vatId ?? $mfData?->vatId ?? $viesData?->vatId,
+                regon: $regonResult?->regon ?? $mfData?->regon ?? $viesData?->regon,
+                shortName: $regonResult?->shortName ?? $mfData?->shortName ?? $viesData?->shortName,
+                phoneNumber: $regonResult?->phoneNumber ?? $mfData?->phoneNumber ?? $viesData?->phoneNumber,
+                email: $regonResult?->email ?? $mfData?->email ?? $viesData?->email,
+                website: $regonResult?->website ?? $mfData?->website ?? $viesData?->website,
+                address: $regonResult?->address ?? $mfData?->address ?? $viesData?->address,
+                bankAccount: $regonResult?->bankAccount ?? $mfData?->bankAccount ?? $viesData?->bankAccount,
                 sources: new CommonCompanyLookupSources(
                     mf: $mfData ? true : false,
                     regon: $regonData ? true : false,

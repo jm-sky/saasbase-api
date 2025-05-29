@@ -29,7 +29,7 @@ class ContractorController extends Controller
     public function __construct()
     {
         $this->modelClass  = Contractor::class;
-        $this->defaultWith = ['tags'];
+        $this->defaultWith = ['tags', 'registryConfirmations'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'vatId', 'taxId', 'regon', 'email', 'phone', 'description'])),
@@ -74,6 +74,19 @@ class ContractorController extends Controller
         $validated  = $request->validated();
 
         $contractor = Contractor::create($validated['contractor']);
+
+        if (isset($validated['registry_confirmation'])) {
+            // TODO: Implement registry confirmation backend logic
+            // $result = $this->autoFillService->autoFill($vatId, $regon, $country, $force);
+            $confirmations = collect($validated['registry_confirmation'])->filter(fn ($item) => $item)->map(fn ($item, $key) => [
+                'type'       => $key,
+                'payload'    => $item,
+                'result'     => $item,
+                'success'    => true,
+                'checked_at' => now(),
+            ])->toArray();
+            $contractor->registryConfirmations()->createMany($confirmations);
+        }
 
         if (isset($validated['address'])) {
             $contractor->addresses()->create($validated['address']);
