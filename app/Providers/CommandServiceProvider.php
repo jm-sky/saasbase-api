@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\CompanyLookup\Commands\CompanyLookupCommand;
-use App\Services\GusLookup\Commands\GusLookupCommand;
+use App\Services\MfLookup\Commands\MfLookupCommand;
+use App\Services\RegonLookup\Commands\RegonLookupCommand;
 use App\Services\ViesLookup\Commands\ViesLookupCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,9 +13,9 @@ class CommandServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CompanyLookupCommand::class,
-                GusLookupCommand::class,
+                RegonLookupCommand::class,
                 ViesLookupCommand::class,
+                MfLookupCommand::class,
             ]);
         }
     }

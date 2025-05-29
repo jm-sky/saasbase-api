@@ -15,52 +15,65 @@ class ViesLookupService
 
     protected ViesConnector $connector;
 
-    public function __construct()
+    public function __construct(?ViesConnector $connector = null)
     {
-        $this->connector = new ViesConnector();
+        $this->connector = $connector ?? new ViesConnector();
     }
 
-    public function findByVat(string $countryCode, string $vatNumber): ?ViesLookupResultDTO
+    /**
+     * @throws ViesLookupException
+     */
+    public function findByVat(string $countryCode, string $vatNumber, bool $force = false): ?ViesLookupResultDTO
     {
         $countryCode = strtoupper(trim($countryCode));
         $vatNumber   = preg_replace('/[^0-9A-Za-z]/', '', $vatNumber);
 
-        $cacheKey = "vies_lookup_{$countryCode}_{$vatNumber}";
+        $cacheKey = "vies_lookup:{$countryCode}:{$vatNumber}";
         $cacheTtl = $this->getCacheExpiration();
 
+        if ($force) {
+            return $this->lookupAndCache($countryCode, $vatNumber, $cacheKey, $cacheTtl);
+        }
+
         return Cache::remember($cacheKey, $cacheTtl, function () use ($countryCode, $vatNumber) {
-            try {
-                $request  = new CheckVatRequest($countryCode, $vatNumber);
-                $response = $this->connector->send($request);
-
-                if ($response->successful()) {
-                    $xml = simplexml_load_string($response->body());
-
-                    if (false === $xml) {
-                        throw new ViesLookupException('Invalid VIES XML response.');
-                    }
-
-                    $result = json_decode(json_encode($xml), true);
-
-                    return ViesLookupResultDTO::fromApiResponse([
-                        'countryCode' => $result['soap:Body']['checkVatResponse']['countryCode'] ?? '',
-                        'vatNumber'   => $result['soap:Body']['checkVatResponse']['vatNumber'] ?? '',
-                        'valid'       => $result['soap:Body']['checkVatResponse']['valid'] ?? false,
-                        'name'        => $result['soap:Body']['checkVatResponse']['name'] ?? null,
-                        'address'     => $result['soap:Body']['checkVatResponse']['address'] ?? null,
-                    ]);
-                }
-
-                throw new ViesLookupException('Unsuccessful VIES API response.');
-            } catch (\Throwable $e) {
-                Log::error('ViesLookupService error: ' . $e->getMessage(), [
-                    'countryCode' => $countryCode,
-                    'vatNumber'   => $vatNumber,
-                ]);
-
-                throw new ViesLookupException('Failed to lookup VAT number.', 0, $e);
-            }
+            return $this->lookup($countryCode, $vatNumber);
         });
+    }
+
+    protected function lookupAndCache(string $countryCode, string $vatNumber, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl): ?ViesLookupResultDTO
+    {
+        $result = $this->lookup($countryCode, $vatNumber);
+        Cache::put($cacheKey, $result, $cacheTtl);
+
+        return $result;
+    }
+
+    /**
+     * @throws ViesLookupException
+     */
+    public function lookup(string $countryCode, string $vatNumber): ?ViesLookupResultDTO
+    {
+        try {
+            $request  = new CheckVatRequest($countryCode, $vatNumber);
+            $response = $this->connector->send($request);
+
+            if ($response->successful()) {
+                return $response->dtoOrFail();
+            }
+
+            throw new ViesLookupException('Unsuccessful VIES API response: ' . $response->status());
+        } catch (\Throwable $e) {
+            Log::error('ViesLookupService error: ' . $e->getMessage(), [
+                'countryCode' => $countryCode,
+                'vatNumber'   => $vatNumber,
+            ]);
+
+            if ($e instanceof ViesLookupException) {
+                throw $e;
+            }
+
+            throw new ViesLookupException($e->getMessage(), 0, $e);
+        }
     }
 
     protected function getCacheExpiration(): \DateTimeInterface|\DateInterval|int

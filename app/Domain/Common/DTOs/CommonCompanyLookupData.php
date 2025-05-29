@@ -3,16 +3,18 @@
 namespace App\Domain\Common\DTOs;
 
 /**
- * @property string          $name
- * @property string          $country
- * @property ?string         $vatId
- * @property ?string         $regon
- * @property ?string         $shortName
- * @property ?string         $phoneNumber
- * @property ?string         $email
- * @property ?string         $website
- * @property ?AddressDTO     $address
- * @property ?BankAccountDTO $bankAccount
+ * @property string                      $name
+ * @property string                      $country
+ * @property ?string                     $vatId
+ * @property ?string                     $regon
+ * @property ?string                     $shortName
+ * @property ?string                     $phoneNumber
+ * @property ?string                     $email
+ * @property ?string                     $website
+ * @property ?AddressDTO                 $address
+ * @property ?BankAccountDTO             $bankAccount
+ * @property ?CommonCompanyLookupSources $sources
+ * @property ?bool                       $cache
  */
 class CommonCompanyLookupData extends BaseDataDTO
 {
@@ -27,6 +29,8 @@ class CommonCompanyLookupData extends BaseDataDTO
         public ?string $website = null,
         public ?AddressDTO $address = null,
         public ?BankAccountDTO $bankAccount = null,
+        public ?CommonCompanyLookupSources $sources = null,
+        public ?bool $cache = null,
     ) {
     }
 
@@ -43,6 +47,8 @@ class CommonCompanyLookupData extends BaseDataDTO
             'website'     => $this->website,
             'address'     => $this->address?->toArray(),
             'bankAccount' => $this->bankAccount?->toArray(),
+            'sources'     => $this->sources?->toArray(),
+            'cache'       => $this->cache,
         ];
     }
 }
