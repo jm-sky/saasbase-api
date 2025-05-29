@@ -1,35 +1,72 @@
-# Task: Integrate with NBP to fetch Polish bank list using Saloon
+# Task: Import Polish banks and provide IBAN-based lookup
 
-## Description
-Implement an HTTP client using Saloon to download the official Polish bank list from NBP as an XML file. Parse the XML to extract bank names and codes for further use (e.g., IBAN recognition).
+Check: https://github.com/globalcitizen/php-iban 
 
-## RAW Data import
-At this step we will just import JSON data into system, without integration.
-- Create `Bank` domain
-- Create `Bank` model
-- Create `BankSeeder` to seed from `database/data/nbp_banks.json`
-- Create service that returns bank info based on IBAN (polish only). Bank info: bank name, SWIFT. How? By bankCode extracted from IBAN. Maybe we need to save bankCode in dedicated indexed column.
-- Create controller and endpoint in /utils, to get bank info based for requested IBAN.
+We will import bank routing data (numer rozliczeniowy) and provide a service to get bank info from IBAN. Use **cache** for performance. IBAN lookup works only for **Polish IBANs (PL)**.
 
-### Bank model
-- `id`: string - UUID
-- `mfi_id`: string
-- `country`: string
-- `bank_id`: string
-- `name`: string
-- `bank_code`: string - maybe, indexed
-- `swift`: string nullable - data needed somehow
-- `address`: string
-- `postal_code`: string
-- `city`: string
-- `category`: string
-- `source_country`: string
-- `headquarters_name`: string
-- `headquarters_id`: string
-- `category_pl`: string
-- `regon`: string
+---
 
---- 
+## ✅ Step 1: Create `Bank` domain
+
+Create model: `Domain/Bank/Models/BankRouting.php`
+
+### Fields:
+- `id`: ULID
+- `bank_name`: string
+- `bank_code`: string (first 4 digits of routing code)
+- `routing_code`: string (8 digits), indexed  
+  > `substr($iban, 4, 8)`
+- `swift`: string, nullable
+
+---
+
+## ✅ Step 2: Seed data from `nbp_banks.json`
+
+- Create `BankRoutingSeeder`:
+  - Parse JSON
+  - Save entries in DB
+
+---
+
+## ✅ Step 3: Create cached lookup service
+
+Create service: `BankRoutingService`:
+
+- On boot or cache warmup, cache all routing codes as key-value (`routing_code → BankRouting`)
+- IBAN lookup:
+  1. Validate IBAN 
+      - Polish IBAN (starts with `PL`, has 28 chars, digits only after PL).
+      - Other IBAN's (use *globalcitizen/php-iban*)
+  2. Lookup routing code in cache.
+  3. Return bank name, SWIFT, and other info.
+  4. Return suggestions from *globalcitizen/php-iban* if IBAN is invalid
+
+---
+
+## ✅ Step 4: Create controller endpoint
+
+- `GET /utils/bank-info?iban=PL...`
+- Validate input IBAN:
+  - Starts with `PL`
+  - Has exactly 28 characters
+  - Checksum could be validated (optional)
+- Return JSON with:
+  - `bank_name`
+  - `swift`
+  - `routing_code`
+  - `bank_code` (first 4 digits)
+  - `branch_code` (last 4 digits)
+
+---
+
+## 🧠 Background: Polish IBAN Structure
+
+- Format: `PLkk bbbb ssss cccccccccccccc`
+  - `bbbb` – bank code (4 digits)
+  - `ssss` – branch/system code (4 digits)
+- **Routing code = 8 digits at position 3–10 in IBAN**  
+  ```php
+  $routingCode = substr($iban, 4, 8);
 
 ## NBP API Integration (maybe later)
 ### Steps

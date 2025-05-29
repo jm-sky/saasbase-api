@@ -19,46 +19,30 @@ class RegonApiConnector extends Connector
 
     protected ?string $response = RegonResponse::class;
 
-    public function __construct(
-        private readonly string $baseUrl,
-        private readonly string $username,
-        private readonly string $password
-    ) {
-    }
-
     public function resolveBaseUrl(): string
     {
-        return $this->baseUrl;
+        return config('regon_lookup.api_url', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc');
     }
 
-    protected function defaultHeaders(): array
+    public function defaultHeaders(): array
     {
         return [
-            'Accept'       => 'application/json',
-            'Content-Type' => 'application/json',
+            'Content-Type' => 'application/soap+xml',
+            'Accept'       => 'application/soap+xml',
         ];
     }
 
-    protected function defaultConfig(): array
+    protected function defaultAuth(): ?Authenticator
     {
-        return [
-            'timeout'         => 30,
-            'connect_timeout' => 10,
-        ];
-    }
-
-    protected function defaultAuthenticator(): ?Authenticator
-    {
-        return new RegonAuthenticator(
-            username: $this->username,
-            password: $this->password
-        );
+        return new RegonAuthenticator();
     }
 
     protected function resolveLimits(): array
     {
         return [
-            Limit::allow(1)->everyMinute(),
+            Limit::allow(6000)->everyHour(),
+            Limit::allow(120)->everyMinute(),
+            Limit::allow(3)->everySeconds(1),
         ];
     }
 

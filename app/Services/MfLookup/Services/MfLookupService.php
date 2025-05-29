@@ -29,7 +29,7 @@ class MfLookupService
     public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null): ?MfLookupResultDTO
     {
         $nip      = $this->sanitizeAndValidateNip($nip);
-        $cacheKey = "mf_lookup_nip.{$nip}";
+        $cacheKey = "mf_lookup:nip:{$nip}";
         $cacheTtl = $this->getCacheExpiration($now ?? now());
 
         if ($force) {

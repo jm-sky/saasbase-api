@@ -25,7 +25,7 @@ class CompanyLookupController extends Controller
         try {
             $result = $this->autoFillService->autoFill($vatId, $regon, $country, $force);
 
-            return new CommonCompanyLookupResource($result);
+            return $result ? new CommonCompanyLookupResource($result) : null;
         } catch (\Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }

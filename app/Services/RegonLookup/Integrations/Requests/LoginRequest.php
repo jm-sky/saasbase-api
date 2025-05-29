@@ -26,11 +26,6 @@ class LoginRequest extends BaseRegonRequest
         $this->userKey = $userKey;
     }
 
-    public function resolveEndpoint(): string
-    {
-        return '/Zaloguj';
-    }
-
     public function hasRequestFailed(Response $response): bool
     {
         $data = $response->xml();
@@ -40,26 +35,26 @@ class LoginRequest extends BaseRegonRequest
 
     public function createDtoFromResponse(Response $response): RegonAuthResultDTO
     {
-        $data = $response->json();
+        $data       = $response->xml();
+        $sessionKey = (string) $data->{'ZalogujResponse'}->{'ZalogujResult'};
 
-        if (!isset($data['sessionKey'])) {
-            throw new RegonLookupException('Invalid response from REGON API: missing sessionKey field');
-        }
-
-        return new RegonAuthResultDTO(
-            sessionKey: $data['sessionKey']
-        );
+        return new RegonAuthResultDTO($sessionKey);
     }
 
-    protected function defaultBody(): string
+    protected function defaultBody(): ?string
     {
-        return '<?xml version="1.0" encoding="UTF-8"?>
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
-    <soap:Body>
-        <ns:Zaloguj>
-            <ns:pKluczUzytkownika>{{username}}</ns:pKluczUzytkownika>
-        </ns:Zaloguj>
-    </soap:Body>
-</soap:Envelope>';
+        return <<<XML
+            <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
+                <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                    <wsa:To>{$this->baseUrl}</wsa:To>
+                    <wsa:Action>http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj</wsa:Action>
+                </soap:Header>
+                <soap:Body>
+                    <ns:Zaloguj>
+                        <ns:pKluczUzytkownika>{$this->userKey}</ns:pKluczUzytkownika>
+                    </ns:Zaloguj>
+                </soap:Body>
+            </soap:Envelope>
+        XML;
     }
 }

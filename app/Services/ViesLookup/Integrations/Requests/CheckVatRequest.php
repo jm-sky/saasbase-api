@@ -2,7 +2,8 @@
 
 namespace App\Services\ViesLookup\Integrations\Requests;
 
-use App\Services\ViesLookup\DTOs\ViesCheckResultDTO;
+use App\Services\ViesLookup\DTOs\ViesLookupResultDTO;
+use App\Services\ViesLookup\Exceptions\ViesLookupException;
 use Saloon\Http\Response;
 
 class CheckVatRequest extends BaseViesRequest
@@ -13,35 +14,35 @@ class CheckVatRequest extends BaseViesRequest
     ) {
     }
 
-    public function resolveEndpoint(): string
+    protected function defaultBody(): ?string
     {
-        return ''; // Base URL is enough for SOAP service
+        return <<<XML
+            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+               <soapenv:Body>
+                  <urn:checkVat>
+                     <urn:countryCode>{$this->countryCode}</urn:countryCode>
+                     <urn:vatNumber>{$this->vatNumber}</urn:vatNumber>
+                  </urn:checkVat>
+               </soapenv:Body>
+            </soapenv:Envelope>
+        XML;
     }
 
-    protected function defaultBody(): string
+    public function createDtoFromResponse(Response $response): ViesLookupResultDTO
     {
-        $body = <<<XML
-<tns:checkVat>
-  <tns:countryCode>{$this->countryCode}</tns:countryCode>
-  <tns:vatNumber>{$this->vatNumber}</tns:vatNumber>
-</tns:checkVat>
-XML;
+        $xml = $response->xml();
 
-        return $this->getSoapEnvelope($body);
-    }
+        if (false === $xml) {
+            throw new ViesLookupException('Invalid VIES XML response.');
+        }
 
-    public function createDtoFromResponse(Response $response): ViesCheckResultDTO
-    {
-        $response = $this->handleResponse($response);
-        $data     = json_decode(json_encode(simplexml_load_string($response->body())), true);
+        $isValid     = (string) ($xml->xpath('//urn:valid')[0] ?? 'false');
+        $faultString = (string) ($xml->xpath('//env:Fault/faultstring')[0] ?? 'Unknown error');
 
-        return ViesCheckResultDTO::fromApiResponse([
-            'valid'       => $data['soap:Body']['checkVatResponse']['valid'] ?? false,
-            'countryCode' => $data['soap:Body']['checkVatResponse']['countryCode'] ?? '',
-            'vatNumber'   => $data['soap:Body']['checkVatResponse']['vatNumber'] ?? '',
-            'requestDate' => $data['soap:Body']['checkVatResponse']['requestDate'] ?? '',
-            'name'        => $data['soap:Body']['checkVatResponse']['name'] ?? null,
-            'address'     => $data['soap:Body']['checkVatResponse']['address'] ?? null,
-        ]);
+        if ('true' !== $isValid) {
+            throw new ViesLookupException('VIES API error: ' . $faultString);
+        }
+
+        return ViesLookupResultDTO::fromXml($xml);
     }
 }

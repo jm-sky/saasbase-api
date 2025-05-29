@@ -1,8 +1,12 @@
+# Refactor Company Lookup
+
 I need to refactor our company lookup services to improve code consistency and maintainability. We have three services that use Saloon for API integration:
 
 1. GusLookup (REGON) - rename to RegonLookup ✅
 2. ViesLookup (VIES) - needs refactoring ⚠️
 3. CompanyLookup (MF) - rename to MfLookup ✅
+
+## Plan
 
 Please implement the following changes:
 
@@ -94,3 +98,18 @@ All tasks have been completed! The refactoring is now finished with:
 5. Documentation updated with examples and best practices
 
 Let me know if you need any clarification or have questions about the implementation.
+
+
+## Manual checks
+- VIES
+  - [x] Check command
+  - [ ] Check service
+  - [ ] Working
+- REGON
+  - [x] Check command
+  - [ ] Check service
+  - [ ] Working
+- MF
+  - [x] Check command
+  - [ ] Check service
+  - [ ] Working

@@ -25,6 +25,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property AuthorizedClerkDTO[] $authorizedClerks      Example: [{"name": "Anna Nowak", "nip": null, "pesel": "90020256789"}]
  * @property PartnerDTO[]         $partners              Example: [{"name": "Michał Wiśniewski", "nip": "9876543210", "pesel": null}]
  * @property ?string              $registrationLegalDate Example: "2015-01-01"
+ * @property ?bool                $cache
  */
 class MfLookupResultDTO implements Arrayable, \JsonSerializable
 {
@@ -45,6 +46,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
         /** @var PartnerDTO[] */
         public readonly array $partners,
         public readonly ?string $registrationLegalDate,
+        public readonly ?bool $cache = null,
     ) {
     }
 
@@ -64,6 +66,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
             authorizedClerks: AuthorizedClerkDTO::collect($data['authorizedClerks'] ?? []),
             partners: PartnerDTO::collect($data['partners'] ?? []),
             registrationLegalDate: $data['registrationLegalDate'] ?? null,
+            cache: null,
         );
     }
 
@@ -83,6 +86,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
             'authorizedClerks'      => $this->authorizedClerks,
             'partners'              => $this->partners,
             'registrationLegalDate' => $this->registrationLegalDate,
+            'cache'                 => $this->cache,
         ];
     }
 
@@ -91,38 +95,59 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
         return $this->toArray();
     }
 
-    public function toCommonLookupData(): CommonCompanyLookupData
+    protected function getAddress(): ?AddressDTO
     {
         $address = null;
 
         if ($this->workingAddress) {
-            $address = new AddressDTO(
-                country: 'PL',
-                city: '', // We don't have city in MF data
-                type: AddressType::REGISTERED_OFFICE,
-                isDefault: true,
-                street: $this->workingAddress
-            );
+            $mfAddress = MfAddressDTO::fromString($this->workingAddress);
+
+            if ($mfAddress) {
+                $address = new AddressDTO(
+                    country: 'PL',
+                    city: $mfAddress->city,
+                    type: AddressType::REGISTERED_OFFICE,
+                    isDefault: true,
+                    street: $mfAddress->street . ' ' . $mfAddress->buildingAndFlat,
+                    postalCode: $mfAddress->postalCode
+                );
+            }
         }
 
         if (!$address && $this->residenceAddress) {
-            $address = new AddressDTO(
-                country: 'PL',
-                city: '', // We don't have city in MF data
-                type: AddressType::RESIDENCE,
-                isDefault: true,
-                street: $this->residenceAddress
-            );
+            $mfAddress = MfAddressDTO::fromString($this->residenceAddress);
+
+            if ($mfAddress) {
+                $address = new AddressDTO(
+                    country: 'PL',
+                    city: $mfAddress->city,
+                    type: AddressType::RESIDENCE,
+                    isDefault: true,
+                    street: $mfAddress->street . ' ' . $mfAddress->buildingAndFlat,
+                    postalCode: $mfAddress->postalCode
+                );
+            }
         }
 
-        $bankAccount = null;
+        return $address;
+    }
 
-        if (!empty($this->accountNumbers)) {
-            $bankAccount = new BankAccountDTO(
-                iban: $this->accountNumbers[0],
-                isDefault: true
-            );
+    protected function getBankAccount(): ?BankAccountDTO
+    {
+        if (empty($this->accountNumbers)) {
+            return null;
         }
+
+        return new BankAccountDTO(
+            iban: $this->accountNumbers[0],
+            isDefault: true
+        );
+    }
+
+    public function toCommonLookupData(): CommonCompanyLookupData
+    {
+        $address     = $this->getAddress();
+        $bankAccount = $this->getBankAccount();
 
         return new CommonCompanyLookupData(
             name: $this->name,
@@ -130,7 +155,8 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
             vatId: $this->nip,
             regon: $this->regon,
             address: $address,
-            bankAccount: $bankAccount
+            bankAccount: $bankAccount,
+            cache: $this->cache,
         );
     }
 }
