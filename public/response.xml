@@ -1,59 +1,48 @@
 <root>
   <dane>
-    <praw_regon9>140672685</praw_regon9>
-    <praw_nip>1251402446</praw_nip>
-    <praw_statusNip />
-    <praw_nazwa>SKŁODOWSCY SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</praw_nazwa>
-    <praw_nazwaSkrocona />
-    <praw_numerWRejestrzeEwidencji>0000264193</praw_numerWRejestrzeEwidencji>
-    <praw_dataWpisuDoRejestruEwidencji>2006-09-25</praw_dataWpisuDoRejestruEwidencji>
-    <praw_dataPowstania>2006-09-11</praw_dataPowstania>
-    <praw_dataRozpoczeciaDzialalnosci>2006-09-11</praw_dataRozpoczeciaDzialalnosci>
-    <praw_dataWpisuDoRegon />
-    <praw_dataZawieszeniaDzialalnosci />
-    <praw_dataWznowieniaDzialalnosci />
-    <praw_dataZaistnieniaZmiany>2024-03-27</praw_dataZaistnieniaZmiany>
-    <praw_dataZakonczeniaDzialalnosci />
-    <praw_dataSkresleniaZRegon />
-    <praw_dataOrzeczeniaOUpadlosci />
-    <praw_dataZakonczeniaPostepowaniaUpadlosciowego />
-    <praw_adSiedzKraj_Symbol>PL</praw_adSiedzKraj_Symbol>
-    <praw_adSiedzWojewodztwo_Symbol>14</praw_adSiedzWojewodztwo_Symbol>
-    <praw_adSiedzPowiat_Symbol>34</praw_adSiedzPowiat_Symbol>
-    <praw_adSiedzGmina_Symbol>021</praw_adSiedzGmina_Symbol>
-    <praw_adSiedzKodPocztowy>05270</praw_adSiedzKodPocztowy>
-    <praw_adSiedzMiejscowoscPoczty_Symbol>0920901</praw_adSiedzMiejscowoscPoczty_Symbol>
-    <praw_adSiedzMiejscowosc_Symbol>0920901</praw_adSiedzMiejscowosc_Symbol>
-    <praw_adSiedzUlica_Symbol>09582</praw_adSiedzUlica_Symbol>
-    <praw_adSiedzNumerNieruchomosci>43</praw_adSiedzNumerNieruchomosci>
-    <praw_adSiedzNumerLokalu />
-    <praw_adSiedzNietypoweMiejsceLokalizacji />
-    <praw_numerTelefonu>0222426007</praw_numerTelefonu>
-    <praw_numerWewnetrznyTelefonu />
-    <praw_numerFaksu />
-    <praw_adresEmail />
-    <praw_adresStronyinternetowej />
-    <praw_adSiedzKraj_Nazwa>POLSKA</praw_adSiedzKraj_Nazwa>
-    <praw_adSiedzWojewodztwo_Nazwa>MAZOWIECKIE</praw_adSiedzWojewodztwo_Nazwa>
-    <praw_adSiedzPowiat_Nazwa>wołomiński</praw_adSiedzPowiat_Nazwa>
-    <praw_adSiedzGmina_Nazwa>Marki</praw_adSiedzGmina_Nazwa>
-    <praw_adSiedzMiejscowosc_Nazwa>Marki</praw_adSiedzMiejscowosc_Nazwa>
-    <praw_adSiedzMiejscowoscPoczty_Nazwa>Marki</praw_adSiedzMiejscowoscPoczty_Nazwa>
-    <praw_adSiedzUlica_Nazwa>ul. Tadeusza Kościuszki</praw_adSiedzUlica_Nazwa>
-    <praw_podstawowaFormaPrawna_Symbol>1</praw_podstawowaFormaPrawna_Symbol>
-    <praw_szczegolnaFormaPrawna_Symbol>117</praw_szczegolnaFormaPrawna_Symbol>
-    <praw_formaFinansowania_Symbol>1</praw_formaFinansowania_Symbol>
-    <praw_formaWlasnosci_Symbol>214</praw_formaWlasnosci_Symbol>
-    <praw_organZalozycielski_Symbol />
-    <praw_organRejestrowy_Symbol>071010060</praw_organRejestrowy_Symbol>
-    <praw_rodzajRejestruEwidencji_Symbol>138</praw_rodzajRejestruEwidencji_Symbol>
-    <praw_podstawowaFormaPrawna_Nazwa>OSOBA PRAWNA</praw_podstawowaFormaPrawna_Nazwa>
-    <praw_szczegolnaFormaPrawna_Nazwa>SPÓŁKI Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</praw_szczegolnaFormaPrawna_Nazwa>
-    <praw_formaFinansowania_Nazwa>JEDNOSTKA SAMOFINANSUJĄCA NIE BĘDĄCA JEDNOSTKĄ BUDŻETOWĄ LUB SAMORZĄDOWYM ZAKŁADEM BUDŻETOWYM</praw_formaFinansowania_Nazwa>
-    <praw_formaWlasnosci_Nazwa>WŁASNOŚĆ KRAJOWYCH OSÓB FIZYCZNYCH</praw_formaWlasnosci_Nazwa>
-    <praw_organZalozycielski_Nazwa />
-    <praw_organRejestrowy_Nazwa>SĄD REJONOWY DLA M.ST.WARSZAWY W WARSZAWIE,XIV WYDZIAŁ GOSPODARCZY KRAJOWEGO REJESTRU SĄDOWEGO</praw_organRejestrowy_Nazwa>
-    <praw_rodzajRejestruEwidencji_Nazwa>REJESTR PRZEDSIĘBIORCÓW</praw_rodzajRejestruEwidencji_Nazwa>
-    <praw_liczbaJednLokalnych>0</praw_liczbaJednLokalnych>
+    <fiz_regon9>383717468</fiz_regon9>
+    <fiz_nazwa>Blueprint Lab Mateusz Tryniszewski</fiz_nazwa>
+    <fiz_nazwaSkrocona>Blueprint Lab</fiz_nazwaSkrocona>
+    <fiz_dataPowstania>2019-06-25</fiz_dataPowstania>
+    <fiz_dataRozpoczeciaDzialalnosci>2019-07-03</fiz_dataRozpoczeciaDzialalnosci>
+    <fiz_dataWpisuDzialalnosciDoRegon>2019-06-26</fiz_dataWpisuDzialalnosciDoRegon>
+    <fiz_dataZawieszeniaDzialalnosci />
+    <fiz_dataWznowieniaDzialalnosci />
+    <fiz_dataZaistnieniaZmianyDzialalnosci>2019-07-22</fiz_dataZaistnieniaZmianyDzialalnosci>
+    <fiz_dataZakonczeniaDzialalnosci />
+    <fiz_dataSkresleniaDzialalnosciZRegon />
+    <fiz_dataOrzeczeniaOUpadlosci />
+    <fiz_dataZakonczeniaPostepowaniaUpadlosciowego />
+    <fiz_adSiedzKraj_Symbol>PL</fiz_adSiedzKraj_Symbol>
+    <fiz_adSiedzWojewodztwo_Symbol>14</fiz_adSiedzWojewodztwo_Symbol>
+    <fiz_adSiedzPowiat_Symbol>34</fiz_adSiedzPowiat_Symbol>
+    <fiz_adSiedzGmina_Symbol>041</fiz_adSiedzGmina_Symbol>
+    <fiz_adSiedzKodPocztowy>05220</fiz_adSiedzKodPocztowy>
+    <fiz_adSiedzMiejscowoscPoczty_Symbol>0921970</fiz_adSiedzMiejscowoscPoczty_Symbol>
+    <fiz_adSiedzMiejscowosc_Symbol>0921970</fiz_adSiedzMiejscowosc_Symbol>
+    <fiz_adSiedzUlica_Symbol>23884</fiz_adSiedzUlica_Symbol>
+    <fiz_adSiedzNumerNieruchomosci>10</fiz_adSiedzNumerNieruchomosci>
+    <fiz_adSiedzNumerLokalu />
+    <fiz_adSiedzNietypoweMiejsceLokalizacji />
+    <fiz_numerTelefonu />
+    <fiz_numerWewnetrznyTelefonu />
+    <fiz_numerFaksu />
+    <fiz_adresEmail />
+    <fiz_adresStronyinternetowej />
+    <fiz_adSiedzKraj_Nazwa>POLSKA</fiz_adSiedzKraj_Nazwa>
+    <fiz_adSiedzWojewodztwo_Nazwa>MAZOWIECKIE</fiz_adSiedzWojewodztwo_Nazwa>
+    <fiz_adSiedzPowiat_Nazwa>wołomiński</fiz_adSiedzPowiat_Nazwa>
+    <fiz_adSiedzGmina_Nazwa>Zielonka</fiz_adSiedzGmina_Nazwa>
+    <fiz_adSiedzMiejscowosc_Nazwa>Zielonka</fiz_adSiedzMiejscowosc_Nazwa>
+    <fiz_adSiedzMiejscowoscPoczty_Nazwa>Zielonka</fiz_adSiedzMiejscowoscPoczty_Nazwa>
+    <fiz_adSiedzUlica_Nazwa>ul. Wesoła</fiz_adSiedzUlica_Nazwa>
+    <fizC_dataWpisuDoRejestruEwidencji>2019-06-25</fizC_dataWpisuDoRejestruEwidencji>
+    <fizC_dataSkresleniaZRejestruEwidencji />
+    <fizC_numerWRejestrzeEwidencji>000978089/2019</fizC_numerWRejestrzeEwidencji>
+    <fizC_OrganRejestrowy_Symbol>121000000</fizC_OrganRejestrowy_Symbol>
+    <fizC_OrganRejestrowy_Nazwa>MINISTER PRZEDSIĘBIORCZOŚCI I TECHNOLOGII</fizC_OrganRejestrowy_Nazwa>
+    <fizC_RodzajRejestru_Symbol>151</fizC_RodzajRejestru_Symbol>
+    <fizC_RodzajRejestru_Nazwa>CENTRALNA EWIDENCJA I INFORMACJA O DZIAŁALNOŚCI GOSPODARCZEJ</fizC_RodzajRejestru_Nazwa>
+    <fizC_NiePodjetoDzialalnosci>false</fizC_NiePodjetoDzialalnosci>
   </dane>
 </root>

@@ -19,6 +19,8 @@ class CompanyDataAutoFillService
 
     /**
      * Auto-fill company data from available sources.
+     *
+     * TODO: Implement batch execution for all sources
      */
     public function autoFill(
         ?string $nip = null,
@@ -36,11 +38,19 @@ class CompanyDataAutoFillService
         }
 
         if ($nip) {
-            $mfData = $this->mfLookupService->findByNip($nip, $force);
+            try {
+                $mfData = $this->mfLookupService->findByNip($nip, $force);
+            } catch (\Throwable $e) {
+                $mfData = null;
+            }
         }
 
         if ($nip && $country) {
-            $viesData = $this->viesLookupService->findByVat($country, $nip, $force);
+            try {
+                $viesData = $this->viesLookupService->findByVat($country, $nip, $force);
+            } catch (\Throwable $e) {
+                $viesData = null;
+            }
         }
 
         if (!$regonData && !$mfData) {

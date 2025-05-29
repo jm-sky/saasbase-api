@@ -65,8 +65,6 @@ class GetFullReportRequest extends BaseRegonRequest
 
         $xml = simplexml_load_string($raw)->dane;
 
-        file_put_contents('response.xml', $raw);
-
         switch ($this->reportName) {
             case RegonReportName::BIR11NaturalPersonCeidg:
                 return RegonReportForNaturalPerson::fromXml($xml, $this->nip);
