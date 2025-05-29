@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?string $decimal_separator
  * @property ?string $date_format
  * @property ?string $dark_mode
+ * @property ?string $timezone
  * @property bool    $is_sound_enabled
  * @property bool    $is_profile_public
  * @property array   $field_visibility

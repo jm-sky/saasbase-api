@@ -53,13 +53,13 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: saasbase_api
+          POSTGRES_DB: testing
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U root -d saasbase_api"
+          --health-cmd="pg_isready -U root -d testing"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -109,7 +109,7 @@ jobs:
       - name: Wait for PostgreSQL
         run: |
           echo "Waiting for PostgreSQL to be ready..."
-          until pg_isready -h 127.0.0.1 -p 5432 -U root -d saasbase_api; do
+          until pg_isready -h 127.0.0.1 -p 5432 -U root -d testing; do
             sleep 1
           done
 

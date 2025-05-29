@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Resources;
 
 use App\Domain\Common\Resources\MediaResource;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Utils\Resources\RegistryConfirmationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,26 +21,27 @@ class ContractorResource extends JsonResource
         $logoMedia = $this->getFirstMedia('logo');
 
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenant_id,
-            'name'        => $this->name,
-            'email'       => $this->email,
-            'phone'       => $this->phone,
-            'website'     => $this->website,
-            'country'     => $this->country,
-            'vatId'       => $this->vat_id,
-            'taxId'       => $this->tax_id,
-            'regon'       => $this->regon,
-            'description' => $this->description,
-            'isActive'    => $this->is_active,
-            'isBuyer'     => $this->is_buyer,
-            'isSupplier'  => $this->is_supplier,
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
-            'deletedAt'   => $this->deleted_at?->toIso8601String(),
-            'logoUrl'     => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
-            'logo'        => $logoMedia ? new MediaResource($logoMedia) : null,
-            'tags'        => method_exists($this->resource, 'getTagNames') ? $this->getTagNames() : [],
+            'id'                    => $this->id,
+            'tenantId'              => $this->tenant_id,
+            'name'                  => $this->name,
+            'email'                 => $this->email,
+            'phone'                 => $this->phone,
+            'website'               => $this->website,
+            'country'               => $this->country,
+            'vatId'                 => $this->vat_id,
+            'taxId'                 => $this->tax_id,
+            'regon'                 => $this->regon,
+            'description'           => $this->description,
+            'isActive'              => $this->is_active,
+            'isBuyer'               => $this->is_buyer,
+            'isSupplier'            => $this->is_supplier,
+            'createdAt'             => $this->created_at?->toIso8601String(),
+            'updatedAt'             => $this->updated_at?->toIso8601String(),
+            'deletedAt'             => $this->deleted_at?->toIso8601String(),
+            'logoUrl'               => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
+            'logo'                  => $logoMedia ? new MediaResource($logoMedia) : null,
+            'tags'                  => method_exists($this->resource, 'getTagNames') ? $this->getTagNames() : [],
+            'registryConfirmations' => $this->registryConfirmations?->count() ? RegistryConfirmationResource::collection($this->registryConfirmations) : null,
         ];
     }
 }

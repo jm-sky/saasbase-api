@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class ViesLookupCommand extends Command
 {
-    protected $signature = 'vies:lookup {country_code} {vat_number}';
+    protected $signature = 'vies:lookup {country_code} {vat_number} {--force}';
 
     protected $description = 'Lookup VAT details using VIES service';
 
@@ -15,9 +15,12 @@ class ViesLookupCommand extends Command
     {
         $countryCode = $this->argument('country_code');
         $vatNumber   = $this->argument('vat_number');
+        $force       = $this->option('force');
+
+        $this->info('Looking up VAT details in VIES for ' . $countryCode . ' ' . $vatNumber . ($force ? ' (force)' : '') . '...');
 
         try {
-            $result = $service->findByVat($countryCode, $vatNumber);
+            $result = $service->findByVat($countryCode, $vatNumber, $force);
 
             if (null === $result) {
                 $this->warn('No VAT details found.');
@@ -26,11 +29,11 @@ class ViesLookupCommand extends Command
             }
 
             $this->info('VAT Details:');
-            $this->line('Country Code: ' . $result->countryCode);
-            $this->line('VAT Number: ' . $result->vatNumber);
-            $this->line('Valid: ' . ($result->valid ? 'Yes' : 'No'));
-            $this->line('Company Name: ' . ($result->name ?? 'N/A'));
-            $this->line('Address: ' . ($result->address ?? 'N/A'));
+            $this->line('- Country Code : ' . $result->countryCode);
+            $this->line('- VAT Number   : ' . $result->vatNumber);
+            $this->line('- Valid        : ' . ($result->valid ? 'Yes' : 'No'));
+            $this->line('- Company Name : ' . ($result->name ?? 'N/A'));
+            $this->line('- Address      : ' . ($result->address ?? 'N/A'));
 
             return self::SUCCESS;
         } catch (\Throwable $e) {

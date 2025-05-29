@@ -15,6 +15,7 @@ class UpdatePreferenceRequest extends BaseFormRequest
     {
         return [
             'language'                => ['nullable', 'string', 'size:2'],
+            'timezone'                => ['nullable', 'string', 'size:32'],
             'decimalSeparator'        => ['nullable', 'string', 'size:1'],
             'dateFormat'              => ['nullable', 'string', 'max:20'],
             'darkMode'                => ['nullable', 'string', 'in:system,dark,light'],

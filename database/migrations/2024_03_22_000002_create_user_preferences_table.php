@@ -11,6 +11,7 @@ return new class() extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('language')->nullable();
+            $table->string('timezone')->nullable();
             $table->string('decimal_separator')->nullable();
             $table->string('date_format')->nullable();
             $table->string('dark_mode')->nullable();

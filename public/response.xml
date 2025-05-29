@@ -1,0 +1,48 @@
+<root>
+  <dane>
+    <fiz_regon9>383717468</fiz_regon9>
+    <fiz_nazwa>Blueprint Lab Mateusz Tryniszewski</fiz_nazwa>
+    <fiz_nazwaSkrocona>Blueprint Lab</fiz_nazwaSkrocona>
+    <fiz_dataPowstania>2019-06-25</fiz_dataPowstania>
+    <fiz_dataRozpoczeciaDzialalnosci>2019-07-03</fiz_dataRozpoczeciaDzialalnosci>
+    <fiz_dataWpisuDzialalnosciDoRegon>2019-06-26</fiz_dataWpisuDzialalnosciDoRegon>
+    <fiz_dataZawieszeniaDzialalnosci />
+    <fiz_dataWznowieniaDzialalnosci />
+    <fiz_dataZaistnieniaZmianyDzialalnosci>2019-07-22</fiz_dataZaistnieniaZmianyDzialalnosci>
+    <fiz_dataZakonczeniaDzialalnosci />
+    <fiz_dataSkresleniaDzialalnosciZRegon />
+    <fiz_dataOrzeczeniaOUpadlosci />
+    <fiz_dataZakonczeniaPostepowaniaUpadlosciowego />
+    <fiz_adSiedzKraj_Symbol>PL</fiz_adSiedzKraj_Symbol>
+    <fiz_adSiedzWojewodztwo_Symbol>14</fiz_adSiedzWojewodztwo_Symbol>
+    <fiz_adSiedzPowiat_Symbol>34</fiz_adSiedzPowiat_Symbol>
+    <fiz_adSiedzGmina_Symbol>041</fiz_adSiedzGmina_Symbol>
+    <fiz_adSiedzKodPocztowy>05220</fiz_adSiedzKodPocztowy>
+    <fiz_adSiedzMiejscowoscPoczty_Symbol>0921970</fiz_adSiedzMiejscowoscPoczty_Symbol>
+    <fiz_adSiedzMiejscowosc_Symbol>0921970</fiz_adSiedzMiejscowosc_Symbol>
+    <fiz_adSiedzUlica_Symbol>23884</fiz_adSiedzUlica_Symbol>
+    <fiz_adSiedzNumerNieruchomosci>10</fiz_adSiedzNumerNieruchomosci>
+    <fiz_adSiedzNumerLokalu />
+    <fiz_adSiedzNietypoweMiejsceLokalizacji />
+    <fiz_numerTelefonu />
+    <fiz_numerWewnetrznyTelefonu />
+    <fiz_numerFaksu />
+    <fiz_adresEmail />
+    <fiz_adresStronyinternetowej />
+    <fiz_adSiedzKraj_Nazwa>POLSKA</fiz_adSiedzKraj_Nazwa>
+    <fiz_adSiedzWojewodztwo_Nazwa>MAZOWIECKIE</fiz_adSiedzWojewodztwo_Nazwa>
+    <fiz_adSiedzPowiat_Nazwa>wołomiński</fiz_adSiedzPowiat_Nazwa>
+    <fiz_adSiedzGmina_Nazwa>Zielonka</fiz_adSiedzGmina_Nazwa>
+    <fiz_adSiedzMiejscowosc_Nazwa>Zielonka</fiz_adSiedzMiejscowosc_Nazwa>
+    <fiz_adSiedzMiejscowoscPoczty_Nazwa>Zielonka</fiz_adSiedzMiejscowoscPoczty_Nazwa>
+    <fiz_adSiedzUlica_Nazwa>ul. Wesoła</fiz_adSiedzUlica_Nazwa>
+    <fizC_dataWpisuDoRejestruEwidencji>2019-06-25</fizC_dataWpisuDoRejestruEwidencji>
+    <fizC_dataSkresleniaZRejestruEwidencji />
+    <fizC_numerWRejestrzeEwidencji>000978089/2019</fizC_numerWRejestrzeEwidencji>
+    <fizC_OrganRejestrowy_Symbol>121000000</fizC_OrganRejestrowy_Symbol>
+    <fizC_OrganRejestrowy_Nazwa>MINISTER PRZEDSIĘBIORCZOŚCI I TECHNOLOGII</fizC_OrganRejestrowy_Nazwa>
+    <fizC_RodzajRejestru_Symbol>151</fizC_RodzajRejestru_Symbol>
+    <fizC_RodzajRejestru_Nazwa>CENTRALNA EWIDENCJA I INFORMACJA O DZIAŁALNOŚCI GOSPODARCZEJ</fizC_RodzajRejestru_Nazwa>
+    <fizC_NiePodjetoDzialalnosci>false</fizC_NiePodjetoDzialalnosci>
+  </dane>
+</root>
