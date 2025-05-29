@@ -24,7 +24,7 @@ class ViesLookupServiceTest extends TestCase
         parent::setUp();
         Cache::flush();
 
-        $this->markTestAsSkipped('Fix mocking');
+        $this->markTestSkipped('Fix mocking. VIES service not available');
     }
 
     public function testFindByVatReturnsNullWhenSearchFails(): void
