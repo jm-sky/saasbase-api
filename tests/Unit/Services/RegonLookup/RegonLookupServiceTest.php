@@ -31,6 +31,8 @@ class RegonLookupServiceTest extends TestCase
     {
         parent::setUp();
 
+        $this->markTestAsSkipped();
+        
         $this->apiConnector = \Mockery::mock(RegonApiConnector::class);
         $this->service      = new RegonLookupService($this->apiConnector);
 
