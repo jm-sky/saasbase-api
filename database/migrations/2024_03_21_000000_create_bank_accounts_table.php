@@ -12,6 +12,7 @@ return new class() extends Migration {
             $table->uuid('tenant_id')->nullable();
             $table->uuidMorphs('bankable');
             $table->string('iban');
+            $table->string('country', 2)->nullable();
             $table->string('swift')->nullable();
             $table->string('bank_name')->nullable();
             $table->boolean('is_default')->default(false);

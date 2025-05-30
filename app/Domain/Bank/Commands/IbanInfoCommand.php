@@ -2,7 +2,7 @@
 
 namespace App\Domain\Bank\Commands;
 
-use App\Services\BankRoutingService;
+use App\Services\IbanInfo\IbanInfoService;
 use Illuminate\Console\Command;
 
 class IbanInfoCommand extends Command
@@ -11,7 +11,7 @@ class IbanInfoCommand extends Command
 
     protected $description = 'Lookup bank details by IBAN and print result.';
 
-    public function handle(BankRoutingService $service): int
+    public function handle(IbanInfoService $service): int
     {
         $iban = $this->argument('iban');
 

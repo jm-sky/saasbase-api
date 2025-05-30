@@ -1,0 +1,2969 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Mailbox API",
+    "description": "Build: No version set",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5005"
+    }
+  ],
+  "paths": {
+    "/api/archive": {
+      "get": {
+        "tags": [
+          "Archive"
+        ],
+        "summary": "Gets archive",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for paging",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Rows per page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/archive/evidences/{conversationId}": {
+      "get": {
+        "tags": [
+          "Archive"
+        ],
+        "summary": "Get evidences for given conversation",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/messages/{messageId}/attachments/{documentId}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Download attachment for message",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "description": "Attachment identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Message identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/messages/{messageId}/attachments": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Download attachments for message",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Message identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/confirmations/{id}": {
+      "get": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "Get confirmation for given message",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Attachment identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/drafts": {
+      "post": {
+        "tags": [
+          "ConversationDrafts"
+        ],
+        "summary": "Creates draft for conversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/drafts/{draftId}": {
+      "delete": {
+        "tags": [
+          "ConversationDrafts"
+        ],
+        "summary": "Deletes conversation draft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "draftId",
+            "in": "path",
+            "description": "Conversation draft identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/drafts/{draftId}/attachment": {
+      "post": {
+        "tags": [
+          "ConversationDrafts"
+        ],
+        "summary": "Adds attachment to draft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "draftId",
+            "in": "path",
+            "description": "Conversation draft identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Attachment",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/drafts/{draftId}/forward/attachments": {
+      "post": {
+        "tags": [
+          "ConversationDrafts"
+        ],
+        "summary": "Adds attachments to the draft using their identifiers. Adding attachments results in file duplication",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "draftId",
+            "in": "path",
+            "description": "Conversation draft identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Existing attachment/s identifier/s",
+          "content": {
+            "application/json": {
+              "schema": {
+                "uniqueItems": true,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "uniqueItems": true,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "uniqueItems": true,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/drafts/{draftId}/attachments/{attachmentId}": {
+      "delete": {
+        "tags": [
+          "ConversationDrafts"
+        ],
+        "summary": "Deletes attachment from draft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "draftId",
+            "in": "path",
+            "description": "Draft identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "Attachment idientifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations": {
+      "post": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Creates empty conversation",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Gets new messages for given address",
+        "parameters": [
+          {
+            "name": "mailboxType",
+            "in": "query",
+            "description": "Mailbox type inbox, outbox or draft",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Messages.MailboxType"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for paging",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Rows per page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "onlyUnread",
+            "in": "query",
+            "description": "Indicates that only unread messages should be fetched when this parameter is true",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/is-read": {
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Marks as read conversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{conversationId}/message/{messageId}": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Get message by it's ID",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "description": "The identifier of the conversation within message will be fecthed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "The identifier of the message to fecth",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Messages.MessageDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Messages.MessageDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Messages.MessageDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/conversation/{id}": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Gets conversation by it's ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/trash": {
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Moves a conversation by ID to trash",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request with unique identifiers for the conversations to move to trash",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.TrashConversationsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.TrashConversationsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.TrashConversationsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Gets elements from trash / removed",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to fetch",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Number of rows per one page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}": {
+      "delete": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Deletes a conversation by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier for the conversation to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{conversationId}/message/{messageId}/trash": {
+      "delete": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Moves a conversation's message by ID to trash",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "description": "The unique identifier for the conversation within the message will be moved to trash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "The unique identifier for the message which will be moved to trash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/trash/empty": {
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Permanently deletes conversations by theirs IDs (from trash)",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The unique conversations identifiers to be deleted from trash",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.EmptyTrashRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.EmptyTrashRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.EmptyTrashRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{conversationId}/message/{messageId}/restore": {
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Restores a message of conversation by ID from trash",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "description": "The unique identifier for the conversation within the message will be restored from trash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "The unique identifier for the message which will be restored from trash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/trash/restore": {
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Restores conversations by IDs from trash",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The unique conversations identifiers to be be restored from trash",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.RestoreConversationsFromTrashRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.RestoreConversationsFromTrashRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Conversations.RestoreConversationsFromTrashRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/current-user/mailboxes": {
+      "get": {
+        "tags": [
+          "CurrentUserMailboxes"
+        ],
+        "summary": "Gets user mailboxes",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.Api.UserMailboxes.MailboxUserDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.Api.UserMailboxes.MailboxUserDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/eDLVR.Mailbox.Api.UserMailboxes.MailboxUserDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/features": {
+      "get": {
+        "tags": [
+          "Features"
+        ],
+        "summary": "Gets all features",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/limits": {
+      "get": {
+        "tags": [
+          "Mailboxes"
+        ],
+        "summary": "Get details information about mailbox limits",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/send-messages": {
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Sends message",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "message",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Messages.SendMessageRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Messages.SendMessageRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Messages.SendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/messages/{messageId}/notifications": {
+      "get": {
+        "tags": [
+          "MessagesNotifications"
+        ],
+        "summary": "Gets notifications/evidences for given message",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Message identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/messages/notifications": {
+      "post": {
+        "tags": [
+          "MessagesNotifications"
+        ],
+        "summary": "Gets notifications/evidences for given messages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Messages identifiers",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversations/{id}/messages/{messageId}/notifications/as-file": {
+      "get": {
+        "tags": [
+          "MessagesNotifications"
+        ],
+        "summary": "Gets notifications/evidences as file for given message",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Conversation identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Message identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Gets mailbox notifications",
+        "parameters": [
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "RowsPerPage",
+            "in": "query",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Evidences.EvidenceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Evidences.EvidenceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Evidences.EvidenceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}/details": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Gets notofication details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Notification identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}/is-read": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Marks notification as read",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}/as-file": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Gets notification as file",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Notification identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/search/conversations": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Search conversation for giver criteria",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Search criteria",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Search.SearchConversationsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Search.SearchConversationsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Search.SearchConversationsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.Search.SearchConversationsResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.Search.SearchConversationsResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.Search.SearchConversationsResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/entities": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Search entities for given criteria",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Search criteria",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Search.SearchEntitiesRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Search.SearchEntitiesRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/eDLVR.Mailbox.Api.Search.SearchEntitiesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.EntityDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.EntityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.EntityDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/searchCategory": {
+      "get": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Dictionary of search categories for entity searches",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/messages-synchronization": {
+      "post": {
+        "tags": [
+          "Synchronization"
+        ],
+        "summary": "Enable messages synchronization process for given mailbox address. Gets messages from erds service.",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        }
+      }
+    },
+    "/api/evidences-synchronization": {
+      "post": {
+        "tags": [
+          "Synchronization"
+        ],
+        "summary": "Enable evidences synchronization process for given mailbox address. Gets evidences from erds service.",
+        "parameters": [
+          {
+            "name": "MailboxAddress",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Microsoft.AspNetCore.Mvc.ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "eDLVR.Authentication.RegularRole": {
+        "enum": [
+          "MailboxOwner",
+          "MailboxSuccessorOwner",
+          "MailboxSuccessorOwnerReadOnly",
+          "MailboxNonNaturalPersonOwner",
+          "MailboxAuthorizedOwner",
+          "MailboxAuthorizedOwnerReadOnly",
+          "MailboxOwnerReadOnly",
+          "MailboxCorrespondenceOperator",
+          "MailboxCorrespondenceOperatorReadOnly",
+          "MailboxDeliverySystem",
+          "EzdOwner",
+          "EzdOwnerReadOnly",
+          "EzdAuthorizedOwner",
+          "EzdAuthorizedOwnerReadOnly",
+          "ErdsOwner",
+          "ErdsSuccessorOwner",
+          "ErdsSuccessorOwnerReadOnly",
+          "ErdsNonNaturalPersonOwner",
+          "ErdsAuthorizedOwner",
+          "ErdsAuthorizedOwnerReadOnly",
+          "ErdsOwnerReadOnly",
+          "ErdsCorrespondenceOperator",
+          "ErdsCorrespondenceOperatorReadOnly",
+          "ErdsDeliverySystem",
+          "ErdsEzdOwner",
+          "ErdsEzdOwnerReadOnly",
+          "ErdsEzdAuthorizedOwner",
+          "ErdsEzdAuthorizedOwnerReadOnly",
+          "Disabled"
+        ],
+        "type": "string"
+      },
+      "eDLVR.Mailbox.Api.Conversations.EmptyTrashRequest": {
+        "type": "object",
+        "properties": {
+          "conversations": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Api.Conversations.RestoreConversationsFromTrashRequest": {
+        "type": "object",
+        "properties": {
+          "conversations": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Api.Conversations.TrashConversationsRequest": {
+        "type": "object",
+        "properties": {
+          "conversations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Api.Messages.SendMessageRequest": {
+        "required": [
+          "draftId",
+          "finalRecipients"
+        ],
+        "type": "object",
+        "properties": {
+          "draftId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "topic": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "maxLength": 10485760,
+            "type": "string",
+            "nullable": true
+          },
+          "finalRecipients": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "refToMessageId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Api.Search.SearchConversationsRequest": {
+        "required": [
+          "searchTerm"
+        ],
+        "type": "object",
+        "properties": {
+          "searchTerm": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "mailboxType": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Messages.MailboxType"
+          },
+          "page": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowsPerPage": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Api.Search.SearchEntitiesRequest": {
+        "type": "object",
+        "properties": {
+          "entityQuery": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.Search.SearchEntityParameters"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Api.UserMailboxes.MailboxUserDto": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Mailboxes.MailboxStatus"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "entityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userRole": {
+            "$ref": "#/components/schemas/eDLVR.Authentication.RegularRole"
+          },
+          "creationTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "mailboxCapacity": {
+            "type": "number",
+            "format": "double"
+          },
+          "accountType": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Mailboxes.AccountType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.Domain.Mailboxes.AccountType": {
+        "enum": [
+          "MailboxOnly",
+          "MailboxWithApi",
+          "ErdsApiWithoutMailbox",
+          "Trusted"
+        ],
+        "type": "string"
+      },
+      "eDLVR.Mailbox.Domain.Mailboxes.MailboxStatus": {
+        "enum": [
+          "Inactive",
+          "Active",
+          "Suspended",
+          "Closed"
+        ],
+        "type": "string"
+      },
+      "eDLVR.Mailbox.Domain.Messages.MailboxType": {
+        "enum": [
+          "Draft",
+          "Outbox",
+          "Inbox"
+        ],
+        "type": "string"
+      },
+      "eDLVR.Mailbox.Domain.Messages.MessageStatus": {
+        "enum": [
+          "MessageSubmission",
+          "MessageSharing",
+          "SubmissionAcceptance",
+          "SubmissionRejection",
+          "ConsignmentAcceptance",
+          "ContentConsignment",
+          "ContentConsignmentFailure",
+          "ConsignmentNotification",
+          "ConsignmentNotificationFailure",
+          "ContentHandover",
+          "ContentHandoverFailure",
+          "RelayAcceptance",
+          "RelayRejection",
+          "RelayFailure",
+          "NotificationForAcceptance",
+          "NotificationForAcceptanceFailure",
+          "ConsignmentRejection",
+          "AcceptanceRejectionExpiry",
+          "RelayToNonERDS",
+          "RelayToNonERDSFailure",
+          "ReceivedFromNonERDS"
+        ],
+        "type": "string"
+      },
+      "eDLVR.Mailbox.UseCases.Conversations.ConversationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Messages.MessageDto"
+            },
+            "nullable": true
+          },
+          "lastReceived": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastSent": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Conversations.ConversationsDto": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "conversations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.ConversationDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Conversations.Search.FoundConversation": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.Search.FoundMessage"
+            },
+            "nullable": true
+          },
+          "conversationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "lastReceived": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Conversations.Search.FoundMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "topic": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.Search.RecipientDto"
+            },
+            "nullable": true
+          },
+          "originalSender": {
+            "type": "string",
+            "nullable": true
+          },
+          "filesIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Messages.MessageStatus"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "mailboxType": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Messages.MailboxType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Conversations.Search.RecipientDto": {
+        "type": "object",
+        "properties": {
+          "finalRecipient": {
+            "type": "string",
+            "nullable": true
+          },
+          "erdsId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSent": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Conversations.Search.SearchConversationsResult": {
+        "type": "object",
+        "properties": {
+          "conversations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Conversations.Search.FoundConversation"
+            },
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Entities.EntityAddress": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "maxLength": 110,
+            "type": "string",
+            "nullable": true
+          },
+          "flatNumber": {
+            "maxLength": 20,
+            "type": "string",
+            "nullable": true
+          },
+          "houseNumber": {
+            "maxLength": 30,
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "maxLength": 10,
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "maxLength": 112,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Entities.EntityDto": {
+        "type": "object",
+        "properties": {
+          "mailboxAddress": {
+            "maxLength": 320,
+            "type": "string",
+            "nullable": true
+          },
+          "correspondenceEntityAddress": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.EntityAddress"
+          },
+          "entityAddress": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.EntityAddress"
+          },
+          "officialIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Entities.OfficialId"
+            },
+            "nullable": true
+          },
+          "entityName": {
+            "maxLength": 2000,
+            "type": "string",
+            "nullable": true
+          },
+          "legalForm": {
+            "type": "string",
+            "nullable": true
+          },
+          "professionalTitle": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "maxLength": 120,
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "maxLength": 300,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Entities.OfficialId": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 255,
+            "type": "string",
+            "nullable": true
+          },
+          "referenceRegistry": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Entities.Search.SearchEntityParameters": {
+        "type": "object",
+        "properties": {
+          "searchCategory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "krs": {
+            "maxLength": 10,
+            "minLength": 10,
+            "type": "string",
+            "nullable": true
+          },
+          "nip": {
+            "maxLength": 10,
+            "minLength": 10,
+            "type": "string",
+            "nullable": true
+          },
+          "regon": {
+            "maxLength": 14,
+            "minLength": 7,
+            "type": "string",
+            "nullable": true
+          },
+          "pesel": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "maxLength": 120,
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "maxLength": 300,
+            "type": "string",
+            "nullable": true
+          },
+          "entityName": {
+            "maxLength": 2000,
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "maxLength": 112,
+            "type": "string",
+            "nullable": true
+          },
+          "buildingNumber": {
+            "maxLength": 30,
+            "type": "string",
+            "nullable": true
+          },
+          "recipientEdas": {
+            "type": "string",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Evidences.EvidenceDto": {
+        "type": "object",
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "recipientIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "notificationDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "senderIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "isRead": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Messages.FileInformationDto": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileSize": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Messages.MessageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "confirmationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "topic": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "sendDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Messages.MessageStatus"
+          },
+          "originalSender": {
+            "type": "string",
+            "nullable": true
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Messages.FileInformationDto"
+            },
+            "nullable": true
+          },
+          "isRead": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "mailboxType": {
+            "$ref": "#/components/schemas/eDLVR.Mailbox.Domain.Messages.MailboxType"
+          },
+          "refToMessageId": {
+            "type": "string",
+            "nullable": true
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/eDLVR.Mailbox.UseCases.Messages.RecipientDto"
+            },
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "eDLVR.Mailbox.UseCases.Messages.RecipientDto": {
+        "type": "object",
+        "properties": {
+          "finalRecipient": {
+            "type": "string",
+            "nullable": true
+          },
+          "erdsId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSent": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Enter JWT Bearer token **_only_**",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

@@ -3,9 +3,10 @@
 namespace App\Domain\Skills\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -19,8 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property User    $user
  * @property Skill   $skill
  */
-class UserSkill extends BaseModel
+class UserSkill extends Pivot
 {
+    use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [

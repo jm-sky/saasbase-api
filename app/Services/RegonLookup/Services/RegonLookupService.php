@@ -29,35 +29,38 @@ class RegonLookupService
     public function __construct(
         private readonly RegonApiConnector $apiConnector
     ) {
-        $this->shouldLog    = app()->isLocal() || config('regon_lookup.should_log', false);
-        $this->cacheMode    = CacheMode::from(config('regon_lookup.cache_mode', 'hours'));
-        $this->cacheHours   = (int) config('regon_lookup.cache_hours', self::DEFAULT_CACHE_HOURS);
+        $this->shouldLog    = app()->isLocal() || config('services.regon.should_log', false);
+        $this->cacheMode    = CacheMode::from(config('services.regon.cache_mode', 'hours'));
+        $this->cacheHours   = (int) config('services.regon.cache_hours', self::DEFAULT_CACHE_HOURS);
     }
 
-    public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null): ?RegonReportUnified
+    /**
+     * @throws RegonLookupException
+     */
+    public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null, bool $throw = false): ?RegonReportUnified
     {
         $nip      = $this->sanitizeAndValidateNip($nip);
         $cacheKey = "regon_lookup:nip:{$nip}";
         $cacheTtl = $this->getCacheTtl($now);
 
         if ($force) {
-            return $this->lookupAndCacheByNip($nip, $cacheKey, $cacheTtl);
+            return $this->lookupAndCacheByNip($nip, $cacheKey, $cacheTtl, $throw);
         }
 
-        return Cache::remember($cacheKey, $cacheTtl, fn () => $this->lookupByNip($nip));
+        return Cache::remember($cacheKey, $cacheTtl, fn () => $this->lookupByNip($nip, $throw));
     }
 
-    public function findByRegon(string $regon, bool $force = false, ?CarbonInterface $now = null): ?RegonReportUnified
+    public function findByRegon(string $regon, bool $force = false, ?CarbonInterface $now = null, bool $throw = false): ?RegonReportUnified
     {
         $regon    = $this->sanitizeAndValidateRegon($regon);
         $cacheKey = "regon_lookup:regon:{$regon}";
         $cacheTtl = $this->getCacheTtl($now);
 
         if ($force) {
-            return $this->lookupAndCacheByRegon($regon, $cacheKey, $cacheTtl);
+            return $this->lookupAndCacheByRegon($regon, $cacheKey, $cacheTtl, $throw);
         }
 
-        return Cache::remember($cacheKey, $cacheTtl, fn () => $this->lookupByRegon($regon));
+        return Cache::remember($cacheKey, $cacheTtl, fn () => $this->lookupByRegon($regon, $throw));
     }
 
     protected function getCacheTtl(?CarbonInterface $now = null): \DateTimeInterface|\DateInterval|int
@@ -69,29 +72,33 @@ class RegonLookupService
         };
     }
 
-    protected function lookupAndCacheByNip(string $nip, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl): ?RegonReportUnified
+    protected function lookupAndCacheByNip(string $nip, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl, bool $throw = false): ?RegonReportUnified
     {
-        $result = $this->lookupByNip($nip);
+        $result = $this->lookupByNip($nip, $throw);
         Cache::put($cacheKey, $result, $cacheTtl);
 
         return $result;
     }
 
-    protected function lookupAndCacheByRegon(string $regon, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl): ?RegonReportUnified
+    protected function lookupAndCacheByRegon(string $regon, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl, bool $throw = false): ?RegonReportUnified
     {
-        $result = $this->lookupByRegon($regon);
+        $result = $this->lookupByRegon($regon, $throw);
         Cache::put($cacheKey, $result, $cacheTtl);
 
         return $result;
     }
 
-    protected function lookupByNip(string $nip): ?RegonReportUnified
+    protected function lookupByNip(string $nip, bool $throw = false): ?RegonReportUnified
     {
         try {
             $searchResponse = $this->apiConnector->send(new SearchRequest(nip: $nip, regon: ''));
             $searchResult   = $searchResponse->dto();
 
             if (!$searchResult instanceof RegonLookupResultDTO) {
+                if ($throw) {
+                    throw new RegonLookupException('Invalid NIP format. NIP must be 10 digits.');
+                }
+
                 return null;
             }
 
@@ -104,6 +111,10 @@ class RegonLookupService
 
             return $dto->toUnifiedReportDto();
         } catch (\Exception $e) {
+            if ($throw) {
+                throw $e;
+            }
+
             if ($this->shouldLog) {
                 Log::error('RegonLookupService error: ' . $e->getMessage(), [
                     'nip'       => $nip,
@@ -115,7 +126,7 @@ class RegonLookupService
         }
     }
 
-    protected function lookupByRegon(string $regon): ?RegonReportUnified
+    protected function lookupByRegon(string $regon, bool $throw = false): ?RegonReportUnified
     {
         try {
             $response = $this->apiConnector->send(new GetFullReportRequest(
@@ -124,6 +135,10 @@ class RegonLookupService
 
             return $response->dto();
         } catch (\Exception $e) {
+            if ($throw) {
+                throw $e;
+            }
+
             if ($this->shouldLog) {
                 Log::error('RegonLookupService error: ' . $e->getMessage(), [
                     'regon'     => $regon,

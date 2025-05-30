@@ -23,7 +23,9 @@ class ContractorBankAccountController extends Controller
      */
     public function index(Contractor $contractor): AnonymousResourceCollection
     {
-        return BankAccountResource::collection($contractor->bankAccounts);
+        $bankAccounts = $contractor->bankAccounts()->orderBy('is_default', 'desc')->get();
+
+        return BankAccountResource::collection($bankAccounts);
     }
 
     /**
@@ -50,7 +52,7 @@ class ContractorBankAccountController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateContractorBankAccountRequest $request, Contractor $contractor, int $bankAccountId): BankAccountResource
+    public function update(UpdateContractorBankAccountRequest $request, Contractor $contractor, string $bankAccountId): BankAccountResource
     {
         $bankAccount = $contractor->bankAccounts()->findOrFail($bankAccountId);
         $bankAccount->update($request->validated());
@@ -62,7 +64,7 @@ class ContractorBankAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contractor $contractor, int $bankAccountId): Response
+    public function destroy(Contractor $contractor, string $bankAccountId): Response
     {
         $bankAccount = $contractor->bankAccounts()->findOrFail($bankAccountId);
         $contractor->logModelActivity(ContractorActivityType::BankAccountDeleted->value, $bankAccount);

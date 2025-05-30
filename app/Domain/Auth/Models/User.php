@@ -256,9 +256,9 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(Skill::class, 'user_skills')
+        return $this->belongsToMany(Skill::class, 'user_skill')
             ->using(UserSkill::class)
-            ->withPivot(['proficiency'])
+            ->withPivot(['level'])
             ->withTimestamps()
         ;
     }

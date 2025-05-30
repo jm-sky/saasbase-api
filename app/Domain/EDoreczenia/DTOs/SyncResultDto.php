@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Domain\EDoreczenia\DTOs;
+
+use App\Domain\Common\DTOs\BaseDataDTO;
+use Carbon\Carbon;
+
+class SyncResultDto extends BaseDataDTO
+{
+    public function __construct(
+        public readonly bool $success,
+        public readonly int $newMessages = 0,
+        public readonly int $updatedMessages = 0,
+        public readonly ?string $error = null,
+        public readonly ?Carbon $syncedAt = null,
+    ) {
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'success'         => $this->success,
+            'newMessages'     => $this->newMessages,
+            'updatedMessages' => $this->updatedMessages,
+            'error'           => $this->error,
+            'syncedAt'        => $this->syncedAt?->toIso8601String(),
+        ];
+    }
+}

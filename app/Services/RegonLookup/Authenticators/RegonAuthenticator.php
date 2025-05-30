@@ -16,7 +16,7 @@ class RegonAuthenticator implements Authenticator
 
     public function __construct()
     {
-        $isTest = Str::contains(config('regon_lookup.api_url'), 'wyszukiwarkaregontest');
+        $isTest = Str::contains(config('services.regon.api_url'), 'wyszukiwarkaregontest');
 
         $this->CACHE_KEY = $isTest ? "{$this->CACHE_KEY}.test" : "{$this->CACHE_KEY}";
     }

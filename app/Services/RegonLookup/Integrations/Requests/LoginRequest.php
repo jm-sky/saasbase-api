@@ -17,7 +17,7 @@ class LoginRequest extends BaseRegonRequest
     {
         parent::__construct();
 
-        $userKey = config('regon_lookup.user_key');
+        $userKey = config('services.regon.user_key');
 
         if (!$userKey) {
             throw new RegonLookupException('REGON API user key not configured.');

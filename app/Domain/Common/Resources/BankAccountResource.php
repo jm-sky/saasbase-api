@@ -22,6 +22,7 @@ class BankAccountResource extends JsonResource
             'bankableId'   => $this->bankable_id,
             'bankableType' => $this->bankable_type,
             'iban'         => $this->iban,
+            'country'      => $this->country,
             'swift'        => $this->swift,
             'isDefault'    => $this->is_default,
             'currency'     => $this->currency,

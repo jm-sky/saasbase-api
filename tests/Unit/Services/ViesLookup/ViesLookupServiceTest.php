@@ -8,33 +8,32 @@ use App\Services\ViesLookup\Integrations\Requests\CheckVatRequest;
 use App\Services\ViesLookup\Integrations\ViesConnector;
 use App\Services\ViesLookup\Services\ViesLookupService;
 use Illuminate\Support\Facades\Cache;
-use Saloon\Http\Faking\MockClient;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Saloon\Http\Faking\MockResponse;
+use Saloon\Laravel\Facades\Saloon;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(ViesLookupService::class)]
 class ViesLookupServiceTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
         Cache::flush();
-
-        $this->markTestSkipped('Fix mocking. VIES service not available');
     }
 
     public function testFindByVatReturnsNullWhenSearchFails(): void
     {
-        $mockClient = new MockClient([
-            CheckVatRequest::class => MockResponse::make('', 400),
+        Saloon::fake([
+            CheckVatRequest::class => MockResponse::make('', HttpResponse::HTTP_BAD_REQUEST),
         ]);
+
         $connector = new ViesConnector();
-        $connector->withMockClient($mockClient);
-        $service = new ViesLookupService($connector);
+        $service   = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
         $this->expectExceptionMessage('Unsuccessful VIES API response: 400');
@@ -43,15 +42,17 @@ class ViesLookupServiceTest extends TestCase
 
     public function testFindByVatReturnsNullWhenSearchResultIsInvalid(): void
     {
-        $mockClient = new MockClient([
-            CheckVatRequest::class => MockResponse::make('<not-xml>', 200),
+        $invalidXml = '<?xml version="1.0" encoding="UTF-8"?><invalid>';
+
+        Saloon::fake([
+            CheckVatRequest::class => MockResponse::make($invalidXml, HttpResponse::HTTP_OK),
         ]);
+
         $connector = new ViesConnector();
-        $connector->withMockClient($mockClient);
-        $service = new ViesLookupService($connector);
+        $service   = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
-        $this->expectExceptionMessage('Invalid VIES XML response.');
+        $this->expectExceptionMessage('Invalid VIES XML response');
         $service->findByVat('PL', '2222222222');
     }
 
@@ -69,12 +70,13 @@ class ViesLookupServiceTest extends TestCase
             </checkVatResponse>
           </soap:Body>
         </soap:Envelope>';
-        $mockClient = new MockClient([
-            CheckVatRequest::class => MockResponse::make($xml, 200),
+
+        Saloon::fake([
+            CheckVatRequest::class => MockResponse::make($xml, HttpResponse::HTTP_OK),
         ]);
+
         $connector = new ViesConnector();
-        $connector->withMockClient($mockClient);
-        $service = new ViesLookupService($connector);
+        $service   = new ViesLookupService($connector);
 
         $result = $service->findByVat('PL', '3333333333');
         $this->assertInstanceOf(ViesLookupResultDTO::class, $result);
@@ -99,12 +101,13 @@ class ViesLookupServiceTest extends TestCase
             </checkVatResponse>
           </soap:Body>
         </soap:Envelope>';
-        $mockClient = new MockClient([
-            CheckVatRequest::class => MockResponse::make($xml, 200),
+
+        Saloon::fake([
+            CheckVatRequest::class => MockResponse::make($xml, HttpResponse::HTTP_OK),
         ]);
+
         $connector = new ViesConnector();
-        $connector->withMockClient($mockClient);
-        $service = new ViesLookupService($connector);
+        $service   = new ViesLookupService($connector);
 
         $result1 = $service->findByVat('PL', '4444444444');
         $result2 = $service->findByVat('PL', '4444444444');
@@ -122,12 +125,13 @@ class ViesLookupServiceTest extends TestCase
             </soap:Fault>
           </soap:Body>
         </soap:Envelope>';
-        $mockClient = new MockClient([
-            CheckVatRequest::class => MockResponse::make($soapFault, 200),
+
+        Saloon::fake([
+            CheckVatRequest::class => MockResponse::make($soapFault, HttpResponse::HTTP_OK),
         ]);
+
         $connector = new ViesConnector();
-        $connector->withMockClient($mockClient);
-        $service = new ViesLookupService($connector);
+        $service   = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
         $this->expectExceptionMessage('VIES API error: Invalid VAT number format');

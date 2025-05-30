@@ -98,7 +98,7 @@ class UserSkillApiTest extends TestCase
             ])
         ;
 
-        $this->assertDatabaseHas('user_skills', [
+        $this->assertDatabaseHas('user_skill', [
             'user_id'     => $this->user->id,
             'skill_id'    => $this->skill->id,
             'level'       => $userSkillData['level'],
@@ -194,7 +194,7 @@ class UserSkillApiTest extends TestCase
             ])
         ;
 
-        $this->assertDatabaseHas('user_skills', [
+        $this->assertDatabaseHas('user_skill', [
             'id'          => $userSkill->id,
             'level'       => $updateData['level'],
             'acquired_at' => $updateData['acquiredAt'],
@@ -211,7 +211,7 @@ class UserSkillApiTest extends TestCase
         $response = $this->deleteJson($this->baseUrl . '/' . $userSkill->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
-        $this->assertSoftDeleted('user_skills', ['id' => $userSkill->id]);
+        $this->assertSoftDeleted('user_skill', ['id' => $userSkill->id]);
     }
 
     public function testReturns404ForNonexistentUserSkill(): void

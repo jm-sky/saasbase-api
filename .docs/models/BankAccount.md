@@ -8,10 +8,10 @@ Represents a bank account that can be associated with various entities (contract
 - `tenant_id` (uuid, nullable) - Reference to the tenant (null for user-specific accounts)
 - `bankable_id` (uuid) - ID of the related entity (contractor, user, or tenant)
 - `bankable_type` (varchar) - Type of the related entity ('contractors', 'users', 'tenants')
-- `name` (varchar) - Account name/label
-- `bank_name` (varchar) - Name of the bank
-- `account_number` (varchar) - Full bank account number (IBAN format)
+- `iban` (varchar) - Full bank account number (IBAN format)
+- `country` (varchar) - Country code
 - `swift` (varchar, nullable) - SWIFT/BIC code
+- `bank_name` (varchar) - Name of the bank
 - `is_default` (boolean) - Whether this is the default account for the entity
 - `currency` (varchar) - Account currency code (ISO 4217)
 - `description` (text, nullable) - Additional notes

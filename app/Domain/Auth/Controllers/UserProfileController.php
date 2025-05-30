@@ -13,9 +13,11 @@ class UserProfileController extends Controller
 {
     public function show(): UserProfileResource
     {
+        /** @var User $user */
         $user = Auth::user();
 
-        $user->profile ??= new UserProfile();
+        $user->profile ??= UserProfile::create(['user_id' => $user->id]);
+        $user->profile->load('user', 'user.skills');
 
         return new UserProfileResource($user->profile);
     }
