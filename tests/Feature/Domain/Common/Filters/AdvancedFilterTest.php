@@ -31,7 +31,6 @@ class AdvancedFilterTest extends TestCase
 
         $this->authenticateUser($this->tenant);
 
-        // $this->markTestSkipped('Skipping this test for now');
         Tenant::bypassTenant($this->tenant->id, function () {
             Contractor::factory()->create([
                 'name'       => 'John Doe Company',

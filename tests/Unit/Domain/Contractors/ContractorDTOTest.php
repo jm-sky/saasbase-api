@@ -7,8 +7,6 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
-use Tests\Traits\WithAuthenticatedUser;
-use Tests\Traits\WithMockedJwtPayload;
 
 /**
  * @internal
@@ -16,33 +14,23 @@ use Tests\Traits\WithMockedJwtPayload;
 #[CoversNothing]
 class ContractorDTOTest extends TestCase
 {
-    use WithMockedJwtPayload;
-    use WithAuthenticatedUser;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->markTestSkipped('Fix tenancy with JWT');
-    }
-
     public function testCanCreateContractorDtoFromModel(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->actingAs($this->authenticateUser($tenant));
-        // $this->mockTenantId($tenant->id); TODO: Use instead of sessions
 
-        $contractor = Contractor::factory()->create([
-            'name'        => 'Test Contractor',
-            'email'       => 'test@example.com',
-            'phone'       => '1234567890',
-            'country'     => 'US',
-            'tax_id'      => '123456789',
-            'description' => 'Test description',
-            'is_active'   => true,
-            'is_buyer'    => true,
-            'is_supplier' => false,
-        ]);
+        $contractor = Tenant::bypassTenant($tenant->id, function () {
+            return Contractor::factory()->create([
+                'name'        => 'Test Contractor',
+                'email'       => 'test@example.com',
+                'phone'       => '1234567890',
+                'country'     => 'US',
+                'tax_id'      => '123456789',
+                'description' => 'Test description',
+                'is_active'   => true,
+                'is_buyer'    => true,
+                'is_supplier' => false,
+            ]);
+        });
 
         $dto = ContractorDTO::from($contractor);
 

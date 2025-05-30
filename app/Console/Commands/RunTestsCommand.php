@@ -29,7 +29,7 @@ class RunTestsCommand extends Command
 
         $this->info("Running tests for pattern: {$pattern}");
 
-        $command = "php artisan test {$pattern} --colors";
+        $command = "php artisan test {$pattern}";
         // This allows to see colors in the terminal, but works only on Linux
         $command = "script -q -c '{$command}' /dev/null";
         passthru($command, $exitCode);
@@ -54,7 +54,7 @@ class RunTestsCommand extends Command
             ->filter(fn ($p) => !str_contains($p, 'TestCase.php'))
             ->filter(fn ($p) => !str_contains($p, 'Traits'))
             ->map(fn ($p) => explode('/', $p))
-            ->map(fn ($parts) => implode('/', array_slice($parts, 0, 2)))
+            ->map(fn ($parts) => implode('/', array_slice($parts, 0, 3)))
             ->unique()
             ->sort()
             ->values()

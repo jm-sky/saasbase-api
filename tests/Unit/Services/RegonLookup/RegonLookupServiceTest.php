@@ -2,17 +2,20 @@
 
 namespace Tests\Unit\Services\RegonLookup;
 
-use App\Services\RegonLookup\DTOs\RegonFullReportResultDTO;
+use App\Services\RegonLookup\DTOs\RegonAuthResultDTO;
 use App\Services\RegonLookup\DTOs\RegonLookupResultDTO;
+use App\Services\RegonLookup\DTOs\RegonReportUnified;
 use App\Services\RegonLookup\Exceptions\RegonLookupException;
 use App\Services\RegonLookup\Integrations\RegonApiConnector;
 use App\Services\RegonLookup\Integrations\Requests\GetFullReportRequest;
+use App\Services\RegonLookup\Integrations\Requests\LoginRequest;
 use App\Services\RegonLookup\Integrations\Requests\SearchRequest;
 use App\Services\RegonLookup\Services\RegonLookupService;
 use Illuminate\Support\Facades\Cache;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Saloon\Http\Response;
+use Saloon\Http\Faking\MockResponse;
+use Saloon\Laravel\Facades\Saloon;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Tests\TestCase;
 
 /**
@@ -21,8 +24,6 @@ use Tests\TestCase;
 #[CoversClass(RegonLookupService::class)]
 class RegonLookupServiceTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
     private RegonApiConnector $apiConnector;
 
     private RegonLookupService $service;
@@ -31,12 +32,11 @@ class RegonLookupServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->markTestSkipped('Fix mocks');
-
-        $this->apiConnector = \Mockery::mock(RegonApiConnector::class);
+        $this->apiConnector = new RegonApiConnector();
         $this->service      = new RegonLookupService($this->apiConnector);
 
-        // Clear cache before each test
+        config()->set('regon_lookup.user_key', '1234567890');
+
         Cache::flush();
     }
 
@@ -44,14 +44,11 @@ class RegonLookupServiceTest extends TestCase
     {
         $nip = '1234567890';
 
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(SearchRequest::class))
-            ->andThrow(new \Exception('API Error'))
-        ;
+        Saloon::fake([
+            SearchRequest::class => MockResponse::make('', HttpResponse::HTTP_INTERNAL_SERVER_ERROR),
+        ]);
 
         $result = $this->service->findByNip($nip);
-
         $this->assertNull($result);
     }
 
@@ -59,46 +56,42 @@ class RegonLookupServiceTest extends TestCase
     {
         $nip = '1234567890';
 
-        $searchResponse = \Mockery::mock(Response::class);
-        $searchResponse->shouldReceive('dto')->andReturn(null);
-
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(SearchRequest::class))
-            ->andReturn($searchResponse)
-        ;
+        Saloon::fake([
+            SearchRequest::class => MockResponse::make('invalid-response', HttpResponse::HTTP_OK),
+        ]);
 
         $result = $this->service->findByNip($nip);
-
         $this->assertNull($result);
     }
 
     public function testFindByNipReturnsFullReportWhenSearchSucceeds(): void
     {
+        $this->markTestSkipped('Need to mock XML response');
+
         $nip   = '1234567890';
         $regon = '123456789';
 
         // Mock search response
         $searchResult = new RegonLookupResultDTO(
+            name: 'Test Company',
             regon: $regon,
             nip: $nip,
-            name: 'Test Company',
-            shortName: null,
-            registrationNumber: null,
-            registrationDate: null,
-            startDate: null,
-            endDate: null,
-            phoneNumber: null,
-            email: null,
-            website: null,
-            address: null
+            type: \App\Services\RegonLookup\Enums\EntityType::LegalPerson,
+            statusNip: null,
+            dateOfEnd: null,
+            voivodeship: null,
+            province: null,
+            community: null,
+            city: null,
+            postalCode: null,
+            street: null,
+            building: null,
+            flat: null,
+            silosId: null
         );
 
-        $searchResponse = \Mockery::mock(Response::class);
-        $searchResponse->shouldReceive('dto')->andReturn($searchResult);
-
         // Mock full report response
-        $fullReportResult = new RegonFullReportResultDTO(
+        $fullReportResult = new RegonReportUnified(
             regon: $regon,
             nip: $nip,
             nipStatus: null,
@@ -139,41 +132,35 @@ class RegonLookupServiceTest extends TestCase
             cityName: '',
             postalCityName: '',
             streetName: '',
-            legalFormCode: '',
-            detailedLegalFormCode: '',
-            financingFormCode: '',
-            ownershipFormCode: '',
-            foundingBodyCode: null,
+            registrationDeletionDate: null,
             registrationAuthorityCode: '',
             registryTypeCode: '',
-            legalFormName: '',
-            detailedLegalFormName: '',
-            financingFormName: '',
-            ownershipFormName: '',
-            foundingBodyName: null,
             registrationAuthorityName: '',
             registryTypeName: '',
-            localUnitsCount: 0
+            legalFormCode: null,
+            detailedLegalFormCode: null,
+            financingFormCode: null,
+            ownershipFormCode: null,
+            foundingBodyCode: null,
+            legalFormName: null,
+            detailedLegalFormName: null,
+            financingFormName: null,
+            ownershipFormName: null,
+            foundingBodyName: null,
+            localUnitsCount: 0,
+            hasNotStartedActivity: null,
+            cache: null
         );
 
-        $fullReportResponse = \Mockery::mock(Response::class);
-        $fullReportResponse->shouldReceive('dto')->andReturn($fullReportResult);
+        Saloon::fake([
+            LoginRequest::class         => MockResponse::make(json_encode(new RegonAuthResultDTO('1234567890')), HttpResponse::HTTP_OK),
+            SearchRequest::class        => MockResponse::make(json_encode($searchResult), HttpResponse::HTTP_OK),
+            GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
+        ]);
 
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(SearchRequest::class))
-            ->andReturn($searchResponse)
-        ;
+        $result = $this->service->findByNip($nip, throw: true);
 
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(GetFullReportRequest::class))
-            ->andReturn($fullReportResponse)
-        ;
-
-        $result = $this->service->findByNip($nip);
-
-        $this->assertInstanceOf(RegonFullReportResultDTO::class, $result);
+        $this->assertInstanceOf(RegonReportUnified::class, $result);
         $this->assertEquals($regon, $result->regon);
         $this->assertEquals($nip, $result->nip);
         $this->assertEquals('Test Company', $result->name);
@@ -183,22 +170,21 @@ class RegonLookupServiceTest extends TestCase
     {
         $regon = '123456789';
 
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(GetFullReportRequest::class))
-            ->andThrow(new \Exception('API Error'))
-        ;
+        Saloon::fake([
+            GetFullReportRequest::class => MockResponse::make('', HttpResponse::HTTP_INTERNAL_SERVER_ERROR),
+        ]);
 
         $result = $this->service->findByRegon($regon);
-
         $this->assertNull($result);
     }
 
     public function testFindByRegonReturnsFullReportWhenRequestSucceeds(): void
     {
+        $this->markTestSkipped('Need to mock XML response');
+
         $regon = '123456789';
 
-        $fullReportResult = new RegonFullReportResultDTO(
+        $fullReportResult = new RegonReportUnified(
             regon: $regon,
             nip: '1234567890',
             nipStatus: null,
@@ -239,35 +225,34 @@ class RegonLookupServiceTest extends TestCase
             cityName: '',
             postalCityName: '',
             streetName: '',
-            legalFormCode: '',
-            detailedLegalFormCode: '',
-            financingFormCode: '',
-            ownershipFormCode: '',
-            foundingBodyCode: null,
+            registrationDeletionDate: null,
             registrationAuthorityCode: '',
             registryTypeCode: '',
-            legalFormName: '',
-            detailedLegalFormName: '',
-            financingFormName: '',
-            ownershipFormName: '',
-            foundingBodyName: null,
             registrationAuthorityName: '',
             registryTypeName: '',
-            localUnitsCount: 0
+            legalFormCode: null,
+            detailedLegalFormCode: null,
+            financingFormCode: null,
+            ownershipFormCode: null,
+            foundingBodyCode: null,
+            legalFormName: null,
+            detailedLegalFormName: null,
+            financingFormName: null,
+            ownershipFormName: null,
+            foundingBodyName: null,
+            localUnitsCount: 0,
+            hasNotStartedActivity: null,
+            cache: null
         );
 
-        $fullReportResponse = \Mockery::mock(Response::class);
-        $fullReportResponse->shouldReceive('dto')->andReturn($fullReportResult);
-
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(GetFullReportRequest::class))
-            ->andReturn($fullReportResponse)
-        ;
+        Saloon::fake([
+            LoginRequest::class         => MockResponse::make(json_encode(new RegonAuthResultDTO('1234567890')), HttpResponse::HTTP_OK),
+            GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
+        ]);
 
         $result = $this->service->findByRegon($regon);
 
-        $this->assertInstanceOf(RegonFullReportResultDTO::class, $result);
+        $this->assertInstanceOf(RegonReportUnified::class, $result);
         $this->assertEquals($regon, $result->regon);
         $this->assertEquals('Test Company', $result->name);
     }
@@ -290,30 +275,32 @@ class RegonLookupServiceTest extends TestCase
 
     public function testFindByNipUsesCache(): void
     {
+        $this->markTestSkipped('Need to mock XML response');
+
         $nip   = '1234567890';
         $regon = '123456789';
 
         // Mock search response
         $searchResult = new RegonLookupResultDTO(
+            name: 'Test Company',
             regon: $regon,
             nip: $nip,
-            name: 'Test Company',
-            shortName: null,
-            registrationNumber: null,
-            registrationDate: null,
-            startDate: null,
-            endDate: null,
-            phoneNumber: null,
-            email: null,
-            website: null,
-            address: null
+            type: \App\Services\RegonLookup\Enums\EntityType::LegalPerson,
+            statusNip: null,
+            dateOfEnd: null,
+            voivodeship: null,
+            province: null,
+            community: null,
+            city: null,
+            postalCode: null,
+            street: null,
+            building: null,
+            flat: null,
+            silosId: null
         );
 
-        $searchResponse = \Mockery::mock(Response::class);
-        $searchResponse->shouldReceive('dto')->andReturn($searchResult);
-
         // Mock full report response
-        $fullReportResult = new RegonFullReportResultDTO(
+        $fullReportResult = new RegonReportUnified(
             regon: $regon,
             nip: $nip,
             nipStatus: null,
@@ -354,55 +341,48 @@ class RegonLookupServiceTest extends TestCase
             cityName: '',
             postalCityName: '',
             streetName: '',
-            legalFormCode: '',
-            detailedLegalFormCode: '',
-            financingFormCode: '',
-            ownershipFormCode: '',
-            foundingBodyCode: null,
+            registrationDeletionDate: null,
             registrationAuthorityCode: '',
             registryTypeCode: '',
-            legalFormName: '',
-            detailedLegalFormName: '',
-            financingFormName: '',
-            ownershipFormName: '',
-            foundingBodyName: null,
             registrationAuthorityName: '',
             registryTypeName: '',
-            localUnitsCount: 0
+            legalFormCode: null,
+            detailedLegalFormCode: null,
+            financingFormCode: null,
+            ownershipFormCode: null,
+            foundingBodyCode: null,
+            legalFormName: null,
+            detailedLegalFormName: null,
+            financingFormName: null,
+            ownershipFormName: null,
+            foundingBodyName: null,
+            localUnitsCount: 0,
+            hasNotStartedActivity: null,
+            cache: null
         );
 
-        $fullReportResponse = \Mockery::mock(Response::class);
-        $fullReportResponse->shouldReceive('dto')->andReturn($fullReportResult);
-
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(SearchRequest::class))
-            ->andReturn($searchResponse)
-            ->once()
-        ;
-
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(GetFullReportRequest::class))
-            ->andReturn($fullReportResponse)
-            ->once()
-        ;
+        Saloon::fake([
+            SearchRequest::class        => MockResponse::make(json_encode($searchResult), HttpResponse::HTTP_OK),
+            GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
+        ]);
 
         // First call should hit the API
         $result1 = $this->service->findByNip($nip);
-        $this->assertInstanceOf(RegonFullReportResultDTO::class, $result1);
+        $this->assertInstanceOf(RegonReportUnified::class, $result1);
 
         // Second call should use cache
         $result2 = $this->service->findByNip($nip);
-        $this->assertInstanceOf(RegonFullReportResultDTO::class, $result2);
+        $this->assertInstanceOf(RegonReportUnified::class, $result2);
         $this->assertEquals($result1, $result2);
     }
 
     public function testFindByRegonUsesCache(): void
     {
+        $this->markTestSkipped('Need to mock XML response');
+
         $regon = '123456789';
 
-        $fullReportResult = new RegonFullReportResultDTO(
+        $fullReportResult = new RegonReportUnified(
             regon: $regon,
             nip: '1234567890',
             nipStatus: null,
@@ -443,46 +423,37 @@ class RegonLookupServiceTest extends TestCase
             cityName: '',
             postalCityName: '',
             streetName: '',
-            legalFormCode: '',
-            detailedLegalFormCode: '',
-            financingFormCode: '',
-            ownershipFormCode: '',
-            foundingBodyCode: null,
+            registrationDeletionDate: null,
             registrationAuthorityCode: '',
             registryTypeCode: '',
-            legalFormName: '',
-            detailedLegalFormName: '',
-            financingFormName: '',
-            ownershipFormName: '',
-            foundingBodyName: null,
             registrationAuthorityName: '',
             registryTypeName: '',
-            localUnitsCount: 0
+            legalFormCode: null,
+            detailedLegalFormCode: null,
+            financingFormCode: null,
+            ownershipFormCode: null,
+            foundingBodyCode: null,
+            legalFormName: null,
+            detailedLegalFormName: null,
+            financingFormName: null,
+            ownershipFormName: null,
+            foundingBodyName: null,
+            localUnitsCount: 0,
+            hasNotStartedActivity: null,
+            cache: null
         );
 
-        $fullReportResponse = \Mockery::mock(Response::class);
-        $fullReportResponse->shouldReceive('dto')->andReturn($fullReportResult);
-
-        $this->apiConnector
-            ->shouldReceive('send')
-            ->with(\Mockery::type(GetFullReportRequest::class))
-            ->andReturn($fullReportResponse)
-            ->once()
-        ;
+        Saloon::fake([
+            GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
+        ]);
 
         // First call should hit the API
         $result1 = $this->service->findByRegon($regon);
-        $this->assertInstanceOf(RegonFullReportResultDTO::class, $result1);
+        $this->assertInstanceOf(RegonReportUnified::class, $result1);
 
         // Second call should use cache
         $result2 = $this->service->findByRegon($regon);
-        $this->assertInstanceOf(RegonFullReportResultDTO::class, $result2);
+        $this->assertInstanceOf(RegonReportUnified::class, $result2);
         $this->assertEquals($result1, $result2);
-    }
-
-    protected function tearDown(): void
-    {
-        \Mockery::close();
-        parent::tearDown();
     }
 }
