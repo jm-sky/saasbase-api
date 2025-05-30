@@ -3,15 +3,15 @@
 namespace App\Domain\Ai\Controllers;
 
 use App\Domain\Ai\Requests\AiChatRequest;
+use App\Domain\Ai\Resources\AiChatResponseResource;
 use App\Domain\Ai\Services\AiChatService;
 use App\Domain\Ai\Services\AiConversationService;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class AiChatController extends Controller
 {
-    public function chat(AiChatRequest $request): JsonResponse
+    public function chat(AiChatRequest $request): AiChatResponseResource
     {
         $user = $request->user();
         $data = $request->validated();
@@ -19,19 +19,24 @@ class AiChatController extends Controller
         $conversationService = new AiConversationService($user->id, $data['threadId'] ?? null, $user->tenant_id ?? null);
         $chatService         = new AiChatService($conversationService);
 
-        if (config('services.openrouter.streaming_enabled', true)) {
+        if (AiChatService::isStreamingEnabled()) {
             // Streamowanie - zwracamy natychmiast potwierdzenie, dalsza praca dzieje się w tle (broadcast)
             $chatService->streamAiResponse($data['history'] ?? [], $data['message'], $user->id);
 
-            return response()->json([
-                'message' => 'AI response streaming started',
-            ], Response::HTTP_ACCEPTED);
+            return new AiChatResponseResource((object) [
+                'id'        => Str::uuid(),
+                'content'   => 'AI response streaming started',
+                'streaming' => true,
+            ]);
         }
+
         // Tryb bez streamu - zwracamy odpowiedź od razu do klienta
         $content = $chatService->getFullResponse($data['history'] ?? [], $data['message']);
 
-        return response()->json([
-            'message' => $content,
+        return new AiChatResponseResource((object) [
+            'id'        => Str::uuid(),
+            'content'   => $content,
+            'streaming' => false,
         ]);
     }
 }

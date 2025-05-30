@@ -22,23 +22,23 @@
 
 - [ ] **User Management**
   - [x] Basic user CRUD
-  - [ ] User profile management
+  - [x] User profile management
   - [ ] Role-based access control (RBAC) with roles, permissions, policies
   - [ ] Permission system
-  - [ ] User invitations
-  - [ ] User settings and preferences
-  - [ ] OAuth/social login (Google, GitHub, etc.)
+  - [x] User invitations
+  - [x] User settings and preferences
+  - [x] OAuth/social login (Google, GitHub, etc.)
 
 ## Phase 2: Document Management
 - [ ] **Contractor Management**
-  - [ ] Contractor profiles
-  - [ ] Contact information system
+  - [x] Contractor profiles
+  - [x] Contact information system
   - [ ] Historical data tracking
   - [ ] Contractor categorization
-  - [ ] Address management
+  - [x] Address management
   - [ ] Contractor Data Import
-  - [ ] VAT Number Validation
-  - [ ] Bank Account Validation
+  - [x] VAT Number Validation
+  - [x] Bank Account Validation
 
 - [ ] **Basic Invoice System**
   - [ ] Invoice creation and templates
@@ -79,10 +79,10 @@
   - [ ] Exchange Rate Import Service (scheduling, error handling, admin notifications)
 
 - [ ] **Company Lookup Service**
-  - [ ] Integration with external providers
+  - [x] Integration with external providers
   - [ ] Company data enrichment
   - [ ] Verification services
-  - [ ] Data caching
+  - [x] Data caching
   - [ ] Rate limiting
 
 - [ ] **Advanced Invoice Features**
@@ -101,7 +101,7 @@
 
 ## Phase 4: Project Management
 - [ ] **Basic Project Structure**
-  - [ ] Project CRUD operations
+  - [x] Project CRUD operations
   - [ ] Team assignment
   - [ ] Project status tracking
   - [ ] Resource allocation
