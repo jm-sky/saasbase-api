@@ -2,21 +2,23 @@
 
 namespace App\Domain\Ai\Controllers;
 
+use Illuminate\Support\Str;
+use App\Domain\Auth\Models\User;
+use App\Http\Controllers\Controller;
 use App\Domain\Ai\Requests\AiChatRequest;
-use App\Domain\Ai\Resources\AiChatResponseResource;
 use App\Domain\Ai\Services\AiChatService;
 use App\Domain\Ai\Services\AiConversationService;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Str;
+use App\Domain\Ai\Resources\AiChatResponseResource;
 
 class AiChatController extends Controller
 {
     public function chat(AiChatRequest $request): AiChatResponseResource
     {
+        /** @var User $user */
         $user = $request->user();
         $data = $request->validated();
 
-        $conversationService = new AiConversationService($user->id, $data['threadId'] ?? null, $user->tenant_id ?? null);
+        $conversationService = new AiConversationService($user->id, $data['threadId'] ?? null, $user->getTenantId() ?? null);
         $chatService         = new AiChatService($conversationService);
 
         if (AiChatService::isStreamingEnabled()) {
