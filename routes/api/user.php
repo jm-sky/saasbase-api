@@ -6,11 +6,11 @@ use App\Domain\Auth\Controllers\UserIdentityController;
 use App\Domain\Auth\Controllers\UserProfileController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
 use App\Domain\Users\Controllers\TrustedDeviceController;
 use App\Domain\Users\Controllers\UserTableSettingController;
-use App\Domain\Skills\Controllers\UserSkillController;
 use Illuminate\Support\Facades\Route;
 
 Route::withoutMiddleware(['auth:api', 'is_active'])
