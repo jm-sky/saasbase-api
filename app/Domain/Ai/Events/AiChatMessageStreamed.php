@@ -16,7 +16,7 @@ class AiChatMessageStreamed implements ShouldBroadcastNow
     public function __construct(
         public string $userId,
         public StreamDeltaData $delta,
-        public int $index
+        public int $index = 0
     ) {
     }
 
