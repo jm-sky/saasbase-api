@@ -6,6 +6,7 @@ use App\Domain\Auth\Controllers\UserIdentityController;
 use App\Domain\Auth\Controllers\UserProfileController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
 use App\Domain\Users\Controllers\TrustedDeviceController;
@@ -28,6 +29,7 @@ Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () 
     Route::post('profile-image', [UserProfileImageController::class, 'upload'])->name('user.profile-image.upload');
     Route::delete('profile-image', [UserProfileImageController::class, 'delete'])->name('user.profile-image.delete');
     Route::get('profile-image', [UserProfileImageController::class, 'show'])->name('user.profile-image.show');
+    Route::apiResource('skills', UserSkillController::class);
 });
 
 Route::middleware(['auth:api', 'is_active'])->group(function () {
