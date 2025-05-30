@@ -19,7 +19,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.nova
-/.vscode
+# /.vscode
 /.zed
 
 # Test files
@@ -43,8 +43,6 @@ node_modules/
 
 # Environment variables
 # Editor directories and files
-.idea
-.vscode
 *.suo
 *.ntvs*
 *.njsproj
