@@ -86,6 +86,9 @@ Każdy model zawiera: `nazwa pola`, `typ`, `opis`, `zastosowanie`. Używany jest
 - `language`: string
    Wybrany język interfejsu użytkownika (i.e. "pl", "en")
 
+- `timezone`: string
+   TimeZone
+
 - `decimal_separator`: string
    Separator dziesiętny (np. "." lub ",")  
 
