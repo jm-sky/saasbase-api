@@ -6,8 +6,6 @@ use App\Domain\EDoreczenia\Contracts\EDoreczeniaProviderInterface;
 use App\Domain\EDoreczenia\Models\EDoreczeniaCertificate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
 
 class EDoreczeniaProviderManager
 {
@@ -29,7 +27,7 @@ class EDoreczeniaProviderManager
     public function registerProvider(string $providerClass): void
     {
         if (!is_subclass_of($providerClass, EDoreczeniaProviderInterface::class)) {
-            throw new InvalidArgumentException("Provider class must implement EDoreczeniaProviderInterface");
+            throw new \InvalidArgumentException('Provider class must implement EDoreczeniaProviderInterface');
         }
 
         $provider = new $providerClass(
@@ -66,7 +64,8 @@ class EDoreczeniaProviderManager
     {
         $certificate = EDoreczeniaCertificate::where('tenant_id', $tenant->id)
             ->where('is_valid', true)
-            ->first();
+            ->first()
+        ;
 
         if (!$certificate) {
             return null;

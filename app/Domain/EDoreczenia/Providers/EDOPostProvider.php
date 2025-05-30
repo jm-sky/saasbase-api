@@ -18,13 +18,15 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
     public const PROVIDER_NAME = 'edo_post';
 
     private string $apiKey;
+
     private string $apiSecret;
+
     private string $apiBaseUrl;
 
     public function __construct(string $apiKey, string $apiSecret, ?string $apiBaseUrl = null)
     {
-        $this->apiKey = $apiKey;
-        $this->apiSecret = $apiSecret;
+        $this->apiKey     = $apiKey;
+        $this->apiSecret  = $apiSecret;
         $this->apiBaseUrl = $apiBaseUrl ?? config('edoreczenia.providers.edo_post.api_url');
     }
 
@@ -32,11 +34,12 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
     {
         try {
             $response = Http::withHeaders($this->getAuthHeaders())
-                ->post("{$this->apiBaseUrl}/messages", $message->toArray());
+                ->post("{$this->apiBaseUrl}/messages", $message->toArray())
+            ;
 
             if (!$response->successful()) {
                 Log::error('Failed to send message via eDO Post', [
-                    'error' => $response->json(),
+                    'error'   => $response->json(),
                     'message' => $message->toArray(),
                 ]);
 
@@ -56,7 +59,7 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
             );
         } catch (\Exception $e) {
             Log::error('Exception while sending message via eDO Post', [
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
                 'message' => $message->toArray(),
             ]);
 
@@ -73,12 +76,13 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
     {
         try {
             $response = Http::withHeaders($this->getAuthHeaders())
-                ->post("{$this->apiBaseUrl}/certificates/verify", $certificate->toArray());
+                ->post("{$this->apiBaseUrl}/certificates/verify", $certificate->toArray())
+            ;
 
             return $response->successful();
         } catch (\Exception $e) {
             Log::error('Exception while verifying certificate via eDO Post', [
-                'error' => $e->getMessage(),
+                'error'       => $e->getMessage(),
                 'certificate' => $certificate->toArray(),
             ]);
 
@@ -95,7 +99,8 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
     {
         try {
             $response = Http::withHeaders($this->getAuthHeaders())
-                ->get("{$this->apiBaseUrl}/messages");
+                ->get("{$this->apiBaseUrl}/messages")
+            ;
 
             if (!$response->successful()) {
                 Log::error('Failed to sync messages via eDO Post', [
@@ -133,9 +138,9 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
     private function getAuthHeaders(): array
     {
         return [
-            'X-API-Key' => $this->apiKey,
+            'X-API-Key'    => $this->apiKey,
             'X-API-Secret' => $this->apiSecret,
-            'Accept' => 'application/json',
+            'Accept'       => 'application/json',
             'Content-Type' => 'application/json',
         ];
     }
@@ -146,8 +151,8 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
             $message = EDoreczeniaMessage::updateOrCreate(
                 ['external_id' => $messageData['id']],
                 [
-                    'tenant_id' => $messageData['tenant_id'],
-                    'content' => $messageData['content'],
+                    'tenant_id'  => $messageData['tenant_id'],
+                    'content'    => $messageData['content'],
                     'created_by' => $messageData['created_by'] ?? null,
                 ]
             );
@@ -156,14 +161,14 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
                 collect($messageData['attachments'])->each(function (array $attachmentData) use ($message) {
                     EDoreczeniaMessageAttachment::updateOrCreate(
                         [
-                            'message_id' => $message->id,
+                            'message_id'  => $message->id,
                             'external_id' => $attachmentData['id'],
                         ],
                         [
-                            'filename' => $attachmentData['filename'],
+                            'filename'  => $attachmentData['filename'],
                             'mime_type' => $attachmentData['mime_type'],
-                            'size' => $attachmentData['size'],
-                            'url' => $attachmentData['url'],
+                            'size'      => $attachmentData['size'],
+                            'url'       => $attachmentData['url'],
                         ]
                     );
                 });

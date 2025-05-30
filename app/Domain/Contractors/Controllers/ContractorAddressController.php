@@ -6,7 +6,6 @@ use App\Domain\Common\Resources\AddressResource;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Contractors\Models\ContractorAddress;
 use App\Domain\Contractors\Requests\StoreContractorAddressRequest;
 use App\Domain\Contractors\Requests\UpdateContractorAddressRequest;
 use App\Http\Controllers\Controller;
@@ -23,7 +22,9 @@ class ContractorAddressController extends Controller
      */
     public function index(Contractor $contractor): AnonymousResourceCollection
     {
-        return AddressResource::collection($contractor->addresses);
+        $addresses = $contractor->addresses()->orderBy('is_default', 'desc')->get();
+
+        return AddressResource::collection($addresses);
     }
 
     /**
@@ -74,12 +75,14 @@ class ContractorAddressController extends Controller
         return response()->noContent();
     }
 
-    public function setDefault(Contractor $contractor, ContractorAddress $address): JsonResponse
+    public function setDefault(Contractor $contractor, string $addressId): JsonResponse
     {
-        $contractor->addresses()->update(['is_default' => false]);
-        $address->update(['is_default' => true]);
+        $contractorAddress = $contractor->addresses()->findOrFail($addressId);
 
-        $contractor->logModelActivity(ContractorActivityType::AddressSetDefault->value, $address);
+        $contractor->addresses()->update(['is_default' => false]);
+        $contractorAddress->update(['is_default' => true]);
+
+        $contractor->logModelActivity(ContractorActivityType::AddressSetDefault->value, $contractorAddress);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

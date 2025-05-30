@@ -11,7 +11,8 @@ class EDoreczeniaServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../../../config/edoreczenia.php', 'edoreczenia'
+            __DIR__ . '/../../../config/edoreczenia.php',
+            'edoreczenia'
         );
 
         $this->app->singleton(EDoreczeniaProviderManager::class, function ($app) {
@@ -20,6 +21,7 @@ class EDoreczeniaServiceProvider extends ServiceProvider
 
         $this->app->bind(EDoreczeniaProviderInterface::class, function ($app) {
             $manager = $app->make(EDoreczeniaProviderManager::class);
+
             return $manager->getProvider(config('edoreczenia.default_provider'));
         });
     }

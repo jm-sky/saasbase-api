@@ -23,7 +23,9 @@ class ContractorBankAccountController extends Controller
      */
     public function index(Contractor $contractor): AnonymousResourceCollection
     {
-        return BankAccountResource::collection($contractor->bankAccounts);
+        $bankAccounts = $contractor->bankAccounts()->orderBy('is_default', 'desc')->get();
+
+        return BankAccountResource::collection($bankAccounts);
     }
 
     /**

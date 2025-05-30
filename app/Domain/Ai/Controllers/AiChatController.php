@@ -2,13 +2,13 @@
 
 namespace App\Domain\Ai\Controllers;
 
-use Illuminate\Support\Str;
-use App\Domain\Auth\Models\User;
-use App\Http\Controllers\Controller;
 use App\Domain\Ai\Requests\AiChatRequest;
+use App\Domain\Ai\Resources\AiChatResponseResource;
 use App\Domain\Ai\Services\AiChatService;
 use App\Domain\Ai\Services\AiConversationService;
-use App\Domain\Ai\Resources\AiChatResponseResource;
+use App\Domain\Auth\Models\User;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 class AiChatController extends Controller
 {

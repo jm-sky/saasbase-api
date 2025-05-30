@@ -25,7 +25,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
     ;
 
     Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class)->names('contractors.addresses');
-    Route::post('contractors/{contractor}/addresses/{address}/set-default', [ContractorAddressController::class, 'setDefault'])
+    Route::post('contractors/{contractor}/addresses/{contractorAddress}/set-default', [ContractorAddressController::class, 'setDefault'])
         ->name('contractors.addresses.setDefault')
     ;
 

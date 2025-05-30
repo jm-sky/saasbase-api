@@ -91,9 +91,36 @@ This document outlines the implementation of e-Doręczenia (electronic delivery)
   - [x] Add certificate settings
   - [x] Add message settings
 
+### Controllers
+- [x] Create `CertificateController`
+  - [x] Add index method
+  - [x] Add store method
+  - [x] Add show method
+  - [x] Add update method
+  - [x] Add destroy method
+- [x] Create `MessageController`
+  - [x] Add index method
+  - [x] Add store method
+  - [x] Add show method
+  - [x] Add update method
+  - [x] Add destroy method
+  - [x] Add sync method
+
+### Requests
+- [x] Create `StoreCertificateRequest`
+  - [x] Add authorization
+  - [x] Add validation rules
+- [x] Create `UpdateCertificateRequest`
+  - [x] Add authorization
+  - [x] Add validation rules
+- [x] Create `SendMessageRequest`
+  - [x] Add authorization
+  - [x] Add validation rules
+- [x] Create `UpdateMessageRequest`
+  - [x] Add authorization
+  - [x] Add validation rules
+
 ### Next Steps
-- [ ] Create controllers for certificate management
-- [ ] Create controllers for message management
 - [ ] Add certificate validation service
 - [ ] Add message synchronization service
 - [ ] Add certificate expiration notification service
