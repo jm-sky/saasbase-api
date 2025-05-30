@@ -22,8 +22,8 @@ class MfLookupService
     public function __construct(MfApiConnector $connector)
     {
         $this->connector    = $connector;
-        $this->cacheMode    = config('mf_lookup.cache_mode', 'hours');
-        $this->cacheHours   = (int) config('mf_lookup.cache_hours', 12);
+        $this->cacheMode    = config('services.mf.cache_mode', 'hours');
+        $this->cacheHours   = (int) config('services.mf.cache_hours', 12);
     }
 
     public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null): ?MfLookupResultDTO

@@ -29,9 +29,9 @@ class RegonLookupService
     public function __construct(
         private readonly RegonApiConnector $apiConnector
     ) {
-        $this->shouldLog    = app()->isLocal() || config('regon_lookup.should_log', false);
-        $this->cacheMode    = CacheMode::from(config('regon_lookup.cache_mode', 'hours'));
-        $this->cacheHours   = (int) config('regon_lookup.cache_hours', self::DEFAULT_CACHE_HOURS);
+        $this->shouldLog    = app()->isLocal() || config('services.regon.should_log', false);
+        $this->cacheMode    = CacheMode::from(config('services.regon.cache_mode', 'hours'));
+        $this->cacheHours   = (int) config('services.regon.cache_hours', self::DEFAULT_CACHE_HOURS);
     }
 
     /**

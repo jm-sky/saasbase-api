@@ -31,9 +31,9 @@ class CompanyDataAutoFillService
         $regonData = null;
         $mfData    = null;
 
-        if ($nip && config('regon_lookup.user_key')) {
+        if ($nip && config('services.regon.user_key')) {
             $regonData = $this->regonLookupService->findByNip($nip, $force);
-        } elseif ($regon && config('regon_lookup.user_key')) {
+        } elseif ($regon && config('services.regon.user_key')) {
             $regonData = $this->regonLookupService->findByRegon($regon, $force);
         }
 

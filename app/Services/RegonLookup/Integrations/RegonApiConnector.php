@@ -21,7 +21,7 @@ class RegonApiConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return config('regon_lookup.api_url', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc');
+        return config('services.regon.api_url', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc');
     }
 
     public function defaultHeaders(): array

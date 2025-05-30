@@ -20,7 +20,7 @@ abstract class BaseRegonRequest extends Request implements HasBody
 
     public function __construct()
     {
-        $this->baseUrl = config('regon_lookup.api_url', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc');
+        $this->baseUrl = config('services.regon.api_url', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc');
     }
 
     public function resolveEndpoint(): string

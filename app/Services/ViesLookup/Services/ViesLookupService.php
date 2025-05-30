@@ -78,13 +78,13 @@ class ViesLookupService
 
     protected function getCacheExpiration(): \DateTimeInterface|\DateInterval|int
     {
-        $cacheMode = config('vies_lookup.cache_mode', 'hours');
+        $cacheMode = config('services.vies.cache_mode', 'hours');
 
         if ('week' === $cacheMode) {
             return now()->next('Sunday')->startOfDay();
         }
 
-        $hours = (int) config('vies_lookup.cache_hours', self::DEFAULT_CACHE_HOURS);
+        $hours = (int) config('services.vies.cache_hours', self::DEFAULT_CACHE_HOURS);
 
         return now()->addHours($hours);
     }

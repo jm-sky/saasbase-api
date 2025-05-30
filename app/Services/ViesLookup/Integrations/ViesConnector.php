@@ -13,7 +13,7 @@ class ViesConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return config('vies_lookup.base_url', self::BASE_URL); // This is SOAP
+        return config('services.vies.base_url', self::BASE_URL); // This is SOAP
     }
 
     public function defaultHeaders(): array
