@@ -7,15 +7,15 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 class IbanDataDTO extends BaseDataDTO
 {
     public function __construct(
-        public string $country_code,
-        public string $iso_alpha3,
-        public string $country_name,
-        public string $currency_code,
-        public string $sepa_member,
-        public SepaDTO $sepa,
-        public string $bban,
-        public string $bank_account,
-        public BankDTO $bank,
+        public ?string $country_code,
+        public ?string $iso_alpha3,
+        public ?string $country_name,
+        public ?string $currency_code,
+        public ?string $sepa_member,
+        public ?SepaDTO $sepa,
+        public ?string $bban,
+        public ?string $bank_account,
+        public ?BankDTO $bank,
     ) {
     }
 
@@ -37,15 +37,15 @@ class IbanDataDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new self(
-            country_code: $data['country_code'],
-            iso_alpha3: $data['iso_alpha3'],
-            country_name: $data['country_name'],
-            currency_code: $data['currency_code'],
-            sepa_member: $data['sepa_member'],
-            sepa: SepaDTO::fromArray($data['sepa']),
-            bban: $data['bban'],
-            bank_account: $data['bank_account'],
-            bank: BankDTO::fromArray($data['bank']),
+            country_code: $data['country_code'] ?? null,
+            iso_alpha3: $data['iso_alpha3'] ?? null,
+            country_name: $data['country_name'] ?? null,
+            currency_code: $data['currency_code'] ?? null,
+            sepa_member: $data['sepa_member'] ?? null,
+            sepa: isset($data['sepa']) ? SepaDTO::fromArray($data['sepa']) : null,
+            bban: $data['bban'] ?? null,
+            bank_account: $data['bank_account'] ?? null,
+            bank: isset($data['bank']) ? BankDTO::fromArray($data['bank']) : null,
         );
     }
 }

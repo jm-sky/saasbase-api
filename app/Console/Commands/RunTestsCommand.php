@@ -49,14 +49,29 @@ class RunTestsCommand extends Command
             $paths[]      = $relativePath;
         }
 
-        // Optional: sort and deduplicate directory levels (e.g., tests/Feature, tests/Unit)
-        return collect($paths)
+        // Get all paths and first-level folders
+        $allPaths = collect($paths)
             ->filter(fn ($p) => !str_contains($p, 'TestCase.php'))
             ->filter(fn ($p) => !str_contains($p, 'Traits'))
             ->map(fn ($p) => explode('/', $p))
             ->map(fn ($parts) => implode('/', array_slice($parts, 0, 3)))
             ->unique()
             ->sort()
+            ->values()
+        ;
+
+        // Get first-level folders
+        $firstLevelFolders = $allPaths
+            ->map(fn ($p) => explode('/', $p)[0] . '/' . explode('/', $p)[1])
+            ->unique()
+            ->sort()
+            ->values()
+        ;
+
+        // Combine first-level folders with other paths
+        return $firstLevelFolders
+            ->concat($allPaths)
+            ->unique()
             ->values()
             ->toArray()
         ;

@@ -26,7 +26,7 @@ Represents an authenticated user in the system. Users can belong to tenants, hol
 - `oauthAccounts` - HasMany relationship to [UserOAuthAccount](./UserOAuthAccount.md)
 - `avatar` - MorphOne relationship to [Media](./Media.md) (using Spatie Media Library)
 - `documents` - MorphMany relationship to [Media](./Media.md) (using Spatie Media Library)
-- `skills` - BelongsToMany relationship to [Skill](./Skill.md) through user_skills pivot
+- `skills` - BelongsToMany relationship to [Skill](./Skill.md) through user_skill pivot
 - `orgUnits` - BelongsToMany relationship to [OrganizationUnit](./OrganizationUnit.md) through [OrgUnitUser](./OrgUnitUser.md)
 - `comments` - HasMany relationship to [Comment](./Comment.md)
 

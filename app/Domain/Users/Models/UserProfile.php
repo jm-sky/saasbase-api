@@ -22,6 +22,8 @@ class UserProfile extends Model
 {
     use HasUuids;
 
+    protected $with = ['user'];
+
     protected $fillable = [
         'user_id',
         'bio',

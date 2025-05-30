@@ -93,7 +93,7 @@ class IbanInfoService
             iban: $iban,
             bankName: $info?->data->bank->bank_name ?? iban_country_get_central_bank_name($countryCode),
             branchName: null,
-            swift: $info?->data->bank->bic ?? null,
+            swift: $info?->data->bank?->bic ?? null,
             bankCode: iban_get_bank_part($iban),
             routingCode: null,
             currency: $info?->data->currency_code ?? iban_country_get_currency_iso4217($countryCode),

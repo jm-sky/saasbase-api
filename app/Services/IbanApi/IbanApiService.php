@@ -12,6 +12,8 @@ class IbanApiService
 {
     protected const DEFAULT_CACHE_HOURS = 12;
 
+    public static bool $throw = false;
+
     protected IbanApiConnector $connector;
 
     public function __construct(?IbanApiConnector $connector = null)
@@ -19,11 +21,12 @@ class IbanApiService
         $this->connector = $connector ?? new IbanApiConnector();
     }
 
-    public function getIbanInfo(string $iban, bool $throw = false, bool $force = false): ?IbanApiResponse
+    public function getIbanInfo(string $iban, ?bool $throw = null, bool $force = false): ?IbanApiResponse
     {
         $iban     = trim($iban);
         $cacheKey = "iban_lookup:{$iban}";
         $cacheTtl = $this->getCacheExpiration();
+        $throw    = $throw ?? self::$throw;
 
         if ($force) {
             return $this->lookupAndCache($iban, $cacheKey, $cacheTtl, $throw);
@@ -34,17 +37,19 @@ class IbanApiService
         });
     }
 
-    protected function lookupAndCache(string $iban, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl, bool $throw): ?IbanApiResponse
+    protected function lookupAndCache(string $iban, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl, ?bool $throw = null): ?IbanApiResponse
     {
-        $result = $this->lookup($iban, $throw);
+        $throw    = $throw ?? self::$throw;
+        $result   = $this->lookup($iban, $throw);
         Cache::put($cacheKey, $result, $cacheTtl);
 
         return $result;
     }
 
-    protected function lookup(string $iban, bool $throw): ?IbanApiResponse
+    protected function lookup(string $iban, ?bool $throw = null): ?IbanApiResponse
     {
         try {
+            $throw    = $throw ?? self::$throw;
             $response = $this->connector->send(new ValidateIbanRequest($iban));
 
             if ($throw) {
@@ -69,9 +74,10 @@ class IbanApiService
         }
     }
 
-    public function getSwiftForIban(string $iban, bool $throw = false, bool $force = false): ?string
+    public function getSwiftForIban(string $iban, ?bool $throw = null, bool $force = false): ?string
     {
-        $info = $this->getIbanInfo($iban, $throw, $force);
+        $throw    = $throw ?? self::$throw;
+        $info     = $this->getIbanInfo($iban, $throw, $force);
 
         return $info?->data?->bank?->bic;
     }

@@ -8,12 +8,12 @@ class BankDTO extends BaseDataDTO
 {
     public function __construct(
         public string $bank_name,
-        public string $phone,
-        public string $address,
-        public string $bic,
-        public string $city,
-        public string $state,
-        public string $zip,
+        public ?string $phone = null,
+        public ?string $address = null,
+        public ?string $bic = null,
+        public ?string $city = null,
+        public ?string $state = null,
+        public ?string $zip = null,
     ) {
     }
 
@@ -21,12 +21,12 @@ class BankDTO extends BaseDataDTO
     {
         return [
             'bank_name' => $this->bank_name,
-            'phone'     => $this->phone,
-            'address'   => $this->address,
-            'bic'       => $this->bic,
-            'city'      => $this->city,
-            'state'     => $this->state,
-            'zip'       => $this->zip,
+            'phone'     => $this->phone ?? null,
+            'address'   => $this->address ?? null,
+            'bic'       => $this->bic ?? null,
+            'city'      => $this->city ?? null,
+            'state'     => $this->state ?? null,
+            'zip'       => $this->zip ?? null,
         ];
     }
 }

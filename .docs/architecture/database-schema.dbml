@@ -466,7 +466,7 @@ Table skill_categories {
   description text [note: 'nullable']
 }
 
-Table user_skills {
+Table user_skill {
   user_id uuid [ref: > users.id]
   skill_id uuid [ref: > skills.id]
   level int

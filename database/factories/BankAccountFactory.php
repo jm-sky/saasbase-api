@@ -19,6 +19,7 @@ class BankAccountFactory extends Factory
             'id'           => fake()->uuid(),
             'tenant_id'    => Tenant::factory(),
             'iban'         => fake()->iban(),
+            'country'      => fake()->countryCode(),
             'swift'        => fake()->optional()->swiftBicNumber(),
             'bank_name'    => fake()->optional()->company(),
             'is_default'   => false,

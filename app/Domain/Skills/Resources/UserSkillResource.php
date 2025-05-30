@@ -24,7 +24,6 @@ class UserSkillResource extends JsonResource
             'acquiredAt' => $this->acquired_at?->toIso8601String(),
             'createdAt'  => $this->created_at?->toIso8601String(),
             'updatedAt'  => $this->updated_at?->toIso8601String(),
-            'deletedAt'  => $this->deleted_at?->toIso8601String(),
             'skill'      => $this->whenLoaded('skill', fn () => new SkillResource($this->skill)),
         ];
     }
