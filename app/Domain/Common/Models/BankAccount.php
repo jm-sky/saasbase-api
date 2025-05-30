@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string                 $bankable_id
  * @property string                 $bankable_type
  * @property string                 $iban
+ * @property ?string                $country
  * @property ?string                $swift
  * @property ?string                $bank_name
  * @property bool                   $is_default
@@ -36,6 +37,7 @@ class BankAccount extends BaseModel
         'bankable_id',
         'bankable_type',
         'iban',
+        'country',
         'swift',
         'bank_name',
         'is_default',

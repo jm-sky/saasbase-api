@@ -28,6 +28,7 @@ class UserProfileLegacyResource extends JsonResource
             'position'    => $this->profile?->position,
             'website'     => $this->profile?->website,
             'socialLinks' => $this->profile?->social_links ?? [],
+            'skills'      => UserSkillPreviewResource::collection($this->skills),
 
             'avatarUrl'    => $this->getMediaSignedUrl('profile'),
             'createdAt'    => $this->created_at->toIso8601String(),

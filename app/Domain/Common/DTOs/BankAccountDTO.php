@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $bankableId   UUID
  * @property ?string $bankableType
  * @property string  $iban
+ * @property ?string $country
  * @property ?string $swift
  * @property bool    $isDefault
  * @property ?string $currency
@@ -26,6 +27,7 @@ class BankAccountDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $iban,
+        public readonly string $country,
         public readonly ?string $bankableId = null,
         public readonly ?string $bankableType = null,
         public readonly ?string $tenantId = null,
@@ -47,6 +49,7 @@ class BankAccountDTO extends BaseDTO
             bankableId: $data['bankable_id'] ?? null,
             bankableType: $data['bankable_type'] ?? null,
             iban: $data['iban'],
+            country: $data['country'] ?? null,
             swift: $data['swift'] ?? null,
             bankName: $data['bank_name'] ?? null,
             isDefault: $data['is_default'] ?? false,
@@ -70,6 +73,7 @@ class BankAccountDTO extends BaseDTO
             bankableType: $model->bankable_type ?? null,
             bankName: $model->bank_name ?? null,
             iban: $model->iban,
+            country: $model->country ?? null,
             swift: $model->swift ?? null,
             isDefault: $model->is_default,
             currency: $model->currency ?? null,
@@ -88,6 +92,7 @@ class BankAccountDTO extends BaseDTO
             'bankableId'    => $this->bankableId,
             'bankableType'  => $this->bankableType,
             'iban'          => $this->iban,
+            'country'       => $this->country,
             'swift'         => $this->swift,
             'bankName'      => $this->bankName,
             'isDefault'     => $this->isDefault,

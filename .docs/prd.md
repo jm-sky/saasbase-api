@@ -126,6 +126,20 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 - **Invoice Services**: Automated invoice generation, numbering, and PDF creation.
 - **Project/Task/Time Services**: Project status management, task assignment, and time tracking are handled by dedicated services.
 - **Contractor Services**: Data import, VAT number validation, and bank account validation for contractors.
+- **Document Processing Services**:
+  - Azure Intelligence Studio integration for OCR processing
+  - Automated expense document analysis
+  - Data extraction from receipts and invoices
+  - Structured data output for expense management
+  - Machine learning-based document classification
+  - Confidence scoring for extracted data
+- **E-Delivery Services**:
+  - E-Doręczenia (eDO) integration with Poczta Polska
+  - Electronic document delivery tracking
+  - Delivery status monitoring
+  - Automated delivery confirmations
+  - Integration with document management system
+  - Support for multiple delivery channels
 - **Company Lookup Services**:
   - REGON Lookup Service: Integration with Polish National Business Registry
   - Ministry of Finance (MF) Lookup Service: Integration with Polish Ministry of Finance database
@@ -223,6 +237,20 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
   - Contact information
   - Historical data
   - Categorization
+- **Document Delivery**
+  - E-Doręczenia (eDO) integration
+  - Electronic document delivery
+  - Delivery status tracking
+  - Automated delivery confirmations
+  - Multi-channel delivery support
+  - Integration with Poczta Polska
+- **Document Processing**
+  - Azure Intelligence Studio OCR integration
+  - Automated expense document analysis
+  - Data extraction from receipts
+  - Machine learning-based classification
+  - Structured data output
+  - Confidence scoring
 - **Measurement Units**
   - Standard units
   - Custom units

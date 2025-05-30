@@ -14,20 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (CustomTenantUserSeeder::shouldRun()) {
-            $this->call(CustomTenantUserSeeder::class);
-        } else {
-            $this->call(DefaultTenantSeeder::class);
-        }
-
-        Tenant::all()->each(function (Tenant $tenant) {
-            collect(['VIP', 'Test'])->each(fn (string $tag) => Tag::create([
-                'tenant_id' => $tenant->id,
-                'name'      => $tag,
-                'slug'      => Str::slug($tag),
-            ]));
-        });
-
         $this->call([
             CountrySeeder::class,
             VatRateSeeder::class,
@@ -38,5 +24,19 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             BankSeeder::class,
         ]);
+
+        Tenant::all()->each(function (Tenant $tenant) {
+            collect(['VIP', 'Test'])->each(fn (string $tag) => Tag::create([
+                'tenant_id' => $tenant->id,
+                'name'      => $tag,
+                'slug'      => Str::slug($tag),
+            ]));
+        });
+
+        if (CustomTenantUserSeeder::shouldRun()) {
+            $this->call(CustomTenantUserSeeder::class);
+        } else {
+            $this->call(DefaultTenantSeeder::class);
+        }
     }
 }

@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Skills\Models\Skill;
+use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\Tenant;
@@ -146,6 +148,7 @@ class CustomTenantUserSeeder extends Seeder
             $user->save();
 
             $this->createUserTenant($user, Arr::get($userData, 'relations.tenant'));
+            $this->createUserSkills($user, Arr::get($userData, 'relations.skills'));
             $this->createUserAvatar($user, Arr::get($userData, 'meta.avatarUrl'));
 
             $this->users[$user->id] = $user;
@@ -175,6 +178,20 @@ class CustomTenantUserSeeder extends Seeder
             $tenant->owner_id = $user->id;
             $tenant->save();
         }
+    }
+
+    protected function createUserSkills(User $user, ?array $skills = null): void
+    {
+        if (!$skills) {
+            return;
+        }
+
+        $skills = collect($skills)->map(fn (array $skill) => [
+            'user_id'     => $user->id,
+            'skill_id'    => Skill::firstOrCreate(['name' => $skill['name']])->id,
+            'level'       => $skill['level'] ?? 3,
+            'acquired_at' => $skill['acquired_at'] ?? now(),
+        ])->each(fn (array $skill) => UserSkill::create($skill));
     }
 
     protected function createTenantLogo(Tenant $tenant, ?string $logoUrl = null): void

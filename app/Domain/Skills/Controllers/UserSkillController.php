@@ -2,61 +2,42 @@
 
 namespace App\Domain\Skills\Controllers;
 
-use App\Domain\Skills\DTOs\UserSkillDTO;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Skills\Requests\UserSkillRequest;
+use App\Domain\Skills\Resources\UserSkillResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class UserSkillController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
-        $userSkills = UserSkill::with(['user', 'skill'])->get();
+        $userSkills = UserSkill::with(['user', 'skill'])->paginate();
 
-        return response()->json([
-            'data' => $userSkills->map(fn (UserSkill $skill) => UserSkillDTO::fromModel($skill)),
-        ]);
+        return UserSkillResource::collection($userSkills);
     }
 
-    public function store(UserSkillRequest $request): JsonResponse
+    public function store(UserSkillRequest $request): UserSkillResource
     {
-        $dto       = UserSkillDTO::from($request->validated());
-        $userSkill = UserSkill::create([
-            'user_id'     => $dto->userId,
-            'skill_id'    => $dto->skillId,
-            'level'       => $dto->level,
-            'acquired_at' => $dto->acquiredAt,
-        ]);
+        $userSkill = UserSkill::create($request->validated());
 
-        return response()->json([
-            'data' => UserSkillDTO::fromModel($userSkill),
-        ], Response::HTTP_CREATED);
+        return new UserSkillResource($userSkill);
     }
 
-    public function show(UserSkill $userSkill): JsonResponse
+    public function show(UserSkill $userSkill): UserSkillResource
     {
         $userSkill->load(['user', 'skill']);
 
-        return response()->json([
-            'data' => UserSkillDTO::fromModel($userSkill),
-        ]);
+        return new UserSkillResource($userSkill);
     }
 
-    public function update(UserSkillRequest $request, UserSkill $userSkill): JsonResponse
+    public function update(UserSkillRequest $request, UserSkill $userSkill): UserSkillResource
     {
-        $dto = UserSkillDTO::from($request->validated());
-        $userSkill->update([
-            'user_id'     => $dto->userId,
-            'skill_id'    => $dto->skillId,
-            'level'       => $dto->level,
-            'acquired_at' => $dto->acquiredAt,
-        ]);
+        $userSkill->update($request->validated());
 
-        return response()->json([
-            'data' => UserSkillDTO::fromModel($userSkill),
-        ]);
+        return new UserSkillResource($userSkill);
     }
 
     public function destroy(UserSkill $userSkill): JsonResponse
