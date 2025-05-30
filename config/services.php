@@ -151,4 +151,9 @@ return [
             'hours' => env('REGON_CACHE_HOURS', 12),
         ],
     ],
+
+    'edo_post' => [
+        'base_url'        => env('EDO_POST_BASE_URL', 'http://localhost:5005'),
+        'mailbox_address' => env('EDO_POST_MAILBOX_ADDRESS'),
+    ],
 ];
