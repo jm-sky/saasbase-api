@@ -26,7 +26,8 @@ class UserSkillController extends Controller
             ->whereHas('userSkills', function ($query) {
                 $query->whereNull('deleted_at');
             })
-            ->get();
+            ->get()
+        ;
 
         return UserSkillResource::collection($skills);
     }
