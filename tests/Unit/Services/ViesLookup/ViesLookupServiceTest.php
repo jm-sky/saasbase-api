@@ -8,6 +8,7 @@ use App\Services\ViesLookup\Integrations\Requests\CheckVatRequest;
 use App\Services\ViesLookup\Integrations\ViesConnector;
 use App\Services\ViesLookup\Services\ViesLookupService;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -15,9 +16,8 @@ use Tests\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(ViesLookupService::class)]
 class ViesLookupServiceTest extends TestCase
 {
     protected function setUp(): void

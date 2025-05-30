@@ -31,7 +31,7 @@ Create model: `Domain/Bank/Models/Bank.php`
 
 ## ✅ Step 3: Create cached lookup service
 
-Create service: `BankRoutingService`:
+Create service: `IbanInfoService`:
 
 - On boot or cache warmup, cache all routing codes as key-value (`routing_code → BankRouting`)
 - IBAN lookup:

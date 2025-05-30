@@ -55,4 +55,8 @@ return [
         'log'               => env('OPENROUTER_LOG', false),
         'streaming_enabled' => env('OPENROUTER_STREAMING_ENABLED', true),
     ],
+
+    'ibanapi' => [
+        'key' => env('IBANAPI_KEY'),
+    ],
 ];

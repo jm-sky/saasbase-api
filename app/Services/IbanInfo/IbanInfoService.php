@@ -1,21 +1,28 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\IbanInfo;
 
 use App\Domain\Bank\DTO\BankInfoDTO;
 use App\Domain\Bank\Models\Bank;
+use App\Services\IbanApi\IbanApiService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
-class BankRoutingService
+class IbanInfoService
 {
+    private const POLISH_COUNTRY_CODE = 'PL';
+
+    private const POLISH_CURRENCY_CODE = 'PLN';
+
     private const CACHE_KEY = 'bank_routing_codes';
 
     private const CACHE_TTL = 86400; // 24 hours
 
-    public function __construct()
-    {
+    public function __construct(
+        private ?IbanApiService $ibanApiService = null,
+    ) {
+        $this->ibanApiService = $ibanApiService ?? new IbanApiService();
         $this->warmCache();
     }
 
@@ -38,19 +45,19 @@ class BankRoutingService
     public function getBankInfoFromIban(string $iban, ?string $country = null): ?BankInfoDTO
     {
         $iban    = $this->sanitizeIban($iban);
-        $country = $country ? strtoupper($country) : substr($iban, 0, 2);
+        $country = $this->getCountryCode($iban, $country);
 
         if (!$this->isValidIban($iban)) {
             return null;
         }
 
         // For Polish IBANs, we can look up the bank
-        if ('PL' === $country) {
-            return $this->handlePolishIban($iban);
+        switch ($country) {
+            case self::POLISH_COUNTRY_CODE:
+                return $this->handlePolishIban($iban);
+            default:
+                return $this->handleNonPolishIban($iban, $country);
         }
-
-        // For non-Polish IBANs or when bank not found, return basic info
-        return null;
     }
 
     public function handlePolishIban(string $iban): ?BankInfoDTO
@@ -60,15 +67,37 @@ class BankRoutingService
 
         if ($bank) {
             return new BankInfoDTO(
+                iban: $iban,
                 bankName: $bank->bank_name,
                 branchName: $bank->branch_name,
-                swift: $bank->swift,
+                swift: $bank->swift ?? $this->ibanApiService?->getSwiftForIban($iban, false) ?? null,
                 bankCode: $bank->bank_code,
                 routingCode: $bank->routing_code,
+                currency: self::POLISH_CURRENCY_CODE,
             );
         }
 
-        return null;
+        return $this->getBankInfoFromServices($iban, self::POLISH_COUNTRY_CODE);
+    }
+
+    public function handleNonPolishIban(string $iban, string $countryCode): ?BankInfoDTO
+    {
+        return $this->getBankInfoFromServices($iban, $countryCode);
+    }
+
+    public function getBankInfoFromServices(string $iban, string $countryCode): ?BankInfoDTO
+    {
+        $info = $this->ibanApiService?->getIbanInfo($iban);
+
+        return new BankInfoDTO(
+            iban: $iban,
+            bankName: $info?->data->bank->bank_name ?? iban_country_get_central_bank_name($countryCode),
+            branchName: null,
+            swift: $info?->data->bank->bic ?? null,
+            bankCode: iban_get_bank_part($iban),
+            routingCode: null,
+            currency: $info?->data->currency_code ?? iban_country_get_currency_iso4217($countryCode),
+        );
     }
 
     protected function extractRoutingCode(string $iban): string
@@ -89,6 +118,11 @@ class BankRoutingService
         return Str::of($iban)->replace(' ', '')->toString();
     }
 
+    protected function getCountryCode(string $iban, ?string $countryCode = null): string
+    {
+        return $countryCode ? strtoupper($countryCode) : strtoupper(substr($iban, 0, 2));
+    }
+
     protected function isValidIban(string $iban): bool
     {
         // Verify IBAN
@@ -104,10 +138,17 @@ class BankRoutingService
         }
 
         // For Polish IBANs, we have additional validation
-        if ('PL' === $parts['country']) {
-            return 28 === strlen($iban) && ctype_digit(substr($iban, 2));
+        if (self::POLISH_COUNTRY_CODE === $parts['country']) {
+            return $this->isValidPolishIban($iban);
         }
 
         return true;
+    }
+
+    protected function isValidPolishIban(string $iban): bool
+    {
+        $polishIbanLength = 28;
+
+        return $polishIbanLength === strlen($iban) && ctype_digit(substr($iban, 2));
     }
 }
