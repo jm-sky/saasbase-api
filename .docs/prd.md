@@ -27,6 +27,20 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 - Dictionary tables (e.g., VAT rates, countries, units) use meaningful string primary keys for clarity and maintainability.
 - Custom exceptions are thrown if tenant context is missing or invalid, returning a 403 error.
 - Tenant ID is stored in JWT claims and request context for secure, automatic scoping.
+- Tenant Branding:
+  - Customizable tenant logo and branding elements
+  - Brand color schemes and theme customization
+  - Custom domain support
+  - Branded email templates
+  - Customizable public profile page
+- Tenant Public Profile:
+  - Public-facing company information
+  - Contact details and social media links
+  - Company description and services
+  - Team members showcase
+  - Public portfolio and achievements
+  - Custom URL slugs
+  - SEO optimization
 
 ---
 
@@ -69,6 +83,18 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 ## Chat System
 - Internal chat supports direct messages, group chats, and channels using ChatRoom, ChatMessage, and ChatParticipant models.
 - Features include file sharing, message threading, markdown support, and chat search.
+- AI Chat Integration:
+  - OpenRouter integration for AI-powered conversations
+  - Context-aware responses
+  - Multi-model support
+  - Conversation history management
+  - AI assistant customization per tenant
+  - Rate limiting and usage tracking
+- Cross-tenant Chat:
+  - Public chat rooms for inter-tenant communication
+  - Verified business profiles
+  - Professional networking features
+  - Business opportunity discovery
 
 ---
 
@@ -100,6 +126,24 @@ SaaSBase API is a comprehensive backend service layer designed to support multi-
 - **Invoice Services**: Automated invoice generation, numbering, and PDF creation.
 - **Project/Task/Time Services**: Project status management, task assignment, and time tracking are handled by dedicated services.
 - **Contractor Services**: Data import, VAT number validation, and bank account validation for contractors.
+- **Company Lookup Services**:
+  - REGON Lookup Service: Integration with Polish National Business Registry
+  - Ministry of Finance (MF) Lookup Service: Integration with Polish Ministry of Finance database
+  - VIES Lookup Service: Integration with EU's VAT Information Exchange System
+  - Company Data Auto-fill Service: Unified interface for fetching company information
+  - Caching support with configurable duration
+  - Comprehensive error handling
+  - Command-line tools for testing and debugging
+- **Company Services**
+  - Company information lookup
+    - REGON integration for Polish companies
+    - Ministry of Finance integration
+    - VIES integration for EU VAT validation
+    - Auto-fill service for unified data fetching
+  - Verification services
+  - Company data enrichment
+  - Logo fetching and management
+  - IBAN validation and bank account verification
 
 ---
 
