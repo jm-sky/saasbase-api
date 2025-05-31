@@ -16,14 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $acquired_at
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
- * @property ?Carbon $deleted_at
  * @property User    $user
  * @property Skill   $skill
  */
 class UserSkill extends Pivot
 {
     use HasUuids;
-    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
