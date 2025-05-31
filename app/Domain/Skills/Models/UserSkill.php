@@ -33,6 +33,14 @@ class UserSkill extends Pivot
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>

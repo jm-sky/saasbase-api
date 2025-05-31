@@ -4,7 +4,7 @@ namespace App\Domain\Skills\Requests;
 
 use App\Http\Requests\BaseFormRequest;
 
-class UserSkillRequest extends BaseFormRequest
+class StoreUserSkillRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
@@ -14,7 +14,6 @@ class UserSkillRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'userId'     => ['required', 'uuid', 'exists:users,id'],
             'skillId'    => ['required', 'uuid', 'exists:skills,id'],
             'level'      => ['required', 'integer', 'min:1', 'max:5'],
             'acquiredAt' => ['nullable', 'date'],
@@ -24,9 +23,6 @@ class UserSkillRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'userId.required'  => 'The user ID is required.',
-            'userId.uuid'      => 'The user ID must be a valid UUID.',
-            'userId.exists'    => 'The selected user does not exist.',
             'skillId.required' => 'The skill ID is required.',
             'skillId.uuid'     => 'The skill ID must be a valid UUID.',
             'skillId.exists'   => 'The selected skill does not exist.',
