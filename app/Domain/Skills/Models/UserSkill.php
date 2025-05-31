@@ -4,7 +4,9 @@ namespace App\Domain\Skills\Models;
 
 use App\Domain\Auth\Models\User;
 use Carbon\Carbon;
+use Database\Factories\Domain\Skills\UserSkillFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class UserSkill extends Pivot
 {
     use HasUuids;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -28,6 +31,14 @@ class UserSkill extends Pivot
         'level',
         'acquired_at',
     ];
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
 
     /**
      * The attributes that should be cast.
@@ -47,5 +58,10 @@ class UserSkill extends Pivot
     public function skill(): BelongsTo
     {
         return $this->belongsTo(Skill::class);
+    }
+
+    protected static function newFactory(): UserSkillFactory
+    {
+        return UserSkillFactory::new();
     }
 }

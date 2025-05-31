@@ -6,12 +6,14 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Tenant\Traits\BelongsToTenant;
+use App\Services\PurifierService;
 use Database\Factories\FeedFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use League\CommonMark\CommonMarkConverter;
-use Mews\Purifier\Facades\Purifier;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Feed.
@@ -27,9 +29,10 @@ use Mews\Purifier\Facades\Purifier;
  * @property User                                               $user
  * @property \Illuminate\Database\Eloquent\Collection|Comment[] $comments
  */
-class Feed extends BaseModel
+class Feed extends BaseModel implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
     use BelongsToTenant;
 
     protected $fillable = [
@@ -45,7 +48,7 @@ class Feed extends BaseModel
         parent::boot();
 
         static::saving(function (Feed $model) {
-            $cleanContent   = Purifier::clean($model->content);
+            $cleanContent   = PurifierService::clean($model->content);
             $model->content = $cleanContent;
 
             $converter           = new CommonMarkConverter();
@@ -66,5 +69,10 @@ class Feed extends BaseModel
     protected static function newFactory()
     {
         return FeedFactory::new();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
     }
 }

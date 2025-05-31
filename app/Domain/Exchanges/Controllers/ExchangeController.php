@@ -2,36 +2,55 @@
 
 namespace App\Domain\Exchanges\Controllers;
 
-use App\Domain\Exchanges\DTOs\ExchangeDTO;
-use App\Domain\Exchanges\DTOs\ExchangeRateDTO;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Exchanges\Models\Exchange;
+use App\Domain\Exchanges\Requests\SearchExchangeRateRequest;
+use App\Domain\Exchanges\Requests\SearchExchangeRequest;
+use App\Domain\Exchanges\Resources\ExchangeRateResource;
+use App\Domain\Exchanges\Resources\ExchangeResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class ExchangeController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    use HasIndexQuery;
+
+    protected int $defaultPerPage = 15;
+
+    public function __construct()
     {
-        $query = Exchange::query();
+        $this->modelClass = Exchange::class;
 
-        if ($currency = $request->input('currency')) {
-            $query->where('currency', $currency);
-        }
+        $this->filters = [
+            AllowedFilter::exact('currency'),
+        ];
 
-        $exchanges = $query->get()
-            ->map(fn (Exchange $exchange) => ExchangeDTO::fromModel($exchange))
+        $this->sorts = [
+            'name',
+            'currency',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
+        ];
+
+        $this->defaultSort = 'name';
+    }
+
+    public function index(SearchExchangeRequest $request): AnonymousResourceCollection
+    {
+        $exchanges = $this->getIndexPaginator($request);
+
+        return ExchangeResource::collection($exchanges['data'])
+            ->additional(['meta' => $exchanges['meta']])
         ;
-
-        return response()->json($exchanges);
     }
 
-    public function show(Exchange $exchange): JsonResponse
+    public function show(Exchange $exchange): ExchangeResource
     {
-        return response()->json(['data' => ExchangeDTO::fromModel($exchange)]);
+        return new ExchangeResource($exchange);
     }
 
-    public function getRates(Request $request, Exchange $exchange): JsonResponse
+    public function getRates(SearchExchangeRateRequest $request, Exchange $exchange): AnonymousResourceCollection
     {
         $query = $exchange->rates();
 
@@ -39,12 +58,8 @@ class ExchangeController extends Controller
             $query->where('date', $date);
         }
 
-        $rates = $query
-            ->orderBy('date', 'desc')
-            ->get()
-            ->map(fn ($rate) => ExchangeRateDTO::fromModel($rate))
-        ;
+        $rates = $query->orderBy('date', 'desc')->get();
 
-        return response()->json($rates);
+        return ExchangeRateResource::collection($rates);
     }
 }
