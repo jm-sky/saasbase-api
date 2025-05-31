@@ -2,155 +2,99 @@
 
 namespace App\Domain\EDoreczenia\Controllers;
 
-use App\Domain\EDoreczenia\DTOs\SendMessageDto;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\EDoreczenia\Models\EDoreczeniaMessage;
 use App\Domain\EDoreczenia\Providers\EDoreczeniaProviderManager;
+use App\Domain\EDoreczenia\Requests\SearchMessageRequest;
 use App\Domain\EDoreczenia\Requests\SendMessageRequest;
 use App\Domain\EDoreczenia\Requests\UpdateMessageRequest;
+use App\Domain\EDoreczenia\Resources\EDoreczeniaMessageResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class MessageController extends Controller
 {
+    use HasIndexQuery;
+
+    protected int $defaultPerPage = 15;
+
     public function __construct(
         private readonly EDoreczeniaProviderManager $providerManager
     ) {
         $this->authorizeResource(EDoreczeniaMessage::class, 'message');
+        $this->modelClass  = EDoreczeniaMessage::class;
+        $this->defaultWith = ['creator', 'attachments'];
+
+        $this->filters = [
+            AllowedFilter::exact('status'),
+            AllowedFilter::exact('provider'),
+        ];
+
+        $this->sorts = [
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
+        ];
+
+        $this->defaultSort = '-created_at';
     }
 
-    /**
-     * Display a listing of the messages.
-     */
-    public function index(Request $request): JsonResponse
+    public function index(SearchMessageRequest $request): AnonymousResourceCollection
     {
-        $messages = EDoreczeniaMessage::where('tenant_id', $request->user()->tenant_id)
-            ->with(['creator', 'attachments'])
-            ->latest()
-            ->paginate()
+        $messages = $this->getIndexPaginator($request);
+
+        return EDoreczeniaMessageResource::collection($messages['data'])
+            ->additional(['meta' => $messages['meta']])
         ;
-
-        return response()->json($messages);
     }
 
-    /**
-     * Store a newly created message and send it.
-     */
-    public function store(SendMessageRequest $request): JsonResponse
+    public function store(SendMessageRequest $request): EDoreczeniaMessageResource
     {
-        $provider = $this->providerManager->getTenantProvider($request->user()->tenant);
-
-        if (!$provider) {
-            return response()->json(
-                ['message' => 'No valid certificate found for this tenant'],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        // Create message DTO
-        $messageDto = new SendMessageDto(
-            subject: $request->input('subject'),
-            content: $request->input('content'),
-            recipients: $request->input('recipients'),
-            attachments: $request->input('attachments'),
-            refToMessageId: $request->input('ref_to_message_id'),
-            createdAt: now()
-        );
-
-        // Send message through provider
-        $result = $provider->send($messageDto);
-
-        if (!$result->success) {
-            return response()->json(
-                ['message' => $result->error],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        // Create message record
         $message = EDoreczeniaMessage::create([
-            'tenant_id'   => $request->user()->tenant_id,
-            'provider'    => $provider->getProviderName(),
-            'external_id' => $result->messageId,
-            'content'     => $messageDto->content,
-            'created_by'  => $request->user()->id,
+            'tenant_id' => $request->user()->tenant_id,
+            'user_id'   => $request->user()->id,
+            'provider'  => $request->input('provider'),
+            'recipient' => $request->input('recipient'),
+            'subject'   => $request->input('subject'),
+            'content'   => $request->input('content'),
+            'status'    => 'pending',
         ]);
 
-        // Store attachments
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $path = $file->store('edoreczenia/attachments');
-                $message->attachments()->create([
-                    'filename'  => $file->getClientOriginalName(),
-                    'mime_type' => $file->getMimeType(),
-                    'size'      => $file->getSize(),
-                    'url'       => $path,
-                ]);
+                $message->addMedia($file)
+                    ->toMediaCollection('attachments')
+                ;
             }
         }
 
-        return response()->json($message->load(['creator', 'attachments']), Response::HTTP_CREATED);
+        $this->providerManager->send($message);
+
+        return new EDoreczeniaMessageResource($message);
     }
 
-    /**
-     * Display the specified message.
-     */
-    public function show(EDoreczeniaMessage $message): JsonResponse
+    public function show(EDoreczeniaMessage $message): EDoreczeniaMessageResource
     {
-        return response()->json($message->load(['creator', 'attachments']));
+        return new EDoreczeniaMessageResource($message);
     }
 
-    /**
-     * Update the specified message.
-     */
-    public function update(UpdateMessageRequest $request, EDoreczeniaMessage $message): JsonResponse
+    public function update(UpdateMessageRequest $request, EDoreczeniaMessage $message): EDoreczeniaMessageResource
     {
         $message->update($request->validated());
 
-        return response()->json($message);
-    }
-
-    /**
-     * Remove the specified message.
-     */
-    public function destroy(EDoreczeniaMessage $message): JsonResponse
-    {
-        // Delete attachments
-        foreach ($message->attachments as $attachment) {
-            Storage::delete($attachment->url);
-            $attachment->delete();
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $message->addMedia($file)
+                    ->toMediaCollection('attachments')
+                ;
+            }
         }
 
+        return new EDoreczeniaMessageResource($message);
+    }
+
+    public function destroy(EDoreczeniaMessage $message): void
+    {
         $message->delete();
-
-        return response()->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Synchronize messages with the provider.
-     */
-    public function sync(Request $request): JsonResponse
-    {
-        $provider = $this->providerManager->getTenantProvider($request->user()->tenant);
-
-        if (!$provider) {
-            return response()->json(
-                ['message' => 'No valid certificate found for this tenant'],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        $result = $provider->syncMessages();
-
-        if (!$result->success) {
-            return response()->json(
-                ['message' => $result->error],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        return response()->json(['message' => 'Messages synchronized successfully']);
     }
 }
