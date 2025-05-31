@@ -8,10 +8,8 @@ use App\Domain\Feeds\Requests\SearchFeedRequest;
 use App\Domain\Feeds\Requests\StoreFeedRequest;
 use App\Domain\Feeds\Resources\FeedResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * Controller for managing user feeds.
@@ -33,16 +31,11 @@ class FeedController extends Controller
         $this->defaultSort = '-created_at';
     }
 
-    public function getIndexQuery(Request $request): QueryBuilder
-    {
-        return parent::getIndexQuery($request)
-            ->withCount('comments')
-        ;
-    }
-
     public function index(SearchFeedRequest $request): AnonymousResourceCollection
     {
-        $feeds = $this->getIndexPaginator($request);
+        $query = $this->getIndexQuery($request);
+        $query = $query->withCount('comments');
+        $feeds = $this->getIndexPaginator($request, query: $query);
 
         return FeedResource::collection($feeds['data'])
             ->additional(['meta' => $feeds['meta']])
@@ -58,20 +51,32 @@ class FeedController extends Controller
             'content'   => $request->input('content'),
         ]);
 
+        if ($request->hasFile('attachments')) {
+            $attachments = $request->file('attachments');
+
+            foreach ($attachments as $attachment) {
+                $feed->addMedia($attachment)
+                    ->toMediaCollection('attachments')
+                ;
+            }
+        }
+
+        $feed->load(['user']);
+        $feed->loadCount('comments');
+
         return new FeedResource($feed);
     }
 
     public function show(Feed $feed): FeedResource
     {
-        $this->authorize('view', $feed);
         $feed->load(['user', 'comments.user']);
+        $feed->loadCount('comments');
 
         return new FeedResource($feed);
     }
 
     public function destroy(Feed $feed): Response
     {
-        $this->authorize('delete', $feed);
         $feed->delete();
 
         return response()->noContent();

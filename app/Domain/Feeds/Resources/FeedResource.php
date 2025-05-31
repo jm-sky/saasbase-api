@@ -18,7 +18,7 @@ class FeedResource extends JsonResource
             'content'       => $this->content,
             'createdAt'     => $this->created_at,
             'updatedAt'     => $this->updated_at,
-            'user'          => new UserPreviewResource($this->whenLoaded('user')),
+            'creator'       => new UserPreviewResource($this->whenLoaded('user')),
             'commentsCount' => $this->whenCounted('comments'),
             'comments'      => CommentResource::collection($this->whenLoaded('comments')),
         ];

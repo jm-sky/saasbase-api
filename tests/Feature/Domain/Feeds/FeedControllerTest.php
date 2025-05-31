@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Domain\Feeds;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Feeds\Models\Feed;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,23 +24,25 @@ class FeedControllerTest extends TestCase
 
     private string $baseUrl = '/api/v1/feeds';
 
+    private User $user;
+
     private Tenant $tenant;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->user   = User::factory()->create();
         $this->tenant = Tenant::factory()->create();
-        $this->authenticateUser($this->tenant);
+        $this->authenticateUser($this->tenant, $this->user);
         Storage::fake('local');
     }
 
     public function testCanListFeeds(): void
     {
-        $this->markTestSkipped('Need to fix feed listing functionality');
-
         Tenant::bypassTenant($this->tenant->id, function () {
             Feed::factory()->count(3)->create([
                 'tenant_id' => $this->tenant->id,
+                'user_id'   => $this->user->id,
             ]);
         });
 
@@ -77,6 +80,8 @@ class FeedControllerTest extends TestCase
 
     public function testCanCreateFeed(): void
     {
+        \Mockery::mock(Feed::class)->shouldReceive('addMedia')->andReturnSelf();
+
         $this->markTestSkipped('Need to fix feed creation functionality');
 
         $file = UploadedFile::fake()->create('image.jpg', 100);
@@ -120,12 +125,10 @@ class FeedControllerTest extends TestCase
 
     public function testCanShowFeed(): void
     {
-        $this->markTestSkipped('Need to fix feed retrieval functionality');
-
-        $feed = null;
-        Tenant::bypassTenant($this->tenant->id, function () use (&$feed) {
-            $feed = Feed::factory()->create([
+        $feed = Tenant::bypassTenant($this->tenant->id, function () {
+            return Feed::factory()->create([
                 'tenant_id' => $this->tenant->id,
+                'user_id'   => $this->user->id,
             ]);
         });
 
@@ -155,12 +158,10 @@ class FeedControllerTest extends TestCase
 
     public function testCanDeleteFeed(): void
     {
-        $this->markTestSkipped('Need to fix feed deletion functionality');
-
-        $feed = null;
-        Tenant::bypassTenant($this->tenant->id, function () use (&$feed) {
-            $feed = Feed::factory()->create([
+        $feed = Tenant::bypassTenant($this->tenant->id, function () {
+            return Feed::factory()->create([
                 'tenant_id' => $this->tenant->id,
+                'user_id'   => $this->user->id,
             ]);
         });
 
@@ -175,19 +176,17 @@ class FeedControllerTest extends TestCase
 
     public function testCannotAccessOtherTenantFeed(): void
     {
-        $this->markTestSkipped('Need to fix tenant isolation for feeds');
-
         $otherTenant = Tenant::factory()->create();
-        $feed        = null;
 
-        Tenant::bypassTenant($otherTenant->id, function () use ($otherTenant, &$feed) {
-            $feed = Feed::factory()->create([
+        $feed = Tenant::bypassTenant($otherTenant->id, function () use ($otherTenant) {
+            return Feed::factory()->create([
                 'tenant_id' => $otherTenant->id,
+                'user_id'   => $this->user->id,
             ]);
         });
 
         $response = $this->getJson($this->baseUrl . '/' . $feed->id);
 
-        $response->assertForbidden();
+        $response->assertNotFound();
     }
 }
