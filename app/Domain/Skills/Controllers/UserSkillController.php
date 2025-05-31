@@ -23,9 +23,6 @@ class UserSkillController extends Controller
         // Use the "skills" relation with pivot data and exclude soft-deleted records
         $skills = $user->skills()
             ->withPivot(['level', 'acquired_at'])
-            ->whereHas('userSkills', function ($query) {
-                $query->whereNull('deleted_at');
-            })
             ->get()
         ;
 

@@ -259,9 +259,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->belongsToMany(Skill::class, 'user_skill')
             ->using(UserSkill::class)
             ->withPivot(['level', 'acquired_at', 'id'])
-            ->whereHas('userSkills', function ($query) {
-                $query->whereNull('deleted_at');
-            })
             ->withTimestamps()
         ;
     }
