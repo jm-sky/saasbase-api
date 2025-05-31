@@ -14,7 +14,6 @@ return new class() extends Migration {
             $table->integer('level')->comment('1-5');
             $table->timestamp('acquired_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
