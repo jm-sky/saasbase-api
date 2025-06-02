@@ -12,6 +12,7 @@ use App\Domain\Subscription\Requests\UpdateSubscriptionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+
 class SubscriptionController extends Controller
 {
     public function index(Request $request)

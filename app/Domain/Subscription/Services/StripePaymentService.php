@@ -26,10 +26,10 @@ class StripePaymentService extends StripeService
             $paymentMethod = $this->stripe->paymentMethods->create([
                 'type' => 'card',
                 'card' => [
-                    'number' => $paymentDetails['cardNumber'],
+                    'number'    => $paymentDetails['cardNumber'],
                     'exp_month' => (int) explode('/', $paymentDetails['expiry'])[0],
-                    'exp_year' => (int) '20' . explode('/', $paymentDetails['expiry'])[1],
-                    'cvc' => $paymentDetails['cvc'],
+                    'exp_year'  => (int) '20' . explode('/', $paymentDetails['expiry'])[1],
+                    'cvc'       => $paymentDetails['cvc'],
                 ],
                 'billing_details' => [
                     'name' => $paymentDetails['name'],
