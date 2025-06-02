@@ -3,6 +3,7 @@
 namespace App\Domain\Feeds\Requests;
 
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\NoProfanity;
 
 class StoreFeedRequest extends BaseFormRequest
 {
@@ -15,7 +16,7 @@ class StoreFeedRequest extends BaseFormRequest
     {
         return [
             'title'   => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', new NoProfanity()],
         ];
     }
 }

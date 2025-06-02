@@ -15,6 +15,7 @@ return new class() extends Migration {
             $table->uuid('commentable_id');
             $table->string('commentable_type');
             $table->jsonb('meta')->nullable();
+            $table->boolean('is_flagged')->default(false);
             $table->timestamps();
             $table->softDeletes();
 

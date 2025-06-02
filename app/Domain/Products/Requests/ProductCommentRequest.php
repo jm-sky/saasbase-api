@@ -3,6 +3,7 @@
 namespace App\Domain\Products\Requests;
 
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\NoProfanity;
 
 class ProductCommentRequest extends BaseFormRequest
 {
@@ -14,7 +15,7 @@ class ProductCommentRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'content' => ['required', 'string', 'max:1000'],
+            'content' => ['required', 'string', 'max:1000', new NoProfanity()],
         ];
     }
 

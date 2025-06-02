@@ -5,6 +5,7 @@ namespace Tests\Feature\Domain\Feeds;
 use App\Domain\Auth\Models\User;
 use App\Domain\Feeds\Models\Feed;
 use App\Domain\Tenant\Models\Tenant;
+use App\Services\ProfanityFilterService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -35,6 +36,14 @@ class FeedControllerTest extends TestCase
         $this->tenant = Tenant::factory()->create();
         $this->authenticateUser($this->tenant, $this->user);
         Storage::fake('local');
+
+        // Mock ProfanityFilterService for all tests
+        $profanityService = \Mockery::mock(ProfanityFilterService::class);
+        $profanityService->shouldReceive('hasProfanity')->andReturn(false);
+        $profanityService->shouldReceive('filterText')->andReturnUsing(function ($text) {
+            return $text;
+        });
+        $this->app->instance(ProfanityFilterService::class, $profanityService);
     }
 
     public function testCanListFeeds(): void
@@ -188,5 +197,45 @@ class FeedControllerTest extends TestCase
         $response = $this->getJson($this->baseUrl . '/' . $feed->id);
 
         $response->assertNotFound();
+    }
+
+    public function testProfanityIsFilteredAndFlagged(): void
+    {
+        // Override the default mock for this specific test
+        $profanityService = \Mockery::mock(ProfanityFilterService::class);
+        $profanityService->shouldReceive('hasProfanity')
+            ->once()
+            ->andReturn(true)
+        ;
+
+        $this->app->instance(ProfanityFilterService::class, $profanityService);
+
+        \Mockery::mock(Feed::class)->shouldReceive('addMedia')->andReturnSelf();
+
+        $file = UploadedFile::fake()->create('image.jpg', 100);
+
+        $response = $this->postJson($this->baseUrl, [
+            'title'       => 'Test Feed',
+            'content'     => 'This is a test with some bad words: fuck shit',
+            'attachments' => [$file],
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'content',
+                ],
+            ])
+            ->assertJsonValidationErrors(['content'])
+        ;
+
+        Tenant::bypassTenant($this->tenant->id, function () {
+            $this->assertDatabaseMissing('feeds', [
+                'tenant_id' => $this->tenant->id,
+                'title'     => 'Test Feed',
+                'content'   => 'This is a test with some bad words: fuck shit',
+            ]);
+        });
     }
 }

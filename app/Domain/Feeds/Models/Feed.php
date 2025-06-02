@@ -7,6 +7,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use App\Services\PurifierService;
+use App\Traits\HasProfanityCheck;
 use Database\Factories\FeedFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -34,6 +35,7 @@ class Feed extends BaseModel implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use BelongsToTenant;
+    use HasProfanityCheck;
 
     protected $fillable = [
         'tenant_id',
@@ -42,6 +44,8 @@ class Feed extends BaseModel implements HasMedia
         'content',
         'content_html',
     ];
+
+    protected $profanityCheckFields = ['content'];
 
     protected static function boot()
     {

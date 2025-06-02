@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Requests;
 
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\NoProfanity;
 
 class ContractorCommentRequest extends BaseFormRequest
 {
@@ -14,7 +15,7 @@ class ContractorCommentRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', new NoProfanity()],
         ];
     }
 }

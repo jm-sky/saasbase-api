@@ -4,72 +4,70 @@
 ---
 
 ### ✅ Zakres
-1. **Instalacja paczki `wpm/laravel-profanity-filter`**  
-   - Dokumentacja: https://github.com/WPMedia/laravel-profanity-filter
+1. **Instalacja paczki `consoletvs/profanity`**  
+   - Dokumentacja: https://github.com/ConsoleTVs/Profanity
+   - Pakiet zawiera gotowe listy słów w wielu językach
 
-2. **Pobranie i integracja słowników z repozytorium LDNOOBW:**  
-   Źródło: [https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words)
-   - Języki:
-     - `en`: `en`
-     - `pl`: `pl`
-     - `ru`: `ru`
-     - `ua`: `uk` (ukraiński)
-
-3. **Umieszczenie słowników w katalogu:**
-   ```
-   storage/app/badwords/
-   ├── en.txt
-   ├── pl.txt
-   ├── ru.txt
-   └── ua.txt
-   ```
-
-4. **Publikacja i edycja konfiguracji:**
-   - Plik `config/profanity-filter.php`
-   - Wskazanie ścieżek do plików słów:
-     ```php
-     'lang' => ['en', 'pl', 'ru', 'ua'],
-     'custom_badwords_path' => [
-         'en' => storage_path('app/badwords/en.txt'),
-         'pl' => storage_path('app/badwords/pl.txt'),
-         'ru' => storage_path('app/badwords/ru.txt'),
-         'ua' => storage_path('app/badwords/ua.txt'),
-     ],
+2. **Utworzenie własnego słownika wulgaryzmów:**
+   - Plik `storage/app/profanity/dictionary.json` zawiera słowa w językach:
+     - `en`: angielski
+     - `pl`: polski
+     - `ru`: rosyjski
+     - `ua`: ukraiński
+   - Format słownika:
+     ```json
+     [
+         {
+             "language": "en",
+             "word": "xxx"
+         },
+         {
+             "language": "pl",
+             "word": "xxx"
+         }
+     ]
      ```
 
-5. **Zastosowanie walidatora (np. w `FormRequest`)**
+3. **Publikacja konfiguracji:**
+   ```bash
+   php artisan vendor:publish --provider="ConsoleTVs\Profanity\ProfanityServiceProvider"
+   ```
+
+4. **Zastosowanie walidatora (np. w `FormRequest`)**
    - Reguła dla pola `content`, `description`, `comment` itp.:
      ```php
-     use WPM\LaravelProfanityFilter\ProfanityFilter;
+     use App\Rules\NoProfanity;
 
      function rules(): array
      {
          return [
-             'content' => ['required', function ($attribute, $value, $fail) {
-                 if ((new ProfanityFilter())->hasProfanity($value)) {
-                     $fail('Treść zawiera niedozwolone słowa.');
-                 }
-             }]
+             'content' => ['required', new NoProfanity()]
          ];
      }
      ```
-   - Zaimplementować w:
-     - [ ] StoreFeedRequest
-     - [ ] ProductCommentRequest
-     - [ ] ContractorCommentRequest
+   - Zaimplementowano w:
+     - [x] StoreFeedRequest
+     - [x] ProductCommentRequest
+     - [x] ContractorCommentRequest
 
-6. **(Opcjonalnie) Asynchroniczna obsługa**
-   - Utworzenie `job`a, np. `DetectProfanityJob`, który:
+5. **(Opcjonalnie) Asynchroniczna obsługa**
+   - Utworzono `job`a `DetectProfanityJob`, który:
      - Przyjmuje model i pole tekstowe
      - Sprawdza czy treść zawiera niedozwolone słowa
      - Oznacza wpis jako wymagający moderacji (`is_flagged = true`)
      - Może być uruchamiany po zapisaniu modelu (np. `observer`)
+   - Dodano trait `HasProfanityCheck` do modeli:
+     - [x] Feed
+     - [x] Comment (używany przez ProductComment i ContractorComment)
 
 ---
 
-### 📂 Pliki do utworzenia
-- `storage/app/badwords/{en,pl,ru,ua}.txt`
-- `app/Jobs/DetectProfanityJob.php` (jeśli używany)
+### 📂 Utworzone pliki
+- [x] `app/Services/ProfanityFilterService.php`
+- [x] `app/Rules/NoProfanity.php`
+- [x] `app/Traits/HasProfanityCheck.php`
+- [x] `app/Jobs/DetectProfanityJob.php`
+- [x] `storage/app/profanity/dictionary.json`
 
 ---
 
@@ -83,5 +81,5 @@
 ---
 
 ### ⏳ Szacowany czas:
-- Implementacja podstawowa: 1–2h  
-- Integracja jobów i obserwatorów: dodatkowe 1–2h
+- Implementacja podstawowa: 1h  
+- Integracja jobów i obserwatorów: dodatkowe 1h

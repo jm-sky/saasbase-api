@@ -14,6 +14,7 @@ return new class() extends Migration {
             $table->string('title');
             $table->text('content');
             $table->text('content_html')->nullable();
+            $table->boolean('is_flagged')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

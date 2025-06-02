@@ -8,6 +8,7 @@ use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
+use App\Traits\HasProfanityCheck;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,7 @@ class Comment extends BaseModel
 {
     use HasActivityLog;
     use HasActivityLogging;
+    use HasProfanityCheck;
 
     protected $fillable = [
         'tenant_id',
@@ -45,6 +47,8 @@ class Comment extends BaseModel
     protected $casts = [
         'meta' => CommentMeta::class,
     ];
+
+    protected $profanityCheckFields = ['content'];
 
     public function commentable(): MorphTo
     {
