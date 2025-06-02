@@ -4,20 +4,21 @@ namespace App\Domain\Subscription\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string                                   $id
- * @property string                                   $billable_type
- * @property string                                   $billable_id
- * @property ?string                                  $subscription_plan_id
- * @property string                                   $stripe_subscription_id
- * @property string                                   $status
- * @property Carbon                                   $current_period_start
- * @property Carbon                                   $current_period_end
- * @property ?Carbon                                  $ends_at
- * @property bool                                     $cancel_at_period_end
- * @property \Illuminate\Database\Eloquent\Model|null $billable
- * @property SubscriptionPlan|null                    $plan
+ * @property string            $id
+ * @property string            $billable_type
+ * @property string            $billable_id
+ * @property ?string           $subscription_plan_id
+ * @property string            $stripe_subscription_id
+ * @property string            $status
+ * @property Carbon            $current_period_start
+ * @property Carbon            $current_period_end
+ * @property ?Carbon           $ends_at
+ * @property bool              $cancel_at_period_end
+ * @property ?Model            $billable
+ * @property ?SubscriptionPlan $plan
  */
 class Subscription extends BaseModel
 {

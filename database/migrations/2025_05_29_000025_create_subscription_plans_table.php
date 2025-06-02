@@ -18,7 +18,6 @@ return new class() extends Migration {
             $table->string('stripe_price_id')->index();
             $table->enum('interval', ['monthly', 'yearly']);
             $table->decimal('price', 10, 2);
-            $table->json('features')->nullable();
             $table->timestamps();
         });
     }

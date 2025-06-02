@@ -8,7 +8,7 @@ use App\Domain\Subscription\Requests\PurchaseAddonRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class AddonController extends Controller
+class AddonPurchaseController extends Controller
 {
     public function index(Request $request)
     {

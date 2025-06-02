@@ -2,22 +2,22 @@
 
 namespace App\Domain\Subscription\Controllers;
 
-use App\Domain\Subscription\Models\SubscriptionPlan;
+use App\Domain\Subscription\Models\AddonPackage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class PlanController extends Controller
+class AddonPackageController extends Controller
 {
     public function index(Request $request)
     {
         // TODO: Add filtering, pagination, etc.
-        return SubscriptionPlan::paginate();
+        return AddonPackage::paginate();
     }
 
     public function show(string $id)
     {
-        $plan = SubscriptionPlan::findOrFail($id);
+        $addonPackage = AddonPackage::findOrFail($id);
 
-        return response()->json($plan);
+        return response()->json($addonPackage);
     }
 }

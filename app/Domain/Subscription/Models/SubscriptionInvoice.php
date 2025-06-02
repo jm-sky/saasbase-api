@@ -4,19 +4,20 @@ namespace App\Domain\Subscription\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string                                   $id
- * @property string                                   $billable_type
- * @property string                                   $billable_id
- * @property string                                   $stripe_invoice_id
- * @property float                                    $amount_due
- * @property string                                   $status
- * @property string                                   $hosted_invoice_url
- * @property string                                   $pdf_url
- * @property Carbon                                   $issued_at
- * @property ?Carbon                                  $paid_at
- * @property \Illuminate\Database\Eloquent\Model|null $billable
+ * @property string  $id
+ * @property string  $billable_type
+ * @property string  $billable_id
+ * @property string  $stripe_invoice_id
+ * @property float   $amount_due
+ * @property string  $status
+ * @property string  $hosted_invoice_url
+ * @property string  $pdf_url
+ * @property Carbon  $issued_at
+ * @property ?Carbon $paid_at
+ * @property ?Model  $billable
  */
 class SubscriptionInvoice extends BaseModel
 {

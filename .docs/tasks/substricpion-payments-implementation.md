@@ -34,161 +34,144 @@ app/Domain/Subscription/
     - [x] AddonPackage.php
     - [x] AddonPurchase.php
     - [x] SubscriptionInvoice.php
-- [x] Services/
-    - [x] StripeCustomerService.php
-    - [x] StripeSubscriptionService.php
-    - [x] StripeAddonService.php
-    - [x] StripeInvoiceService.php
-- [x] Actions/
-    - [x] CreateSubscriptionAction.php
-    - [x] UpdateSubscriptionAction.php
-    - [x] CancelSubscriptionAction.php
-    - [x] PurchaseAddonAction.php
+    - [x] Feature.php
+    - [x] PlanFeature.php
+- [x] Enums/
+    - [x] FeatureName.php
+- [ ] Services/
+    - [ ] StripeCustomerService.php
+    - [ ] StripeSubscriptionService.php
+    - [ ] StripeAddonService.php
+    - [ ] StripeInvoiceService.php
+- [ ] Actions/
+    - [ ] CreateSubscriptionAction.php
+    - [ ] UpdateSubscriptionAction.php
+    - [ ] CancelSubscriptionAction.php
+    - [ ] PurchaseAddonAction.php
 - [ ] Events/
-    - [ ] SubscriptionCreated.php  # TODO: NotImplementedException
-    - [ ] SubscriptionUpdated.php  # TODO: NotImplementedException
-    - [ ] SubscriptionCancelled.php  # TODO: NotImplementedException
-    - [ ] AddonPurchased.php  # TODO: NotImplementedException
+    - [ ] SubscriptionCreated.php
+    - [ ] SubscriptionUpdated.php
+    - [ ] SubscriptionCancelled.php
+    - [ ] AddonPurchased.php
 - [ ] Listeners/
-    - [ ] HandleStripeWebhook.php  # TODO: NotImplementedException
-    - [ ] SendSubscriptionNotification.php  # TODO: NotImplementedException
-    - [ ] UpdateBillingStatus.php  # TODO: NotImplementedException
+    - [ ] HandleStripeWebhook.php
+    - [ ] SendSubscriptionNotification.php
+    - [ ] UpdateBillingStatus.php
 - [ ] Policies/
-    - [ ] SubscriptionPolicy.php  # TODO: NotImplementedException
-    - [ ] AddonPolicy.php  # TODO: NotImplementedException
-- [x] Requests/
-    - [x] StoreSubscriptionRequest.php
-    - [x] UpdateSubscriptionRequest.php
-    - [x] PurchaseAddonRequest.php
+    - [ ] SubscriptionPolicy.php
+    - [ ] AddonPolicy.php
+- [ ] Requests/
+    - [ ] StoreSubscriptionRequest.php
+    - [ ] UpdateSubscriptionRequest.php
+    - [ ] PurchaseAddonRequest.php
 - [ ] Resources/
-    - [ ] SubscriptionResource.php  # TODO: NotImplementedException
-    - [ ] AddonResource.php  # TODO: NotImplementedException
-    - [ ] InvoiceResource.php  # TODO: NotImplementedException
+    - [ ] SubscriptionResource.php
+    - [ ] AddonResource.php
+    - [ ] InvoiceResource.php
 - [ ] DTOs/
-    - [ ] SubscriptionData.php  # TODO: NotImplementedException
-    - [ ] BillingInfoData.php  # TODO: NotImplementedException
-    - [ ] AddonPurchaseData.php  # TODO: NotImplementedException
+    - [ ] SubscriptionData.php
+    - [ ] BillingInfoData.php
+    - [ ] AddonPurchaseData.php
 - [ ] Enums/
-    - [ ] SubscriptionStatus.php  # TODO: NotImplementedException
-    - [ ] AddonType.php  # TODO: NotImplementedException
-    - [ ] BillingInterval.php  # TODO: NotImplementedException
+    - [ ] SubscriptionStatus.php
+    - [ ] AddonType.php
+    - [ ] BillingInterval.php
 
-## 1. Database Schema Updates
+## 1. Database Schema Updates ✅
 
 ### New Tables
 - [x] billing_customers
-    - [x] UUID primary key
-    - [x] Polymorphic billable relationship (uuidMorphs) (User/Tenant)
-    - [x] Stripe customer ID
-    - [x] Timestamps
 - [x] billing_info
-    - [x] UUID primary key
-    - [x] Polymorphic billable relationship (uuidMorphs)
-    - [x] Billing address fields
-    - [x] Tax/VAT information
-    - [x] Email and notes
-    - [x] Timestamps
 - [x] subscription_plans
-    - [x] UUID primary key
-    - [x] Name and description
-    - [x] Stripe product and price IDs
-    - [x] Interval (monthly/yearly)
-    - [x] Price (display)
-    - [x] Features (JSON)
-    - [x] Timestamps
+- [x] features
+- [x] plan_features
 - [x] subscriptions
-    - [x] UUID primary key
-    - [x] Polymorphic billable relationship (uuidMorphs)
-    - [x] Plan reference
-    - [x] Stripe subscription ID
-    - [x] Status and period tracking
-    - [x] Timestamps
 - [x] addon_packages
-    - [x] UUID primary key
-    - [x] Name and description
-    - [x] Stripe price ID
-    - [x] Type (one-time/recurring)
-    - [x] Price (display)
-    - [x] Timestamps
 - [x] addon_purchases
-    - [x] UUID primary key
-    - [x] Polymorphic billable relationship (uuidMorphs)
-    - [x] Package reference
-    - [x] Stripe invoice item ID
-    - [x] Purchase and expiry dates
-    - [x] Timestamps
 - [x] subscription_invoices
-    - [x] UUID primary key
-    - [x] Polymorphic billable relationship (uuidMorphs)
-    - [x] Stripe invoice ID
-    - [x] Amount and status
-    - [x] URLs for hosted invoice and PDF
-    - [x] Issue and payment dates
-    - [x] Timestamps
 
-## 2. Stripe Integration
+## 2. Features Migration ✅
+
+### Step 1: Create New Tables ✅
+- [x] Create migration for `features` table
+- [x] Create migration for `plan_features` table
+- [x] Add proper indexes and constraints
+
+### Step 2: Data Migration ✅
+- [x] Create seeder for core features
+- [x] Create seeder for plan features
+- [x] Write migration script to move data from JSON to relations
+
+### Step 3: Code Updates ✅
+- [x] Create Feature and PlanFeature models
+- [x] Update SubscriptionPlan model to use new relationship
+- [x] Add helper methods for feature access
+- [x] Update existing code to use new feature system
+- [x] Mark old features field as deprecated
+
+## 3. Stripe Integration 🔄
 
 ### Configuration
-- [ ] Add Stripe configuration to `.env`:
-    - [ ] STRIPE_KEY  # TODO: NotImplementedException
-    - [ ] STRIPE_SECRET  # TODO: NotImplementedException
-    - [ ] STRIPE_WEBHOOK_SECRET  # TODO: NotImplementedException
-- [ ] Create Stripe service provider:
-    - [ ] Register Stripe client  # TODO: NotImplementedException
-    - [ ] Configure webhook handling  # TODO: NotImplementedException
-    - [ ] Set up error handling  # TODO: NotImplementedException
+- [x] Add Stripe configuration to `.env`:
+    - [x] STRIPE_KEY
+    - [x] STRIPE_SECRET
+    - [x] STRIPE_WEBHOOK_SECRET
+- [x] Create Stripe service provider:
+    - [x] Register Stripe client
+    - [x] Configure webhook handling
+    - [x] Set up error handling
 
 ### Core Services
-- [x] StripeCustomerService
-    - [ ] Create/update Stripe customers  # TODO: NotImplementedException
-    - [ ] Manage billing information  # TODO: NotImplementedException
-    - [ ] Handle customer deletion  # TODO: NotImplementedException
-- [x] StripeSubscriptionService
-    - [ ] Create/manage subscriptions  # TODO: NotImplementedException
-    - [ ] Handle plan changes  # TODO: NotImplementedException
-    - [ ] Process cancellations  # TODO: NotImplementedException
-    - [ ] Manage trial periods  # TODO: NotImplementedException
-- [x] StripeAddonService
-    - [ ] Process one-time purchases  # TODO: NotImplementedException
-    - [ ] Handle recurring addons  # TODO: NotImplementedException
-    - [ ] Manage addon expiration  # TODO: NotImplementedException
-- [x] StripeInvoiceService
-    - [ ] Sync Stripe invoices  # TODO: NotImplementedException
-    - [ ] Generate PDFs  # TODO: NotImplementedException
-    - [ ] Handle payment status  # TODO: NotImplementedException
+- [ ] StripeCustomerService
+    - [ ] Create/update Stripe customers
+    - [ ] Manage billing information
+    - [ ] Handle customer deletion
+- [ ] StripeSubscriptionService
+    - [ ] Create/manage subscriptions
+    - [ ] Handle plan changes
+    - [ ] Process cancellations
+    - [ ] Manage trial periods
+- [ ] StripeAddonService
+    - [ ] Process one-time purchases
+    - [ ] Handle recurring addons
+    - [ ] Manage addon expiration
+- [ ] StripeInvoiceService
+    - [ ] Sync Stripe invoices
+    - [ ] Generate PDFs
+    - [ ] Handle payment status
 
-## 3. API Endpoints
+## 4. API Endpoints
 
 ### Customer Management
 - [ ] POST /api/v1/billing/customers
-    - [ ] Create Stripe customer  # TODO: NotImplementedException
-    - [ ] Link to User/Tenant  # TODO: NotImplementedException
+    - [ ] Create Stripe customer
+    - [ ] Link to User/Tenant
 - [ ] PUT /api/v1/billing/customers/{id}
-    - [ ] Update billing information  # TODO: NotImplementedException
-    - [ ] Modify Stripe customer  # TODO: NotImplementedException
+    - [ ] Update billing information
+    - [ ] Modify Stripe customer
 
 ### Subscription Management
 - [x] GET /api/v1/subscription-plans
     - [x] List available plans
     - [x] Include pricing and features
-- [x] POST /api/v1/subscriptions
-    - [x] Create new subscription
-    - [ ] Handle trial periods  # TODO: NotImplementedException
-- [x] PUT /api/v1/subscriptions/{id}
-    - [x] Update subscription
-    - [ ] Change plans  # TODO: NotImplementedException
-    - [ ] Modify billing cycle  # TODO: NotImplementedException
-- [x] DELETE /api/v1/subscriptions/{id}
-    - [x] Cancel subscription
-    - [ ] Handle immediate/end-of-period  # TODO: NotImplementedException
+- [ ] POST /api/v1/subscriptions
+    - [ ] Create new subscription
+    - [ ] Handle trial periods
+- [ ] PUT /api/v1/subscriptions/{id}
+    - [ ] Update subscription
+    - [ ] Change plans
+    - [ ] Modify billing cycle
+- [ ] DELETE /api/v1/subscriptions/{id}
+    - [ ] Cancel subscription
+    - [ ] Handle immediate/end-of-period
 
 ### Addon Management
 - [x] GET /api/v1/addon-packages
     - [x] List available addons
     - [x] Show pricing and details
-- [x] POST /api/v1/addon-purchases
-    - [x] Purchase addon
-    - [ ] Handle one-time/recurring  # TODO: NotImplementedException
+- [ ] POST /api/v1/addon-purchases
+    - [ ] Purchase addon
+    - [ ] Handle one-time/recurring
 - [x] GET /api/v1/addon-purchases
     - [x] List active addons
     - [x] Show expiration dates
@@ -201,147 +184,147 @@ app/Domain/Subscription/
     - [x] Get invoice details
     - [x] Access PDF/hosted URL
 
-## 4. Webhook Handling
+## 5. Webhook Handling
 
 ### Required Webhooks
 - [ ] customer.subscription.created
-    - [ ] Create local subscription  # TODO: NotImplementedException
-    - [ ] Set up trial period  # TODO: NotImplementedException
+    - [ ] Create local subscription
+    - [ ] Set up trial period
 - [ ] customer.subscription.updated
-    - [ ] Update subscription status  # TODO: NotImplementedException
-    - [ ] Handle plan changes  # TODO: NotImplementedException
+    - [ ] Update subscription status
+    - [ ] Handle plan changes
 - [ ] customer.subscription.deleted
-    - [ ] Mark subscription as cancelled  # TODO: NotImplementedException
-    - [ ] Handle cleanup  # TODO: NotImplementedException
+    - [ ] Mark subscription as cancelled
+    - [ ] Handle cleanup
 - [ ] invoice.created
-    - [ ] Create local invoice  # TODO: NotImplementedException
-    - [ ] Set up payment tracking  # TODO: NotImplementedException
+    - [ ] Create local invoice
+    - [ ] Set up payment tracking
 - [ ] invoice.paid
-    - [ ] Update invoice status  # TODO: NotImplementedException
-    - [ ] Trigger post-payment actions  # TODO: NotImplementedException
+    - [ ] Update invoice status
+    - [ ] Trigger post-payment actions
 - [ ] invoice.payment_failed
-    - [ ] Handle failed payments  # TODO: NotImplementedException
-    - [ ] Send notifications  # TODO: NotImplementedException
+    - [ ] Handle failed payments
+    - [ ] Send notifications
 
-## 5. Frontend Components
+## 6. Frontend Components
 
 ### Subscription Management
 1. Plan Selection
-   - Display available plans  # TODO: NotImplementedException
-   - Show features and pricing  # TODO: NotImplementedException
-   - Handle plan comparison  # TODO: NotImplementedException
+   - Display available plans
+   - Show features and pricing
+   - Handle plan comparison
 
 2. Subscription Dashboard
-   - Show current plan  # TODO: NotImplementedException
-   - Display usage metrics  # TODO: NotImplementedException
-   - Manage addons  # TODO: NotImplementedException
+   - Show current plan
+   - Display usage metrics
+   - Manage addons
 
 3. Billing Information
-   - Edit billing details  # TODO: NotImplementedException
-   - Update payment methods  # TODO: NotImplementedException
-   - View billing history  # TODO: NotImplementedException
+   - Edit billing details
+   - Update payment methods
+   - View billing history
 
 ### Addon Management
 1. Addon Catalog
-   - Browse available addons  # TODO: NotImplementedException
-   - View pricing and details  # TODO: NotImplementedException
-   - Purchase flow  # TODO: NotImplementedException
+   - Browse available addons
+   - View pricing and details
+   - Purchase flow
 
 2. Active Addons
-   - List purchased addons  # TODO: NotImplementedException
-   - Show expiration dates  # TODO: NotImplementedException
-   - Manage recurring addons  # TODO: NotImplementedException
+   - List purchased addons
+   - Show expiration dates
+   - Manage recurring addons
 
 ### Invoice Management
 1. Invoice List
-   - View all invoices  # TODO: NotImplementedException
-   - Filter and search  # TODO: NotImplementedException
-   - Download PDFs  # TODO: NotImplementedException
+   - View all invoices
+   - Filter and search
+   - Download PDFs
 
 2. Invoice Details
-   - View invoice details  # TODO: NotImplementedException
-   - Access hosted invoice  # TODO: NotImplementedException
-   - Payment status  # TODO: NotImplementedException
+   - View invoice details
+   - Access hosted invoice
+   - Payment status
 
-## 6. Testing Strategy
+## 7. Testing Strategy
 
 ### Unit Tests
 1. Service Layer
-   - Stripe service mocks  # TODO: NotImplementedException
-   - Business logic validation  # TODO: NotImplementedException
-   - Error handling  # TODO: NotImplementedException
+   - Stripe service mocks
+   - Business logic validation
+   - Error handling
 
 2. Model Tests
-   - Relationship validation  # TODO: NotImplementedException
-   - Attribute casting  # TODO: NotImplementedException
-   - Business rules  # TODO: NotImplementedException
+   - Relationship validation
+   - Attribute casting
+   - Business rules
 
 ### Integration Tests
 1. API Endpoints
-   - Request validation  # TODO: NotImplementedException
-   - Response formatting  # TODO: NotImplementedException
-   - Error handling  # TODO: NotImplementedException
+   - Request validation
+   - Response formatting
+   - Error handling
 
 2. Stripe Integration
-   - Webhook handling  # TODO: NotImplementedException
-   - Customer management  # TODO: NotImplementedException
-   - Subscription lifecycle  # TODO: NotImplementedException
+   - Webhook handling
+   - Customer management
+   - Subscription lifecycle
 
 ### Feature Tests
 1. Subscription Flow
-   - Plan selection  # TODO: NotImplementedException
-   - Payment processing  # TODO: NotImplementedException
-   - Status updates  # TODO: NotImplementedException
+   - Plan selection
+   - Payment processing
+   - Status updates
 
 2. Addon Flow
-   - Purchase process  # TODO: NotImplementedException
-   - Expiration handling  # TODO: NotImplementedException
-   - Recurring management  # TODO: NotImplementedException
+   - Purchase process
+   - Expiration handling
+   - Recurring management
 
-## 7. Documentation
+## 8. Documentation
 
 ### API Documentation
 1. Endpoint Specifications
-   - Request/response formats  # TODO: NotImplementedException
-   - Authentication  # TODO: NotImplementedException
-   - Error codes  # TODO: NotImplementedException
+   - Request/response formats
+   - Authentication
+   - Error codes
 
 2. Webhook Documentation
-   - Event types  # TODO: NotImplementedException
-   - Payload structure  # TODO: NotImplementedException
-   - Testing setup  # TODO: NotImplementedException
+   - Event types
+   - Payload structure
+   - Testing setup
 
 ### User Documentation
 1. Subscription Guide
-   - Plan selection  # TODO: NotImplementedException
-   - Billing setup  # TODO: NotImplementedException
-   - Management tips  # TODO: NotImplementedException
+   - Plan selection
+   - Billing setup
+   - Management tips
 
 2. Addon Guide
-   - Available addons  # TODO: NotImplementedException
-   - Purchase process  # TODO: NotImplementedException
-   - Usage instructions  # TODO: NotImplementedException
+   - Available addons
+   - Purchase process
+   - Usage instructions
 
-## 8. Deployment Checklist
+## 9. Deployment Checklist
 
 ### Pre-deployment
 1. Stripe Configuration
-   - API keys  # TODO: NotImplementedException
-   - Webhook endpoints  # TODO: NotImplementedException
-   - Test mode setup  # TODO: NotImplementedException
+   - API keys
+   - Webhook endpoints
+   - Test mode setup
 
 2. Database Migration
-   - Schema updates  # TODO: NotImplementedException
-   - Data migration  # TODO: NotImplementedException
-   - Index optimization  # TODO: NotImplementedException
+   - Schema updates
+   - Data migration
+   - Index optimization
 
 ### Post-deployment
 1. Monitoring
-   - Error tracking  # TODO: NotImplementedException
-   - Webhook monitoring  # TODO: NotImplementedException
-   - Performance metrics  # TODO: NotImplementedException
+   - Error tracking
+   - Webhook monitoring
+   - Performance metrics
 
 2. Backup Strategy
-   - Database backups  # TODO: NotImplementedException
-   - Stripe data sync  # TODO: NotImplementedException
-   - Recovery procedures  # TODO: NotImplementedException
+   - Database backups
+   - Stripe data sync
+   - Recovery procedures

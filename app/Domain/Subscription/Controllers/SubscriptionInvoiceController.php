@@ -6,7 +6,7 @@ use App\Domain\Subscription\Models\SubscriptionInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class InvoiceController extends Controller
+class SubscriptionInvoiceController extends Controller
 {
     public function index(Request $request)
     {

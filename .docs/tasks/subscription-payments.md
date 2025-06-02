@@ -268,3 +268,41 @@ For one-time purchases (e.g. extra storage):
 - Dodatki (Plus 1 user, Plus 5 GB, integracje, unlimited requests) to `AddonPackage` (mogą być jednorazowe lub cykliczne)
 - Limitacje (liczba faktur, użytkowników, zapytań) egzekwujemy po stronie aplikacji, bazując na aktywnych planach i dodatkach
 - Integracje (KSEF, e-Doreczenia) można trzymać jako flagi lub uprawnienia powiązane z aktywnym subskrypcją lub dodatkiem
+
+
+## ✅ TODO: Migrate `features` from array → relation `plan_features`
+
+### 🎯 Kontekst  
+Obecnie model Plan posiada pole `features` jako tablicę (array/json), np.:
+
+```
+{
+  "max_users": 5,
+  "storage_gb": 10,
+  "api_calls": 1000,
+  "custom_domain": false
+}
+```
+
+### ⚠️ Problem  
+- Trudność w agregacji (np. COUNT, JOIN, filtrowanie).  
+- Brak elastyczności typów i opisów funkcji.  
+- Utrudnione dodawanie nowych funkcji bez zmian w kodzie i bazie.  
+- Brak możliwości wersjonowania, notatek czy warunków (np. reset miesięczny).  
+
+### ✅ Cel  
+Zamiana pola `features` na relację:  
+- Tabela `features` jako katalog funkcji.  
+- Tabela `plan_features` jako przypisanie wartości do danego planu.  
+
+### 🧩 Zadania  
+- [ ] Stworzyć tabele `features` i `plan_features`.  
+- [ ] Przenieść dane z obecnego pola `features` na modelu `Plan` do nowej relacji.  
+- [ ] Zmodyfikować kod aplikacji – np. zamiast `plan.features['max_users']` używać helpera `plan.getFeature('max_users')`.  
+- [ ] (Opcjonalnie) Usunąć stare pole `features` lub oznaczyć je jako `@deprecated`.  
+
+### 💡 Uwagi  
+- Uzgodnić format wartości:  
+  - -1 lub "unlimited" jako nielimitowane.  
+  - true/false dla funkcji binarnych.  
+- To przygotowanie pod rozbudowę planów i dynamiczne pakiety w przyszłości (np. dla klientów Enterprise).
