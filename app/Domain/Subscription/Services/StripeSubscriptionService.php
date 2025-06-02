@@ -223,4 +223,51 @@ class StripeSubscriptionService extends StripeService
             return $subscription;
         });
     }
+
+    /**
+     * Create a Stripe Checkout session for subscription.
+     *
+     * @param array $options Additional options for checkout session
+     *
+     * @return array{url: string, sessionId: string} Checkout session data
+     *
+     * @throws StripeException
+     */
+    public function createCheckoutSession(
+        BillingCustomer $billingCustomer,
+        SubscriptionPlan $plan,
+        array $options = []
+    ): array {
+        return $this->handleStripeException(function () use ($billingCustomer, $plan, $options) {
+            $checkoutData = [
+                'customer'   => $billingCustomer->stripe_customer_id,
+                'mode'       => 'subscription',
+                'line_items' => [
+                    [
+                        'price'    => $plan->stripe_price_id,
+                        'quantity' => 1,
+                    ],
+                ],
+                'success_url' => $options['success_url'] ?? config('app.url') . '/subscription/success?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url'  => $options['cancel_url'] ?? config('app.url') . '/subscription/cancel',
+                'metadata'    => [
+                    'plan_id' => $plan->id,
+                ],
+            ];
+
+            // Add trial period if specified
+            if (isset($options['trial_end'])) {
+                $checkoutData['subscription_data'] = [
+                    'trial_end' => $options['trial_end'],
+                ];
+            }
+
+            $session = $this->stripe->checkout->sessions->create($checkoutData);
+
+            return [
+                'url'       => $session->url,
+                'sessionId' => $session->id,
+            ];
+        });
+    }
 }
