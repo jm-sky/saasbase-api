@@ -6,6 +6,7 @@ use App\Domain\Subscription\Events\SubscriptionCreated;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\SubscriptionPlan;
+use App\Domain\Subscription\Services\StripePaymentService;
 use App\Domain\Subscription\Services\StripeSubscriptionService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\Log;
 class CreateSubscriptionAction
 {
     public function __construct(
-        protected StripeSubscriptionService $stripeSubscriptionService
+        protected StripeSubscriptionService $stripeSubscriptionService,
+        protected StripePaymentService $stripePaymentService
     ) {
     }
 
@@ -28,6 +30,12 @@ class CreateSubscriptionAction
      *     plan_id: string,
      *     trial_end?: string,
      *     payment_behavior?: string,
+     *     payment_details?: array{
+     *         cardNumber: string,
+     *         expiry: string,
+     *         cvc: string,
+     *         name: string
+     *     },
      *     metadata?: array<string, mixed>
      * } $data
      *
@@ -40,6 +48,11 @@ class CreateSubscriptionAction
                 // Find required models
                 $billingCustomer = BillingCustomer::findOrFail($data['billing_customer_id']);
                 $plan            = SubscriptionPlan::findOrFail($data['plan_id']);
+
+                // Create payment method if provided
+                if (isset($data['payment_details'])) {
+                    $this->stripePaymentService->createPaymentMethod($billingCustomer, $data['payment_details']);
+                }
 
                 // Create subscription in Stripe and locally
                 $subscription = $this->stripeSubscriptionService->createSubscription(

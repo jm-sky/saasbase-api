@@ -11,7 +11,7 @@ use App\Domain\Subscription\Requests\StoreSubscriptionRequest;
 use App\Domain\Subscription\Requests\UpdateSubscriptionRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
+use Symfony\Component\HttpFoundation\Response;
 class SubscriptionController extends Controller
 {
     public function index(Request $request)
@@ -24,7 +24,7 @@ class SubscriptionController extends Controller
     {
         $subscriptionId = $createAction($request->validated());
 
-        return response()->json(['id' => $subscriptionId], 201);
+        return response()->json(['id' => $subscriptionId], Response::HTTP_CREATED);
     }
 
     public function show(string $id)
