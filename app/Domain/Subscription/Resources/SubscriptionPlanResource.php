@@ -23,7 +23,7 @@ class SubscriptionPlanResource extends JsonResource
             'stripeProductId' => $this->stripe_product_id,
             'stripePriceId'   => $this->stripe_price_id,
             'features'        => $this->whenLoaded('planFeatures', function () {
-                return FeatureResource::collection($this->planFeatures->pluck('feature'));
+                return PlanFeatureResource::collection($this->planFeatures);
             }),
             'currency'  => 'PLN',
             'isCurrent' => false,
