@@ -18,7 +18,8 @@ class ProfanityFilterService
         $dictionaryPath = storage_path('app/profanity/dictionary.json');
 
         if (file_exists($dictionaryPath)) {
-            Profanity::dictionary($dictionaryPath);
+            $dictionary = json_decode(file_get_contents($dictionaryPath), true);
+            Profanity::blocker('')->dictionary($dictionary);
         }
     }
 
