@@ -53,6 +53,10 @@
          ];
      }
      ```
+   - Zaimplementować w:
+     - [ ] StoreFeedRequest
+     - [ ] ProductCommentRequest
+     - [ ] ContractorCommentRequest
 
 6. **(Opcjonalnie) Asynchroniczna obsługa**
    - Utworzenie `job`a, np. `DetectProfanityJob`, który:

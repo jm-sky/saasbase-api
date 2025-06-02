@@ -36,6 +36,8 @@ App/
 
 ## ⚙️ Konfiguracja środowiska
 
+> Uwaga: Serwis może działać w dwóch trybach: (1) używając danych z `.env` jako usługa wewnętrzna aplikacji, (2) używając danych endpoint, klucza, modelu z ustawień tenanta (tu potrzebny jest model typu TenantIntegration dla trzymnia konfiguracji różnych integracji)
+
 .env:
 AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=https://<your-resource-name>.cognitiveservices.azure.com/
 AZURE_DOCUMENT_INTELLIGENCE_KEY=<your-key>

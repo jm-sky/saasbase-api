@@ -38,44 +38,44 @@ app/Domain/Subscription/
     - [x] PlanFeature.php
 - [x] Enums/
     - [x] FeatureName.php
-- [ ] Services/
-    - [ ] StripeCustomerService.php
-    - [ ] StripeSubscriptionService.php
-    - [ ] StripeAddonService.php
-    - [ ] StripeInvoiceService.php
-- [ ] Actions/
-    - [ ] CreateSubscriptionAction.php
-    - [ ] UpdateSubscriptionAction.php
-    - [ ] CancelSubscriptionAction.php
-    - [ ] PurchaseAddonAction.php
-- [ ] Events/
-    - [ ] SubscriptionCreated.php
-    - [ ] SubscriptionUpdated.php
-    - [ ] SubscriptionCancelled.php
-    - [ ] AddonPurchased.php
-- [ ] Listeners/
-    - [ ] HandleStripeWebhook.php
+    - [x] SubscriptionStatus.php
+    - [x] AddonType.php
+    - [x] BillingInterval.php
+- [x] Services/
+    - [x] StripeCustomerService.php
+    - [x] StripeSubscriptionService.php
+    - [x] StripeAddonService.php
+    - [~] StripeInvoiceService.php (Partially implemented)
+- [~] Actions/
+    - [x] CreateSubscriptionAction.php
+    - [x] UpdateSubscriptionAction.php
+    - [x] CancelSubscriptionAction.php
+    - [x] PurchaseAddonAction.php
+- [x] Events/
+    - [x] SubscriptionCreated.php
+    - [x] SubscriptionUpdated.php
+    - [x] SubscriptionCancelled.php
+    - [x] AddonPurchased.php
+- [~] Listeners/
+    - [x] HandleStripeWebhook.php
     - [ ] SendSubscriptionNotification.php
     - [ ] UpdateBillingStatus.php
 - [ ] Policies/
     - [ ] SubscriptionPolicy.php
     - [ ] AddonPolicy.php
-- [ ] Requests/
-    - [ ] StoreSubscriptionRequest.php
-    - [ ] UpdateSubscriptionRequest.php
-    - [ ] PurchaseAddonRequest.php
-- [ ] Resources/
-    - [ ] SubscriptionResource.php
-    - [ ] AddonResource.php
-    - [ ] InvoiceResource.php
+- [x] Requests/
+    - [x] StoreSubscriptionRequest.php
+    - [x] UpdateSubscriptionRequest.php
+    - [x] PurchaseAddonRequest.php
+- [x] Resources/
+    - [x] SubscriptionResource.php
+    - [x] AddonResource.php
+    - [x] InvoiceResource.php
+    - [x] AddonPurchaseResource.php
 - [ ] DTOs/
     - [ ] SubscriptionData.php
     - [ ] BillingInfoData.php
     - [ ] AddonPurchaseData.php
-- [ ] Enums/
-    - [ ] SubscriptionStatus.php
-    - [ ] AddonType.php
-    - [ ] BillingInterval.php
 
 ## 1. Database Schema Updates ✅
 
@@ -111,7 +111,7 @@ app/Domain/Subscription/
 
 ## 3. Stripe Integration 🔄
 
-### Configuration
+### Configuration ✅
 - [x] Add Stripe configuration to `.env`:
     - [x] STRIPE_KEY
     - [x] STRIPE_SECRET
@@ -121,26 +121,26 @@ app/Domain/Subscription/
     - [x] Configure webhook handling
     - [x] Set up error handling
 
-### Core Services
-- [ ] StripeCustomerService
-    - [ ] Create/update Stripe customers
-    - [ ] Manage billing information
-    - [ ] Handle customer deletion
-- [ ] StripeSubscriptionService
-    - [ ] Create/manage subscriptions
-    - [ ] Handle plan changes
-    - [ ] Process cancellations
-    - [ ] Manage trial periods
-- [ ] StripeAddonService
-    - [ ] Process one-time purchases
-    - [ ] Handle recurring addons
-    - [ ] Manage addon expiration
-- [ ] StripeInvoiceService
-    - [ ] Sync Stripe invoices
+### Core Services 🔄
+- [x] StripeCustomerService
+    - [x] Create/update Stripe customers
+    - [x] Manage billing information
+    - [x] Handle customer deletion
+- [x] StripeSubscriptionService
+    - [x] Create/manage subscriptions
+    - [x] Handle plan changes
+    - [x] Process cancellations
+    - [x] Manage trial periods
+- [x] StripeAddonService
+    - [x] Process one-time purchases
+    - [x] Handle recurring addons
+    - [x] Manage addon expiration
+- [~] StripeInvoiceService
+    - [~] Sync Stripe invoices
     - [ ] Generate PDFs
-    - [ ] Handle payment status
+    - [~] Handle payment status
 
-## 4. API Endpoints
+## 4. API Endpoints 🔄
 
 ### Customer Management
 - [ ] POST /api/v1/billing/customers
@@ -154,16 +154,16 @@ app/Domain/Subscription/
 - [x] GET /api/v1/subscription-plans
     - [x] List available plans
     - [x] Include pricing and features
-- [ ] POST /api/v1/subscriptions
-    - [ ] Create new subscription
-    - [ ] Handle trial periods
-- [ ] PUT /api/v1/subscriptions/{id}
-    - [ ] Update subscription
-    - [ ] Change plans
-    - [ ] Modify billing cycle
-- [ ] DELETE /api/v1/subscriptions/{id}
-    - [ ] Cancel subscription
-    - [ ] Handle immediate/end-of-period
+- [x] POST /api/v1/subscriptions
+    - [x] Create new subscription
+    - [x] Handle trial periods
+- [x] PUT /api/v1/subscriptions/{id}
+    - [x] Update subscription
+    - [x] Change plans
+    - [x] Modify billing cycle
+- [x] DELETE /api/v1/subscriptions/{id}
+    - [x] Cancel subscription
+    - [x] Handle immediate/end-of-period
 
 ### Addon Management
 - [x] GET /api/v1/addon-packages
@@ -184,29 +184,29 @@ app/Domain/Subscription/
     - [x] Get invoice details
     - [x] Access PDF/hosted URL
 
-## 5. Webhook Handling
+## 5. Webhook Handling 🔄
 
 ### Required Webhooks
-- [ ] customer.subscription.created
-    - [ ] Create local subscription
-    - [ ] Set up trial period
-- [ ] customer.subscription.updated
-    - [ ] Update subscription status
-    - [ ] Handle plan changes
-- [ ] customer.subscription.deleted
-    - [ ] Mark subscription as cancelled
-    - [ ] Handle cleanup
-- [ ] invoice.created
-    - [ ] Create local invoice
-    - [ ] Set up payment tracking
-- [ ] invoice.paid
-    - [ ] Update invoice status
-    - [ ] Trigger post-payment actions
-- [ ] invoice.payment_failed
-    - [ ] Handle failed payments
-    - [ ] Send notifications
+- [x] customer.subscription.created
+    - [x] Create local subscription
+    - [x] Set up trial period
+- [x] customer.subscription.updated
+    - [x] Update subscription status
+    - [x] Handle plan changes
+- [x] customer.subscription.deleted
+    - [x] Mark subscription as cancelled
+    - [x] Handle cleanup
+- [x] invoice.created
+    - [x] Create local invoice
+    - [x] Set up payment tracking
+- [x] invoice.paid
+    - [x] Update invoice status
+    - [x] Trigger post-payment actions
+- [x] invoice.payment_failed
+    - [x] Handle failed payments
+    - [x] Send notifications
 
-## 6. Frontend Components
+## 6. Frontend Components 🔄
 
 ### Subscription Management
 1. Plan Selection
@@ -246,7 +246,7 @@ app/Domain/Subscription/
    - Access hosted invoice
    - Payment status
 
-## 7. Testing Strategy
+## 7. Testing Strategy 🔄
 
 ### Unit Tests
 1. Service Layer
@@ -281,7 +281,7 @@ app/Domain/Subscription/
    - Expiration handling
    - Recurring management
 
-## 8. Documentation
+## 8. Documentation 🔄
 
 ### API Documentation
 1. Endpoint Specifications
@@ -305,7 +305,7 @@ app/Domain/Subscription/
    - Purchase process
    - Usage instructions
 
-## 9. Deployment Checklist
+## 9. Deployment Checklist 🔄
 
 ### Pre-deployment
 1. Stripe Configuration

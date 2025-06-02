@@ -14,10 +14,23 @@ class PurchaseAddonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'billable_type'    => ['required', 'string'],
-            'billable_id'      => ['required', 'uuid'],
-            'addon_package_id' => ['required', 'uuid'],
-            'recurring'        => ['sometimes', 'boolean'],
+            'addonId'         => ['required', 'exists:addon_packages,id'],
+            'quantity'        => ['required', 'integer', 'min:1'],
+            'paymentMethodId' => ['required', 'string'],
+            'metadata'        => ['nullable', 'array'],
+            'metadata.*'      => ['string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'addonId.required'         => 'Please select an addon package.',
+            'addonId.exists'           => 'The selected addon package is invalid.',
+            'quantity.required'        => 'Please specify the quantity.',
+            'quantity.integer'         => 'The quantity must be a whole number.',
+            'quantity.min'             => 'The quantity must be at least 1.',
+            'paymentMethodId.required' => 'Please provide a payment method.',
         ];
     }
 }

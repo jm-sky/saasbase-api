@@ -2,9 +2,11 @@
 
 namespace App\Domain\Subscription\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Domain\Subscription\Enums\BillingInterval;
+use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreSubscriptionRequest extends FormRequest
+class StoreSubscriptionRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
@@ -14,10 +16,27 @@ class StoreSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'billable_type'        => ['required', 'string'],
-            'billable_id'          => ['required', 'uuid'],
-            'subscription_plan_id' => ['required', 'uuid'],
-            'payment_method'       => ['required', 'string'],
+            'planId'          => ['required', 'exists:subscription_plans,id'],
+            'billingInterval' => ['required', Rule::enum(BillingInterval::class)],
+            'paymentMethodId' => ['required', 'string'],
+            'trialEndsAt'     => ['nullable', 'date', 'after:now'],
+            'couponCode'      => ['nullable', 'string', 'max:50'],
+            'metadata'        => ['nullable', 'array'],
+            'metadata.*'      => ['string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'planId.required'          => 'Please select a subscription plan.',
+            'planId.exists'            => 'The selected plan is invalid.',
+            'billingInterval.required' => 'Please select a billing interval.',
+            'billingInterval.enum'     => 'The selected billing interval is invalid.',
+            'paymentMethodId.required' => 'Please provide a payment method.',
+            'trialEndsAt.date'         => 'The trial end date must be a valid date.',
+            'trialEndsAt.after'        => 'The trial end date must be in the future.',
+            'couponCode.max'           => 'The coupon code must not exceed 50 characters.',
         ];
     }
 }

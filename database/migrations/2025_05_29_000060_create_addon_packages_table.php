@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Subscription\Enums\AddonType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class() extends Migration {
             $table->string('name');
             $table->string('stripe_price_id')->index();
             $table->text('description');
-            $table->enum('type', ['one_time', 'recurring']);
+            $table->enum('type', array_map(fn (AddonType $type) => $type->value, AddonType::cases()));
             $table->decimal('price', 10, 2)->nullable();
             $table->timestamps();
         });
