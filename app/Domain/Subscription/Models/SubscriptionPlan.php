@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string                    $stripe_price_id
  * @property BillingInterval           $interval
  * @property float                     $price
+ * @property string                    $currency
+ * @property bool                      $is_active
  * @property Collection|Subscription[] $subscriptions
  * @property Collection|PlanFeature[]  $planFeatures
  */
@@ -31,8 +33,9 @@ class SubscriptionPlan extends BaseModel
     ];
 
     protected $casts = [
-        'price'    => 'float',
-        'interval' => BillingInterval::class,
+        'price'     => 'float',
+        'is_active' => 'boolean',
+        'interval'  => BillingInterval::class,
     ];
 
     public function subscriptions()
