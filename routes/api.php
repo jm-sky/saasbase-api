@@ -90,10 +90,4 @@ Route::prefix('v1')->group(function () {
         ->name('stripe.webhook')
         ->middleware('stripe.webhook')
     ;
-
-    // Subscription Checkout
-    Route::post('/subscription/checkout', App\Domain\Subscription\Controllers\SubscriptionCheckoutController::class)
-        ->middleware(['auth:sanctum'])
-        ->name('subscription.checkout')
-    ;
 });

@@ -11,6 +11,7 @@ use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
+use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -45,6 +46,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection|BankAccount[]      $bankAccounts
  * @property Collection|Media[]            $media
  * @property Collection|TenantInvitation[] $invitations
+ * @property BillingCustomer               $billingCustomer
  */
 class Tenant extends BaseModel implements HasMedia
 {
@@ -145,6 +147,11 @@ class Tenant extends BaseModel implements HasMedia
     public function publicProfile(): HasOne
     {
         return $this->hasOne(TenantPublicProfile::class);
+    }
+
+    public function billingCustomer(): HasOne
+    {
+        return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
     }
 
     protected static function booted()

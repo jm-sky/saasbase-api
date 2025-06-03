@@ -20,6 +20,11 @@ Route::prefix('subscriptions')->group(function () {
     Route::delete('/{id}', [SubscriptionController::class, 'destroy']);
 });
 
+// Subscription Checkout
+Route::post('/subscription/checkout', App\Domain\Subscription\Controllers\SubscriptionCheckoutController::class)
+    ->name('subscription.checkout')
+;
+
 Route::prefix('addon-packages')->group(function () {
     Route::get('/', [AddonPackageController::class, 'index']); // List available addons
     Route::get('/{id}', [AddonPackageController::class, 'show']); // Show pricing and details

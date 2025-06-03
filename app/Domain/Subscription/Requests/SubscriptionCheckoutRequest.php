@@ -22,9 +22,10 @@ class SubscriptionCheckoutRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'planId'     => ['required', 'exists:subscription_plans,id'],
-            'successUrl' => ['nullable', 'url'],
-            'cancelUrl'  => ['nullable', 'url'],
+            'billableType' => ['required', 'in:tenant,user'],
+            'planId'       => ['required', 'exists:subscription_plans,id'],
+            'successUrl'   => ['nullable', 'url'],
+            'cancelUrl'    => ['nullable', 'url'],
         ];
     }
 
