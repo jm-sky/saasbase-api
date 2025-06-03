@@ -19,7 +19,7 @@ return new class() extends Migration {
             $table->string('status')->default(SubscriptionInvoiceStatus::DRAFT->value);
             $table->string('hosted_invoice_url');
             $table->string('pdf_url');
-            $table->timestamp('issued_at');
+            $table->timestamp('issued_at')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
