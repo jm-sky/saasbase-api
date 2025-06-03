@@ -48,5 +48,5 @@ class PlanSeeder extends Seeder
         foreach ($plans as $plan) {
             SubscriptionPlan::create($plan);
         }
-     }
+    }
 }
