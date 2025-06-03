@@ -19,6 +19,9 @@ return new class() extends Migration {
             $table->string('stripe_price_id')->nullable()->index();
             $table->enum('interval', array_map(fn (BillingInterval $interval) => $interval->value, BillingInterval::cases()));
             $table->decimal('price', 10, 2);
+            $table->string('currency', 3)->default('PLN');
+            $table->unsignedTinyInteger('sort_order')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
