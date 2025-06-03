@@ -13,6 +13,7 @@ class SubscriptionPlanController extends Controller
     {
         $query = SubscriptionPlan::query()
             ->with(['planFeatures.feature'])
+            ->where('is_active', true)
             ->when($request->has('billing_interval'), function ($query) use ($request) {
                 $query->where('billing_interval', $request->billing_interval);
             })
