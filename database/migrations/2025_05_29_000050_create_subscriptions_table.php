@@ -16,8 +16,8 @@ return new class() extends Migration {
             $table->uuid('subscription_plan_id')->nullable()->index();
             $table->string('stripe_subscription_id')->index();
             $table->string('status');
-            $table->timestamp('current_period_start');
-            $table->timestamp('current_period_end');
+            $table->timestamp('current_period_start')->nullable();
+            $table->timestamp('current_period_end')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->boolean('cancel_at_period_end')->default(false);
             $table->timestamps();
