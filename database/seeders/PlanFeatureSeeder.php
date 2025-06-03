@@ -12,9 +12,32 @@ class PlanFeatureSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->seedFreePlan();
         $this->seedBasicPlan();
         $this->seedProPlan();
         $this->seedFullPlan();
+    }
+
+    private function seedFreePlan(): void
+    {
+        $plan = SubscriptionPlan::where('name', 'Free')->first();
+
+        if (!$plan) {
+            return;
+        }
+
+        $features = [
+            FeatureName::MAX_USERS->value               => '1',
+            FeatureName::STORAGE_GB->value              => '0.5',
+            FeatureName::MAX_INVOICES->value            => '3',
+            FeatureName::GUS_VIES_REQUESTS->value       => '10',
+            FeatureName::KSEF_INTEGRATION->value        => 'false',
+            FeatureName::EDORECZENIA_INTEGRATION->value => 'false',
+            FeatureName::UNLIMITED_GUS_VIES->value      => 'false',
+            FeatureName::AUTO_CONTRACTOR_LOGO->value    => 'false',
+        ];
+
+        $this->createPlanFeatures($plan, $features);
     }
 
     private function seedBasicPlan(): void
@@ -29,7 +52,7 @@ class PlanFeatureSeeder extends Seeder
             FeatureName::MAX_USERS->value               => '5',
             FeatureName::STORAGE_GB->value              => '1',
             FeatureName::MAX_INVOICES->value            => '10',
-            FeatureName::GUS_VIES_REQUESTS->value       => '5',
+            FeatureName::GUS_VIES_REQUESTS->value       => '25',
             FeatureName::KSEF_INTEGRATION->value        => 'false',
             FeatureName::EDORECZENIA_INTEGRATION->value => 'false',
             FeatureName::UNLIMITED_GUS_VIES->value      => 'false',
@@ -51,7 +74,7 @@ class PlanFeatureSeeder extends Seeder
             FeatureName::MAX_USERS->value               => '10',
             FeatureName::STORAGE_GB->value              => '10',
             FeatureName::MAX_INVOICES->value            => '100',
-            FeatureName::GUS_VIES_REQUESTS->value       => '10',
+            FeatureName::GUS_VIES_REQUESTS->value       => '100',
             FeatureName::KSEF_INTEGRATION->value        => 'true',
             FeatureName::EDORECZENIA_INTEGRATION->value => 'true',
             FeatureName::UNLIMITED_GUS_VIES->value      => 'false',
