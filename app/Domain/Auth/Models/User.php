@@ -115,7 +115,14 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         });
     }
 
-    protected function fullName(): Attribute
+    protected function tenantId(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->getTenantId(),
+        );
+    }
+
+    protected function name(): Attribute
     {
         return Attribute::make(
             get: fn ($value) => trim("{$this->first_name} {$this->last_name}"),

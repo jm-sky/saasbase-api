@@ -11,7 +11,6 @@ use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 
 class CustomTenantUserSeeder extends Seeder
 {
@@ -47,7 +46,7 @@ class CustomTenantUserSeeder extends Seeder
 
     public static function getSeedFilePath(): string
     {
-        return database_path("data/" . static::$seedFile);
+        return database_path('data/' . static::$seedFile);
     }
 
     protected function loadData(): void
@@ -81,9 +80,9 @@ class CustomTenantUserSeeder extends Seeder
         CreateTenantForNewUser::$BYPASSED = true;
 
         foreach ($users as $userData) {
-            $userPayload = collect($userData)->except(['relations', 'meta'])->toArray();
-            $user = User::create($userPayload);
-            $user->is_active = true;
+            $userPayload             = collect($userData)->except(['relations', 'meta'])->toArray();
+            $user                    = User::create($userPayload);
+            $user->is_active         = true;
             $user->email_verified_at = now();
             $user->save();
 
@@ -143,6 +142,7 @@ class CustomTenantUserSeeder extends Seeder
 
         try {
             $stream = $this->getCachedImageStream($logoUrl);
+
             if (!$stream) {
                 return;
             }
@@ -151,7 +151,8 @@ class CustomTenantUserSeeder extends Seeder
 
             $tenant->addMediaFromStream($stream)
                 ->usingFileName('logo.png')
-                ->toMediaCollection('logo');
+                ->toMediaCollection('logo')
+            ;
         } catch (\Exception $e) {
             $this->command->error("Error creating tenant logo: {$e->getMessage()}");
         }
@@ -165,6 +166,7 @@ class CustomTenantUserSeeder extends Seeder
 
         try {
             $stream = $this->getCachedImageStream($avatarUrl);
+
             if (!$stream) {
                 return;
             }
@@ -173,7 +175,8 @@ class CustomTenantUserSeeder extends Seeder
 
             $user->addMediaFromStream($stream)
                 ->usingFileName('profile.png')
-                ->toMediaCollection('profile');
+                ->toMediaCollection('profile')
+            ;
         } catch (\Exception $e) {
             $this->command->error("Error creating user avatar: {$e->getMessage()}");
         }
@@ -182,8 +185,8 @@ class CustomTenantUserSeeder extends Seeder
     protected function createContractors(array $contractors): void
     {
         foreach ($contractors as $contractorData) {
-            $tenantId = Arr::get($contractorData, 'tenant_id');
-            $addresses = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $tenantId     = Arr::get($contractorData, 'tenant_id');
+            $addresses    = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
             $bankAccounts = collect(Arr::get($contractorData, 'relations.bankAccounts', []))->map(fn ($bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             Tenant::bypassTenant($tenantId, function () use ($contractorData, $addresses, $bankAccounts) {
@@ -203,6 +206,7 @@ class CustomTenantUserSeeder extends Seeder
 
         try {
             $stream = $this->getCachedImageStream($logoUrl);
+
             if (!$stream) {
                 return;
             }
@@ -211,7 +215,8 @@ class CustomTenantUserSeeder extends Seeder
 
             $contractor->addMediaFromStream($stream)
                 ->usingFileName('logo.png')
-                ->toMediaCollection('logo');
+                ->toMediaCollection('logo')
+            ;
         } catch (\Exception $e) {
             $this->command->error("Error creating contractor logo: {$e->getMessage()}");
         }
@@ -220,6 +225,7 @@ class CustomTenantUserSeeder extends Seeder
     private function getCachedImageStream(string $url): mixed
     {
         $cacheDir = storage_path('app/seeder_cache');
+
         if (!is_dir($cacheDir)) {
             mkdir($cacheDir, 0775, true);
         }
@@ -231,6 +237,7 @@ class CustomTenantUserSeeder extends Seeder
         if (!file_exists($filepath)) {
             try {
                 $contents = file_get_contents($url);
+
                 if (!$contents) {
                     return null;
                 }
@@ -238,6 +245,7 @@ class CustomTenantUserSeeder extends Seeder
                 file_put_contents($filepath, $contents);
             } catch (\Exception $e) {
                 $this->command->error("Failed to download image from URL: {$url} ({$e->getMessage()})");
+
                 return null;
             }
         }
