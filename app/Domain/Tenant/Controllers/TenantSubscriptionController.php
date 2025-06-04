@@ -5,14 +5,15 @@ namespace App\Domain\Tenant\Controllers;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Media;
 use App\Domain\Subscription\Enums\FeatureName;
+use App\Domain\Subscription\Resources\SubscriptionPlanResource;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Resources\TenantQuotaResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class TenantQuotaController extends Controller
+class TenantSubscriptionController extends Controller
 {
-    public function __invoke()
+    public function quota(): TenantQuotaResource
     {
         /** @var User $user */
         $user     = Auth::user();
@@ -20,6 +21,16 @@ class TenantQuotaController extends Controller
         $tenant   = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
 
         return new TenantQuotaResource($this->calculateQuota($tenant));
+    }
+
+    public function currentPlan(): SubscriptionPlanResource
+    {
+        /** @var User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+        $tenant   = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
+
+        return new SubscriptionPlanResource($tenant->subscription->plan);
     }
 
     /**

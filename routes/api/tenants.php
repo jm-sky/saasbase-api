@@ -9,7 +9,7 @@ use App\Domain\Tenant\Controllers\TenantBrandingController;
 use App\Domain\Tenant\Controllers\TenantController;
 use App\Domain\Tenant\Controllers\TenantLogoController;
 use App\Domain\Tenant\Controllers\TenantPublicProfileController;
-use App\Domain\Tenant\Controllers\TenantQuotaController;
+use App\Domain\Tenant\Controllers\TenantSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->group(function () {
@@ -64,5 +64,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::get('tenants/{tenant}/logs', [TenantActivityLogController::class, 'index']);
 
-    Route::get('tenants/{tenant}/quota', TenantQuotaController::class)->name('tenants.quota');
+    Route::get('tenants/{tenant}/quota', [TenantSubscriptionController::class, 'quota'])->name('tenants.quota');
+    Route::get('tenants/{tenant}/current-plan', [TenantSubscriptionController::class, 'currentPlan'])->name('tenants.currentPlan');
 });
