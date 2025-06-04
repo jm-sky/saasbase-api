@@ -2,6 +2,7 @@
 
 namespace App\Domain\Subscription\Resources;
 
+use App\Domain\Billing\Resources\BillingPriceResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,17 +19,14 @@ class SubscriptionPlanResource extends JsonResource
             'id'              => $this->id,
             'name'            => $this->name,
             'description'     => $this->description,
-            'price'           => $this->price,
-            'billingInterval' => $this->interval,
             'stripeProductId' => $this->stripe_product_id,
-            'stripePriceId'   => $this->stripe_price_id,
+            'prices'          => BillingPriceResource::collection($this->whenLoaded('prices')),
             'features'        => $this->whenLoaded('planFeatures', function () {
                 return PlanFeatureResource::collection($this->planFeatures);
             }),
-            'currency'  => 'PLN',
-            'isCurrent' => false,
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
+            'isActive'        => $this->is_active,
+            'createdAt'       => $this->created_at,
+            'updatedAt'       => $this->updated_at,
         ];
     }
 }

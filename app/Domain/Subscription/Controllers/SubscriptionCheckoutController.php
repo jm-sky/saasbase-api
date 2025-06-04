@@ -3,6 +3,8 @@
 namespace App\Domain\Subscription\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Billing\Models\BillingPrice;
+use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Subscription\Requests\SubscriptionCheckoutRequest;
 use App\Domain\Subscription\Resources\SubscriptionCheckoutResource;
@@ -29,23 +31,13 @@ class SubscriptionCheckoutController
         $tenantId        = $user->tenant_id;
         $tenant          = Tenant::findOrFail($tenantId);
         $plan            = SubscriptionPlan::findOrFail($request->planId);
-        $billingCustomer = $tenant->billingCustomer;
-
-        if (!$billingCustomer && 'tenant' === $request->billableType) {
-            $billingCustomer = $this->stripeCustomerService->createCustomer($tenant, [
-                'email' => $tenant->email ?? $user->email,
-                'name'  => $tenant->name ?? $user->name,
-            ]);
-        } elseif (!$billingCustomer && 'user' === $request->billableType) {
-            $billingCustomer = $this->stripeCustomerService->createCustomer($user, [
-                'email' => $user->email,
-                'name'  => $user->name,
-            ]);
-        }
+        $price           = $this->provideBillingPrice($plan, $request->priceId);
+        $billingCustomer = $this->provideBillingCustomer($user, $tenant, $request->billableType);
 
         $checkoutData = $this->stripeSubscriptionService->createCheckoutSession(
             $billingCustomer,
             $plan,
+            $price,
             [
                 'success_url' => $request->successUrl,
                 'cancel_url'  => $request->cancelUrl,
@@ -53,5 +45,33 @@ class SubscriptionCheckoutController
         );
 
         return new SubscriptionCheckoutResource($checkoutData);
+    }
+
+    protected function provideBillingCustomer(User $user, Tenant $tenant, string $billableType): BillingCustomer
+    {
+        $billingCustomer = null;
+
+        if (!$billingCustomer && 'tenant' === $billableType) {
+            $billingCustomer = $this->stripeCustomerService->createCustomer($tenant, [
+                'email' => $tenant->email ?? $user->email,
+                'name'  => $tenant->name ?? $user->name,
+            ]);
+        } elseif (!$billingCustomer && 'user' === $billableType) {
+            $billingCustomer = $this->stripeCustomerService->createCustomer($user, [
+                'email' => $user->email,
+                'name'  => $user->name,
+            ]);
+        }
+
+        return $billingCustomer;
+    }
+
+    protected function provideBillingPrice(SubscriptionPlan $plan, string $priceId): BillingPrice
+    {
+        return $plan->prices()
+            ->where('id', $priceId)
+            ->where('is_active', true)
+            ->firstOrFail()
+        ;
     }
 }

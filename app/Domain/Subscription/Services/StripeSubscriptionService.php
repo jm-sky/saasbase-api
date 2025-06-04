@@ -2,6 +2,7 @@
 
 namespace App\Domain\Subscription\Services;
 
+use App\Domain\Billing\Models\BillingPrice;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
@@ -236,15 +237,16 @@ class StripeSubscriptionService extends StripeService
     public function createCheckoutSession(
         BillingCustomer $billingCustomer,
         SubscriptionPlan $plan,
+        BillingPrice $price,
         array $options = []
     ): array {
-        return $this->handleStripeException(function () use ($billingCustomer, $plan, $options) {
+        return $this->handleStripeException(function () use ($billingCustomer, $plan, $price, $options) {
             $checkoutData = [
                 'customer'   => $billingCustomer->stripe_customer_id,
                 'mode'       => 'subscription',
                 'line_items' => [
                     [
-                        'price'    => $plan->stripe_price_id,
+                        'price'    => $price->stripe_price_id,
                         'quantity' => 1,
                     ],
                 ],

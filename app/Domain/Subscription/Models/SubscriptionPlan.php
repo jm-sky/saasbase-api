@@ -2,24 +2,23 @@
 
 namespace App\Domain\Subscription\Models;
 
+use App\Domain\Billing\Models\BillingPrice;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Subscription\Enums\BillingInterval;
 use App\Domain\Subscription\Enums\FeatureName;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property string                    $id
  * @property string                    $name
  * @property ?string                   $description
  * @property string                    $stripe_product_id
- * @property string                    $stripe_price_id
- * @property BillingInterval           $interval
- * @property float                     $price
- * @property string                    $currency
  * @property bool                      $is_active
  * @property Collection|Subscription[] $subscriptions
  * @property Collection|PlanFeature[]  $planFeatures
+ * @property Collection|BillingPrice[] $prices
  */
 class SubscriptionPlan extends BaseModel
 {
@@ -27,15 +26,11 @@ class SubscriptionPlan extends BaseModel
         'name',
         'description',
         'stripe_product_id',
-        'stripe_price_id',
-        'interval',
-        'price',
+        'is_active',
     ];
 
     protected $casts = [
-        'price'     => 'float',
         'is_active' => 'boolean',
-        'interval'  => BillingInterval::class,
     ];
 
     public function subscriptions()
@@ -46,6 +41,11 @@ class SubscriptionPlan extends BaseModel
     public function planFeatures(): HasMany
     {
         return $this->hasMany(PlanFeature::class);
+    }
+
+    public function prices(): MorphMany
+    {
+        return $this->morphMany(BillingPrice::class, 'priceable');
     }
 
     public function getFeature(FeatureName $feature)
@@ -96,18 +96,12 @@ class SubscriptionPlan extends BaseModel
         ;
     }
 
-    public function isMonthly(): bool
+    public function getPriceForInterval(BillingInterval $interval): ?BillingPrice
     {
-        return BillingInterval::MONTHLY === $this->interval;
-    }
-
-    public function isQuarterly(): bool
-    {
-        return BillingInterval::QUARTERLY === $this->interval;
-    }
-
-    public function isYearly(): bool
-    {
-        return BillingInterval::YEARLY === $this->interval;
+        return $this->prices()
+            ->where('billing_period', $interval->value)
+            ->where('is_active', true)
+            ->first()
+        ;
     }
 }
