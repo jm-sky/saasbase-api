@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property string                    $stripe_product_id
  * @property bool                      $is_active
  * @property Collection|Subscription[] $subscriptions
- * @property Collection|PlanFeature[]  $planFeatures
+ * @property Collection|PlanFeature[]  $features
  * @property Collection|BillingPrice[] $prices
  */
 class SubscriptionPlan extends BaseModel
@@ -38,7 +38,7 @@ class SubscriptionPlan extends BaseModel
         return $this->hasMany(Subscription::class, 'subscription_plan_id');
     }
 
-    public function planFeatures(): HasMany
+    public function features(): HasMany
     {
         return $this->hasMany(PlanFeature::class);
     }
@@ -50,7 +50,7 @@ class SubscriptionPlan extends BaseModel
 
     public function getFeature(FeatureName $feature)
     {
-        $planFeature = $this->planFeatures()
+        $planFeature = $this->features()
             ->whereHas('feature', function ($query) use ($feature) {
                 $query->where('name', $feature->value);
             })
@@ -62,7 +62,7 @@ class SubscriptionPlan extends BaseModel
 
     public function hasFeature(FeatureName $feature): bool
     {
-        return $this->planFeatures()
+        return $this->features()
             ->whereHas('feature', function ($query) use ($feature) {
                 $query->where('name', $feature->value);
             })
@@ -78,7 +78,7 @@ class SubscriptionPlan extends BaseModel
             throw new \InvalidArgumentException("Feature {$feature->value} does not exist");
         }
 
-        $this->planFeatures()->updateOrCreate(
+        $this->features()->updateOrCreate(
             ['feature_id' => $featureModel->id],
             ['value' => $value]
         );
@@ -86,7 +86,7 @@ class SubscriptionPlan extends BaseModel
 
     public function getAllFeatures(): array
     {
-        return $this->planFeatures()
+        return $this->features()
             ->with('feature')
             ->get()
             ->mapWithKeys(function ($planFeature) {

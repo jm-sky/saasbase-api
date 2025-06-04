@@ -6,11 +6,14 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
+use App\Domain\Subscription\Enums\SubscriptionStatus;
+use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class CustomTenantUserSeeder extends Seeder
 {
@@ -67,6 +70,15 @@ class CustomTenantUserSeeder extends Seeder
             Tenant::bypassTenant($tenant->id, function () use ($tenant, $addresses, $bankAccounts) {
                 $tenant->addresses()->createMany($addresses);
                 $tenant->bankAccounts()->createMany($bankAccounts);
+                $tenant->subscription()->create([
+                    'id'                     => (string) Str::uuid(),
+                    'subscription_plan_id'   => SubscriptionPlan::where('name', 'Free')->firstOrFail()->id,
+                    'stripe_subscription_id' => null,
+                    'status'                 => SubscriptionStatus::ACTIVE,
+                    'current_period_start'   => now(),
+                    'current_period_end'     => now()->addYear(),
+                    'cancel_at_period_end'   => false,
+                ]);
             });
 
             $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));

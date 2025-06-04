@@ -12,7 +12,7 @@ class SubscriptionPlanController extends Controller
     public function index(Request $request)
     {
         $query = SubscriptionPlan::query()
-            ->with(['planFeatures.feature', 'prices'])
+            ->with(['features.feature', 'prices'])
             ->where('is_active', true)
             ->when($request->has('billing_period'), function ($query) use ($request) {
                 $query->whereHas('prices', function ($q) use ($request) {
@@ -38,7 +38,7 @@ class SubscriptionPlanController extends Controller
 
     public function show(string $id)
     {
-        $plan = SubscriptionPlan::with(['planFeatures.feature', 'prices'])
+        $plan = SubscriptionPlan::with(['features.feature', 'prices'])
             ->findOrFail($id)
         ;
 

@@ -14,7 +14,7 @@ return new class() extends Migration {
             $table->uuid('id')->primary();
             $table->uuidMorphs('billable');
             $table->uuid('subscription_plan_id')->nullable()->index();
-            $table->string('stripe_subscription_id')->index();
+            $table->string('stripe_subscription_id')->nullable()->index();
             $table->string('status');
             $table->timestamp('current_period_start')->nullable();
             $table->timestamp('current_period_end')->nullable();

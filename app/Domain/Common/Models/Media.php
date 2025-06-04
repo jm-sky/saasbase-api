@@ -39,4 +39,13 @@ class Media extends MediaLibraryMedia
     protected $fillable = [
         'tenant_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (self $media) {
+            $media->tenant_id = $media->model->tenant_id ?? null;
+        });
+    }
 }

@@ -1,5 +1,12 @@
 <?php
 
+use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\Media;
+use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\Models\Task;
+use App\Domain\Tenant\Models\Tenant;
+
 return [
     /*
      * The disk on which to store added files and derived images by default. Choose
@@ -38,7 +45,7 @@ return [
     /*
      * The fully qualified class name of the media model.
      */
-    'media_model' => App\Domain\Common\Models\Media::class,
+    'media_model' => Media::class,
 
     /*
      * The fully qualified class name of the media observer.
@@ -80,7 +87,7 @@ return [
     /*
      * The class that contains the strategy for determining a media file's path.
      */
-    'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
+    'path_generator' => App\Domain\Common\Support\DefaultMediaPathGenerator::class,
 
     /*
      * The class that contains the strategy for determining how to remove files.
@@ -94,6 +101,11 @@ return [
         // Model::class => PathGenerator::class
         // or
         // 'model_morph_alias' => PathGenerator::class
+        User::class       => App\Domain\Common\Support\UserMediaPathGenerator::class,
+        Tenant::class     => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Contractor::class => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Project::class    => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Task::class       => App\Domain\Common\Support\TenantMediaPathGenerator::class,
     ],
 
     /*
