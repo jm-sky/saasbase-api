@@ -21,8 +21,8 @@ class SubscriptionPlanResource extends JsonResource
             'description'     => $this->description,
             'stripeProductId' => $this->stripe_product_id,
             'prices'          => BillingPriceResource::collection($this->whenLoaded('prices')),
-            'features'        => $this->whenLoaded('planFeatures', function () {
-                return PlanFeatureResource::collection($this->planFeatures);
+            'features'        => $this->whenLoaded('features', function () {
+                return PlanFeatureResource::collection($this->features);
             }),
             'isActive'        => $this->is_active,
             'createdAt'       => $this->created_at,

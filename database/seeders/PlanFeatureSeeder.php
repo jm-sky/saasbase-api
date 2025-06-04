@@ -28,7 +28,7 @@ class PlanFeatureSeeder extends Seeder
 
         $features = [
             FeatureName::MAX_USERS->value               => '1',
-            FeatureName::STORAGE_GB->value              => '0.5',
+            FeatureName::STORAGE_MB->value              => '500',
             FeatureName::MAX_INVOICES->value            => '3',
             FeatureName::GUS_VIES_REQUESTS->value       => '10',
             FeatureName::KSEF_INTEGRATION->value        => 'false',
@@ -50,7 +50,7 @@ class PlanFeatureSeeder extends Seeder
 
         $features = [
             FeatureName::MAX_USERS->value               => '5',
-            FeatureName::STORAGE_GB->value              => '1',
+            FeatureName::STORAGE_MB->value              => '1000',
             FeatureName::MAX_INVOICES->value            => '10',
             FeatureName::GUS_VIES_REQUESTS->value       => '25',
             FeatureName::KSEF_INTEGRATION->value        => 'false',
@@ -72,7 +72,7 @@ class PlanFeatureSeeder extends Seeder
 
         $features = [
             FeatureName::MAX_USERS->value               => '10',
-            FeatureName::STORAGE_GB->value              => '10',
+            FeatureName::STORAGE_MB->value              => '10000',
             FeatureName::MAX_INVOICES->value            => '100',
             FeatureName::GUS_VIES_REQUESTS->value       => '100',
             FeatureName::KSEF_INTEGRATION->value        => 'true',
@@ -94,7 +94,7 @@ class PlanFeatureSeeder extends Seeder
 
         $features = [
             FeatureName::MAX_USERS->value               => 'unlimited',
-            FeatureName::STORAGE_GB->value              => '100',
+            FeatureName::STORAGE_MB->value              => '100000',
             FeatureName::MAX_INVOICES->value            => 'unlimited',
             FeatureName::GUS_VIES_REQUESTS->value       => 'unlimited',
             FeatureName::KSEF_INTEGRATION->value        => 'true',

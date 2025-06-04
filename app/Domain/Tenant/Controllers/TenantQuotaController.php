@@ -2,40 +2,56 @@
 
 namespace App\Domain\Tenant\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Auth\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Domain\Common\Models\Media;
 use App\Domain\Subscription\Enums\FeatureName;
+use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Resources\TenantQuotaResource;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class TenantQuotaController extends Controller
 {
     public function __invoke()
     {
         /** @var User $user */
-        $user = Auth::user();
-
+        $user     = Auth::user();
         $tenantId = $user->getTenantId();
+        $tenant   = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
 
-        $tenant = Tenant::with('subscriptionPlan.features')->findOrFail($tenantId);
+        return new TenantQuotaResource($this->calculateQuota($tenant));
+    }
 
-        $usedStorageBytes = Media::where('tenant_id', $tenantId)->sum('size');
-        $usedStorageGB = round($usedStorageBytes / 1024 / 1024 / 1024, 2);
+    /**
+     * Calculate tenant quota usage and limits.
+     *
+     * @return array{usedStorageGb: float, availableStorageGb: float, usedUsers: int, availableUsers: int|string}
+     */
+    private function calculateQuota(Tenant $tenant): array
+    {
+        $usedStorageBytes = Media::where('tenant_id', $tenant->id)->sum('size');
+        $usedStorageMB    = round($usedStorageBytes / 1024 / 1024, 2);
+        $usedUsers        = $tenant->users()->count();
 
-        $usedUsers = $tenant->users()->count();
+        $features   = $tenant->subscription?->plan?->features->pluck('value', 'feature.name');
+        $maxUsers   = $this->parseLimit($features[FeatureName::MAX_USERS->value] ?? '0');
+        $maxStorage = (float) ($features[FeatureName::STORAGE_MB->value] ?? 0);
 
-        $features = $tenant->subscriptionPlan->features->pluck('pivot.value', 'name');
-
-        $maxUsers = $this->parseLimit($features[FeatureName::MAX_USERS->value] ?? '0');
-        $maxStorage = (float) ($features[FeatureName::STORAGE_GB->value] ?? 0);
-
-        return response()->json([
-            'usedStorageGb'      => $usedStorageGB,
-            'availableStorageGb' => $maxStorage,
-            'usedUsers'          => $usedUsers,
-            'availableUsers'     => $maxUsers,
-        ]);
+        return [
+            'storage' => [
+                'used'      => $usedStorageMB,
+                'total'     => $maxStorage,
+                'unit'      => 'MB',
+            ],
+            'users' => [
+                'used'      => $usedUsers,
+                'total'     => $maxUsers,
+            ],
+            'apiCalls' => [
+                'used'      => 0,
+                'total'     => 10000,
+            ],
+        ];
     }
 
     private function parseLimit(string $value): int|string

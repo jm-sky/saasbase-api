@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string     $description
  * @property string     $type
  * @property string     $default_value
- * @property Collection $planFeatures
+ * @property Collection $features
  */
 class Feature extends BaseModel
 {
@@ -23,7 +23,7 @@ class Feature extends BaseModel
         'default_value',
     ];
 
-    public function planFeatures(): HasMany
+    public function features(): HasMany
     {
         return $this->hasMany(PlanFeature::class);
     }

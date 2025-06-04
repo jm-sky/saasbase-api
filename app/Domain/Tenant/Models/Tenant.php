@@ -12,6 +12,7 @@ use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Subscription\Models\BillingCustomer;
+use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -152,6 +153,11 @@ class Tenant extends BaseModel implements HasMedia
     public function billingCustomer(): HasOne
     {
         return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
+    }
+
+    public function subscription(): MorphOne
+    {
+        return $this->morphOne(Subscription::class, 'billable');
     }
 
     protected static function booted()
