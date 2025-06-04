@@ -16,65 +16,6 @@ class CustomTenantUserSeeder extends Seeder
 {
     protected static string $seedFile = '_custom.json';
 
-    /**
-     * @var array{
-     *     tenants?: array<array{
-     *         id: string,
-     *         name: string,
-     *         relations?: array{
-     *             addresses?: array<array{
-     *                 street: string,
-     *                 city: string,
-     *                 country: string,
-     *                 postal_code: string
-     *             }>,
-     *             bankAccounts?: array<array{
-     *                 iban: string,
-     *                 bank_name: string
-     *             }>
-     *         },
-     *         meta?: array{
-     *             logoUrl?: string
-     *         }
-     *     }>,
-     *     users?: array<array{
-     *         first_name: string,
-     *         last_name: string,
-     *         email: string,
-     *         password: string,
-     *         phone?: string,
-     *         relations?: array{
-     *             tenant?: array{
-     *                 id: string,
-     *                 role?: string,
-     *                 isOwner?: bool
-     *             }
-     *         },
-     *         meta?: array{
-     *             avatarUrl?: string
-     *         }
-     *     }>,
-     *     contractors?: array<array{
-     *         tenant_id: string,
-     *         name: string,
-     *         relations?: array{
-     *             addresses?: array<array{
-     *                 street: string,
-     *                 city: string,
-     *                 country: string,
-     *                 postal_code: string
-     *             }>,
-     *             bankAccounts?: array<array{
-     *                 iban: string,
-     *                 bank_name: string
-     *             }>
-     *         },
-     *         meta?: array{
-     *             logoUrl?: string
-     *         }
-     *     }>
-     * }
-     */
     protected array $data = [];
 
     protected array $tenants = [];
@@ -105,9 +46,7 @@ class CustomTenantUserSeeder extends Seeder
 
     public static function getSeedFilePath(): string
     {
-        $file = static::$seedFile;
-
-        return database_path("data/{$file}");
+        return database_path('data/' . static::$seedFile);
     }
 
     protected function loadData(): void
@@ -120,8 +59,8 @@ class CustomTenantUserSeeder extends Seeder
         foreach ($tenants as $tenantInput) {
             $tenantId     = Arr::get($tenantInput, 'id');
             $tenantData   = collect($tenantInput)->except(['relations', 'meta'])->toArray();
-            $addresses    = collect(Arr::get($tenantInput, 'relations.addresses', []))->map(fn (array $address) => [...$address, 'tenant_id' => $tenantId])->toArray();
-            $bankAccounts = collect(Arr::get($tenantInput, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
+            $addresses    = collect(Arr::get($tenantInput, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $bankAccounts = collect(Arr::get($tenantInput, 'relations.bankAccounts', []))->map(fn ($bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             $tenant = Tenant::create($tenantData);
 
@@ -130,7 +69,7 @@ class CustomTenantUserSeeder extends Seeder
                 $tenant->bankAccounts()->createMany($bankAccounts);
             });
 
-            $this->createTenantLogo($tenant, Arr::get($tenantData, 'meta.logoUrl'));
+            $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));
 
             $this->tenants[$tenant->id] = $tenant;
         }
@@ -165,8 +104,7 @@ class CustomTenantUserSeeder extends Seeder
         $role     = Arr::get($tenantData, 'role') ?? UserTenantRole::User->value;
         $isOwner  = Arr::get($tenantData, 'isOwner') ?? false;
 
-        /** @var ?Tenant $tenant */
-        $tenant = Arr::get($this->tenants, $tenantId);
+        $tenant = $this->tenants[$tenantId] ?? null;
 
         if (!$tenant) {
             return;
@@ -186,12 +124,14 @@ class CustomTenantUserSeeder extends Seeder
             return;
         }
 
-        $skills = collect($skills)->map(fn (array $skill) => [
-            'user_id'     => $user->id,
-            'skill_id'    => Skill::firstOrCreate(['name' => $skill['name']])->id,
-            'level'       => $skill['level'] ?? 3,
-            'acquired_at' => $skill['acquired_at'] ?? now(),
-        ])->each(fn (array $skill) => UserSkill::create($skill));
+        collect($skills)->each(function (array $skill) use ($user) {
+            UserSkill::create([
+                'user_id'     => $user->id,
+                'skill_id'    => Skill::firstOrCreate(['name' => $skill['name']])->id,
+                'level'       => $skill['level'] ?? 3,
+                'acquired_at' => $skill['acquired_at'] ?? now(),
+            ]);
+        });
     }
 
     protected function createTenantLogo(Tenant $tenant, ?string $logoUrl = null): void
@@ -201,7 +141,12 @@ class CustomTenantUserSeeder extends Seeder
         }
 
         try {
-            $stream = fopen($logoUrl, 'r');
+            $stream = $this->getCachedImageStream($logoUrl);
+
+            if (!$stream) {
+                return;
+            }
+
             $tenant->clearMediaCollection('logo');
 
             $tenant->addMediaFromStream($stream)
@@ -210,8 +155,6 @@ class CustomTenantUserSeeder extends Seeder
             ;
         } catch (\Exception $e) {
             $this->command->error("Error creating tenant logo: {$e->getMessage()}");
-
-            return;
         }
     }
 
@@ -222,7 +165,12 @@ class CustomTenantUserSeeder extends Seeder
         }
 
         try {
-            $stream = fopen($avatarUrl, 'r');
+            $stream = $this->getCachedImageStream($avatarUrl);
+
+            if (!$stream) {
+                return;
+            }
+
             $user->clearMediaCollection('profile');
 
             $user->addMediaFromStream($stream)
@@ -231,24 +179,21 @@ class CustomTenantUserSeeder extends Seeder
             ;
         } catch (\Exception $e) {
             $this->command->error("Error creating user avatar: {$e->getMessage()}");
-
-            return;
         }
     }
 
     protected function createContractors(array $contractors): void
     {
-        foreach ($contractors as $contractor) {
-            $tenantId       = Arr::get($contractor, 'tenant_id');
-            $contractorData = collect($contractor)->except(['relations', 'meta'])->toArray();
-            $addresses      = collect(Arr::get($contractor, 'relations.addresses', []))->map(fn (array $address) => [...$address, 'tenant_id' => $tenantId])->toArray();
-            $bankAccounts   = collect(Arr::get($contractor, 'relations.bankAccounts', []))->map(fn (array $bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
+        foreach ($contractors as $contractorData) {
+            $tenantId     = Arr::get($contractorData, 'tenant_id');
+            $addresses    = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $bankAccounts = collect(Arr::get($contractorData, 'relations.bankAccounts', []))->map(fn ($bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             Tenant::bypassTenant($tenantId, function () use ($contractorData, $addresses, $bankAccounts) {
-                $contractor = Contractor::create($contractorData);
+                $contractor = Contractor::create(collect($contractorData)->except(['relations', 'meta'])->toArray());
                 $contractor->addresses()->createMany($addresses);
                 $contractor->bankAccounts()->createMany($bankAccounts);
-                $this->createContractorLogo($contractor, Arr::get($contractor, 'meta.logoUrl'));
+                $this->createContractorLogo($contractor, Arr::get($contractorData, 'meta.logoUrl'));
             });
         }
     }
@@ -260,7 +205,12 @@ class CustomTenantUserSeeder extends Seeder
         }
 
         try {
-            $stream = fopen($logoUrl, 'r');
+            $stream = $this->getCachedImageStream($logoUrl);
+
+            if (!$stream) {
+                return;
+            }
+
             $contractor->clearMediaCollection('logo');
 
             $contractor->addMediaFromStream($stream)
@@ -269,8 +219,37 @@ class CustomTenantUserSeeder extends Seeder
             ;
         } catch (\Exception $e) {
             $this->command->error("Error creating contractor logo: {$e->getMessage()}");
-
-            return;
         }
+    }
+
+    private function getCachedImageStream(string $url): mixed
+    {
+        $cacheDir = storage_path('app/seeder_cache');
+
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0775, true);
+        }
+
+        $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'png';
+        $filename  = md5($url) . '.' . $extension;
+        $filepath  = $cacheDir . '/' . $filename;
+
+        if (!file_exists($filepath)) {
+            try {
+                $contents = file_get_contents($url);
+
+                if (!$contents) {
+                    return null;
+                }
+
+                file_put_contents($filepath, $contents);
+            } catch (\Exception $e) {
+                $this->command->error("Failed to download image from URL: {$url} ({$e->getMessage()})");
+
+                return null;
+            }
+        }
+
+        return fopen($filepath, 'r');
     }
 }

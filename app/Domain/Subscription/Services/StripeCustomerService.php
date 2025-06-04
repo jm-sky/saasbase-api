@@ -37,6 +37,8 @@ class StripeCustomerService extends StripeService
             // Create local billing customer record
             $billingCustomer = new BillingCustomer([
                 'stripe_customer_id' => $stripeCustomer->id,
+                'billable_type'      => get_class($billable),
+                'billable_id'        => $billable->id,
             ]);
 
             $billable->billingCustomer()->save($billingCustomer);

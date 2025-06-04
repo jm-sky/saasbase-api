@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Domain\Bank\Models\Bank;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class BankSeeder extends Seeder
 {
@@ -20,15 +22,22 @@ class BankSeeder extends Seeder
 
         $banks = json_decode(File::get($jsonPath), true);
 
-        foreach ($banks as $bank) {
-            Bank::create([
+        collect($banks)
+            ->map(fn ($bank) => [
+                'id'           => Str::uuid(),
                 'country'      => 'PL',
                 'bank_name'    => $bank['name'],
                 'branch_name'  => $bank['branch_name'] ?? null,
                 'bank_code'    => substr($bank['routing_code'], 0, 4),
                 'routing_code' => $bank['routing_code'],
                 'swift'        => $bank['swift'] ?? null,
-            ]);
-        }
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ])
+            ->chunk(100)
+            ->each(function (Collection $chunk) {
+                Bank::insert($chunk->all());
+            })
+        ;
     }
 }

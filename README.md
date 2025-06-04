@@ -126,6 +126,11 @@ For Task Master integration with Cursor, you need to:
 
 Required API keys depend on which AI model you're using with Task Master. Currently configured for OpenRouter.
 
+### Testing Stripe in local mode
+
+1. Install [Stripe CLI](https://github.com/stripe/stripe-cli)
+2. Run `stripe listen --forward-to localhost:8989/api/v1/stripe/webhook` in terminal
+
 ---
 
 ## License
