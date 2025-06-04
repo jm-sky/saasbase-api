@@ -129,7 +129,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         );
     }
 
-
     protected function fullName(): Attribute
     {
         return Attribute::make(
