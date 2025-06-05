@@ -7,6 +7,7 @@ use App\Domain\Tenant\Controllers\TenantAttachmentsController;
 use App\Domain\Tenant\Controllers\TenantBankAccountController;
 use App\Domain\Tenant\Controllers\TenantBrandingController;
 use App\Domain\Tenant\Controllers\TenantController;
+use App\Domain\Tenant\Controllers\TenantIntegrationController;
 use App\Domain\Tenant\Controllers\TenantLogoController;
 use App\Domain\Tenant\Controllers\TenantPublicProfileController;
 use App\Domain\Tenant\Controllers\TenantSubscriptionController;
@@ -66,4 +67,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::get('tenants/{tenant}/quota', [TenantSubscriptionController::class, 'quota'])->name('tenants.quota');
     Route::get('tenants/{tenant}/current-plan', [TenantSubscriptionController::class, 'currentPlan'])->name('tenants.currentPlan');
+
+    Route::apiResource('tenants/{tenant}/integrations', TenantIntegrationController::class)->names('tenants.integrations');
 });
