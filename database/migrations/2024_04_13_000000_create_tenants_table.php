@@ -9,7 +9,7 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('tenants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('vat_id', DatabaseColumnLength::VAT_ID)->nullable();
@@ -20,7 +20,7 @@ return new class() extends Migration {
             $table->string('website', DatabaseColumnLength::WEBSITE)->nullable();
             $table->string('country', DatabaseColumnLength::COUNTRY)->nullable();
             $table->string('description')->nullable();
-            $table->foreignUuid('owner_id')->nullable()->constrained('users');
+            $table->foreignUlid('owner_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
 

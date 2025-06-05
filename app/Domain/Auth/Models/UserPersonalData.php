@@ -2,14 +2,11 @@
 
 namespace App\Domain\Auth\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserPersonalData extends Model
+class UserPersonalData extends BaseModel
 {
-    use HasUuids;
-
     protected $fillable = [
         'user_id',
         'gender',

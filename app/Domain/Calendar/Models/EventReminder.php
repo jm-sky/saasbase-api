@@ -5,7 +5,6 @@ namespace App\Domain\Calendar\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -20,8 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class EventReminder extends BaseModel
 {
-    use HasUuids;
-
     protected $fillable = [
         'event_id',
         'user_id',

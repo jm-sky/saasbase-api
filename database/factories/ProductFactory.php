@@ -6,6 +6,7 @@ use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Products\Models\Product>
@@ -17,7 +18,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => fake()->uuid(),
+            'id'          => Str::ulid(),
             'name'        => fake()->words(3, true),
             'description' => fake()->optional()->paragraph(),
             'unit_id'     => fn (array $attributes) => $attributes['tenant_id'] ? MeasurementUnit::factory(['tenant_id' => $attributes['tenant_id']]) : null,

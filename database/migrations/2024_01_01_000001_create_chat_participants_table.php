@@ -8,10 +8,10 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('chat_participants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id')->nullable()->index();
-            $table->uuid('chat_room_id')->index();
-            $table->uuid('user_id')->index();
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id')->nullable()->index();
+            $table->ulid('chat_room_id')->index();
+            $table->ulid('user_id')->index();
             $table->string('role'); // admin, moderator, member
             $table->timestamp('joined_at');
             $table->timestamp('last_read_at')->nullable();

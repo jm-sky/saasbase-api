@@ -11,16 +11,6 @@
 
 ---
 
-## [ ] Add multi-language support for user interface.
-
-- **Subtasks**:
-  - Implement language files for UI translations.
-  - Set up language switching feature in the UI.
-  - Ensure all UI strings are translatable.
-  - Test multi-language support across the application.
-
----
-
 ## [ ] Refactor dictionary-like tables (e.g. VAT rates) to use meaningful string primary keys
 
 - **Goal**: Improve readability and maintainability by using string values (e.g., `'5%'`, `'PL'`, `'kg'`) as primary keys instead of UUIDs for static/dictionary data.
@@ -112,8 +102,8 @@
     - `code` (e.g. "h")
     - `category` (e.g. "time", "length", "energy")
     - `is_default` (boolean to distinguish system defaults)
-  - [ ] Seed default units (e.g., hour, day, km, liter) categorized properly.
-  - [ ] On tenant creation, copy default units to tenant with `is_default = true`.
+  - [x] Seed default units (e.g., hour, day, km, liter) categorized properly.
+  - [x] On tenant creation, copy default units to tenant with `is_default = true`.
   - Allow tenants to:
     - View their unit list
     - Create new custom units
@@ -126,58 +116,6 @@
     - Tenant initialization
     - CRUD operations
     - Unit usage in invoices
-
----
-
-## [] **Invitation System**
-  - Implement a system allowing users with appropriate permissions to send invitations to join a tenant.
-  - Each invitation should include:
-    - Recipient email address.
-    - The tenant the invitation is associated with.
-    - The role the invited user should be assigned to upon accepting the invitation.
-  - Support invitation acceptance via token-based link (e.g. signed URL or UUID/UULID).
-  - Handle cases for existing users and new user registrations through invitations.
-  - Store invitation metadata (status, timestamps, who invited whom, etc.).
-  - Migration and `Invitation` model with fields: `recipient_email`, `tenant_id`, `role`, `invitation_token`, `invited_by`, `status`, `sent_at`.  
-   - `InvitationController@send`: accepts `{ email, tenant_id, role }`, creates record, sends signed URL email.  
-   - `InvitationController@accept`: via `GET /api/v1/invitations/{token}`, links or creates user, assigns role.  
-   - **Done when:**  
-     - Endpoints `POST /api/v1/tenant/{tenant}/invite` and `GET /api/v1/invitations/{token}` work end‑to‑end.  
-     - Tests assert invitation creation, email sent, and acceptance flow.
-
----
-
-## [] **Generate OpenAPI YAML Specification**
-  - Automatically generate OpenAPI documentation in YAML format for the entire API.
-  - Include all endpoints, models, request/response schemas, authentication details.
-  - Ensure compatibility with tools like Swagger UI and Postman.
-  - Preferably automate via Artisan command or during CI build.
-
----
-
-### [] Task: Create Invoice Numbering Template System
-
-**Goal:**  
-Allow tenants to define custom invoice numbering templates (e.g., `YYYY/NNN`, `INV-YYYY-MM/NNNN`).
-
-**Scope:**  
-- Model: `InvoiceNumberTemplate`
-- Fields:
-  - `id`, `tenant_id`, `invoice_type` (e.g., "sales", "proforma"), `template` (e.g., "YYYY/NNN")
-- Logic:
-  - Tokens to support: `YYYY`, `YY`, `MM`, `DD`, `NNN`, `NNNN`, etc.
-  - Stored per tenant and per invoice type
-- Endpoint:
-  - `GET /api/invoice-number-templates` (list for current tenant)
-  - Optional admin endpoint to define default templates
-- Usage:
-  - Will be used when generating new invoices
-
-**Definition of Done:**
-- Model and migration created
-- Read-only endpoint showing current tenant templates
-- Ability to support token parsing (future: during invoice creation)
-- Unit test for template rendering logic (optional in this task)
 
 ---
 

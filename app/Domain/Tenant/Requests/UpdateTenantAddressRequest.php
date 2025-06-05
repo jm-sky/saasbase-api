@@ -24,7 +24,7 @@ class UpdateTenantAddressRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'id'          => ['required', 'uuid', 'exists:addresses,id'],
+            'id'          => ['required', 'ulid', 'exists:addresses,id'],
             'country'     => ['required', 'string', 'max:255'],
             'postalCode'  => ['nullable', 'string', 'max:20'],
             'city'        => ['required', 'string', 'max:255'],

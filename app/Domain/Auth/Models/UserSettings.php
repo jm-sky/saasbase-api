@@ -2,15 +2,13 @@
 
 namespace App\Domain\Auth\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserSettings extends Model
+class UserSettings extends BaseModel
 {
     use HasFactory;
-    use HasUuids;
 
     /**
      * The attributes that are mass assignable.

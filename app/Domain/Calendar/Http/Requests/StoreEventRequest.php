@@ -33,10 +33,10 @@ class StoreEventRequest extends BaseFormRequest
             'reminderSettings.push'         => ['boolean'],
             'reminderSettings.remindBefore' => ['string'],
             'relatedType'                   => ['nullable', 'string'],
-            'relatedId'                     => ['nullable', 'uuid'],
+            'relatedId'                     => ['nullable', 'ulid'],
             'attendees'                     => ['array'],
             'attendees.*.attendeeType'      => ['required', 'string'],
-            'attendees.*.attendeeId'        => ['required', 'uuid'],
+            'attendees.*.attendeeId'        => ['required', 'ulid'],
             'attendees.*.responseStatus'    => ['required', 'string'],
             'attendees.*.customNote'        => ['nullable', 'string'],
         ];

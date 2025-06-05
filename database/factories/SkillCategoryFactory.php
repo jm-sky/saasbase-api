@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class SkillCategoryFactory extends Factory
 {
@@ -12,7 +13,7 @@ class SkillCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => fake()->uuid(),
+            'id'          => Str::ulid(),
             'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),
             'created_at'  => fake()->dateTime(),

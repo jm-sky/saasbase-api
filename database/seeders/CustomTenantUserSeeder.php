@@ -71,7 +71,7 @@ class CustomTenantUserSeeder extends Seeder
                 $tenant->addresses()->createMany($addresses);
                 $tenant->bankAccounts()->createMany($bankAccounts);
                 $tenant->subscription()->create([
-                    'id'                     => (string) Str::uuid(),
+                    'id'                     => (string) Str::ulid(),
                     'subscription_plan_id'   => SubscriptionPlan::where('name', 'Free')->firstOrFail()->id,
                     'stripe_subscription_id' => null,
                     'status'                 => SubscriptionStatus::ACTIVE,

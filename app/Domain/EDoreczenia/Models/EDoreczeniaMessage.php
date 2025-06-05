@@ -3,17 +3,15 @@
 namespace App\Domain\EDoreczenia\Models;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class EDoreczeniaMessage extends Model
+class EDoreczeniaMessage extends BaseModel
 {
-    use HasUuids;
     use SoftDeletes;
     use BelongsToTenant;
 

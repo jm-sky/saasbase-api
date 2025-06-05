@@ -3,7 +3,7 @@
 namespace App\Domain\Common\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
 
@@ -27,7 +27,7 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
  */
 class Activity extends BaseActivity
 {
-    use HasUuids;
+    use HasUlids;
 
     protected $fillable = [
         'log_name',

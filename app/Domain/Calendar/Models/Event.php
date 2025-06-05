@@ -6,7 +6,6 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -34,7 +33,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Event extends BaseModel
 {
-    use HasUuids;
     use BelongsToTenant;
 
     protected $fillable = [

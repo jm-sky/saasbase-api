@@ -15,7 +15,7 @@ class ContractorRequest extends BaseFormRequest
     public function rules(): array
     {
         $rules = [
-            'contractor.tenantId'    => ['required', 'uuid', 'exists:tenants,id'],
+            'contractor.tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
             'contractor.name'        => ['required', 'string', 'max:255'],
             'contractor.email'       => ['nullable', 'email', 'max:255'],
             'contractor.phone'       => ['nullable', 'string', 'max:20'],
@@ -68,7 +68,7 @@ class ContractorRequest extends BaseFormRequest
     {
         return [
             'contractor.tenantId.required' => 'The tenant ID is required.',
-            'contractor.tenantId.uuid'     => 'The tenant ID must be a valid UUID.',
+            'contractor.tenantId.ulid'     => 'The tenant ID must be a valid ULID.',
             'contractor.tenantId.exists'   => 'The selected tenant does not exist.',
 
             'contractor.name.required'  => 'The name field is required.',

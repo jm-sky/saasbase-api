@@ -8,9 +8,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('feeds', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUlid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('content');
             $table->text('content_html')->nullable();

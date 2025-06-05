@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('user_identity_documents', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->enum('type', ['tax_id', 'passport', 'id_card']);
             $table->string('number');
             $table->string('country', 2);
@@ -17,7 +17,7 @@ return new class() extends Migration {
             $table->date('expires_at');
             $table->boolean('is_verified')->default(false);
             $table->timestamp('verified_at')->nullable();
-            $table->foreignUuid('verified_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUlid('verified_by')->nullable()->constrained('users')->nullOnDelete();
             $table->json('meta')->nullable();
             $table->timestamps();
         });

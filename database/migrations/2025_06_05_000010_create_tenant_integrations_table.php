@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('tenant_integrations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id');
             $table->string('type');
             $table->boolean('enabled')->default(true);
             $table->string('mode')->default('shared');

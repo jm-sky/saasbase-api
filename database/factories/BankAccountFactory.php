@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Common\Models\BankAccount>
@@ -16,7 +17,7 @@ class BankAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'           => fake()->uuid(),
+            'id'           => Str::ulid(),
             'tenant_id'    => Tenant::factory(),
             'iban'         => fake()->iban(),
             'country'      => fake()->countryCode(),

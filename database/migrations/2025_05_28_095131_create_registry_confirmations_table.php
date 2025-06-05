@@ -11,8 +11,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('registry_confirmations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('confirmable');
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('confirmable');
             $table->string('type'); // 'GUS', 'VIES', 'WhiteList'
             $table->json('payload')->nullable();
             $table->json('result')->nullable();

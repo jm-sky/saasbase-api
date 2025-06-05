@@ -25,13 +25,13 @@ use App\Domain\Users\Models\TrustedDevice;
 use App\Domain\Users\Models\UserPreference;
 use App\Domain\Users\Models\UserProfile;
 use App\Domain\Users\Models\UserTableSetting;
-use App\Traits\UuidNotifiable;
+use App\Traits\UlidNotifiable;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -77,8 +77,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
 {
     use HasApiTokens;
     use HasFactory;
-    use HasUuids;
-    use UuidNotifiable;
+    use HasUlids;
+    use UlidNotifiable;
     use SoftDeletes;
     use InteractsWithMedia;
     use HasMediaSignedUrls;

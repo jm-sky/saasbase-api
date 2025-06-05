@@ -9,9 +9,9 @@ class CreateUserTokensTable extends Migration
     public function up()
     {
         Schema::create('user_tokens', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
-            $table->uuid('token_id')->unique(); // UUID tied to refresh token
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained('users')->onDelete('cascade');
+            $table->ulid('token_id')->unique(); // UUID tied to refresh token
             $table->string('user_agent')->nullable();
             $table->ipAddress('ip_address')->nullable();
             $table->string('device_name')->nullable(); // optional

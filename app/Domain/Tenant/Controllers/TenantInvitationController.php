@@ -59,7 +59,7 @@ class TenantInvitationController extends Controller
         $tenantId = $user->getTenantId();
         // TODO: Add authorization check (policy)
 
-        $token     = Str::uuid()->toString();
+        $token     = Str::ulid()->toString();
         $expiresAt = now()->addDays(self::TOKEN_EXPIRATION_DAYS);
 
         $invitation = TenantInvitation::create([

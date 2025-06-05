@@ -2,19 +2,20 @@
 
 namespace App\Domain\Common\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string              $id
- * @property \Carbon\Carbon      $created_at
- * @property \Carbon\Carbon      $updated_at
- * @property \Carbon\Carbon|null $deleted_at
+ * @property string  $id
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
+ * @property ?Carbon $deleted_at
  */
 class BaseModel extends Model
 {
-    use HasUuids;
+    use HasUlids;
     use HasFactory;
 
     protected static function newFactory()

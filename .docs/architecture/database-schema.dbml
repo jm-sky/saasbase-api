@@ -7,20 +7,20 @@ Project Saasbase {
 
 // Action Logs
 Table action_logs {
-  id uuid [pk]
-  user_id uuid [ref: > users.id]
+  id ulid [pk]
+  user_id ulid [ref: > users.id]
   action_type varchar
   description text [note: 'nullable']
   model_type varchar
-  model_id uuid
+  model_id ulid
   ip_address varchar [note: 'nullable']
   created_at timestamp
 }
 
 // Offices
 Table offices {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   description text [note: 'nullable']
   address varchar [note: 'nullable']
@@ -33,9 +33,9 @@ Table offices {
 
 // Office Agreements
 Table office_agreements {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  office_id uuid [ref: > offices.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  office_id ulid [ref: > offices.id]
   agreement_start_date date
   agreement_end_date date [note: 'nullable']
   contract_terms text [note: 'nullable']
@@ -45,7 +45,7 @@ Table office_agreements {
 
 // Office Service Types
 Table office_service_types {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   description text [note: 'nullable']
   created_at timestamp
@@ -54,11 +54,11 @@ Table office_service_types {
 
 // Office-Tenant Relation
 Table office_tenant_relations {
-  id uuid [pk]
-  office_id uuid [ref: > offices.id]
-  tenant_id uuid [ref: > tenants.id]
-  office_agreement_id uuid [ref: > office_agreements.id]
-  office_service_type_id uuid [ref: > office_service_types.id]
+  id ulid [pk]
+  office_id ulid [ref: > offices.id]
+  tenant_id ulid [ref: > tenants.id]
+  office_agreement_id ulid [ref: > office_agreements.id]
+  office_service_type_id ulid [ref: > office_service_types.id]
   service_start_date date
   service_end_date date [note: 'nullable']
   created_at timestamp
@@ -67,7 +67,7 @@ Table office_tenant_relations {
 
 // Exchanges
 Table exchanges {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   currency varchar
   created_at timestamp
@@ -76,7 +76,7 @@ Table exchanges {
 
 // Exchange Rates
 Table exchange_rates {
-  id uuid [pk]
+  id ulid [pk]
   date date
   rate decimal
   table varchar [note: 'Table name of the rate i.e. A']
@@ -86,7 +86,7 @@ Table exchange_rates {
 
 // Tenants
 Table tenants {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   slug varchar [unique]
   created_at timestamp
@@ -94,9 +94,9 @@ Table tenants {
 }
 
 Table addresses {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  addressable_id uuid
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  addressable_id ulid
   addressable_type varchar [note: 'users, contractors, tenants']
   type varchar [note: 'residence, billing, correspondence']
   description varchar [note: 'nullable']
@@ -117,7 +117,7 @@ Table addresses {
 
 // Users
 Table users {
-  id uuid [pk]
+  id ulid [pk]
   first_name varchar
   last_name varchar
   email varchar [unique]
@@ -133,8 +133,8 @@ Table users {
 
 // Tenant Users
 Table user_tenants {
-  tenant_id uuid [ref: > tenants.id]
-  user_id uuid [ref: > users.id]
+  tenant_id ulid [ref: > tenants.id]
+  user_id ulid [ref: > users.id]
   role varchar
   permissions text [note: 'nullable']
   joined_at timestamp
@@ -143,14 +143,14 @@ Table user_tenants {
 
 // Projects
 Table projects {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   description text [note: 'nullable']
   start_date date [note: 'nullable']
   end_date date [note: 'nullable']
-  status_id uuid [ref: > project_statuses.id]
-  owner_id uuid [ref: > users.id]
+  status_id ulid [ref: > project_statuses.id]
+  owner_id ulid [ref: > users.id]
   created_at timestamp
   updated_at timestamp
   deleted_at timestamp [note: 'nullable']
@@ -158,8 +158,8 @@ Table projects {
 
 // Project Statuses
 Table project_statuses {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   color varchar
   sort_order int
@@ -170,15 +170,15 @@ Table project_statuses {
 
 // Tasks
 Table tasks {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  project_id uuid [ref: > projects.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  project_id ulid [ref: > projects.id]
   title varchar
   description text [note: 'nullable']
-  status_id uuid [ref: > task_statuses.id]
+  status_id ulid [ref: > task_statuses.id]
   priority varchar [note: 'nullable']
-  assigned_to_id uuid [ref: > users.id, note: 'nullable']
-  created_by_id uuid [ref: > users.id]
+  assigned_to_id ulid [ref: > users.id, note: 'nullable']
+  created_by_id ulid [ref: > users.id]
   due_date date [note: 'nullable']
   created_at timestamp
   updated_at timestamp
@@ -187,8 +187,8 @@ Table tasks {
 
 // Task Statuses
 Table task_statuses {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   color varchar
   sort_order int
@@ -199,8 +199,8 @@ Table task_statuses {
 
 // Contractors
 Table contractors {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   tax_id varchar [note: 'nullable']
   email varchar [note: 'nullable']
@@ -216,9 +216,9 @@ Table contractors {
 
 // Contractor Addresses
 Table contractor_addresses {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  addressable_id uuid [ref: > contractors.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  addressable_id ulid [ref: > contractors.id]
   addressable_type varchar
   type varchar [note: 'registered_office, billing, correspondence']
   description varchar [note: 'nullable']
@@ -235,9 +235,9 @@ Table contractor_addresses {
 
 // Contractor Bank Accounts
 Table contractor_bank_accounts {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  contractor_id uuid [ref: > contractors.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  contractor_id ulid [ref: > contractors.id]
   bank_name varchar
   iban varchar
   currencies varchar
@@ -248,9 +248,9 @@ Table contractor_bank_accounts {
 
 // Contractor Contact Persons
 Table contractor_contact_persons {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  contractor_id uuid [ref: > contractors.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  contractor_id ulid [ref: > contractors.id]
   name varchar
   email varchar [note: 'nullable']
   phone varchar [note: 'nullable']
@@ -260,12 +260,12 @@ Table contractor_contact_persons {
 
 // Invoices
 Table invoices {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  contractor_id uuid [ref: > contractors.id]
-  subscription_id uuid [ref: > subscriptions.id, note: 'nullable']
-  invoice_type_id uuid [ref: > invoice_types.id]
-  invoice_numbering_template_id uuid [ref: > invoice_numbering_templates.id, note: 'nullable']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  contractor_id ulid [ref: > contractors.id]
+  subscription_id ulid [ref: > subscriptions.id, note: 'nullable']
+  invoice_type_id ulid [ref: > invoice_types.id]
+  invoice_numbering_template_id ulid [ref: > invoice_numbering_templates.id, note: 'nullable']
   number varchar
   status varchar [note: 'draft, issued, paid, cancelled']
   issue_date date
@@ -273,7 +273,7 @@ Table invoices {
   payment_date date [note: 'nullable']
   payment_method varchar [note: 'nullable']
   currency varchar
-  exchange_rate_id uuid [ref: > exchange_rates.id, note: 'nullable']
+  exchange_rate_id ulid [ref: > exchange_rates.id, note: 'nullable']
   total_net decimal
   total_tax decimal
   total_gross decimal
@@ -290,23 +290,23 @@ Table invoices {
 
 // Invoice Items
 Table invoice_items {
-  id uuid [pk]
-  invoice_id uuid [ref: > invoices.id]
-  product_id uuid [ref: > products.id, note: 'nullable']
+  id ulid [pk]
+  invoice_id ulid [ref: > invoices.id]
+  product_id ulid [ref: > products.id, note: 'nullable']
   name varchar
   quantity decimal
-  unit_id uuid [ref: > measurement_units.id]
+  unit_id ulid [ref: > measurement_units.id]
   price_net decimal
-  vat_rate_id uuid [ref: > vat_rates.id]
+  vat_rate_id ulid [ref: > vat_rates.id]
   total_net decimal
   total_tax decimal
   total_gross decimal
-  exchange_rate_id uuid [ref: > exchange_rates.id, note: 'nullable']
+  exchange_rate_id ulid [ref: > exchange_rates.id, note: 'nullable']
 }
 
 // Invoice Types
 Table invoice_types {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   is_correction boolean
   is_vat boolean
@@ -315,9 +315,9 @@ Table invoice_types {
 
 // Invoice Numbering Templates
 Table invoice_numbering_templates {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  invoice_type_id uuid [ref: > invoice_types.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  invoice_type_id ulid [ref: > invoice_types.id]
   template varchar
   is_default boolean
   reset_period varchar [note: 'nullable']
@@ -330,21 +330,21 @@ Table invoice_numbering_templates {
 
 // Products
 Table products {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   description text [note: 'nullable']
-  unit_id uuid [ref: > measurement_units.id]
+  unit_id ulid [ref: > measurement_units.id]
   price_net decimal
-  vat_rate_id uuid [ref: > vat_rates.id]
+  vat_rate_id ulid [ref: > vat_rates.id]
   created_at timestamp
   updated_at timestamp
 }
 
 // VAT Rates
 Table vat_rates {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   rate decimal
   is_default boolean
@@ -354,8 +354,8 @@ Table vat_rates {
 
 // Measurement Units
 Table measurement_units {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   code varchar
   name varchar
   category varchar [note: 'nullable']
@@ -366,7 +366,7 @@ Table measurement_units {
 
 // Default Measurement Units
 Table default_measurement_units {
-  id uuid [pk]
+  id ulid [pk]
   code varchar  [note: 'unique']
   name varchar
   category varchar
@@ -375,7 +375,7 @@ Table default_measurement_units {
 
 // Default Statuses
 Table default_project_statuses {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   color varchar
   sort_order int
@@ -384,7 +384,7 @@ Table default_project_statuses {
 }
 
 Table default_task_statuses {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   color varchar
   sort_order int
@@ -394,12 +394,12 @@ Table default_task_statuses {
 
 // Comments
 Table comments {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  user_id uuid [ref: > users.id]
-  parent_id uuid [ref: > comments.id, note: 'nullable, for threaded comments']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  user_id ulid [ref: > users.id]
+  parent_id ulid [ref: > comments.id, note: 'nullable, for threaded comments']
   content text [note: 'markdown content']
-  commentable_id uuid
+  commentable_id ulid
   commentable_type varchar
   created_at timestamp
   updated_at timestamp
@@ -411,25 +411,25 @@ Table comments {
 
 // Tags
 Table tags {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   color varchar [note: 'nullable']
 }
 
 Table taggables {
-  tag_id uuid [ref: > tags.id]
-  taggable_id uuid
+  tag_id ulid [ref: > tags.id]
+  taggable_id ulid
   taggable_type varchar
   [pk: tag_id, taggable_id, taggable_type]
 }
 
 // Media (Attachments, using Spatie Media Library)
 Table media {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id, note: 'nullable for user-specific media']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id, note: 'nullable for user-specific media']
   model_type varchar
-  model_id uuid
-  uuid varchar [note: 'unique identifier for the media item']
+  model_id ulid
+  ulid varchar [note: 'unique identifier for the media item']
   collection_name varchar [note: 'e.g., avatar, logo, documents']
   name varchar [note: 'original file name']
   file_name varchar [note: 'name on disk']
@@ -447,43 +447,43 @@ Table media {
 
   indexes {
     (model_type, model_id)
-    uuid
+    ulid
     collection_name
   }
 }
 
 // Skills
 Table skills {
-  id uuid [pk]
-  category_id uuid [ref: > skill_categories.id, note: 'nullable']
+  id ulid [pk]
+  category_id ulid [ref: > skill_categories.id, note: 'nullable']
   name varchar
   description text [note: 'nullable']
 }
 
 Table skill_categories {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   description text [note: 'nullable']
 }
 
 Table user_skill {
-  user_id uuid [ref: > users.id]
-  skill_id uuid [ref: > skills.id]
+  user_id ulid [ref: > users.id]
+  skill_id ulid [ref: > skills.id]
   level int
   acquired_at date [note: 'nullable']
   [pk: user_id, skill_id]
 }
 
 Table project_required_skills {
-  project_id uuid [ref: > projects.id]
-  skill_id uuid [ref: > skills.id]
+  project_id ulid [ref: > projects.id]
+  skill_id ulid [ref: > skills.id]
   required_level int
   [pk: project_id, skill_id]
 }
 
 // User Settings and OAuth
 Table user_settings {
-  user_id uuid [ref: > users.id]
+  user_id ulid [ref: > users.id]
   language varchar [note: 'nullable']
   theme varchar [note: 'nullable']
   timezone varchar [note: 'nullable']
@@ -493,8 +493,8 @@ Table user_settings {
 }
 
 Table user_oauth_accounts {
-  id uuid [pk]
-  user_id uuid [ref: > users.id]
+  id ulid [pk]
+  user_id ulid [ref: > users.id]
   provider varchar
   provider_user_id varchar
   email varchar [note: 'nullable']
@@ -503,9 +503,9 @@ Table user_oauth_accounts {
 
 // User Addresses
 Table user_addresses {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  addressable_id uuid [ref: > users.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  addressable_id ulid [ref: > users.id]
   addressable_type varchar
   type varchar [note: 'residence, billing, correspondence']
   description varchar [note: 'nullable']
@@ -522,9 +522,9 @@ Table user_addresses {
 
 // Employees
 Table employees {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  user_id uuid [ref: > users.id, note: 'nullable']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  user_id ulid [ref: > users.id, note: 'nullable']
   first_name varchar
   middle_name varchar [note: 'nullable']
   last_name varchar
@@ -544,9 +544,9 @@ Table employees {
 
 // Employee Agreements
 Table employee_agreements {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  employee_id uuid [ref: > employees.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  employee_id ulid [ref: > employees.id]
   agreement_start_date date
   agreement_end_date date [note: 'nullable']
   contract_terms text [note: 'nullable']
@@ -556,9 +556,9 @@ Table employee_agreements {
 }
 
 Table organization_units {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  parent_id uuid [ref: > organization_units.id, note: 'nullable']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  parent_id ulid [ref: > organization_units.id, note: 'nullable']
   name varchar
   short_name varchar
   created_at timestamp
@@ -566,9 +566,9 @@ Table organization_units {
 }
 
 Table org_unit_user {
-  id uuid [pk]
-  organization_unit_id uuid [ref: > organization_units.id]
-  user_id uuid [ref: > users.id]
+  id ulid [pk]
+  organization_unit_id ulid [ref: > organization_units.id]
+  user_id ulid [ref: > users.id]
   role varchar
   created_at timestamp
   updated_at timestamp
@@ -576,9 +576,9 @@ Table org_unit_user {
 
 // Bank Accounts
 Table bank_accounts {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id, note: 'nullable for user-specific accounts']
-  bankable_id uuid
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id, note: 'nullable for user-specific accounts']
+  bankable_id ulid
   bankable_type varchar
   name varchar [note: 'account name/label']
   bank_name varchar
@@ -599,11 +599,11 @@ Table bank_accounts {
 
 // Time Tracking
 Table time_entries {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  user_id uuid [ref: > users.id]
-  project_id uuid [ref: > projects.id, note: 'nullable']
-  task_id uuid [ref: > tasks.id, note: 'nullable']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  user_id ulid [ref: > users.id]
+  project_id ulid [ref: > projects.id, note: 'nullable']
+  task_id ulid [ref: > tasks.id, note: 'nullable']
   description text [note: 'nullable']
   started_at timestamp
   ended_at timestamp [note: 'nullable']
@@ -623,11 +623,11 @@ Table time_entries {
 
 // Notifications
 Table notifications {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id, note: 'nullable']
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id, note: 'nullable']
   type varchar [note: 'notification class name']
   notifiable_type varchar
-  notifiable_id uuid
+  notifiable_id ulid
   data json
   read_at timestamp [note: 'nullable']
   created_at timestamp
@@ -641,8 +641,8 @@ Table notifications {
 
 // Chat System
 Table chat_rooms {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   type varchar [note: 'direct, group, channel']
   description text [note: 'nullable']
@@ -655,9 +655,9 @@ Table chat_rooms {
 }
 
 Table chat_participants {
-  id uuid [pk]
-  chat_room_id uuid [ref: > chat_rooms.id]
-  user_id uuid [ref: > users.id]
+  id ulid [pk]
+  chat_room_id ulid [ref: > chat_rooms.id]
+  user_id ulid [ref: > users.id]
   role varchar [note: 'admin, moderator, member']
   joined_at timestamp
   last_read_at timestamp [note: 'nullable']
@@ -672,10 +672,10 @@ Table chat_participants {
 }
 
 Table chat_messages {
-  id uuid [pk]
-  chat_room_id uuid [ref: > chat_rooms.id]
-  user_id uuid [ref: > users.id]
-  parent_id uuid [ref: > chat_messages.id, note: 'nullable, for threads']
+  id ulid [pk]
+  chat_room_id ulid [ref: > chat_rooms.id]
+  user_id ulid [ref: > users.id]
+  parent_id ulid [ref: > chat_messages.id, note: 'nullable, for threads']
   content text [note: 'markdown content']
   edited_at timestamp [note: 'nullable']
   created_at timestamp
@@ -690,7 +690,7 @@ Table chat_messages {
 
 // Subscription & Billing
 Table subscription_plans {
-  id uuid [pk]
+  id ulid [pk]
   name varchar
   description text [note: 'nullable']
   price decimal
@@ -702,9 +702,9 @@ Table subscription_plans {
 }
 
 Table subscriptions {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  plan_id uuid [ref: > subscription_plans.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  plan_id ulid [ref: > subscription_plans.id]
   status varchar [note: 'active, cancelled, expired']
   trial_ends_at timestamp [note: 'nullable']
   starts_at timestamp
@@ -720,9 +720,9 @@ Table subscriptions {
 }
 
 Table payments {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  invoice_id uuid [ref: > invoices.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  invoice_id ulid [ref: > invoices.id]
   amount decimal
   payment_method varchar
   transaction_id varchar [note: 'payment provider reference']
@@ -739,8 +739,8 @@ Table payments {
 }
 
 Table price_lists {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   name varchar
   description text [note: 'nullable']
   is_active boolean [default: true]
@@ -755,8 +755,8 @@ Table price_lists {
 }
 
 Table discounts {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
   code varchar
   type varchar [note: 'percentage, fixed']
   value decimal
@@ -776,9 +776,9 @@ Table discounts {
 
 // Invitation System
 Table invitations {
-  id uuid [pk]
-  tenant_id uuid [ref: > tenants.id]
-  inviter_id uuid [ref: > users.id]
+  id ulid [pk]
+  tenant_id ulid [ref: > tenants.id]
+  inviter_id ulid [ref: > users.id]
   email varchar
   role varchar
   token varchar [unique]

@@ -11,8 +11,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('billing_info', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('billable');
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('billable');
             $table->string('name');
             $table->string('address_line1');
             $table->string('address_line2')->nullable();

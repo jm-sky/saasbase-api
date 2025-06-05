@@ -5,7 +5,6 @@ namespace App\Domain\Tenant\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Tenant\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -26,7 +25,6 @@ use Spatie\MediaLibrary\MediaCollections\File;
  */
 class TenantPublicProfile extends BaseModel implements HasMedia
 {
-    use HasUuids;
     use BelongsToTenant;
     use InteractsWithMedia;
     use HasMediaSignedUrls;

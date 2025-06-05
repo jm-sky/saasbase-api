@@ -12,8 +12,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('user_sessions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('type')->default(SessionType::JWT->value);
             $table->string('token_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();

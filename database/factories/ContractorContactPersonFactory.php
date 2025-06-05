@@ -6,6 +6,7 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorContactPerson;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Contractors\Models\ContractorContactPerson>
@@ -17,7 +18,7 @@ class ContractorContactPersonFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'            => fake()->uuid(),
+            'id'            => Str::ulid(),
             'tenant_id'     => Tenant::factory(),
             'contractor_id' => Contractor::factory(),
             'name'          => fake()->name(),

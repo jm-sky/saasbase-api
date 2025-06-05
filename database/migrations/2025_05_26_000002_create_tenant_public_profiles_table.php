@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('tenant_public_profiles', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id')->unique();
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id')->unique();
             $table->string('public_name')->nullable();
             $table->text('description')->nullable();
             $table->string('website_url')->nullable();

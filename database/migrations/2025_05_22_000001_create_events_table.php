@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id');
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('start_at');
@@ -22,9 +22,9 @@ return new class() extends Migration {
             $table->string('timezone');
             $table->text('recurrence_rule')->nullable();
             $table->json('reminder_settings')->nullable();
-            $table->foreignUuid('created_by_id')->constrained('users');
+            $table->foreignUlid('created_by_id')->constrained('users');
             $table->string('related_type')->nullable();
-            $table->uuid('related_id')->nullable();
+            $table->ulid('related_id')->nullable();
             $table->timestamps();
 
             $table->foreign('tenant_id')->references('id')->on('tenants');

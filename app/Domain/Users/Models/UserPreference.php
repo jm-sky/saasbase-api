@@ -3,8 +3,7 @@
 namespace App\Domain\Users\Models;
 
 use App\Domain\Auth\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -19,10 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array   $visibility_per_tenant
  * @property User    $user
  */
-class UserPreference extends Model
+class UserPreference extends BaseModel
 {
-    use HasUuids;
-
     protected $fillable = [
         'user_id',
         'language',

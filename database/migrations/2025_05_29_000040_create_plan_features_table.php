@@ -8,9 +8,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('plan_features', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('subscription_plan_id')->constrained('subscription_plans')->cascadeOnDelete();
-            $table->foreignUuid('feature_id')->constrained('features')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('subscription_plan_id')->constrained('subscription_plans')->cascadeOnDelete();
+            $table->foreignUlid('feature_id')->constrained('features')->cascadeOnDelete();
             $table->string('value');
             $table->timestamps();
 

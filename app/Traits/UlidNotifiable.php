@@ -2,9 +2,9 @@
 
 namespace App\Traits;
 
-use App\Models\UuidDatabaseNotification;
+use App\Models\UlidDatabaseNotification;
 
-trait UuidNotifiable
+trait UlidNotifiable
 {
     use \Illuminate\Notifications\Notifiable {
         notifications as baseNotifications;
@@ -12,6 +12,6 @@ trait UuidNotifiable
 
     public function notifications()
     {
-        return $this->morphMany(UuidDatabaseNotification::class, 'notifiable');
+        return $this->morphMany(UlidDatabaseNotification::class, 'notifiable');
     }
 }

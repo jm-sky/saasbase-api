@@ -5,7 +5,7 @@ namespace App\Domain\Skills\Models;
 use App\Domain\Auth\Models\User;
 use Carbon\Carbon;
 use Database\Factories\Domain\Skills\UserSkillFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class UserSkill extends Pivot
 {
-    use HasUuids;
+    use HasUlids;
     use HasFactory;
 
     protected $fillable = [

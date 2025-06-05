@@ -11,9 +11,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('subscriptions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('billable');
-            $table->uuid('subscription_plan_id')->nullable()->index();
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('billable');
+            $table->ulid('subscription_plan_id')->nullable()->index();
             $table->string('stripe_subscription_id')->nullable()->index();
             $table->string('status');
             $table->timestamp('current_period_start')->nullable();

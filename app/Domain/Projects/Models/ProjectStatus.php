@@ -2,18 +2,16 @@
 
 namespace App\Domain\Projects\Models;
 
+use App\Domain\Common\Models\BaseModel;
 use App\Domain\Projects\Database\Factories\ProjectStatusFactory;
 use App\Domain\Tenant\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ProjectStatus extends Model
+class ProjectStatus extends BaseModel
 {
     use BelongsToTenant;
     use HasFactory;
-    use HasUuids;
 
     protected $keyType = 'string';
 

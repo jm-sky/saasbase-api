@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('chat_rooms', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id')->nullable()->index();
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id')->nullable()->index();
             $table->string('name');
             $table->string('type'); // direct, group, channel
             $table->text('description')->nullable();

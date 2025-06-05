@@ -8,10 +8,10 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('project_users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('project_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('project_role_id')->constrained('project_roles')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('project_role_id')->constrained('project_roles')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -2,9 +2,8 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -15,10 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $updated_at
  * @property User   $user
  */
-class EmailVerificationToken extends Model
+class EmailVerificationToken extends BaseModel
 {
-    use HasUuids;
-
     protected $fillable = [
         'user_id',
         'token',
