@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Utils;
+namespace App\Domain\Utils\Controllers;
 
 use App\Domain\Bank\Requests\GetBankInfoRequest;
+use App\Domain\Utils\Resources\BankInfoResource;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BankInfoResource;
 use App\Services\IbanInfo\IbanInfoService;
 use Illuminate\Http\Resources\Json\JsonResource;
 

@@ -1,7 +1,7 @@
 <?php
 
+use App\Domain\Utils\Controllers\BankInfoController;
 use App\Domain\Utils\Controllers\CompanyLookupController;
-use App\Http\Controllers\Utils\BankInfoController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active'])->group(function () {
