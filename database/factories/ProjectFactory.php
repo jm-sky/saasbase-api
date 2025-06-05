@@ -7,6 +7,7 @@ use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class ProjectFactory extends Factory
 {
@@ -15,7 +16,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => fake()->uuid(),
+            'id'          => Str::ulid()->toString(),
             'tenant_id'   => Tenant::factory(),
             'name'        => fake()->sentence(),
             'description' => fake()->paragraph(),

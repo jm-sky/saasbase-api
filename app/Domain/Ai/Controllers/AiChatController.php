@@ -26,7 +26,7 @@ class AiChatController extends Controller
             $chatService->streamAiResponse($data['history'] ?? [], $data['message'], $user->id);
 
             return new AiChatResponseResource((object) [
-                'id'        => Str::uuid(),
+                'id'        => Str::ulid(),
                 'content'   => 'AI response streaming started',
                 'streaming' => true,
             ]);
@@ -36,7 +36,7 @@ class AiChatController extends Controller
         $content = $chatService->getFullResponse($data['history'] ?? [], $data['message']);
 
         return new AiChatResponseResource((object) [
-            'id'        => Str::uuid(),
+            'id'        => Str::ulid(),
             'content'   => $content,
             'streaming' => false,
         ]);

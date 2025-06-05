@@ -3,7 +3,7 @@
 namespace App\Domain\Rights\Models;
 
 use App\Domain\Tenant\Traits\HasGlobalOrTenantScope;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 /**
@@ -16,7 +16,7 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  */
 class Permission extends SpatiePermission
 {
-    use HasUuids;
+    use HasUlids;
     use HasGlobalOrTenantScope;
 
     protected $fillable = ['name', 'guard_name', 'tenant_id'];

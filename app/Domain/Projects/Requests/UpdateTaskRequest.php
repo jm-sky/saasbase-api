@@ -11,9 +11,9 @@ class UpdateTaskRequest extends BaseFormRequest
         return [
             'title'         => ['sometimes', 'string', 'max:255'],
             'description'   => ['nullable', 'string'],
-            'statusId'      => ['sometimes', 'uuid', 'exists:task_statuses,id'],
+            'statusId'      => ['sometimes', 'ulid', 'exists:task_statuses,id'],
             'priority'      => ['nullable', 'string'],
-            'assignedToId'  => ['nullable', 'uuid', 'exists:users,id'],
+            'assignedToId'  => ['nullable', 'ulid', 'exists:users,id'],
             'dueDate'       => ['nullable', 'date'],
         ];
     }

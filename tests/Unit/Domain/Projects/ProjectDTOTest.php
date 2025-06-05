@@ -33,7 +33,7 @@ class ProjectDTOTest extends TestCase
         parent::setUp();
 
         $this->status = ProjectStatus::factory()->create([
-            'id' => Str::uuid()->toString(),
+            'id' => Str::ulid()->toString(),
         ]);
         $this->tenant = Tenant::factory()->create();
         $this->user   = $this->authenticateUser($this->tenant);

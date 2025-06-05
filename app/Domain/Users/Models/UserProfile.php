@@ -3,8 +3,7 @@
 namespace App\Domain\Users\Models;
 
 use App\Domain\Auth\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -18,10 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array   $social_links
  * @property User    $user
  */
-class UserProfile extends Model
+class UserProfile extends BaseModel
 {
-    use HasUuids;
-
     protected $with = ['user'];
 
     protected $fillable = [

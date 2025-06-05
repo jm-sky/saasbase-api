@@ -24,7 +24,7 @@ class BankSeeder extends Seeder
 
         collect($banks)
             ->map(fn ($bank) => [
-                'id'           => Str::uuid(),
+                'id'           => Str::ulid(),
                 'country'      => 'PL',
                 'bank_name'    => $bank['name'],
                 'branch_name'  => $bank['branch_name'] ?? null,

@@ -8,9 +8,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('task_watchers', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('task_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('task_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
 

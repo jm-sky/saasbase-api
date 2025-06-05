@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('billing_prices', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('priceable');
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('priceable');
             $table->string('stripe_price_id')->nullable();
             $table->enum('billing_period', ['monthly', 'yearly']);
             $table->integer('price_cents');

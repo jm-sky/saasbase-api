@@ -25,7 +25,7 @@ class InitializeTenantDefaults
         $rootUnit = OrganizationUnit::firstOrCreate(
             ['tenant_id' => $tenant->id, 'parent_id' => null],
             [
-                'id'         => (string) Str::uuid(),
+                'id'         => (string) Str::ulid(),
                 'name'       => $tenant->name,
                 'short_name' => Str::slug($tenant->name),
             ]
@@ -38,7 +38,7 @@ class InitializeTenantDefaults
                     'user_id'              => $owner->id,
                 ],
                 [
-                    'id'   => (string) Str::uuid(),
+                    'id'   => (string) Str::ulid(),
                     'role' => OrgUnitRole::Owner,
                 ]
             );

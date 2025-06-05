@@ -8,10 +8,10 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('media', function (Blueprint $table) {
-            $table->uuid('id');
-            $table->uuid('tenant_id')->nullable()->index();
+            $table->ulid('id');
+            $table->ulid('tenant_id')->nullable()->index();
 
-            $table->uuidMorphs('model');
+            $table->ulidMorphs('model');
             $table->uuid()->nullable()->unique();
             $table->string('collection_name');
             $table->string('name');

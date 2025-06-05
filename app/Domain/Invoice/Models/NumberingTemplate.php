@@ -2,10 +2,9 @@
 
 namespace App\Domain\Invoice\Models;
 
+use App\Domain\Common\Models\BaseModel;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Tenant\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -23,9 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon              $updated_at
  * @property Collection<Invoice> $invoices
  */
-class NumberingTemplate extends Model
+class NumberingTemplate extends BaseModel
 {
-    use HasUuids;
     use BelongsToTenant;
 
     protected $fillable = [

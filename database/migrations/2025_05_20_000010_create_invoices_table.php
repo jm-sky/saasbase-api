@@ -8,13 +8,13 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('type');
             $table->date('issue_date');
             $table->string('status');
             $table->string('number');
-            $table->foreignUuid('numbering_template_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('numbering_template_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_net', 12, 2);
             $table->decimal('total_tax', 12, 2);
             $table->decimal('total_gross', 12, 2);

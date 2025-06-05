@@ -12,8 +12,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('type')->default(AddressType::BILLING->value);
             $table->string('country');
             $table->string('postal_code')->nullable();
@@ -26,7 +26,7 @@ return new class() extends Migration {
             $table->jsonb('meta')->nullable();
 
             // Polymorphic relationship fields
-            $table->uuidMorphs('addressable');
+            $table->ulidMorphs('addressable');
 
             $table->timestamps();
         });

@@ -4,7 +4,6 @@ namespace App\Domain\Calendar\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -21,8 +20,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class EventAttendee extends BaseModel
 {
-    use HasUuids;
-
     protected $fillable = [
         'event_id',
         'attendee_type',

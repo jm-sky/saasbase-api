@@ -44,7 +44,7 @@ class ApplicationInvitationControllerTest extends TestCase
     public function testCanAcceptInvitation(): void
     {
         $user       = User::factory()->create();
-        $token      = Str::uuid()->toString();
+        $token      = Str::ulid()->toString();
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
             'email'      => 'invitee@example.com',
@@ -68,7 +68,7 @@ class ApplicationInvitationControllerTest extends TestCase
     public function testCanRejectInvitation(): void
     {
         $user       = User::factory()->create();
-        $token      = Str::uuid()->toString();
+        $token      = Str::ulid()->toString();
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
             'email'      => 'invitee@example.com',
@@ -98,7 +98,7 @@ class ApplicationInvitationControllerTest extends TestCase
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
             'email'      => 'invitee@example.com',
-            'token'      => Str::uuid()->toString(),
+            'token'      => Str::ulid()->toString(),
             'status'     => 'pending',
             'expires_at' => now()->addDays(7),
         ]);
@@ -120,7 +120,7 @@ class ApplicationInvitationControllerTest extends TestCase
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
             'email'      => 'invitee@example.com',
-            'token'      => Str::uuid()->toString(),
+            'token'      => Str::ulid()->toString(),
             'status'     => 'pending',
             'expires_at' => now()->addDays(7),
         ]);

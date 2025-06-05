@@ -46,7 +46,7 @@ class ApplicationInvitationController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $token     = Str::uuid()->toString();
+        $token     = Str::ulid()->toString();
         $expiresAt = now()->addDays(self::TOKEN_EXPIRATION_DAYS);
 
         $invitation = ApplicationInvitation::create([

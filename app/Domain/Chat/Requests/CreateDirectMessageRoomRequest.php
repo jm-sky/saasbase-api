@@ -14,7 +14,7 @@ class CreateDirectMessageRoomRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'userId' => ['required', 'uuid', 'exists:users,id'],
+            'userId' => ['required', 'ulid', 'exists:users,id'],
         ];
     }
 

@@ -8,7 +8,7 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('default_project_statuses', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->string('name');
             $table->string('color', 7);
             $table->integer('sort_order');

@@ -34,12 +34,12 @@ class DefaultStatusesSeeder extends Seeder
 
         foreach ($defaultStatuses as $status) {
             DefaultProjectStatus::create([
-                'id' => Str::uuid(),
+                'id' => Str::ulid(),
                 ...$status,
             ]);
 
             DefaultTaskStatus::create([
-                'id' => Str::uuid(),
+                'id' => Str::ulid(),
                 ...$status,
             ]);
         }

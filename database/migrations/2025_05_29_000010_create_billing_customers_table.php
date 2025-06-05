@@ -11,8 +11,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('billing_customers', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('billable');
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('billable');
             $table->string('stripe_customer_id')->index();
             $table->timestamps();
         });

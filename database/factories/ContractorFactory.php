@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Domain\Contractors\Models\Contractor;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Contractors\Models\Contractor>
@@ -15,7 +16,7 @@ class ContractorFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => fake()->uuid(),
+            'id'          => Str::ulid()->toString(),
             'name'        => fake()->company(),
             'tax_id'      => fake()->numerify('##########'),
             'email'       => fake()->companyEmail(),

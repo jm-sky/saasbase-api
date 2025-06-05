@@ -15,7 +15,7 @@ class SendMessageRequest extends BaseFormRequest
     {
         return [
             'content'  => ['required', 'string'],
-            'parentId' => ['nullable', 'uuid', 'exists:chat_messages,id'],
+            'parentId' => ['nullable', 'ulid', 'exists:chat_messages,id'],
         ];
     }
 }

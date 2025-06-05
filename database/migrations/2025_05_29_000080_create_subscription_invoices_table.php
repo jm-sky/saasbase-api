@@ -12,8 +12,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('subscription_invoices', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('billable');
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('billable');
             $table->string('stripe_invoice_id')->index();
             $table->decimal('amount_due', 10, 2);
             $table->string('status')->default(SubscriptionInvoiceStatus::DRAFT->value);

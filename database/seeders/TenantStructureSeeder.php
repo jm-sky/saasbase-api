@@ -26,7 +26,7 @@ class TenantStructureSeeder extends Seeder
         // Tenant
         $tenant = $user->tenants()->firstOrCreate(
             ['name' => 'Demo Company'],
-            ['id' => (string) Str::uuid()]
+            ['id' => (string) Str::ulid()]
         );
 
         // Zapewniamy istnienie wpisu w tabeli user_tenant
@@ -36,7 +36,7 @@ class TenantStructureSeeder extends Seeder
         $rootUnit = OrganizationUnit::firstOrCreate(
             ['tenant_id' => $tenant->id, 'parent_id' => null],
             [
-                'id'         => (string) Str::uuid(),
+                'id'         => (string) Str::ulid(),
                 'name'       => $tenant->name,
                 'short_name' => Str::slug($tenant->name),
             ]
@@ -49,7 +49,7 @@ class TenantStructureSeeder extends Seeder
                 'user_id'              => $user->id,
             ],
             [
-                'id'   => (string) Str::uuid(),
+                'id'   => (string) Str::ulid(),
                 'role' => OrgUnitRole::CEO,
             ]
         );

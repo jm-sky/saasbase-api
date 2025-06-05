@@ -15,7 +15,6 @@ use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -52,7 +51,6 @@ use Spatie\MediaLibrary\MediaCollections\File;
  */
 class Tenant extends BaseModel implements HasMedia
 {
-    use HasUuids;
     use SoftDeletes;
     use InteractsWithMedia;
     use HasMediaSignedUrls;

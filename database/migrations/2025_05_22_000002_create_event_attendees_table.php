@@ -9,9 +9,9 @@ return new class() extends Migration {
     {
         Schema::create('event_attendees', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('event_id')->constrained()->cascadeOnDelete();
             $table->string('attendee_type');
-            $table->uuid('attendee_id');
+            $table->ulid('attendee_id');
             $table->string('response_status');
             $table->dateTime('response_at')->nullable();
             $table->string('custom_note')->nullable();

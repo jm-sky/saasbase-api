@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('measurement_units', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('code')->unique();
             $table->string('name');
             $table->string('category');

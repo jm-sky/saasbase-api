@@ -12,7 +12,7 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('addon_packages', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->string('name');
             $table->string('stripe_price_id')->index();
             $table->text('description');

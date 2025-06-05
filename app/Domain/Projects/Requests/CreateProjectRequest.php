@@ -11,7 +11,7 @@ class CreateProjectRequest extends BaseFormRequest
         return [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'statusId'    => ['required', 'uuid', 'exists:project_statuses,id'],
+            'statusId'    => ['required', 'ulid', 'exists:project_statuses,id'],
             'startDate'   => ['nullable', 'date'],
             'endDate'     => ['nullable', 'date'],
         ];

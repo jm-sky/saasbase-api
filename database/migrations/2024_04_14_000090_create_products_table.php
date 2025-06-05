@@ -8,13 +8,13 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->uuid('unit_id')->nullable();
+            $table->ulid('unit_id')->nullable();
             $table->decimal('price_net', 10, 2);
-            $table->uuid('vat_rate_id')->nullable();
+            $table->ulid('vat_rate_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

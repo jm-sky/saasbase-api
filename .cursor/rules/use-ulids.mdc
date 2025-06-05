@@ -4,5 +4,6 @@ globs: app/Domain/**/Models/*.php
 alwaysApply: false
 ---
 
-- All Eloquent models should use UUIDs as primary keys.
+- All Eloquent models should use ULIDs as primary keys.
 - Do not use auto-incrementing integers.
+- Use BaseModel that handles that.

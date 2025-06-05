@@ -15,12 +15,12 @@ class ProductRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'tenantId'    => ['required', 'uuid', 'exists:tenants,id'],
+            'tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'unitId'      => ['nullable', 'uuid', 'exists:measurement_units,id'],
+            'unitId'      => ['nullable', 'ulid', 'exists:measurement_units,id'],
             'priceNet'    => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:999999.99'],
-            'vatRateId'   => ['nullable', 'uuid', 'exists:vat_rates,id'],
+            'vatRateId'   => ['nullable', 'ulid', 'exists:vat_rates,id'],
         ];
     }
 
@@ -28,7 +28,7 @@ class ProductRequest extends BaseFormRequest
     {
         return [
             'tenantId.required' => 'The tenant ID is required.',
-            'tenantId.uuid'     => 'The tenant ID must be a valid UUID.',
+            'tenantId.ulid'     => 'The tenant ID must be a valid ULID.',
             'tenantId.exists'   => 'The selected tenant does not exist.',
 
             'name.required' => 'The name field is required.',
@@ -39,7 +39,7 @@ class ProductRequest extends BaseFormRequest
             'description.max'    => 'The description may not be greater than :max characters.',
 
             'unitId.required' => 'The unit ID is required.',
-            'unitId.uuid'     => 'The unit ID must be a valid UUID.',
+            'unitId.ulid'     => 'The unit ID must be a valid ULID.',
             'unitId.exists'   => 'The selected unit does not exist.',
 
             'priceNet.required' => 'The net price is required.',
@@ -49,7 +49,7 @@ class ProductRequest extends BaseFormRequest
             'priceNet.max'      => 'The net price may not be greater than :max.',
 
             'vatRateId.required' => 'The VAT rate ID is required.',
-            'vatRateId.uuid'     => 'The VAT rate ID must be a valid UUID.',
+            'vatRateId.ulid'     => 'The VAT rate ID must be a valid ULID.',
             'vatRateId.exists'   => 'The selected VAT rate does not exist.',
         ];
     }

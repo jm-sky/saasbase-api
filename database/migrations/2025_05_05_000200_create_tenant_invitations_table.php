@@ -8,10 +8,10 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('tenant_invitations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id');
-            $table->uuid('inviter_id');
-            $table->uuid('invited_user_id')->nullable();
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id');
+            $table->ulid('inviter_id');
+            $table->ulid('invited_user_id')->nullable();
             $table->string('email');
             $table->string('role');
             $table->string('token')->unique();

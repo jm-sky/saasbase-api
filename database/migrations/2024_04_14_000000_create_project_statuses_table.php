@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('project_statuses', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('color', 7);
             $table->integer('sort_order');

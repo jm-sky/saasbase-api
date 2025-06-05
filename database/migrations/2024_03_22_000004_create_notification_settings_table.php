@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('notification_settings', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->string('channel');
             $table->string('setting_key');
             $table->boolean('enabled')->default(true);

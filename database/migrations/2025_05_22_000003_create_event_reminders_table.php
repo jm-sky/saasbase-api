@@ -9,8 +9,8 @@ return new class() extends Migration {
     {
         Schema::create('event_reminders', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained();
+            $table->foreignUlid('event_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained();
             $table->dateTime('reminder_at');
             $table->string('reminder_type');
             $table->boolean('is_sent')->default(false);

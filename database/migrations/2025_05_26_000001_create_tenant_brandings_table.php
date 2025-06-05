@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('tenant_brandings', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id')->unique();
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id')->unique();
             $table->string('color_primary')->nullable();
             $table->string('color_secondary')->nullable();
             $table->string('short_name')->nullable();

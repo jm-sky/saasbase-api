@@ -8,9 +8,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('project_required_skills', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('project_id');
-            $table->uuid('skill_id');
+            $table->ulid('id')->primary();
+            $table->ulid('project_id');
+            $table->ulid('skill_id');
             $table->integer('required_level');
             $table->timestamps();
             $table->softDeletes();

@@ -9,8 +9,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('contractors', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('country', DatabaseColumnLength::COUNTRY)->nullable();
             $table->string('vat_id', DatabaseColumnLength::VAT_ID)->nullable();

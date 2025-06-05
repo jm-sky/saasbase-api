@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Domain\Common\Enums\AddressType;
 use App\Domain\Common\Models\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Common\Models\Address>
@@ -21,8 +22,8 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => fake()->uuid(),
-            'tenant_id'   => fake()->optional()->uuid(),
+            'id'          => Str::ulid()->toString(),
+            'tenant_id'   => fake()->optional()->passthrough((string) Str::ulid()->toString()),
             'country'     => fake()->countryCode(),
             'postal_code' => fake()->optional()->postcode(),
             'city'        => fake()->city(),

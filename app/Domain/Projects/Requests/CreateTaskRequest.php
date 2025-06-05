@@ -9,12 +9,12 @@ class CreateTaskRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'projectId'     => ['required', 'uuid', 'exists:projects,id'],
+            'projectId'     => ['required', 'ulid', 'exists:projects,id'],
             'title'         => ['required', 'string', 'max:255'],
             'description'   => ['nullable', 'string'],
-            'statusId'      => ['required', 'uuid', 'exists:task_statuses,id'],
+            'statusId'      => ['required', 'ulid', 'exists:task_statuses,id'],
             'priority'      => ['nullable', 'string'],
-            'assignedToId'  => ['nullable', 'uuid', 'exists:users,id'],
+            'assignedToId'  => ['nullable', 'ulid', 'exists:users,id'],
             'dueDate'       => ['nullable', 'date'],
         ];
     }

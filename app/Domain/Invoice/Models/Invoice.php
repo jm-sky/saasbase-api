@@ -2,6 +2,7 @@
 
 namespace App\Domain\Invoice\Models;
 
+use App\Domain\Common\Models\BaseModel;
 use App\Domain\Invoice\Casts\InvoiceBuyerCast;
 use App\Domain\Invoice\Casts\InvoiceDataCast;
 use App\Domain\Invoice\Casts\InvoiceOptionsCast;
@@ -15,8 +16,6 @@ use App\Domain\Invoice\DTOs\InvoiceSellerDTO;
 use App\Domain\Invoice\Enums\InvoiceType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -38,10 +37,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
  */
-class Invoice extends Model
+class Invoice extends BaseModel
 {
     use SoftDeletes;
-    use HasUuids;
     use BelongsToTenant;
 
     protected $fillable = [

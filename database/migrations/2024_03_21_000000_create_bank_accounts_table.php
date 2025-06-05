@@ -8,9 +8,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('bank_accounts', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id')->nullable();
-            $table->uuidMorphs('bankable');
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id')->nullable();
+            $table->ulidMorphs('bankable');
             $table->string('iban');
             $table->string('country', 2)->nullable();
             $table->string('swift')->nullable();

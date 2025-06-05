@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class SkillFactory extends Factory
 {
@@ -15,7 +16,7 @@ class SkillFactory extends Factory
         $category = SkillCategory::factory()->create();
 
         return [
-            'id'          => fake()->uuid(),
+            'id'          => Str::ulid()->toString(),
             'category'    => $category->name,
             'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),

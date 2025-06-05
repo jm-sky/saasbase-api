@@ -11,9 +11,9 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('api_keys', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained('tenants')->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained('tenants')->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
             $table->string('key')->unique();
             $table->json('scopes');

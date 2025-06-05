@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Domain\Feeds\Models\Feed;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Feed>
@@ -15,9 +16,9 @@ class FeedFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => $this->faker->uuid(),
-            'tenant_id'   => $this->faker->uuid(),
-            'user_id'     => $this->faker->uuid(),
+            'id'          => Str::ulid()->toString(),
+            'tenant_id'   => Str::ulid()->toString(),
+            'user_id'     => Str::ulid()->toString(),
             'title'       => $this->faker->sentence(6, true),
             'content'     => $this->faker->paragraphs(3, true),
             'content_html'=> null,

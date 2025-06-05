@@ -33,7 +33,7 @@ class UpdateEventRequest extends BaseFormRequest
             'reminderSettings.push'         => ['boolean'],
             'reminderSettings.remindBefore' => ['string'],
             'relatedType'                   => ['nullable', 'string'],
-            'relatedId'                     => ['nullable', 'uuid'],
+            'relatedId'                     => ['nullable', 'ulid'],
         ];
     }
 }

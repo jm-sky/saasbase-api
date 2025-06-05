@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('tags', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('tenant_id')->nullable();
+            $table->ulid('id')->primary();
+            $table->ulid('tenant_id')->nullable();
             $table->string('name');
             $table->string('slug');
             $table->jsonb('meta')->nullable();
@@ -18,8 +18,8 @@ return new class() extends Migration {
         });
 
         Schema::create('taggables', function (Blueprint $table) {
-            $table->foreignUuid('tag_id')->references('id')->on('tags')->onDelete('cascade');
-            $table->uuid('taggable_id');
+            $table->foreignUlid('tag_id')->references('id')->on('tags')->onDelete('cascade');
+            $table->ulid('taggable_id');
             $table->string('taggable_type');
             $table->timestamps();
             $table->unique(['tag_id', 'taggable_id', 'taggable_type'], 'taggables_unique');

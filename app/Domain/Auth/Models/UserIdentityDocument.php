@@ -2,16 +2,14 @@
 
 namespace App\Domain\Auth\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class UserIdentityDocument extends Model implements HasMedia
+class UserIdentityDocument extends BaseModel implements HasMedia
 {
-    use HasUuids;
     use InteractsWithMedia;
 
     protected $fillable = [

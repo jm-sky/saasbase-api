@@ -14,7 +14,7 @@ class StoreUserSkillRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'skillId'    => ['required', 'uuid', 'exists:skills,id'],
+            'skillId'    => ['required', 'ulid', 'exists:skills,id'],
             'level'      => ['required', 'integer', 'min:1', 'max:5'],
             'acquiredAt' => ['nullable', 'date'],
         ];
@@ -24,7 +24,7 @@ class StoreUserSkillRequest extends BaseFormRequest
     {
         return [
             'skillId.required' => 'The skill ID is required.',
-            'skillId.uuid'     => 'The skill ID must be a valid UUID.',
+            'skillId.ulid'     => 'The skill ID must be a valid ULID.',
             'skillId.exists'   => 'The selected skill does not exist.',
             'level.required'   => 'The level field is required.',
             'level.integer'    => 'The level must be an integer.',

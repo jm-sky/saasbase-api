@@ -4,7 +4,7 @@ namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Enums\UserTenantRole;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class UserTenant extends Pivot
 {
-    use HasUuids;
+    use HasUlids;
 
     protected $table = 'user_tenants';
 

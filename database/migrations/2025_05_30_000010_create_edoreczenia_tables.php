@@ -8,8 +8,8 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('edoreczenia_messages', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('provider');
             $table->string('message_id')->nullable();
             $table->string('subject')->nullable();
@@ -26,15 +26,15 @@ return new class() extends Migration {
         });
 
         Schema::create('edoreczenia_certificates', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('provider');
             $table->string('file_path');
             $table->string('fingerprint');
             $table->string('subject_cn');
             $table->timestamp('valid_from')->nullable();
             $table->timestamp('valid_to')->nullable();
-            $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignUlid('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
 
@@ -43,8 +43,8 @@ return new class() extends Migration {
         });
 
         Schema::create('edoreczenia_message_attachments', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('edoreczenia_message_id')->constrained('edoreczenia_messages')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('edoreczenia_message_id')->constrained('edoreczenia_messages')->cascadeOnDelete();
             $table->string('file_name');
             $table->bigInteger('file_size');
             $table->string('file_path');
