@@ -46,6 +46,12 @@ class SubscriptionPlanController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
+        $request->merge([
+            'filter' => [
+                'isActive' => $request->has('isActive') ? $request->boolean('isActive') : true,
+            ]
+        ]);
+
         $plans = $this->getIndexPaginator($request);
 
         return SubscriptionPlanResource::collection($plans['data'])
