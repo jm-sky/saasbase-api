@@ -17,7 +17,7 @@ class TenantPublicProfileController extends Controller
         $profile = $tenant->publicProfile;
 
         if (!$profile) {
-            throw new NotFoundHttpException('Public profile not found');
+            $profile = $tenant->publicProfile()->create();
         }
 
         return new TenantPublicProfileResource($profile);

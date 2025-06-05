@@ -10,7 +10,7 @@ return new class() extends Migration {
         Schema::create('tenant_public_profiles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tenant_id')->unique();
-            $table->string('public_name');
+            $table->string('public_name')->nullable();
             $table->text('description')->nullable();
             $table->string('website_url')->nullable();
             $table->json('social_links')->nullable();
