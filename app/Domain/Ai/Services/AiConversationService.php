@@ -14,6 +14,11 @@ class AiConversationService
     ) {
     }
 
+    public function getUserId(): string
+    {
+        return $this->userId;
+    }
+
     public function generateSystemPrompt(): string
     {
         return "You are an AI assistant for user #{$this->userId}."

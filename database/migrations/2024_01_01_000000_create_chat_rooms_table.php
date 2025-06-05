@@ -12,6 +12,7 @@ return new class() extends Migration {
             $table->ulid('tenant_id')->nullable()->index();
             $table->string('name');
             $table->string('type'); // direct, group, channel
+            $table->boolean('is_ai')->default(false);
             $table->text('description')->nullable();
             $table->timestamps();
         });

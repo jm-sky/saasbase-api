@@ -6,6 +6,8 @@ use App\Domain\Ai\DTOs\OpenRouterDeltaData;
 use App\Domain\Ai\DTOs\OpenRouterStreamChunkData;
 use App\Domain\Ai\DTOs\StreamDeltaData;
 use App\Domain\Ai\Events\AiChatMessageStreamed;
+use App\Domain\Chat\Models\ChatMessage;
+use App\Domain\Chat\Models\ChatRoom;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 
@@ -38,7 +40,7 @@ class AiChatService
         return config('services.openrouter.streaming_enabled', true);
     }
 
-    public function streamAiResponse(array $history, string $message, string $userId): void
+    public function streamAiResponse(array $history, string $message, string $userId, ?string $tempId = null, bool $noHistory = false): void
     {
         $messages = $this->buildMessages($history, $message);
 
@@ -46,13 +48,18 @@ class AiChatService
             if (!self::isStreamingEnabled()) {
                 $response = $this->openRouterService->createNonStreamedResponse($messages);
                 $content  = $this->extractFullContent($response);
+
+                if (!$noHistory) {
+                    $this->saveMessages($userId, $message, $content, $tempId);
+                }
+
                 $this->broadcastStreamedResponse($userId, $content);
 
                 return;
             }
 
             $response = $this->openRouterService->createStreamedResponse($messages);
-            $this->processStreamedResponse($response, $userId);
+            $this->processStreamedResponse($response, $userId, $message, $tempId, $noHistory);
         } catch (RequestException $e) {
             Log::error('AI request failed: ' . $e->getMessage(), [
                 'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null,
@@ -63,6 +70,58 @@ class AiChatService
                 'trace'   => $e->getTraceAsString(),
             ]);
         }
+    }
+
+    protected function saveMessages(string $userId, string $userMessage, string $aiResponse, ?string $tempId = null): void
+    {
+        $room = $this->getOrCreateAiChatRoom($userId);
+
+        // Save user message
+        $userMessageModel = ChatMessage::create([
+            'chat_room_id' => $room->id,
+            'user_id'      => $userId,
+            'content'      => $userMessage,
+            'role'         => 'user',
+            'is_ai'        => false,
+            'temp_id'      => $tempId,
+        ]);
+
+        // Save AI response
+        ChatMessage::create([
+            'chat_room_id' => $room->id,
+            'user_id'      => $userId,
+            'content'      => $aiResponse,
+            'role'         => 'assistant',
+            'is_ai'        => true,
+            'parent_id'    => $userMessageModel->id,
+        ]);
+    }
+
+    protected function getOrCreateAiChatRoom(string $userId): ChatRoom
+    {
+        $room = ChatRoom::where('type', 'ai')
+            ->whereHas('participants', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->first()
+        ;
+
+        if (!$room) {
+            $room = ChatRoom::create([
+                'name'        => 'AI Chat',
+                'type'        => 'ai',
+                'description' => 'AI Assistant Chat Room',
+            ]);
+
+            $room->participants()->create([
+                'user_id'      => $userId,
+                'role'         => 'member',
+                'joined_at'    => now(),
+                'last_read_at' => now(),
+            ]);
+        }
+
+        return $room;
     }
 
     protected function broadcastStreamedResponse(string $userId, string $content): void
@@ -98,35 +157,6 @@ class AiChatService
         return $messages;
     }
 
-    // protected function createStreamedResponse(array $messages)
-    // {
-    //     return $this->guzzleClient->post($this->openRouterUrl, [
-    //         'headers' => $this->getOpenRouterHeaders(),
-    //         'json'    => [
-    //             'model'    => $this->model,
-    //             'messages' => $messages,
-    //             'stream'   => true,
-    //         ],
-    //         'stream'          => true,
-    //         'timeout'         => 60,
-    //         'connect_timeout' => 10,
-    //     ]);
-    // }
-
-    // protected function createNonStreamedResponse(array $messages)
-    // {
-    //     return $this->guzzleClient->post($this->openRouterUrl, [
-    //         'headers' => $this->getOpenRouterHeaders(),
-    //         'json'    => [
-    //             'model'    => $this->model,
-    //             'messages' => $messages,
-    //             'stream'   => false,
-    //         ],
-    //         'timeout'         => 60,
-    //         'connect_timeout' => 10,
-    //     ]);
-    // }
-
     protected function extractFullContent($response): string
     {
         $json = json_decode($response->getBody()->getContents(), true);
@@ -134,11 +164,12 @@ class AiChatService
         return $json['choices'][0]['message']['content'] ?? '[empty]';
     }
 
-    protected function processStreamedResponse($response, string $userId): void
+    protected function processStreamedResponse($response, string $userId, string $userMessage, ?string $tempId = null, bool $noHistory = false): void
     {
-        $body   = $response->getBody();
-        $index  = 0;
-        $buffer = '';
+        $body        = $response->getBody();
+        $index       = 0;
+        $buffer      = '';
+        $fullContent = '';
 
         while (!$body->eof()) {
             if ($this->conversationService->isCancelled()) {
@@ -167,6 +198,9 @@ class AiChatService
                     $json = substr($line, 6);
 
                     if (self::DONE_TOKEN === $json) {
+                        if (!$noHistory) {
+                            $this->saveMessages($userId, $userMessage, $fullContent, $tempId);
+                        }
                         continue;
                     }
 
@@ -181,6 +215,7 @@ class AiChatService
                     $delta = $data->choices[0]->delta;
 
                     if (isset($delta->content)) {
+                        $fullContent .= $delta->content;
                         $this->broadcastStreamedChunk($data, $delta, $userId, $index);
                     }
                 }
@@ -199,22 +234,19 @@ class AiChatService
         );
     }
 
-    // protected function getOpenRouterHeaders(): array
-    // {
-    //     return [
-    //         'Authorization' => "Bearer {$this->apiKey}",
-    //         'Accept'        => 'text/event-stream',
-    //     ];
-    // }
-
-    public function getFullResponse(array $history, string $message): string
+    public function getFullResponse(array $history, string $message, ?string $tempId = null, bool $noHistory = false): string
     {
         $messages = $this->buildMessages($history, $message);
 
         try {
             $response = $this->openRouterService->createNonStreamedResponse($messages);
+            $content  = $this->extractFullContent($response);
 
-            return $this->extractFullContent($response);
+            if (!$noHistory) {
+                $this->saveMessages($this->conversationService->getUserId(), $message, $content, $tempId);
+            }
+
+            return $content;
         } catch (\Throwable $e) {
             Log::error('AI request failed (non-streamed): ' . $e->getMessage());
 

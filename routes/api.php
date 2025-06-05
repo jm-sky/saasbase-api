@@ -4,9 +4,7 @@ use App\Domain\Auth\Controllers\ApiKeyController;
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Calendar\Http\Controllers\EventController;
 use App\Domain\Common\Controllers\ActivityLogController;
-use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Common\Controllers\TagController;
-use App\Domain\Exchanges\Controllers\ExchangeController;
 use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Rights\Controllers\RoleController;
 use App\Domain\Users\Controllers\PublicUserController;
@@ -46,8 +44,9 @@ Route::prefix('v1')->group(function () {
         require __DIR__ . '/api/tenants.php';
         require __DIR__ . '/api/feeds.php';
         require __DIR__ . '/api/chat.php';
-
-        Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+        require __DIR__ . '/api/skills.php';
+        require __DIR__ . '/api/admin.php';
+        require __DIR__ . '/api/common_resources.php';
 
         Route::middleware('is_in_tenant')->group(function () {
             // TODO: move outside tenant middleware and check only for public users
@@ -65,24 +64,6 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('api-keys', ApiKeyController::class);
             Route::get('/logs', [ActivityLogController::class, 'index']);
         });
-
-        Route::apiResource('exchanges', ExchangeController::class)->only(['index', 'show']);
-        Route::get('exchanges/{exchange}/rates', [ExchangeController::class, 'getRates']);
-
-        require __DIR__ . '/api/skills.php';
-    });
-
-    require __DIR__ . '/api/admin.php';
-
-    Route::post('ai/chat', [App\Domain\Ai\Controllers\AiChatController::class, 'chat']);
-
-    // User Identity Routes
-    Route::prefix('user-identity')->group(function () {
-        Route::post('personal-data', [App\Domain\Auth\Controllers\UserIdentityController::class, 'storePersonalData']);
-        Route::get('personal-data', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getPersonalData']);
-        Route::post('documents', [App\Domain\Auth\Controllers\UserIdentityController::class, 'storeIdentityDocument']);
-        Route::get('documents', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getIdentityDocuments']);
-        Route::get('documents/{document}', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getIdentityDocument']);
     });
 
     require __DIR__ . '/api/stripe.php';

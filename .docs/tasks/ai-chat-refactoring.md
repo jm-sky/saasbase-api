@@ -108,12 +108,14 @@ The AI Chat will be implemented as an extension of the existing Chat domain, tre
 
 ### **3.2. Database Schema Updates**
 
+- Edit existing migrations.
+
 **Add to existing `chat_messages` table:**
 - `temp_id` (string, nullable) – For frontend message reconciliation
 - `role` (enum: 'user', 'assistant') – To distinguish AI messages
 
 **Add to existing `chat_rooms` table:**
-- `type` (enum: 'user', 'ai') – To distinguish AI conversations
+- `id_ai` (boolean) – To distinguish AI conversations
 
 **AI User:**
 - Create a system user record for AI in the `users` table
