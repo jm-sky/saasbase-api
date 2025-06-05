@@ -22,8 +22,8 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid(),
-            'tenant_id'   => fake()->optional()->generator(fn () => (string) Str::ulid()),
+            'id'          => Str::ulid()->toString(),
+            'tenant_id'   => fake()->optional()->passthrough((string) Str::ulid()->toString()),
             'country'     => fake()->countryCode(),
             'postal_code' => fake()->optional()->postcode(),
             'city'        => fake()->city(),

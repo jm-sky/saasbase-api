@@ -17,7 +17,7 @@ class TaskStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid(),
+            'id'          => Str::ulid()->toString(),
             'tenant_id'   => Tenant::factory(),
             'name'        => fake()->words(2, true),
             'color'       => fake()->hexColor(),

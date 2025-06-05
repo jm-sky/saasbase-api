@@ -18,7 +18,7 @@ class ContractorContactPersonFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'            => Str::ulid(),
+            'id'            => Str::ulid()->toString(),
             'tenant_id'     => Tenant::factory(),
             'contractor_id' => Contractor::factory(),
             'name'          => fake()->name(),

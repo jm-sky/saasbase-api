@@ -16,7 +16,7 @@ class SkillFactory extends Factory
         $category = SkillCategory::factory()->create();
 
         return [
-            'id'          => Str::ulid(),
+            'id'          => Str::ulid()->toString(),
             'category'    => $category->name,
             'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),

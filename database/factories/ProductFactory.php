@@ -18,7 +18,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid(),
+            'id'          => Str::ulid()->toString(),
             'name'        => fake()->words(3, true),
             'description' => fake()->optional()->paragraph(),
             'unit_id'     => fn (array $attributes) => $attributes['tenant_id'] ? MeasurementUnit::factory(['tenant_id' => $attributes['tenant_id']]) : null,

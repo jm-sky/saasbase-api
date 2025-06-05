@@ -16,7 +16,7 @@ class VatRateFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'   => Str::ulid(),
+            'id'   => Str::ulid()->toString(),
             'name' => fake()->randomElement(['Standard', 'Reduced', 'Zero', 'Exempt']),
             'rate' => fake()->randomElement([0, 5, 8, 23]),
         ];

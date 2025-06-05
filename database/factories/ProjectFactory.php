@@ -16,7 +16,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid(),
+            'id'          => Str::ulid()->toString(),
             'tenant_id'   => Tenant::factory(),
             'name'        => fake()->sentence(),
             'description' => fake()->paragraph(),

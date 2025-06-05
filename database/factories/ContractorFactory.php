@@ -16,7 +16,7 @@ class ContractorFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid(),
+            'id'          => Str::ulid()->toString(),
             'name'        => fake()->company(),
             'tax_id'      => fake()->numerify('##########'),
             'email'       => fake()->companyEmail(),

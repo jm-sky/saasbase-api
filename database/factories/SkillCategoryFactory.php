@@ -13,7 +13,7 @@ class SkillCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid(),
+            'id'          => Str::ulid()->toString(),
             'name'        => fake()->unique()->word(),
             'description' => fake()->sentence(),
             'created_at'  => fake()->dateTime(),

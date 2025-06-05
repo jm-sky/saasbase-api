@@ -17,7 +17,7 @@ class BankAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'           => Str::ulid(),
+            'id'           => Str::ulid()->toString(),
             'tenant_id'    => Tenant::factory(),
             'iban'         => fake()->iban(),
             'country'      => fake()->countryCode(),
