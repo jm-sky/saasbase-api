@@ -145,6 +145,17 @@ class AiChatService
         }
     }
 
+    protected function broadcastStreamingComplete(string $userId, string $messageId): void
+    {
+        broadcast(new AiChatMessageStreamed($userId, new StreamDeltaData(
+            id: $messageId,
+            index: -1, // Special index to indicate completion
+            provider: 'openrouter',
+            model: $this->model,
+            content: '[DONE]',
+        )));
+    }
+
     protected function buildMessages(array $history, string $message): array
     {
         $messages   = $this->conversationService->buildMessages(collect($history));
@@ -170,6 +181,7 @@ class AiChatService
         $index       = 0;
         $buffer      = '';
         $fullContent = '';
+        $messageId   = uniqid('msg_', true);
 
         while (!$body->eof()) {
             if ($this->conversationService->isCancelled()) {
@@ -201,6 +213,7 @@ class AiChatService
                         if (!$noHistory) {
                             $this->saveMessages($userId, $userMessage, $fullContent, $tempId);
                         }
+                        $this->broadcastStreamingComplete($userId, $messageId);
                         continue;
                     }
 
