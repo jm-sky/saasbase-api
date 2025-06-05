@@ -2,10 +2,16 @@
 
 namespace App\Domain\Subscription\Resources;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Billing\Resources\BillingPriceResource;
+use App\Domain\Subscription\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * @mixin SubscriptionPlan
+ */
 class SubscriptionPlanResource extends JsonResource
 {
     /**
@@ -15,6 +21,10 @@ class SubscriptionPlanResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
         return [
             'id'              => $this->id,
             'name'            => $this->name,
@@ -25,6 +35,7 @@ class SubscriptionPlanResource extends JsonResource
                 return PlanFeatureResource::collection($this->features);
             }),
             'isActive'        => $this->is_active,
+            'isCurrent'       => $this->isCurrent($tenantId),
             'createdAt'       => $this->created_at,
             'updatedAt'       => $this->updated_at,
         ];

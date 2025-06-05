@@ -129,7 +129,7 @@ paths:
                 birthDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:26'
+                  example: '2025-06-05T07:09:32'
                   nullable: true
                 phone:
                   type: string
@@ -560,7 +560,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -579,7 +579,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -606,7 +606,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -801,18 +801,13 @@ paths:
       description: ''
       parameters: []
       responses:
-        404:
+        200:
           description: ''
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                example:
-                  message: 'No query results for model [App\Domain\Auth\Models\User] architecto'
-                properties:
-                  message:
-                    type: string
-                    example: 'No query results for model [App\Domain\Auth\Models\User] architecto'
+                type: string
+                example: !!binary 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
       tags:
         - Endpoints
       security: []
@@ -821,7 +816,7 @@ paths:
         in: path
         name: user_id
         description: 'The ID of the user.'
-        example: architecto
+        example: efb6c5e5-f708-5a9e-89d8-c9963afd4ff8
         required: true
         schema:
           type: string
@@ -897,7 +892,7 @@ paths:
                 birthDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:26'
+                  example: '2025-06-05T07:09:32'
                   nullable: true
                 position:
                   type: string
@@ -1133,7 +1128,7 @@ paths:
                 acquiredAt:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:26'
+                  example: '2025-06-05T07:09:32'
                   nullable: true
               required:
                 - skillId
@@ -1184,7 +1179,7 @@ paths:
                 acquiredAt:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:26'
+                  example: '2025-06-05T07:09:32'
                   nullable: true
               required:
                 - level
@@ -1203,7 +1198,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the skill.'
-        example: architecto
+        example: 01973b12-a9cb-73e6-a1a4-af82a2f957b9
         required: true
         schema:
           type: string
@@ -1300,7 +1295,7 @@ paths:
                 gender:
                   type: string
                   description: ''
-                  example: female
+                  example: prefer_not_to_say
                   nullable: false
                   enum:
                     - male
@@ -1374,12 +1369,12 @@ paths:
                 issued_at:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:26'
+                  example: '2025-06-05T07:09:32'
                   nullable: true
                 expires_at:
                   type: string
                   description: 'Must be a valid date. Must be a date after <code>issued_at</code>.'
-                  example: '2051-06-26'
+                  example: '2051-06-29'
                   nullable: false
                 meta:
                   type: object
@@ -1540,7 +1535,7 @@ paths:
                 isDefault:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
               required:
                 - config
@@ -1632,7 +1627,7 @@ paths:
                 enabled:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
               required:
                 - channel
@@ -1829,7 +1824,7 @@ paths:
                 force:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: true
               required:
                 - vatId
@@ -2094,7 +2089,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2113,7 +2108,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2155,7 +2150,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2234,7 +2229,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: registeredOffice
+                  example: residence
                   nullable: false
                   enum:
                     - residence
@@ -2245,7 +2240,7 @@ paths:
                 isDefault:
                   type: boolean
                   description: ''
-                  example: false
+                  example: true
                   nullable: false
               required:
                 - country
@@ -2257,7 +2252,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2341,7 +2336,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: contact
+                  example: residence
                   nullable: false
                   enum:
                     - residence
@@ -2374,7 +2369,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2382,7 +2377,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the address.'
-        example: architecto
+        example: 01973b12-a73e-709c-9ded-50e7be68c743
         required: true
         schema:
           type: string
@@ -2401,7 +2396,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2483,7 +2478,7 @@ paths:
                 isDefault:
                   type: boolean
                   description: ''
-                  example: false
+                  example: true
                   nullable: false
               required:
                 - bankName
@@ -2495,7 +2490,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2569,7 +2564,7 @@ paths:
                 isDefault:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
               required:
                 - bankName
@@ -2590,7 +2585,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2652,7 +2647,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2692,7 +2687,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2700,7 +2695,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: architecto
+        example: 01973b12-a9d8-711b-be7f-76e889977a52
         required: true
         schema:
           type: string
@@ -2731,7 +2726,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2739,7 +2734,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: architecto
+        example: 01973b12-a9d8-711b-be7f-76e889977a52
         required: true
         schema:
           type: string
@@ -2770,7 +2765,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2778,7 +2773,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: architecto
+        example: 01973b12-a9d8-711b-be7f-76e889977a52
         required: true
         schema:
           type: string
@@ -2884,7 +2879,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -2903,7 +2898,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -3028,7 +3023,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -3047,7 +3042,7 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
-        example: architecto
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
         required: true
         schema:
           type: string
@@ -3086,6 +3081,68 @@ paths:
         in: path
         name: tenant_id
         description: 'The ID of the tenant.'
+        example: fd925344-bd04-51f0-be90-33e35bd33a05
+        required: true
+        schema:
+          type: string
+  '/api/v1/tenants/{tenant}/quota':
+    get:
+      summary: ''
+      operationId: getApiV1TenantsTenantQuota
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: tenant
+        description: 'The tenant.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/v1/tenants/{tenant}/current-plan':
+    get:
+      summary: ''
+      operationId: getApiV1TenantsTenantCurrentPlan
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+    parameters:
+      -
+        in: path
+        name: tenant
+        description: 'The tenant.'
         example: architecto
         required: true
         schema:
@@ -3126,7 +3183,7 @@ paths:
                 sort:
                   type: string
                   description: ''
-                  example: '-updatedAt'
+                  example: '-createdAt'
                   nullable: false
                   enum:
                     - createdAt
@@ -3477,12 +3534,12 @@ paths:
                         from:
                           type: string
                           description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date.'
-                          example: '2025-06-02T12:20:26'
+                          example: '2025-06-05T07:09:33'
                           nullable: false
                         to:
                           type: string
                           description: 'This field is required when <code>filter.createdAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.createdAt.from</code>.'
-                          example: '2051-06-26'
+                          example: '2051-06-29'
                           nullable: false
                     updatedAt:
                       type: object
@@ -3493,17 +3550,17 @@ paths:
                         from:
                           type: string
                           description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date.'
-                          example: '2025-06-02T12:20:26'
+                          example: '2025-06-05T07:09:33'
                           nullable: false
                         to:
                           type: string
                           description: 'This field is required when <code>filter.updatedAt</code> is present. Must be a valid date. Must be a date after or equal to <code>filter.updatedAt.from</code>.'
-                          example: '2051-06-26'
+                          example: '2051-06-29'
                           nullable: false
                 sort:
                   type: string
                   description: ''
-                  example: '-subregion'
+                  example: numericCode
                   nullable: false
                   enum:
                     - name
@@ -3558,7 +3615,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the country.'
-        example: architecto
+        example: 01973b12-a5c9-73b2-afbc-3c80a8b73a29
         required: true
         schema:
           type: string
@@ -3611,7 +3668,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the user.'
-        example: architecto
+        example: efb6c5e5-f708-5a9e-89d8-c9963afd4ff8
         required: true
         schema:
           type: string
@@ -3670,12 +3727,12 @@ paths:
                 startDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:33'
                   nullable: true
                 endDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:33'
                   nullable: true
               required:
                 - name
@@ -3736,12 +3793,12 @@ paths:
                 startDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:33'
                   nullable: true
                 endDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:33'
                   nullable: true
       security: []
     delete:
@@ -4017,7 +4074,7 @@ paths:
                 dueDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:33'
                   nullable: true
               required:
                 - projectId
@@ -4089,7 +4146,7 @@ paths:
                 dueDate:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:33'
                   nullable: true
       security: []
     delete:
@@ -4152,7 +4209,7 @@ paths:
                     isDefault:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: false
                     createdAt:
                       type: object
@@ -4271,7 +4328,7 @@ paths:
                 isDefault:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
               required:
                 - name
@@ -4393,7 +4450,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -4432,7 +4489,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -4471,7 +4528,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -4573,7 +4630,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -4612,7 +4669,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -4651,7 +4708,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -4757,7 +4814,7 @@ paths:
                 sort:
                   type: string
                   description: ''
-                  example: email
+                  example: '-updatedAt'
                   nullable: false
                   enum:
                     - name
@@ -4854,7 +4911,7 @@ paths:
                     isBuyer:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: false
                     isSupplier:
                       type: boolean
@@ -4896,17 +4953,17 @@ paths:
                     mf:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: true
                     vies:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: true
                     regon:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: true
       security: []
   '/api/v1/contractors/{id}':
@@ -5005,7 +5062,7 @@ paths:
                     isActive:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: false
                     isBuyer:
                       type: boolean
@@ -5015,7 +5072,7 @@ paths:
                     isSupplier:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: false
                   required:
                     - tenantId
@@ -5052,12 +5109,12 @@ paths:
                     mf:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: true
                     vies:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: true
                     regon:
                       type: boolean
@@ -5200,7 +5257,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: correspondence
+                  example: registeredOffice
                   nullable: false
                   enum:
                     - residence
@@ -5302,7 +5359,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: registeredOffice
+                  example: residence
                   nullable: false
                   enum:
                     - residence
@@ -5438,7 +5495,7 @@ paths:
                 isDefault:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
               required:
                 - iban
@@ -5571,7 +5628,7 @@ paths:
         in: path
         name: bankAccount_id
         description: 'The ID of the bankAccount.'
-        example: architecto
+        example: 01973b12-a73f-7175-8918-2f404abccad4
         required: true
         schema:
           type: string
@@ -5829,7 +5886,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -5868,7 +5925,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -5907,7 +5964,7 @@ paths:
         in: path
         name: media_id
         description: 'The ID of the media.'
-        example: 16
+        example: 1973
         required: true
         schema:
           type: integer
@@ -6279,7 +6336,7 @@ paths:
                 sort:
                   type: string
                   description: ''
-                  example: '-updatedAt'
+                  example: '-name'
                   nullable: false
                   enum:
                     - name
@@ -6972,15 +7029,41 @@ paths:
                     - monthly
                     - quarterly
                     - yearly
-                paymentMethodId:
-                  type: string
+                paymentDetails:
+                  type: object
                   description: ''
-                  example: architecto
+                  example: []
                   nullable: false
+                  properties:
+                    cardNumber:
+                      type: string
+                      description: 'Must match the regex /^\d{16}$/.'
+                      example: '5642559314232682'
+                      nullable: false
+                    expiry:
+                      type: string
+                      description: 'Must match the regex /^\d{2}\/\d{2}$/.'
+                      example: 64/25
+                      nullable: false
+                    cvc:
+                      type: string
+                      description: 'Must match the regex /^\d{3,4}$/.'
+                      example: '564'
+                      nullable: false
+                    name:
+                      type: string
+                      description: 'Must not be greater than 255 characters.'
+                      example: 'y'
+                      nullable: false
+                  required:
+                    - cardNumber
+                    - expiry
+                    - cvc
+                    - name
                 trialEndsAt:
                   type: string
                   description: 'Must be a valid date. Must be a date after <code>now</code>.'
-                  example: '2051-06-26'
+                  example: '2051-06-29'
                   nullable: true
                 couponCode:
                   type: string
@@ -6997,7 +7080,7 @@ paths:
               required:
                 - planId
                 - billingInterval
-                - paymentMethodId
+                - paymentDetails
       security: []
   '/api/v1/subscriptions/{id}':
     get:
@@ -7044,7 +7127,7 @@ paths:
                 billingInterval:
                   type: string
                   description: ''
-                  example: yearly
+                  example: quarterly
                   nullable: false
                   enum:
                     - monthly
@@ -7058,7 +7141,7 @@ paths:
                 prorate:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
                 cancelAtPeriodEnd:
                   type: boolean
@@ -7103,6 +7186,55 @@ paths:
         required: true
         schema:
           type: string
+  /api/v1/subscription/checkout:
+    post:
+      summary: 'Create a Stripe Checkout session for subscription.'
+      operationId: createAStripeCheckoutSessionForSubscription
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                billableType:
+                  type: string
+                  description: ''
+                  example: user
+                  nullable: false
+                  enum:
+                    - tenant
+                    - user
+                planId:
+                  type: string
+                  description: 'The <code>id</code> of an existing record in the subscription_plans table.'
+                  example: architecto
+                  nullable: false
+                priceId:
+                  type: string
+                  description: 'The <code>id</code> of an existing record in the billing_prices table.'
+                  example: architecto
+                  nullable: false
+                successUrl:
+                  type: string
+                  description: 'Must be a valid URL.'
+                  example: 'http://bailey.com/'
+                  nullable: true
+                cancelUrl:
+                  type: string
+                  description: 'Must be a valid URL.'
+                  example: 'http://rempel.com/sunt-nihil-accusantium-harum-mollitia'
+                  nullable: true
+              required:
+                - billableType
+                - planId
+                - priceId
+      security: []
   /api/v1/addon-packages:
     get:
       summary: ''
@@ -7366,7 +7498,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: basic-correction
+                  example: advance-payment
                   nullable: false
                   enum:
                     - basic
@@ -7387,7 +7519,7 @@ paths:
                 issue_date:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:34'
                   nullable: false
                 status:
                   type: string
@@ -7516,7 +7648,7 @@ paths:
                 type:
                   type: string
                   description: ''
-                  example: import-correction
+                  example: basic-correction
                   nullable: false
                   enum:
                     - basic
@@ -7537,7 +7669,7 @@ paths:
                 issue_date:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:34'
                   nullable: false
                 status:
                   type: string
@@ -7678,17 +7810,17 @@ paths:
                 startAt:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:34'
                   nullable: false
                 endAt:
                   type: string
                   description: 'Must be a valid date. Must be a date after <code>start_at</code>.'
-                  example: '2067-10-13'
+                  example: '2077-03-01'
                   nullable: false
                 isAllDay:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
                   nullable: false
                 location:
                   type: string
@@ -7703,7 +7835,7 @@ paths:
                 status:
                   type: string
                   description: ''
-                  example: tentative
+                  example: completed
                   nullable: false
                   enum:
                     - scheduled
@@ -7737,7 +7869,7 @@ paths:
                     email:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: false
                     push:
                       type: boolean
@@ -7848,12 +7980,12 @@ paths:
                 startAt:
                   type: string
                   description: 'Must be a valid date.'
-                  example: '2025-06-02T12:20:27'
+                  example: '2025-06-05T07:09:34'
                   nullable: false
                 endAt:
                   type: string
                   description: 'Must be a valid date. Must be a date after <code>start_at</code>.'
-                  example: '2067-10-13'
+                  example: '2077-03-01'
                   nullable: false
                 isAllDay:
                   type: boolean
@@ -7873,7 +8005,7 @@ paths:
                 status:
                   type: string
                   description: ''
-                  example: cancelled
+                  example: completed
                   nullable: false
                   enum:
                     - scheduled
@@ -7883,7 +8015,7 @@ paths:
                 visibility:
                   type: string
                   description: ''
-                  example: public
+                  example: private
                   nullable: false
                   enum:
                     - public
@@ -7912,7 +8044,7 @@ paths:
                     push:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: false
                     remindBefore:
                       type: string
@@ -8062,7 +8194,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the role.'
-        example: architecto
+        example: 01973b12-a666-702f-a3b9-e572b063e068
         required: true
         schema:
           type: string
@@ -8112,7 +8244,7 @@ paths:
                   type: array
                   description: ''
                   example:
-                    - write
+                    - read
                   items:
                     type: string
                     enum:
@@ -8255,7 +8387,7 @@ paths:
                 sort:
                   type: string
                   description: ''
-                  example: currency
+                  example: name
                   nullable: false
                   enum:
                     - name
@@ -8329,7 +8461,7 @@ paths:
                 date:
                   type: string
                   description: 'Must be a valid date. Must be a valid date in the format <code>Y-m-d</code>.'
-                  example: '2025-06-02'
+                  example: '2025-06-05'
                   nullable: false
       security: []
     parameters:
@@ -8467,7 +8599,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the skill.'
-        example: architecto
+        example: 01973b12-a5ed-70d3-9d16-6a3919a1d383
         required: true
         schema:
           type: string
@@ -8585,7 +8717,7 @@ paths:
         in: path
         name: id
         description: 'The ID of the skill category.'
-        example: architecto
+        example: 01973b12-a5e1-7197-8741-0000e39f15d4
         required: true
         schema:
           type: string
@@ -8691,7 +8823,7 @@ paths:
                 sort:
                   type: string
                   description: ''
-                  example: name
+                  example: isActive
                   nullable: false
                   enum:
                     - name
@@ -8793,7 +8925,7 @@ paths:
                     isSupplier:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: false
                   required:
                     - tenantId
@@ -8830,12 +8962,12 @@ paths:
                     mf:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: true
                     vies:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: true
                     regon:
                       type: boolean
@@ -8944,12 +9076,12 @@ paths:
                     isBuyer:
                       type: boolean
                       description: ''
-                      example: false
+                      example: true
                       nullable: false
                     isSupplier:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: false
                   required:
                     - tenantId
@@ -8996,7 +9128,7 @@ paths:
                     regon:
                       type: boolean
                       description: ''
-                      example: true
+                      example: false
                       nullable: true
       security: []
     delete:
@@ -9084,7 +9216,7 @@ paths:
                 sort:
                   type: string
                   description: ''
-                  example: name
+                  example: '-name'
                   nullable: false
                   enum:
                     - name

@@ -39,6 +39,11 @@ trait HasIndexQuery
     protected array $defaultWith = [];
 
     /**
+     * Default without global scopes option.
+     */
+    protected array $withoutGlobalScopes = [];
+
+    /**
      * Create the base query using Spatie QueryBuilder.
      */
     public function getIndexQuery(Request $request): QueryBuilder
@@ -48,6 +53,7 @@ trait HasIndexQuery
             ->allowedSorts($this->sorts)
             ->defaultSort($this->defaultSort)
             ->with($this->defaultWith)
+            ->withoutGlobalScopes($this->withoutGlobalScopes)
         ;
     }
 

@@ -24,7 +24,9 @@ class AdminContractorController extends Controller
 
     public function __construct()
     {
-        $this->modelClass = Contractor::withoutGlobalScope(TenantScope::class);
+        $this->modelClass = Contractor::class;
+
+        $this->withoutGlobalScopes = [TenantScope::class];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'email', 'phone', 'notes'])),

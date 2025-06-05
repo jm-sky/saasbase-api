@@ -2,43 +2,60 @@
 
 namespace App\Domain\Subscription\Controllers;
 
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
+use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Subscription\Resources\SubscriptionPlanResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class SubscriptionPlanController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = SubscriptionPlan::query()
-            ->with(['features.feature', 'prices'])
-            ->where('is_active', true)
-            ->when($request->has('billing_period'), function ($query) use ($request) {
-                $query->whereHas('prices', function ($q) use ($request) {
-                    $q->where('billing_period', $request->billing_period)
-                        ->where('is_active', true)
-                    ;
-                });
-            })
-            ->when($request->has('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
-                    ;
-                });
-            })
-        ;
+    use HasIndexQuery;
 
-        return SubscriptionPlanResource::collection(
-            $query->paginate($request->input('perPage', 15))
-        );
+    protected int $defaultPerPage = 15;
+
+    public function __construct()
+    {
+        $this->modelClass  = SubscriptionPlan::class;
+        $this->defaultWith = ['features.feature', 'prices', 'subscriptions.billable'];
+
+        $this->filters = [
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('id', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('isActive', new AdvancedFilter(['is_active' => 'boolean']), 'is_active'),
+            AllowedFilter::custom('billingPeriod', new AdvancedFilter(), 'billing_period'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+        ];
+
+        $this->sorts = [
+            'name',
+            'isActive'  => 'is_active',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
+        ];
+
+        $this->defaultSort = '-created_at';
+    }
+
+    public function index(Request $request): AnonymousResourceCollection
+    {
+        $plans = $this->getIndexPaginator($request);
+
+        return SubscriptionPlanResource::collection($plans['data'])
+            ->additional(['meta' => $plans['meta']])
+        ;
     }
 
     public function show(string $id)
     {
-        $plan = SubscriptionPlan::with(['features.feature', 'prices'])
+        $plan = SubscriptionPlan::with(['features.feature', 'prices', 'subscriptions.billable'])
             ->findOrFail($id)
         ;
 

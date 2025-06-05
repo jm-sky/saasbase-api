@@ -85,9 +85,5 @@ Route::prefix('v1')->group(function () {
         Route::get('documents/{document}', [App\Domain\Auth\Controllers\UserIdentityController::class, 'getIdentityDocument']);
     });
 
-    // Stripe Webhook
-    Route::post('stripe/webhook', App\Domain\Subscription\Controllers\StripeWebhookController::class)
-        ->name('stripe.webhook')
-        ->middleware('stripe.webhook')
-    ;
+    require __DIR__ . '/api/stripe.php';
 });

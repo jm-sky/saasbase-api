@@ -26,7 +26,9 @@ class AdminProductController extends Controller
 
     public function __construct()
     {
-        $this->modelClass = Product::withoutGlobalScope(TenantScope::class);
+        $this->modelClass = Product::class;
+
+        $this->withoutGlobalScopes = [TenantScope::class];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),

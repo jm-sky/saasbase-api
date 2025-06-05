@@ -48,6 +48,17 @@ class SubscriptionPlan extends BaseModel
         return $this->morphMany(BillingPrice::class, 'priceable');
     }
 
+    public function isCurrent(string $tenantId): bool
+    {
+        return $this->subscriptions()
+            ->whereHas('billable', function ($query) use ($tenantId) {
+                $query->where('id', $tenantId);
+            })
+            ->where('status', 'active')
+            ->exists()
+        ;
+    }
+
     public function getFeature(FeatureName $feature)
     {
         $planFeature = $this->features()

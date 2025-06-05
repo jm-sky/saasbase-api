@@ -1,6 +1,6 @@
 ---
 description:
-globs:
+globs: *Resource.php,*Controller.php
 alwaysApply: false
 ---
 - **Controllers must use the `HasIndexQuery` trait for index endpoints.**
@@ -18,11 +18,12 @@ alwaysApply: false
   - See [ProjectController.php](mdc:app/Domain/Projects/Controllers/ProjectController.php).
 
 - **All single model API responses must be wrapped in a `data` key.**
-  - Example: `return response()->json(['data' => ProjectDTO::fromModel($project)]);`
+  - This is
   - This provides flexibility for adding extra content (e.g., `message`, `meta`) in the future and ensures consistency with paginated/multi-item responses.
 
 - **DO:**
-  - Use DTOs for all output.
+  - Use Resources for API responses.
+  - Use DTOs for internal data movement.
   - Use camelCase for all response keys.
   - Include pagination meta for paginated endpoints.
   - Use policies for all resource actions.

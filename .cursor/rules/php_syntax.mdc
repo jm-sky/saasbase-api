@@ -1,6 +1,6 @@
 ---
 description:
-globs:
+globs: **/Models/*
 alwaysApply: false
 ---
 - **Use short type syntax in PHP**
