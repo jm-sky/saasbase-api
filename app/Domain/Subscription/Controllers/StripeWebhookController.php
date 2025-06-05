@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Stripe\Event;
-use Stripe\Exception\SignatureVerificationException;
-use Stripe\Webhook;
 
 class StripeWebhookController
 {
@@ -24,29 +22,16 @@ class StripeWebhookController
      */
     public function __invoke(Request $request): Response
     {
-        $payload   = $request->getContent();
-        $sigHeader = $request->header('Stripe-Signature');
-
         try {
-            $event = Webhook::constructEvent(
-                $payload,
-                $sigHeader,
-                config('services.stripe.webhook_secret')
-            );
-        } catch (SignatureVerificationException $e) {
-            Log::error('Invalid Stripe webhook signature', [
-                'error' => $e->getMessage(),
-            ]);
+            $event = $request->get('stripe_event');
 
-            return response('Invalid signature', Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
             $this->handleEvent($event);
         } catch (\Exception $e) {
             Log::error('Failed to handle Stripe webhook', [
-                'error' => $e->getMessage(),
-                'event' => $event->type,
+                'error'    => $e->getMessage(),
+                'trace'    => $e->getTraceAsString(),
+                'event'    => $event->type ?? 'unknown',
+                'event_id' => $event->id ?? 'unknown',
             ]);
 
             return response('Webhook handler failed', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -65,9 +50,12 @@ class StripeWebhookController
             'customer.subscription.updated' => $this->handleSubscriptionUpdated($event),
             'customer.subscription.deleted' => $this->handleSubscriptionDeleted($event),
             'invoice.created'               => $this->handleInvoiceCreated($event),
-            'invoice.paid'                  => $this->handleInvoicePaid($event),
+            'invoice.payment_succeeded'     => $this->handleInvoicePaymentSucceeded($event),
             'invoice.payment_failed'        => $this->handleInvoicePaymentFailed($event),
-            default                         => Log::info('Unhandled Stripe event', ['type' => $event->type]),
+            default                         => Log::info('Unhandled Stripe event', [
+                'type'     => $event->type,
+                'event_id' => $event->id,
+            ]),
         };
     }
 
@@ -108,11 +96,16 @@ class StripeWebhookController
     }
 
     /**
-     * Handle invoice paid event.
+     * Handle invoice payment succeeded event.
      */
-    protected function handleInvoicePaid(Event $event): void
+    protected function handleInvoicePaymentSucceeded(Event $event): void
     {
         $invoice = $event->data->object;
+
+        // First ensure the invoice exists
+        $this->stripeInvoiceService->syncInvoice($invoice->toArray());
+
+        // Then update its status
         $this->stripeInvoiceService->updatePaymentStatus($invoice->id, 'paid');
     }
 
@@ -122,6 +115,11 @@ class StripeWebhookController
     protected function handleInvoicePaymentFailed(Event $event): void
     {
         $invoice = $event->data->object;
+
+        // First ensure the invoice exists
+        $this->stripeInvoiceService->syncInvoice($invoice->toArray());
+
+        // Then update its status
         $this->stripeInvoiceService->updatePaymentStatus($invoice->id, 'failed');
     }
 }

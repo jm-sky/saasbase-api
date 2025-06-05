@@ -14,6 +14,8 @@ use Carbon\Carbon;
  */
 class StripeSubscriptionService extends StripeService
 {
+    protected BillingCustomer $billingCustomer;
+
     /**
      * Create a new subscription for a customer.
      *
@@ -109,8 +111,8 @@ class StripeSubscriptionService extends StripeService
             // Update local subscription record
             $subscription->update([
                 'status'               => $stripeSubscription->status,
-                'current_period_start' => Carbon::createFromTimestamp($stripeSubscription->current_period_start),
-                'current_period_end'   => Carbon::createFromTimestamp($stripeSubscription->current_period_end),
+                'current_period_start' => $stripeSubscription->current_period_start ? Carbon::createFromTimestamp($stripeSubscription->current_period_start) : null,
+                'current_period_end'   => $stripeSubscription->current_period_end ? Carbon::createFromTimestamp($stripeSubscription->current_period_end) : null,
             ]);
 
             if (isset($newPlan)) {
@@ -198,21 +200,24 @@ class StripeSubscriptionService extends StripeService
                     throw new StripeException('Cannot sync subscription: customer not found');
                 }
 
-                $plan = SubscriptionPlan::where('stripe_price_id', $stripeSubscription->items->data[0]->price->id)->first();
+                // Find the plan by looking up the price in the prices relation
+                $plan = SubscriptionPlan::whereHas('prices', function ($query) use ($stripeSubscription) {
+                    $query->where('stripe_price_id', $stripeSubscription->items->data[0]->price->id);
+                })->first();
 
                 if (!$plan) {
-                    throw new StripeException('Cannot sync subscription: plan not found');
+                    throw new StripeException('Cannot sync subscription: plan not found for price ' . $stripeSubscription->items->data[0]->price->id);
                 }
 
-                $subscription->billingCustomer()->associate($billingCustomer);
+                $subscription->billable()->associate($billingCustomer);
                 $subscription->plan()->associate($plan);
             }
 
             // Update subscription data
             $subscription->fill([
                 'status'               => $stripeSubscription->status,
-                'current_period_start' => Carbon::createFromTimestamp($stripeSubscription->current_period_start),
-                'current_period_end'   => Carbon::createFromTimestamp($stripeSubscription->current_period_end),
+                'current_period_start' => $stripeSubscription->current_period_start ? Carbon::createFromTimestamp($stripeSubscription->current_period_start) : null,
+                'current_period_end'   => $stripeSubscription->current_period_end ? Carbon::createFromTimestamp($stripeSubscription->current_period_end) : null,
                 'trial_start'          => $stripeSubscription->trial_start ? Carbon::createFromTimestamp($stripeSubscription->trial_start) : null,
                 'trial_end'            => $stripeSubscription->trial_end ? Carbon::createFromTimestamp($stripeSubscription->trial_end) : null,
                 'cancel_at_period_end' => $stripeSubscription->cancel_at_period_end,
@@ -240,6 +245,8 @@ class StripeSubscriptionService extends StripeService
         BillingPrice $price,
         array $options = []
     ): array {
+        $this->billingCustomer = $billingCustomer;
+
         return $this->handleStripeException(function () use ($billingCustomer, $plan, $price, $options) {
             $checkoutData = [
                 'customer'   => $billingCustomer->stripe_customer_id,
@@ -275,10 +282,12 @@ class StripeSubscriptionService extends StripeService
 
     protected function buildCallbackUrl(string $url): string
     {
+        $tenantId = $this->billingCustomer->billable->getTenantId();
+
         if (str_contains($url, '?')) {
             return $url . '&session_id={CHECKOUT_SESSION_ID}';
         }
 
-        return $url . '?session_id={CHECKOUT_SESSION_ID}';
+        return $url . '?session_id={CHECKOUT_SESSION_ID}&tenant_id=' . $tenantId;
     }
 }

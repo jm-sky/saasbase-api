@@ -37,27 +37,27 @@ class StripeInvoiceService extends StripeService
                 throw new StripeException('Cannot sync invoice: customer not found');
             }
 
+            // Calculate amount due - use total if amount_due is not set
+            $amountDue = $stripeInvoiceData['amount_due'] ?? $stripeInvoiceData['total'] ?? 0;
+
             // Update invoice data
             $invoice->fill([
-                'billing_customer_id' => $billingCustomer->id,
-                'amount'              => $this->unformatAmount($stripeInvoiceData['amount_due']),
-                'currency'            => $stripeInvoiceData['currency'],
+                'billable_type'       => BillingCustomer::class,
+                'billable_id'         => $billingCustomer->id,
+                'amount_due'          => $this->unformatAmount($amountDue),
                 'status'              => SubscriptionInvoiceStatus::from($stripeInvoiceData['status']),
-                'due_date'            => $stripeInvoiceData['due_date'] ? Carbon::createFromTimestamp($stripeInvoiceData['due_date']) : null,
+                'hosted_invoice_url'  => $stripeInvoiceData['hosted_invoice_url'] ?? null,
+                'pdf_url'             => $stripeInvoiceData['invoice_pdf'] ?? null,
+                'issued_at'           => Carbon::createFromTimestamp($stripeInvoiceData['created']),
                 'paid_at'             => SubscriptionInvoiceStatus::from($stripeInvoiceData['status'])->isPaid() ? Carbon::createFromTimestamp($stripeInvoiceData['created']) : null,
-                'hosted_url'          => $stripeInvoiceData['hosted_invoice_url'],
-                'invoice_pdf'         => $stripeInvoiceData['invoice_pdf'],
-                'number'              => $stripeInvoiceData['number'],
-                'description'         => $stripeInvoiceData['description'],
-                'metadata'            => $stripeInvoiceData['metadata'] ?? [],
             ]);
 
             $invoice->save();
 
             // Generate and store PDF if not provided by Stripe
-            if (!$invoice->invoice_pdf) {
+            if (!$invoice->pdf_url) {
                 $pdfPath = $this->generatePdf($invoice->id);
-                $invoice->update(['invoice_pdf' => $pdfPath]);
+                $invoice->update(['pdf_url' => $pdfPath]);
             }
 
             return $invoice;
@@ -99,7 +99,8 @@ class StripeInvoiceService extends StripeService
     public function updatePaymentStatus(string $invoiceId, string $status): SubscriptionInvoice
     {
         return $this->handleStripeException(function () use ($invoiceId, $status) {
-            $invoice       = SubscriptionInvoice::findOrFail($invoiceId);
+            // TODO: MAYBE ADD TENANT SCOPE & BYPASS HERE
+            $invoice       = SubscriptionInvoice::where('stripe_invoice_id', $invoiceId)->firstOrFail();
             $invoiceStatus = SubscriptionInvoiceStatus::from($status);
 
             $updates = [

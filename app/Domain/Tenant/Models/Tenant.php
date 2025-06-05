@@ -83,6 +83,11 @@ class Tenant extends BaseModel implements HasMedia
         'is_active' => 'boolean',
     ];
 
+    public function getTenantId(): string
+    {
+        return $this->id;
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_tenants')
