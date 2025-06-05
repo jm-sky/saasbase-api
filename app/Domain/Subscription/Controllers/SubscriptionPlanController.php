@@ -49,7 +49,7 @@ class SubscriptionPlanController extends Controller
         $request->merge([
             'filter' => [
                 'isActive' => $request->has('isActive') ? $request->boolean('isActive') : true,
-            ]
+            ],
         ]);
 
         $plans = $this->getIndexPaginator($request);

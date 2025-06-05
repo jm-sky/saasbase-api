@@ -14,6 +14,8 @@ use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
+use App\Domain\Subscription\Models\BillingCustomer;
+use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
@@ -34,6 +36,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
@@ -307,6 +310,16 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+
+    public function billingCustomer(): HasOne
+    {
+        return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
+    }
+
+    public function subscription(): MorphOne
+    {
+        return $this->morphOne(Subscription::class, 'billable');
     }
 
     // === MEDIA LIBRARY CONFIG ===

@@ -49,21 +49,21 @@ class SubscriptionCheckoutController
 
     protected function provideBillingCustomer(User $user, Tenant $tenant, string $billableType): BillingCustomer
     {
-        $billingCustomer = null;
-
-        if (!$billingCustomer && 'tenant' === $billableType) {
-            $billingCustomer = $this->stripeCustomerService->createCustomer($tenant, [
+        if ('tenant' === $billableType) {
+            return $tenant->billingCustomer ?? $this->stripeCustomerService->createCustomer($tenant, [
                 'email' => $tenant->email ?? $user->email,
                 'name'  => $tenant->name ?? $user->name,
             ]);
-        } elseif (!$billingCustomer && 'user' === $billableType) {
-            $billingCustomer = $this->stripeCustomerService->createCustomer($user, [
+        }
+
+        if ('user' === $billableType) {
+            return $this->stripeCustomerService->createCustomer($user, [
                 'email' => $user->email,
                 'name'  => $user->name,
             ]);
         }
 
-        return $billingCustomer;
+        throw new \Exception('Invalid billable type');
     }
 
     protected function provideBillingPrice(SubscriptionPlan $plan, string $priceId): BillingPrice

@@ -250,8 +250,8 @@ class StripeSubscriptionService extends StripeService
                         'quantity' => 1,
                     ],
                 ],
-                'success_url' => $options['success_url'] ?? config('app.url') . '/subscription/success?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url'  => $options['cancel_url'] ?? config('app.url') . '/subscription/cancel',
+                'success_url' => $this->buildCallbackUrl($options['success_url'] ?? config('app.url') . '/subscription/success?session_id={CHECKOUT_SESSION_ID}'),
+                'cancel_url'  => $this->buildCallbackUrl($options['cancel_url'] ?? config('app.url') . '/subscription/cancel'),
                 'metadata'    => [
                     'plan_id' => $plan->id,
                 ],
@@ -271,5 +271,14 @@ class StripeSubscriptionService extends StripeService
                 'sessionId' => $session->id,
             ];
         });
+    }
+
+    protected function buildCallbackUrl(string $url): string
+    {
+        if (str_contains($url, '?')) {
+            return $url . '&session_id={CHECKOUT_SESSION_ID}';
+        }
+
+        return $url . '?session_id={CHECKOUT_SESSION_ID}';
     }
 }
