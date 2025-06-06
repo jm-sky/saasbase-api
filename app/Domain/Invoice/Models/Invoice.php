@@ -3,6 +3,7 @@
 namespace App\Domain\Invoice\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Invoice\Casts\InvoiceBuyerCast;
 use App\Domain\Invoice\Casts\InvoiceDataCast;
 use App\Domain\Invoice\Casts\InvoiceOptionsCast;
@@ -41,6 +42,7 @@ class Invoice extends BaseModel
 {
     use SoftDeletes;
     use BelongsToTenant;
+    use IsSearchable;
 
     protected $fillable = [
         'type',

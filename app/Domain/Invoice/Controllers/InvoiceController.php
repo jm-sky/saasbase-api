@@ -94,4 +94,23 @@ class InvoiceController extends Controller
 
         return response()->json(['message' => 'Invoice deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
+
+    public function search(Request $request): JsonResponse|AnonymousResourceCollection
+    {
+        $query   = $request->input('q');
+        $perPage = $request->input('perPage', $this->defaultPerPage);
+
+        if (!$query) {
+            return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $results = Invoice::search($query)
+            ->query(function ($builder) use ($request) {
+                return $this->getIndexQuery($request);
+            })
+            ->paginate($perPage)
+        ;
+
+        return InvoiceResource::collection($results);
+    }
 }

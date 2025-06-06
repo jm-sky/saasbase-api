@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
         Route::middleware('is_in_tenant')->group(function () {
             // TODO: move outside tenant middleware and check only for public users
             Route::apiResource('users', PublicUserController::class)->only(['index', 'show']);
+            Route::get('users/search', [PublicUserController::class, 'search'])->name('users.search');
 
             require __DIR__ . '/api/projects.php';
             require __DIR__ . '/api/contractors.php';
@@ -59,10 +60,14 @@ Route::prefix('v1')->group(function () {
 
             Route::apiResource('tags', TagController::class)->only(['index']);
             Route::apiResource('invoices', InvoiceController::class);
+            Route::get('invoices/search', [InvoiceController::class, 'search'])->name('invoices.search');
             Route::apiResource('events', EventController::class);
             Route::apiResource('roles', RoleController::class);
             Route::apiResource('api-keys', ApiKeyController::class);
             Route::get('/logs', [ActivityLogController::class, 'index']);
+
+            Route::apiResource('contacts', App\Domain\Common\Controllers\ContactController::class);
+            Route::get('contacts/search', [App\Domain\Common\Controllers\ContactController::class, 'search'])->name('contacts.search');
         });
     });
 

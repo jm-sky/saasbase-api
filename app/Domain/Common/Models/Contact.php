@@ -7,7 +7,9 @@ use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
+use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Tenant\Traits\BelongsToTenant;
+use Database\Factories\ContactFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +26,7 @@ class Contact extends BaseModel implements HasMedia
     use HaveAddresses;
     use HasActivityLog;
     use HasActivityLogging;
+    use IsSearchable;
 
     protected $fillable = [
         'first_name',
@@ -58,5 +61,10 @@ class Contact extends BaseModel implements HasMedia
             ->singleFile()
             ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
         ;
+    }
+
+    protected static function newFactory()
+    {
+        return ContactFactory::new();
     }
 }

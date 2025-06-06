@@ -103,4 +103,32 @@ class ContactController extends Controller
 
         return response()->noContent();
     }
+
+    public function search(Request $request): JsonResponse|AnonymousResourceCollection
+    {
+        $query   = $request->input('q');
+        $perPage = $request->input('perPage', $this->defaultPerPage);
+
+        if (!$query) {
+            return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $results = Contact::search($query)
+            ->query(function ($builder) use ($request) {
+                return $this->getIndexQuery($request);
+            })
+            ->paginate($perPage)
+        ;
+
+        return ContactResource::collection($results)
+            ->additional([
+                'meta' => [
+                    'currentPage' => $results->currentPage(),
+                    'lastPage'    => $results->lastPage(),
+                    'perPage'     => $results->perPage(),
+                    'total'       => $results->total(),
+                ],
+            ])
+        ;
+    }
 }

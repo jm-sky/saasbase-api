@@ -13,6 +13,7 @@ use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
+use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
@@ -50,6 +51,7 @@ class Product extends BaseModel implements HasMedia
     use HaveComments;
     use HasActivityLog;
     use HasActivityLogging;
+    use IsSearchable;
 
     protected $fillable = [
         'tenant_id',

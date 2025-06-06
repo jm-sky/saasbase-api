@@ -13,6 +13,7 @@ use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Common\Traits\HaveComments;
+use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use App\Domain\Utils\Models\RegistryConfirmation;
@@ -61,6 +62,7 @@ class Contractor extends BaseModel implements HasMedia
     use HasTags;
     use HasActivityLog;
     use HasActivityLogging;
+    use IsSearchable;
 
     protected $fillable = [
         'tenant_id',
