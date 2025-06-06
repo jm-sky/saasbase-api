@@ -35,7 +35,7 @@ class InitializeTenantDefaults
             'cancel_at_period_end'   => false,
         ]);
     }
-    
+
     protected function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): void
     {
         $rootUnit = OrganizationUnit::firstOrCreate(
