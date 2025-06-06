@@ -5,6 +5,8 @@ namespace App\Domain\Tenant\Actions;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\DefaultMeasurementUnit;
 use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Subscription\Enums\SubscriptionStatus;
+use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\OrgUnitUser;
@@ -17,7 +19,21 @@ class InitializeTenantDefaults
     {
         $this->createRootOrganizationUnit($tenant, $owner);
         $this->seedDefaultMeasurementUnits($tenant);
+        $this->createSubscription($tenant);
         // 3. (Optional) Add more default setup here
+    }
+
+    protected function createSubscription(Tenant $tenant)
+    {
+        $tenant->subscription()->create([
+            'id'                     => (string) Str::ulid(),
+            'subscription_plan_id'   => SubscriptionPlan::where('name', 'Free')->firstOrFail()->id,
+            'stripe_subscription_id' => null,
+            'status'                 => SubscriptionStatus::ACTIVE,
+            'current_period_start'   => now(),
+            'current_period_end'     => now()->addYear(),
+            'cancel_at_period_end'   => false,
+        ]);
     }
 
     protected function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): void
