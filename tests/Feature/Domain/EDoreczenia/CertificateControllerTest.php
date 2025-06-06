@@ -2,20 +2,21 @@
 
 namespace Tests\Feature\Domain\EDoreczenia;
 
+use App\Domain\EDoreczenia\Controllers\CertificateController;
 use App\Domain\EDoreczenia\Models\EDoreczeniaCertificate;
 use App\Domain\EDoreczenia\Providers\EDoreczeniaProviderManager;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(CertificateController::class)]
 class CertificateControllerTest extends TestCase
 {
     use RefreshDatabase;

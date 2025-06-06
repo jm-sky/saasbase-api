@@ -74,4 +74,10 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
         Route::get('/', [SecurityEventController::class, 'index']);
         Route::get('/{event}', [SecurityEventController::class, 'show']);
     });
+
+    // User Identity Confirmation (EPUAP)
+    Route::prefix('identity/confirmation')->group(function () {
+        Route::post('template', [App\Domain\Auth\Controllers\IdentityConfirmationController::class, 'generateTemplate']);
+        Route::post('submit', [App\Domain\Auth\Controllers\IdentityConfirmationController::class, 'submitSigned']);
+    });
 });

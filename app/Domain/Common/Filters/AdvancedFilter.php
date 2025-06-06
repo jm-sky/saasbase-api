@@ -2,6 +2,7 @@
 
 namespace App\Domain\Common\Filters;
 
+use App\Domain\Common\Enums\AdvancedFilterOperator;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\Filters\Filter;
 
@@ -72,33 +73,33 @@ class AdvancedFilter implements Filter
         $op = strtolower($operator);
 
         match ($op) {
-            'null'      => $query->whereNull($column),
-            'notnull'   => $query->whereNotNull($column),
-            'nullish'   => $query->where(fn ($q) => $q->whereNull($column)->orWhere($column, '')),
-            'in'        => $query->whereIn($column, $this->splitToArray($value)),
-            'nin', 'notin' => $query->whereNotIn($column, $this->splitToArray($value)),
-            'between'   => $this->applyBetween($query, $column, $value),
-            'like'      => $query->where($column, 'like', "%{$value}%"),
-            'nlike', 'notlike' => $query->where($column, 'not like', "%{$value}%"),
-            'startswith' => $query->where($column, 'like', "{$value}%"),
-            'endswith'   => $query->where($column, 'like', "%{$value}"),
-            'regex'      => $query->whereRaw("{$column} REGEXP ?", [$value]),
-            default      => $query->where($column, $this->mapOperator($op), $value),
+            AdvancedFilterOperator::IsNull->value      => $query->whereNull($column),
+            AdvancedFilterOperator::IsNotNull->value   => $query->whereNotNull($column),
+            AdvancedFilterOperator::IsNullish->value   => $query->where(fn ($q) => $q->whereNull($column)->orWhere($column, '')),
+            AdvancedFilterOperator::In->value          => $query->whereIn($column, $this->splitToArray($value)),
+            AdvancedFilterOperator::NotIn->value, AdvancedFilterOperator::NotInAlt->value => $query->whereNotIn($column, $this->splitToArray($value)),
+            AdvancedFilterOperator::Between->value   => $this->applyBetween($query, $column, $value),
+            AdvancedFilterOperator::Like->value      => $query->where($column, 'like', "%{$value}%"),
+            AdvancedFilterOperator::NotLike->value, AdvancedFilterOperator::NotLikeAlt->value => $query->where($column, 'not like', "%{$value}%"),
+            AdvancedFilterOperator::StartsWith->value => $query->where($column, 'like', "{$value}%"),
+            AdvancedFilterOperator::EndsWith->value   => $query->where($column, 'like', "%{$value}"),
+            AdvancedFilterOperator::Regex->value      => $query->whereRaw("{$column} REGEXP ?", [$value]),
+            default                                   => $query->where($column, $this->mapOperator($op), $value),
         };
     }
 
     protected function mapOperator(string $op): string
     {
         return match ($op) {
-            'eq'  => '=',
-            'ne', 'neq' => '!=',
-            'gt'     => '>',
-            'gte'    => '>=',
-            'from'   => '>=',
-            'lt'     => '<',
-            'lte'    => '<=',
-            'to'     => '<=',
-            default  => '=',
+            AdvancedFilterOperator::Equals->value  => '=',
+            AdvancedFilterOperator::NotEquals->value, AdvancedFilterOperator::NotEqualsAlt->value => '!=',
+            AdvancedFilterOperator::GreaterThan->value           => '>',
+            AdvancedFilterOperator::GreaterThanOrEqual->value    => '>=',
+            AdvancedFilterOperator::From->value                  => '>=',
+            AdvancedFilterOperator::LessThan->value              => '<',
+            AdvancedFilterOperator::LessThanOrEqual->value       => '<=',
+            AdvancedFilterOperator::To->value                    => '<=',
+            default                                              => '=',
         };
     }
 

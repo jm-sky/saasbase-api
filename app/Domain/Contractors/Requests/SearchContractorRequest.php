@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Requests;
 
+use App\Domain\Common\Rules\ValidAdvancedFilterRule;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Support\Str;
 
@@ -15,23 +16,19 @@ class SearchContractorRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'filter.name'           => 'sometimes',
-            'filter.email'          => 'sometimes',
-            'filter.phone'          => 'sometimes',
-            'filter.address'        => 'sometimes',
-            'filter.city'           => 'sometimes',
-            'filter.state'          => 'sometimes',
-            'filter.zipCode'        => 'sometimes',
-            'filter.country'        => 'sometimes',
-            'filter.taxId'          => 'sometimes',
-            'filter.notes'          => 'sometimes',
-            'filter.isActive'       => 'sometimes',
-            'filter.createdAt'      => 'sometimes',
-            'filter.createdAt.from' => 'sometimes|date',
-            'filter.createdAt.to'   => 'sometimes|date',
-            'filter.updatedAt'      => 'sometimes',
-            'filter.updatedAt.from' => 'sometimes|date',
-            'filter.updatedAt.to'   => 'sometimes|date',
+            'filter.name'           => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.email'          => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.phone'          => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.address'        => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.city'           => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.state'          => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.zipCode'        => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.country'        => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.taxId'          => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.notes'          => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.isActive'       => ['sometimes', new ValidAdvancedFilterRule('boolean')],
+            'filter.createdAt'      => ['sometimes', new ValidAdvancedFilterRule('date')],
+            'filter.updatedAt'      => ['sometimes', new ValidAdvancedFilterRule('date')],
             'sort'                  => ['sometimes', 'string', 'in:name,-name,email,-email,city,-city,country,-country,isActive,-isActive,createdAt,-createdAt,updatedAt,-updatedAt'],
         ];
     }
