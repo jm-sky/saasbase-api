@@ -26,6 +26,11 @@ Represents a verification process used to confirm a user's identity or a tenant'
 - `epuap` — Verified via login or document issued through ePUAP.
 - `manual` — Manually verified by platform staff using submitted documents.
 
+#### Whats done:
+- `POST /api/v1/identity/confirmation/template`
+- `POST /api/v1/identity/confirmation/submit`
+- `IdentityConfirmationController`
+
 #### For Tenants (Companies):
 - `bank_transfer` — Verified via bank account ownership matched with registry.
 - `ceidg` — Company data verified against CEIDG registry, optionally matched to a user.
@@ -33,3 +38,4 @@ Represents a verification process used to confirm a user's identity or a tenant'
 - `epuap` — Verified via company-related ePUAP document.
 - `ksef_token` — Verified through successful authentication using KSeF token.
 - `manual` — Verified manually based on uploaded or researched documents.
+

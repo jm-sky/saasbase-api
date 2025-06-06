@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://saasbase.madeyski.org/xml/identity/v1/identity-confirmation.xsl"?>
+<IdentityConfirmation xmlns="https://saasbase.madeyski.org/xml/identity/v1"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="https://saasbase.madeyski.org/xml/identity/v1 https://saasbase.madeyski.org/xml/identity/v1/identity-confirmation.xsd">
+
+  <FirstName>Jan</FirstName>
+  <LastName>Kowalski</LastName>
+  <FullName>Jan Kowalski</FullName>
+  <BirthDate>1985-04-12</BirthDate>
+  <PESEL>85041212345</PESEL>
+  <GeneratedAt>2025-06-06T14:32:00Z</GeneratedAt>
+  <ConfirmationToken>01HX7ZEGZ6ECZT8B3BG9AXW53H</ConfirmationToken>
+  <ApplicationName>SaaSBass</ApplicationName>
+
+</IdentityConfirmation>
