@@ -7,6 +7,7 @@ use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveAddresses;
+use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -24,6 +25,7 @@ class Contact extends BaseModel implements HasMedia
     use HaveAddresses;
     use HasActivityLog;
     use HasActivityLogging;
+    use IsSearchable;
 
     protected $fillable = [
         'first_name',

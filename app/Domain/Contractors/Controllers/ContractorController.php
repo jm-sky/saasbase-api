@@ -136,6 +136,25 @@ class ContractorController extends Controller
         return response()->json(['message' => 'Contractor deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 
+    public function search(Request $request): JsonResponse|AnonymousResourceCollection
+    {
+        $query   = $request->input('q');
+        $perPage = $request->input('perPage', $this->defaultPerPage);
+
+        if (!$query) {
+            return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $results = Contractor::search($query)
+            ->query(function ($builder) use ($request) {
+                return $this->getIndexQuery($request);
+            })
+            ->paginate($perPage)
+        ;
+
+        return ContractorResource::collection($results);
+    }
+
     protected function shouldFetchLogo(Contractor $contractor, Request $request): bool
     {
         if ($contractor->hasMedia('logo')) {

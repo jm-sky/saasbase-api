@@ -9,6 +9,7 @@ use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
+use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
@@ -86,6 +87,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use HaveBankAccounts;
     use HaveAddresses;
     use HasRoles;
+    use IsSearchable;
 
     protected $with = ['preferences'];
 

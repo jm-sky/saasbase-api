@@ -101,6 +101,25 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product deleted successfully.'], Response::HTTP_NO_CONTENT);
     }
 
+    public function search(Request $request): JsonResponse|AnonymousResourceCollection
+    {
+        $query   = $request->input('q');
+        $perPage = $request->input('perPage', $this->defaultPerPage);
+
+        if (!$query) {
+            return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $results = Product::search($query)
+            ->query(function ($builder) use ($request) {
+                return $this->getIndexQuery($request);
+            })
+            ->paginate($perPage)
+        ;
+
+        return ProductResource::collection($results);
+    }
+
     protected function getIndexQuery(Request $request): QueryBuilder
     {
         return QueryBuilder::for($this->modelClass)
