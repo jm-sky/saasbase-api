@@ -7,6 +7,7 @@ use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\TagController;
 use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Rights\Controllers\RoleController;
+use App\Domain\ShareToken\Controllers\ShareTokenController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
 use Illuminate\Support\Facades\Broadcast;
@@ -33,6 +34,7 @@ Route::get('/health', [HealthController::class, 'health']);
 
 Route::prefix('v1')->group(function () {
     Route::post('auth/token/refresh', [AuthController::class, 'refresh']);
+    Route::get('share/{token}', [ShareTokenController::class, 'show'])->name('share.token.show');
 
     require __DIR__ . '/api/auth.php';
     require __DIR__ . '/api/invitations.php';
