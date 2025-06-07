@@ -13,17 +13,23 @@ use Intervention\Image\ImageManager;
 
 class LogoFetcherService
 {
-    const CACHING_DAYS = 7;
+    public const CACHING_DAYS = 7;
+
     protected bool $debug;
+
     protected bool $duckDuckGo = true;
+
     protected bool $clearbit = true;
+
     protected bool $gravatar = true;
+
     protected string $tempFile;
+
     protected ImageManager $imageManager;
 
     public function __construct()
     {
-        $this->debug = config('app.env') === 'local';
+        $this->debug        = 'local' === config('app.env');
         $this->imageManager = new ImageManager(new Driver());
     }
 
@@ -39,8 +45,10 @@ class LogoFetcherService
             $this->log('Fetching logo', ['url' => $url]);
 
             $response = Http::get($url);
+
             if (!$response->successful()) {
                 $this->log('Logo not found', ['url' => $url]);
+
                 return false;
             }
 
@@ -78,16 +86,16 @@ class LogoFetcherService
 
         if ($this->debug) {
             $this->log('Logo candidates', [
-                'domain' => $domain,
-                'email' => $email,
-                'chosen' => $best?->url,
-                'candidates' => array_map(fn($c) => [
-                    'url' => $c->url,
+                'domain'     => $domain,
+                'email'      => $email,
+                'chosen'     => $best?->url,
+                'candidates' => array_map(fn ($c) => [
+                    'url'    => $c->url,
                     'source' => $c->source,
-                    'mime' => $c->mime,
-                    'width' => $c->width,
+                    'mime'   => $c->mime,
+                    'width'  => $c->width,
                     'height' => $c->height,
-                    'score' => $c->score,
+                    'score'  => $c->score,
                 ], $candidates),
             ]);
         }
@@ -97,7 +105,7 @@ class LogoFetcherService
 
     protected function fetchAllCandidates(?string $domain, ?string $email): array
     {
-        $cacheKey = "logo_candidates:" . md5("{$domain}|{$email}");
+        $cacheKey = 'logo_candidates:' . md5("{$domain}|{$email}");
 
         return Cache::remember($cacheKey, now()->addDays(self::CACHING_DAYS), function () use ($domain, $email) {
             $urls = [];
@@ -111,22 +119,24 @@ class LogoFetcherService
             }
 
             if ($this->gravatar && $email) {
-                $hash = md5(strtolower(trim($email)));
+                $hash   = md5(strtolower(trim($email)));
                 $urls[] = ['url' => "https://www.gravatar.com/avatar/{$hash}?d=404", 'source' => 'Gravatar'];
             }
 
-            $responses = Http::pool(fn ($pool) =>
-                collect($urls)->map(fn ($item) => $pool->as($item['url'])->get($item['url']))
+            $responses = Http::pool(
+                fn ($pool) => collect($urls)->map(fn ($item) => $pool->as($item['url'])->get($item['url']))
             );
 
             $candidates = [];
 
             foreach ($responses as $url => $response) {
-                if (!$response->successful()) continue;
+                if (!$response->successful()) {
+                    continue;
+                }
 
                 try {
                     $image = $this->imageManager->readFromBuffer($response->body());
-                    $mime = $response->header('Content-Type');
+                    $mime  = $response->header('Content-Type');
 
                     $candidates[] = new LogoCandidate(
                         url: $url,
@@ -150,16 +160,17 @@ class LogoFetcherService
             $score = 0;
 
             $score += match (true) {
-                str_contains($candidate->mime, 'png') => 50,
+                str_contains($candidate->mime, 'png')  => 50,
                 str_contains($candidate->mime, 'jpeg') => 40,
                 str_contains($candidate->mime, 'webp') => 40,
-                str_contains($candidate->mime, 'ico') => -20,
-                default => 0,
+                str_contains($candidate->mime, 'ico')  => -20,
+                default                                => 0,
             };
 
             $score += min(100, (int) ($candidate->resolution() / 1000));
 
             $ratio = $candidate->ratio();
+
             if ($ratio && $ratio > 0.8 && $ratio < 1.2) {
                 $score += 30;
             } elseif ($ratio && $ratio > 0.5 && $ratio < 2.0) {
@@ -171,7 +182,8 @@ class LogoFetcherService
 
         return collect($candidates)
             ->sortByDesc('score')
-            ->first();
+            ->first()
+        ;
     }
 
     protected function saveLogoToTempFile(string $responseBody, string $contentType): void
@@ -187,8 +199,8 @@ class LogoFetcherService
 
     protected function getTempFileName(string $contentType): string
     {
-        $tempDir = storage_path('app/public');
-        $tempName = uniqid('logo_', true);
+        $tempDir   = storage_path('app/public');
+        $tempName  = uniqid('logo_', true);
         $extension = $this->getExtensionFromMimeType($contentType);
 
         return "{$tempDir}/{$tempName}.{$extension}";

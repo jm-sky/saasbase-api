@@ -11,7 +11,8 @@ class LogoCandidate
         public ?int $height = null,
         public ?string $mime = null,
         public ?int $score = null,
-    ) {}
+    ) {
+    }
 
     public function ratio(): ?float
     {
@@ -25,5 +26,5 @@ class LogoCandidate
         return $this->width && $this->height
             ? $this->width * $this->height
             : null;
-     }
+    }
 }
