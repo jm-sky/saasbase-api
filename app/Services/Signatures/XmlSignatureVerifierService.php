@@ -2,8 +2,11 @@
 
 namespace App\Services\Signatures;
 
-use App\Services\Signatures\DTOs\XmlSignatureDetailsDTO;
-use App\Services\Signatures\DTOs\XmlSignaturesVerificationResultDTO;
+use App\Services\Signatures\DTOs\CertificateDTO;
+use App\Services\Signatures\DTOs\GenericSignatureDetailsDTO;
+use App\Services\Signatures\DTOs\GenericSignaturesVerificationResultDTO;
+use App\Services\Signatures\DTOs\SignerIdentityDTO;
+use App\Services\Signatures\Enums\SignatureType;
 
 class XmlSignatureVerifierService
 {
@@ -14,7 +17,7 @@ class XmlSignatureVerifierService
         $this->caBundlePath = $caBundlePath ?? storage_path('app/certs/ca-bundle.pem');
     }
 
-    public function verify(string $xmlContent): XmlSignaturesVerificationResultDTO
+    public function verify(string $xmlContent): GenericSignaturesVerificationResultDTO
     {
         $dom                     = new \DOMDocument();
         $dom->preserveWhiteSpace = false;
@@ -38,17 +41,21 @@ class XmlSignatureVerifierService
             $personData  = $this->extractPersonData($xpath, $signatureNode);
             $certDetails = $this->parseCertificateDetails($certPem);
 
-            $signatures[] = new XmlSignatureDetailsDTO(
+            $signatures[] = new GenericSignatureDetailsDTO(
                 valid: $isTrusted,
                 trustedCA: $isTrusted,
-                personFirstName: $personData['first_name'] ?? null,
-                personLastName: $personData['last_name'] ?? null,
-                personPESEL: $personData['pesel'] ?? null,
-                certificateIssuer: $certDetails['issuer'] ?? null,
-                certificateSerial: $certDetails['serial'] ?? null,
-                certificateSubject: $certDetails['subject'] ?? null,
-                certificateValidFrom: $certDetails['valid_from'] ?? null,
-                certificateValidTo: $certDetails['valid_to'] ?? null,
+                signerIdentity: new SignerIdentityDTO(
+                    firstName: $personData['first_name'] ?? null,
+                    lastName: $personData['last_name'] ?? null,
+                    pesel: $personData['pesel'] ?? null,
+                ),
+                certificate: new CertificateDTO(
+                    issuer: $parsed['issuer'] ?? null,
+                    serialNumber: $parsed['serial'] ?? null,
+                    subject: $parsed['subject'] ?? null,
+                    validFrom: $parsed['valid_from'] ?? null,
+                    validTo: $parsed['valid_to'] ?? null,
+                ),
             );
 
             if (!$isTrusted) {
@@ -56,8 +63,9 @@ class XmlSignatureVerifierService
             }
         }
 
-        return new XmlSignaturesVerificationResultDTO(
+        return new GenericSignaturesVerificationResultDTO(
             valid: $allValid,
+            type: SignatureType::XAdES,
             signatures: $signatures
         );
     }
