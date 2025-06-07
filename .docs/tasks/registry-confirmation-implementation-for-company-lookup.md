@@ -38,7 +38,7 @@ The system has two main use cases:
   - [ ] Indicate data source (GUS/VIES/WhiteList)
 
 ### 3. Company Data Auto-fill Service
-- [x] Create a service that will:
+- [x] Create a service (check `CompanyDataAutoFillService`) that will:
   - [x] Accept search parameters (NIP, REGON)
   - [ ] Query all available data sources
   - [ ] Standardize data from different sources

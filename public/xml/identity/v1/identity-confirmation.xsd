@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://saasbase.madeyski.org/xml/identity/v1"
+           xmlns="https://saasbase.madeyski.org/xml/identity/v1"
+           elementFormDefault="qualified">
+
+  <xs:element name="IdentityConfirmation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="FirstName" type="xs:string"/>
+        <xs:element name="LastName" type="xs:string"/>
+        <xs:element name="FullName" type="xs:string"/>
+        <xs:element name="BirthDate" type="xs:date"/>
+        <xs:element name="PESEL" type="xs:string"/>
+        <xs:element name="GeneratedAt" type="xs:dateTime"/>
+        <xs:element name="ConfirmationToken" type="xs:string"/>
+        <xs:element name="ApplicationName" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
