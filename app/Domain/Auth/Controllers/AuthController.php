@@ -11,7 +11,7 @@ use App\Domain\Auth\Requests\RegisterRequest;
 use App\Domain\Auth\Services\UserSessionService;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
-use App\Services\ReCaptchaService;
+use App\Services\ReCaptcha\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;

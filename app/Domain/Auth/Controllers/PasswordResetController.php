@@ -6,7 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Notifications\PasswordChangedNotification;
 use App\Domain\Auth\Requests\ResetPasswordRequest;
 use App\Domain\Auth\Requests\SendResetLinkEmailRequest;
-use App\Services\ReCaptchaService;
+use App\Services\ReCaptcha\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Hash;
