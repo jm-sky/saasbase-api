@@ -29,16 +29,16 @@ class XmlSignatureVerifierService
 
         $signatureNodes = $xpath->query("//*[local-name()='Signature' and namespace-uri()='http://www.w3.org/2000/09/xmldsig#']");
         $signatures = [];
-        $valid = true;
+        $allValid = true;
 
         foreach ($signatureNodes as $signatureNode) {
             $certificateNode = $xpath->query(".//ds:X509Certificate", $signatureNode)->item(0);
             $certBase64 = $certificateNode?->nodeValue;
-
             $certPem = $this->wrapCertificate($certBase64);
-            $isTrusted = $this->isCertificateTrusted($certPem);
 
+            $isTrusted = $this->isCertificateTrusted($certPem);
             $personData = $this->extractPersonData($xpath, $signatureNode);
+            $certDetails = $this->parseCertificateDetails($certPem);
 
             $signatures[] = new XmlSignatureDetailsDTO(
                 valid: $isTrusted,
@@ -46,39 +46,57 @@ class XmlSignatureVerifierService
                 personFirstName: $personData['first_name'] ?? null,
                 personLastName: $personData['last_name'] ?? null,
                 personPESEL: $personData['pesel'] ?? null,
-                certificateIssuer: null, // Można dodać z x509_parse
-                certificateSerial: null, // jw.
+                certificateIssuer: $certDetails['issuer'] ?? null,
+                certificateSerial: $certDetails['serial'] ?? null,
+                certificateSubject: $certDetails['subject'] ?? null,
+                certificateValidFrom: $certDetails['valid_from'] ?? null,
+                certificateValidTo: $certDetails['valid_to'] ?? null,
             );
 
             if (!$isTrusted) {
-                $valid = false;
+                $allValid = false;
             }
         }
 
         return new XmlSignaturesVerificationResultDTO(
-            valid: $valid,
+            valid: $allValid,
             signatures: $signatures
         );
     }
 
-    protected function wrapCertificate(?string $base64): string
+    protected function wrapCertificate(?string $base64): ?string
     {
         if (!$base64) {
-            return '';
+            return null;
         }
 
         return "-----BEGIN CERTIFICATE-----\n" .
-            chunk_split($base64, 64, "\n") .
+            chunk_split(trim($base64), 64, "\n") .
             "-----END CERTIFICATE-----\n";
     }
 
-    protected function isCertificateTrusted(string $certPem): bool
+    protected function isCertificateTrusted(?string $certPem): bool
     {
         if (!$certPem) {
             return false;
         }
 
         return openssl_x509_checkpurpose($certPem, X509_PURPOSE_ANY, [$this->caBundlePath]) === true;
+    }
+
+    protected function parseCertificateDetails(?string $certPem): array
+    {
+        if (!$certPem || !$parsed = openssl_x509_parse($certPem)) {
+            return [];
+        }
+
+        return [
+            'issuer' => $parsed['issuer']['CN'] ?? null,
+            'serial' => $parsed['serialNumberHex'] ?? null,
+            'subject' => $parsed['subject']['CN'] ?? null,
+            'valid_from' => isset($parsed['validFrom_time_t']) ? date('c', $parsed['validFrom_time_t']) : null,
+            'valid_to' => isset($parsed['validTo_time_t']) ? date('c', $parsed['validTo_time_t']) : null,
+        ];
     }
 
     protected function extractPersonData(DOMXPath $xpath, \DOMNode $signatureNode): array
