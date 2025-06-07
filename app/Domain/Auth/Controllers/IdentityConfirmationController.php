@@ -7,7 +7,10 @@ use App\Domain\Auth\Models\UserPersonalData;
 use App\Domain\Auth\Requests\SubmitSignedIdentityConfirmationRequest;
 use App\Domain\Common\Models\Media;
 use App\Http\Controllers\Controller;
-use App\Services\PdfSignatureVerifierService;
+use App\Services\Signatures\DTOs\GenericSignatureDetailsDTO;
+use App\Services\Signatures\DTOs\GenericSignaturesVerificationResultDTO;
+use App\Services\Signatures\Enums\SignatureType;
+use App\Services\Signatures\SignatureVerifierDispatcher;
 use App\Services\XmlValidatorService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -65,8 +68,10 @@ class IdentityConfirmationController extends Controller
         }
 
         // 2. Verify signature (reuse PdfSignatureVerifierService for CMS signature)
-        $verifier     = app(PdfSignatureVerifierService::class);
-        $verifyResult = $verifier->verifySignature($file->getPathname());
+        $verifier     = app(SignatureVerifierDispatcher::class);
+
+        /** @var GenericSignaturesVerificationResultDTO $verifyResult */
+        $verifyResult = $verifier->verify($xmlContent, SignatureType::XAdES);
 
         if (empty($verifyResult['valid'])) {
             return response()->json([
@@ -76,7 +81,37 @@ class IdentityConfirmationController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        // 3. Extract data from XML
+        // 3. Confirm that XML is for the current user
+        $confirmed = $this->confirmIdentity($user, $xmlContent);
+
+        // 4. Confirm that signature is of the current user
+        $signatureValid = $this->confirmSignature($user, $verifyResult);
+
+        // 5. Optionally create/update UserPersonalData if pesel is missing but present in signature
+        // if (!$user->pesel && $data['pesel']) {
+        //     $personalData = UserPersonalData::updateOrCreate(
+        //         ['user_id' => $user->id],
+        //         ['pesel' => $data['pesel']]
+        //     );
+        // }
+
+        // 7. Store signed XML in identity_confirmation_final, remove previous template
+        $signedMedia = $user->addMedia($file)
+            ->usingFileName('identity_confirmation_' . $user->id . '_' . time() . '.xml')
+            ->toMediaCollection('identity_confirmation_final')
+        ;
+
+        $user->clearMediaCollection('identity_confirmation_template');
+
+        return response()->json([
+            'status'         => ($confirmed['full_name'] && $confirmed['pesel'] && $confirmed['birth_date']) ? 'verified' : 'unverified',
+            'confirmed'      => $confirmed && $signatureValid,
+            'signatureInfo'  => $verifyResult['details'] ?? null,
+        ]);
+    }
+
+    protected function confirmIdentity(User $user, string $xmlContent): array
+    {
         $xml  = simplexml_load_string($xmlContent);
         $ns   = $xml->getNamespaces(true);
         $data = [
@@ -90,34 +125,26 @@ class IdentityConfirmationController extends Controller
             'application_name'   => (string) $xml->ApplicationName,
         ];
 
-        // 4. Compare with user profile
-        $confirmed = [
-            'full_name'  => trim($user->first_name . ' ' . $user->last_name) === trim($data['full_name']),
-            'pesel'      => $user->pesel && $user->pesel === $data['pesel'],
-            'birth_date' => $user->birth_date && Carbon::parse($user->birth_date)->toDateString() === $data['birth_date'],
+        // 4. Confirm that XML is for the current user
+        return [
+            'full_name'  => trim($user->full_name) === trim($data['full_name']),
+            'pesel'      => $user->personalData?->pesel && $user->personalData?->pesel === $data['pesel'],
+            'birth_date' => $user->profile?->birth_date && Carbon::parse($user->profile?->birth_date)->toDateString() === $data['birth_date'],
         ];
+    }
 
-        // 5. Optionally create/update UserPersonalData if pesel is missing but present in signature
-        if (!$user->pesel && $data['pesel']) {
-            $personalData = UserPersonalData::updateOrCreate(
-                ['user_id' => $user->id],
-                ['pesel' => $data['pesel']]
-            );
-        }
-
-        // 6. Store signed XML in identity_confirmation_final, remove previous template
-        $signedMedia = $user->addMedia($file)
-            ->usingFileName('identity_confirmation_' . $user->id . '_' . time() . '.xml')
-            ->toMediaCollection('identity_confirmation_final')
+    protected function confirmSignature(User $user, GenericSignaturesVerificationResultDTO $verifyResult): bool
+    {
+        return collect($verifyResult->signatures)
+            ->first(
+                fn (GenericSignatureDetailsDTO $signature) => $signature->valid
+                // First name and last name must match
+                && $signature->signerIdentity->firstName === $user->first_name
+                && $signature->signerIdentity->lastName === $user->last_name
+                // PESEL is optional, but if it's present, it must match
+                && ($user->personalData?->pesel ? $signature->signerIdentity?->pesel === $user->personalData?->pesel : true)
+            )
         ;
-
-        $user->clearMediaCollection('identity_confirmation_template');
-
-        return response()->json([
-            'status'         => ($confirmed['full_name'] && $confirmed['pesel'] && $confirmed['birth_date']) ? 'verified' : 'unverified',
-            'confirmed'      => $confirmed,
-            'signatureInfo'  => $verifyResult['details'] ?? null,
-        ]);
     }
 
     /**
