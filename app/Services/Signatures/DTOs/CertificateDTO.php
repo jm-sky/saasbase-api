@@ -10,5 +10,6 @@ class CertificateDTO
         public ?string $validFrom = null,
         public ?string $validTo = null,
         public ?string $subject = null,
-    ) {}
+    ) {
+    }
 }

@@ -8,5 +8,6 @@ class XmlSignatureVerificationResultDTO
         public bool $valid,
         /** @var XmlSignatureDTO[] */
         public array $signatures,
-    ) {}
+    ) {
+    }
 }

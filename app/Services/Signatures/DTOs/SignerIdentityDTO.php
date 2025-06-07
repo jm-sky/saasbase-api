@@ -11,5 +11,6 @@ class SignerIdentityDTO
         public string $pesel,
         public ?string $trustedProfileId = null,
         public ?string $epuapUsername = null,
-    ) {}
+    ) {
+    }
 }

@@ -15,5 +15,6 @@ class XmlSignatureDTO
         public ?string $certificateSubject,
         public ?string $certificateValidFrom,
         public ?string $certificateValidTo,
-    ) {}
+    ) {
+    }
 }
