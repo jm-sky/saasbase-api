@@ -6,14 +6,16 @@ use App\Domain\Auth\Actions\RegisterUserAction;
 use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Requests\LoginRequest;
 use App\Domain\Auth\Requests\RegisterRequest;
 use App\Domain\Auth\Services\UserSessionService;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
+use App\Services\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -23,13 +25,18 @@ class AuthController extends Controller
     use RespondsWithToken;
 
     public function __construct(
-        private readonly RegisterUserAction $registerUserAction
+        private readonly RegisterUserAction $registerUserAction,
+        private readonly ReCaptchaService $recaptchaService,
     ) {
     }
 
-    public function login(Request $request, UserSessionService $userSessionService): JsonResponse
+    public function login(LoginRequest $request, UserSessionService $userSessionService): JsonResponse
     {
         $credentials = $request->only(['email', 'password']);
+
+        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), 'login', 0.5)) {
+            throw new BadRequestHttpException('Invalid recaptcha token');
+        }
 
         if (!Auth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
@@ -64,6 +71,10 @@ class AuthController extends Controller
     public function register(RegisterRequest $request, UserSessionService $userSessionService): JsonResponse
     {
         $validated = $request->validated();
+
+        if (!$this->recaptchaService->verify($validated['recaptchaToken'], 'register', 0.6)) {
+            throw new BadRequestHttpException('Invalid recaptcha token');
+        }
 
         $dto = new RegisterUserDTO(
             firstName: $validated['first_name'],

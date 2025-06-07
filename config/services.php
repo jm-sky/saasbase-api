@@ -152,8 +152,28 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | eDO Post - E-Doręczenia provider
+    |--------------------------------------------------------------------------
+    |
+    | eDO Post is a E-Doręczenia provider.
+    |
+    */
     'edo_post' => [
         'base_url'        => env('EDO_POST_BASE_URL', 'http://localhost:5005'),
         'mailbox_address' => env('EDO_POST_MAILBOX_ADDRESS'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | ReCaptcha - Google ReCaptcha service
+    |--------------------------------------------------------------------------
+    |
+    | Service for verifying ReCaptcha tokens.
+    |
+    */
+    'recaptcha' => [
+        'secret' => env('RECAPTCHA_SECRET_KEY'),
     ],
 ];
