@@ -6,6 +6,8 @@ We use multiple sources to enrich IBANs with bank-related information such as ba
 
 ## 🧩 Current Components
 
+This controller `app/Domain/Utils/Controllers/BankInfoController.php` uses this `app/Services/IbanInfo/IbanInfoService.php` service.
+
 - **Banks table** (local database): 
   - Contains static list of Polish banks with names and SWIFT codes.
   - Can become stale over time if not updated.

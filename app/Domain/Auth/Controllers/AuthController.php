@@ -2,23 +2,24 @@
 
 namespace App\Domain\Auth\Controllers;
 
-use App\Domain\Auth\Actions\RegisterUserAction;
-use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
-use App\Domain\Auth\Requests\LoginRequest;
-use App\Domain\Auth\Requests\RegisterRequest;
-use App\Domain\Auth\Services\UserSessionService;
-use App\Domain\Auth\Traits\RespondsWithToken;
-use App\Http\Controllers\Controller;
-use App\Services\ReCaptcha\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Domain\Auth\DTOs\RegisterUserDTO;
+use App\Domain\Auth\Requests\LoginRequest;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Services\ReCaptcha\ReCaptchaService;
+use App\Domain\Auth\Requests\RegisterRequest;
+use App\Domain\Auth\Traits\RespondsWithToken;
+use Symfony\Component\HttpFoundation\Response;
+use App\Domain\Auth\Actions\RegisterUserAction;
+use App\Domain\Auth\Services\UserSessionService;
+use App\Services\ReCaptcha\Enums\ReCaptchaAction;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AuthController extends Controller
 {
@@ -34,7 +35,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), 'login', 0.5)) {
+        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::LOGIN->value, 0.5)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 
@@ -72,7 +73,7 @@ class AuthController extends Controller
     {
         $validated = $request->validated();
 
-        if (!$this->recaptchaService->verify($validated['recaptchaToken'], 'register', 0.6)) {
+        if (!$this->recaptchaService->verify($validated['recaptchaToken'], ReCaptchaAction::REGISTER->value, 0.6)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 

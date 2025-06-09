@@ -29,7 +29,7 @@ class ResetPasswordNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         // Generate frontend URL for password reset
-        $url = Config::get('app.frontend_url') . '/auth/reset-password?' . http_build_query([
+        $url = Config::get('app.frontend_url') . '/reset-password?' . http_build_query([
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
         ]);

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'enabled' => env('SCOUT_ENABLED', false),
     'driver' => env('SCOUT_DRIVER', 'meilisearch'),
     'queue'  => env('SCOUT_QUEUE', true),
     'chunk'  => [

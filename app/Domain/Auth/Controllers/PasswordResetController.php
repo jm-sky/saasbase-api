@@ -2,17 +2,18 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use Illuminate\Support\Str;
 use App\Domain\Auth\Models\User;
-use App\Domain\Auth\Notifications\PasswordChangedNotification;
-use App\Domain\Auth\Requests\ResetPasswordRequest;
-use App\Domain\Auth\Requests\SendResetLinkEmailRequest;
-use App\Services\ReCaptcha\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
+use App\Services\ReCaptcha\ReCaptchaService;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\ReCaptcha\Enums\ReCaptchaAction;
+use App\Domain\Auth\Requests\ResetPasswordRequest;
+use App\Domain\Auth\Requests\SendResetLinkEmailRequest;
+use App\Domain\Auth\Notifications\PasswordChangedNotification;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PasswordResetController extends Controller
@@ -27,7 +28,7 @@ class PasswordResetController extends Controller
      */
     public function sendResetLinkEmail(SendResetLinkEmailRequest $request): JsonResponse
     {
-        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), 'forgot-password', 0.6)) {
+        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::FORGOT_PASSWORD->value, 0.6)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 
@@ -51,6 +52,10 @@ class PasswordResetController extends Controller
      */
     public function reset(ResetPasswordRequest $request): JsonResponse
     {
+        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::RESET_PASSWORD->value, 0.6)) {
+            throw new BadRequestHttpException('Invalid recaptcha token');
+        }
+
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user, string $password) {
