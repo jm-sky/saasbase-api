@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Domain\Rights\Models\Permission;
 use App\Domain\Rights\Models\Role;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Seeder;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -33,11 +34,13 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create([
-                'name'       => $permission,
-                'guard_name' => 'api',
-                'tenant_id'  => null, // Global permissions
-            ]);
+            Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () use ($permission) {
+                Permission::create([
+                    'name'       => $permission,
+                    'guard_name' => 'api',
+                    'tenant_id'  => Tenant::GLOBAL_TENANT_ID,
+                ]);
+            });
         }
 
         // Create roles and assign permissions
@@ -64,13 +67,15 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {
-            $role = Role::create([
-                'name'       => $roleName,
-                'guard_name' => 'api',
-                'tenant_id'  => null, // Global roles
-            ]);
+            Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () use ($roleName, $rolePermissions) {
+                $role = Role::create([
+                    'name'       => $roleName,
+                    'guard_name' => 'api',
+                    'tenant_id'  => Tenant::GLOBAL_TENANT_ID,
+                ]);
 
-            $role->syncPermissions($rolePermissions);
+                $role->syncPermissions($rolePermissions);
+            });
         }
     }
 }

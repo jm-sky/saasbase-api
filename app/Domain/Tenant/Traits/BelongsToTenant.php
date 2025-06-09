@@ -34,7 +34,7 @@ trait BelongsToTenant
                 }
             }
 
-            if (!$model->tenant_id) {
+            if (Tenant::NONE_TENANT_ID === $model->tenant_id) {
                 throw new TenantNotFoundException();
             }
         });

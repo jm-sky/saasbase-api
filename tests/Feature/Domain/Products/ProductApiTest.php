@@ -2,16 +2,17 @@
 
 namespace Tests\Feature\Domain\Products;
 
+use Tests\TestCase;
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Products\Models\Product;
-use App\Domain\Tenant\Models\Tenant;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
-use Symfony\Component\HttpFoundation\Response;
-use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
+use App\Domain\Products\Enums\ProductType;
+use App\Domain\Common\Models\MeasurementUnit;
+use Symfony\Component\HttpFoundation\Response;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * @internal
@@ -106,6 +107,7 @@ class ProductApiTest extends TestCase
         $productData = [
             'tenantId'    => $this->tenant->id,
             'name'        => 'Test Product',
+            'type'        => ProductType::PRODUCT->value,
             'description' => 'Test Description',
             'unitId'      => $this->unit->id,
             'priceNet'    => 100.50,
@@ -219,6 +221,7 @@ class ProductApiTest extends TestCase
         $updateData = [
             'tenantId'    => $this->tenant->id,
             'name'        => 'Updated Product',
+            'type'        => ProductType::PRODUCT->value,
             'description' => 'Updated Description',
             'unitId'      => $this->unit->id,
             'priceNet'    => 200.75,

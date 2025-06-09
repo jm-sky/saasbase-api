@@ -84,11 +84,11 @@ Role.php:
 
     use Illuminate\Database\Eloquent\Concerns\HasUuids;
     use Spatie\Permission\Models\Role as SpatieRole;
-    use App\Domain\Rights\Traits\HasGlobalOrTenantScope;
+    use App\Domain\Tenants\Traits\IsGlobalOrBelongsToTenant ;
 
     class Role extends SpatieRole
     {
-        use HasGlobalOrTenantScope;
+        use IsGlobalOrBelongsToTenant ;
         use HasUuids;
 
         protected $fillable = ['name', 'guard_name', 'tenant_id'];
@@ -108,15 +108,15 @@ Update `config/permission.php`:
 
 #### 7. Add Scope and Trait for Global/Tenant Filtering
 
-**Scope**: `app/Domain/Rights/Scopes/IsGlobalOrTenants.php`
+**Scope**: `app/Domain/Tenants/Scopes/GlobalOrCurrentTenantScope.php`
 
-    namespace App\Domain\Rights\Scopes;
+    namespace App\Domain\Tenants\Scopes;
 
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Eloquent\Scope;
 
-    class IsGlobalOrTenants implements Scope
+    class GlobalOrCurrentTenantScope implements Scope
     {
         protected ?string $tenantId;
 
@@ -134,13 +134,13 @@ Update `config/permission.php`:
         }
     }
 
-**Trait**: `app/Domain/Rights/Traits/HasGlobalOrTenantScope.php`
+**Trait**: `app/Domain/Rights/Traits/IsGlobalOrBelongsToTenant .php`
 
     namespace App\Domain\Rights\Traits;
 
-    use App\Domain\Rights\Scopes\IsGlobalOrTenants;
+    use App\Domain\Rights\Scopes\GlobalOrCurrentTenantScope;
 
-    trait HasGlobalOrTenantScope
+    trait IsGlobalOrBelongsToTenant 
     {
         protected static function bootHasGlobalOrTenantScope()
         {
@@ -148,7 +148,7 @@ Update `config/permission.php`:
             $user     = auth()->user();
             $tenantId = $user?->getTenantId() ?? \App\Domain\Tenant\Models\Tenant::$BYPASSED_TENANT_ID;
 
-            static::addGlobalScope(new IsGlobalOrTenants($tenantId));
+            static::addGlobalScope(new GlobalOrCurrentTenantScope($tenantId));
         }
     }
 
@@ -170,7 +170,7 @@ Update `config/permission.php`:
 - Endpoint base: `/api/v1/roles`
 - Controller: `App\Domain\Rights\Controllers\RoleController`
 - Actions:
-  - `index()` – return all roles (global and tenant) using `IsGlobalOrTenants` scope
+  - `index()` – return all roles (global and tenant) using `GlobalOrCurrentTenantScope` scope
   - `store()` – allow creating tenant-scoped roles
   - `update(Role $role)` – update name or permissions (only if role belongs to current tenant)
   - `destroy(Role $role)` – delete (only if role belongs to current tenant)

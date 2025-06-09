@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ProjectRoleSeeder::class,
             DefaultMeasurementUnitSeeder::class,
             RolesAndPermissionsSeeder::class,
+            NumberingTemplateSeeder::class,
         ]);
 
         Tenant::all()->each(function (Tenant $tenant) {

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
-class IsGlobalOrTenants implements Scope
+class GlobalOrCurrentTenantScope implements Scope
 {
     protected ?string $tenantId;
 

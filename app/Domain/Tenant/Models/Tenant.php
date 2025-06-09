@@ -59,7 +59,11 @@ class Tenant extends BaseModel implements HasMedia
     use HasActivityLog;
     use HasActivityLogging;
 
-    public static ?string $BYPASSED_TENANT_ID = null;
+    public const GLOBAL_TENANT_ID = null;
+
+    public const NONE_TENANT_ID = 'none';
+
+    public static ?string $BYPASSED_TENANT_ID = self::NONE_TENANT_ID;
 
     protected $fillable = [
         'name',
@@ -184,7 +188,7 @@ class Tenant extends BaseModel implements HasMedia
         });
     }
 
-    public static function bypassTenant(string $tenantId, \Closure $callback): mixed
+    public static function bypassTenant(?string $tenantId, \Closure $callback): mixed
     {
         $previousTenantId         = self::$BYPASSED_TENANT_ID;
         self::$BYPASSED_TENANT_ID = $tenantId;

@@ -3,15 +3,16 @@
 namespace App\Domain\Invoice\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Invoice\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
-use App\Domain\Tenant\Traits\BelongsToTenant;
+use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string              $id
- * @property string              $tenant_id
+ * @property ?string             $tenant_id
  * @property string              $name
- * @property string              $invoice_type
+ * @property InvoiceType         $invoice_type
  * @property string              $format
  * @property int                 $next_number
  * @property ResetPeriod         $reset_period
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class NumberingTemplate extends BaseModel
 {
-    use BelongsToTenant;
+    use IsGlobalOrBelongsToTenant;
 
     protected $fillable = [
         'name',
@@ -39,6 +40,7 @@ class NumberingTemplate extends BaseModel
 
     protected $casts = [
         'next_number'  => 'integer',
+        'invoice_type' => InvoiceType::class,
         'reset_period' => ResetPeriod::class,
         'is_default'   => 'boolean',
     ];
