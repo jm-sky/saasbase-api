@@ -77,7 +77,7 @@ class LogoFetcherService
         }
 
         $domain = $website
-            ? parse_url($website, PHP_URL_HOST) ?: $website
+            ? (parse_url($website, PHP_URL_HOST) ?: $website)
             : null;
 
         $candidates = $this->fetchAllCandidates($domain, $email);
@@ -135,7 +135,7 @@ class LogoFetcherService
                 }
 
                 try {
-                    $image = $this->imageManager->readFromBuffer($response->body());
+                    $image = $this->imageManager->read($response->body());
                     $mime  = $response->header('Content-Type');
 
                     $candidates[] = new LogoCandidate(
