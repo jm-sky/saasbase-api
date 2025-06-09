@@ -2,30 +2,30 @@
 
 namespace App\Domain\Utils\Controllers;
 
-use App\Domain\Bank\Requests\GetBankInfoRequest;
-use App\Domain\Utils\Resources\BankInfoResource;
+use App\Domain\Utils\Requests\GetIbanInfoRequest;
+use App\Domain\Utils\Resources\IbanInfoResource;
 use App\Http\Controllers\Controller;
 use App\Services\IbanInfo\IbanInfoService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BankInfoController extends Controller
+class IbanInfoController extends Controller
 {
     public function __construct(
         private readonly IbanInfoService $ibanInfoService
     ) {
     }
 
-    public function __invoke(GetBankInfoRequest $request): JsonResource
+    public function __invoke(GetIbanInfoRequest $request): IbanInfoResource
     {
-        $bankInfo = $this->ibanInfoService->getBankInfoFromIban(
+        $ibanInfo = $this->ibanInfoService->getBankInfoFromIban(
             $request->iban,
             $request->input('country')
         );
 
-        if (!$bankInfo) {
+        if (!$ibanInfo) {
             return new JsonResource(['error' => 'Bank not found for the provided IBAN']);
         }
 
-        return new BankInfoResource($bankInfo->toArray());
+        return new IbanInfoResource($ibanInfo->toArray());
     }
 }

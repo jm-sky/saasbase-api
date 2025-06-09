@@ -143,7 +143,7 @@ This strategy reduces API calls and improves response time when processing multi
 
 - Use **bank code** extracted from one IBAN to enrich others with the same prefix (e.g., digits 3–10 in Polish IBANs).
 - Cache this per-bank info separately:
-  - Redis key: `bankinfo:{country}:{bank_code}`
+  - Redis key: `ibaninfo:{country}:{bank_code}`
   - DB table: `bank_codes` or similar
 
 This lets you enrich multiple IBANs with a single API call.

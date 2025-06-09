@@ -5,7 +5,7 @@ namespace App\Domain\Utils\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BankInfoResource extends JsonResource
+class IbanInfoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

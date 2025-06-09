@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Services\BankInfo;
+namespace Tests\Unit\Services\IbanInfo;
 
 use App\Domain\Bank\Models\Bank;
 use App\Services\IbanApi\IbanApiService;

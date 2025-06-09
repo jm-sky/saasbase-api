@@ -2,9 +2,9 @@
 
 namespace App\Services\IbanInfo;
 
-use App\Domain\Bank\DTO\BankInfoDTO;
 use App\Domain\Bank\Models\Bank;
 use App\Services\IbanApi\IbanApiService;
+use App\Services\IbanInfo\DTOs\IbanInfoDTO;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -42,7 +42,7 @@ class IbanInfoService
         Cache::put(self::CACHE_KEY, $routings, self::CACHE_TTL);
     }
 
-    public function getBankInfoFromIban(string $iban, ?string $country = null): ?BankInfoDTO
+    public function getBankInfoFromIban(string $iban, ?string $country = null): ?IbanInfoDTO
     {
         $iban    = $this->sanitizeIban($iban);
         $country = $this->getCountryCode($iban, $country);
@@ -60,13 +60,13 @@ class IbanInfoService
         }
     }
 
-    public function handlePolishIban(string $iban): ?BankInfoDTO
+    public function handlePolishIban(string $iban): ?IbanInfoDTO
     {
         $routingCode = $this->extractRoutingCode($iban);
         $bank        = $this->getBankByRoutingCode($routingCode);
 
         if ($bank) {
-            return new BankInfoDTO(
+            return new IbanInfoDTO(
                 iban: $iban,
                 bankName: $bank->bank_name,
                 branchName: $bank->branch_name,
@@ -80,16 +80,16 @@ class IbanInfoService
         return $this->getBankInfoFromServices($iban, self::POLISH_COUNTRY_CODE);
     }
 
-    public function handleNonPolishIban(string $iban, string $countryCode): ?BankInfoDTO
+    public function handleNonPolishIban(string $iban, string $countryCode): ?IbanInfoDTO
     {
         return $this->getBankInfoFromServices($iban, $countryCode);
     }
 
-    public function getBankInfoFromServices(string $iban, string $countryCode): ?BankInfoDTO
+    public function getBankInfoFromServices(string $iban, string $countryCode): ?IbanInfoDTO
     {
         $info = $this->ibanApiService?->getIbanInfo($iban);
 
-        return new BankInfoDTO(
+        return new IbanInfoDTO(
             iban: $iban,
             bankName: $info?->data->bank->bank_name ?? iban_country_get_central_bank_name($countryCode),
             branchName: null,

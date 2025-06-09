@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Bank\Requests;
+namespace App\Domain\Utils\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class GetBankInfoRequest extends FormRequest
+class GetIbanInfoRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
