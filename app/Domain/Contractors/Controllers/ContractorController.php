@@ -8,8 +8,9 @@ use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
+use App\Domain\Contractors\Requests\StoreContractorRequest;
+use App\Domain\Contractors\Requests\UpdateContractorRequest;
 use App\Domain\Contractors\Resources\ContractorResource;
 use App\Http\Controllers\Controller;
 use App\Services\LogoFetcher\LogoFetcherService;
@@ -69,7 +70,7 @@ class ContractorController extends Controller
         ;
     }
 
-    public function store(ContractorRequest $request, LogoFetcherService $logoFetcherService): JsonResponse
+    public function store(StoreContractorRequest $request, LogoFetcherService $logoFetcherService): ContractorResource
     {
         $validated  = $request->validated();
 
@@ -99,13 +100,10 @@ class ContractorController extends Controller
         $contractor->logModelActivity(ContractorActivityType::Created->value, $contractor);
 
         if ($this->shouldFetchLogo($contractor, $request)) {
-            $logoFetcherService->fetchAndStore($contractor, $request->website, $request->email);
+            $logoFetcherService->fetchAndStore($contractor, $contractor->website, $contractor->email);
         }
 
-        return response()->json([
-            'message' => 'Contractor created successfully.',
-            'data'    => new ContractorResource($contractor),
-        ], Response::HTTP_CREATED);
+        return new ContractorResource($contractor);
     }
 
     public function show(Contractor $contractor): ContractorResource
@@ -113,19 +111,16 @@ class ContractorController extends Controller
         return new ContractorResource($contractor);
     }
 
-    public function update(ContractorRequest $request, Contractor $contractor, LogoFetcherService $logoFetcherService): JsonResponse
+    public function update(UpdateContractorRequest $request, Contractor $contractor, LogoFetcherService $logoFetcherService): ContractorResource
     {
-        $contractor->update($request->validated());
+        $contractor->update($request->validated('contractor'));
         $contractor->logModelActivity(ContractorActivityType::Updated->value, $contractor);
 
         if ($this->shouldFetchLogo($contractor, $request)) {
-            $logoFetcherService->fetchAndStore($contractor, $request->website, $request->email);
+            $logoFetcherService->fetchAndStore($contractor, $contractor->website, $contractor->email);
         }
 
-        return response()->json([
-            'message' => 'Contractor updated successfully.',
-            'data'    => new ContractorResource($contractor),
-        ]);
+        return new ContractorResource($contractor);
     }
 
     public function destroy(Contractor $contractor): JsonResponse
