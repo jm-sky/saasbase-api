@@ -26,17 +26,17 @@ use Illuminate\Database\Eloquent\Model;
 class BankAccountDTO extends BaseDTO
 {
     public function __construct(
-        public readonly string $iban,
-        public readonly string $country,
-        public readonly ?string $bankableId = null,
-        public readonly ?string $bankableType = null,
-        public readonly ?string $tenantId = null,
-        public readonly ?string $swift = null,
-        public readonly ?string $bankName = null,
-        public readonly bool $isDefault = false,
-        public readonly ?string $currency = null,
-        public readonly ?string $description = null,
-        public readonly ?string $id = null,
+        public string $iban,
+        public string $country,
+        public ?string $bankableId = null,
+        public ?string $bankableType = null,
+        public ?string $tenantId = null,
+        public ?string $swift = null,
+        public ?string $bankName = null,
+        public bool $isDefault = false,
+        public ?string $currency = null,
+        public ?string $description = null,
+        public ?string $id = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
     ) {

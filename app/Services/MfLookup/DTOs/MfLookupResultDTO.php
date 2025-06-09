@@ -8,6 +8,7 @@ use App\Domain\Common\DTOs\CommonCompanyLookupData;
 use App\Domain\Common\Enums\AddressType;
 use App\Services\MfLookup\Enums\VatStatusEnum;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 /**
  * Ministry of Finance Lookup Result Data Transfer Object.
@@ -29,6 +30,8 @@ use Illuminate\Contracts\Support\Arrayable;
  */
 class MfLookupResultDTO implements Arrayable, \JsonSerializable
 {
+    public const COUNTRY = 'PL';
+
     public function __construct(
         public readonly string $name,
         public readonly string $nip,
@@ -104,7 +107,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
 
             if ($mfAddress) {
                 $address = new AddressDTO(
-                    country: 'PL',
+                    country: self::COUNTRY,
                     city: $mfAddress->city,
                     type: AddressType::REGISTERED_OFFICE,
                     isDefault: true,
@@ -119,7 +122,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
 
             if ($mfAddress) {
                 $address = new AddressDTO(
-                    country: 'PL',
+                    country: self::COUNTRY,
                     city: $mfAddress->city,
                     type: AddressType::RESIDENCE,
                     isDefault: true,
@@ -138,8 +141,15 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
             return null;
         }
 
+        $iban = $this->accountNumbers[0];
+
+        if (!Str::startsWith($iban, 'PL')) {
+            $iban = self::COUNTRY . $iban;
+        }
+
         return new BankAccountDTO(
-            iban: $this->accountNumbers[0],
+            iban: $iban,
+            country: self::COUNTRY,
             isDefault: true
         );
     }
@@ -151,7 +161,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
 
         return new CommonCompanyLookupData(
             name: $this->name,
-            country: 'PL',
+            country: self::COUNTRY,
             vatId: $this->nip,
             regon: $this->regon,
             address: $address,

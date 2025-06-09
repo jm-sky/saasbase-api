@@ -3,9 +3,9 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\Traits\HasActivityLogging;
-use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Tenant\Requests\TenantRequest;
+use App\Domain\Tenant\Requests\StoreTenantRequest;
+use App\Domain\Tenant\Requests\UpdateTenantRequest;
 use App\Domain\Tenant\Resources\TenantPreviewResource;
 use App\Domain\Tenant\Resources\TenantResource;
 use App\Http\Controllers\Controller;
@@ -34,18 +34,22 @@ class TenantController extends Controller
         return TenantPreviewResource::collection($tenants);
     }
 
-    public function store(TenantRequest $request): JsonResponse
+    public function store(StoreTenantRequest $request): TenantResource
     {
-        // TODO: Create enum for tenant roles
-        $tenant = Tenant::create($request->validated());
-        $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
-        // We already log activity in Tenant model
-        // $tenant->logModelActivity(TenantActivityType::Created->value, $tenant);
+        $tenantData = $request->validated('tenant');
+        $tenant     = Tenant::create($tenantData);
 
-        return response()->json([
-            'message' => 'Tenant created successfully.',
-            'data'    => new TenantResource($tenant),
-        ], Response::HTTP_CREATED);
+        if ($request->has('bankAccount') && $request->validated('bankAccount') && $request->validated('bankAccount')['iban']) {
+            $tenant->bankAccounts()->create($request->validated('bankAccount'));
+        }
+
+        if ($request->has('address') && $request->validated('address') && $request->validated('address')['street']) {
+            $tenant->addresses()->create($request->validated('address'));
+        }
+
+        $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
+
+        return new TenantResource($tenant);
     }
 
     public function show(Request $request, Tenant $tenant): TenantResource
@@ -55,12 +59,10 @@ class TenantController extends Controller
         return new TenantResource($tenant);
     }
 
-    public function update(TenantRequest $request, Tenant $tenant): JsonResponse
+    public function update(UpdateTenantRequest $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('update', $tenant);
         $tenant->update($request->validated());
-        // We already log activity in Tenant model
-        // $tenant->logModelActivity(TenantActivityType::Updated->value, $tenant);
 
         return response()->json([
             'message' => 'Tenant updated successfully.',
@@ -71,8 +73,6 @@ class TenantController extends Controller
     public function destroy(Request $request, Tenant $tenant): JsonResponse
     {
         $this->authorize('delete', $tenant);
-        // We already log activity in Tenant model
-        // $tenant->logModelActivity(TenantActivityType::Deleted->value, $tenant);
         $tenant->delete();
 
         return response()->json(['message' => 'Tenant deleted successfully.'], Response::HTTP_NO_CONTENT);

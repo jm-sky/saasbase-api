@@ -6,7 +6,7 @@ use App\Domain\Utils\Requests\GetIbanInfoRequest;
 use App\Domain\Utils\Resources\IbanInfoResource;
 use App\Http\Controllers\Controller;
 use App\Services\IbanInfo\IbanInfoService;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\JsonResponse;
 
 class IbanInfoController extends Controller
 {
@@ -15,7 +15,7 @@ class IbanInfoController extends Controller
     ) {
     }
 
-    public function __invoke(GetIbanInfoRequest $request): IbanInfoResource
+    public function __invoke(GetIbanInfoRequest $request): IbanInfoResource|JsonResponse
     {
         $ibanInfo = $this->ibanInfoService->getBankInfoFromIban(
             $request->iban,
@@ -23,7 +23,7 @@ class IbanInfoController extends Controller
         );
 
         if (!$ibanInfo) {
-            return new JsonResource(['error' => 'Bank not found for the provided IBAN']);
+            return new JsonResponse(['error' => 'Bank not found for the provided IBAN']);
         }
 
         return new IbanInfoResource($ibanInfo->toArray());
