@@ -8,6 +8,7 @@ use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
 use App\Domain\Subscription\Models\SubscriptionPlan;
+use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\Tenant;
@@ -79,6 +80,10 @@ class CustomTenantUserSeeder extends Seeder
                     'current_period_end'     => now()->addYear(),
                     'cancel_at_period_end'   => false,
                 ]);
+
+                $initializer = new InitializeTenantDefaults();
+                $initializer->createRootOrganizationUnit($tenant);
+                $initializer->seedDefaultMeasurementUnits($tenant);
             });
 
             $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));
