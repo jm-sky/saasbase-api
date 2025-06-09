@@ -3,8 +3,12 @@
 namespace App\Domain\ShareToken\Resources;
 
 use App\Domain\ShareToken\DTOs\ShareTokenDTO;
+use App\Domain\ShareToken\Models\ShareToken;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin ShareToken
+ */
 class ShareTokenResource extends JsonResource
 {
     /**
