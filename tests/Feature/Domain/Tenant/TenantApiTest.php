@@ -67,8 +67,10 @@ class TenantApiTest extends TestCase
     public function testCanCreateTenant(): void
     {
         $tenantData = [
-            'name' => 'Test Tenant',
-            'slug' => 'test-tenant',
+            'tenant' => [
+                'name' => 'Test Tenant',
+                'slug' => 'test-tenant',
+            ],
         ];
 
         $response = $this->postJson($this->baseUrl, $tenantData);
@@ -86,13 +88,13 @@ class TenantApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'name' => $tenantData['name'],
-                    'slug' => $tenantData['slug'],
+                    'name' => $tenantData['tenant']['name'],
+                    'slug' => $tenantData['tenant']['slug'],
                 ],
             ])
         ;
 
-        $this->assertDatabaseHas('tenants', $tenantData);
+        $this->assertDatabaseHas('tenants', $tenantData['tenant']);
     }
 
     public function testCannotCreateTenantWithDuplicateSlug(): void
@@ -100,14 +102,16 @@ class TenantApiTest extends TestCase
         $existingTenant = Tenant::factory()->create();
 
         $tenantData = [
-            'name' => 'Test Tenant',
-            'slug' => $existingTenant->slug,
+            'tenant' => [
+                'name' => 'Test Tenant',
+                'slug' => $existingTenant->slug,
+            ],
         ];
 
         $response = $this->postJson($this->baseUrl, $tenantData);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['slug'])
+            ->assertJsonValidationErrors(['tenant.slug'])
         ;
     }
 

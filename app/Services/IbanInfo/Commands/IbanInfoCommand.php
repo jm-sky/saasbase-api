@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Bank\Commands;
+namespace App\Services\IbanInfo\Commands;
 
 use App\Services\IbanInfo\IbanInfoService;
 use Illuminate\Console\Command;
@@ -18,20 +18,20 @@ class IbanInfoCommand extends Command
         $this->info('Looking up bank details for ' . $iban . '...');
 
         try {
-            $bankInfo = $service->getBankInfoFromIban($iban);
+            $ibanInfo = $service->getBankInfoFromIban($iban);
 
-            if (null === $bankInfo) {
+            if (null === $ibanInfo) {
                 $this->warn('No bank found for given IBAN.');
 
                 return self::FAILURE;
             }
 
             $this->info('IBAN Details:');
-            $this->line('- Bank Name         : ' . $bankInfo->bankName);
-            $this->line('- Branch Name       : ' . $bankInfo->branchName);
-            $this->line('- SWIFT             : ' . $bankInfo->swift);
-            $this->line('- Bank Code         : ' . $bankInfo->bankCode);
-            $this->line('- Routing Code      : ' . $bankInfo->routingCode);
+            $this->line('- Bank Name         : ' . $ibanInfo->bankName);
+            $this->line('- Branch Name       : ' . $ibanInfo->branchName);
+            $this->line('- SWIFT             : ' . $ibanInfo->swift);
+            $this->line('- Bank Code         : ' . $ibanInfo->bankCode);
+            $this->line('- Routing Code      : ' . $ibanInfo->routingCode);
 
             return self::SUCCESS;
         } catch (\Throwable $e) {

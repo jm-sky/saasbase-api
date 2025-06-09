@@ -4,7 +4,7 @@ namespace App\Domain\Tenant\Requests;
 
 use App\Http\Requests\BaseFormRequest;
 
-class TenantRequest extends BaseFormRequest
+class UpdateTenantRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {

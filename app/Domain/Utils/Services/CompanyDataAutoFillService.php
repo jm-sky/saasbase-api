@@ -2,8 +2,10 @@
 
 namespace App\Domain\Utils\Services;
 
+use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\DTOs\CommonCompanyLookupData;
 use App\Domain\Common\DTOs\CommonCompanyLookupSources;
+use App\Services\IbanInfo\IbanInfoService;
 use App\Services\MfLookup\Services\MfLookupService;
 use App\Services\RegonLookup\Services\RegonLookupService;
 use App\Services\ViesLookup\Services\ViesLookupService;
@@ -14,6 +16,7 @@ class CompanyDataAutoFillService
         private readonly RegonLookupService $regonLookupService,
         private readonly MfLookupService $mfLookupService,
         private readonly ViesLookupService $viesLookupService,
+        private readonly IbanInfoService $ibanInfoService,
     ) {
     }
 
@@ -44,6 +47,10 @@ class CompanyDataAutoFillService
             } catch (\Throwable $e) {
                 $mfData = null;
             }
+        }
+
+        if (isset($mfData->bankAccount->iban)) {
+            $mfData->bankAccount = $this->fillBankAccountDetails($mfData);
         }
 
         if ($nip && $country) {
@@ -83,5 +90,20 @@ class CompanyDataAutoFillService
         }
 
         return null;
+    }
+
+    private function fillBankAccountDetails(CommonCompanyLookupData $mfData): BankAccountDTO
+    {
+        $ibanInfo = $this->ibanInfoService->getBankInfoFromIban($mfData->bankAccount->iban, $mfData->country);
+
+        if (!$ibanInfo) {
+            return $mfData->bankAccount;
+        }
+
+        $mfData->bankAccount->swift    = $ibanInfo->swift;
+        $mfData->bankAccount->bankName = $ibanInfo->bankName;
+        $mfData->bankAccount->currency = $ibanInfo->currency;
+
+        return $mfData->bankAccount;
     }
 }
