@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Bank\DTO;
+namespace App\Services\IbanInfo\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-class BankInfoDTO extends BaseDataDTO
+class IbanInfoDTO extends BaseDataDTO
 {
     public function __construct(
         public string $bankName,

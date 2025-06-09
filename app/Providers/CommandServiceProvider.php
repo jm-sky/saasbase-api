@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Domain\Bank\Commands\IbanInfoCommand;
+use App\Services\IbanInfo\Commands\IbanInfoCommand;
 use App\Services\MfLookup\Commands\MfLookupCommand;
 use App\Services\RegonLookup\Commands\RegonLookupCommand;
 use App\Services\ViesLookup\Commands\ViesLookupCommand;

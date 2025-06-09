@@ -31,6 +31,7 @@ class RegisterUserAction
         // Create user profile
         UserProfile::create([
             'user_id'    => $user->id,
+            'bio'        => $dto->description,
             'birth_date' => $dto->birthDate,
         ]);
 

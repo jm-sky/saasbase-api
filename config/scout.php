@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'driver' => env('SCOUT_DRIVER', 'meilisearch'),
-    'queue'  => env('SCOUT_QUEUE', true),
-    'chunk'  => [
+    'enabled' => env('SCOUT_ENABLED', false),
+    'driver'  => env('SCOUT_DRIVER', 'meilisearch'),
+    'queue'   => env('SCOUT_QUEUE', true),
+    'chunk'   => [
         'searchable'   => 500,
         'unsearchable' => 500,
     ],
