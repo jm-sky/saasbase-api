@@ -7,7 +7,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 class InvoiceBuyerDTO extends BaseDataDTO
 {
     public function __construct(
-        public int $contractorId,
+        public string $contractorId,
         public string $contractorType,
         public string $name,
         public string $taxId,

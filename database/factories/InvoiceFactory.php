@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories\Domain\Invoice;
+namespace Database\Factories;
 
 use App\Domain\Invoice\DTOs\InvoiceBuyerDTO;
 use App\Domain\Invoice\DTOs\InvoiceDataDTO;

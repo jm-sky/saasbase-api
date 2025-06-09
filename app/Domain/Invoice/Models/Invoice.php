@@ -14,10 +14,12 @@ use App\Domain\Invoice\DTOs\InvoiceDataDTO;
 use App\Domain\Invoice\DTOs\InvoiceOptionsDTO;
 use App\Domain\Invoice\DTOs\InvoicePaymentDTO;
 use App\Domain\Invoice\DTOs\InvoiceSellerDTO;
+use App\Domain\Invoice\Enums\InvoiceStatus;
 use App\Domain\Invoice\Enums\InvoiceType;
 use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
+use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -25,7 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string            $id
  * @property string            $tenant_id
  * @property InvoiceType       $type
- * @property string            $status
+ * @property InvoiceStatus     $status
  * @property string            $number
  * @property string            $numbering_template_id
  * @property BigDecimal        $total_net
@@ -66,6 +68,7 @@ class Invoice extends BaseModel
 
     protected $casts = [
         'type'          => InvoiceType::class,
+        'status'        => InvoiceStatus::class,
         'issue_date'    => 'date',
         'total_net'     => BigDecimal::class,
         'total_tax'     => BigDecimal::class,
@@ -81,5 +84,10 @@ class Invoice extends BaseModel
     public function numberingTemplate(): BelongsTo
     {
         return $this->belongsTo(NumberingTemplate::class);
+    }
+
+    protected static function newFactory()
+    {
+        return InvoiceFactory::new();
     }
 }
