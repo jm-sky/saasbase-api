@@ -15,6 +15,7 @@ use App\Domain\Invoice\DTOs\InvoiceOptionsDTO;
 use App\Domain\Invoice\DTOs\InvoicePaymentDTO;
 use App\Domain\Invoice\DTOs\InvoiceSellerDTO;
 use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,6 +44,7 @@ class Invoice extends BaseModel
     use SoftDeletes;
     use BelongsToTenant;
     use IsSearchable;
+    use HasShareTokens;
 
     protected $fillable = [
         'type',

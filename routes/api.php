@@ -56,6 +56,7 @@ Route::prefix('v1')->group(function () {
             require __DIR__ . '/api/projects.php';
             require __DIR__ . '/api/contractors.php';
             require __DIR__ . '/api/products.php';
+            require __DIR__ . '/api/invoices.php';
             require __DIR__ . '/api/subscriptions.php';
 
             Route::apiResource('tags', TagController::class)->only(['index']);

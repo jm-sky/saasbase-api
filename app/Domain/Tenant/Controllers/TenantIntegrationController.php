@@ -23,14 +23,6 @@ class TenantIntegrationController extends Controller
 {
     use HasIndexQuery;
 
-    protected string $modelClass;
-
-    protected array $filters;
-
-    protected array $sorts;
-
-    protected string $defaultSort;
-
     public function __construct()
     {
         $this->modelClass = TenantIntegration::class;
