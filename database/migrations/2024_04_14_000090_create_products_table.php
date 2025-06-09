@@ -11,6 +11,7 @@ return new class() extends Migration {
             $table->ulid('id')->primary();
             $table->ulid('tenant_id');
             $table->string('name');
+            $table->string('type');
             $table->text('description')->nullable();
             $table->ulid('unit_id')->nullable();
             $table->decimal('price_net', 10, 2);

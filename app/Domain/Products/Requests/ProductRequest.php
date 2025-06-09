@@ -2,7 +2,9 @@
 
 namespace App\Domain\Products\Requests;
 
+use App\Domain\Products\Enums\ProductType;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class ProductRequest extends BaseFormRequest
@@ -17,6 +19,7 @@ class ProductRequest extends BaseFormRequest
         return [
             'tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
             'name'        => ['required', 'string', 'max:255'],
+            'type'        => ['required', 'string', Rule::in(ProductType::cases())],
             'description' => ['nullable', 'string', 'max:1000'],
             'unitId'      => ['nullable', 'ulid', 'exists:measurement_units,id'],
             'priceNet'    => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:999999.99'],

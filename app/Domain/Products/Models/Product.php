@@ -15,6 +15,7 @@ use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Products\Enums\ProductActivityType;
+use App\Domain\Products\Enums\ProductType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
@@ -30,6 +31,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string                                  $id
  * @property string                                  $tenant_id
  * @property string                                  $name
+ * @property ProductType                             $type
  * @property ?string                                 $description
  * @property string                                  $unit_id
  * @property float                                   $price_net
@@ -56,6 +58,7 @@ class Product extends BaseModel implements HasMedia
     protected $fillable = [
         'tenant_id',
         'name',
+        'type',
         'description',
         'unit_id',
         'price_net',
@@ -69,6 +72,7 @@ class Product extends BaseModel implements HasMedia
      */
     protected $casts = [
         'price_net' => 'float',
+        'type'      => ProductType::class,
     ];
 
     public function unit(): BelongsTo

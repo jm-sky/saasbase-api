@@ -61,16 +61,13 @@ class ProductController extends Controller
         ;
     }
 
-    public function store(ProductRequest $request): JsonResponse
+    public function store(ProductRequest $request): ProductResource
     {
         $product = Product::create($request->validated());
         $product->load(['unit', 'vatRate']);
         $product->logModelActivity(ProductActivityType::Created->value, $product);
 
-        return response()->json([
-            'message' => 'Product created successfully.',
-            'data'    => new ProductResource($product),
-        ], Response::HTTP_CREATED);
+        return new ProductResource($product);
     }
 
     public function show(Product $product): ProductResource
