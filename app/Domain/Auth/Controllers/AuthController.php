@@ -2,24 +2,24 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use App\Domain\Auth\Actions\RegisterUserAction;
+use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
-use Illuminate\Http\JsonResponse;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Domain\Auth\DTOs\RegisterUserDTO;
 use App\Domain\Auth\Requests\LoginRequest;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Services\ReCaptcha\ReCaptchaService;
 use App\Domain\Auth\Requests\RegisterRequest;
-use App\Domain\Auth\Traits\RespondsWithToken;
-use Symfony\Component\HttpFoundation\Response;
-use App\Domain\Auth\Actions\RegisterUserAction;
 use App\Domain\Auth\Services\UserSessionService;
+use App\Domain\Auth\Traits\RespondsWithToken;
+use App\Http\Controllers\Controller;
 use App\Services\ReCaptcha\Enums\ReCaptchaAction;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use App\Services\ReCaptcha\ReCaptchaService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {

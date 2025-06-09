@@ -2,8 +2,8 @@
 
 namespace App\Domain\Common\Traits;
 
-use Laravel\Scout\Searchable;
 use Laravel\Scout\ModelObserver;
+use Laravel\Scout\Searchable;
 use Laravel\Scout\SearchableScope;
 
 trait IsSearchable
@@ -16,11 +16,11 @@ trait IsSearchable
             return;
         }
 
-        static::addGlobalScope(new SearchableScope);
+        static::addGlobalScope(new SearchableScope());
 
-        static::observe(new ModelObserver);
+        static::observe(new ModelObserver());
 
-        (new static)->registerSearchableMacros();
+        (new static())->registerSearchableMacros();
     }
 
     public function toSearchableArray(): array
