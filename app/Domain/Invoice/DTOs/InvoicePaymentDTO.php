@@ -10,24 +10,24 @@ use Carbon\Carbon;
 
 /**
  * @property InvoicePaymentStatus $status
- * @property Carbon               $dueDate
+ * @property ?Carbon              $dueDate
  * @property ?Carbon              $paidDate
- * @property BigDecimal           $paidAmount
+ * @property ?BigDecimal          $paidAmount
  * @property InvoicePaymentMethod $method
- * @property string               $reference
- * @property string               $terms
+ * @property ?string              $reference
+ * @property ?string              $terms
  * @property ?string              $notes
  */
 class InvoicePaymentDTO extends BaseDataDTO
 {
     public function __construct(
         public InvoicePaymentStatus $status,
-        public Carbon $dueDate,
+        public ?Carbon $dueDate,
         public ?Carbon $paidDate,
-        public BigDecimal $paidAmount,
-        public InvoicePaymentMethod $method,
-        public string $reference,
-        public string $terms,
+        public ?BigDecimal $paidAmount,
+        public InvoicePaymentMethod $method = InvoicePaymentMethod::BANK_TRANSFER,
+        public ?string $reference = null,
+        public ?string $terms = null,
         public ?string $notes = null,
     ) {
     }
@@ -36,9 +36,9 @@ class InvoicePaymentDTO extends BaseDataDTO
     {
         return [
             'status'     => $this->status->value,
-            'dueDate'    => $this->dueDate->format('Y-m-d\TH:i:s.u\Z'),
+            'dueDate'    => $this->dueDate?->format('Y-m-d\TH:i:s.u\Z'),
             'paidDate'   => $this->paidDate?->format('Y-m-d\TH:i:s.u\Z'),
-            'paidAmount' => $this->paidAmount->toFloat(),
+            'paidAmount' => $this->paidAmount?->toFloat(),
             'method'     => $this->method->value,
             'reference'  => $this->reference,
             'terms'      => $this->terms,
@@ -50,12 +50,12 @@ class InvoicePaymentDTO extends BaseDataDTO
     {
         return new static(
             status: InvoicePaymentStatus::from($data['status']),
-            dueDate: Carbon::parse($data['dueDate']),
+            dueDate: isset($data['dueDate']) ? Carbon::parse($data['dueDate']) : null,
             paidDate: isset($data['paidDate']) ? Carbon::parse($data['paidDate']) : null,
-            paidAmount: new BigDecimal($data['paidAmount']),
+            paidAmount: isset($data['paidAmount']) ? BigDecimal::of($data['paidAmount']) : null,
             method: InvoicePaymentMethod::from($data['method']),
-            reference: $data['reference'],
-            terms: $data['terms'],
+            reference: isset($data['reference']) ? $data['reference'] : null,
+            terms: isset($data['terms']) ? $data['terms'] : null,
             notes: $data['notes'] ?? null,
         );
     }

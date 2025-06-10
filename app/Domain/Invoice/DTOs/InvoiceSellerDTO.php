@@ -6,24 +6,24 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
  * @property ?string $contractorId
- * @property string  $contractorType
- * @property string  $name
+ * @property ?string $contractorType
+ * @property ?string $name
  * @property ?string $taxId
- * @property string  $address
- * @property string  $country
+ * @property ?string $address
+ * @property ?string $country
  * @property ?string $iban
  * @property ?string $email
  */
 class InvoiceSellerDTO extends BaseDataDTO
 {
     public function __construct(
-        public string $contractorType,
-        public string $name,
-        public string $address,
-        public string $country,
+        public ?string $name = null,
+        public ?string $address = null,
+        public ?string $country = null,
         public ?string $taxId = null,
         public ?string $iban = null,
         public ?string $contractorId = null,
+        public ?string $contractorType = null,
         public ?string $email = null,
     ) {
     }
@@ -46,11 +46,11 @@ class InvoiceSellerDTO extends BaseDataDTO
     {
         return new static(
             contractorId: $data['contractorId'] ?? null,
-            contractorType: $data['contractorType'],
-            name: $data['name'],
-            taxId: $data['taxId'],
-            address: $data['address'],
-            country: $data['country'],
+            contractorType: $data['contractorType'] ?? null,
+            name: $data['name'] ?? null,
+            taxId: $data['taxId'] ?? null,
+            address: $data['address'] ?? null,
+            country: $data['country'] ?? null,
             iban: $data['iban'] ?? null,
             email: $data['email'] ?? null,
         );

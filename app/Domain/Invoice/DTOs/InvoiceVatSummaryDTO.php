@@ -36,9 +36,9 @@ class InvoiceVatSummaryDTO extends BaseDataDTO
     {
         return new static(
             vatRate: VatRate::from($data['vatRate']),
-            net: new BigDecimal($data['net']),
-            vat: new BigDecimal($data['vat']),
-            gross: new BigDecimal($data['gross']),
+            net: BigDecimal::of($data['net']),
+            vat: BigDecimal::of($data['vat']),
+            gross: BigDecimal::of($data['gross']),
         );
     }
 }

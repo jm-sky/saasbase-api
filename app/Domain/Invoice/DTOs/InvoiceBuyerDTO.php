@@ -7,13 +7,13 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 class InvoiceBuyerDTO extends BaseDataDTO
 {
     public function __construct(
-        public string $contractorType,
-        public string $name,
-        public string $address,
-        public string $country,
-        public ?string $contractorId = null,
+        public ?string $name = null,
+        public ?string $address = null,
+        public ?string $country = null,
         public ?string $taxId = null,
         public ?string $iban = null,
+        public ?string $contractorId = null,
+        public ?string $contractorType = null,
         public ?string $email = null,
     ) {
     }
@@ -36,11 +36,11 @@ class InvoiceBuyerDTO extends BaseDataDTO
     {
         return new static(
             contractorId: $data['contractorId'] ?? null,
-            contractorType: $data['contractorType'],
-            name: $data['name'],
+            contractorType: $data['contractorType'] ?? null,
+            name: $data['name'] ?? null,
             taxId: $data['taxId'] ?? null,
-            address: $data['address'],
-            country: $data['country'],
+            address: $data['address'] ?? null,
+            country: $data['country'] ?? null,
             iban: $data['iban'] ?? null,
             email: $data['email'] ?? null,
         );

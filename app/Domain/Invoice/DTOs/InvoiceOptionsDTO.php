@@ -5,18 +5,18 @@ namespace App\Domain\Invoice\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
- * @property string   $language
- * @property string   $template
+ * @property ?string  $language
+ * @property ?string  $template
  * @property bool     $sendEmail
  * @property string[] $emailTo
  */
 class InvoiceOptionsDTO extends BaseDataDTO
 {
     public function __construct(
-        public string $language,
-        public string $template,
-        public bool $sendEmail,
-        public array $emailTo,
+        public ?string $language = null,
+        public ?string $template = null,
+        public bool $sendEmail = false,
+        public array $emailTo = [],
     ) {
     }
 
@@ -33,10 +33,10 @@ class InvoiceOptionsDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            language: $data['language'],
-            template: $data['template'],
-            sendEmail: $data['sendEmail'],
-            emailTo: $data['emailTo'],
+            language: isset($data['language']) ? $data['language'] : null,
+            template: isset($data['template']) ? $data['template'] : null,
+            sendEmail: isset($data['sendEmail']) ? $data['sendEmail'] : false,
+            emailTo: isset($data['emailTo']) ? $data['emailTo'] : [],
         );
     }
 }

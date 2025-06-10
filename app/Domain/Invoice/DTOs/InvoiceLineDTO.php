@@ -52,12 +52,12 @@ class InvoiceLineDTO extends BaseDataDTO
         return new static(
             id: $data['id'],
             description: $data['description'],
-            quantity: new BigDecimal($data['quantity']),
-            unitPrice: new BigDecimal($data['unitPrice']),
+            quantity: BigDecimal::of($data['quantity']),
+            unitPrice: BigDecimal::of($data['unitPrice']),
             vatRate: VatRate::from($data['vatRate']),
-            totalNet: new BigDecimal($data['totalNet']),
-            totalVat: new BigDecimal($data['totalVat']),
-            totalGross: new BigDecimal($data['totalGross']),
+            totalNet: BigDecimal::of($data['totalNet']),
+            totalVat: BigDecimal::of($data['totalVat']),
+            totalGross: BigDecimal::of($data['totalGross']),
             productId: $data['productId'] ?? null,
         );
     }

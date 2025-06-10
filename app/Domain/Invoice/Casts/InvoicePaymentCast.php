@@ -28,6 +28,14 @@ class InvoicePaymentCast implements CastsAttributes
             return null;
         }
 
-        return $value->toJson();
+        if ($value instanceof InvoicePaymentDTO) {
+            return $value->toJson();
+        }
+
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+
+        return $value;
     }
 }

@@ -8,6 +8,11 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class InvoiceSellerCast implements CastsAttributes
 {
+    /**
+     * Cast the given value.
+     *
+     * @return InvoiceSellerDTO
+     */
     public function get($model, string $key, $value, array $attributes)
     {
         /** @var Invoice $model */
@@ -22,12 +27,25 @@ class InvoiceSellerCast implements CastsAttributes
         return InvoiceSellerDTO::fromArray($data);
     }
 
+    /**
+     * Prepare the given value for storage.
+     *
+     * @return string|null
+     */
     public function set($model, string $key, $value, array $attributes)
     {
         if (is_null($value)) {
             return null;
         }
 
-        return $value->toJson();
+        if ($value instanceof InvoiceSellerDTO) {
+            return $value->toJson();
+        }
+
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+
+        return $value;
     }
 }

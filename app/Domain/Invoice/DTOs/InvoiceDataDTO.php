@@ -33,7 +33,7 @@ class InvoiceDataDTO extends BaseDataDTO
     {
         return new static(
             lines: array_map(fn (array $line) => InvoiceLineDTO::fromArray($line), $data['lines']),
-            vatSummary: array_map(fn (array $summary) => InvoiceVatSummaryDTO::fromArray($summary), $data['vatSummary']),
+            vatSummary: isset($data['vatSummary']) ? array_map(fn (array $summary) => InvoiceVatSummaryDTO::fromArray($summary), $data['vatSummary']) : [],
             exchange: InvoiceExchangeDTO::fromArray($data['exchange']),
         );
     }

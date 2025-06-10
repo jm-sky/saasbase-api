@@ -14,7 +14,7 @@ class BigDecimalCast implements CastsAttributes
             return null;
         }
 
-        return new BigDecimal($value);
+        return BigDecimal::of($value);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string

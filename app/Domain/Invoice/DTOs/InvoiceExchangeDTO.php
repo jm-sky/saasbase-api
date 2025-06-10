@@ -6,16 +6,16 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 use Brick\Math\BigDecimal;
 
 /**
- * @property string     $currency
- * @property BigDecimal $exchangeRate
- * @property string     $date
+ * @property string      $currency
+ * @property ?BigDecimal $exchangeRate
+ * @property ?string     $date
  */
 class InvoiceExchangeDTO extends BaseDataDTO
 {
     public function __construct(
         public string $currency,
-        public BigDecimal $exchangeRate,
-        public string $date,
+        public ?BigDecimal $exchangeRate = null,
+        public ?string $date = null,
     ) {
     }
 
@@ -23,7 +23,7 @@ class InvoiceExchangeDTO extends BaseDataDTO
     {
         return [
             'currency'     => $this->currency,
-            'exchangeRate' => $this->exchangeRate->toFloat(),
+            'exchangeRate' => $this->exchangeRate?->toFloat(),
             'date'         => $this->date,
         ];
     }
@@ -32,8 +32,8 @@ class InvoiceExchangeDTO extends BaseDataDTO
     {
         return new static(
             currency: $data['currency'],
-            exchangeRate: new BigDecimal($data['exchangeRate'], 6),
-            date: $data['date'],
+            exchangeRate: isset($data['exchangeRate']) ? BigDecimal::of($data['exchangeRate']) : null,
+            date: isset($data['date']) ? $data['date'] : null,
         );
     }
 }
