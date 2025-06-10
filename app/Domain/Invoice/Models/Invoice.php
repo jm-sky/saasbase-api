@@ -4,6 +4,7 @@ namespace App\Domain\Invoice\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Traits\IsSearchable;
+use App\Domain\Invoice\Casts\BigDecimalCast;
 use App\Domain\Invoice\Casts\InvoiceBuyerCast;
 use App\Domain\Invoice\Casts\InvoiceDataCast;
 use App\Domain\Invoice\Casts\InvoiceOptionsCast;
@@ -70,10 +71,10 @@ class Invoice extends BaseModel
         'type'          => InvoiceType::class,
         'status'        => InvoiceStatus::class,
         'issue_date'    => 'date',
-        'total_net'     => BigDecimal::class,
-        'total_tax'     => BigDecimal::class,
-        'total_gross'   => BigDecimal::class,
-        'exchange_rate' => BigDecimal::class,
+        'total_net'     => BigDecimalCast::class,
+        'total_tax'     => BigDecimalCast::class,
+        'total_gross'   => BigDecimalCast::class,
+        'exchange_rate' => BigDecimalCast::class,
         'seller'        => InvoiceSellerCast::class,
         'buyer'         => InvoiceBuyerCast::class,
         'data'          => InvoiceDataCast::class,

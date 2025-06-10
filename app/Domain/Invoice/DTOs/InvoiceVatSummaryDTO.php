@@ -32,9 +32,9 @@ class InvoiceVatSummaryDTO extends BaseDataDTO
         ];
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             vatRate: VatRate::from($data['vatRate']),
             net: new BigDecimal($data['net']),
             vat: new BigDecimal($data['vat']),

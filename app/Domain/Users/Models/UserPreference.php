@@ -20,6 +20,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class UserPreference extends BaseModel
 {
+    public const DEFAULT_FIELD_VISIBILITY = [
+        'email'      => 'tenant',
+        'phone'      => 'tenant',
+        'birth_date' => 'tenant',
+    ];
+
     protected $fillable = [
         'user_id',
         'language',
@@ -69,7 +75,7 @@ class UserPreference extends BaseModel
      */
     public function getFieldVisibility(string $field): ?string
     {
-        return $this->field_visibility[$field] ?? null;
+        return $this->field_visibility[$field] ?? self::DEFAULT_FIELD_VISIBILITY[$field] ?? null;
     }
 
     /**

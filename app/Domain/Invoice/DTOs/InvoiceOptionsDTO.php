@@ -30,9 +30,9 @@ class InvoiceOptionsDTO extends BaseDataDTO
         ];
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             language: $data['language'],
             template: $data['template'],
             sendEmail: $data['sendEmail'],

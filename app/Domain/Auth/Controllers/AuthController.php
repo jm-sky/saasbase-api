@@ -128,9 +128,9 @@ class AuthController extends Controller
             // TODO: Implement $remember
             return $this->respondWithToken($newToken, $user, tenantId: $tenantId);
         } catch (TokenInvalidException $e) {
-            return response()->json(['error' => 'Invalid token'], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['error' => 'Invalid token', 'message' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Token not provided or expired'], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['error' => 'Token not provided or expired', 'message' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
         }
     }
 

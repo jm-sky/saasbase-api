@@ -3,31 +3,31 @@
 namespace App\Domain\Invoice\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
+use App\Domain\Invoice\Enums\InvoiceStatus;
 use App\Domain\Invoice\Enums\InvoiceType;
 use App\Domain\Invoice\Models\Invoice;
-use Illuminate\Support\Collection;
 
 /**
- * @property string      $id
- * @property string      $tenantId
- * @property InvoiceType $type
- * @property string      $status
- * @property string      $number
- * @property string      $numberingTemplateId
- * @property float       $totalNet
- * @property float       $totalTax
- * @property float       $totalGross
- * @property string      $currency
- * @property float       $exchangeRate
- * @property array       $seller
- * @property array       $buyer
- * @property array       $data
- * @property array       $payment
- * @property array       $options
- * @property string      $issueDate
- * @property string      $createdAt
- * @property string      $updatedAt
- * @property array       $numberingTemplate
+ * @property string        $id
+ * @property string        $tenantId
+ * @property InvoiceType   $type
+ * @property InvoiceStatus $status
+ * @property string        $number
+ * @property string        $numberingTemplateId
+ * @property float         $totalNet
+ * @property float         $totalTax
+ * @property float         $totalGross
+ * @property string        $currency
+ * @property float         $exchangeRate
+ * @property array         $seller
+ * @property array         $buyer
+ * @property array         $data
+ * @property array         $payment
+ * @property array         $options
+ * @property string        $issueDate
+ * @property string        $createdAt
+ * @property string        $updatedAt
+ * @property array         $numberingTemplate
  */
 class InvoiceDTO extends BaseDataDTO
 {
@@ -35,7 +35,7 @@ class InvoiceDTO extends BaseDataDTO
         public readonly string $id,
         public readonly string $tenantId,
         public readonly InvoiceType $type,
-        public readonly string $status,
+        public readonly InvoiceStatus $status,
         public readonly string $number,
         public readonly string $numberingTemplateId,
         public readonly float $totalNet,
@@ -81,18 +81,13 @@ class InvoiceDTO extends BaseDataDTO
         );
     }
 
-    public static function collect(Collection $invoices): Collection
-    {
-        return $invoices->map(fn (Invoice $invoice) => self::from($invoice));
-    }
-
     public function toArray(): array
     {
         return [
             'id'                    => $this->id,
             'tenant_id'             => $this->tenantId,
-            'type'                  => $this->type,
-            'status'                => $this->status,
+            'type'                  => $this->type->value,
+            'status'                => $this->status->value,
             'number'                => $this->number,
             'numbering_template_id' => $this->numberingTemplateId,
             'total_net'             => $this->totalNet,

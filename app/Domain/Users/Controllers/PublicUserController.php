@@ -4,7 +4,7 @@ namespace App\Domain\Users\Controllers;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Resources\UserPreviewResource;
-use App\Domain\Common\Resources\UserProfileLegacyResource;
+use App\Domain\Common\Resources\UserProfileTenantScopedResource;
 use App\Domain\Tenant\Models\Tenant;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -34,8 +34,8 @@ class PublicUserController extends Controller
         return UserPreviewResource::collection($users);
     }
 
-    public function show(User $user): UserProfileLegacyResource
+    public function show(User $user): UserProfileTenantScopedResource
     {
-        return new UserProfileLegacyResource($user);
+        return new UserProfileTenantScopedResource($user);
     }
 }

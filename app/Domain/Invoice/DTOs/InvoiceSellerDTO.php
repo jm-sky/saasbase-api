@@ -5,25 +5,25 @@ namespace App\Domain\Invoice\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
- * @property string  $contractorId
+ * @property ?string $contractorId
  * @property string  $contractorType
  * @property string  $name
- * @property string  $taxId
+ * @property ?string $taxId
  * @property string  $address
  * @property string  $country
- * @property string  $iban
+ * @property ?string $iban
  * @property ?string $email
  */
 class InvoiceSellerDTO extends BaseDataDTO
 {
     public function __construct(
-        public string $contractorId,
         public string $contractorType,
         public string $name,
-        public string $taxId,
         public string $address,
         public string $country,
-        public string $iban,
+        public ?string $taxId = null,
+        public ?string $iban = null,
+        public ?string $contractorId = null,
         public ?string $email = null,
     ) {
     }
@@ -45,13 +45,13 @@ class InvoiceSellerDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            contractorId: $data['contractorId'],
+            contractorId: $data['contractorId'] ?? null,
             contractorType: $data['contractorType'],
             name: $data['name'],
             taxId: $data['taxId'],
             address: $data['address'],
             country: $data['country'],
-            iban: $data['iban'],
+            iban: $data['iban'] ?? null,
             email: $data['email'] ?? null,
         );
     }

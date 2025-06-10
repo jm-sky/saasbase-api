@@ -47,9 +47,9 @@ class InvoiceLineDTO extends BaseDataDTO
         ];
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             id: $data['id'],
             description: $data['description'],
             quantity: new BigDecimal($data['quantity']),

@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use Illuminate\Support\Str;
-use App\Domain\Products\Models\Product;
-use App\Domain\Products\Enums\ProductType;
 use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Products\Enums\ProductType;
+use App\Domain\Products\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Products\Models\Product>

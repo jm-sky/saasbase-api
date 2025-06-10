@@ -46,9 +46,9 @@ class InvoicePaymentDTO extends BaseDataDTO
         ];
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             status: InvoicePaymentStatus::from($data['status']),
             dueDate: Carbon::parse($data['dueDate']),
             paidDate: isset($data['paidDate']) ? Carbon::parse($data['paidDate']) : null,

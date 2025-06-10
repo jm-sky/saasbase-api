@@ -103,6 +103,10 @@ class CustomTenantUserSeeder extends Seeder
             $user->email_verified_at = now();
             $user->save();
 
+            $user->profile()->create(Arr::get($userData, 'relations.profile', []));
+            $user->settings()->create(Arr::get($userData, 'relations.settings', []));
+            $user->preferences()->create(Arr::get($userData, 'relations.preferences', []));
+
             $this->createUserTenant($user, Arr::get($userData, 'relations.tenant'));
             $this->createUserSkills($user, Arr::get($userData, 'relations.skills'));
             $this->createUserAvatar($user, Arr::get($userData, 'meta.avatarUrl'));

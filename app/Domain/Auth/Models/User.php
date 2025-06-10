@@ -4,6 +4,8 @@ namespace App\Domain\Auth\Models;
 
 use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
+use App\Domain\Auth\Traits\HasUsersPublicScopedFields;
+use App\Domain\Auth\Traits\HasUsersTenantScopedFields;
 use App\Domain\Common\Model\BankAccount;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
@@ -64,6 +66,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?Carbon                       $deleted_at
  * @property ?Carbon                       $email_verified_at
  * @property ?UserSettings                 $settings
+ * @property ?UserPreference               $preferences
  * @property Collection<int, Address>      $addresses
  * @property Collection<int, BankAccount>  $bankAccounts
  * @property Collection<int, Media>        $media
@@ -88,6 +91,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     use HaveAddresses;
     use HasRoles;
     use IsSearchable;
+    use HasUsersTenantScopedFields;
+    use HasUsersPublicScopedFields;
 
     protected $with = ['preferences'];
 
@@ -138,27 +143,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     {
         return Attribute::make(
             get: fn ($value) => trim("{$this->first_name} {$this->last_name}"),
-        );
-    }
-
-    protected function publicEmail(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $this->preferences?->isFieldPublic('email') ? $this->email : null,
-        );
-    }
-
-    protected function publicBirthDate(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $this->preferences?->isFieldPublic('birth_date') ? $this->profile?->birth_date : null,
-        );
-    }
-
-    protected function publicPhone(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $this->preferences?->isFieldPublic('phone') ? $this->phone : null,
         );
     }
 

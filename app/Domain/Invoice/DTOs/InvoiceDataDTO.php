@@ -29,9 +29,9 @@ class InvoiceDataDTO extends BaseDataDTO
         ];
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             lines: array_map(fn (array $line) => InvoiceLineDTO::fromArray($line), $data['lines']),
             vatSummary: array_map(fn (array $summary) => InvoiceVatSummaryDTO::fromArray($summary), $data['vatSummary']),
             exchange: InvoiceExchangeDTO::fromArray($data['exchange']),

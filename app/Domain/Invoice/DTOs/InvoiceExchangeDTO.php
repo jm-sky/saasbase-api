@@ -28,9 +28,9 @@ class InvoiceExchangeDTO extends BaseDataDTO
         ];
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             currency: $data['currency'],
             exchangeRate: new BigDecimal($data['exchangeRate'], 6),
             date: $data['date'],

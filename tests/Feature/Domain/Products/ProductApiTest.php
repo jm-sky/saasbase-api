@@ -2,17 +2,17 @@
 
 namespace Tests\Feature\Domain\Products;
 
-use Tests\TestCase;
 use App\Domain\Auth\Models\User;
-use App\Domain\Tenant\Models\Tenant;
-use App\Domain\Common\Models\VatRate;
-use App\Domain\Products\Models\Product;
-use Tests\Traits\WithAuthenticatedUser;
-use App\Domain\Products\Enums\ProductType;
 use App\Domain\Common\Models\MeasurementUnit;
-use Symfony\Component\HttpFoundation\Response;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use App\Domain\Common\Models\VatRate;
+use App\Domain\Products\Enums\ProductType;
+use App\Domain\Products\Models\Product;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use Symfony\Component\HttpFoundation\Response;
+use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal

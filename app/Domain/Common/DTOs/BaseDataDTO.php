@@ -16,6 +16,11 @@ abstract class BaseDataDTO implements Arrayable, \JsonSerializable
         return $this->toArray();
     }
 
+    public function toJson(): string
+    {
+        return json_encode($this->toArray());
+    }
+
     public static function collect(?array $data = null): array
     {
         $data ??= [];
