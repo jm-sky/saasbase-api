@@ -15,13 +15,14 @@ class AnalyzeDocumentRequest extends Request implements HasBody
 
     public function __construct(
         protected string $modelId,
-        protected string $filePath
+        protected string $filePath,
+        protected string $apiVersion = '2023-10-31'
     ) {
     }
 
     public function resolveEndpoint(): string
     {
-        return "/documentintelligence/documentModels/{$this->modelId}:analyze?api-version=2023-10-31";
+        return "/documentintelligence/documentModels/{$this->modelId}:analyze?api-version={$this->apiVersion}";
     }
 
     protected function defaultHeaders(): array
