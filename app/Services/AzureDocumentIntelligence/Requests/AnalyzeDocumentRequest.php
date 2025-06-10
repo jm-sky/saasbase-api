@@ -21,7 +21,7 @@ class AnalyzeDocumentRequest extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/documentintelligence/documentModels/{$this->modelId}:analyze?_overload=analyzeDocument&api-version=2023-10-31";
+        return "/documentintelligence/documentModels/{$this->modelId}:analyze?api-version=2023-10-31";
     }
 
     protected function defaultHeaders(): array
