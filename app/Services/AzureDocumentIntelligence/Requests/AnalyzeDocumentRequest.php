@@ -2,6 +2,7 @@
 
 namespace App\Services\AzureDocumentIntelligence\Requests;
 
+use App\Services\AzureDocumentIntelligence\Exceptions\AzureDocumentIntelligenceException;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -13,10 +14,27 @@ class AnalyzeDocumentRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
+    /**
+     * @var string[]
+     */
+    protected array $allowedContentTypes = [
+        'application/octet-stream',
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'image/tiff',
+        'image/bmp',
+        'image/heif',
+        'text/html',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    ];
+
     public function __construct(
         protected string $modelId,
         protected string $filePath,
-        protected string $apiVersion = '2023-10-31'
+        protected string $apiVersion = '2024-11-30'
     ) {
     }
 
@@ -27,7 +45,13 @@ class AnalyzeDocumentRequest extends Request implements HasBody
 
     protected function defaultHeaders(): array
     {
-        return ['Content-Type' => 'application/pdf'];
+        $mimeType = mime_content_type($this->filePath);
+
+        if (!in_array($mimeType, $this->allowedContentTypes)) {
+            throw new AzureDocumentIntelligenceException('Invalid file type.', context: ['mime_type' => $mimeType]);
+        }
+
+        return ['Content-Type' => $mimeType];
     }
 
     protected function defaultBody(): mixed

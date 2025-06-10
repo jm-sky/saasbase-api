@@ -4,7 +4,7 @@ namespace App\Services\AzureDocumentIntelligence\Agents;
 
 use App\Services\AzureDocumentIntelligence\DocumentAnalysisService;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
-use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisStatus;
+use App\Services\AzureDocumentIntelligence\Enums\DocumentAnalysisStatus;
 
 class DocumentAnalysisAgent
 {

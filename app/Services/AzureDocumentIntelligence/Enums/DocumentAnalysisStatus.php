@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AzureDocumentIntelligence\DTOs;
+namespace App\Services\AzureDocumentIntelligence\Enums;
 
 /**
  * Enum for Azure Document Analysis status.

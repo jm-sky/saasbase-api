@@ -2,8 +2,10 @@
 
 namespace App\Services\AzureDocumentIntelligence\Requests;
 
+use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 
 class GetAnalysisResultRequest extends Request
 {
@@ -16,5 +18,10 @@ class GetAnalysisResultRequest extends Request
     public function resolveEndpoint(): string
     {
         return $this->resultUrl;
+    }
+
+    public function createDtoFromResponse(Response $response): DocumentAnalysisResult
+    {
+        return DocumentAnalysisResult::fromArray($response->json());
     }
 }
