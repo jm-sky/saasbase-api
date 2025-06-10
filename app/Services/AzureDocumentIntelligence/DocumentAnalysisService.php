@@ -29,6 +29,13 @@ class DocumentAnalysisService
 
     public function analyze(string $filePath, ?string $modelId = null): DocumentAnalysisResult
     {
+        $result = $this->analyzeRaw($filePath, $modelId);
+
+        return DocumentAnalysisResult::fromArray($result);
+    }
+
+    public function analyzeRaw(string $filePath, ?string $modelId = null): array
+    {
         $modelId = $modelId ?? config('azure_doc_intel.model_id');
 
         $uploadRequest = new AnalyzeDocumentRequest($modelId, $filePath);
@@ -52,10 +59,11 @@ class DocumentAnalysisService
             if (DocumentAnalysisStatus::SUCCEEDED === $status) {
                 break;
             }
+
             sleep(self::BACKOFF_TIME);
         }
 
-        return $dto;
+        return $pollResponse->json();
     }
 
     /**
@@ -71,9 +79,11 @@ class DocumentAnalysisService
             Cache::forget($cacheKey);
         }
 
-        return Cache::remember($cacheKey, $ttl, function () use ($filePath, $modelId) {
-            return $this->analyze($filePath, $modelId);
+        $result = Cache::remember($cacheKey, $ttl, function () use ($filePath, $modelId) {
+            return $this->analyzeRaw($filePath, $modelId);
         });
+
+        return DocumentAnalysisResult::fromArray($result);
     }
 
     /**

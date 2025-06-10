@@ -24,7 +24,7 @@ class DocumentField extends BaseDataDTO
     {
         return [
             'type'       => $this->type,
-            'value'      => $this->value,
+            'value'      => $this->value instanceof BaseDataDTO ? $this->value->toArray() : $this->value,
             'confidence' => $this->confidence,
         ];
     }
@@ -32,7 +32,11 @@ class DocumentField extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         unset($data['boundingRegions']);
+
         $value = self::getValueFromRawData($data);
+
+        echo "[DocumentField] type: {$data['type']}", PHP_EOL;
+        echo '[DocumentField] value: ' . json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), PHP_EOL;
 
         if (null === $value && isset($data['content'])) {
             $value = $data['content'];
@@ -52,9 +56,35 @@ class DocumentField extends BaseDataDTO
             'date'     => $data['valueDate'] ?? null,
             'number'   => $data['valueNumber'] ?? null,
             'string'   => $data['valueString'] ?? null,
-            'array'    => $data['valueArray'] ?? [],
-            'object'   => $data['valueObject'] ?? null,
+            'array'    => self::parseValueArray($data['valueArray'] ?? null),
+            'object'   => self::parseValueObject($data['valueObject'] ?? null),
             default    => null,
         };
+    }
+
+    protected static function parseValueArray(array $valueArray): array
+    {
+        $result = [];
+
+        foreach ($valueArray as $item) {
+            if (is_array($item)) {
+                $result[] = self::fromArray($item);
+            }
+        }
+
+        return $result;
+    }
+
+    protected static function parseValueObject(array $valueObject): object
+    {
+        $result = new \stdClass();
+
+        foreach ($valueObject as $key => $field) {
+            if (is_array($field)) {
+                $result->{$key} = self::fromArray($field);
+            }
+        }
+
+        return $result;
     }
 }

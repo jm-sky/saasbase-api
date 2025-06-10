@@ -32,7 +32,8 @@ class Document extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         unset($data['boundingRegions']);
-        $fields = self::sanitizeFields($data['fields'] ?? []);
+
+        $fields = self::sanitizeFields($data);
 
         return new static(
             docType: $data['docType'] ?? '',
@@ -41,12 +42,13 @@ class Document extends BaseDataDTO
         );
     }
 
-    protected static function sanitizeFields(array $fields): array
+    protected static function sanitizeFields(array $data): array
     {
         $fields = [];
 
         foreach ($data['fields'] ?? [] as $key => $field) {
             if (is_array($field)) {
+                echo "[Document] field: {$key}", PHP_EOL;
                 $fields[$key] = DocumentField::fromArray($field);
             }
         }
