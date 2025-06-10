@@ -2,6 +2,8 @@
 
 Polymorficzny model potwierdzający dane (adres, konto bankowe, itp.) w zewnętrznych rejestrach publicznych (np. GUS, VIES, Biała Lista VAT).
 
+Może się zmieniać z czasem, można weryfikować cyklicznie lub na żądanie.
+
 ## Pola:
 - id: UUID
 - confirmable_id: string

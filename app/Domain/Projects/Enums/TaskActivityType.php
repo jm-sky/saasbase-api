@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tasks\Enums;
+namespace App\Domain\Projects\Enums;
 
 enum TaskActivityType: string
 {

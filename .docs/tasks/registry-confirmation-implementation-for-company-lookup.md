@@ -40,13 +40,13 @@ The system has two main use cases:
 ### 3. Company Data Auto-fill Service
 - [x] Create a service (check `CompanyDataAutoFillService`) that will:
   - [x] Accept search parameters (NIP, REGON)
-  - [ ] Query all available data sources
-  - [ ] Standardize data from different sources
-  - [ ] Return unified structure for form auto-fill:
+  - [x] Query all available data sources
+  - [x] Standardize data from different sources
+  - [x] Return unified structure for form auto-fill:
     - [ ] Company header (name, vat_id, regon, short_name)
     - [ ] Contact data (email, phone, website)
-    - [ ] Bank account
-    - [ ] Address
+    - [x] Bank account
+    - [x] Address
 
 ### 4. Controller Refactoring
 - [x] Refactor `CompanyLookupController` to:

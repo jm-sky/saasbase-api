@@ -3,7 +3,11 @@
 **Description**  
 Represents a verification process used to confirm a user's identity or a tenant's (company's) official data or ownership. Each check records the verification target, the method used, purpose, result, and any related evidence or metadata. Useful for legal compliance, audit trails, and access control.
 
+We assume that once confirmed identity stays confirmed. Only special situations can change that state.
+
 ### Model: `IdentityCheck`
+
+- [x] Draft implementation: `app/Domain/IdentityCheck/Models/IdentityCheck.php`
 
 - **id**: `UUID` — Unique identifier for the identity check.
 - **verifiable_type**: `string` — Polymorphic target: `"User"` or `"Tenant"`.
