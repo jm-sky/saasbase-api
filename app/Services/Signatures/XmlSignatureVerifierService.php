@@ -50,11 +50,11 @@ class XmlSignatureVerifierService
                     pesel: $personData['pesel'] ?? null,
                 ),
                 certificate: new CertificateDTO(
-                    issuer: $parsed['issuer'] ?? null,
-                    serialNumber: $parsed['serial'] ?? null,
-                    subject: $parsed['subject'] ?? null,
-                    validFrom: $parsed['valid_from'] ?? null,
-                    validTo: $parsed['valid_to'] ?? null,
+                    issuer: $certDetails['issuer'] ?? null,
+                    serialNumber: $certDetails['serial'] ?? null,
+                    subject: $certDetails['subject'] ?? null,
+                    validFrom: $certDetails['valid_from'] ?? null,
+                    validTo: $certDetails['valid_to'] ?? null,
                 ),
             );
 

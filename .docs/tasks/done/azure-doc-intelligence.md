@@ -171,15 +171,155 @@ class DocumentAnalysisService
 - [ ] Utwórz prosty testowy endpoint / job
 - [ ] (Opcjonalnie) Zmapuj dane do modeli Eloquent
 - [ ] (Opcjonalnie) Przenieś polling do osobnego Job + retry
+- [ ] Zaimplementuj AI Agent do obsługi dokumentów
 
----
+## 🤖 AI Agent Implementation
 
-## ✨ Rozszerzenia (opcjonalne)
+### Structure
+App/
+└── Services/
+    └── AzureDocumentIntelligence/
+        ├── [Previous files remain unchanged]
+        ├── Agents/
+        │   ├── DocumentAnalysisAgent.php
+        │   └── DocumentAnalysisJob.php
+        └── DTOs/
+            ├── DocumentAnalysisResult.php
+            └── DocumentAnalysisStatus.php
 
-- Retry z exponential backoff
-- Obsługa dokumentów zdalnych (URL, nie tylko upload)
-- Walidacja / standaryzacja danych (np. invoice fields)
-- Notyfikacja użytkownika po zakończeniu przetwarzania
+### DocumentAnalysisAgent.php
+```php
+namespace App\Services\AzureDocumentIntelligence\Agents;
+
+use App\Services\AzureDocumentIntelligence\DocumentAnalysisService;
+use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
+use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisStatus;
+
+class DocumentAnalysisAgent
+{
+    public function __construct(
+        protected DocumentAnalysisService $analysisService
+    ) {}
+
+    public function analyzeDocument(string $filePath, ?string $modelId = null): DocumentAnalysisResult
+    {
+        $rawResult = $this->analysisService->analyze($filePath, $modelId);
+        return $this->mapToResult($rawResult);
+    }
+
+    protected function mapToResult(array $rawResult): DocumentAnalysisResult
+    {
+        // Map raw Azure response to our DTO
+        return new DocumentAnalysisResult(
+            status: DocumentAnalysisStatus::from($rawResult['status']),
+            // Map other fields based on document type
+        );
+    }
+}
+```
+
+### DocumentAnalysisJob.php
+```php
+namespace App\Services\AzureDocumentIntelligence\Agents;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class DocumentAnalysisJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        protected string $filePath,
+        protected ?string $modelId = null,
+        protected ?int $tenantId = null
+    ) {}
+
+    public function handle(DocumentAnalysisAgent $agent): void
+    {
+        // Bypass tenant if needed
+        if ($this->tenantId) {
+            Tenant::bypassTenant(fn() => $this->processDocument($agent));
+        } else {
+            $this->processDocument($agent);
+        }
+    }
+
+    protected function processDocument(DocumentAnalysisAgent $agent): void
+    {
+        $result = $agent->analyzeDocument($this->filePath, $this->modelId);
+        
+        // Store result in database or trigger notifications
+        // Implementation depends on specific requirements
+    }
+}
+```
+
+### DTOs
+```php
+namespace App\Services\AzureDocumentIntelligence\DTOs;
+
+enum DocumentAnalysisStatus: string
+{
+    case NOT_STARTED = 'notStarted';
+    case RUNNING = 'running';
+    case SUCCEEDED = 'succeeded';
+    case FAILED = 'failed';
+}
+
+class DocumentAnalysisResult
+{
+    public function __construct(
+        public readonly DocumentAnalysisStatus $status,
+        public readonly ?array $fields = null,
+        public readonly ?string $error = null
+    ) {}
+}
+```
+
+### Usage Example
+```php
+// In a controller or command
+public function analyze(Request $request)
+{
+    $file = $request->file('document');
+    $path = $file->store('temp');
+    
+    DocumentAnalysisJob::dispatch(
+        filePath: storage_path("app/{$path}"),
+        modelId: $request->input('model_id'),
+        tenantId: $request->user()->tenant_id
+    );
+    
+    return response()->json(['message' => 'Document analysis started']);
+}
+```
+
+## 🔄 Workflow
+
+1. User uploads document through API endpoint
+2. Controller stores file and dispatches DocumentAnalysisJob
+3. Job processes document using DocumentAnalysisAgent
+4. Agent uses DocumentAnalysisService to communicate with Azure
+5. Results are stored and user is notified
+
+## 🛡️ Error Handling
+
+- Implement exponential backoff for retries
+- Handle Azure API rate limits
+- Validate document types and sizes
+- Log analysis failures for debugging
+- Implement proper cleanup of temporary files
+
+## 📊 Monitoring
+
+- Track analysis success/failure rates
+- Monitor processing times
+- Log Azure API usage
+- Set up alerts for high failure rates
 
 ---
 
