@@ -242,7 +242,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     {
         return $this->belongsToMany(Project::class, 'project_users')
             ->using(ProjectUser::class)
-            ->withPivot(['role'])
+            ->withPivot(['project_role_id'])
             ->withTimestamps()
         ;
     }

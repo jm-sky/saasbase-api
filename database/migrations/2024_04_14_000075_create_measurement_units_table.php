@@ -10,10 +10,12 @@ return new class() extends Migration {
         Schema::create('measurement_units', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
-            $table->string('code')->unique();
+            $table->string('code');
             $table->string('name');
-            $table->string('category');
+            $table->string('category')->nullable();
             $table->timestamps();
+
+            $table->unique(['tenant_id', 'code']);
         });
     }
 

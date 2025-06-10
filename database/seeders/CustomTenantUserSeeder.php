@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Projects\Models\ProjectRole;
+use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
@@ -41,6 +43,7 @@ class CustomTenantUserSeeder extends Seeder
         $this->createTenants(Arr::get($this->data, 'tenants', []));
         $this->createUsers(Arr::get($this->data, 'users', []));
         $this->createContractors(Arr::get($this->data, 'contractors', []));
+        $this->createProjects();
     }
 
     public static function shouldRun(): bool
@@ -84,6 +87,7 @@ class CustomTenantUserSeeder extends Seeder
                 $initializer = new InitializeTenantDefaults();
                 $initializer->createRootOrganizationUnit($tenant);
                 $initializer->seedDefaultMeasurementUnits($tenant);
+                $initializer->seedDefaultProjectStatuses($tenant);
             });
 
             $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));
@@ -272,5 +276,31 @@ class CustomTenantUserSeeder extends Seeder
         }
 
         return fopen($filepath, 'r');
+    }
+
+    protected function createProjects(): void
+    {
+        $tenants = Tenant::all();
+
+        foreach ($tenants as $tenant) {
+            Tenant::bypassTenant($tenant->id, function () use ($tenant) {
+                $status = ProjectStatus::withoutTenant()->where('tenant_id', $tenant->id)->where('is_default', true)->first();
+
+                $project = $tenant->projects()->create([
+                    'name'        => 'Onboarding',
+                    'status_id'   => $status->id,
+                    'description' => 'Tenants onboarding project for new users',
+                    'start_date'  => now(),
+                    'owner_id'    => $tenant->owner_id,
+                ]);
+
+                $users         = $tenant->users;
+                $developerRole = ProjectRole::where('name', 'Developer')->first();
+
+                foreach ($users as $user) {
+                    $user->projects()->attach($project->id, ['project_role_id' => $developerRole->id]);
+                }
+            });
+        }
     }
 }

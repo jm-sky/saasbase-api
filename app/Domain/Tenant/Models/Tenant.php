@@ -11,6 +11,7 @@ use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
+use App\Domain\Projects\Models\Project;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Enums\TenantActivityType;
@@ -47,6 +48,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection|Media[]             $media
  * @property Collection|TenantInvitation[]  $invitations
  * @property Collection|TenantIntegration[] $integrations
+ * @property Collection|Project[]           $projects
  * @property BillingCustomer                $billingCustomer
  */
 class Tenant extends BaseModel implements HasMedia
@@ -171,6 +173,11 @@ class Tenant extends BaseModel implements HasMedia
     public function integrations(): HasMany
     {
         return $this->hasMany(TenantIntegration::class);
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
     }
 
     protected static function booted()

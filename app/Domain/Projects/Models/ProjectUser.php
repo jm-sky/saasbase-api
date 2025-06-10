@@ -3,9 +3,10 @@
 namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property string      $id
@@ -14,13 +15,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string      $project_role_id
  * @property Carbon      $created_at
  * @property Carbon      $updated_at
- * @property ?Carbon     $deleted_at
  * @property Project     $project
  * @property User        $user
  * @property ProjectRole $role
  */
-class ProjectUser extends BaseModel
+class ProjectUser extends Pivot
 {
+    use HasUlids;
+
     protected $fillable = [
         'project_id',
         'user_id',

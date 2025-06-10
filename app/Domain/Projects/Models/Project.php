@@ -65,7 +65,7 @@ class Project extends BaseModel implements HasMedia
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'project_users')
-            ->withPivot(['role'])
+            ->withPivot(['project_role_id'])
             ->withTimestamps()
         ;
     }

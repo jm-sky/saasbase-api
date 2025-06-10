@@ -13,7 +13,6 @@ return new class() extends Migration {
             $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('project_role_id')->constrained('project_roles')->cascadeOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

@@ -5,6 +5,8 @@ namespace App\Domain\Tenant\Actions;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\DefaultMeasurementUnit;
 use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Projects\Models\DefaultProjectStatus;
+use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
 use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Enums\OrgUnitRole;
@@ -71,6 +73,21 @@ class InitializeTenantDefaults
                 'code'      => $unit->code,
                 'name'      => $unit->name,
                 'category'  => $unit->category,
+            ]);
+        }
+    }
+
+    public function seedDefaultProjectStatuses(Tenant $tenant): void
+    {
+        $defaultStatuses = DefaultProjectStatus::where('is_default', true)->get();
+
+        foreach ($defaultStatuses as $status) {
+            ProjectStatus::withoutTenant()->firstOrCreate([
+                'tenant_id'  => $tenant->id,
+                'name'       => $status->name,
+                'color'      => $status->color,
+                'sort_order' => $status->sort_order,
+                'is_default' => $status->is_default,
             ]);
         }
     }

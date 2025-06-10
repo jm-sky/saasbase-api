@@ -2,8 +2,7 @@
 
 namespace App\Domain\Projects\Resources;
 
-use App\Domain\Auth\Resources\UserResource;
-use App\Domain\Projects\Models\Project;
+use App\Domain\Common\Resources\UserPreviewResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,8 +28,8 @@ class ProjectResource extends JsonResource
             'createdAt'      => $this->created_at?->toIso8601String(),
             'updatedAt'      => $this->updated_at?->toIso8601String(),
             'deletedAt'      => $this->deleted_at?->toIso8601String(),
-            'owner'          => $this->whenLoaded('owner', fn () => new UserResource($this->owner)),
-            'users'          => $this->whenLoaded('users', fn () => UserResource::collection($this->users)),
+            'owner'          => $this->whenLoaded('owner', fn () => new UserPreviewResource($this->owner)),
+            'users'          => $this->whenLoaded('users', fn () => UserPreviewResource::collection($this->users)),
             'tasks'          => $this->whenLoaded('tasks', fn () => $this->tasks->toArray()),
             'requiredSkills' => $this->whenLoaded('requiredSkills', fn () => $this->requiredSkills->toArray()),
         ];

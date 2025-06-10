@@ -10,10 +10,12 @@ use App\Domain\Projects\DTOs\ProjectDTO;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Requests\CreateProjectRequest;
 use App\Domain\Projects\Requests\UpdateProjectRequest;
+use App\Domain\Projects\Resources\ProjectResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,6 +29,8 @@ class ProjectController extends Controller
     public function __construct()
     {
         $this->modelClass = Project::class;
+
+        $this->defaultWith = ['status', 'owner', 'users'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
@@ -49,41 +53,37 @@ class ProjectController extends Controller
         $this->defaultSort = '-created_at';
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $result         = $this->getIndexPaginator($request);
-        $result['data'] = ProjectDTO::collect($result['data']);
+        $projects = $this->getIndexPaginator($request);
 
-        return response()->json($result);
+        return ProjectResource::collection($projects['data'])
+            ->additional(['meta' => $projects['meta']])
+        ;
     }
 
-    public function store(CreateProjectRequest $request): JsonResponse
+    public function store(CreateProjectRequest $request): ProjectResource
     {
         $dto     = ProjectDTO::from($request->validated());
         $project = Project::create((array) $dto);
 
-        return response()->json(
-            ['data' => ProjectDTO::fromModel($project)],
-            Response::HTTP_CREATED
-        );
+        return new ProjectResource($project);
     }
 
-    public function show(Project $project): JsonResponse
+    public function show(Project $project): ProjectResource
     {
         $this->authorize('view', $project);
 
-        return response()->json([
-            'data' => ProjectDTO::fromModel($project, true),
-        ]);
+        return new ProjectResource($project);
     }
 
-    public function update(UpdateProjectRequest $request, Project $project): JsonResponse
+    public function update(UpdateProjectRequest $request, Project $project): ProjectResource
     {
         $this->authorize('update', $project);
 
         $project->update($request->validated());
 
-        return response()->json(['data' => ProjectDTO::fromModel($project)]);
+        return new ProjectResource($project);
     }
 
     public function destroy(Project $project): JsonResponse

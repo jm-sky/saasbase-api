@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string                                                 $tenant_id
  * @property string                                                 $code
  * @property string                                                 $name
+ * @property string                                                 $category
  * @property Carbon                                                 $created_at
  * @property Carbon                                                 $updated_at
  * @property \Illuminate\Database\Eloquent\Collection<int, Product> $products
@@ -24,6 +25,7 @@ class MeasurementUnit extends BaseModel
         'tenant_id',
         'code',
         'name',
+        'category',
     ];
 
     public function products(): HasMany
