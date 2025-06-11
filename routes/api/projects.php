@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('project-statuses', ProjectStatusController::class);
+
+    Route::get('tasks/export', [TaskController::class, 'export']);
     Route::apiResource('tasks', TaskController::class);
     Route::apiResource('task-statuses', TaskStatusController::class);
 

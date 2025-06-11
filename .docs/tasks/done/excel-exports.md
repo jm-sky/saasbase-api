@@ -173,3 +173,163 @@ This setup allows flexible and reusable export logic across different models. It
 - Column merging (e.g. full address from multiple fields)
 - Queued/background exports
 - Per-user saved export presets
+
+--
+
+# Detailed Implementation Plan for Excel Export System
+
+## 1. Directory Structure
+```
+app/
+├── Domain/
+│   └── Export/
+│       ├── Exports/
+│       │   ├── BaseExport.php
+│       │   └── [Model]Export.php (e.g., TasksExport.php)
+│       ├── DTOs/
+│       │   └── ExportConfigDTO.php
+│       ├── Services/
+│       │   └── ExportService.php
+│       └── Providers/
+│           └── ExportServiceProvider.php
+```
+
+## 2. Implementation Steps
+
+### Step 1: Setup Dependencies
+1. Install required packages:
+```bash
+composer require maatwebsite/excel spatie/laravel-query-builder
+```
+
+### Step 2: Create Base Export Infrastructure
+1. Create `ExportConfigDTO.php`:
+```php
+namespace App\Domain\Export\DTOs;
+
+use App\Domain\Common\DTOs\BaseDataDTO;
+
+class ExportConfigDTO extends BaseDataDTO
+{
+    public function __construct(
+        public readonly array $filters = [],
+        public readonly array $columns = [],
+        public readonly array $formatting = [
+            'date' => 'Y-m-d',
+            'datetime' => 'Y-m-d H:i',
+            'currency' => 'PLN',
+        ]
+    ) {}
+}
+```
+
+2. Create `BaseExport.php` (as shown in the task description, but with these additions):
+- Add type hints and return types
+- Add PHPDoc blocks
+- Add validation for column names
+- Add support for custom column transformers
+- Add support for column merging
+
+### Step 3: Create Export Service
+1. Create `ExportService.php`:
+```php
+namespace App\Domain\Export\Services;
+
+use App\Domain\Export\DTOs\ExportConfigDTO;
+use Maatwebsite\Excel\Facades\Excel;
+
+class ExportService
+{
+    public function download(string $exportClass, ExportConfigDTO $config, string $filename)
+    {
+        return Excel::download(
+            new $exportClass(
+                filters: $config->filters,
+                columns: $config->columns,
+                formatting: $config->formatting
+            ),
+            $filename
+        );
+    }
+}
+```
+
+### Step 4: Create Example Model Export
+1. Create `TasksExport.php` (as shown in the task description)
+2. Add validation for allowed columns
+3. Add support for nested relationships
+4. Add proper type hints and return types
+
+### Step 5: Create Controller Integration
+1. Create `ExportController.php`:
+```php
+namespace App\Http\Controllers\Api;
+
+use App\Domain\Export\DTOs\ExportConfigDTO;
+use App\Domain\Export\Services\ExportService;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class ExportController extends Controller
+{
+    public function __construct(
+        private readonly ExportService $exportService
+    ) {}
+
+    public function export(Request $request, string $type)
+    {
+        $config = new ExportConfigDTO(
+            filters: $request->all(),
+            columns: $request->get('columns', []),
+            formatting: $request->get('formatting', [])
+        );
+
+        return $this->exportService->download(
+            exportClass: $this->getExportClass($type),
+            config: $config,
+            filename: "{$type}.xlsx"
+        );
+    }
+
+    private function getExportClass(string $type): string
+    {
+        return match($type) {
+            'tasks' => TasksExport::class,
+            default => throw new \InvalidArgumentException("Unsupported export type: {$type}")
+        };
+    }
+}
+```
+
+### Step 6: Add Tests
+1. Create `ExportServiceTest.php`
+2. Create `TasksExportTest.php`
+3. Create `ExportControllerTest.php`
+
+### Step 7: Add Documentation
+1. Add PHPDoc blocks to all classes
+2. Create README.md in the Export domain directory
+3. Add example usage in the documentation
+
+## 3. Future Enhancements
+1. Add support for queued exports
+2. Add export presets per user
+3. Add export history
+4. Add export templates
+5. Add support for custom column transformers
+6. Add support for column merging
+7. Add support for custom styling
+
+## 4. Testing Strategy
+1. Unit tests for:
+   - BaseExport class
+   - ExportService
+   - ExportConfigDTO
+2. Integration tests for:
+   - Model exports
+   - Controller endpoints
+3. Feature tests for:
+   - Complete export flow
+   - Error handling
+   - Validation

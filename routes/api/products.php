@@ -9,8 +9,9 @@ use App\Domain\Products\Controllers\ProductTagsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
-    Route::apiResource('products', ProductController::class);
     Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
+    Route::get('products/export', [ProductController::class, 'export']);
+    Route::apiResource('products', ProductController::class);
 
     Route::controller(ProductLogoController::class)
         ->prefix('products/{product}/logo')

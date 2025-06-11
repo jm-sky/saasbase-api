@@ -26,6 +26,7 @@
         "league/commonmark": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.0",
         "lorisleiva/laravel-actions": "^2.9",
+        "maatwebsite/excel": "^3.1",
         "meilisearch/meilisearch-php": "^1.14",
         "mews/purifier": "^3.4",
         "mledoze/countries": "^5.1",

@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Common\Models\VatRate;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Products\Enums\ProductType;
 use App\Domain\Projects\Models\ProjectRole;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Skills\Models\Skill;
@@ -44,6 +47,7 @@ class CustomTenantUserSeeder extends Seeder
         $this->createUsers(Arr::get($this->data, 'users', []));
         $this->createContractors(Arr::get($this->data, 'contractors', []));
         $this->createProjects();
+        $this->createProductsForTenants();
     }
 
     public static function shouldRun(): bool
@@ -322,6 +326,46 @@ class CustomTenantUserSeeder extends Seeder
 
         foreach ($users as $user) {
             $user->projects()->attach($project->id, ['project_role_id' => $developerRole->id]);
+        }
+    }
+
+    protected function createProductsForTenants(): void
+    {
+        $tenants = Tenant::all();
+
+        foreach ($tenants as $tenant) {
+            Tenant::bypassTenant($tenant->id, function () use ($tenant) {
+                $this->createProducts($tenant);
+            });
+        }
+    }
+
+    protected function createProducts(Tenant $tenant): void
+    {
+        $unit    = MeasurementUnit::where('code', 'mh')->first();
+        $vatRate = VatRate::where('name', '23%')->first();
+
+        $products = [
+            'product-1' => [
+                'name'        => 'Usługi IT',
+                'description' => 'Usługi IT dla klienta',
+                'price_net'   => 200,
+                'type'        => ProductType::SERVICE,
+                'unit_id'     => $unit->id,
+                'vat_rate_id' => $vatRate->id,
+            ],
+            'product-1' => [
+                'name'        => 'Szkolenie z cyberbezpieczeństwa',
+                'description' => 'Szkolenie z cyberbezpieczeństwa dla klienta',
+                'price_net'   => 300,
+                'type'        => ProductType::SERVICE,
+                'unit_id'     => $unit->id,
+                'vat_rate_id' => $vatRate->id,
+            ],
+        ];
+
+        foreach ($products as $product) {
+            $tenant->products()->create($product);
         }
     }
 }

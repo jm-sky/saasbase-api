@@ -12,8 +12,9 @@ use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
-    Route::apiResource('contractors', ContractorController::class);
     Route::get('contractors/search', [ContractorController::class, 'search'])->name('contractors.search');
+    Route::get('contractors/export', [ContractorController::class, 'export']);
+    Route::apiResource('contractors', ContractorController::class);
 
     Route::controller(ContractorLogoController::class)
         ->prefix('contractors/{contractor}/logo')

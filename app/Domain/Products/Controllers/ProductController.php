@@ -6,6 +6,9 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Export\DTOs\ExportConfigDTO;
+use App\Domain\Export\Exports\ProductsExport;
+use App\Domain\Export\Services\ExportService;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
@@ -26,6 +29,8 @@ class ProductController extends Controller
 
     protected int $defaultPerPage = 15;
 
+    private ExportService $exportService;
+
     public function __construct()
     {
         $this->modelClass  = Product::class;
@@ -33,7 +38,6 @@ class ProductController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('if', new AdvancedFilter()),
             AllowedFilter::custom('name', new AdvancedFilter()),
             AllowedFilter::custom('description', new AdvancedFilter()),
             AllowedFilter::custom('unitId', new AdvancedFilter(), 'unit_id'),
@@ -49,7 +53,8 @@ class ProductController extends Controller
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort = '-created_at';
+        $this->defaultSort   = '-created_at';
+        $this->exportService = app(ExportService::class);
     }
 
     public function index(SearchProductRequest $request): AnonymousResourceCollection
@@ -125,5 +130,25 @@ class ProductController extends Controller
             ->defaultSort($this->defaultSort)
             ->with(['unit', 'vatRate'])
         ;
+    }
+
+    /**
+     * Export products as Excel file.
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $config = new ExportConfigDTO(
+            filters: $request->all(),
+            columns: $request->get('columns', []),
+            formatting: $request->get('formatting', [])
+        );
+
+        return $this->exportService->download(
+            ProductsExport::class,
+            $config,
+            'products.xlsx'
+        );
     }
 }

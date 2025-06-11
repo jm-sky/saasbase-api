@@ -12,6 +12,9 @@ use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Requests\StoreContractorRequest;
 use App\Domain\Contractors\Requests\UpdateContractorRequest;
 use App\Domain\Contractors\Resources\ContractorResource;
+use App\Domain\Export\DTOs\ExportConfigDTO;
+use App\Domain\Export\Exports\ContractorsExport;
+use App\Domain\Export\Services\ExportService;
 use App\Http\Controllers\Controller;
 use App\Services\LogoFetcher\LogoFetcherService;
 use Illuminate\Http\JsonResponse;
@@ -26,6 +29,8 @@ class ContractorController extends Controller
     use HasActivityLogging;
 
     protected int $defaultPerPage = 15;
+
+    private ExportService $exportService;
 
     public function __construct()
     {
@@ -58,7 +63,8 @@ class ContractorController extends Controller
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort = '-created_at';
+        $this->defaultSort   = '-created_at';
+        $this->exportService = app(ExportService::class);
     }
 
     public function index(SearchContractorRequest $request): AnonymousResourceCollection
@@ -165,5 +171,25 @@ class ContractorController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * Export contractors as Excel file.
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $config = new ExportConfigDTO(
+            filters: $request->all(),
+            columns: $request->get('columns', []),
+            formatting: $request->get('formatting', [])
+        );
+
+        return $this->exportService->download(
+            ContractorsExport::class,
+            $config,
+            'contractors.xlsx'
+        );
     }
 }

@@ -6,14 +6,18 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
-use App\Domain\Projects\DTOs\TaskDTO;
+use App\Domain\Export\DTOs\ExportConfigDTO;
+use App\Domain\Export\Exports\TasksExport;
+use App\Domain\Export\Services\ExportService;
 use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Requests\CreateTaskRequest;
 use App\Domain\Projects\Requests\UpdateTaskRequest;
+use App\Domain\Projects\Resources\TaskResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +28,8 @@ class TaskController extends Controller
     use AuthorizesRequests;
 
     protected int $defaultPerPage = 15;
+
+    private ExportService $exportService;
 
     public function __construct()
     {
@@ -51,18 +57,20 @@ class TaskController extends Controller
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort = '-created_at';
+        $this->defaultSort   = '-created_at';
+        $this->exportService = app(ExportService::class);
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $result         = $this->getIndexPaginator($request);
-        $result['data'] = TaskDTO::collect($result['data']);
 
-        return response()->json($result);
+        return TaskResource::collection($result['data'])
+            ->additional(['meta' => $result['meta']])
+        ;
     }
 
-    public function store(CreateTaskRequest $request): JsonResponse
+    public function store(CreateTaskRequest $request): TaskResource
     {
         $task = Task::create([
             'tenant_id'      => Auth::user()->tenant_id,
@@ -76,26 +84,23 @@ class TaskController extends Controller
             'due_date'       => $request->input('due_date'),
         ]);
 
-        return response()->json(
-            ['data' => TaskDTO::fromModel($task)],
-            Response::HTTP_CREATED
-        );
+        return new TaskResource($task);
     }
 
-    public function show(Task $task): JsonResponse
+    public function show(Task $task): TaskResource
     {
         $this->authorize('view', $task);
 
-        return response()->json(['data' => TaskDTO::fromModel($task)]);
+        return new TaskResource($task);
     }
 
-    public function update(UpdateTaskRequest $request, Task $task): JsonResponse
+    public function update(UpdateTaskRequest $request, Task $task): TaskResource
     {
         $this->authorize('update', $task);
 
         $task->update($request->validated());
 
-        return response()->json(['data' => TaskDTO::fromModel($task)]);
+        return new TaskResource($task);
     }
 
     public function destroy(Task $task): JsonResponse
@@ -105,5 +110,25 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Export tasks as Excel file.
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $config = new ExportConfigDTO(
+            filters: $request->all(),
+            columns: $request->get('columns', []),
+            formatting: $request->get('formatting', [])
+        );
+
+        return $this->exportService->download(
+            TasksExport::class,
+            $config,
+            'tasks.xlsx'
+        );
     }
 }

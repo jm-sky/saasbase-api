@@ -9,6 +9,8 @@ use App\Domain\Common\Policies\BankAccountPolicy;
 use App\Domain\Common\Policies\MediaPolicy;
 use App\Domain\Exchanges\Models\Exchange;
 use App\Domain\Exchanges\Policies\ExchangePolicy;
+use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\Policies\ProjectPolicy;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Policies\TenantPolicy;
 use App\Domain\Users\Models\SecurityEvent;
@@ -36,6 +38,7 @@ class AuthServiceProvider extends ServiceProvider
         Address::class          => AddressPolicy::class,
         BankAccount::class      => BankAccountPolicy::class,
         Media::class            => MediaPolicy::class,
+        Project::class          => ProjectPolicy::class,
     ];
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasActivityLog;
@@ -11,6 +10,9 @@ use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
+use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Products\Models\Product;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
@@ -19,7 +21,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -49,6 +50,9 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection|TenantInvitation[]  $invitations
  * @property Collection|TenantIntegration[] $integrations
  * @property Collection|Project[]           $projects
+ * @property Collection|Contractor[]        $contractors
+ * @property Collection|Product[]           $products
+ * @property Collection|Invoice[]           $invoices
  * @property BillingCustomer                $billingCustomer
  */
 class Tenant extends BaseModel implements HasMedia
@@ -88,9 +92,29 @@ class Tenant extends BaseModel implements HasMedia
         'is_active' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($tenant) {
+            $tenant->logModelActivity(TenantActivityType::Created->value, $tenant);
+        });
+
+        static::updated(function ($tenant) {
+            $tenant->logModelActivity(TenantActivityType::Updated->value, $tenant);
+        });
+
+        static::deleted(function ($tenant) {
+            $tenant->logModelActivity(TenantActivityType::Deleted->value, $tenant);
+        });
+    }
+
     public function getTenantId(): string
     {
         return $this->id;
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function users(): BelongsToMany
@@ -107,9 +131,49 @@ class Tenant extends BaseModel implements HasMedia
         return $this->hasMany(TenantInvitation::class);
     }
 
-    public function owner()
+    public function branding(): HasOne
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->hasOne(TenantBranding::class);
+    }
+
+    public function publicProfile(): HasOne
+    {
+        return $this->hasOne(TenantPublicProfile::class);
+    }
+
+    public function billingCustomer(): HasOne
+    {
+        return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
+    }
+
+    public function subscription(): MorphOne
+    {
+        return $this->morphOne(Subscription::class, 'billable');
+    }
+
+    public function integrations(): HasMany
+    {
+        return $this->hasMany(TenantIntegration::class);
+    }
+
+    public function contractors(): HasMany
+    {
+        return $this->hasMany(Contractor::class);
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
     }
 
     public function registerMediaCollections(): void
@@ -138,61 +202,6 @@ class Tenant extends BaseModel implements HasMedia
         }
 
         return $this->getFirstMediaUrl($collectionName, $fileName);
-    }
-
-    public function logo(): MorphOne
-    {
-        return $this->morphOne(Attachment::class, 'attachable');
-    }
-
-    public function attachments(): MorphMany
-    {
-        return $this->morphMany(Attachment::class, 'attachable');
-    }
-
-    public function branding(): HasOne
-    {
-        return $this->hasOne(TenantBranding::class);
-    }
-
-    public function publicProfile(): HasOne
-    {
-        return $this->hasOne(TenantPublicProfile::class);
-    }
-
-    public function billingCustomer(): HasOne
-    {
-        return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
-    }
-
-    public function subscription(): MorphOne
-    {
-        return $this->morphOne(Subscription::class, 'billable');
-    }
-
-    public function integrations(): HasMany
-    {
-        return $this->hasMany(TenantIntegration::class);
-    }
-
-    public function projects(): HasMany
-    {
-        return $this->hasMany(Project::class);
-    }
-
-    protected static function booted()
-    {
-        static::created(function ($tenant) {
-            $tenant->logModelActivity(TenantActivityType::Created->value, $tenant);
-        });
-
-        static::updated(function ($tenant) {
-            $tenant->logModelActivity(TenantActivityType::Updated->value, $tenant);
-        });
-
-        static::deleted(function ($tenant) {
-            $tenant->logModelActivity(TenantActivityType::Deleted->value, $tenant);
-        });
     }
 
     public static function bypassTenant(?string $tenantId, \Closure $callback): mixed
