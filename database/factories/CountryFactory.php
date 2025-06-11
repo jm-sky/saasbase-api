@@ -18,7 +18,6 @@ class CountryFactory extends Factory
             'numeric_code'    => fake()->unique()->numerify('###'),
             'phone_code'      => fake()->numerify('##'),
             'capital'         => fake()->city(),
-            'currency'        => fake()->word(),
             'currency_code'   => strtoupper(fake()->lexify('???')),
             'currency_symbol' => fake()->randomElement(['$', '€', '£', '¥']),
             'tld'             => '.' . fake()->lexify('??'),

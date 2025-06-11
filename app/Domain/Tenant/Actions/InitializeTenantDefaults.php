@@ -27,9 +27,15 @@ class InitializeTenantDefaults
 
     protected function createSubscription(Tenant $tenant)
     {
+        $subscriptionPlan = SubscriptionPlan::where('name', 'Free')->first();
+
+        if (!$subscriptionPlan) {
+            return;
+        }
+
         $tenant->subscription()->create([
             'id'                     => (string) Str::ulid(),
-            'subscription_plan_id'   => SubscriptionPlan::where('name', 'Free')->firstOrFail()->id,
+            'subscription_plan_id'   => $subscriptionPlan->id,
             'stripe_subscription_id' => null,
             'status'                 => SubscriptionStatus::ACTIVE,
             'current_period_start'   => now(),

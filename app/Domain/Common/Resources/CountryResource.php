@@ -17,14 +17,12 @@ class CountryResource extends JsonResource
     {
         /* @var Country $this->resource */
         return [
-            'id'             => $this->id,
             'name'           => $this->name,
             'code'           => $this->code,
             'code3'          => $this->code3,
             'numericCode'    => $this->numeric_code,
             'phoneCode'      => $this->phone_code,
             'capital'        => $this->capital,
-            'currency'       => $this->currency,
             'currencyCode'   => $this->currency_code,
             'currencySymbol' => $this->currency_symbol,
             'tld'            => $this->tld,

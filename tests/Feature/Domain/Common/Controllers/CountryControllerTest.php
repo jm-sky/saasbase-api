@@ -3,6 +3,7 @@
 namespace Tests\Feature\Domain\Common\Controllers;
 
 use App\Domain\Common\Models\Country;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ class CountryControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $tenant = \App\Domain\Tenant\Models\Tenant::factory()->create();
+        $tenant = Tenant::factory()->create();
         $this->authenticateUser($tenant);
     }
 
@@ -45,7 +46,6 @@ class CountryControllerTest extends TestCase
                         'numericCode',
                         'phoneCode',
                         'capital',
-                        'currency',
                         'currencyCode',
                         'currencySymbol',
                         'tld',

@@ -3,6 +3,8 @@
 namespace App\Domain\Common\Models;
 
 use Carbon\Carbon;
+use Database\Factories\CountryFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -14,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string  $numeric_code    Three-digit country code (ISO 3166-1 numeric)
  * @property string  $phone_code      International calling code
  * @property string  $capital         Capital city name
- * @property string  $currency        Currency name
  * @property string  $currency_code   Three-letter currency code (ISO 4217)
  * @property string  $currency_symbol Currency symbol
  * @property string  $tld             Top-level domain
@@ -29,6 +30,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Country extends Model
 {
+    use HasFactory;
+
     protected $primaryKey = 'code';
 
     protected $keyType = 'string';
@@ -42,7 +45,6 @@ class Country extends Model
         'numeric_code',
         'phone_code',
         'capital',
-        'currency',
         'currency_code',
         'currency_symbol',
         'tld',
@@ -52,4 +54,9 @@ class Country extends Model
         'emoji',
         'emojiU',
     ];
+
+    protected static function newFactory()
+    {
+        return CountryFactory::new();
+    }
 }

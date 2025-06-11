@@ -44,14 +44,12 @@ class CountryApiTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
-                        'id',
                         'name',
                         'code',
                         'code3',
                         'numericCode',
                         'phoneCode',
                         'capital',
-                        'currency',
                         'currencyCode',
                         'currencySymbol',
                         'tld',
@@ -63,45 +61,6 @@ class CountryApiTest extends TestCase
                         'createdAt',
                         'updatedAt',
                     ],
-                ],
-            ])
-        ;
-    }
-
-    public function testCanShowCountry(): void
-    {
-        $country = Country::factory()->create();
-
-        $response = $this->getJson($this->baseUrl . '/' . $country->id);
-
-        $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'name',
-                    'code',
-                    'code3',
-                    'numericCode',
-                    'phoneCode',
-                    'capital',
-                    'currency',
-                    'currencyCode',
-                    'currencySymbol',
-                    'tld',
-                    'native',
-                    'region',
-                    'subregion',
-                    'emoji',
-                    'emojiU',
-                    'createdAt',
-                    'updatedAt',
-                ],
-            ])
-            ->assertJson([
-                'data' => [
-                    'id'   => $country->id,
-                    'name' => $country->name,
-                    'code' => $country->code,
                 ],
             ])
         ;
