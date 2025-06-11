@@ -15,7 +15,7 @@ class InvoiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /** @var Invoice $this->resource */
+        /* @var Invoice $this->resource */
         return [
             'id'                  => $this->id,
             'tenantId'            => $this->tenant_id,
