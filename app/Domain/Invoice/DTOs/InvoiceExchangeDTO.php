@@ -23,7 +23,7 @@ class InvoiceExchangeDTO extends BaseDataDTO
     {
         return [
             'currency'     => $this->currency,
-            'exchangeRate' => $this->exchangeRate?->toFloat(),
+            // 'exchangeRate' => $this->exchangeRate?->toFloat(),
             'date'         => $this->date,
         ];
     }

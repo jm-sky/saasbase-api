@@ -22,7 +22,7 @@ return new class() extends Migration {
             $table->decimal('exchange_rate', 10, 6)->nullable();
             $table->json('seller');
             $table->json('buyer');
-            $table->json('data');
+            $table->json('body');
             $table->json('payment');
             $table->json('options');
             $table->timestamps();

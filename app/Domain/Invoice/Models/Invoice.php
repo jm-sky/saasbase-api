@@ -6,7 +6,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Invoice\Casts\BigDecimalCast;
 use App\Domain\Invoice\Casts\InvoiceBuyerCast;
-use App\Domain\Invoice\Casts\InvoiceDataCast;
+use App\Domain\Invoice\Casts\InvoiceBodyCast;
 use App\Domain\Invoice\Casts\InvoiceOptionsCast;
 use App\Domain\Invoice\Casts\InvoicePaymentCast;
 use App\Domain\Invoice\Casts\InvoiceSellerCast;
@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property BigDecimal        $exchange_rate
  * @property InvoiceSellerDTO  $seller
  * @property InvoiceBuyerDTO   $buyer
- * @property InvoiceDataDTO    $data
+ * @property InvoiceDataDTO    $body
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
  */
@@ -62,7 +62,7 @@ class Invoice extends BaseModel
         'exchange_rate',
         'seller',
         'buyer',
-        'data',
+        'body',
         'payment',
         'options',
     ];
@@ -77,7 +77,7 @@ class Invoice extends BaseModel
         'exchange_rate' => BigDecimalCast::class,
         'seller'        => InvoiceSellerCast::class,
         'buyer'         => InvoiceBuyerCast::class,
-        'data'          => InvoiceDataCast::class,
+        'body'          => InvoiceBodyCast::class,
         'payment'       => InvoicePaymentCast::class,
         'options'       => InvoiceOptionsCast::class,
     ];

@@ -8,7 +8,7 @@ use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Tenant\Models\Tenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\DTOs\InvoiceBuyerDTOFactory;
-use Database\Factories\DTOs\InvoiceDataDTOFactory;
+use Database\Factories\DTOs\InvoiceBodyDTOFactory;
 use Database\Factories\DTOs\InvoiceOptionsDTOFactory;
 use Database\Factories\DTOs\InvoicePaymentDTOFactory;
 use Database\Factories\DTOs\InvoiceSellerDTOFactory;
@@ -43,7 +43,7 @@ class InvoiceFactory extends Factory
             'issue_date'            => fake()->dateTimeBetween('-1 year', 'now'),
             'seller'                => (new InvoiceSellerDTOFactory())->make(),
             'buyer'                 => (new InvoiceBuyerDTOFactory())->make(),
-            'data'                  => (new InvoiceDataDTOFactory())->make(),
+            'body'                  => (new InvoiceBodyDTOFactory())->make(),
             'payment'               => (new InvoicePaymentDTOFactory())->make(),
             'options'               => (new InvoiceOptionsDTOFactory())->make(),
         ];

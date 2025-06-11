@@ -61,8 +61,8 @@ class NumberingTemplate extends BaseModel
         $format = str_replace('YYYY', date('Y'), $format);
         $format = str_replace('YY', date('y'), $format);
         $format = str_replace('MM', date('m'), $format);
-        $format = str_replace('NNN', $number, $format);
         $format = str_replace('NNNN', str_pad($number, 4, '0', STR_PAD_LEFT), $format);
+        $format = str_replace('NNN', $number, $format);
 
         if ($this->prefix) {
             $format = $this->prefix . $format;

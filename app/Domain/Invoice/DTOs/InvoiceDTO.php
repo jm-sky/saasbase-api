@@ -21,7 +21,7 @@ use App\Domain\Invoice\Models\Invoice;
  * @property float         $exchangeRate
  * @property array         $seller
  * @property array         $buyer
- * @property array         $data
+ * @property array         $body
  * @property array         $payment
  * @property array         $options
  * @property string        $issueDate
@@ -45,7 +45,7 @@ class InvoiceDTO extends BaseDataDTO
         public readonly float $exchangeRate,
         public readonly array $seller,
         public readonly array $buyer,
-        public readonly array $data,
+        public readonly array $body,
         public readonly array $payment,
         public readonly array $options,
         public readonly ?string $issueDate = null,
@@ -71,7 +71,7 @@ class InvoiceDTO extends BaseDataDTO
             exchangeRate: $invoice->exchange_rate->toFloat(),
             seller: $invoice->seller->toArray(),
             buyer: $invoice->buyer->toArray(),
-            data: $invoice->data->toArray(),
+            body: $invoice->body->toArray(),
             payment: $invoice->payment->toArray(),
             options: $invoice->options->toArray(),
             issueDate: $invoice->issue_date?->toDateString(),
@@ -97,7 +97,7 @@ class InvoiceDTO extends BaseDataDTO
             'exchange_rate'         => $this->exchangeRate,
             'seller'                => $this->seller,
             'buyer'                 => $this->buyer,
-            'data'                  => $this->data,
+            'body'                  => $this->body,
             'payment'               => $this->payment,
             'options'               => $this->options,
             'issue_date'            => $this->issueDate,

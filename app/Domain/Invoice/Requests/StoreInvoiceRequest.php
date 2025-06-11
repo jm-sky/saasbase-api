@@ -28,7 +28,7 @@ class StoreInvoiceRequest extends BaseFormRequest
             'exchangeRate'          => ['required', 'numeric'],
             'seller'                => ['required', 'array'],
             'buyer'                 => ['required', 'array'],
-            'data'                  => ['required', 'array'],
+            'body'                  => ['required', 'array'],
             'payment'               => ['required', 'array'],
             'options'               => ['required', 'array'],
         ];

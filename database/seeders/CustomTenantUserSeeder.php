@@ -6,6 +6,9 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Products\Enums\ProductType;
 use App\Domain\Projects\Models\ProjectRole;
 use App\Domain\Projects\Models\ProjectStatus;
@@ -336,6 +339,7 @@ class CustomTenantUserSeeder extends Seeder
         foreach ($tenants as $tenant) {
             Tenant::bypassTenant($tenant->id, function () use ($tenant) {
                 $this->createProducts($tenant);
+                $this->createInvoices($tenant);
             });
         }
     }
@@ -367,5 +371,16 @@ class CustomTenantUserSeeder extends Seeder
         foreach ($products as $product) {
             $tenant->products()->create($product);
         }
+    }
+
+    protected function createInvoices(Tenant $tenant): void
+    {
+        $template = NumberingTemplate::where('invoice_type', InvoiceType::Basic->value)->where('is_default', true)->first();
+
+        $tenant->invoices()->create(Invoice::factory()->make([
+            'number'                => "TEST/{$template->generateNextNumber()}",
+            'type'                  => InvoiceType::Basic,
+            'numbering_template_id' => $template,
+        ])->toArray());
     }
 }

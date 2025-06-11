@@ -28,7 +28,7 @@ class UpdateInvoiceRequest extends BaseFormRequest
             'exchange_rate'         => ['sometimes', 'numeric'],
             'seller'                => ['sometimes', 'array'],
             'buyer'                 => ['sometimes', 'array'],
-            'data'                  => ['sometimes', 'array'],
+            'body'                  => ['sometimes', 'array'],
             'payment'               => ['sometimes', 'array'],
             'options'               => ['sometimes', 'array'],
         ];

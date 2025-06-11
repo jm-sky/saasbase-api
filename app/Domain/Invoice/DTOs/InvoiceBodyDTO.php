@@ -9,7 +9,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  * @property InvoiceVatSummaryDTO[] $vatSummary
  * @property InvoiceExchangeDTO     $exchange
  */
-class InvoiceDataDTO extends BaseDataDTO
+class InvoiceBodyDTO extends BaseDataDTO
 {
     public function __construct(
         /** @var InvoiceLineDTO[] */

@@ -15,12 +15,12 @@ class InvoiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /* @var Invoice $this->resource */
+        /** @var Invoice $this->resource */
         return [
             'id'                  => $this->id,
             'tenantId'            => $this->tenant_id,
-            'type'                => $this->type,
-            'status'              => $this->status,
+            'type'                => $this->type->value,
+            'status'              => $this->status->value,
             'number'              => $this->number,
             'numberingTemplateId' => $this->numbering_template_id,
             'totalNet'            => $this->total_net->toFloat(),
@@ -30,7 +30,7 @@ class InvoiceResource extends JsonResource
             'exchangeRate'        => $this->exchange_rate->toFloat(),
             'seller'              => $this->seller->toArray(),
             'buyer'               => $this->buyer->toArray(),
-            'data'                => $this->data->toArray(),
+            'body'                => $this->body->toArray(),
             'payment'             => $this->payment->toArray(),
             'options'             => $this->options->toArray(),
             'issueDate'           => $this->issue_date?->toDateString(),

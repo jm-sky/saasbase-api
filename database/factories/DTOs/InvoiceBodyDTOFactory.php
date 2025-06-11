@@ -2,11 +2,11 @@
 
 namespace Database\Factories\DTOs;
 
-use App\Domain\Invoice\DTOs\InvoiceDataDTO;
+use App\Domain\Invoice\DTOs\InvoiceBodyDTO;
 
-class InvoiceDataDTOFactory extends DTOFactory
+class InvoiceBodyDTOFactory extends DTOFactory
 {
-    public function make(): InvoiceDataDTO
+    public function make(): InvoiceBodyDTO
     {
         $lines = [];
         $count = fake()->numberBetween(1, 5);
@@ -45,7 +45,7 @@ class InvoiceDataDTOFactory extends DTOFactory
             );
         }
 
-        return new InvoiceDataDTO(
+        return new InvoiceBodyDTO(
             lines: $lines,
             vatSummary: $vatSummaryDTOs,
             exchange: (new InvoiceExchangeDTOFactory())->make(),
