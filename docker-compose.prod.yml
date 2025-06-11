@@ -1,0 +1,50 @@
+services:
+    saasbase:
+        build:
+            context: './docker/prod/php'
+            dockerfile: Dockerfile.prod
+            args:
+                WWWGROUP: '${WWWGROUP}'
+                NODE_VERSION: '20'
+        image: 'saasbase-prod/app'
+        ports:
+            - '${APP_PORT:-80}:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 0
+            APP_ENV: 'production'
+            APP_DEBUG: 'false'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - saasbase-prod
+        depends_on:
+            - pgsql
+            - minio
+            - redis
+
+    pgsql:
+        image: 'postgres:17'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:
+            PGPASSWORD: '${DB_PASSWORD}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - 'saasbase-pgsql:/var/lib/postgresql/data'
+        networks:
+            - saasbase-prod
+        healthcheck:
+            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            retries: 3
+            timeout: 5s
+
+networks:
+    saasbase-prod:
+        driver: bridge
+
+volumes:
+    saasbase-pgsql:
+        driver: local
