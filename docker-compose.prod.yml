@@ -2,7 +2,7 @@ services:
     saasbase:
         build:
             context: './docker/prod/php'
-            dockerfile: Dockerfile.prod
+            dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
                 NODE_VERSION: '20'
