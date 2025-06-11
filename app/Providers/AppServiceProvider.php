@@ -7,6 +7,7 @@ use App\Domain\Common\Support\ColumnTypeCache;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Event::listen(MigrationsEnded::class, function () {
             ColumnTypeCache::clearAll();
         });
