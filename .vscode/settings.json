@@ -1,4 +1,4 @@
 {
     "LaravelExtraIntellisense.basePathForCode": "/var/www/html",
-    "LaravelExtraIntellisense.phpCommand": "docker-compose exec -w /var/www/html laravel.test php -r \"{code}\""
+    "LaravelExtraIntellisense.phpCommand": "docker-compose exec -w /var/www/html saasbase.test php -r \"{code}\""
 }
