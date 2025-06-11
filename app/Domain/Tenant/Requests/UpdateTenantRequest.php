@@ -28,7 +28,7 @@ class UpdateTenantRequest extends BaseFormRequest
             'email'       => ['nullable', 'email', 'max:254'],
             'phone'       => ['nullable', 'string', 'max:20'],
             'website'     => ['nullable', 'string', 'max:255'],
-            'country'     => ['nullable', 'string', 'max:2'],
+            'country'     => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'description' => ['nullable', 'string'],
         ];
     }

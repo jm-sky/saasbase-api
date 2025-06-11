@@ -15,7 +15,7 @@ class GetIbanInfoRequest extends BaseFormRequest
     {
         return [
             'iban'    => ['required', 'string', 'regex:/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/'],
-            'country' => ['sometimes', 'string', 'size:2', 'regex:/^[A-Z]{2}$/'],
+            'country' => ['sometimes', 'string', 'size:2', 'regex:/^[A-Z]{2}$/', 'exists:countries,code'],
         ];
     }
 

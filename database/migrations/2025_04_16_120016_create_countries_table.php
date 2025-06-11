@@ -11,22 +11,20 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('countries', function (Blueprint $table) {
-            $table->ulid('id')->primary();
+            $table->string('code', 2)->primary();
             $table->string('name');
-            $table->string('code', 2)->unique();
             $table->string('code3', 3)->unique();
             $table->string('numeric_code', 3)->unique();
-            $table->string('phone_code', 10);
-            $table->string('capital')->nullable();
-            $table->string('currency')->nullable();
             $table->string('currency_code', 3)->nullable();
-            $table->string('currency_symbol', 5)->nullable();
+            $table->string('currency_symbol', 20)->nullable();
+            $table->string('phone_code', 10)->nullable();
             $table->string('tld', 10)->nullable();
-            $table->string('native')->nullable();
+            $table->string('capital')->nullable();
             $table->string('region')->nullable();
             $table->string('subregion')->nullable();
             $table->string('emoji', 10)->nullable();
             $table->string('emojiU', 20)->nullable();
+            $table->string('native')->nullable();
             $table->timestamps();
         });
     }

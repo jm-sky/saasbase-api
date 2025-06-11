@@ -20,7 +20,7 @@ class StoreContractorRequest extends BaseFormRequest
             'contractor.email'       => ['nullable', 'email', 'max:255'],
             'contractor.phone'       => ['nullable', 'string', 'max:20'],
             'contractor.website'     => ['nullable', 'string', 'max:255'],
-            'contractor.country'     => ['nullable', 'string', 'max:100'],
+            'contractor.country'     => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'contractor.vatId'       => ['nullable', 'string', 'max:20'],
             'contractor.taxId'       => ['nullable', 'string', 'max:20'],
             'contractor.regon'       => ['nullable', 'string', 'max:20'],
@@ -42,7 +42,7 @@ class StoreContractorRequest extends BaseFormRequest
         if ($this->input('address.street') || $this->input('address.city') || $this->input('address.postalCode')) {
             $rules = [
                 ...$rules,
-                'address.country'    => ['required', 'string', 'max:2'],
+                'address.country'    => ['required', 'string', 'max:2', 'exists:countries,code'],
                 'address.city'       => ['required', 'string', 'max:255'],
                 'address.postalCode' => ['required', 'string', 'max:20'],
                 'address.street'     => ['nullable', 'string', 'max:255'],

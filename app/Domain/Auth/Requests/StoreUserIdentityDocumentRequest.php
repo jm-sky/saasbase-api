@@ -16,7 +16,7 @@ class StoreUserIdentityDocumentRequest extends BaseFormRequest
         return [
             'type'           => ['required', 'in:tax_id,passport,id_card'],
             'number'         => ['required', 'string'],
-            'country'        => ['required', 'string', 'size:2'],
+            'country'        => ['required', 'string', 'size:2', 'exists:countries,code'],
             'issued_at'      => ['nullable', 'date'],
             'expires_at'     => ['required', 'date', 'after:issued_at'],
             'meta'           => ['nullable', 'array'],

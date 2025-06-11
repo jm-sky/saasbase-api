@@ -15,7 +15,7 @@ class TenantAddressRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'country'     => ['required', 'string', 'max:2'],
+            'country'     => ['required', 'string', 'max:2', 'exists:countries,code'],
             'postalCode'  => ['nullable', 'string', 'max:10'],
             'city'        => ['required', 'string', 'max:100'],
             'street'      => ['nullable', 'string', 'max:100'],

@@ -15,7 +15,7 @@ class CompanyLookupRequest extends BaseFormRequest
     {
         return [
             'vatId'   => ['required', 'string'],
-            'country' => ['required', 'string', 'size:2'],
+            'country' => ['required', 'string', 'size:2', 'exists:countries,code'],
             'force'   => ['nullable', 'boolean'],
         ];
     }

@@ -24,7 +24,7 @@ class StoreContractorAddressRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'country'     => ['required', 'string', 'max:255'],
+            'country'     => ['required', 'string', 'max:2', 'exists:countries,code'],
             'postalCode'  => ['nullable', 'string', 'max:20'],
             'city'        => ['required', 'string', 'max:255'],
             'street'      => ['nullable', 'string', 'max:255'],

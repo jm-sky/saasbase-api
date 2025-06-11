@@ -18,7 +18,7 @@ class ContractorAddressRequest extends BaseFormRequest
             'street'      => ['nullable', 'string', 'max:255'],
             'city'        => ['required', 'string', 'max:255'],
             'postalCode'  => ['nullable', 'string', 'max:20'],
-            'country'     => ['required', 'string', 'max:2'],
+            'country'     => ['required', 'string', 'max:2', 'exists:countries,code'],
             'tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
             'building'    => ['nullable', 'string', 'max:255'],
             'flat'        => ['nullable', 'string', 'max:255'],

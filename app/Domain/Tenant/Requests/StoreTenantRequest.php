@@ -24,11 +24,11 @@ class StoreTenantRequest extends BaseFormRequest
             'tenant.email'       => ['nullable', 'email', 'max:254'],
             'tenant.phone'       => ['nullable', 'string', 'max:20'],
             'tenant.website'     => ['nullable', 'string', 'max:255'],
-            'tenant.country'     => ['nullable', 'string', 'max:2'],
+            'tenant.country'     => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'tenant.description' => ['nullable', 'string'],
 
             'address'            => ['nullable', 'array'],
-            'address.country'    => ['nullable', 'string', 'max:2'],
+            'address.country'    => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'address.city'       => ['nullable', 'string', 'max:255'],
             'address.postalCode' => ['nullable', 'string', 'max:20'],
             'address.street'     => ['nullable', 'string', 'max:255'],
@@ -40,7 +40,7 @@ class StoreTenantRequest extends BaseFormRequest
             'bankAccount.swift'     => ['nullable', 'string', 'max:50'],
             'bankAccount.bankName'  => ['nullable', 'string', 'max:255'],
             'bankAccount.currency'  => ['nullable', 'string', 'max:3'],
-            'bankAccount.country'   => ['nullable', 'string', 'max:2'],
+            'bankAccount.country'   => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'bankAccount.isDefault' => ['nullable', 'boolean'],
         ];
     }
