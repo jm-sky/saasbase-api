@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Subscription\Models\SubscriptionPlan;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class PlanSeeder extends Seeder
@@ -88,7 +89,10 @@ class PlanSeeder extends Seeder
             $prices = $planData['prices'] ?? [];
             unset($planData['prices']);
 
-            $plan = SubscriptionPlan::create($planData);
+            $plan = SubscriptionPlan::create([
+                'id' => Ulid::deterministic(['subscription-plan', $planData['name']]),
+                ...$planData,
+            ]);
 
             foreach ($prices as $priceData) {
                 $plan->prices()->create($priceData);

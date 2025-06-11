@@ -28,9 +28,9 @@
         "lorisleiva/laravel-actions": "^2.9",
         "meilisearch/meilisearch-php": "^1.14",
         "mews/purifier": "^3.4",
+        "mledoze/countries": "^5.1",
         "pragmarx/google2fa": "^8.0",
         "pusher/pusher-php-server": "^7.2",
-        "ramsey/uuid": "^4.7",
         "rap2hpoutre/laravel-log-viewer": "^2.5",
         "saloonphp/laravel-plugin": "^3.0",
         "saloonphp/rate-limit-plugin": "^2.0",
@@ -40,6 +40,7 @@
         "spatie/laravel-permission": "^6.18",
         "spatie/laravel-query-builder": "^6.3",
         "stripe/stripe-php": "^17.3",
+        "symfony/uid": "^7.3",
         "tymon/jwt-auth": "^2.2"
     },
     "require-dev": {

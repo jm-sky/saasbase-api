@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Skills\Models\Skill;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class SkillSeeder extends Seeder
@@ -143,7 +144,10 @@ class SkillSeeder extends Seeder
         ];
 
         foreach ($skills as $skill) {
-            Skill::create($skill);
+            Skill::create([
+                'id' => Ulid::deterministic(['skill', $skill['name']]),
+                ...$skill,
+            ]);
         }
     }
 }

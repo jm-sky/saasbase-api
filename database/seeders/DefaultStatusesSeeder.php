@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Domain\Projects\Models\DefaultProjectStatus;
 use App\Domain\Projects\Models\DefaultTaskStatus;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DefaultStatusesSeeder extends Seeder
 {
@@ -34,12 +34,12 @@ class DefaultStatusesSeeder extends Seeder
 
         foreach ($defaultStatuses as $status) {
             DefaultProjectStatus::create([
-                'id' => Str::ulid(),
+                'id' => Ulid::deterministic(['project-status', $status['name']]),
                 ...$status,
             ]);
 
             DefaultTaskStatus::create([
-                'id' => Str::ulid(),
+                'id' => Ulid::deterministic(['task-status', $status['name']]),
                 ...$status,
             ]);
         }

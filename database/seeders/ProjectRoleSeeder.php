@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Projects\Models\ProjectRole;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class ProjectRoleSeeder extends Seeder
@@ -56,7 +57,10 @@ class ProjectRoleSeeder extends Seeder
         ];
 
         foreach ($roles as $role) {
-            ProjectRole::create($role);
+            ProjectRole::create([
+                'id' => Ulid::deterministic(['project-role', $role['name']]),
+                ...$role,
+            ]);
         }
     }
 }

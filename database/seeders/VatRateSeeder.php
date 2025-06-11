@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Common\Models\VatRate;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class VatRateSeeder extends Seeder
@@ -34,7 +35,10 @@ class VatRateSeeder extends Seeder
         ];
 
         foreach ($vatRates as $vatRate) {
-            VatRate::create($vatRate);
+            VatRate::create([
+                'id' => Ulid::deterministic(['vat-rate', $vatRate['name']]),
+                ...$vatRate,
+            ]);
         }
     }
 }

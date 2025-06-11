@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Skills\Models\SkillCategory;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class SkillCategorySeeder extends Seeder
@@ -45,7 +46,10 @@ class SkillCategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            SkillCategory::create($category);
+            SkillCategory::create([
+                'id' => Ulid::deterministic(['skill-category', $category['name']]),
+                ...$category,
+            ]);
         }
     }
 }

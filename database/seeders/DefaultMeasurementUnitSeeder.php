@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Common\Models\DefaultMeasurementUnit;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class DefaultMeasurementUnitSeeder extends Seeder
@@ -48,7 +49,10 @@ class DefaultMeasurementUnitSeeder extends Seeder
         ];
 
         foreach ($units as $unit) {
-            DefaultMeasurementUnit::create($unit);
+            DefaultMeasurementUnit::create([
+                'id' => Ulid::deterministic(['measurement-unit', $unit['code']]),
+                ...$unit,
+            ]);
         }
     }
 }

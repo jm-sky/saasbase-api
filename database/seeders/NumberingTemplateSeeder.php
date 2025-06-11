@@ -6,6 +6,7 @@ use App\Domain\Invoice\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Tenant\Models\Tenant;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class NumberingTemplateSeeder extends Seeder
@@ -46,6 +47,7 @@ class NumberingTemplateSeeder extends Seeder
 
             foreach ($templates as $template) {
                 NumberingTemplate::create([
+                    'id'           => Ulid::deterministic(['numbering-template', $template['type']->value]),
                     'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                     'invoice_type' => $template['type'],
                     'name'         => $template['type']->label(),
@@ -58,6 +60,7 @@ class NumberingTemplateSeeder extends Seeder
                 ]);
 
                 NumberingTemplate::create([
+                    'id'           => Ulid::deterministic(['numbering-template', $template['type']->getCorrectionType()->value]),
                     'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                     'invoice_type' => $template['type']->getCorrectionType(),
                     'name'         => $template['type']->getCorrectionType()->label(),
