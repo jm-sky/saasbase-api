@@ -2,7 +2,9 @@
 
 namespace App\Domain\Projects\Resources;
 
+use App\Domain\Common\Resources\MediaResource;
 use App\Domain\Common\Resources\UserPreviewResource;
+use App\Domain\Projects\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +17,9 @@ class ProjectResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var Project $this->resource */
+        $logoMedia = $this->getFirstMedia('logo');
+
         /* @var Project $this->resource */
         return [
             'id'             => $this->id,
@@ -28,6 +33,9 @@ class ProjectResource extends JsonResource
             'createdAt'      => $this->created_at?->toIso8601String(),
             'updatedAt'      => $this->updated_at?->toIso8601String(),
             'deletedAt'      => $this->deleted_at?->toIso8601String(),
+            'logoUrl'        => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
+            'logo'           => $logoMedia ? new MediaResource($logoMedia) : null,
+            'tags'           => method_exists($this->resource, 'getTagNames') ? $this->getTagNames() : [],
             'owner'          => $this->whenLoaded('owner', fn () => new UserPreviewResource($this->owner)),
             'users'          => $this->whenLoaded('users', fn () => UserPreviewResource::collection($this->users)),
             'tasks'          => $this->whenLoaded('tasks', fn () => $this->tasks->toArray()),

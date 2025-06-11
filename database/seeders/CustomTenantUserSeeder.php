@@ -280,27 +280,48 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createProjects(): void
     {
-        $tenants = Tenant::all();
+        $tenants   = Tenant::all();
+        $templates = [
+            'onboarding' => [
+                'name'        => 'Onboarding',
+                'description' => 'Tenants onboarding project for new users. This project is used to onboard new users to the platform.',
+            ],
+            'saasbase-development' => [
+                'name'        => 'SaasBase development',
+                'description' => 'SaasBase development project to test our platform and add new features.',
+            ],
+            'project-management' => [
+                'name'        => 'Project Management',
+                'description' => 'Project management project for new tenants',
+            ],
+        ];
 
         foreach ($tenants as $tenant) {
-            Tenant::bypassTenant($tenant->id, function () use ($tenant) {
-                $status = ProjectStatus::withoutTenant()->where('tenant_id', $tenant->id)->where('is_default', true)->first();
-
-                $project = $tenant->projects()->create([
-                    'name'        => 'Onboarding',
-                    'status_id'   => $status->id,
-                    'description' => 'Tenants onboarding project for new users',
-                    'start_date'  => now(),
-                    'owner_id'    => $tenant->owner_id,
-                ]);
-
-                $users         = $tenant->users;
-                $developerRole = ProjectRole::where('name', 'Developer')->first();
-
-                foreach ($users as $user) {
-                    $user->projects()->attach($project->id, ['project_role_id' => $developerRole->id]);
+            Tenant::bypassTenant($tenant->id, function () use ($tenant, $templates) {
+                foreach ($templates as $template) {
+                    $this->createProject($tenant, $template);
                 }
             });
+        }
+    }
+
+    protected function createProject(Tenant $tenant, array $template): void
+    {
+        $status = ProjectStatus::withoutTenant()->where('tenant_id', $tenant->id)->where('is_default', true)->first();
+
+        $project = $tenant->projects()->create([
+            'name'        => $template['name'],
+            'status_id'   => $status->id,
+            'description' => $template['description'],
+            'start_date'  => now(),
+            'owner_id'    => $tenant->owner_id,
+        ]);
+
+        $users         = $tenant->users;
+        $developerRole = ProjectRole::where('name', 'Developer')->first();
+
+        foreach ($users as $user) {
+            $user->projects()->attach($project->id, ['project_role_id' => $developerRole->id]);
         }
     }
 }

@@ -4,6 +4,11 @@ namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Media;
+use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Common\Traits\HasTags;
+use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
  * @property string                                $id
@@ -34,12 +40,18 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Collection<int, ProjectUser>          $projectUsers
  * @property Collection<int, ProjectRequiredSkill> $requiredSkills
  * @property Collection<int, ProjectComment>       $comments
+ * @property Collection|Media[]                    $media
+ * @property Collection|string[]                   $tags
  */
 class Project extends BaseModel implements HasMedia
 {
     use BelongsToTenant;
     use SoftDeletes;
     use InteractsWithMedia;
+    use HaveComments;
+    use HasTags;
+    use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'tenant_id',
@@ -97,6 +109,29 @@ class Project extends BaseModel implements HasMedia
 
     public function registerMediaCollections(): void
     {
+        $this->addMediaCollection('logo')
+            ->singleFile()
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
+        ;
+
         $this->addMediaCollection('attachments');
+    }
+
+    public function registerAllMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(config('domains.projects.logo.size', 256))
+            ->height(config('domains.projects.logo.size', 256))
+            ->nonQueued()
+        ;
+    }
+
+    public function getMediaUrl(string $collectionName, string $conversionName): string
+    {
+        if ('logo' === $collectionName) {
+            return $this->getMediaSignedUrl($collectionName, $conversionName);
+        }
+
+        return $this->getFirstMediaUrl($collectionName, $conversionName);
     }
 }
