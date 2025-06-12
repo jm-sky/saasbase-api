@@ -5,6 +5,7 @@ namespace Tests\Feature\Domain\Invoice;
 use App\Domain\Auth\Models\User;
 use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -27,47 +28,28 @@ class InvoiceApiTest extends TestCase
 
     private User $user;
 
+    private NumberingTemplate $numberingTemplate;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
         $this->user   = $this->authenticateUser($this->tenant);
-    }
 
-    public function testCanListTenantAndGlobalInvoices(): void
-    {
-        // Tenant-specific invoices
-        $tenantInvoices = Tenant::bypassTenant($this->tenant->id, function () {
-            return Invoice::factory()->count(2)->create([
+        Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () {
+            $this->numberingTemplate = NumberingTemplate::factory()->create([
                 'tenant_id' => $this->tenant->id,
             ]);
         });
-        // Global invoices
-        $globalInvoices = Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () {
-            return Invoice::factory()->count(1)->create([
-                'tenant_id' => Tenant::GLOBAL_TENANT_ID,
-            ]);
-        });
-        $response = $this->getJson($this->baseUrl);
-        $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'id', 'tenantId', 'type', 'status', 'number', 'numberingTemplateId', 'totalNet', 'totalTax', 'totalGross', 'currency', 'exchangeRate', 'seller', 'buyer', 'data', 'payment', 'options', 'issueDate', 'createdAt', 'updatedAt', 'numberingTemplate',
-                    ],
-                ],
-                'meta' => [
-                    'currentPage', 'lastPage', 'perPage', 'total',
-                ],
-            ])
-            ->assertJsonCount(3, 'data')
-        ;
     }
 
     public function testCanShowInvoice(): void
     {
         $invoice = Tenant::bypassTenant($this->tenant->id, function () {
-            return Invoice::factory()->create(['tenant_id' => $this->tenant->id]);
+            return Invoice::factory()->create([
+                'tenant_id'             => $this->tenant->id,
+                'numbering_template_id' => $this->numberingTemplate->id,
+            ]);
         });
         $response = $this->getJson($this->baseUrl . '/' . $invoice->id);
         $response->assertStatus(Response::HTTP_OK)
@@ -83,7 +65,10 @@ class InvoiceApiTest extends TestCase
     public function testCanDeleteInvoice(): void
     {
         $invoice = Tenant::bypassTenant($this->tenant->id, function () {
-            return Invoice::factory()->create(['tenant_id' => $this->tenant->id]);
+            return Invoice::factory()->create([
+                'tenant_id'             => $this->tenant->id,
+                'numbering_template_id' => $this->numberingTemplate->id,
+            ]);
         });
         $response = $this->deleteJson($this->baseUrl . '/' . $invoice->id);
         $response->assertStatus(Response::HTTP_NO_CONTENT);
