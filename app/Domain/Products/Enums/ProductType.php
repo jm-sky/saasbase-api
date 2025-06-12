@@ -6,4 +6,5 @@ enum ProductType: string
 {
     case SERVICE = 'service';
     case PRODUCT = 'product';
+    case OTHER   = 'other';
 }

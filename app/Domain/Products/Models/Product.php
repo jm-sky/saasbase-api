@@ -23,25 +23,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
 /**
- * @property string                                  $id
- * @property string                                  $tenant_id
- * @property string                                  $name
- * @property ProductType                             $type
- * @property ?string                                 $description
- * @property string                                  $unit_id
- * @property float                                   $price_net
- * @property ?string                                 $vat_rate_id
- * @property Carbon                                  $created_at
- * @property Carbon                                  $updated_at
- * @property ?Carbon                                 $deleted_at
- * @property MeasurementUnit                         $unit
- * @property ?VatRate                                $vatRate
- * @property \Illuminate\Support\Collection|string[] $tags
+ * @property string              $id
+ * @property string              $tenant_id
+ * @property string              $name
+ * @property ProductType         $type
+ * @property ?string             $description
+ * @property string              $unit_id
+ * @property float               $price_net
+ * @property ?string             $vat_rate_id
+ * @property string              $symbol
+ * @property ?string             $ean
+ * @property ?string             $external_id
+ * @property ?string             $source_system
+ * @property Carbon              $created_at
+ * @property Carbon              $updated_at
+ * @property ?Carbon             $deleted_at
+ * @property MeasurementUnit     $unit
+ * @property ?VatRate            $vatRate
+ * @property Collection|string[] $tags
  */
 class Product extends BaseModel implements HasMedia
 {
@@ -63,6 +69,10 @@ class Product extends BaseModel implements HasMedia
         'unit_id',
         'price_net',
         'vat_rate_id',
+        'symbol',
+        'ean',
+        'external_id',
+        'source_system',
     ];
 
     /**
@@ -74,6 +84,25 @@ class Product extends BaseModel implements HasMedia
         'price_net' => 'float',
         'type'      => ProductType::class,
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($product) {
+            $product->symbol ??= self::generateSymbol($product->type, $product->name);
+        });
+    }
+
+    public static function generateSymbol(ProductType $type, string $name): string
+    {
+        return Str::of($type->value)
+            ->substr(0, 3)
+            ->append('-', $name)
+            ->slug()
+            ->limit(100, '')
+            ->toString()
+        ;
+    }
 
     public function unit(): BelongsTo
     {

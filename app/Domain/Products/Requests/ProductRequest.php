@@ -17,13 +17,17 @@ class ProductRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
-            'name'        => ['required', 'string', 'max:255'],
-            'type'        => ['required', 'string', Rule::in(ProductType::cases())],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'unitId'      => ['nullable', 'ulid', 'exists:measurement_units,id'],
-            'priceNet'    => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:999999.99'],
-            'vatRateId'   => ['nullable', 'ulid', 'exists:vat_rates,id'],
+            'tenantId'     => ['required', 'ulid', 'exists:tenants,id'],
+            'name'         => ['required', 'string', 'max:255'],
+            'type'         => ['required', 'string', Rule::in(ProductType::cases())],
+            'description'  => ['nullable', 'string', 'max:1000'],
+            'unitId'       => ['nullable', 'ulid', 'exists:measurement_units,id'],
+            'priceNet'     => ['required', 'numeric', 'decimal:0,2', 'min:0', 'max:999999.99'],
+            'vatRateId'    => ['nullable', 'ulid', 'exists:vat_rates,id'],
+            'symbol'       => ['nullable', 'string', 'max:100'],
+            'ean'          => ['nullable', 'string', 'max:13'],
+            'externalId'   => ['nullable', 'string', 'max:255'],
+            'sourceSystem' => ['nullable', 'string', 'max:255'],
         ];
     }
 

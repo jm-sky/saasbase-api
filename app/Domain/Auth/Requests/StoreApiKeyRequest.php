@@ -22,9 +22,10 @@ class StoreApiKeyRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'     => ['required', 'string', 'max:255'],
-            'scopes'   => ['required', 'array'],
-            'scopes.*' => ['string', 'in:read,write'],
+            'name'      => ['required', 'string', 'max:255'],
+            'scopes'    => ['required', 'array'],
+            'scopes.*'  => ['string', 'in:*,read,write'],
+            'expiresAt' => ['nullable', 'date', 'after:now'],
         ];
     }
 }

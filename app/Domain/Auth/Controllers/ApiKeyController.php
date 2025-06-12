@@ -22,10 +22,7 @@ class ApiKeyController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $apiKeys = ApiKey::where('user_id', $user->id)
-            ->where('tenant_id', $user->getTenantId())
-            ->get()
-        ;
+        $apiKeys = $user->apiKeys()->where('tenant_id', $user->getTenantId())->get();
 
         return ApiKeyResource::collection($apiKeys);
     }
@@ -36,11 +33,13 @@ class ApiKeyController extends Controller
         $user = Auth::user();
 
         $apiKey = ApiKey::create([
-            'tenant_id' => $user->getTenantId(),
-            'user_id'   => $user->id,
-            'name'      => $request->name,
-            'key'       => Str::random(64),
-            'scopes'    => $request->scopes,
+            'tenant_id'  => $user->getTenantId(),
+            'user_id'    => $user->id,
+            'name'       => $request->name,
+            'key'        => Str::random(64),
+            'scopes'     => $request->scopes,
+            'is_active'  => true,
+            'expires_at' => $request->expiresAt,
         ]);
 
         return new ApiKeyResource($apiKey);
@@ -60,6 +59,12 @@ class ApiKeyController extends Controller
         $apiKey->update($request->validated());
 
         return new ApiKeyResource($apiKey);
+    }
+
+    public function revoke(ApiKey $apiKey): void
+    {
+        $this->authorize('update', $apiKey);
+        $apiKey->update(['is_active' => false]);
     }
 
     public function destroy(ApiKey $apiKey): void

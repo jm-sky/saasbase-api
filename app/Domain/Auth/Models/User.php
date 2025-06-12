@@ -238,6 +238,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->hasMany(OAuthAccount::class);
     }
 
+    public function apiKeys(): HasMany
+    {
+        return $this->hasMany(ApiKey::class);
+    }
+
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'project_users')

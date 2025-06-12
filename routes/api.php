@@ -65,7 +65,8 @@ Route::prefix('v1')->group(function () {
             Route::get('invoices/search', [InvoiceController::class, 'search'])->name('invoices.search');
             Route::apiResource('events', EventController::class);
             Route::apiResource('roles', RoleController::class);
-            Route::apiResource('api-keys', ApiKeyController::class);
+            Route::apiResource('api-keys', ApiKeyController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+            Route::post('api-keys/{apiKey}/revoke', [ApiKeyController::class, 'revoke'])->name('api-keys.revoke');
             Route::get('/logs', [ActivityLogController::class, 'index']);
 
             Route::apiResource('contacts', App\Domain\Common\Controllers\ContactController::class);

@@ -51,6 +51,7 @@ class CustomTenantUserSeeder extends Seeder
         $this->createContractors(Arr::get($this->data, 'contractors', []));
         $this->createProjects();
         $this->createProductsForTenants();
+        $this->createApiKeys();
     }
 
     public static function shouldRun(): bool
@@ -382,5 +383,27 @@ class CustomTenantUserSeeder extends Seeder
             'type'                  => InvoiceType::Basic,
             'numbering_template_id' => $template,
         ])->toArray());
+    }
+
+    protected function createApiKeys(): void
+    {
+        $tenants = Tenant::all();
+
+        foreach ($tenants as $tenant) {
+            Tenant::bypassTenant($tenant->id, function () use ($tenant) {
+                $users = $tenant->users;
+
+                foreach ($users as $user) {
+                    $user->apiKeys()->create([
+                        'tenant_id' => $tenant->id,
+                        'user_id'   => $user->id,
+                        'name'      => 'Default API Key',
+                        'key'       => Str::random(64),
+                        'scopes'    => ['read', 'write'],
+                        'is_active' => false,
+                    ]);
+                }
+            });
+        }
     }
 }

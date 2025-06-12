@@ -22,9 +22,10 @@ class UpdateApiKeyRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'     => ['sometimes', 'string', 'max:255'],
-            'scopes'   => ['sometimes', 'array'],
-            'scopes.*' => ['string', 'in:read,write'],
+            'name'      => ['sometimes', 'string', 'max:255'],
+            'scopes'    => ['sometimes', 'array'],
+            'scopes.*'  => ['string', 'in:read,write'],
+            'expiresAt' => ['nullable', 'date', 'after:now'],
         ];
     }
 }

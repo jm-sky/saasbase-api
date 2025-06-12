@@ -31,11 +31,11 @@ The system has two main use cases:
   - [x] created_at: datetime
 
 ### 2. Registry Confirmation Resource
-- [ ] Create a resource that will:
+- [x] Create a resource that will:
   - [ ] Transform confirmation data into badge format
   - [ ] Include confidence score
-  - [ ] Show verification timestamp
-  - [ ] Indicate data source (GUS/VIES/WhiteList)
+  - [x] Show verification timestamp
+  - [x] Indicate data source (GUS/VIES/WhiteList)
 
 ### 3. Company Data Auto-fill Service
 - [x] Create a service (check `CompanyDataAutoFillService`) that will:
@@ -43,22 +43,22 @@ The system has two main use cases:
   - [x] Query all available data sources
   - [x] Standardize data from different sources
   - [x] Return unified structure for form auto-fill:
-    - [ ] Company header (name, vat_id, regon, short_name)
-    - [ ] Contact data (email, phone, website)
+    - [x] Company header (name, vat_id, regon, short_name)
+    - [x] Contact data (email, phone, website)
     - [x] Bank account
     - [x] Address
 
 ### 4. Controller Refactoring
 - [x] Refactor `CompanyLookupController` to:
   - [x] Use the new auto-fill service
-  - [ ] Handle multiple data sources
-  - [ ] Return standardized response
+  - [x] Handle multiple data sources
+  - [x] Return standardized response
   - [ ] Include registry confirmation data
 
 ## Implementation Order
-- [ ] Create Registry Confirmation model and migration
-- [ ] Create Registry Confirmation resource
-- [ ] Create Company Data Auto-fill service
+- [x] Create Registry Confirmation model and migration
+- [x] Create Registry Confirmation resource
+- [x] Create Company Data Auto-fill service
 - [ ] Refactor controller to use new service
 - [ ] Add tests for new functionality
 
@@ -71,9 +71,9 @@ The system has two main use cases:
 - Add proper logging for debugging
 
 ## Expected Outcomes
-- [ ] A polymorphic model for storing confirmation data
+- [x] A polymorphic model for storing confirmation data
 - [ ] A resource for displaying confirmation badges
-- [ ] A service for auto-filling company data
+- [x] A service for auto-filling company data
 - [ ] A refactored controller using the new service
 - [ ] Proper error handling and validation
 - [ ] Comprehensive test coverage
