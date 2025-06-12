@@ -3,13 +3,14 @@
 namespace Tests\Feature\Domain\Feeds;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Feeds\Controllers\FeedController;
 use App\Domain\Feeds\Models\Feed;
 use App\Domain\Tenant\Models\Tenant;
 use App\Services\ProfanityFilterService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -17,7 +18,7 @@ use Tests\Traits\WithAuthenticatedUser;
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(FeedController::class)]
 class FeedControllerTest extends TestCase
 {
     use RefreshDatabase;

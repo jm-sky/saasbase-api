@@ -2,18 +2,19 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Domain\Auth\Controllers\UserSettingsController;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\UserSettings;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(UserSettingsController::class)]
 class UserSettingsTest extends TestCase
 {
     use RefreshDatabase;

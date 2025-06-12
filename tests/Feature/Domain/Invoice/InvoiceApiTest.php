@@ -3,18 +3,19 @@
 namespace Tests\Feature\Domain\Invoice;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(InvoiceController::class)]
 class InvoiceApiTest extends TestCase
 {
     use RefreshDatabase;

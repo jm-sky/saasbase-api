@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\Domain\Common\Filters;
 
+use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
@@ -14,7 +15,7 @@ use Tests\Traits\WithAuthenticatedUser;
  *
  * @coversNothing
  */
-#[CoversNothing]
+#[CoversClass(AdvancedFilter::class)]
 class AdvancedFilterTest extends TestCase
 {
     use RefreshDatabase;

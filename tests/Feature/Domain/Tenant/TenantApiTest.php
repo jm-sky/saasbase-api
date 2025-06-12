@@ -3,9 +3,10 @@
 namespace Tests\Feature\Domain\Tenant;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Tenant\Controllers\TenantController;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -13,7 +14,7 @@ use Tests\Traits\WithAuthenticatedUser;
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(TenantController::class)]
 class TenantApiTest extends TestCase
 {
     use RefreshDatabase;

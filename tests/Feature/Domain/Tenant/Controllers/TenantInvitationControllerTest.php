@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Tenant\Controllers\TenantInvitationController;
 use App\Domain\Tenant\Enums\InvitationStatus;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestDox;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -18,7 +19,7 @@ use Tests\Traits\WithAuthenticatedUser;
  * @internal
  */
 #[TestDox('TenantInvitationController')]
-#[CoversNothing]
+#[CoversClass(TenantInvitationController::class)]
 class TenantInvitationControllerTest extends TestCase
 {
     use RefreshDatabase;

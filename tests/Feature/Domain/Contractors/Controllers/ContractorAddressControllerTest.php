@@ -3,18 +3,19 @@
 namespace Tests\Feature\Domain\Contractors\Controllers;
 
 use App\Domain\Common\Enums\AddressType;
+use App\Domain\Contractors\Controllers\ContractorAddressController;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Models\ContractorAddress;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(ContractorAddressController::class)]
 class ContractorAddressControllerTest extends TestCase
 {
     use RefreshDatabase;

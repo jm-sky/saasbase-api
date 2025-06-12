@@ -8,6 +8,7 @@ use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Database\Factories\NumberingTemplateFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string              $id
@@ -22,11 +23,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool                $is_default
  * @property Carbon              $created_at
  * @property Carbon              $updated_at
+ * @property Carbon              $deleted_at
  * @property Collection<Invoice> $invoices
  */
 class NumberingTemplate extends BaseModel
 {
     use IsGlobalOrBelongsToTenant;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

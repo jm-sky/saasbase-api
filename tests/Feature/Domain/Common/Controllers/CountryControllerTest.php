@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\Domain\Common\Controllers;
 
+use App\Domain\Common\Controllers\CountryController;
 use App\Domain\Common\Models\Country;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -13,7 +14,7 @@ use Tests\Traits\WithAuthenticatedUser;
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(CountryController::class)]
 class CountryControllerTest extends TestCase
 {
     use RefreshDatabase;

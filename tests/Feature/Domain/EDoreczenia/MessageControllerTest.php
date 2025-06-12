@@ -2,12 +2,13 @@
 
 namespace Tests\Feature\Domain\EDoreczenia;
 
+use App\Domain\EDoreczenia\Controllers\MessageController;
 use App\Domain\EDoreczenia\Models\EDoreczeniaMessage;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -15,7 +16,7 @@ use Tests\Traits\WithAuthenticatedUser;
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(MessageController::class)]
 class MessageControllerTest extends TestCase
 {
     use RefreshDatabase;

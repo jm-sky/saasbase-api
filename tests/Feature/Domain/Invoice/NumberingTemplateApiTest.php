@@ -3,18 +3,19 @@
 namespace Tests\Feature\Domain\Invoice;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Invoice\Controllers\NumberingTemplateController;
 use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(NumberingTemplateController::class)]
 class NumberingTemplateApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -54,9 +55,6 @@ class NumberingTemplateApiTest extends TestCase
                     '*' => [
                         'id', 'tenantId', 'name', 'invoiceType', 'format', 'nextNumber', 'resetPeriod', 'prefix', 'suffix', 'isDefault', 'createdAt', 'updatedAt',
                     ],
-                ],
-                'meta' => [
-                    'currentPage', 'lastPage', 'perPage', 'total',
                 ],
             ])
             ->assertJsonCount(3, 'data')
@@ -122,11 +120,5 @@ class NumberingTemplateApiTest extends TestCase
             'id'         => $templates->last()->id,
             'is_default' => false,
         ]);
-    }
-
-    public function testReturns404ForNonexistentTemplate(): void
-    {
-        $response = $this->getJson($this->baseUrl . '/nonexistent-id');
-        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

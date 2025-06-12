@@ -19,9 +19,7 @@ return new class() extends Migration {
             $table->string('suffix')->nullable();
             $table->boolean('is_default')->default(false);
             $table->timestamps();
-
-            // Ensure only one default template per invoice type per tenant
-            $table->unique(['tenant_id', 'invoice_type', 'is_default'], 'unique_default_template');
+            $table->softDeletes();
         });
     }
 

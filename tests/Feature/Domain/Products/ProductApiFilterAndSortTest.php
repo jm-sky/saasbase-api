@@ -4,10 +4,11 @@ namespace Tests\Feature\Domain\Products;
 
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
+use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -15,7 +16,7 @@ use Tests\Traits\WithAuthenticatedUser;
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(ProductController::class)]
 class ProductApiFilterAndSortTest extends TestCase
 {
     use RefreshDatabase;
