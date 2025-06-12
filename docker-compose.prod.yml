@@ -12,8 +12,6 @@ services:
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 0
-            APP_ENV: 'production'
-            APP_DEBUG: 'false'
         volumes:
             - '.:/var/www/html'
         networks:
