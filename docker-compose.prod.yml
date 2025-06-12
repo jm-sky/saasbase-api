@@ -59,7 +59,7 @@ services:
             - saasbase-prod
             - saasbase-network
         healthcheck:
-            test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6001/health"]
+            test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:6001"]
             retries: 3
             timeout: 5s
 
