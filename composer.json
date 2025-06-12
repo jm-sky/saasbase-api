@@ -36,6 +36,7 @@
         "saloonphp/laravel-plugin": "^3.0",
         "saloonphp/rate-limit-plugin": "^2.0",
         "saloonphp/saloon": "^3.11",
+        "sentry/sentry-laravel": "^4.14",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.0",
         "spatie/laravel-permission": "^6.18",
