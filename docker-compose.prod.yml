@@ -97,7 +97,7 @@ networks:
     saasbase-prod:
         driver: bridge
     saasbase-network:
-        driver: external
+        driver: bridge
 
 volumes:
     saasbase-pgsql:
