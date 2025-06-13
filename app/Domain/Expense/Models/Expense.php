@@ -10,8 +10,8 @@ use App\Domain\Financial\Casts\InvoiceBuyerCast;
 use App\Domain\Financial\Casts\InvoiceOptionsCast;
 use App\Domain\Financial\Casts\InvoicePaymentCast;
 use App\Domain\Financial\Casts\InvoiceSellerCast;
+use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\DTOs\InvoiceBuyerDTO;
-use App\Domain\Financial\DTOs\InvoiceDataDTO;
 use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentDTO;
 use App\Domain\Financial\DTOs\InvoiceSellerDTO;
@@ -21,7 +21,6 @@ use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\ExpenseFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -37,7 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property BigDecimal        $exchange_rate
  * @property InvoiceSellerDTO  $seller
  * @property InvoiceBuyerDTO   $buyer
- * @property InvoiceDataDTO    $body
+ * @property InvoiceBodyDTO    $body
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
  */
@@ -53,7 +52,6 @@ class Expense extends BaseModel
         'issue_date',
         'status',
         'number',
-        'numbering_template_id',
         'total_net',
         'total_tax',
         'total_gross',
@@ -80,11 +78,6 @@ class Expense extends BaseModel
         'payment'       => InvoicePaymentCast::class,
         'options'       => InvoiceOptionsCast::class,
     ];
-
-    public function numberingTemplate(): BelongsTo
-    {
-        return $this->belongsTo(NumberingTemplate::class);
-    }
 
     protected static function newFactory()
     {

@@ -10,11 +10,24 @@ use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Expense\Requests\StoreExpenseRequest;
 use App\Domain\Expense\Requests\UpdateExpenseRequest;
+use App\Domain\Expense\Requests\UploadExpenseOcrRequest;
 use App\Domain\Expense\Resources\ExpenseResource;
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ExpensesExport;
 use App\Domain\Export\Services\ExportService;
+use App\Domain\Financial\DTOs\InvoiceBodyDTO;
+use App\Domain\Financial\DTOs\InvoiceBuyerDTO;
+use App\Domain\Financial\DTOs\InvoiceExchangeDTO;
+use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
+use App\Domain\Financial\DTOs\InvoicePaymentDTO;
+use App\Domain\Financial\DTOs\InvoiceSellerDTO;
+use App\Domain\Financial\Enums\InvoiceStatus;
+use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Financial\Enums\PaymentMethod;
+use App\Domain\Financial\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
+use Brick\Math\BigDecimal;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,7 +48,7 @@ class ExpenseController extends Controller
     public function __construct()
     {
         $this->modelClass  = Expense::class;
-        $this->defaultWith = ['numberingTemplate'];
+        $this->defaultWith = [];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['number', 'type', 'status'])),
@@ -83,8 +96,6 @@ class ExpenseController extends Controller
 
     public function show(Expense $expense): ExpenseResource
     {
-        $expense->load('numberingTemplate');
-
         return new ExpenseResource($expense);
     }
 
@@ -139,5 +150,35 @@ class ExpenseController extends Controller
             $config,
             'expenses.xlsx'
         );
+    }
+
+    /**
+     * Upload files for OCR and create empty expenses for each file.
+     */
+    public function uploadForOcr(UploadExpenseOcrRequest $request): AnonymousResourceCollection|JsonResponse
+    {
+        $createdExpenses = [];
+
+        foreach ($request->file('files') as $file) {
+            $expense = Expense::create([
+                'type'                  => InvoiceType::Basic,
+                'issue_date'            => Carbon::now(),
+                'status'                => InvoiceStatus::OCR_PROCESSING,
+                'number'                => '',
+                'total_net'             => BigDecimal::of('0'),
+                'total_tax'             => BigDecimal::of('0'),
+                'total_gross'           => BigDecimal::of('0'),
+                'currency'              => 'PLN',
+                'exchange_rate'         => BigDecimal::of('1.0'),
+                'seller'                => new InvoiceSellerDTO(),
+                'buyer'                 => new InvoiceBuyerDTO(),
+                'body'                  => new InvoiceBodyDTO([], [], new InvoiceExchangeDTO('PLN')),
+                'payment'               => new InvoicePaymentDTO(PaymentStatus::PENDING, null, null, null, PaymentMethod::BANK_TRANSFER),
+                'options'               => new InvoiceOptionsDTO(),
+            ]);
+            $createdExpenses[] = $expense;
+        }
+
+        return ExpenseResource::collection(collect($createdExpenses));
     }
 }
