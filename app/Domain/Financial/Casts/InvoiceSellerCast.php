@@ -1,13 +1,18 @@
 <?php
 
-namespace App\Domain\Invoice\Casts;
+namespace App\Domain\Financial\Casts;
 
-use App\Domain\Invoice\DTOs\InvoiceBuyerDTO;
+use App\Domain\Financial\DTOs\InvoiceSellerDTO;
 use App\Domain\Invoice\Models\Invoice;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
-class InvoiceBuyerCast implements CastsAttributes
+class InvoiceSellerCast implements CastsAttributes
 {
+    /**
+     * Cast the given value.
+     *
+     * @return InvoiceSellerDTO
+     */
     public function get($model, string $key, $value, array $attributes)
     {
         /** @var Invoice $model */
@@ -19,16 +24,21 @@ class InvoiceBuyerCast implements CastsAttributes
 
         $data = json_decode($value, true);
 
-        return InvoiceBuyerDTO::fromArray($data);
+        return InvoiceSellerDTO::fromArray($data);
     }
 
+    /**
+     * Prepare the given value for storage.
+     *
+     * @return string|null
+     */
     public function set($model, string $key, $value, array $attributes)
     {
         if (is_null($value)) {
             return null;
         }
 
-        if ($value instanceof InvoiceBuyerDTO) {
+        if ($value instanceof InvoiceSellerDTO) {
             return $value->toJson();
         }
 

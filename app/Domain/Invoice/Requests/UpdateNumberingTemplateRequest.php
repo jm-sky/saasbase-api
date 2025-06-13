@@ -2,7 +2,7 @@
 
 namespace App\Domain\Invoice\Requests;
 
-use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;

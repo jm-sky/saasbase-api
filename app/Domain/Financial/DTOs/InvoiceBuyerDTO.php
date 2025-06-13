@@ -1,20 +1,10 @@
 <?php
 
-namespace App\Domain\Invoice\DTOs;
+namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-/**
- * @property ?string $contractorId
- * @property ?string $contractorType
- * @property ?string $name
- * @property ?string $taxId
- * @property ?string $address
- * @property ?string $country
- * @property ?string $iban
- * @property ?string $email
- */
-class InvoiceSellerDTO extends BaseDataDTO
+class InvoiceBuyerDTO extends BaseDataDTO
 {
     public function __construct(
         public ?string $name = null,

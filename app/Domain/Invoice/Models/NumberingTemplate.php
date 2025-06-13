@@ -3,7 +3,7 @@
 namespace App\Domain\Invoice\Models;
 
 use App\Domain\Common\Models\BaseModel;
-use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Database\Factories\NumberingTemplateFactory;

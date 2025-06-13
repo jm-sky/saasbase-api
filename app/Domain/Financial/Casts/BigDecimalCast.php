@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Invoice\Casts;
+namespace App\Domain\Financial\Casts;
 
 use Brick\Math\BigDecimal;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;

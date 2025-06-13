@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Invoice\Models\NumberingTemplate;
 use Illuminate\Database\Eloquent\Factories\Factory;

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
+use Tests\Traits\WithCountries;
 
 /**
  * @internal
@@ -19,8 +20,8 @@ use Tests\Traits\WithAuthenticatedUser;
 class ContractorAddressControllerTest extends TestCase
 {
     use RefreshDatabase;
-
     use WithAuthenticatedUser;
+    use WithCountries;
 
     private Tenant $tenant;
 
@@ -34,6 +35,7 @@ class ContractorAddressControllerTest extends TestCase
         $this->tenant     = Tenant::factory()->create();
         $this->contractor = Contractor::factory()->create(['tenant_id' => $this->tenant->id]);
 
+        $this->seedCountries();
         $this->authenticateUser($this->tenant);
     }
 
@@ -65,7 +67,7 @@ class ContractorAddressControllerTest extends TestCase
             'street'      => '123 Main St',
             'city'        => 'Test City',
             'postalCode'  => '12345',
-            'country'     => 'US',
+            'country'     => self::SECONDARY_COUNTRY,
             'tenantId'    => $this->tenant->id,
             'building'    => 'Building A',
             'flat'        => '42',
@@ -142,7 +144,7 @@ class ContractorAddressControllerTest extends TestCase
             'street'      => '456 Updated St',
             'city'        => 'Updated City',
             'postalCode'  => '54321',
-            'country'     => 'CA',
+            'country'     => self::SECONDARY_COUNTRY,
             'tenantId'    => $this->tenant->id,
             'building'    => 'Building B',
             'flat'        => '24',
@@ -187,7 +189,7 @@ class ContractorAddressControllerTest extends TestCase
             'street'     => '456 Updated St',
             'city'       => 'Updated City',
             'postalCode' => '54321',
-            'country'    => 'CA',
+            'country'    => self::SECONDARY_COUNTRY,
             'tenantId'   => $this->tenant->id,
             'type'       => AddressType::CORRESPONDENCE->value,
         ];

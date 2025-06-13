@@ -6,7 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Products\Enums\ProductType;

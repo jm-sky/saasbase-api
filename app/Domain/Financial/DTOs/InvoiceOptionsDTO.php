@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Invoice\DTOs;
+namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 

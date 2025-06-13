@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Invoice\Models;
+namespace App\Domain\Expense\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Traits\IsSearchable;
@@ -20,7 +20,7 @@ use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
-use Database\Factories\InvoiceFactory;
+use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InvoiceType       $type
  * @property InvoiceStatus     $status
  * @property string            $number
- * @property string            $numbering_template_id
  * @property BigDecimal        $total_net
  * @property BigDecimal        $total_tax
  * @property BigDecimal        $total_gross
@@ -42,7 +41,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
  */
-class Invoice extends BaseModel
+class Expense extends BaseModel
 {
     use SoftDeletes;
     use BelongsToTenant;
@@ -89,6 +88,6 @@ class Invoice extends BaseModel
 
     protected static function newFactory()
     {
-        return InvoiceFactory::new();
+        return ExpenseFactory::new();
     }
 }

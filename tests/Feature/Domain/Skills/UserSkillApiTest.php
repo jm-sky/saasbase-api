@@ -3,19 +3,20 @@
 namespace Tests\Feature\Domain\Skills;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(UserSkillController::class)]
 class UserSkillApiTest extends TestCase
 {
     use RefreshDatabase;
@@ -33,14 +34,12 @@ class UserSkillApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
         $this->skill  = Skill::factory()->create();
+        $this->user   = $this->authenticateUser($this->tenant);
     }
 
     public function testCanListUserSkills(): void
     {
-        $this->markTestSkipped('Need to fix skill relationship loading in UserSkillResource');
-
         UserSkill::factory()
             ->count(3)
             ->create([
@@ -59,22 +58,14 @@ class UserSkillApiTest extends TestCase
                         'id',
                         'userId',
                         'skillId',
+                        'name',
+                        'category',
+                        'description',
                         'level',
                         'acquiredAt',
                         'createdAt',
                         'updatedAt',
-                        'skill' => [
-                            'id',
-                            'name',
-                            'category',
-                        ],
                     ],
-                ],
-                'meta' => [
-                    'currentPage',
-                    'lastPage',
-                    'perPage',
-                    'total',
                 ],
             ])
         ;
@@ -82,8 +73,6 @@ class UserSkillApiTest extends TestCase
 
     public function testCanCreateUserSkill(): void
     {
-        $this->markTestSkipped('Need to fix skill relationship loading in UserSkillResource');
-
         $userSkillData = [
             'skillId'    => $this->skill->id,
             'level'      => 3,
@@ -98,19 +87,19 @@ class UserSkillApiTest extends TestCase
                     'id',
                     'userId',
                     'skillId',
+                    'name',
+                    'category',
+                    'description',
                     'level',
                     'acquiredAt',
                     'createdAt',
                     'updatedAt',
-                    'skill' => [
-                        'id',
-                        'name',
-                        'category',
-                    ],
                 ],
             ])
             ->assertJson([
                 'data' => [
+                    'userId'     => $this->user->id,
+                    'skillId'    => $this->skill->id,
                     'level'      => $userSkillData['level'],
                     'acquiredAt' => $userSkillData['acquiredAt'],
                 ],
@@ -146,8 +135,6 @@ class UserSkillApiTest extends TestCase
 
     public function testCanShowUserSkill(): void
     {
-        $this->markTestSkipped('Need to fix route model binding for UserSkill');
-
         $userSkill = UserSkill::factory()->create([
             'user_id'  => $this->user->id,
             'skill_id' => $this->skill->id,
@@ -161,15 +148,13 @@ class UserSkillApiTest extends TestCase
                     'id',
                     'userId',
                     'skillId',
+                    'name',
+                    'category',
+                    'description',
                     'level',
                     'acquiredAt',
                     'createdAt',
                     'updatedAt',
-                    'skill' => [
-                        'id',
-                        'name',
-                        'category',
-                    ],
                 ],
             ])
             ->assertJson([
@@ -184,8 +169,6 @@ class UserSkillApiTest extends TestCase
 
     public function testCanUpdateUserSkill(): void
     {
-        $this->markTestSkipped('Need to fix route model binding for UserSkill');
-
         $userSkill = UserSkill::factory()->create([
             'user_id'  => $this->user->id,
             'skill_id' => $this->skill->id,
@@ -204,15 +187,13 @@ class UserSkillApiTest extends TestCase
                     'id',
                     'userId',
                     'skillId',
+                    'name',
+                    'category',
+                    'description',
                     'level',
                     'acquiredAt',
                     'createdAt',
                     'updatedAt',
-                    'skill' => [
-                        'id',
-                        'name',
-                        'category',
-                    ],
                 ],
             ])
             ->assertJson([
@@ -232,8 +213,6 @@ class UserSkillApiTest extends TestCase
 
     public function testCanDeleteUserSkill(): void
     {
-        $this->markTestSkipped('Need to fix route model binding for UserSkill');
-
         $userSkill = UserSkill::factory()->create([
             'user_id'  => $this->user->id,
             'skill_id' => $this->skill->id,

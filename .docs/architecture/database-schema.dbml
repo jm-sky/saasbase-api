@@ -65,18 +65,18 @@ Table office_tenant_relations {
   updated_at timestamp
 }
 
-// Exchanges
-Table exchanges {
-  id ulid [pk]
-  name varchar
-  currency varchar
-  created_at timestamp
-  updated_at timestamp
+// Currencies
+Table currencies {
+  code string [pk, note: ISO-4217 currency code]
+  name string
+  symbol string
 }
 
 // Exchange Rates
 Table exchange_rates {
   id ulid [pk]
+  base_currency [note: base currency ISO-4217 code, default: 'PL', ref: > currencies.code]
+  currency string [note: ISO-4217 code, ref: > currencies.code]
   date date
   rate decimal
   table varchar [note: 'Table name of the rate i.e. A']

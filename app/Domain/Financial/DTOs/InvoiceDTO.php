@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Invoice\DTOs;
+namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Invoice\Enums\InvoiceStatus;
-use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Financial\Enums\InvoiceStatus;
+use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Models\Invoice;
 
 /**

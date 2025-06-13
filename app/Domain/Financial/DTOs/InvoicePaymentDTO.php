@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Domain\Invoice\DTOs;
+namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Invoice\Enums\InvoicePaymentMethod;
-use App\Domain\Invoice\Enums\InvoicePaymentStatus;
+use App\Domain\Financial\Enums\PaymentMethod;
+use App\Domain\Financial\Enums\PaymentStatus;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 
 /**
- * @property InvoicePaymentStatus $status
- * @property ?Carbon              $dueDate
- * @property ?Carbon              $paidDate
- * @property ?BigDecimal          $paidAmount
- * @property InvoicePaymentMethod $method
- * @property ?string              $reference
- * @property ?string              $terms
- * @property ?string              $notes
+ * @property PaymentStatus $status
+ * @property ?Carbon       $dueDate
+ * @property ?Carbon       $paidDate
+ * @property ?BigDecimal   $paidAmount
+ * @property PaymentMethod $method
+ * @property ?string       $reference
+ * @property ?string       $terms
+ * @property ?string       $notes
  */
 class InvoicePaymentDTO extends BaseDataDTO
 {
     public function __construct(
-        public InvoicePaymentStatus $status,
+        public PaymentStatus $status,
         public ?Carbon $dueDate,
         public ?Carbon $paidDate,
         public ?BigDecimal $paidAmount,
-        public InvoicePaymentMethod $method = InvoicePaymentMethod::BANK_TRANSFER,
+        public PaymentMethod $method = PaymentMethod::BANK_TRANSFER,
         public ?string $reference = null,
         public ?string $terms = null,
         public ?string $notes = null,
@@ -49,11 +49,11 @@ class InvoicePaymentDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            status: InvoicePaymentStatus::from($data['status']),
+            status: PaymentStatus::from($data['status']),
             dueDate: isset($data['dueDate']) ? Carbon::parse($data['dueDate']) : null,
             paidDate: isset($data['paidDate']) ? Carbon::parse($data['paidDate']) : null,
             paidAmount: isset($data['paidAmount']) ? BigDecimal::of($data['paidAmount']) : null,
-            method: InvoicePaymentMethod::from($data['method']),
+            method: PaymentMethod::from($data['method']),
             reference: isset($data['reference']) ? $data['reference'] : null,
             terms: isset($data['terms']) ? $data['terms'] : null,
             notes: $data['notes'] ?? null,

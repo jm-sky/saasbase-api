@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Invoice\Enums;
+namespace App\Domain\Financial\Enums;
 
-enum InvoicePaymentMethod: string
+enum PaymentMethod: string
 {
     case BANK_TRANSFER = 'bankTransfer';
     case CASH          = 'cash';

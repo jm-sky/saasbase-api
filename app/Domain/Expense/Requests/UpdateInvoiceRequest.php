@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\Invoice\Requests;
+namespace App\Domain\Expense\Requests;
 
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class UpdateInvoiceRequest extends BaseFormRequest
+class UpdateExpenseRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
@@ -20,7 +20,6 @@ class UpdateInvoiceRequest extends BaseFormRequest
             'issue_date'            => ['sometimes', 'date'],
             'status'                => ['sometimes', 'string'],
             'number'                => ['sometimes', 'string'],
-            'numbering_template_id' => ['sometimes', 'string', 'exists:numbering_templates,id'],
             'total_net'             => ['sometimes', 'numeric'],
             'total_tax'             => ['sometimes', 'numeric'],
             'total_gross'           => ['sometimes', 'numeric'],

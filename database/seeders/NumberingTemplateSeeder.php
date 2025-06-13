@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Invoice\Enums\InvoiceType;
+use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Tenant\Models\Tenant;

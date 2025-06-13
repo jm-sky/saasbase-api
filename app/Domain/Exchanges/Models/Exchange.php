@@ -2,10 +2,10 @@
 
 namespace App\Domain\Exchanges\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Exchange extends Model
+class Exchange extends BaseModel
 {
     protected $fillable = [
         'name',

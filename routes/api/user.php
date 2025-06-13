@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Auth\Controllers\ApiKeyController;
 use App\Domain\Auth\Controllers\MeController;
 use App\Domain\Auth\Controllers\NotificationController;
 use App\Domain\Auth\Controllers\UserIdentityController;
@@ -68,6 +69,9 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
         Route::delete('/{device}', [TrustedDeviceController::class, 'destroy']);
         Route::delete('/', [TrustedDeviceController::class, 'destroyAll']);
     });
+
+    Route::apiResource('api-keys', ApiKeyController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::post('api-keys/{apiKey}/revoke', [ApiKeyController::class, 'revoke'])->name('api-keys.revoke');
 
     // Security events routes
     Route::prefix('security-events')->group(function () {

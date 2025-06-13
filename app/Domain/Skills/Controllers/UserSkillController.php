@@ -3,8 +3,6 @@
 namespace App\Domain\Skills\Controllers;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Skills\Models\Skill;
-use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Skills\Requests\StoreUserSkillRequest;
 use App\Domain\Skills\Requests\UpdateUserSkillRequest;
 use App\Domain\Skills\Resources\UserSkillResource;
@@ -22,85 +20,85 @@ class UserSkillController extends Controller
         $user = Auth::user();
 
         // Use the "skills" relation with pivot data and exclude soft-deleted records
-        $skills = $user->skills()
-            ->withPivot(['level', 'acquired_at'])
-            ->with('skill')
-            ->get()
-        ;
+        $skills = $user->skills()->get();
 
         return UserSkillResource::collection($skills);
     }
 
-    public function store(StoreUserSkillRequest $request): UserSkillResource
+    public function store(StoreUserSkillRequest $request): JsonResponse
     {
         $data = $request->validated();
 
         /** @var User $user */
         $user = Auth::user();
 
-        // Create a new UserSkill model
-        $userSkill = new UserSkill([
-            'user_id'     => $user->id,
+        $userSkill = $user->userSkills()->create([
             'skill_id'    => $data['skill_id'],
             'level'       => $data['level'],
             'acquired_at' => $data['acquired_at'] ?? null,
         ]);
 
-        $userSkill->save();
-        $userSkill->load(['user', 'skill']);
+        $skill = $user->skills()->find($userSkill->skill_id);
 
-        return new UserSkillResource($userSkill);
+        return (new UserSkillResource($skill))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED)
+        ;
     }
 
-    public function show(UserSkill $userSkill): UserSkillResource
+    public function show(string $userSkillId): UserSkillResource
     {
         /** @var User $user */
         $user = Auth::user();
 
+        $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
+
         // Check if the user skill belongs to the authenticated user
-        if ($userSkill->user_id !== $user->id) {
+        if (!$skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
-        $userSkill->load(['user', 'skill']);
-
-        return new UserSkillResource($userSkill);
+        return new UserSkillResource($skill);
     }
 
-    public function update(UpdateUserSkillRequest $request, UserSkill $userSkill): UserSkillResource
+    public function update(UpdateUserSkillRequest $request, string $userSkillId): UserSkillResource
     {
         /** @var User $user */
         $user = Auth::user();
 
+        $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
+
         // Check if the user skill belongs to the authenticated user
-        if ($userSkill->user_id !== $user->id) {
+        if (!$skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
         $data = $request->validated();
 
         // Update the pivot data
-        $userSkill->update([
+        $skill->pivot->update([
             'level'       => $data['level'],
             'acquired_at' => $data['acquired_at'] ?? null,
         ]);
 
-        $userSkill->load(['user', 'skill']);
+        $skill->refresh();
 
-        return new UserSkillResource($userSkill);
+        return new UserSkillResource($skill);
     }
 
-    public function destroy(UserSkill $userSkill): JsonResponse
+    public function destroy(string $userSkillId): JsonResponse
     {
         /** @var User $user */
         $user = Auth::user();
 
+        $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
+
         // Check if the user skill belongs to the authenticated user
-        if ($userSkill->user_id !== $user->id) {
+        if (!$skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
-        $userSkill->delete();
+        $skill->pivot->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

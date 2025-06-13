@@ -2,7 +2,7 @@
 
 namespace Database\Factories\DTOs;
 
-use App\Domain\Invoice\DTOs\InvoiceBuyerDTO;
+use App\Domain\Financial\DTOs\InvoiceBuyerDTO;
 
 class InvoiceBuyerDTOFactory extends DTOFactory
 {

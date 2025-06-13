@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Invoice\Enums;
+namespace App\Domain\Financial\Enums;
 
-enum InvoicePaymentStatus: string
+enum PaymentStatus: string
 {
     case PENDING   = 'pending';
     case PAID      = 'paid';

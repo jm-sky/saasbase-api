@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
+use Tests\Traits\WithFakeStorage;
 
 /**
  * @internal
@@ -23,6 +24,7 @@ class FeedControllerTest extends TestCase
 {
     use RefreshDatabase;
     use WithAuthenticatedUser;
+    use WithFakeStorage;
 
     private string $baseUrl = '/api/v1/feeds';
 
@@ -88,13 +90,47 @@ class FeedControllerTest extends TestCase
         ;
     }
 
-    public function testCanCreateFeed(): void
+    public function testCanCreateFeedWithoutAttachment(): void
     {
-        \Mockery::mock(Feed::class)->shouldReceive('addMedia')->andReturnSelf();
+        $response = $this->postJson($this->baseUrl, [
+            'title'       => 'Test Feed',
+            'content'     => 'Test Content',
+        ]);
 
-        $this->markTestSkipped('Need to fix feed creation functionality');
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'tenantId',
+                    'userId',
+                    'title',
+                    'content',
+                    'commentsCount',
+                    'createdAt',
+                    'updatedAt',
+                    'creator' => [
+                        'id',
+                        'name',
+                        'email',
+                    ],
+                ],
+            ])
+        ;
 
-        $file = UploadedFile::fake()->create('image.jpg', 100);
+        Tenant::bypassTenant($this->tenant->id, function () {
+            $this->assertDatabaseHas('feeds', [
+                'tenant_id' => $this->tenant->id,
+                'title'     => 'Test Feed',
+                'content'   => 'Test Content',
+            ]);
+        });
+    }
+
+    public function testCanCreateFeedWithAttachment(): void
+    {
+        $this->fakeStorage('media');
+
+        $file = UploadedFile::fake()->image('image.jpg', 500, 500)->size(512);
 
         $response = $this->postJson($this->baseUrl, [
             'title'       => 'Test Feed',
@@ -128,9 +164,11 @@ class FeedControllerTest extends TestCase
                 'title'     => 'Test Feed',
                 'content'   => 'Test Content',
             ]);
-        });
 
-        $this->assertTrue(Storage::disk('local')->exists('feeds/attachments/' . $file->hashName()));
+            $feed = Feed::first();
+
+            $this->assertFileExists($feed->getFirstMedia('attachments')->getPath());
+        });
     }
 
     public function testCanShowFeed(): void

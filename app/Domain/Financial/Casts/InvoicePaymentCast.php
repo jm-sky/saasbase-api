@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\Invoice\Casts;
+namespace App\Domain\Financial\Casts;
 
-use App\Domain\Invoice\DTOs\InvoiceBodyDTO;
+use App\Domain\Financial\DTOs\InvoicePaymentDTO;
 use App\Domain\Invoice\Models\Invoice;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
-class InvoiceBodyCast implements CastsAttributes
+class InvoicePaymentCast implements CastsAttributes
 {
     public function get($model, string $key, $value, array $attributes)
     {
@@ -19,7 +19,7 @@ class InvoiceBodyCast implements CastsAttributes
 
         $data = json_decode($value, true);
 
-        return InvoiceBodyDTO::fromArray($data);
+        return InvoicePaymentDTO::fromArray($data);
     }
 
     public function set($model, string $key, $value, array $attributes)
@@ -28,7 +28,7 @@ class InvoiceBodyCast implements CastsAttributes
             return null;
         }
 
-        if ($value instanceof InvoiceBodyDTO) {
+        if ($value instanceof InvoicePaymentDTO) {
             return $value->toJson();
         }
 

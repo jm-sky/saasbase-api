@@ -40,7 +40,6 @@ class CountryControllerTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
-                        'id',
                         'name',
                         'code',
                         'code3',

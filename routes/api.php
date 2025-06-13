@@ -1,11 +1,9 @@
 <?php
 
-use App\Domain\Auth\Controllers\ApiKeyController;
 use App\Domain\Auth\Controllers\AuthController;
 use App\Domain\Calendar\Http\Controllers\EventController;
 use App\Domain\Common\Controllers\ActivityLogController;
 use App\Domain\Common\Controllers\TagController;
-use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Rights\Controllers\RoleController;
 use App\Domain\Users\Controllers\PublicUserController;
 use App\Http\Controllers\HealthController;
@@ -53,20 +51,18 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('users', PublicUserController::class)->only(['index', 'show']);
             Route::get('users/search', [PublicUserController::class, 'search'])->name('users.search');
 
-            require __DIR__ . '/api/projects.php';
             require __DIR__ . '/api/contractors.php';
+            require __DIR__ . '/api/projects.php';
             require __DIR__ . '/api/products.php';
+            require __DIR__ . '/api/expenses.php';
             require __DIR__ . '/api/invoices.php';
             require __DIR__ . '/api/subscriptions.php';
             require __DIR__ . '/api/shared.php';
 
             Route::apiResource('tags', TagController::class)->only(['index']);
-            Route::apiResource('invoices', InvoiceController::class);
-            Route::get('invoices/search', [InvoiceController::class, 'search'])->name('invoices.search');
             Route::apiResource('events', EventController::class);
             Route::apiResource('roles', RoleController::class);
-            Route::apiResource('api-keys', ApiKeyController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
-            Route::post('api-keys/{apiKey}/revoke', [ApiKeyController::class, 'revoke'])->name('api-keys.revoke');
+
             Route::get('/logs', [ActivityLogController::class, 'index']);
 
             Route::apiResource('contacts', App\Domain\Common\Controllers\ContactController::class);

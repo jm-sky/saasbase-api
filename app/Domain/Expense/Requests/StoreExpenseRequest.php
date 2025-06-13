@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\Invoice\Requests;
+namespace App\Domain\Expense\Requests;
 
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class StoreInvoiceRequest extends BaseFormRequest
+class StoreExpenseRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
@@ -20,7 +20,6 @@ class StoreInvoiceRequest extends BaseFormRequest
             'issueDate'             => ['required', 'date'],
             'status'                => ['required', 'string'],
             'number'                => ['required', 'string'],
-            'numberingTemplateId'   => ['required', 'string', 'exists:numbering_templates,id'],
             'totalNet'              => ['required', 'numeric'],
             'totalTax'              => ['required', 'numeric'],
             'totalGross'            => ['required', 'numeric'],

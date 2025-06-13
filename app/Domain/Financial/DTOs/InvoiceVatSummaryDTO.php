@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domain\Invoice\DTOs;
+namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Invoice\Enums\VatRate;
+use App\Domain\Financial\Enums\VatRate;
 use Brick\Math\BigDecimal;
 
 /**

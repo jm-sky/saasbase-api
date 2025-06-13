@@ -2,8 +2,8 @@
 
 namespace Database\Factories\DTOs;
 
-use App\Domain\Invoice\DTOs\InvoiceLineDTO;
-use App\Domain\Invoice\Enums\VatRate;
+use App\Domain\Financial\DTOs\InvoiceLineDTO;
+use App\Domain\Financial\Enums\VatRate;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Str;
 

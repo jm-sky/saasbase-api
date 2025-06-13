@@ -2,7 +2,7 @@
 
 namespace Database\Factories\DTOs;
 
-use App\Domain\Invoice\DTOs\InvoiceBodyDTO;
+use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 
 class InvoiceBodyDTOFactory extends DTOFactory
 {
@@ -37,8 +37,8 @@ class InvoiceBodyDTOFactory extends DTOFactory
         $vatSummaryDTOs = [];
 
         foreach ($vatSummary as $summary) {
-            $vatSummaryDTOs[] = new \App\Domain\Invoice\DTOs\InvoiceVatSummaryDTO(
-                \App\Domain\Invoice\Enums\VatRate::from($summary['vatRate']),
+            $vatSummaryDTOs[] = new \App\Domain\Financial\DTOs\InvoiceVatSummaryDTO(
+                \App\Domain\Financial\Enums\VatRate::from($summary['vatRate']),
                 \Brick\Math\BigDecimal::of($summary['net']),
                 \Brick\Math\BigDecimal::of($summary['vat']),
                 \Brick\Math\BigDecimal::of($summary['gross'])

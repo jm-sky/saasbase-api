@@ -14,7 +14,7 @@ return new class() extends Migration {
             $table->string('code', 2)->primary();
             $table->string('name');
             $table->string('code3', 3)->unique();
-            $table->string('numeric_code', 3)->unique();
+            $table->string('numeric_code', 3)->nullable();
             $table->string('currency_code', 3)->nullable();
             $table->string('currency_symbol', 20)->nullable();
             $table->string('phone_code', 10)->nullable();

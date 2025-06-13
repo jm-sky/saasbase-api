@@ -2,7 +2,7 @@
 
 namespace Database\Factories\DTOs;
 
-use App\Domain\Invoice\DTOs\InvoiceExchangeDTO;
+use App\Domain\Financial\DTOs\InvoiceExchangeDTO;
 use Brick\Math\BigDecimal;
 
 class InvoiceExchangeDTOFactory extends DTOFactory

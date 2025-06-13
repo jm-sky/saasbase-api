@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Tenant\Models\Tenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\DTOs\InvoiceBodyDTOFactory;
@@ -16,11 +16,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<Invoice>
+ * @extends Factory<Expense>
  */
-class InvoiceFactory extends Factory
+class ExpenseFactory extends Factory
 {
-    protected $model = Invoice::class;
+    protected $model = Expense::class;
 
     public function definition(): array
     {
@@ -33,8 +33,7 @@ class InvoiceFactory extends Factory
             'tenant_id'             => Tenant::factory(),
             'type'                  => fake()->randomElement(InvoiceType::cases()),
             'status'                => fake()->randomElement(InvoiceStatus::cases()),
-            'number'                => fake()->unique()->numerify('2025/####'),
-            'numbering_template_id' => null, // Will be set when creating
+            'number'                => fake()->unique()->numerify('INV-####'),
             'total_net'             => $totalNet,
             'total_tax'             => $totalTax,
             'total_gross'           => $totalGross,
