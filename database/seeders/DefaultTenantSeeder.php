@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 
 class DefaultTenantSeeder extends Seeder
 {
-    protected string $botUserId = 'd99468d6-2153-5493-95dc-7cf06043f471';
+    protected string $botUserId = '01JXMGRDQVE4FWTZNE1WR9K8G1';
 
     public function run(): void
     {
