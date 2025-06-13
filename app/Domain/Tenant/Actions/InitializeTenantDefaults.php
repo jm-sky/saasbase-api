@@ -5,6 +5,7 @@ namespace App\Domain\Tenant\Actions;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\DefaultMeasurementUnit;
 use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Common\Models\Tag;
 use App\Domain\Projects\Models\DefaultProjectStatus;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
@@ -17,11 +18,17 @@ use Illuminate\Support\Str;
 
 class InitializeTenantDefaults
 {
+    public static array $defaultTags = [
+        'VIP',
+        'Test',
+    ];
+
     public function execute(Tenant $tenant, ?User $owner = null): void
     {
         $this->createRootOrganizationUnit($tenant, $owner);
         $this->seedDefaultMeasurementUnits($tenant);
         $this->createSubscription($tenant);
+        $this->seedDefaultTags($tenant);
         // 3. (Optional) Add more default setup here
     }
 
@@ -94,6 +101,17 @@ class InitializeTenantDefaults
                 'color'      => $status->color,
                 'sort_order' => $status->sort_order,
                 'is_default' => $status->is_default,
+            ]);
+        }
+    }
+
+    public function seedDefaultTags(Tenant $tenant): void
+    {
+        foreach (self::$defaultTags as $tag) {
+            Tag::withoutTenant()->firstOrCreate([
+                'tenant_id' => $tenant->id,
+                'name'      => $tag,
+                'slug'      => Str::slug($tag),
             ]);
         }
     }

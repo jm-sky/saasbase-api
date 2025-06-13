@@ -59,7 +59,7 @@ Route::prefix('v1')->group(function () {
             require __DIR__ . '/api/subscriptions.php';
             require __DIR__ . '/api/shared.php';
 
-            Route::apiResource('tags', TagController::class)->only(['index']);
+            Route::apiResource('tags', TagController::class)->only(['index', 'store']);
             Route::apiResource('events', EventController::class);
             Route::apiResource('roles', RoleController::class);
 

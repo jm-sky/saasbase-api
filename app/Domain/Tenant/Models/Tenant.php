@@ -5,6 +5,7 @@ namespace App\Domain\Tenant\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Models\Tag;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
@@ -44,6 +45,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Carbon                         $updated_at
  * @property ?Carbon                        $deleted_at
  * @property ?User                          $owner
+ * @property Collection|Tag[]               $tags
  * @property Collection|Address[]           $addresses
  * @property Collection|BankAccount[]       $bankAccounts
  * @property Collection|Media[]             $media
@@ -154,6 +156,11 @@ class Tenant extends BaseModel implements HasMedia
     public function integrations(): HasMany
     {
         return $this->hasMany(TenantIntegration::class);
+    }
+
+    public function tags(): HasMany
+    {
+        return $this->hasMany(Tag::class);
     }
 
     public function contractors(): HasMany

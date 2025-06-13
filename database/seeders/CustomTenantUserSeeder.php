@@ -96,6 +96,7 @@ class CustomTenantUserSeeder extends Seeder
                 $initializer->createRootOrganizationUnit($tenant);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
+                $initializer->seedDefaultTags($tenant);
             });
 
             $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));
