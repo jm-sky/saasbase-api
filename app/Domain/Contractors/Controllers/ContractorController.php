@@ -41,6 +41,7 @@ class ContractorController extends Controller
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'vatId', 'taxId', 'regon', 'email', 'phone', 'description'])),
             AllowedFilter::custom('id', new AdvancedFilter()),
             AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('type', new AdvancedFilter(), 'type'),
             AllowedFilter::custom('taxId', new AdvancedFilter(), 'tax_id'),
             AllowedFilter::custom('vatId', new AdvancedFilter(), 'vat_id'),
             AllowedFilter::custom('regon', new AdvancedFilter(), 'regon'),
@@ -58,6 +59,7 @@ class ContractorController extends Controller
 
         $this->sorts = [
             'name',
+            'type',
             'email',
             'country',
             'isActive'  => 'is_active',

@@ -12,6 +12,10 @@ class InvoiceLineDTOFactory extends DTOFactory
 {
     public function make(): InvoiceLineDTO
     {
+        if (!VatRate::exists()) {
+            VatRate::factory()->count(3)->create();
+        }
+
         $quantity  = BigDecimal::of(fake()->randomFloat(2, 1, 10));
         $unitPrice = BigDecimal::of(fake()->randomFloat(2, 10, 100));
         $vatRate   = VatRateDTO::fromModel(VatRate::inRandomOrder()->first());

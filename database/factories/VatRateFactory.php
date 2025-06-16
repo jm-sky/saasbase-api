@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domain\Common\Enums\VatRateType;
 use App\Domain\Common\Models\VatRate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -15,10 +16,15 @@ class VatRateFactory extends Factory
 
     public function definition(): array
     {
+        $name = fake()->randomElement(['Standard', 'Reduced', 'Zero', 'Exempt']);
+        $rate = 'Zero' === $name ? 0 : fake()->randomElement([5, 8, 23]);
+
         return [
-            'id'   => Str::ulid()->toString(),
-            'name' => fake()->randomElement(['Standard', 'Reduced', 'Zero', 'Exempt']),
-            'rate' => fake()->randomElement([0, 5, 8, 23]),
+            'id'           => Str::ulid()->toString(),
+            'country_code' => 'PL',
+            'name'         => $name,
+            'type'         => $rate > 0 ? VatRateType::PERCENTAGE : VatRateType::ZERO_PERCENT,
+            'rate'         => $rate,
         ];
     }
 }

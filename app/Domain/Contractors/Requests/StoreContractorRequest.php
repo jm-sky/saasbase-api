@@ -2,7 +2,9 @@
 
 namespace App\Domain\Contractors\Requests;
 
+use App\Domain\Contractors\Enums\ContractorType;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class StoreContractorRequest extends BaseFormRequest
@@ -15,19 +17,23 @@ class StoreContractorRequest extends BaseFormRequest
     public function rules(): array
     {
         $rules = [
-            'contractor.tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
-            'contractor.name'        => ['required', 'string', 'max:255'],
-            'contractor.email'       => ['nullable', 'email', 'max:255'],
-            'contractor.phone'       => ['nullable', 'string', 'max:20'],
-            'contractor.website'     => ['nullable', 'string', 'max:255'],
-            'contractor.country'     => ['nullable', 'string', 'max:2', 'exists:countries,code'],
-            'contractor.vatId'       => ['nullable', 'string', 'max:20'],
-            'contractor.taxId'       => ['nullable', 'string', 'max:20'],
-            'contractor.regon'       => ['nullable', 'string', 'max:20'],
-            'contractor.description' => ['nullable', 'string'],
-            'contractor.isActive'    => ['boolean'],
-            'contractor.isBuyer'     => ['boolean'],
-            'contractor.isSupplier'  => ['boolean'],
+            'contractor.tenantId'         => ['required', 'ulid', 'exists:tenants,id'],
+            'contractor.name'             => ['required', 'string', 'max:255'],
+            'contractor.type'             => ['required', 'string', 'max:255', Rule::enum(ContractorType::class)],
+            'contractor.email'            => ['nullable', 'email', 'max:255'],
+            'contractor.phone'            => ['nullable', 'string', 'max:20'],
+            'contractor.website'          => ['nullable', 'string', 'max:255'],
+            'contractor.country'          => ['nullable', 'string', 'max:2', 'exists:countries,code'],
+            'contractor.vatId'            => ['nullable', 'string', 'max:20'],
+            'contractor.taxId'            => ['nullable', 'string', 'max:20'],
+            'contractor.regon'            => ['nullable', 'string', 'max:20'],
+            'contractor.description'      => ['nullable', 'string'],
+            'contractor.isActive'         => ['boolean'],
+            'contractor.isBuyer'          => ['boolean'],
+            'contractor.isSupplier'       => ['boolean'],
+            'contractor.edeliveryAddress' => ['nullable', 'string', 'max:255'],
+            'contractor.externalId'       => ['nullable', 'string', 'max:255'],
+            'contractor.sourceSystem'     => ['nullable', 'string', 'max:255'],
 
             'address'     => ['nullable', 'sometimes', 'array'],
             'bankAccount' => ['nullable', 'sometimes', 'array'],

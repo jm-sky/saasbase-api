@@ -15,6 +15,7 @@ use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Contractors\Enums\ContractorActivityType;
+use App\Domain\Contractors\Enums\ContractorType;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use App\Domain\Utils\Models\RegistryConfirmation;
 use Carbon\Carbon;
@@ -31,6 +32,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string                   $tenant_id
  * @property string                   $name
  * @property ?string                  $country
+ * @property ContractorType           $type
  * @property ?string                  $vat_id
  * @property ?string                  $tax_id
  * @property ?string                  $regon
@@ -41,6 +43,9 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property bool                     $is_active
  * @property bool                     $is_buyer
  * @property bool                     $is_supplier
+ * @property ?string                  $edelivery_address
+ * @property ?string                  $external_id
+ * @property ?string                  $source_system
  * @property Carbon                   $created_at
  * @property Carbon                   $updated_at
  * @property ?Carbon                  $deleted_at
@@ -67,6 +72,7 @@ class Contractor extends BaseModel implements HasMedia
     protected $fillable = [
         'tenant_id',
         'name',
+        'type',
         'email',
         'phone',
         'website',
@@ -78,9 +84,13 @@ class Contractor extends BaseModel implements HasMedia
         'is_active',
         'is_buyer',
         'is_supplier',
+        'edelivery_address',
+        'external_id',
+        'source_system',
     ];
 
     protected $casts = [
+        'type'        => ContractorType::class,
         'is_active'   => 'boolean',
         'is_buyer'    => 'boolean',
         'is_supplier' => 'boolean',
