@@ -3,6 +3,8 @@
 namespace App\Domain\Invoice\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Tag;
+use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Financial\Casts\BigDecimalCast;
 use App\Domain\Financial\Casts\InvoiceBodyCast;
@@ -41,6 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InvoiceBodyDTO    $body
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
+ * @property Tag[]             $tags
  */
 class Invoice extends BaseModel
 {
@@ -48,6 +51,7 @@ class Invoice extends BaseModel
     use BelongsToTenant;
     use IsSearchable;
     use HasShareTokens;
+    use HasTags;
 
     protected $fillable = [
         'type',

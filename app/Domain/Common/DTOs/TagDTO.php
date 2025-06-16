@@ -2,6 +2,7 @@
 
 namespace App\Domain\Common\DTOs;
 
+use App\Domain\Common\Enums\TagColor;
 use App\Domain\Common\Models\Tag;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -9,12 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Tag>
  *
- * @property ?string $id
- * @property string  $tenantId
- * @property string  $name
- * @property string  $slug
- * @property ?Carbon $createdAt
- * @property ?Carbon $updatedAt
+ * @property ?string  $id
+ * @property string   $tenantId
+ * @property string   $name
+ * @property string   $slug
+ * @property TagColor $color
+ * @property ?Carbon  $createdAt
+ * @property ?Carbon  $updatedAt
  */
 class TagDTO extends BaseDTO
 {
@@ -22,6 +24,7 @@ class TagDTO extends BaseDTO
         public readonly string $tenantId,
         public readonly string $name,
         public readonly string $slug,
+        public readonly TagColor $color,
         public readonly ?string $id = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
@@ -35,6 +38,7 @@ class TagDTO extends BaseDTO
             name: $model->name,
             slug: $model->slug,
             id: $model->id,
+            color: $model->color,
             tenantId: $model->tenant_id,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
@@ -48,6 +52,7 @@ class TagDTO extends BaseDTO
             slug: $data['slug'],
             id: $data['id'] ?? null,
             tenantId: $data['tenant_id'],
+            color: TagColor::from($data['color']),
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
         );
@@ -60,6 +65,7 @@ class TagDTO extends BaseDTO
             'tenantId'  => $this->tenantId,
             'name'      => $this->name,
             'slug'      => $this->slug,
+            'color'     => $this->color,
             'createdAt' => $this->createdAt?->toIso8601String(),
             'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];

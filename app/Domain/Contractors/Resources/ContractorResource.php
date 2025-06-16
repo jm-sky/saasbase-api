@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Resources;
 
 use App\Domain\Common\Resources\MediaResource;
+use App\Domain\Common\Resources\TagResource;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Utils\Resources\RegistryConfirmationResource;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class ContractorResource extends JsonResource
             'deletedAt'             => $this->deleted_at?->toIso8601String(),
             'logoUrl'               => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
             'logo'                  => $logoMedia ? new MediaResource($logoMedia) : null,
-            'tags'                  => method_exists($this->resource, 'getTagNames') ? $this->getTagNames() : [],
+            'tags'                  => TagResource::collection($this->tags),
             'registryConfirmations' => $this->registryConfirmations?->count() ? RegistryConfirmationResource::collection($this->registryConfirmations) : null,
         ];
     }

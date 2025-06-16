@@ -2,6 +2,7 @@
 
 namespace App\Domain\Expense\Resources;
 
+use App\Domain\Common\Resources\TagResource;
 use App\Domain\Expense\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,6 +36,7 @@ class ExpenseResource extends JsonResource
             'issueDate'           => $this->issue_date?->toDateString(),
             'createdAt'           => $this->created_at?->toIso8601String(),
             'updatedAt'           => $this->updated_at?->toIso8601String(),
+            'tags'                => TagResource::collection($this->tags),
         ];
     }
 }

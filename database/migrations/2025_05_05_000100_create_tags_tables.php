@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Common\Enums\TagColor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +13,7 @@ return new class() extends Migration {
             $table->ulid('tenant_id')->nullable();
             $table->string('name');
             $table->string('slug');
-            $table->jsonb('meta')->nullable();
+            $table->string('color')->default(TagColor::DEFAULT->value);
             $table->timestamps();
             $table->unique(['tenant_id', 'slug']);
         });

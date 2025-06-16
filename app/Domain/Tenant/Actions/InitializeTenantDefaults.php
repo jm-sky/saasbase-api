@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Actions;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Enums\TagColor;
 use App\Domain\Common\Models\DefaultMeasurementUnit;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\Tag;
@@ -19,8 +20,21 @@ use Illuminate\Support\Str;
 class InitializeTenantDefaults
 {
     public static array $defaultTags = [
-        'VIP',
-        'Test',
+        'VIP' => [
+            'color' => TagColor::DEFAULT,
+        ],
+        'Test' => [
+            'color' => TagColor::DEFAULT,
+        ],
+        'To Do' => [
+            'color' => TagColor::INFO,
+        ],
+        'Warning' => [
+            'color' => TagColor::DANGER,
+        ],
+        'Critical' => [
+            'color' => TagColor::DANGER_INTENSE,
+        ],
     ];
 
     public function execute(Tenant $tenant, ?User $owner = null): void
@@ -107,11 +121,13 @@ class InitializeTenantDefaults
 
     public function seedDefaultTags(Tenant $tenant): void
     {
-        foreach (self::$defaultTags as $tag) {
+        foreach (self::$defaultTags as $name => $meta) {
             Tag::withoutTenant()->firstOrCreate([
                 'tenant_id' => $tenant->id,
-                'name'      => $tag,
-                'slug'      => Str::slug($tag),
+                'name'      => $name,
+                'slug'      => Str::slug($name),
+            ], [
+                'color'     => $meta['color'],
             ]);
         }
     }

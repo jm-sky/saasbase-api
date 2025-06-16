@@ -3,6 +3,7 @@
 namespace App\Domain\Products\Resources;
 
 use App\Domain\Common\Resources\MediaResource;
+use App\Domain\Common\Resources\TagResource;
 use App\Domain\Products\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,7 +36,7 @@ class ProductResource extends JsonResource
             'updatedAt'    => $this->updated_at?->toIso8601String(),
             'deletedAt'    => $this->deleted_at?->toIso8601String(),
             'logo'         => $logoMedia ? new MediaResource($logoMedia) : null,
-            'tags'         => method_exists($this->resource, 'getTagNames') ? $this->getTagNames() : [],
+            'tags'         => TagResource::collection($this->tags),
             'unit'         => $this->whenLoaded('unit', fn () => new MeasurementUnitResource($this->unit)),
             'vatRate'      => $this->whenLoaded('vatRate', fn () => new VatRateResource($this->vatRate)),
         ];

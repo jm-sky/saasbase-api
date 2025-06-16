@@ -2,6 +2,7 @@
 
 namespace App\Domain\Invoice\Resources;
 
+use App\Domain\Common\Resources\TagResource;
 use App\Domain\Invoice\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -37,6 +38,7 @@ class InvoiceResource extends JsonResource
             'createdAt'           => $this->created_at?->toIso8601String(),
             'updatedAt'           => $this->updated_at?->toIso8601String(),
             'numberingTemplate'   => $this->whenLoaded('numberingTemplate', fn () => $this->numberingTemplate->toArray()),
+            'tags'                => TagResource::collection($this->tags),
         ];
     }
 }

@@ -3,9 +3,11 @@
 namespace App\Domain\Common\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Enums\TagColor;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Models\Tag;
+use App\Domain\Common\Requests\CreateTagRequest;
 use App\Domain\Common\Resources\TagResource;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Http\Controllers\Controller;
@@ -54,21 +56,43 @@ class TagController extends Controller
         ;
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(CreateTagRequest $request): JsonResponse
     {
         /** @var User $user */
         $user = Auth::user();
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:tags,name'],
-        ]);
 
         $tag = Tag::create([
             'tenant_id' => $user->tenant_id,
             'name'      => $request->name,
             'slug'      => Str::slug($request->name),
+            'color'     => $this->getTagColor($request->name, $request->color),
         ]);
 
         return response()->json(new TagResource($tag), Response::HTTP_CREATED);
+    }
+
+    protected function getTagColor(string $name, ?string $color): TagColor
+    {
+        if ($color) {
+            return TagColor::from($color);
+        }
+
+        if (Str::endsWith($name, '!!')) {
+            return TagColor::DANGER_INTENSE;
+        }
+
+        if (Str::endsWith($name, '??')) {
+            return TagColor::INFO_INTENSE;
+        }
+
+        if (Str::endsWith($name, '!')) {
+            return TagColor::DANGER;
+        }
+
+        if (Str::endsWith($name, '?')) {
+            return TagColor::INFO;
+        }
+
+        return TagColor::DEFAULT;
     }
 }
