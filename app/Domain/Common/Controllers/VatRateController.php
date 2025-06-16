@@ -41,7 +41,12 @@ class VatRateController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $rates = $this->getIndexPaginator($request);
+        $query = $this->getIndexQuery($request);
+
+        $query = $query->where('active', true);
+        $query = $query->where('valid_from', '<=', now());
+
+        $rates = $this->getIndexPaginator($request, query: $query);
 
         return VatRateResource::collection($rates['data'])
             ->additional(['meta' => $rates['meta']])

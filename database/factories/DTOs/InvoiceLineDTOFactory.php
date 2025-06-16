@@ -2,8 +2,9 @@
 
 namespace Database\Factories\DTOs;
 
+use App\Domain\Common\Models\VatRate;
 use App\Domain\Financial\DTOs\InvoiceLineDTO;
-use App\Domain\Financial\Enums\VatRate;
+use App\Domain\Financial\DTOs\VatRateDTO;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Str;
 
@@ -13,10 +14,10 @@ class InvoiceLineDTOFactory extends DTOFactory
     {
         $quantity  = BigDecimal::of(fake()->randomFloat(2, 1, 10));
         $unitPrice = BigDecimal::of(fake()->randomFloat(2, 10, 100));
-        $vatRate   = fake()->randomElement(VatRate::cases());
+        $vatRate   = VatRateDTO::fromModel(VatRate::inRandomOrder()->first());
 
         $totalNet   = $quantity->multipliedBy($unitPrice);
-        $totalVat   = $totalNet->multipliedBy($vatRate->rate() / 100);
+        $totalVat   = $totalNet->multipliedBy($vatRate->rate / 100);
         $totalGross = $totalNet->plus($totalVat);
 
         return new InvoiceLineDTO(

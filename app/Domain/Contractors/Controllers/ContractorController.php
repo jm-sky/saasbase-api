@@ -50,6 +50,8 @@ class ContractorController extends Controller
             AllowedFilter::custom('country', new AdvancedFilter()),
             AllowedFilter::custom('description', new AdvancedFilter()),
             AllowedFilter::custom('isActive', new AdvancedFilter(['is_active' => 'boolean']), 'is_active'),
+            AllowedFilter::custom('isBuyer', new AdvancedFilter(['is_buyer' => 'boolean']), 'is_buyer'),
+            AllowedFilter::custom('isSupplier', new AdvancedFilter(['is_supplier' => 'boolean']), 'is_supplier'),
             AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
             AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
         ];

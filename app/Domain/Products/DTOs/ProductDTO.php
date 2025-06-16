@@ -4,6 +4,7 @@ namespace App\Domain\Products\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Financial\DTOs\VatRateDTO;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;

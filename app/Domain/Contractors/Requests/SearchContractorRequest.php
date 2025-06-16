@@ -27,9 +27,11 @@ class SearchContractorRequest extends BaseFormRequest
             'filter.taxId'          => ['sometimes', new ValidAdvancedFilterRule('string')],
             'filter.notes'          => ['sometimes', new ValidAdvancedFilterRule('string')],
             'filter.isActive'       => ['sometimes', new ValidAdvancedFilterRule('boolean')],
+            'filter.isBuyer'        => ['sometimes', new ValidAdvancedFilterRule('boolean')],
+            'filter.isSupplier'     => ['sometimes', new ValidAdvancedFilterRule('boolean')],
             'filter.createdAt'      => ['sometimes', new ValidAdvancedFilterRule('date')],
             'filter.updatedAt'      => ['sometimes', new ValidAdvancedFilterRule('date')],
-            'sort'                  => ['sometimes', 'string', 'in:name,-name,email,-email,city,-city,country,-country,isActive,-isActive,createdAt,-createdAt,updatedAt,-updatedAt'],
+            'sort'                  => ['sometimes', 'string', 'in:name,-name,email,-email,city,-city,country,-country,isActive,-isActive,isBuyer,-isBuyer,isSupplier,-isSupplier,createdAt,-createdAt,updatedAt,-updatedAt'],
         ];
     }
 

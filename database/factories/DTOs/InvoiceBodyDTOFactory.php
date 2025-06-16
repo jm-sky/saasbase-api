@@ -3,6 +3,7 @@
 namespace Database\Factories\DTOs;
 
 use App\Domain\Financial\DTOs\InvoiceBodyDTO;
+use App\Domain\Financial\DTOs\VatRateDTO;
 
 class InvoiceBodyDTOFactory extends DTOFactory
 {
@@ -19,26 +20,27 @@ class InvoiceBodyDTOFactory extends DTOFactory
         $vatSummary = [];
 
         foreach ($lines as $line) {
-            $vatRate = $line->vatRate->value;
+            /** @var VatRateDTO $vatRate */
+            $vatRate = $line->vatRate;
 
-            if (!isset($vatSummary[$vatRate])) {
-                $vatSummary[$vatRate] = [
+            if (!isset($vatSummary[$vatRate->name])) {
+                $vatSummary[$vatRate->name] = [
                     'vatRate' => $vatRate,
                     'net'     => 0,
                     'vat'     => 0,
                     'gross'   => 0,
                 ];
             }
-            $vatSummary[$vatRate]['net'] += $line->totalNet->toFloat();
-            $vatSummary[$vatRate]['vat'] += $line->totalVat->toFloat();
-            $vatSummary[$vatRate]['gross'] += $line->totalGross->toFloat();
+            $vatSummary[$vatRate->name]['net'] += $line->totalNet->toFloat();
+            $vatSummary[$vatRate->name]['vat'] += $line->totalVat->toFloat();
+            $vatSummary[$vatRate->name]['gross'] += $line->totalGross->toFloat();
         }
 
         $vatSummaryDTOs = [];
 
         foreach ($vatSummary as $summary) {
             $vatSummaryDTOs[] = new \App\Domain\Financial\DTOs\InvoiceVatSummaryDTO(
-                \App\Domain\Financial\Enums\VatRate::from($summary['vatRate']),
+                $summary['vatRate'],
                 \Brick\Math\BigDecimal::of($summary['net']),
                 \Brick\Math\BigDecimal::of($summary['vat']),
                 \Brick\Math\BigDecimal::of($summary['gross'])

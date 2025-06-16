@@ -3,11 +3,10 @@
 namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Financial\Enums\VatRate;
 use Brick\Math\BigDecimal;
 
 /**
- * @property VatRate    $vatRate
+ * @property VatRateDTO $vatRate
  * @property BigDecimal $net
  * @property BigDecimal $vat
  * @property BigDecimal $gross
@@ -15,7 +14,7 @@ use Brick\Math\BigDecimal;
 class InvoiceVatSummaryDTO extends BaseDataDTO
 {
     public function __construct(
-        public VatRate $vatRate,
+        public VatRateDTO $vatRate,
         public BigDecimal $net,
         public BigDecimal $vat,
         public BigDecimal $gross,
@@ -25,7 +24,7 @@ class InvoiceVatSummaryDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'vatRate' => $this->vatRate->value,
+            'vatRate' => $this->vatRate->toArray(),
             'net'     => $this->net->toFloat(),
             'vat'     => $this->vat->toFloat(),
             'gross'   => $this->gross->toFloat(),
@@ -35,7 +34,7 @@ class InvoiceVatSummaryDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            vatRate: VatRate::from($data['vatRate']),
+            vatRate: VatRateDTO::fromArray($data['vatRate']),
             net: BigDecimal::of($data['net']),
             vat: BigDecimal::of($data['vat']),
             gross: BigDecimal::of($data['gross']),

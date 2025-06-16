@@ -3,7 +3,6 @@
 namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Financial\Enums\VatRate;
 use Brick\Math\BigDecimal;
 
 /**
@@ -11,7 +10,7 @@ use Brick\Math\BigDecimal;
  * @property string     $description
  * @property BigDecimal $quantity
  * @property BigDecimal $unitPrice
- * @property VatRate    $vatRate
+ * @property VatRateDTO $vatRate
  * @property BigDecimal $totalNet
  * @property BigDecimal $totalVat
  * @property BigDecimal $totalGross
@@ -24,7 +23,7 @@ class InvoiceLineDTO extends BaseDataDTO
         public string $description,
         public BigDecimal $quantity,
         public BigDecimal $unitPrice,
-        public VatRate $vatRate,
+        public VatRateDTO $vatRate,
         public BigDecimal $totalNet,
         public BigDecimal $totalVat,
         public BigDecimal $totalGross,
@@ -39,7 +38,7 @@ class InvoiceLineDTO extends BaseDataDTO
             'description' => $this->description,
             'quantity'    => $this->quantity->toFloat(),
             'unitPrice'   => $this->unitPrice->toFloat(),
-            'vatRate'     => $this->vatRate->value,
+            'vatRate'     => $this->vatRate->toArray(),
             'totalNet'    => $this->totalNet->toFloat(),
             'totalVat'    => $this->totalVat->toFloat(),
             'totalGross'  => $this->totalGross->toFloat(),
@@ -54,7 +53,7 @@ class InvoiceLineDTO extends BaseDataDTO
             description: $data['description'],
             quantity: BigDecimal::of($data['quantity']),
             unitPrice: BigDecimal::of($data['unitPrice']),
-            vatRate: VatRate::from($data['vatRate']),
+            vatRate: VatRateDTO::fromArray($data['vatRate']),
             totalNet: BigDecimal::of($data['totalNet']),
             totalVat: BigDecimal::of($data['totalVat']),
             totalGross: BigDecimal::of($data['totalGross']),

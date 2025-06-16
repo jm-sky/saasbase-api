@@ -11,6 +11,11 @@ return new class() extends Migration {
             $table->ulid('id')->primary();
             $table->string('name');
             $table->decimal('rate', 5, 2);
+            $table->string('type');
+            $table->string('country_code');
+            $table->boolean('active')->default(true);
+            $table->date('valid_from')->nullable();
+            $table->date('valid_to')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
