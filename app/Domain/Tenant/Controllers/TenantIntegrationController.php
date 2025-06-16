@@ -89,8 +89,12 @@ class TenantIntegrationController extends Controller
     /**
      * Remove the specified integration.
      */
-    public function destroy(TenantIntegration $integration): JsonResponse
+    public function destroy(string $integrationId): JsonResponse
     {
+        /** @var User $user */
+        $user        = Auth::user();
+        $integration = $user->currentTenant()->integrations()->findOrFail($integrationId);
+
         $this->authorize('delete', $integration);
 
         $integration->delete();

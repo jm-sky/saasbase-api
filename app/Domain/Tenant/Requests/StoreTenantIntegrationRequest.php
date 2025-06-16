@@ -16,7 +16,6 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
         return [
             'type'        => ['required', 'string'],
             'enabled'     => ['boolean'],
-            'mode'        => ['required', 'string', 'in:shared,custom'],
             'credentials' => ['nullable', 'array'],
             'meta'        => ['nullable', 'array'],
         ];
@@ -26,7 +25,6 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
     {
         return [
             'type'        => 'integration type',
-            'mode'        => 'integration mode',
             'credentials' => 'integration credentials',
             'meta'        => 'integration metadata',
         ];

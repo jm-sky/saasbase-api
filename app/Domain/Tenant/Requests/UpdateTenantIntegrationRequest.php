@@ -15,7 +15,6 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
     {
         return [
             'enabled'     => ['boolean'],
-            'mode'        => ['string', 'in:shared,custom'],
             'credentials' => ['nullable', 'array'],
             'meta'        => ['nullable', 'array'],
         ];
@@ -24,7 +23,6 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
     public function attributes(): array
     {
         return [
-            'mode'        => 'integration mode',
             'credentials' => 'integration credentials',
             'meta'        => 'integration metadata',
         ];

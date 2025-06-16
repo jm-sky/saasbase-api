@@ -12,7 +12,6 @@ return new class() extends Migration {
             $table->ulid('tenant_id');
             $table->string('type');
             $table->boolean('enabled')->default(true);
-            $table->string('mode')->default('shared');
             $table->jsonb('credentials')->nullable();
             $table->jsonb('meta')->nullable();
             $table->timestamp('last_synced_at')->nullable();
