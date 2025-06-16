@@ -7,11 +7,11 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 /**
  * DTO for Azure Document Intelligence analyzeResult.
  *
- * @property string  $apiVersion
- * @property string  $modelId
- * @property ?string $content
- * @property string  $contentFormat
- * @property array   $documents
+ * @property string     $apiVersion
+ * @property string     $modelId
+ * @property ?string    $content
+ * @property string     $contentFormat
+ * @property Document[] $documents
  */
 class AnalyzeResult extends BaseDataDTO
 {

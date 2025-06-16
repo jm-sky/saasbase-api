@@ -48,7 +48,6 @@ class Document extends BaseDataDTO
 
         foreach ($data['fields'] ?? [] as $key => $field) {
             if (is_array($field)) {
-                echo "[Document] field: {$key}", PHP_EOL;
                 $fields[$key] = DocumentField::fromArray($field);
             }
         }

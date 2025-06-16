@@ -3,6 +3,7 @@
 namespace App\Domain\Expense\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Common\Models\Tag;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\IsSearchable;
@@ -23,6 +24,7 @@ use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\ExpenseFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -42,6 +44,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
  * @property Tag[]             $tags
+ * @property OcrRequest        $ocrRequest
  */
 class Expense extends BaseModel
 {
@@ -82,6 +85,11 @@ class Expense extends BaseModel
         'payment'       => InvoicePaymentCast::class,
         'options'       => InvoiceOptionsCast::class,
     ];
+
+    public function ocrRequest(): HasOne
+    {
+        return $this->hasOne(OcrRequest::class, 'processable_id');
+    }
 
     protected static function newFactory()
     {
