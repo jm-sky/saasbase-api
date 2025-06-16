@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Financial\Casts;
+namespace App\Domain\Common\Casts;
 
 use App\Domain\Common\Models\OcrRequest;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;

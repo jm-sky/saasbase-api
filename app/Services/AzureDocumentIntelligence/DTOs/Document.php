@@ -3,16 +3,20 @@
 namespace App\Services\AzureDocumentIntelligence\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
+use App\Services\AzureDocumentIntelligence\Concerns\DocumentFieldInterface;
 
 /**
  * DTO for a single document in Azure Document Intelligence response.
  *
- * @property string $docType
- * @property array  $fields
- * @property float  $confidence
+ * @property string                                $docType
+ * @property array<string, DocumentFieldInterface> $fields
+ * @property float                                 $confidence
  */
 class Document extends BaseDataDTO
 {
+    /**
+     * @param array<string, DocumentFieldInterface> $fields
+     */
     public function __construct(
         public readonly string $docType,
         public readonly array $fields,
@@ -33,25 +37,16 @@ class Document extends BaseDataDTO
     {
         unset($data['boundingRegions']);
 
-        $fields = self::sanitizeFields($data);
+        $fields = [];
+
+        foreach (($data['fields'] ?? []) as $key => $fieldData) {
+            $fields[$key] = DocumentFieldFactory::fromArray($fieldData);
+        }
 
         return new static(
             docType: $data['docType'] ?? '',
             fields: $fields,
             confidence: (float) ($data['confidence'] ?? 0)
         );
-    }
-
-    protected static function sanitizeFields(array $data): array
-    {
-        $fields = [];
-
-        foreach ($data['fields'] ?? [] as $key => $field) {
-            if (is_array($field)) {
-                $fields[$key] = DocumentField::fromArray($field);
-            }
-        }
-
-        return $fields;
     }
 }

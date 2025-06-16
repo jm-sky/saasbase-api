@@ -2,11 +2,11 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use App\Domain\Auth\DTOs\ApplicationInvitationDTO;
 use App\Domain\Auth\Models\ApplicationInvitation;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Notifications\ApplicationInvitationNotification;
 use App\Domain\Auth\Requests\SendApplicationInvitationRequest;
-use App\Domain\Tenant\DTOs\ApplicationInvitationDTO;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

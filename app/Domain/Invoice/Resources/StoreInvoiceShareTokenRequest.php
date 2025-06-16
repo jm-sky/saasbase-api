@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\ShareToken\Requests;
+namespace App\Domain\Invoice\Resources;
 
 use App\Http\Requests\BaseFormRequest;
 

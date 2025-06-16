@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Tenant\DTOs;
+namespace App\Domain\Auth\DTOs;
 
 use App\Domain\Auth\Models\ApplicationInvitation;
 use App\Domain\Common\DTOs\BaseDTO;

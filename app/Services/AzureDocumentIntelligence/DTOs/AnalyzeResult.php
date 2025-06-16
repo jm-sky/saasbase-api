@@ -46,6 +46,10 @@ class AnalyzeResult extends BaseDataDTO
                 function ($doc) {
                     unset($doc['boundingRegions']);
 
+                    if (isset($doc['docType']) && 'invoice' === strtolower($doc['docType'])) {
+                        return InvoiceDocumentDTO::fromAzureArray($doc);
+                    }
+
                     return Document::fromArray($doc);
                 },
                 $data['documents'] ?? []

@@ -6,9 +6,8 @@ use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Events\OcrExpenseCompleted;
 use App\Domain\Expense\Models\Expense;
-use App\Services\AzureDocumentIntelligence\DTOs\Document;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
-use Brick\Math\BigDecimal;
+use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentDTO;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -55,14 +54,20 @@ class FinishOcrJob implements ShouldQueue
 
             // TODO: Make  document fields better typed
             // TODO: Implement seller, buyer, body, payment
-            /** @var Document $document */
-            $document             = $result->analyzeResult->documents[0];
-            $expense->total_net   = $document->fields['totalNet'] ? BigDecimal::of($document->fields['totalNet']) : $expense->total_net;
-            $expense->total_tax   = $document->fields['totalTax'] ? BigDecimal::of($document->fields['totalTax']) : $expense->total_tax;
-            $expense->total_gross = $document->fields['totalGross'] ? BigDecimal::of($document->fields['totalGross']) : $expense->total_gross;
-            // $expense->seller = $result->seller ?? $expense->seller;
-            // $expense->buyer = $result->buyer ?? $expense->buyer;
-            // $expense->body = $result->body ?? $expense->body;
+            /** @var InvoiceDocumentDTO $document */
+            $document                 = $result->analyzeResult->documents[0];
+            $expense->total_net       = $document->subTotal?->getAmount() ?? $expense->total_net;
+            $expense->total_tax       = $document->totalTax?->getAmount() ?? $expense->total_tax;
+            $expense->total_gross     = $document->invoiceTotal?->getAmount() ?? $expense->total_gross;
+            $expense->seller->name    = $document->vendorName?->value ?? $expense->seller->name;
+            $expense->seller->taxId   = $document->vendorTaxId?->value ?? $expense->seller->taxId;
+            $expense->seller->address = $document->vendorAddress?->getFullAddress() ?? $expense->seller->address;
+
+            $expense->buyer->name    = $document->customerName?->value ?? $expense->buyer->name;
+            $expense->buyer->taxId   = $document->customerTaxId?->value ?? $expense->buyer->taxId;
+            $expense->buyer->address = $document->customerAddress?->getFullAddress() ?? $expense->buyer->address;
+
+            $expense->body->description = $document->invoiceType?->value ?? $expense->body->description;
             // $expense->payment = $result->payment ?? $expense->payment;
 
             $expense->save();

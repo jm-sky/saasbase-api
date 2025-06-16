@@ -3,8 +3,8 @@
 namespace App\Domain\Common\Models;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Casts\DocumentAnalysisResultCast;
 use App\Domain\Common\Enums\OcrRequestStatus;
-use App\Domain\Financial\Casts\DocumentAnalysisResultCast;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

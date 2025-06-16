@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class AnalyzeDocumentCommand extends Command
 {
-    protected $signature = 'azure:analyze-document {file : Path to the PDF file} {--cache : Use cache for analysis} {--force : Force re-analysis}';
+    protected $signature = 'azure:analyze-document {file : Path to the PDF file} {--cache=true : Use cache for analysis} {--force : Force re-analysis}';
 
     protected $description = 'Analyze a PDF document using Azure Document Intelligence';
 
@@ -17,6 +17,14 @@ class AnalyzeDocumentCommand extends Command
         $filePath = $this->argument('file');
         $useCache = $this->option('cache');
         $force    = $this->option('force');
+
+        $this->info('--------------------------------');
+        $this->info('Analyzing document...');
+        $this->info('--------------------------------');
+        $this->info('File        : ' . $filePath);
+        $this->info('Using cache : ' . ($useCache ? 'yes' : 'no'));
+        $this->info('Force       : ' . ($force ? 'yes' : 'no'));
+        $this->info('--------------------------------');
 
         if (!file_exists($filePath)) {
             $this->error('File does not exist: ' . $filePath);
@@ -28,7 +36,9 @@ class AnalyzeDocumentCommand extends Command
             $result = $useCache
                 ? $service->analyzeWithCache($filePath, force: $force)
                 : $service->analyze($filePath);
-            $this->info(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            $invoice = $result->analyzeResult->documents[0];
+
+            $this->info(json_encode($invoice, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
             return 0;
         } catch (AzureDocumentIntelligenceException $e) {

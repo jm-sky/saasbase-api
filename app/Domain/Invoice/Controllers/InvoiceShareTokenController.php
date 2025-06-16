@@ -3,7 +3,7 @@
 namespace App\Domain\Invoice\Controllers;
 
 use App\Domain\Invoice\Models\Invoice;
-use App\Domain\ShareToken\Requests\StoreInvoiceShareTokenRequest;
+use App\Domain\Invoice\Resources\StoreInvoiceShareTokenRequest;
 use App\Domain\ShareToken\Resources\ShareTokenResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;

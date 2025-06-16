@@ -31,41 +31,13 @@ class DocumentAnalysisService
 
     public function analyze(string $filePath, ?string $modelId = null): DocumentAnalysisResult
     {
-        if (Str::startsWith($filePath, 'http')) {
+        if ($this->isUrl($filePath)) {
             $result = $this->analyzeByUrlInternal($filePath, $modelId);
         } else {
             $result = $this->analyzeByContentInternal($filePath, $modelId);
         }
 
-        return $result;
-    }
-
-    public function analyzeByContentInternal(string $filePath, ?string $modelId = null): DocumentAnalysisResult
-    {
-        $uploadRequest = new AnalyzeDocumentRequest($filePath);
-        $response      = $this->connector->send($uploadRequest);
-
-        if (!$response->successful()) {
-            throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
-        }
-
-        $operationLocation = $response->header('Operation-Location');
-
-        return $this->pollForAnalysisResult($operationLocation);
-    }
-
-    public function analyzeByUrlInternal(string $url): DocumentAnalysisResult
-    {
-        $uploadRequest = new AnalyzeDocumentByUrlRequest($url);
-        $response      = $this->connector->send($uploadRequest);
-
-        if (!$response->successful()) {
-            throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
-        }
-
-        $operationLocation = $response->header('Operation-Location');
-
-        return $this->pollForAnalysisResult($operationLocation);
+        return DocumentAnalysisResult::fromArray($result);
     }
 
     /**
@@ -81,14 +53,44 @@ class DocumentAnalysisService
             Cache::forget($cacheKey);
         }
 
-        /** @var DocumentAnalysisResult $result */
-        return Cache::remember($cacheKey, $ttl, function () use ($filePath) {
-            if (Str::startsWith($filePath, 'http')) {
+        /* @var array $result */
+        $result = Cache::remember($cacheKey, $ttl, function () use ($filePath) {
+            if ($this->isUrl($filePath)) {
                 return $this->analyzeByUrlInternal($filePath);
             }
 
             return $this->analyzeByContentInternal($filePath);
         });
+
+        return DocumentAnalysisResult::fromArray($result);
+    }
+
+    public function analyzeByContentInternal(string $filePath, ?string $modelId = null): array
+    {
+        $uploadRequest = new AnalyzeDocumentRequest($filePath);
+        $response      = $this->connector->send($uploadRequest);
+
+        if (!$response->successful()) {
+            throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
+        }
+
+        $operationLocation = $response->header('Operation-Location');
+
+        return $this->pollForAnalysisResult($operationLocation);
+    }
+
+    public function analyzeByUrlInternal(string $url): array
+    {
+        $uploadRequest = new AnalyzeDocumentByUrlRequest($url);
+        $response      = $this->connector->send($uploadRequest);
+
+        if (!$response->successful()) {
+            throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
+        }
+
+        $operationLocation = $response->header('Operation-Location');
+
+        return $this->pollForAnalysisResult($operationLocation);
     }
 
     /**
@@ -102,7 +104,7 @@ class DocumentAnalysisService
         return "azure_doc_analysis:{$fileHash}:{$modelId}";
     }
 
-    protected function pollForAnalysisResult(string $operationLocation): DocumentAnalysisResult
+    protected function pollForAnalysisResult(string $operationLocation): array
     {
         sleep(self::INITIAL_BACKOFF_TIME);
 
@@ -123,6 +125,11 @@ class DocumentAnalysisService
             sleep(self::BACKOFF_TIME);
         }
 
-        return $dto;
+        return $pollResponse->json();
+    }
+
+    protected function isUrl(string $filePath): bool
+    {
+        return Str::startsWith($filePath, 'http://') || Str::startsWith($filePath, 'https://');
     }
 }
