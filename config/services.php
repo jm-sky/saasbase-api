@@ -176,4 +176,21 @@ return [
     'recaptcha' => [
         'secret' => env('RECAPTCHA_SECRET_KEY'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | KSeF - Krajowy System e-Faktur
+    |--------------------------------------------------------------------------
+    |
+    | Polish National e-Invoice System for managing electronic invoices
+    | and integration with fiscal authorities.
+    |
+    */
+    'ksef' => [
+        'api_url'    => env('KSEF_API_URL', 'https://ksef.mf.gov.pl/api'),
+        'cache'      => [
+            'mode'  => env('KSEF_CACHE_MODE', 'hours'),
+            'hours' => env('KSEF_CACHE_HOURS', 1),
+        ],
+    ],
 ];

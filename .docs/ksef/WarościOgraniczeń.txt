@@ -1,0 +1,37 @@
+jednostka czasu: MINUTES
+
+Wartości limitów są akumulowane dla każdego duplikatu wywołania usługi. Czas życia akumulatora kończy się po określonym czasie od momentu zarejestrowania ostatniego duplikatu wywołania usługi.
+
+default | limit : 20 | czas życia : 20 | Domyślne ograniczenie na liczbę identycznych wywołań usługi w sekwencji.
+bad_request | limit : 10 | czas życia : 10 | Ograniczenie na liczbę błędnych wywołań usługi w sekwencji.
+online.session.authorisation.challenge | limit : 2 | czas życia : 2 | Ograniczenie na liczbę identycznych wywołań usługi authorisation.challenge w sekwencji.
+online.session.session.signed.init | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi session.signed.init w sekwencji.
+online.session.session.token.init | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi session.token.init w sekwencji.
+online.session.session.status.plain | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi session.status.plain w sekwencji.
+online.session.session.status.reference.number | limit : 10 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi session.status.reference.number w sekwencji.
+online.session.session.terminate.plain | limit : 1 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi session.terminate.plain w sekwencji.
+online.session.session.terminate.reference.number | limit : 1 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi session.terminate.reference.number w sekwencji.
+online.session.internal.identifier.generate | limit : 1 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi online.session.internal.identifier.generate w sekwencji.
+online.query.query.credentials | limit : 5 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi query.credentials w sekwencji.
+online.query.query.invoice | limit : 5 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi query.invoice w sekwencji.
+online.query.query.invoice.init | limit : 5 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi query.invoice.init w sekwencji.
+online.query.query.invoice.status | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi query.invoice.status w sekwencji.
+online.query.query.invoice.fetch | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi query.invoice.fetch w sekwencji.
+online.query.query.context.credentials | limit : 5 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi query.context.credentials w sekwencji.
+online.payment.payment.identifier.request | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi payment.identifier.request w sekwencji.
+online.payment.payment.identifier.get.reference.numbers | limit : 10 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi payment.identifier.get.reference.numbers w sekwencji.
+online.invoice.invoice.send | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi invoice.send w sekwencji.
+online.invoice.invoice.get | limit : 10 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi invoice.get w sekwencji.
+online.invoice.invoice.status | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi invoice.status w sekwencji.
+online.credentials.credentials.status | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi credentials.status w sekwencji.
+online.credentials.credentials.grant | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi credentials.grant w sekwencji.
+online.credentials.generate.token | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi generate.token w sekwencji.
+online.credentials.list.tokens | limit : 5 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi list.tokens w sekwencji.
+online.credentials.revoke.token | limit : 10 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi revoke.token w sekwencji.
+online.credentials.credentials.revoke | limit : 10 | czas życia : 20 | Ograniczenie na liczbę identycznych wywołań usługi credentials.revoke w sekwencji.
+common.invoice.ksef | limit : 2 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi common.invoice.ksef w sekwencji.
+common.status | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi common.status w sekwencji.
+common.upo | limit : 20 | czas życia : 10 | Ograniczenie na liczbę identycznych wywołań usługi common.upo w sekwencji.
+batch.init | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi batch.init w sekwencji.
+batch.upload | limit : 2 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi batch.upload w sekwencji.
+batch.finish | limit : 1 | czas życia : 60 | Ograniczenie na liczbę identycznych wywołań usługi batch.finish w sekwencji.
