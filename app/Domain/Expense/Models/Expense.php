@@ -26,6 +26,8 @@ use Brick\Math\BigDecimal;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string            $id
@@ -46,13 +48,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Tag[]             $tags
  * @property OcrRequest        $ocrRequest
  */
-class Expense extends BaseModel
+class Expense extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
     use IsSearchable;
     use HasShareTokens;
     use HasTags;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'type',
@@ -89,6 +92,11 @@ class Expense extends BaseModel
     public function ocrRequest(): HasOne
     {
         return $this->hasOne(OcrRequest::class, 'processable_id');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
     }
 
     protected static function newFactory()

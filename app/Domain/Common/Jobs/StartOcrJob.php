@@ -6,13 +6,14 @@ use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\OcrRequest;
 use App\Services\AzureDocumentIntelligence\DocumentAnalysisService;
 use App\Services\AzureDocumentIntelligence\Exceptions\AzureDocumentIntelligenceException;
-use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class StartOcrJob implements ShouldQueue
+class StartOcrJob implements ShouldQueue, ShouldBeUnique
 {
     use InteractsWithQueue;
     use Queueable;
@@ -53,7 +54,7 @@ class StartOcrJob implements ShouldQueue
 
             $this->ocrRequest->update([
                 'status'               => OcrRequestStatus::Completed,
-                'result'               => $result->toArray(),
+                'result'               => $result,
                 'external_document_id' => $result->documentId ?? null,
                 'finished_at'          => now(),
             ]);

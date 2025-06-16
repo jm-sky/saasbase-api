@@ -2,9 +2,11 @@
 
 namespace App\Domain\Expense\Controllers;
 
+use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Jobs\StartOcrJob;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Expense\Models\Expense;
@@ -33,6 +35,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class ExpenseController extends Controller
@@ -172,11 +175,31 @@ class ExpenseController extends Controller
                 'exchange_rate'         => BigDecimal::of('1.0'),
                 'seller'                => new InvoiceSellerDTO(),
                 'buyer'                 => new InvoiceBuyerDTO(),
-                'body'                  => new InvoiceBodyDTO([], [], new InvoiceExchangeDTO('PLN')),
+                'body'                  => new InvoiceBodyDTO(
+                    lines: [],
+                    vatSummary: [],
+                    exchange: new InvoiceExchangeDTO('PLN'),
+                    description: null,
+                ),
                 'payment'               => new InvoicePaymentDTO(PaymentStatus::PENDING, null, null, null, PaymentMethod::BANK_TRANSFER),
                 'options'               => new InvoiceOptionsDTO(),
             ]);
+
             $createdExpenses[] = $expense;
+
+            $media = $expense->addMediaFromDisk($file->getRealPath(), 'local')->toMediaCollection('attachments');
+            $expense->ocrRequest()->create([
+                'media_id'             => $media->id,
+                'external_document_id' => $media->id,
+                'status'               => OcrRequestStatus::Pending->value,
+                'result'               => null,
+                'errors'               => null,
+                'started_at'           => null,
+                'finished_at'          => null,
+                'created_by'           => Auth::id(),
+            ]);
+
+            StartOcrJob::dispatch($expense->ocrRequest);
         }
 
         return ExpenseResource::collection(collect($createdExpenses));
