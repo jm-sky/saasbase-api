@@ -30,6 +30,7 @@
         "meilisearch/meilisearch-php": "^1.14",
         "mews/purifier": "^3.4",
         "mledoze/countries": "^5.1",
+        "opcodesio/log-viewer": "^3.17",
         "pragmarx/google2fa": "^8.0",
         "pusher/pusher-php-server": "^7.2",
         "rap2hpoutre/laravel-log-viewer": "^2.5",
