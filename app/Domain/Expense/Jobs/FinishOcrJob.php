@@ -7,6 +7,7 @@ use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Events\OcrExpenseCompleted;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\Enums\InvoiceStatus;
+use App\Domain\Financial\Enums\PaymentMethod;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentDTO;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -62,14 +63,15 @@ class FinishOcrJob implements ShouldQueue
             $expense->total_gross     = $document->invoiceTotal?->getAmount() ?? $expense->total_gross;
             $expense->seller->name    = $document->vendorName?->value ?? $expense->seller->name;
             $expense->seller->taxId   = $document->vendorTaxId?->value ?? $expense->seller->taxId;
-            $expense->seller->address = $document->vendorAddress?->getFullAddress() ?? $expense->seller->address;
+            $expense->seller->address = $document->vendorAddress?->getFullAddress() ?? $expense->seller->name;
+            $expense->seller->iban    = $document->paymentDetails[0]->iban ?? $expense->seller->iban;
 
             $expense->buyer->name    = $document->customerName?->value ?? $expense->buyer->name;
             $expense->buyer->taxId   = $document->customerTaxId?->value ?? $expense->buyer->taxId;
             $expense->buyer->address = $document->customerAddress?->getFullAddress() ?? $expense->buyer->address;
 
             $expense->body->description = $document->invoiceType?->value ?? $expense->body->description;
-            // $expense->payment = $result->payment ?? $expense->payment;
+            $expense->payment->method   = PaymentMethod::tryFrom($document->paymentTerm?->value ?? '') ?? $expense->payment->method;
 
             $expense->status = InvoiceStatus::OCR_COMPLETED;
             $expense->save();
