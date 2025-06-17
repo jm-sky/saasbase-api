@@ -15,7 +15,15 @@ final class StringField extends ValueWrapper
     {
         return new self(
             confidence: (float) ($data['confidence'] ?? 0),
-            value: (string) ($data['stringValue'] ?? '')
+            value: (string) ($data['value'] ?? '')
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
+            confidence: (float) ($data['confidence'] ?? 0),
+            value: (string) ($data['stringValue'] ?? $data['valueString'] ?? $data['value'] ?? '')
         );
     }
 

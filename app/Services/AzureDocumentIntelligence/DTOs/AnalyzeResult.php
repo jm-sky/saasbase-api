@@ -42,11 +42,22 @@ final class AnalyzeResult extends BaseDataDTO
             modelId: $data['modelId'],
             content: $data['content'] ?? null,
             contentFormat: $data['contentFormat'],
+            documents: array_map(fn ($doc) => InvoiceDocumentDTO::fromArray($doc), $data['documents'] ?? [])
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
+            apiVersion: $data['apiVersion'],
+            modelId: $data['modelId'],
+            content: $data['content'] ?? null,
+            contentFormat: $data['contentFormat'],
             documents: array_map(
                 function ($doc) {
                     unset($doc['boundingRegions']);
 
-                    return InvoiceDocumentDTO::fromArray($doc);
+                    return InvoiceDocumentDTO::fromAzureArray($doc);
                 },
                 $data['documents'] ?? []
             )

@@ -22,6 +22,6 @@ class GetAnalysisResultRequest extends Request
 
     public function createDtoFromResponse(Response $response): DocumentAnalysisResult
     {
-        return DocumentAnalysisResult::fromArray($response->json());
+        return DocumentAnalysisResult::fromAzureArray($response->json());
     }
 }

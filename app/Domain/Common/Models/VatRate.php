@@ -3,6 +3,7 @@
 namespace App\Domain\Common\Models;
 
 use App\Domain\Common\Enums\VatRateType;
+use App\Domain\Financial\DTOs\VatRateDTO;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -50,5 +51,15 @@ class VatRate extends BaseModel
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function toDTO(): VatRateDTO
+    {
+        return new VatRateDTO(
+            id: $this->id,
+            name: $this->name,
+            rate: $this->rate,
+            type: $this->type,
+        );
     }
 }

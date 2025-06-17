@@ -11,7 +11,7 @@ final class SelectionMarkField extends ValueWrapper
         parent::__construct('selectionMark', $confidence, $value);
     }
 
-    public static function fromArray(array $data): static
+    public static function fromAzureArray(array $data): static
     {
         return new self(
             confidence: (float) ($data['confidence'] ?? 0),

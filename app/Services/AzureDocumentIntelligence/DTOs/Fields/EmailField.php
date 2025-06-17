@@ -6,12 +6,20 @@ final class EmailField extends ValueWrapper
 {
     public function __construct(
         float $confidence,
-        string $value
+        ?string $value
     ) {
         parent::__construct('email', $confidence, $value);
     }
 
     public static function fromArray(array $data): static
+    {
+        return new self(
+            confidence: $data['confidence'] ?? 0,
+            value: $data['value'] ?? null,
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
     {
         return new self(
             confidence: (float) ($data['confidence'] ?? 0),

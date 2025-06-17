@@ -36,6 +36,6 @@ class DocumentAnalysisResultCast implements CastsAttributes
             return json_encode($value);
         }
 
-        return $value;
+        return json_encode($value);
     }
 }

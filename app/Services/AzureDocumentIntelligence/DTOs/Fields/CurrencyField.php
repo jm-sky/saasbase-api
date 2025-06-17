@@ -8,8 +8,8 @@ final class CurrencyField extends ValueWrapper
 {
     public function __construct(
         float $confidence,
-        BigDecimal $amount,
-        string $currencyCode
+        ?BigDecimal $amount,
+        ?string $currencyCode
     ) {
         parent::__construct('currency', $confidence, [
             'amount'       => $amount,
@@ -18,6 +18,15 @@ final class CurrencyField extends ValueWrapper
     }
 
     public static function fromArray(array $data): static
+    {
+        return new self(
+            confidence: $data['confidence'] ?? 0,
+            amount: isset($data['amount']) ? BigDecimal::of($data['amount']) : null,
+            currencyCode: $data['currencyCode'] ?? null,
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
     {
         return new self(
             confidence: (float) ($data['confidence'] ?? 0),

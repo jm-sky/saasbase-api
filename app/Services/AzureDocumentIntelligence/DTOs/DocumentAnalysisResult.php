@@ -38,4 +38,13 @@ final class DocumentAnalysisResult extends BaseDataDTO
             error: $data['error']['message'] ?? ($data['error'] ?? null)
         );
     }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
+            status: DocumentAnalysisStatus::from($data['status']),
+            analyzeResult: isset($data['analyzeResult']) ? AnalyzeResult::fromAzureArray($data['analyzeResult']) : null,
+            error: $data['error']['message'] ?? ($data['error'] ?? null)
+        );
+    }
 }

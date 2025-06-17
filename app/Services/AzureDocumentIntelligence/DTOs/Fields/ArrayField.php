@@ -19,6 +19,14 @@ final class ArrayField extends ValueWrapper
 
     public static function fromArray(array $data): static
     {
+        return new self(
+            confidence: (float) ($data['confidence'] ?? 0),
+            items: array_map(fn (array $item) => DocumentFieldFactory::fromArray($item), $data['items'] ?? []),
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
         $items = [];
 
         foreach (($data['value'] ?? []) as $itemData) {

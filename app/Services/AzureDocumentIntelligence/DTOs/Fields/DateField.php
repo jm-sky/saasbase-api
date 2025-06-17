@@ -16,6 +16,14 @@ final class DateField extends ValueWrapper
     public static function fromArray(array $data): static
     {
         return new self(
+            confidence: $data['confidence'] ?? 0,
+            value: Carbon::parse($data['value'] ?? ''),
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             value: Carbon::parse($data['value'] ?? ''),
         );
@@ -35,5 +43,10 @@ final class DateField extends ValueWrapper
             'confidence' => $this->confidence,
             'value'      => $this->value->toIso8601String(),
         ];
+    }
+
+    public function getDate(): Carbon
+    {
+        return $this->value;
     }
 }

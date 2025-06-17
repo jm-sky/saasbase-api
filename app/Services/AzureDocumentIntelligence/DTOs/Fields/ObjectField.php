@@ -21,6 +21,20 @@ final class ObjectField extends ValueWrapper
     {
         $fields = [];
 
+        foreach ($data['fields'] ?? [] as $key => $field) {
+            $fields[$key] = DocumentFieldFactory::fromArray($field);
+        }
+
+        return new self(
+            confidence: (float) ($data['confidence'] ?? 0),
+            fields: $fields,
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        $fields = [];
+
         foreach (($data['value'] ?? []) as $key => $fieldData) {
             $fields[$key] = DocumentFieldFactory::fromArray($fieldData);
         }

@@ -16,6 +16,14 @@ final class TimeField extends ValueWrapper
     public static function fromArray(array $data): static
     {
         return new self(
+            confidence: $data['confidence'] ?? 0,
+            value: Carbon::parse($data['value'] ?? ''),
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             value: Carbon::parse($data['valueTime'] ?? '')
         );

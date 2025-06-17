@@ -14,8 +14,8 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 final class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
 {
     public function __construct(
-        public readonly string $iban,
-        public readonly string $swift,
+        public readonly ?string $iban,
+        public readonly ?string $swift,
         public readonly float $confidence = 1.0,
     ) {
     }
@@ -23,8 +23,17 @@ final class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new self(
-            iban: (string) ($data['IBAN']['valueString'] ?? ''),
-            swift: (string) ($data['SWIFT']['valueString'] ?? ''),
+            iban: $data['iban'] ?? null,
+            swift: $data['swift'] ?? null,
+            confidence: (float) ($data['confidence'] ?? 1.0),
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
+            iban: $data['IBAN']['valueString'] ?? null,
+            swift: $data['SWIFT']['valueString'] ?? null,
             confidence: (float) ($data['confidence'] ?? 1.0),
         );
     }

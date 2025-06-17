@@ -38,14 +38,29 @@ final class InvoiceDocumentItemDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new self(
-            description: isset($data['Description']) ? StringField::fromArray($data['Description']) : null,
-            quantity: isset($data['Quantity']) ? NumberField::fromArray($data['Quantity']) : null,
-            unitPrice: isset($data['UnitPrice']) ? CurrencyField::fromArray($data['UnitPrice']) : null,
-            totalPrice: isset($data['TotalPrice']) ? CurrencyField::fromArray($data['TotalPrice']) : null,
-            amount: isset($data['Amount']) ? CurrencyField::fromArray($data['Amount']) : null,
-            tax: isset($data['Tax']) ? CurrencyField::fromArray($data['Tax']) : null,
-            taxRate: isset($data['TaxRate']) ? StringField::fromArray($data['TaxRate']) : null,
-            unit: isset($data['Unit']) ? StringField::fromArray($data['Unit']) : null,
+            description: isset($data['description']) ? StringField::fromArray($data['description']) : null,
+            quantity: isset($data['quantity']) ? NumberField::fromArray($data['quantity']) : null,
+            unitPrice: isset($data['unitPrice']) ? CurrencyField::fromArray($data['unitPrice']) : null,
+            totalPrice: isset($data['totalPrice']) ? CurrencyField::fromArray($data['totalPrice']) : null,
+            amount: isset($data['amount']) ? CurrencyField::fromArray($data['amount']) : null,
+            tax: isset($data['tax']) ? CurrencyField::fromArray($data['tax']) : null,
+            taxRate: isset($data['taxRate']) ? StringField::fromArray($data['taxRate']) : null,
+            unit: isset($data['unit']) ? StringField::fromArray($data['unit']) : null,
+            confidence: (float) ($data['confidence'] ?? 1.0),
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
+            description: isset($data['Description']) ? StringField::fromAzureArray($data['Description']) : null,
+            quantity: isset($data['Quantity']) ? NumberField::fromAzureArray($data['Quantity']) : null,
+            unitPrice: isset($data['UnitPrice']) ? CurrencyField::fromAzureArray($data['UnitPrice']) : null,
+            totalPrice: isset($data['TotalPrice']) ? CurrencyField::fromAzureArray($data['TotalPrice']) : null,
+            amount: isset($data['Amount']) ? CurrencyField::fromAzureArray($data['Amount']) : null,
+            tax: isset($data['Tax']) ? CurrencyField::fromAzureArray($data['Tax']) : null,
+            taxRate: isset($data['TaxRate']) ? StringField::fromAzureArray($data['TaxRate']) : null,
+            unit: isset($data['Unit']) ? StringField::fromAzureArray($data['Unit']) : null,
             confidence: (float) ($data['confidence'] ?? 1.0),
         );
     }

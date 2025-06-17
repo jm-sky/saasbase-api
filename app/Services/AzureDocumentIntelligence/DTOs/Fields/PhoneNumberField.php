@@ -6,7 +6,7 @@ final class PhoneNumberField extends ValueWrapper
 {
     public function __construct(
         float $confidence,
-        string $value
+        ?string $value
     ) {
         parent::__construct('phoneNumber', $confidence, $value);
     }
@@ -14,8 +14,16 @@ final class PhoneNumberField extends ValueWrapper
     public static function fromArray(array $data): static
     {
         return new self(
+            confidence: $data['confidence'] ?? 0,
+            value: $data['value'] ?? null,
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
-            value: (string) ($data['valuePhoneNumber'] ?? '')
+            value: $data['valuePhoneNumber'] ?? null,
         );
     }
 

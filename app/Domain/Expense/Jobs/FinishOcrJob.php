@@ -4,12 +4,9 @@ namespace App\Domain\Expense\Jobs;
 
 use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\OcrRequest;
+use App\Domain\Expense\Actions\ApplyOcrResultToExpenseAction;
 use App\Domain\Expense\Events\OcrExpenseCompleted;
-use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\Enums\InvoiceStatus;
-use App\Domain\Financial\Enums\PaymentMethod;
-use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
-use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentDTO;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,64 +25,29 @@ class FinishOcrJob implements ShouldQueue
 
     public OcrRequest $ocrRequest;
 
-    public function __construct(OcrRequest $ocrRequest)
-    {
+    public function __construct(
+        OcrRequest $ocrRequest,
+    ) {
         $this->ocrRequest = $ocrRequest;
     }
 
     public function handle(): void
     {
         try {
-            /** @var ?DocumentAnalysisResult $result */
-            $result = $this->ocrRequest->result;
-
-            if (!$result) {
+            if ($this->ocrRequest->hasNoDocument()) {
                 Log::warning('[OCR] Invalid result format', ['id' => $this->ocrRequest->id]);
 
                 return;
             }
 
-            /** @var Expense $expense */
-            $expense = $this->ocrRequest->processable;
-
-            if (!$expense instanceof Expense) {
-                Log::warning('[OCR] Unsupported processable type', ['type' => get_class($expense)]);
-
-                return;
-            }
-
-            // TODO: Make  document fields better typed
-            // TODO: Implement seller, buyer, body, payment
-            /** @var InvoiceDocumentDTO $document */
-            $document                 = $result->analyzeResult->documents[0];
-            $expense->total_net       = $document->subTotal?->getAmount() ?? $expense->total_net;
-            $expense->total_tax       = $document->totalTax?->getAmount() ?? $expense->total_tax;
-            $expense->total_gross     = $document->invoiceTotal?->getAmount() ?? $expense->total_gross;
-            $expense->seller->name    = $document->vendorName?->value ?? $expense->seller->name;
-            $expense->seller->taxId   = $document->vendorTaxId?->value ?? $expense->seller->taxId;
-            $expense->seller->address = $document->vendorAddress?->getFullAddress() ?? $expense->seller->name;
-            $expense->seller->iban    = $document->paymentDetails[0]->iban ?? $expense->seller->iban;
-
-            $expense->buyer->name    = $document->customerName?->value ?? $expense->buyer->name;
-            $expense->buyer->taxId   = $document->customerTaxId?->value ?? $expense->buyer->taxId;
-            $expense->buyer->address = $document->customerAddress?->getFullAddress() ?? $expense->buyer->address;
-
-            $expense->body->description = $document->invoiceType?->value ?? $expense->body->description;
-            $expense->payment->method   = PaymentMethod::tryFrom($document->paymentTerm?->value ?? '') ?? $expense->payment->method;
-
-            $expense->status = InvoiceStatus::OCR_COMPLETED;
-            $expense->save();
+            app(ApplyOcrResultToExpenseAction::class)->handle($this->ocrRequest);
 
             broadcast(new OcrExpenseCompleted(
-                notifiable: $this->ocrRequest->createdBy,
-                expense: $expense
+                user: $this->ocrRequest->createdBy,
+                expense: $this->ocrRequest->processable
             ));
         } catch (\Exception $e) {
             Log::error('[OCR] Error finishing OCR job', ['id' => $this->ocrRequest->id, 'error' => $e->getMessage()]);
-            $expense         = $this->ocrRequest->processable;
-            $expense->status = InvoiceStatus::OCR_FAILED;
-            $expense->save();
-
             $this->failWithReason('Error finishing OCR job', $e);
         }
     }
@@ -96,6 +58,10 @@ class FinishOcrJob implements ShouldQueue
             'status'      => OcrRequestStatus::Failed,
             'errors'      => ['message' => $ex->getMessage()],
             'finished_at' => now(),
+        ]);
+
+        $this->ocrRequest->processable->update([
+            'status' => InvoiceStatus::OCR_FAILED,
         ]);
 
         $this->fail($ex);

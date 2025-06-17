@@ -28,6 +28,20 @@ final class AddressField extends ValueWrapper
     public static function fromArray(array $data): static
     {
         return new self(
+            confidence: $data['confidence'] ?? 0,
+            houseNumber: $data['houseNumber'] ?? null,
+            road: $data['road'] ?? null,
+            postalCode: $data['postalCode'] ?? null,
+            city: $data['city'] ?? null,
+            countryRegion: $data['countryRegion'] ?? null,
+            streetAddress: $data['streetAddress'] ?? null,
+            rawAddress: $data['rawAddress'] ?? null,
+        );
+    }
+
+    public static function fromAzureArray(array $data): static
+    {
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             houseNumber: $data['valueAddress']['houseNumber'] ?? null,
             road: $data['valueAddress']['road'] ?? null,

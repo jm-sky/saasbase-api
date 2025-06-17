@@ -5,6 +5,9 @@ namespace App\Domain\Common\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Casts\DocumentAnalysisResultCast;
 use App\Domain\Common\Enums\OcrRequestStatus;
+use App\Domain\Expense\Actions\ApplyOcrResultToExpenseAction;
+use App\Domain\Expense\Models\Expense;
+use App\Domain\Invoice\Models\Invoice;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +28,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string                  $created_by
  * @property Carbon                  $created_at
  * @property Carbon                  $updated_at
+ * @property User                    $createdBy
+ * @property Media                   $media
+ * @property Expense|Invoice         $processable
  */
 class OcrRequest extends BaseModel
 {
@@ -64,5 +70,15 @@ class OcrRequest extends BaseModel
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function hasNoDocument(): bool
+    {
+        return !$this->result || !isset($this->result->analyzeResult->documents[0]);
+    }
+
+    public function applyResultToProcessable(): void
+    {
+        app(ApplyOcrResultToExpenseAction::class)->handle($this);
     }
 }

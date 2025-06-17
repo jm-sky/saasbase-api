@@ -25,20 +25,27 @@ class DocumentAnalysisService
 
     protected const BACKOFF_TIME = 2; // 2 seconds
 
+    protected bool $useMock = false;
+
     public function __construct()
     {
         $this->connector = new AzureConnector();
+        $this->useMock   = config('azure_doc_intel.use_mock', false);
     }
 
     public function analyze(string $filePath): DocumentAnalysisResult
     {
+        if ($this->useMock) {
+            return $this->returnMockResult();
+        }
+
         if ($this->isUrl($filePath)) {
             $result = $this->analyzeByUrlInternal($filePath);
         } else {
             $result = $this->analyzeByContentInternal($filePath);
         }
 
-        return DocumentAnalysisResult::fromArray($result);
+        return DocumentAnalysisResult::fromAzureArray($result);
     }
 
     /**
@@ -63,7 +70,7 @@ class DocumentAnalysisService
             return $this->analyzeByContentInternal($filePath);
         });
 
-        return DocumentAnalysisResult::fromArray($result);
+        return DocumentAnalysisResult::fromAzureArray($result);
     }
 
     public function analyzeByContentInternal(string $filePath, ?string $modelId = null): array
@@ -134,5 +141,12 @@ class DocumentAnalysisService
     protected function isUrl(string $filePath): bool
     {
         return Str::startsWith($filePath, 'http://') || Str::startsWith($filePath, 'https://');
+    }
+
+    protected function returnMockResult(): DocumentAnalysisResult
+    {
+        $json = json_decode(file_get_contents(storage_path('app/azure_doc_intel.json')), true);
+
+        return DocumentAnalysisResult::fromAzureArray($json);
     }
 }

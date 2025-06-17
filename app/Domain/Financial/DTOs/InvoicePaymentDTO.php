@@ -9,14 +9,15 @@ use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 
 /**
- * @property PaymentStatus $status
- * @property ?Carbon       $dueDate
- * @property ?Carbon       $paidDate
- * @property ?BigDecimal   $paidAmount
- * @property PaymentMethod $method
- * @property ?string       $reference
- * @property ?string       $terms
- * @property ?string       $notes
+ * @property PaymentStatus                 $status
+ * @property ?Carbon                       $dueDate
+ * @property ?Carbon                       $paidDate
+ * @property ?BigDecimal                   $paidAmount
+ * @property PaymentMethod                 $method
+ * @property ?string                       $reference
+ * @property ?string                       $terms
+ * @property ?string                       $notes
+ * @property ?InvoicePaymentBankAccountDTO $bankAccount
  */
 final class InvoicePaymentDTO extends BaseDataDTO
 {
@@ -29,20 +30,22 @@ final class InvoicePaymentDTO extends BaseDataDTO
         public ?string $reference = null,
         public ?string $terms = null,
         public ?string $notes = null,
+        public ?InvoicePaymentBankAccountDTO $bankAccount = null,
     ) {
     }
 
     public function toArray(): array
     {
         return [
-            'status'     => $this->status->value,
-            'dueDate'    => $this->dueDate?->format('Y-m-d\TH:i:s.u\Z'),
-            'paidDate'   => $this->paidDate?->format('Y-m-d\TH:i:s.u\Z'),
-            'paidAmount' => $this->paidAmount?->toFloat(),
-            'method'     => $this->method->value,
-            'reference'  => $this->reference,
-            'terms'      => $this->terms,
-            'notes'      => $this->notes,
+            'status'      => $this->status->value,
+            'dueDate'     => $this->dueDate?->format('Y-m-d\TH:i:s.u\Z'),
+            'paidDate'    => $this->paidDate?->format('Y-m-d\TH:i:s.u\Z'),
+            'paidAmount'  => $this->paidAmount?->toFloat(),
+            'method'      => $this->method->value,
+            'reference'   => $this->reference,
+            'terms'       => $this->terms,
+            'notes'       => $this->notes,
+            'bankAccount' => $this->bankAccount?->toArray(),
         ];
     }
 
@@ -57,6 +60,7 @@ final class InvoicePaymentDTO extends BaseDataDTO
             reference: isset($data['reference']) ? $data['reference'] : null,
             terms: isset($data['terms']) ? $data['terms'] : null,
             notes: $data['notes'] ?? null,
+            bankAccount: isset($data['bankAccount']) ? InvoicePaymentBankAccountDTO::fromArray($data['bankAccount']) : null,
         );
     }
 }
