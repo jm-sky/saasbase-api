@@ -6,6 +6,9 @@ use App\Domain\Exchanges\Models\ExchangeRate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin ExchangeRate
+ */
 class ExchangeRateResource extends JsonResource
 {
     /**
@@ -15,10 +18,8 @@ class ExchangeRateResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /* @var ExchangeRate $this->resource */
         return [
             'id'         => $this->id,
-            'exchangeId' => $this->exchange_id,
             'date'       => $this->date->toDateString(),
             'rate'       => $this->rate,
             'table'      => $this->table,

@@ -22,19 +22,20 @@ use Illuminate\Support\Str;
 
 class DefaultTenantSeeder extends Seeder
 {
-    protected string $botUserId = '01JXMGRDQVE4FWTZNE1WR9K8G1';
-
     public function run(): void
     {
         CreateTenantForNewUser::$BYPASSED = true;
-
-        $this->botUserId = config('seeding.bot_user_id', $this->botUserId);
 
         $user   = $this->createDefaultUser();
         $tenant = $this->createTenant($user);
 
         $this->createBotUser($tenant);
         $this->createMockedData($tenant);
+    }
+
+    public static function getBotUserId(): string
+    {
+        return config('seeding.bot_user_id', '01JXMGRDQVE4FWTZNE1WR9K8G1');
     }
 
     protected function createDefaultUser(): User
@@ -97,7 +98,7 @@ class DefaultTenantSeeder extends Seeder
                 // Add some random comments for each contractor
                 CommentFactory::new()->count(rand(1, 3))->create([
                     'tenant_id'        => $tenant->id,
-                    'user_id'          => $this->botUserId,
+                    'user_id'          => self::getBotUserId(),
                     'commentable_id'   => $contractor->id,
                     'commentable_type' => Contractor::class,
                 ]);
@@ -114,7 +115,7 @@ class DefaultTenantSeeder extends Seeder
         $domain = Str::after(config('app.url'), '://');
 
         $botUser = User::factory()->create([
-            'id'         => $this->botUserId,
+            'id'         => self::getBotUserId(),
             'first_name' => 'Botto',
             'last_name'  => 'Bot',
             'email'      => "botto.bot@{$domain}",

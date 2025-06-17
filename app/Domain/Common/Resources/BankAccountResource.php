@@ -6,6 +6,9 @@ use App\Domain\Common\Models\BankAccount;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin BankAccount
+ */
 class BankAccountResource extends JsonResource
 {
     /**

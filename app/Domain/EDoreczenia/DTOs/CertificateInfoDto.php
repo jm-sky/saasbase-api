@@ -17,6 +17,18 @@ class CertificateInfoDto extends BaseDataDTO
     ) {
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            filePath: $data['filePath'],
+            password: $data['password'],
+            fingerprint: $data['fingerprint'],
+            subjectCn: $data['subjectCn'],
+            validFrom: $data['validFrom'],
+            validTo: $data['validTo'],
+        );
+    }
+
     public function toArray(): array
     {
         return [

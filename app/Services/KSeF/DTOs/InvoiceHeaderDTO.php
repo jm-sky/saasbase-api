@@ -4,7 +4,7 @@ namespace App\Services\KSeF\DTOs;
 
 use Carbon\Carbon;
 
-class InvoiceHeaderDTO
+final class InvoiceHeaderDTO
 {
     public function __construct(
         public readonly Carbon $acquisitionTimestamp,

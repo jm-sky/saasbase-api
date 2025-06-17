@@ -7,6 +7,9 @@ use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Tenant
+ */
 class TenantPreviewResource extends JsonResource
 {
     /**

@@ -13,7 +13,7 @@ class UpdateTaskRequest extends BaseFormRequest
             'description'   => ['nullable', 'string'],
             'statusId'      => ['sometimes', 'ulid', 'exists:task_statuses,id'],
             'priority'      => ['nullable', 'string'],
-            'assignedToId'  => ['nullable', 'ulid', 'exists:users,id'],
+            'assigneeId'    => ['nullable', 'ulid', 'exists:users,id'],
             'dueDate'       => ['nullable', 'date'],
         ];
     }

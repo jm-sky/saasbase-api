@@ -17,6 +17,23 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
+/**
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $position
+ * @property string $email
+ * @property string $phone_number
+ * @property string $emails
+ * @property string $phone_numbers
+ * @property string $notes
+ * @property string $user_id
+ * @property string $contactable_id
+ * @property string $contactable_type
+ * @property ?User  $user
+ * @property ?Model $contactable
+ */
 class Contact extends BaseModel implements HasMedia
 {
     use SoftDeletes;

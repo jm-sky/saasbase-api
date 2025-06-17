@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
-class SkillCategoryDTO extends BaseDTO
+final class SkillCategoryDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -36,7 +36,7 @@ class SkillCategoryDTO extends BaseDTO
             throw new \InvalidArgumentException('SkillCategory name is required');
         }
 
-        return new static(
+        return new self(
             name: $model->name,
             id: $model->id,
             description: $model->description,

@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?array   $tasks
  * @property ?array   $requiredSkills
  */
-class ProjectDTO extends BaseDTO
+final class ProjectDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -51,7 +51,7 @@ class ProjectDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var Project $model */
-        return new static(
+        return new self(
             name: $model->name,
             tenantId: $model->tenant_id,
             statusId: $model->status_id,

@@ -11,7 +11,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  * @property array $columns    Columns to include in the export
  * @property array $formatting Formatting options (date, datetime, currency)
  */
-class ExportConfigDTO extends BaseDataDTO
+final class ExportConfigDTO extends BaseDataDTO
 {
     public function __construct(
         public readonly array $filters = [],
@@ -22,6 +22,15 @@ class ExportConfigDTO extends BaseDataDTO
             'currency' => 'PLN',
         ]
     ) {
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            filters: $data['filters'],
+            columns: $data['columns'],
+            formatting: $data['formatting'],
+        );
     }
 
     public function toArray(): array

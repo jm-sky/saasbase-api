@@ -9,7 +9,6 @@ use App\Domain\Chat\Models\ChatMessage;
 use App\Domain\Chat\Models\ChatRoom;
 use App\Domain\Chat\Requests\SendMessageRequest;
 use App\Http\Controllers\Controller;
-use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -64,7 +63,7 @@ class MessageController extends Controller
     {
         $message = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'user_id'      => DatabaseSeeder::BOT_USER_ID,
+            'user_id'      => config('seeding.bot_user_id', '01JXMGRDQVE4FWTZNE1WR9K8G1'),
             'content'      => 'Yes, that\'s right! But what do You think about this? ' . Inspiring::quotes()->random(),
             'tenant_id'    => $room->tenant_id,
         ]);

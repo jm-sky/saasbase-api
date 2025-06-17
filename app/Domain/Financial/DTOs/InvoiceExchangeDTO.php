@@ -10,7 +10,7 @@ use Brick\Math\BigDecimal;
  * @property ?BigDecimal $exchangeRate
  * @property ?string     $date
  */
-class InvoiceExchangeDTO extends BaseDataDTO
+final class InvoiceExchangeDTO extends BaseDataDTO
 {
     public function __construct(
         public string $currency,
@@ -30,7 +30,7 @@ class InvoiceExchangeDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             currency: $data['currency'],
             exchangeRate: isset($data['exchangeRate']) ? BigDecimal::of($data['exchangeRate']) : null,
             date: isset($data['date']) ? $data['date'] : null,

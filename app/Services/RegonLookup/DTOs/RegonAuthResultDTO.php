@@ -2,7 +2,7 @@
 
 namespace App\Services\RegonLookup\DTOs;
 
-class RegonAuthResultDTO
+final class RegonAuthResultDTO
 {
     public function __construct(
         public readonly string $sessionKey

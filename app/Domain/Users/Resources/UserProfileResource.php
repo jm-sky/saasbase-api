@@ -8,6 +8,9 @@ use App\Domain\Users\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin UserProfile
+ */
 class UserProfileResource extends JsonResource
 {
     public function toArray(Request $request): array

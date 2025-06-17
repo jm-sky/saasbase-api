@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property UserPreviewDTO  $inviter
  * @property ?UserPreviewDTO $invitedUser
  */
-class ApplicationInvitationDTO extends BaseDTO
+final class ApplicationInvitationDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $id,
@@ -33,18 +33,18 @@ class ApplicationInvitationDTO extends BaseDTO
         public readonly string $role,
         public readonly string $token,
         public readonly string $status,
-        public readonly ?Carbon $acceptedAt = null,
         public readonly Carbon $expiresAt,
+        public readonly UserPreviewDTO $inviter,
+        public readonly ?Carbon $acceptedAt = null,
         public readonly ?Carbon $createdAt = null,
         public readonly ?Carbon $updatedAt = null,
-        public readonly UserPreviewDTO $inviter,
         public readonly ?UserPreviewDTO $invitedUser = null,
     ) {
     }
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             id: $data['id'],
             inviterId: $data['inviterId'],
             email: $data['email'],

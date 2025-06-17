@@ -2,7 +2,7 @@
 
 namespace App\Services\Signatures\DTOs;
 
-class CertificateDTO
+final class CertificateDTO
 {
     public function __construct(
         public string $issuer,

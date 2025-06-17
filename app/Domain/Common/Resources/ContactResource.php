@@ -3,21 +3,15 @@
 namespace App\Domain\Common\Resources;
 
 use App\Domain\Common\Models\Contact;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Contact
+ */
 class ContactResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param Request $request
-     *
-     * @return array<string, mixed>
-     */
     public function toArray($request): array
     {
-        /** @var Contact $this->resource */
         $profileImage = $this->getFirstMedia('profile');
 
         return [

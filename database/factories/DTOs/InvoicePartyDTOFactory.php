@@ -2,13 +2,13 @@
 
 namespace Database\Factories\DTOs;
 
-use App\Domain\Financial\DTOs\InvoiceBuyerDTO;
+use App\Domain\Financial\DTOs\InvoicePartyDTO;
 
-class InvoiceBuyerDTOFactory extends DTOFactory
+class InvoicePartyDTOFactory extends DTOFactory
 {
-    public function make(): InvoiceBuyerDTO
+    public function make(): InvoicePartyDTO
     {
-        return new InvoiceBuyerDTO(
+        return new InvoicePartyDTO(
             contractorType: fake()->randomElement(['company', 'individual']),
             name: fake()->company(),
             address: fake()->address(),

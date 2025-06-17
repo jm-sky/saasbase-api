@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
-class TenantPreviewDTO extends BaseDTO
+final class TenantPreviewDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -32,7 +32,7 @@ class TenantPreviewDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var Tenant $model */
-        return new static(
+        return new self(
             name: $model->name,
             slug: $model->slug,
             id: $model->id,

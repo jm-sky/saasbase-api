@@ -4,7 +4,7 @@ namespace App\Services\IbanApi\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-class BankDTO extends BaseDataDTO
+final class BankDTO extends BaseDataDTO
 {
     public function __construct(
         public string $bank_name,
@@ -15,6 +15,19 @@ class BankDTO extends BaseDataDTO
         public ?string $state = null,
         public ?string $zip = null,
     ) {
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            bank_name: $data['bank_name'],
+            phone: $data['phone'] ?? null,
+            address: $data['address'] ?? null,
+            bic: $data['bic'] ?? null,
+            city: $data['city'] ?? null,
+            state: $data['state'] ?? null,
+            zip: $data['zip'] ?? null,
+        );
     }
 
     public function toArray(): array

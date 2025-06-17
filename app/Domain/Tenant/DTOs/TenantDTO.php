@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string   $logoUrl
  * @property ?MediaDTO $logo
  */
-class TenantDTO extends BaseDTO
+final class TenantDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -55,7 +55,7 @@ class TenantDTO extends BaseDTO
         $logoMedia = $model->getFirstMedia('logo');
 
         /* @var Tenant $model */
-        return new static(
+        return new self(
             id: $model->id,
             name: $model->name,
             slug: $model->slug,

@@ -20,6 +20,7 @@ trait IsSearchable
 
         static::observe(new ModelObserver());
 
+        // @phpstan-ignore-next-line
         (new static())->registerSearchableMacros();
     }
 

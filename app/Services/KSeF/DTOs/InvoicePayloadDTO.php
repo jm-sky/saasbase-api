@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class InvoicePayloadDTO
+final class InvoicePayloadDTO
 {
     public function __construct(
         public readonly string $type,

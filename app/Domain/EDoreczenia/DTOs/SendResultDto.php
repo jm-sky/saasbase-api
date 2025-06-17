@@ -15,6 +15,16 @@ class SendResultDto extends BaseDataDTO
     ) {
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            success: $data['success'],
+            messageId: $data['messageId'],
+            error: $data['error'],
+            sentAt: $data['sentAt'],
+        );
+    }
+
     public function toArray(): array
     {
         return [

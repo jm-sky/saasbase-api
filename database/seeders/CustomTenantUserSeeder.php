@@ -360,7 +360,7 @@ class CustomTenantUserSeeder extends Seeder
                 'unit_id'     => $unit->id,
                 'vat_rate_id' => $vatRate->id,
             ],
-            'product-1' => [
+            'product-2' => [
                 'name'        => 'Szkolenie z cyberbezpieczeństwa',
                 'description' => 'Szkolenie z cyberbezpieczeństwa dla klienta',
                 'price_net'   => 300,

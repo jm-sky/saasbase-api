@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
-class MeasurementUnitDTO extends BaseDTO
+final class MeasurementUnitDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $code,
@@ -30,7 +30,7 @@ class MeasurementUnitDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var MeasurementUnit $model */
-        return new static(
+        return new self(
             code: $model->code,
             name: $model->name,
             id: $model->id,

@@ -18,11 +18,10 @@ use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ExpensesExport;
 use App\Domain\Export\Services\ExportService;
 use App\Domain\Financial\DTOs\InvoiceBodyDTO;
-use App\Domain\Financial\DTOs\InvoiceBuyerDTO;
 use App\Domain\Financial\DTOs\InvoiceExchangeDTO;
 use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
+use App\Domain\Financial\DTOs\InvoicePartyDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentDTO;
-use App\Domain\Financial\DTOs\InvoiceSellerDTO;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Financial\Enums\PaymentMethod;
@@ -173,8 +172,8 @@ class ExpenseController extends Controller
                 'total_gross'           => BigDecimal::of('0'),
                 'currency'              => 'PLN',
                 'exchange_rate'         => BigDecimal::of('1.0'),
-                'seller'                => new InvoiceSellerDTO(),
-                'buyer'                 => new InvoiceBuyerDTO(),
+                'seller'                => new InvoicePartyDTO(),
+                'buyer'                 => new InvoicePartyDTO(),
                 'body'                  => new InvoiceBodyDTO(
                     lines: [],
                     vatSummary: [],

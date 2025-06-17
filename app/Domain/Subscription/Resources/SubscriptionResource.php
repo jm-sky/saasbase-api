@@ -3,9 +3,13 @@
 namespace App\Domain\Subscription\Resources;
 
 use App\Domain\Subscription\Enums\SubscriptionStatus;
+use App\Domain\Subscription\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Subscription
+ */
 class SubscriptionResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -19,9 +23,9 @@ class SubscriptionResource extends JsonResource
             'currentPeriodEnd'   => $this->current_period_end,
             'cancelAtPeriodEnd'  => $this->cancel_at_period_end,
             'canceledAt'         => $this->canceled_at,
-            'endedAt'            => $this->ended_at,
-            'trialStart'         => $this->trial_start,
-            'trialEnd'           => $this->trial_end,
+            // 'endedAt'            => $this->ended_at,
+            // 'trialStart'         => $this->trial_start,
+            // 'trialEnd'           => $this->trial_end,
             'isOnTrial'          => $this->isOnTrial(),
             'isActive'           => $this->isActive(),
             'isCanceled'         => $this->isCanceled(),

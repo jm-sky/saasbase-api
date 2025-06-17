@@ -64,7 +64,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property string $registryTypeName          | key: praw_rodzajRejestruEwidencji_Nazwa             | Example: REJESTR PRZEDSIĘBIORCÓW
  * @property string $localUnitsCount           | key: praw_liczbaJednLokalnych                       | Example: 0
  */
-class RegonReportForLegalPerson implements Arrayable, \JsonSerializable
+final class RegonReportForLegalPerson implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly string $regon,
@@ -127,7 +127,7 @@ class RegonReportForLegalPerson implements Arrayable, \JsonSerializable
 
     public static function fromXml(\SimpleXMLElement $xml): static
     {
-        return new static(
+        return new self(
             regon: (string) $xml->xpath('praw_regon9')[0],
             nip: (string) $xml->xpath('praw_nip')[0],
             nipStatus: (string) $xml->xpath('praw_statusNip')[0] ?: null,

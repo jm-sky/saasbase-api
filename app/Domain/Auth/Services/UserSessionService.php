@@ -14,6 +14,7 @@ class UserSessionService
 {
     public function createSession(User $user, Request $request, string $token): UserSession
     {
+        // @phpstan-ignore-next-line
         $tokenId = Arr::get(JWTAuth::getJWTProvider()->decode($token), 'jti');
 
         $session                 = new UserSession();

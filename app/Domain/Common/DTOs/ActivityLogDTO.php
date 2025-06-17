@@ -6,7 +6,7 @@ use App\Domain\Common\Models\Activity;
 use App\Domain\Users\DTOs\UserPreviewDTO;
 use Illuminate\Support\Carbon;
 
-class ActivityLogDTO
+final class ActivityLogDTO
 {
     public function __construct(
         public readonly string $id,

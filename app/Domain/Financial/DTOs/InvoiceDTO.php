@@ -29,7 +29,7 @@ use App\Domain\Invoice\Models\Invoice;
  * @property string        $updatedAt
  * @property array         $numberingTemplate
  */
-class InvoiceDTO extends BaseDataDTO
+final class InvoiceDTO extends BaseDataDTO
 {
     public function __construct(
         public readonly string $id,
@@ -53,6 +53,32 @@ class InvoiceDTO extends BaseDataDTO
         public readonly ?string $updatedAt = null,
         public readonly ?array $numberingTemplate = null,
     ) {
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            id: $data['id'],
+            tenantId: $data['tenantId'],
+            type: $data['type'],
+            status: $data['status'],
+            number: $data['number'],
+            numberingTemplateId: $data['numberingTemplateId'],
+            totalNet: $data['totalNet'],
+            totalTax: $data['totalTax'],
+            totalGross: $data['totalGross'],
+            currency: $data['currency'],
+            exchangeRate: $data['exchangeRate'],
+            seller: $data['seller'],
+            buyer: $data['buyer'],
+            body: $data['body'],
+            payment: $data['payment'],
+            options: $data['options'],
+            issueDate: $data['issueDate'],
+            createdAt: $data['createdAt'],
+            updatedAt: $data['updatedAt'],
+            numberingTemplate: $data['numberingTemplate'],
+        );
     }
 
     public static function from(Invoice $invoice): self

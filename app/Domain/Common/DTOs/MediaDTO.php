@@ -2,13 +2,12 @@
 
 namespace App\Domain\Common\DTOs;
 
-use App\Domain\Common\Traits\HasMediaSignedUrls;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class MediaDTO implements Arrayable, \JsonSerializable
+final class MediaDTO implements Arrayable, \JsonSerializable
 {
     public const TEMPORARY_URL_EXPIRATION_TIME = 15;
 
@@ -26,15 +25,17 @@ class MediaDTO implements Arrayable, \JsonSerializable
 
     public static function fromModel(Media $media, ?Model $parent = null): static
     {
-        if ($parent && $parent instanceof HasMediaSignedUrls) {
+        $url = null;
+
+        if ($parent && method_exists($parent, 'getMediaSignedUrl')) {
             $url = $parent->getMediaSignedUrl($media->collection_name, $media->file_name);
         }
 
-        if ($parent) {
+        if ($parent && !$url) {
             $url = $parent->getMediaUrl($media->collection_name, $media->file_name);
         }
 
-        return new static(
+        return new self(
             id: $media->uuid ?? (string) $media->id,
             fileName: $media->file_name,
             fileUrl: $url ?? $media->getUrl(),

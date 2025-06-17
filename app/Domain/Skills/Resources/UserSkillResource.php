@@ -2,12 +2,18 @@
 
 namespace App\Domain\Skills\Resources;
 
+use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 
-class UserSkillResource extends JsonResource
+/**
+ * @mixin Skill
+ *
+ * @property UserSkill $pivot
+ */
+final class UserSkillResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

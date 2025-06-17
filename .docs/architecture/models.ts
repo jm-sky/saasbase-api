@@ -181,7 +181,7 @@ export interface ITask {
   description?: string;
   status: TTaskStatus;
   priority: TTaskPriority;
-  assignedToId?: string;
+  assigneeId?: string;
   createdById: string;
   dueDate?: TDateTime;
   createdAt: TDateTime;

@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class SessionTokenDTO
+final class SessionTokenDTO
 {
     public function __construct(
         public readonly string $token,

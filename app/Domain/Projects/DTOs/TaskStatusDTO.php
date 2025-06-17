@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
-class TaskStatusDTO extends BaseDTO
+final class TaskStatusDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -36,7 +36,7 @@ class TaskStatusDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var TaskStatus $model */
-        return new static(
+        return new self(
             name: $model->name,
             color: $model->color,
             sortOrder: $model->sort_order,

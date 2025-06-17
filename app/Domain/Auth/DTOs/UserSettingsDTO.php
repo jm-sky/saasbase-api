@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool    $twoFactorConfirmed
  * @property ?array  $preferences
  */
-class UserSettingsDTO extends BaseDTO
+final class UserSettingsDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $userId,
@@ -35,7 +35,7 @@ class UserSettingsDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var UserSettings $model */
-        return new static(
+        return new self(
             userId: $model->user_id,
             language: $model->language,
             theme: $model->theme,

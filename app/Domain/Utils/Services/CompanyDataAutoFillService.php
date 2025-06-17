@@ -33,6 +33,7 @@ class CompanyDataAutoFillService
     ): ?CommonCompanyLookupData {
         $regonData = null;
         $mfData    = null;
+        $viesData  = null;
 
         if ($nip && config('services.regon.user_key')) {
             $regonData = $this->regonLookupService->findByNip($nip, $force);

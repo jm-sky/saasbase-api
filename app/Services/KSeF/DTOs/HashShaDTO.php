@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class HashShaDTO
+final class HashShaDTO
 {
     public function __construct(
         public readonly string $algorithm,

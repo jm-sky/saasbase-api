@@ -16,7 +16,7 @@ use Brick\Math\BigDecimal;
  * @property BigDecimal $totalGross
  * @property ?string    $productId
  */
-class InvoiceLineDTO extends BaseDataDTO
+final class InvoiceLineDTO extends BaseDataDTO
 {
     public function __construct(
         public string $id,
@@ -48,7 +48,7 @@ class InvoiceLineDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             id: $data['id'],
             description: $data['description'],
             quantity: BigDecimal::of($data['quantity']),

@@ -4,7 +4,7 @@ namespace App\Services\KSeF\DTOs;
 
 use Carbon\Carbon;
 
-class QueryCriteriaDTO
+final class QueryCriteriaDTO
 {
     public function __construct(
         public readonly ?string $subjectType = null,

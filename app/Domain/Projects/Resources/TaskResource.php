@@ -7,6 +7,9 @@ use App\Domain\Projects\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Task
+ */
 class TaskResource extends JsonResource
 {
     /**
@@ -25,7 +28,7 @@ class TaskResource extends JsonResource
             'description'  => $this->description,
             'statusId'     => $this->status_id,
             'priority'     => $this->priority,
-            'assignedToId' => $this->assigned_to_id,
+            'assigneeId'   => $this->assignee_id,
             'createdById'  => $this->created_by_id,
             'dueDate'      => $this->due_date?->toIso8601String(),
             'createdAt'    => $this->created_at?->toIso8601String(),
@@ -33,7 +36,7 @@ class TaskResource extends JsonResource
             'deletedAt'    => $this->deleted_at?->toIso8601String(),
             'project'      => $this->whenLoaded('project', fn () => new ProjectResource($this->project)),
             'status'       => $this->whenLoaded('status', fn () => new TaskStatusResource($this->status)),
-            'assignedTo'   => $this->whenLoaded('assignedTo', fn () => new UserPreviewResource($this->assignedTo)),
+            'assignee'     => $this->whenLoaded('assignee', fn () => new UserPreviewResource($this->assignee)),
             'createdBy'    => $this->whenLoaded('createdBy', fn () => new UserPreviewResource($this->createdBy)),
         ];
     }

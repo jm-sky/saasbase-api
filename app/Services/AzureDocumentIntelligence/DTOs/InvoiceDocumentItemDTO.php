@@ -20,7 +20,7 @@ use App\Services\AzureDocumentIntelligence\DTOs\Fields\StringField;
  * @property ?StringField   $unit
  * @property float          $confidence
  */
-class InvoiceDocumentItemDTO extends BaseDataDTO
+final class InvoiceDocumentItemDTO extends BaseDataDTO
 {
     public function __construct(
         public readonly ?StringField $description,
@@ -35,7 +35,7 @@ class InvoiceDocumentItemDTO extends BaseDataDTO
     ) {
     }
 
-    public static function fromAzureArray(array $data): self
+    public static function fromArray(array $data): self
     {
         return new self(
             description: isset($data['Description']) ? StringField::fromArray($data['Description']) : null,

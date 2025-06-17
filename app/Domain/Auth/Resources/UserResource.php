@@ -6,6 +6,9 @@ use App\Domain\Auth\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin User
+ */
 class UserResource extends JsonResource
 {
     /**
@@ -15,15 +18,14 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /* @var User $this->resource */
         return [
             'id'                 => $this->id,
             'firstName'          => $this->first_name,
             'lastName'           => $this->last_name,
             'email'              => $this->email,
             'avatarUrl'          => $this->getMediaSignedUrl('profile'),
-            'description'        => $this->description,
-            'birthDate'          => $this->birth_date,
+            'description'        => $this->profile?->bio,
+            'birthDate'          => $this->profile?->birth_date,
             'phone'              => $this->phone,
             'isAdmin'            => $this->is_admin,
             'isEmailVerified'    => $this->isEmailVerified(),

@@ -27,7 +27,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property ?string    $flat        Key: NrLokalu        | Example: "1"
  * @property ?string    $silosId     Key: SilosID         | Example: "6"
  */
-class RegonLookupResultDTO implements Arrayable, \JsonSerializable
+final class RegonLookupResultDTO implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly string $name,

@@ -26,10 +26,15 @@ class OpenRouterService
         ?string $model = null,
         ?string $openRouterUrl = null
     ) {
-        $this->openRouterUrl = $openRouterUrl ?? config('services.openrouter.url', self::DEFAULT_OPENROUTER_URL);
+        $this->openRouterUrl = $openRouterUrl ?? self::getOpenRouterUrl();
         $this->model         = $model ?? config('services.openrouter.model', self::DEFAULT_MODEL);
         $this->apiKey        = config('services.openrouter.key');
         $this->guzzleClient  = new Client();
+    }
+
+    public static function getOpenRouterUrl(): string
+    {
+        return config('services.openrouter.url', self::DEFAULT_OPENROUTER_URL);
     }
 
     public function createStreamedResponse(array $messages)

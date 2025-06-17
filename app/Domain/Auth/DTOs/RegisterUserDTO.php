@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<User>
  */
-class RegisterUserDTO extends BaseDTO
+final class RegisterUserDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $firstName,

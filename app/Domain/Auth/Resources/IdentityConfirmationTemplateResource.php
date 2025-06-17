@@ -2,15 +2,17 @@
 
 namespace App\Domain\Auth\Resources;
 
+use App\Domain\Common\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @mixin Media
+ */
 class IdentityConfirmationTemplateResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /* @var Media $this->resource */
         return [
             'id'        => $this->id,
             'fileName'  => $this->file_name,

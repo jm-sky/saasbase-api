@@ -4,7 +4,7 @@ namespace App\Services\AzureDocumentIntelligence\DTOs\Fields;
 
 use Carbon\Carbon;
 
-class DateField extends ValueWrapper
+final class DateField extends ValueWrapper
 {
     public function __construct(
         float $confidence,
@@ -15,7 +15,7 @@ class DateField extends ValueWrapper
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             value: Carbon::parse($data['value'] ?? ''),
         );

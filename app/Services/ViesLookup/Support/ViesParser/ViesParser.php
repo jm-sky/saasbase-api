@@ -318,6 +318,7 @@ class ViesParser
         $address_split = explode(',', $this->address);
         $street        = trim($address_split[1]);
         $city          = trim($address_split[0]);
+        $zip           = null;
 
         if (preg_match('/SECTOR\s+(\d+)/i', $street, $matches)) {
             $city .= ' ' . $matches[0]; // Return the full "SECTOR X" match

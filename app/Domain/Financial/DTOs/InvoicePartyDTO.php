@@ -4,7 +4,7 @@ namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-class InvoiceBuyerDTO extends BaseDataDTO
+final class InvoicePartyDTO extends BaseDataDTO
 {
     public function __construct(
         public ?string $name = null,
@@ -34,7 +34,7 @@ class InvoiceBuyerDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             contractorId: $data['contractorId'] ?? null,
             contractorType: $data['contractorType'] ?? null,
             name: $data['name'] ?? null,

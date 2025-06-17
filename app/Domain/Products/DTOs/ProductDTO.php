@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?VatRateDTO         $vatRate
  * @property ?MediaDTO           $logo
  */
-class ProductDTO extends BaseDTO
+final class ProductDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $tenantId,

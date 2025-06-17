@@ -8,10 +8,9 @@ use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Tenant\Models\Tenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\DTOs\InvoiceBodyDTOFactory;
-use Database\Factories\DTOs\InvoiceBuyerDTOFactory;
 use Database\Factories\DTOs\InvoiceOptionsDTOFactory;
+use Database\Factories\DTOs\InvoicePartyDTOFactory;
 use Database\Factories\DTOs\InvoicePaymentDTOFactory;
-use Database\Factories\DTOs\InvoiceSellerDTOFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -40,8 +39,8 @@ class ExpenseFactory extends Factory
             'currency'              => fake()->currencyCode(),
             'exchange_rate'         => BigDecimal::of('1.0'),
             'issue_date'            => fake()->dateTimeBetween('-1 year', 'now'),
-            'seller'                => (new InvoiceSellerDTOFactory())->make(),
-            'buyer'                 => (new InvoiceBuyerDTOFactory())->make(),
+            'seller'                => (new InvoicePartyDTOFactory())->make(),
+            'buyer'                 => (new InvoicePartyDTOFactory())->make(),
             'body'                  => (new InvoiceBodyDTOFactory())->make(),
             'payment'               => (new InvoicePaymentDTOFactory())->make(),
             'options'               => (new InvoiceOptionsDTOFactory())->make(),

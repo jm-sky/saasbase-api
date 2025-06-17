@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon  $createdAt
  * @property Carbon  $updatedAt
  */
-class ShareTokenDTO extends BaseDataDTO
+final class ShareTokenDTO extends BaseDataDTO
 {
     public function __construct(
         public readonly string $id,
@@ -39,10 +39,27 @@ class ShareTokenDTO extends BaseDataDTO
     ) {
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            id: $data['id'],
+            token: $data['token'],
+            shareableType: $data['shareableType'],
+            shareableId: $data['shareableId'],
+            onlyForAuthenticated: $data['onlyForAuthenticated'],
+            expiresAt: $data['expiresAt'],
+            lastUsedAt: $data['lastUsedAt'],
+            usageCount: $data['usageCount'],
+            maxUsage: $data['maxUsage'],
+            createdAt: $data['createdAt'],
+            updatedAt: $data['updatedAt'],
+        );
+    }
+
     public static function fromModel(Model $model): static
     {
         /* @var ShareToken $model */
-        return new static(
+        return new self(
             id: $model->id,
             token: $model->token,
             shareableType: $model->shareable_type,

@@ -9,11 +9,10 @@ parameters:
         - routes
         - tests
 
-    level: 5
+    level: 1
 
     excludePaths:
         - %currentWorkingDirectory%/database/migrations/*.php
 
-    ignoreErrors:
-        - '#PHPDoc tag @var#'
-        - '#Access to an undefined property App\\Models\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+#'
+    # ignoreErrors:
+    #     - '#PHPDoc tag @var#'

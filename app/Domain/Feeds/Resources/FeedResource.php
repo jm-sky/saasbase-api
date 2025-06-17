@@ -3,9 +3,13 @@
 namespace App\Domain\Feeds\Resources;
 
 use App\Domain\Common\Resources\UserPreviewResource;
+use App\Domain\Feeds\Models\Feed;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Feed
+ */
 class FeedResource extends JsonResource
 {
     public function toArray(Request $request): array

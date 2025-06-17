@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -13,24 +14,25 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property string                                                        $id
- * @property string                                                        $project_id
- * @property string                                                        $title
- * @property ?string                                                       $description
- * @property string                                                        $status
- * @property string                                                        $priority
- * @property ?string                                                       $assigned_to_id
- * @property string                                                        $created_by_id
- * @property ?Carbon                                                       $due_date
- * @property Carbon                                                        $created_at
- * @property Carbon                                                        $updated_at
- * @property ?Carbon                                                       $deleted_at
- * @property Project                                                       $project
- * @property ?User                                                         $assignedTo
- * @property User                                                          $createdBy
- * @property \Illuminate\Database\Eloquent\Collection<int, TaskWatcher>    $watchers
- * @property \Illuminate\Database\Eloquent\Collection<int, TaskComment>    $comments
- * @property \Illuminate\Database\Eloquent\Collection<int, TaskAttachment> $attachments
+ * @property string                          $id
+ * @property string                          $project_id
+ * @property string                          $title
+ * @property ?string                         $description
+ * @property string                          $status_id
+ * @property string                          $priority
+ * @property ?string                         $assignee_id
+ * @property string                          $created_by_id
+ * @property ?Carbon                         $due_date
+ * @property Carbon                          $created_at
+ * @property Carbon                          $updated_at
+ * @property ?Carbon                         $deleted_at
+ * @property Project                         $project
+ * @property ?User                           $assignee
+ * @property User                            $createdBy
+ * @property TaskStatus                      $status
+ * @property Collection<int, TaskWatcher>    $watchers
+ * @property Collection<int, TaskComment>    $comments
+ * @property Collection<int, TaskAttachment> $attachments
  */
 class Task extends BaseModel implements HasMedia
 {
@@ -40,11 +42,11 @@ class Task extends BaseModel implements HasMedia
     protected $fillable = [
         'tenant_id',
         'project_id',
+        'status_id',
         'title',
         'description',
-        'status',
         'priority',
-        'assigned_to_id',
+        'assignee_id',
         'created_by_id',
         'due_date',
     ];
@@ -55,19 +57,23 @@ class Task extends BaseModel implements HasMedia
      * @var array<string, string>
      */
     protected $casts = [
-        'status'   => 'string',
         'priority' => 'string',
         'due_date' => 'datetime',
     ];
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(TaskStatus::class);
+    }
 
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function assignedTo(): BelongsTo
+    public function assignee(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assigned_to_id');
+        return $this->belongsTo(User::class, 'assignee_id');
     }
 
     public function createdBy(): BelongsTo

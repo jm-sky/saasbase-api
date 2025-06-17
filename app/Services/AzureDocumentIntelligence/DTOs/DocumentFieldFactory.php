@@ -11,7 +11,7 @@ use App\Services\AzureDocumentIntelligence\DTOs\Fields\ObjectField;
 use App\Services\AzureDocumentIntelligence\DTOs\Fields\StringField;
 use App\Services\AzureDocumentIntelligence\DTOs\Fields\ValueWrapper;
 
-class DocumentFieldFactory
+final class DocumentFieldFactory
 {
     public static function fromArray(array $data): ValueWrapper
     {

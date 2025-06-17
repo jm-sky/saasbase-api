@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string[]|null $tags
  * @property ?MediaDTO     $logo
  */
-class ContractorDTO extends BaseDTO
+final class ContractorDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $tenantId,

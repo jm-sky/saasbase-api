@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $avatarUrl
  * @property ?Carbon $createdAt
  */
-class UserPreviewDTO extends BaseDTO
+final class UserPreviewDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -30,7 +30,7 @@ class UserPreviewDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var User $model */
-        return new static(
+        return new self(
             name: trim("{$model->first_name} {$model->last_name}"),
             email: $model->public_email,
             id: $model->id,

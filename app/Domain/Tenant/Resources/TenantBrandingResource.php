@@ -2,9 +2,13 @@
 
 namespace App\Domain\Tenant\Resources;
 
+use App\Domain\Tenant\Models\TenantBranding;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin TenantBranding
+ */
 class TenantBrandingResource extends JsonResource
 {
     /**

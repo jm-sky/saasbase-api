@@ -12,7 +12,7 @@ use App\Services\AzureDocumentIntelligence\Enums\DocumentAnalysisStatus;
  * @property ?AnalyzeResult         $analyzeResult
  * @property ?string                $error
  */
-class DocumentAnalysisResult extends BaseDataDTO
+final class DocumentAnalysisResult extends BaseDataDTO
 {
     public function __construct(
         public readonly DocumentAnalysisStatus $status,
@@ -32,7 +32,7 @@ class DocumentAnalysisResult extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             status: DocumentAnalysisStatus::from($data['status']),
             analyzeResult: isset($data['analyzeResult']) ? AnalyzeResult::fromArray($data['analyzeResult']) : null,
             error: $data['error']['message'] ?? ($data['error'] ?? null)

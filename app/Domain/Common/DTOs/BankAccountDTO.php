@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon  $createdAt    Internally Carbon, accepts/serializes ISO 8601
  * @property Carbon  $updatedAt    Internally Carbon, accepts/serializes ISO 8601
  */
-class BankAccountDTO extends BaseDTO
+final class BankAccountDTO extends BaseDTO
 {
     public function __construct(
         public string $iban,

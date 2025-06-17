@@ -16,6 +16,17 @@ class SyncResultDto extends BaseDataDTO
     ) {
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            success: $data['success'],
+            newMessages: $data['newMessages'],
+            updatedMessages: $data['updatedMessages'],
+            error: $data['error'],
+            syncedAt: $data['syncedAt'],
+        );
+    }
+
     public function toArray(): array
     {
         return [

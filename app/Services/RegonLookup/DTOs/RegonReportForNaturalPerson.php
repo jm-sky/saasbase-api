@@ -54,7 +54,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property string  $registryTypeName          | key: fizC_RodzajRejestru_Nazwa                     | Example: CENTRALNA EWIDENCJA I INFORMACJA O DZIAŁALNOŚCI GOSPODARCZEJ
  * @property bool    $hasNotStartedActivity     | key: fizC_NiePodjetoDzialalnosci                   | Example: false
  */
-class RegonReportForNaturalPerson implements Arrayable, \JsonSerializable
+final class RegonReportForNaturalPerson implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly string $regon,
@@ -107,7 +107,7 @@ class RegonReportForNaturalPerson implements Arrayable, \JsonSerializable
 
     public static function fromXml(\SimpleXMLElement $xml, ?string $nip = null): static
     {
-        return new static(
+        return new self(
             nip: $nip ?? null,
             regon: (string) $xml->xpath('fiz_regon9')[0],
             name: (string) $xml->xpath('fiz_nazwa')[0],

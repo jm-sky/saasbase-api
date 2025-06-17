@@ -3,10 +3,14 @@
 namespace App\Domain\Subscription\Resources;
 
 use App\Domain\Subscription\Enums\SubscriptionInvoiceStatus;
+use App\Domain\Subscription\Models\SubscriptionInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InvoiceResource extends JsonResource
+/**
+ * @mixin SubscriptionInvoice
+ */
+final class InvoiceResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

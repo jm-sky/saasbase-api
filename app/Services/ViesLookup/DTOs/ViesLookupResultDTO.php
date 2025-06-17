@@ -19,7 +19,7 @@ use Illuminate\Support\Arr;
  * @property ?string $rawAddress  Raw address from VIES
  * @property ?bool   $cache       Whether the data was cached
  */
-class ViesLookupResultDTO implements Arrayable, \JsonSerializable
+final class ViesLookupResultDTO implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly bool $valid,

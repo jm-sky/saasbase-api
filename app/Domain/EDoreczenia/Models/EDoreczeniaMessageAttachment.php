@@ -7,6 +7,15 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $message_id
+ * @property string $file_path
+ * @property string $file_name
+ * @property int    $file_size
+ * @property string $mime_type
+ */
 class EDoreczeniaMessageAttachment extends BaseModel
 {
     use BelongsToTenant;

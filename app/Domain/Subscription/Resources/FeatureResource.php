@@ -2,10 +2,14 @@
 
 namespace App\Domain\Subscription\Resources;
 
+use App\Domain\Subscription\Models\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FeatureResource extends JsonResource
+/**
+ * @mixin Feature
+ */
+final class FeatureResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

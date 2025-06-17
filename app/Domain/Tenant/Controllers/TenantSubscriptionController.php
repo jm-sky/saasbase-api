@@ -6,6 +6,8 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Media;
 use App\Domain\Subscription\Enums\FeatureName;
 use App\Domain\Subscription\Resources\SubscriptionPlanResource;
+use App\Domain\Tenant\DTOs\TenantQuotaDTO;
+use App\Domain\Tenant\DTOs\TenantQuotaItemDTO;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Resources\TenantQuotaResource;
 use App\Http\Controllers\Controller;
@@ -38,7 +40,7 @@ class TenantSubscriptionController extends Controller
      *
      * @return array{usedStorageGb: float, availableStorageGb: float, usedUsers: int, availableUsers: int|string}
      */
-    private function calculateQuota(Tenant $tenant): array
+    private function calculateQuota(Tenant $tenant): TenantQuotaDTO
     {
         $usedStorageBytes = Media::where('tenant_id', $tenant->id)->sum('size');
         $usedStorageMB    = round($usedStorageBytes / 1024 / 1024, 2);
@@ -48,21 +50,21 @@ class TenantSubscriptionController extends Controller
         $maxUsers   = $this->parseLimit($features[FeatureName::MAX_USERS->value] ?? '0');
         $maxStorage = (float) ($features[FeatureName::STORAGE_MB->value] ?? 0);
 
-        return [
-            'storage' => [
-                'used'      => $usedStorageMB,
-                'total'     => $maxStorage,
-                'unit'      => 'MB',
-            ],
-            'users' => [
-                'used'      => $usedUsers,
-                'total'     => $maxUsers,
-            ],
-            'apiCalls' => [
-                'used'      => 0,
-                'total'     => 10000,
-            ],
-        ];
+        return new TenantQuotaDTO(
+            storage: new TenantQuotaItemDTO(
+                used: $usedStorageMB,
+                total: $maxStorage,
+                unit: 'MB',
+            ),
+            users: new TenantQuotaItemDTO(
+                used: $usedUsers,
+                total: $maxUsers,
+            ),
+            apiCalls: new TenantQuotaItemDTO(
+                used: 0,
+                total: 10000,
+            ),
+        );
     }
 
     private function parseLimit(string $value): int|string

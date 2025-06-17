@@ -6,6 +6,9 @@ use App\Domain\Projects\Models\TaskStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin TaskStatus
+ */
 class TaskStatusResource extends JsonResource
 {
     /**

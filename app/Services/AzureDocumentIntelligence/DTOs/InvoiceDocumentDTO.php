@@ -15,7 +15,7 @@ use App\Services\AzureDocumentIntelligence\DTOs\Fields\TimeField;
 /**
  * DTO for Invoice document from Azure Document Intelligence.
  */
-class InvoiceDocumentDTO extends BaseDataDTO
+final class InvoiceDocumentDTO extends BaseDataDTO
 {
     public function __construct(
         // Basic Invoice Information
@@ -79,7 +79,7 @@ class InvoiceDocumentDTO extends BaseDataDTO
     /**
      * Map from Azure Document Intelligence response (fields array).
      */
-    public static function fromAzureArray(array $data): self
+    public static function fromArray(array $data): self
     {
         $fields = $data['fields'] ?? [];
 
@@ -137,11 +137,11 @@ class InvoiceDocumentDTO extends BaseDataDTO
 
             // Collections
             items: array_map(
-                fn ($item) => InvoiceDocumentItemDTO::fromAzureArray($item['valueObject']),
+                fn ($item) => InvoiceDocumentItemDTO::fromArray($item['valueObject']),
                 $fields['Items']['valueArray'] ?? []
             ),
             paymentDetails: array_map(
-                fn ($item) => InvoiceDocumentPaymentDetailDTO::fromAzureArray($item['valueObject']),
+                fn ($item) => InvoiceDocumentPaymentDetailDTO::fromArray($item['valueObject']),
                 $fields['PaymentDetails']['valueArray'] ?? []
             ),
 

@@ -6,16 +6,13 @@ use App\Domain\Invoice\Models\NumberingTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin NumberingTemplate
+ */
 class NumberingTemplateResource extends JsonResource
 {
-    /**
-     * @param Request $request
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
-        /* @var NumberingTemplate $this->resource */
         return [
             'id'           => $this->id,
             'tenantId'     => $this->tenant_id,

@@ -9,6 +9,9 @@ use App\Domain\Utils\Resources\RegistryConfirmationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Contractor
+ */
 class ContractorResource extends JsonResource
 {
     /**

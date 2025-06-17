@@ -9,6 +9,19 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $provider
+ * @property string $file_path
+ * @property string $fingerprint
+ * @property string $subject_cn
+ * @property Carbon $valid_from
+ * @property Carbon $valid_to
+ * @property string $created_by
+ * @property Tenant $tenant
+ * @property User   $creator
+ */
 class EDoreczeniaCertificate extends BaseModel
 {
     use SoftDeletes;

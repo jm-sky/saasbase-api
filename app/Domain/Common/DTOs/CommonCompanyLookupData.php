@@ -34,6 +34,24 @@ class CommonCompanyLookupData extends BaseDataDTO
     ) {
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            name: $data['name'],
+            country: $data['country'],
+            vatId: $data['vatId'],
+            regon: $data['regon'],
+            shortName: $data['shortName'],
+            phoneNumber: $data['phoneNumber'],
+            email: $data['email'],
+            website: $data['website'],
+            address: $data['address'] ? AddressDTO::fromArray($data['address']) : null,
+            bankAccount: $data['bankAccount'] ? BankAccountDTO::fromArray($data['bankAccount']) : null,
+            sources: $data['sources'] ? CommonCompanyLookupSources::fromArray($data['sources']) : null,
+            cache: $data['cache'],
+        );
+    }
+
     public function toArray(): array
     {
         return [

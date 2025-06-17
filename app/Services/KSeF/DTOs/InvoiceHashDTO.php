@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class InvoiceHashDTO
+final class InvoiceHashDTO
 {
     public function __construct(
         public readonly HashShaDTO $hashSHA,

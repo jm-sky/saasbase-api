@@ -10,6 +10,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string                                        $id
+ * @property string                                        $tenant_id
+ * @property string                                        $provider
+ * @property string                                        $message_id
+ * @property string                                        $subject
+ * @property string                                        $content
+ * @property string                                        $status
+ * @property Carbon                                        $sent_at
+ * @property Carbon                                        $delivered_at
+ * @property string                                        $created_by
+ * @property Tenant                                        $tenant
+ * @property User                                          $creator
+ * @property Collection<int, EDoreczeniaMessageAttachment> $attachments
+ */
 class EDoreczeniaMessage extends BaseModel
 {
     use SoftDeletes;

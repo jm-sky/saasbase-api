@@ -4,7 +4,7 @@ namespace App\Services\IbanApi\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-class IbanDataDTO extends BaseDataDTO
+final class IbanDataDTO extends BaseDataDTO
 {
     public function __construct(
         public ?string $country_code,

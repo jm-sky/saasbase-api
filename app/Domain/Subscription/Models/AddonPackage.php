@@ -4,15 +4,16 @@ namespace App\Domain\Subscription\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Subscription\Enums\AddonType;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
- * @property string                                                   $id
- * @property string                                                   $name
- * @property string                                                   $stripe_price_id
- * @property string                                                   $description
- * @property AddonType                                                $type
- * @property ?float                                                   $price
- * @property \Illuminate\Database\Eloquent\Collection|AddonPurchase[] $purchases
+ * @property string                     $id
+ * @property string                     $name
+ * @property string                     $stripe_price_id
+ * @property string                     $description
+ * @property AddonType                  $type
+ * @property ?float                     $price
+ * @property Collection|AddonPurchase[] $purchases
  */
 class AddonPackage extends BaseModel
 {

@@ -13,9 +13,9 @@ return new class() extends Migration {
             $table->foreignUlid('project_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('status')->default('todo');
+            $table->foreignUlid('status_id')->constrained('task_statuses')->cascadeOnDelete();
             $table->string('priority')->default('medium');
-            $table->foreignUlid('assigned_to_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUlid('assignee_id')->constrained('users')->cascadeOnDelete();
             $table->foreignUlid('created_by_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('due_date')->nullable();
             $table->timestamps();

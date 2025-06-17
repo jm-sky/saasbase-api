@@ -14,7 +14,7 @@ class CreateTaskRequest extends BaseFormRequest
             'description'   => ['nullable', 'string'],
             'statusId'      => ['required', 'ulid', 'exists:task_statuses,id'],
             'priority'      => ['nullable', 'string'],
-            'assignedToId'  => ['nullable', 'ulid', 'exists:users,id'],
+            'assigneeId'    => ['nullable', 'ulid', 'exists:users,id'],
             'dueDate'       => ['nullable', 'date'],
         ];
     }

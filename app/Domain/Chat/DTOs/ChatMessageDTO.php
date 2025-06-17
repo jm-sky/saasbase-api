@@ -7,7 +7,7 @@ use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Users\DTOs\UserPreviewDTO;
 use Illuminate\Database\Eloquent\Model;
 
-class ChatMessageDTO extends BaseDTO
+final class ChatMessageDTO extends BaseDTO
 {
     public function __construct(
         public string $id,
@@ -29,7 +29,7 @@ class ChatMessageDTO extends BaseDTO
             throw new \InvalidArgumentException('Model must be instance of ChatMessage');
         }
 
-        return new static(
+        return new self(
             $model->id,
             $model->temp_id,
             $model->user_id,

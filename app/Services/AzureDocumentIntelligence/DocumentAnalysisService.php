@@ -29,12 +29,12 @@ class DocumentAnalysisService
         $this->connector = new AzureConnector();
     }
 
-    public function analyze(string $filePath, ?string $modelId = null): DocumentAnalysisResult
+    public function analyze(string $filePath): DocumentAnalysisResult
     {
         if ($this->isUrl($filePath)) {
-            $result = $this->analyzeByUrlInternal($filePath, $modelId);
+            $result = $this->analyzeByUrlInternal($filePath);
         } else {
-            $result = $this->analyzeByContentInternal($filePath, $modelId);
+            $result = $this->analyzeByContentInternal($filePath);
         }
 
         return DocumentAnalysisResult::fromArray($result);

@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?array  $user
  * @property ?int    $commentsCount
  */
-class FeedDTO extends BaseDTO
+final class FeedDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $tenantId,

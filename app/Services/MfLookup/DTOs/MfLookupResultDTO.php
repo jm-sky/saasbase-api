@@ -28,7 +28,7 @@ use Illuminate\Support\Str;
  * @property ?string              $registrationLegalDate Example: "2015-01-01"
  * @property ?bool                $cache
  */
-class MfLookupResultDTO implements Arrayable, \JsonSerializable
+final class MfLookupResultDTO implements Arrayable, \JsonSerializable
 {
     public const COUNTRY = 'PL';
 
@@ -98,7 +98,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
         return $this->toArray();
     }
 
-    protected function getAddress(): ?AddressDTO
+    private function getAddress(): ?AddressDTO
     {
         $address = null;
 
@@ -135,7 +135,7 @@ class MfLookupResultDTO implements Arrayable, \JsonSerializable
         return $address;
     }
 
-    protected function getBankAccount(): ?BankAccountDTO
+    private function getBankAccount(): ?BankAccountDTO
     {
         if (empty($this->accountNumbers)) {
             return null;

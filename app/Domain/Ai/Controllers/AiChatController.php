@@ -2,6 +2,7 @@
 
 namespace App\Domain\Ai\Controllers;
 
+use App\Domain\Ai\DTOs\AiChatResponseDTO;
 use App\Domain\Ai\Requests\AiChatRequest;
 use App\Domain\Ai\Resources\AiChatResponseResource;
 use App\Domain\Ai\Services\AiChatService;
@@ -33,15 +34,15 @@ class AiChatController extends Controller
                 $data['noHistory'] ?? false
             );
 
-            return new AiChatResponseResource((object) [
-                'id'        => Str::ulid(),
-                'tempId'    => $data['tempId'] ?? null,
-                'content'   => 'AI response streaming started',
-                'streaming' => true,
-                'role'      => 'assistant',
-                'isAi'      => true,
-                'createdAt' => now()->toIso8601String(),
-            ]);
+            return new AiChatResponseResource(new AiChatResponseDTO(
+                id: Str::ulid(),
+                tempId: $data['tempId'] ?? null,
+                content: 'AI response streaming started',
+                streaming: true,
+                role: 'assistant',
+                isAi: true,
+                createdAt: now(),
+            ));
         }
 
         // Tryb bez streamu - zwracamy odpowiedź od razu do klienta
@@ -52,15 +53,15 @@ class AiChatController extends Controller
             $data['noHistory'] ?? false
         );
 
-        return new AiChatResponseResource((object) [
-            'id'        => Str::ulid(),
-            'tempId'    => $data['tempId'] ?? null,
-            'content'   => $content,
-            'streaming' => false,
-            'role'      => 'assistant',
-            'isAi'      => true,
-            'createdAt' => now()->toIso8601String(),
-        ]);
+        return new AiChatResponseResource(new AiChatResponseDTO(
+            id: Str::ulid(),
+            tempId: $data['tempId'] ?? null,
+            content: $content,
+            streaming: false,
+            role: 'assistant',
+            isAi: true,
+            createdAt: now(),
+        ));
     }
 
     public function stopStreaming(): JsonResponse

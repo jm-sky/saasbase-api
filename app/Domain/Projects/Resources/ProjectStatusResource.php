@@ -6,6 +6,9 @@ use App\Domain\Projects\Models\ProjectStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin ProjectStatus
+ */
 class ProjectStatusResource extends JsonResource
 {
     /**

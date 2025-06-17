@@ -4,7 +4,7 @@ namespace App\Services\KSeF\DTOs;
 
 use Carbon\Carbon;
 
-class StatusInvoiceResponseDTO
+final class StatusInvoiceResponseDTO
 {
     public function __construct(
         public readonly Carbon $timestamp,

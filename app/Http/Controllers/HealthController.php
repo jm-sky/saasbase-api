@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Ai\Services\AiChatService;
+use App\Domain\Ai\Services\OpenRouterService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
@@ -109,7 +109,7 @@ class HealthController extends Controller
         $status = [];
 
         try {
-            $url              = AiChatService::getOpenRouterUrl();
+            $url              = OpenRouterService::getOpenRouterUrl();
             $response         = Http::timeout(2)->get($url);
             $status['status'] = $response->successful() ? 'ok' : 'error: bad response';
         } catch (\Exception $e) {

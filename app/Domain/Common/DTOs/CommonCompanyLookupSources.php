@@ -16,6 +16,15 @@ class CommonCompanyLookupSources extends BaseDataDTO
     ) {
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            mf: $data['mf'],
+            regon: $data['regon'],
+            vies: $data['vies'],
+        );
+    }
+
     public function toArray(): array
     {
         return [

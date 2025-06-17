@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon             $current_period_end
  * @property ?Carbon            $ends_at
  * @property bool               $cancel_at_period_end
+ * @property ?Carbon            $canceled_at
  * @property ?Model             $billable
  * @property ?SubscriptionPlan  $plan
  */
@@ -33,6 +34,7 @@ class Subscription extends BaseModel
         'current_period_end',
         'ends_at',
         'cancel_at_period_end',
+        'canceled_at',
     ];
 
     protected $casts = [
@@ -40,6 +42,7 @@ class Subscription extends BaseModel
         'current_period_end'   => 'datetime',
         'ends_at'              => 'datetime',
         'cancel_at_period_end' => 'boolean',
+        'canceled_at'          => 'datetime',
         'status'               => SubscriptionStatus::class,
     ];
 

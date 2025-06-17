@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $updatedAt          Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt          Internally Carbon, accepts/serializes ISO 8601
  */
-class UserDTO extends BaseDTO
+final class UserDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $firstName,
@@ -50,7 +50,7 @@ class UserDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var User $model */
-        return new static(
+        return new self(
             firstName: $model->first_name,
             lastName: $model->last_name,
             email: $model->email,

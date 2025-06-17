@@ -7,6 +7,9 @@ use App\Domain\Expense\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Expense
+ */
 class ExpenseResource extends JsonResource
 {
     /**

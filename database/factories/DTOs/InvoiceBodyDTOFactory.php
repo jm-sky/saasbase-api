@@ -51,6 +51,7 @@ class InvoiceBodyDTOFactory extends DTOFactory
             lines: $lines,
             vatSummary: $vatSummaryDTOs,
             exchange: (new InvoiceExchangeDTOFactory())->make(),
+            description: fake()->sentence(),
         );
     }
 }

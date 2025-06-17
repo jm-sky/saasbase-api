@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ExchangeRateSource $source
  * @property ?Carbon            $createdAt  Internally Carbon, accepts/serializes ISO 8601
  */
-class ExchangeRateDTO extends BaseDTO
+final class ExchangeRateDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $exchangeId,
@@ -35,12 +35,12 @@ class ExchangeRateDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var ExchangeRate $model */
-        return new static(
+        return new self(
             exchangeId: $model->exchange_id,
             date: $model->date,
             rate: $model->rate,
             table: $model->table,
-            source: $model->source,
+            source: ExchangeRateSource::from($model->source),
             id: $model->id,
             createdAt: $model->created_at,
         );

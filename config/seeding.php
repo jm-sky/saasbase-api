@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'bot_user_id' => 'd99468d6-2153-5493-95dc-7cf06043f471',
+    'bot_user_id' => '01JXMGRDQVE4FWTZNE1WR9K8G1',
 
     'users' => [
         // Example structure (replace with actual data):

@@ -11,7 +11,7 @@ use Brick\Math\BigDecimal;
  * @property BigDecimal $vat
  * @property BigDecimal $gross
  */
-class InvoiceVatSummaryDTO extends BaseDataDTO
+final class InvoiceVatSummaryDTO extends BaseDataDTO
 {
     public function __construct(
         public VatRateDTO $vatRate,
@@ -33,7 +33,7 @@ class InvoiceVatSummaryDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             vatRate: VatRateDTO::fromArray($data['vatRate']),
             net: BigDecimal::of($data['net']),
             vat: BigDecimal::of($data['vat']),

@@ -4,7 +4,7 @@ namespace App\Services\KSeF\DTOs;
 
 use Carbon\Carbon;
 
-class InitSessionResponseDTO
+final class InitSessionResponseDTO
 {
     public function __construct(
         public readonly Carbon $timestamp,

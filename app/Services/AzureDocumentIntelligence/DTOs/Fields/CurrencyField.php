@@ -4,7 +4,7 @@ namespace App\Services\AzureDocumentIntelligence\DTOs\Fields;
 
 use Brick\Math\BigDecimal;
 
-class CurrencyField extends ValueWrapper
+final class CurrencyField extends ValueWrapper
 {
     public function __construct(
         float $confidence,
@@ -19,7 +19,7 @@ class CurrencyField extends ValueWrapper
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             amount: BigDecimal::of($data['valueCurrency']['amount'] ?? 0),
             currencyCode: (string) ($data['valueCurrency']['currencyCode'] ?? '')

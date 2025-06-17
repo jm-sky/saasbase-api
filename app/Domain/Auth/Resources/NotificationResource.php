@@ -4,8 +4,18 @@ namespace App\Domain\Auth\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
+use Illuminate\Notifications\Notification;
 
+/**
+ * @mixin Notification
+ *
+ * @property string  $id
+ * @property string  $type
+ * @property array   $data
+ * @property ?Carbon $read_at
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
+ */
 class NotificationResource extends JsonResource
 {
     public function toArray(Request $request): array

@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class SessionContextDTO
+final class SessionContextDTO
 {
     public function __construct(
         public readonly ContextIdentifierDTO $contextIdentifier,

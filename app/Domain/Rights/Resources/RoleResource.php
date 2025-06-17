@@ -7,10 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property string             $id
- * @property string             $name
- * @property ?string            $tenantId
- * @property array<int, string> $permissions
+ * @mixin Role
  */
 class RoleResource extends JsonResource
 {

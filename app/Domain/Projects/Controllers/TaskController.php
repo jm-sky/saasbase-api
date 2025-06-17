@@ -39,7 +39,7 @@ class TaskController extends Controller
             AllowedFilter::custom('search', new ComboSearchFilter(['title', 'description'])),
             AllowedFilter::custom('projectId', new AdvancedFilter(), 'project_id'),
             AllowedFilter::custom('statusId', new AdvancedFilter(), 'status_id'),
-            AllowedFilter::custom('assignedToId', new AdvancedFilter(), 'assigned_to_id'),
+            AllowedFilter::custom('assigneeId', new AdvancedFilter(), 'assignee_id'),
             AllowedFilter::custom('priority', new AdvancedFilter()),
             AllowedFilter::custom('title', new AdvancedFilter()),
             AllowedFilter::custom('description', new AdvancedFilter()),

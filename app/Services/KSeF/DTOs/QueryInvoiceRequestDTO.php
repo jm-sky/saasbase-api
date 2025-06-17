@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class QueryInvoiceRequestDTO
+final class QueryInvoiceRequestDTO
 {
     public function __construct(
         public readonly QueryCriteriaDTO $queryCriteria,

@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon  $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $user
  */
-class TaskWatcherDTO extends BaseDTO
+final class TaskWatcherDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $taskId,
@@ -35,7 +35,7 @@ class TaskWatcherDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var TaskWatcher $model */
-        return new static(
+        return new self(
             taskId: $model->task_id,
             userId: $model->user_id,
             id: $model->id,

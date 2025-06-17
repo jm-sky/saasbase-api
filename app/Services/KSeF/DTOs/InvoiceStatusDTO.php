@@ -4,7 +4,7 @@ namespace App\Services\KSeF\DTOs;
 
 use Carbon\Carbon;
 
-class InvoiceStatusDTO
+final class InvoiceStatusDTO
 {
     public function __construct(
         public readonly string $invoiceNumber,

@@ -8,15 +8,13 @@ use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Financial\Casts\BigDecimalCast;
 use App\Domain\Financial\Casts\InvoiceBodyCast;
-use App\Domain\Financial\Casts\InvoiceBuyerCast;
 use App\Domain\Financial\Casts\InvoiceOptionsCast;
+use App\Domain\Financial\Casts\InvoicePartyCast;
 use App\Domain\Financial\Casts\InvoicePaymentCast;
-use App\Domain\Financial\Casts\InvoiceSellerCast;
 use App\Domain\Financial\DTOs\InvoiceBodyDTO;
-use App\Domain\Financial\DTOs\InvoiceBuyerDTO;
 use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
+use App\Domain\Financial\DTOs\InvoicePartyDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentDTO;
-use App\Domain\Financial\DTOs\InvoiceSellerDTO;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\ShareToken\Traits\HasShareTokens;
@@ -38,8 +36,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property BigDecimal        $total_gross
  * @property string            $currency
  * @property BigDecimal        $exchange_rate
- * @property InvoiceSellerDTO  $seller
- * @property InvoiceBuyerDTO   $buyer
+ * @property InvoicePartyDTO   $seller
+ * @property InvoicePartyDTO   $buyer
  * @property InvoiceBodyDTO    $body
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
@@ -79,8 +77,8 @@ class Invoice extends BaseModel
         'total_tax'     => BigDecimalCast::class,
         'total_gross'   => BigDecimalCast::class,
         'exchange_rate' => BigDecimalCast::class,
-        'seller'        => InvoiceSellerCast::class,
-        'buyer'         => InvoiceBuyerCast::class,
+        'seller'        => InvoicePartyCast::class,
+        'buyer'         => InvoicePartyCast::class,
         'body'          => InvoiceBodyCast::class,
         'payment'       => InvoicePaymentCast::class,
         'options'       => InvoiceOptionsCast::class,

@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?UserDTO        $user
  * @property ?ProjectRoleDTO $role
  */
-class ProjectUserDTO extends BaseDTO
+final class ProjectUserDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $projectId,
@@ -39,7 +39,7 @@ class ProjectUserDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var ProjectUser $model */
-        return new static(
+        return new self(
             projectId: $model->project_id,
             userId: $model->user_id,
             projectRoleId: $model->project_role_id,

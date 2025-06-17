@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class ContextIdentifierDTO
+final class ContextIdentifierDTO
 {
     public function __construct(
         public readonly string $type,

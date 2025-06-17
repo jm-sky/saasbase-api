@@ -8,16 +8,13 @@ use App\Domain\Products\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Product
+ */
 class ProductResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
-        /** @var Product $this->resource */
         $logoMedia = $this->getFirstMedia('logo');
 
         return [

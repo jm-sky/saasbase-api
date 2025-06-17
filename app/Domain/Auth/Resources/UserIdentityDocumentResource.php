@@ -2,9 +2,13 @@
 
 namespace App\Domain\Auth\Resources;
 
+use App\Domain\Auth\Models\UserIdentityDocument;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin UserIdentityDocument
+ */
 class UserIdentityDocumentResource extends JsonResource
 {
     public function toArray(Request $request): array

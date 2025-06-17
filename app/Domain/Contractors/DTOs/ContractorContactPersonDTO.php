@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $createdAt    Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt    Internally Carbon, accepts/serializes ISO 8601
  */
-class ContractorContactPersonDTO extends BaseDTO
+final class ContractorContactPersonDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,

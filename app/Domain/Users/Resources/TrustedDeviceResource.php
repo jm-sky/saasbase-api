@@ -2,9 +2,13 @@
 
 namespace App\Domain\Users\Resources;
 
+use App\Domain\Users\Models\TrustedDevice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin TrustedDevice
+ */
 class TrustedDeviceResource extends JsonResource
 {
     public function toArray(Request $request): array

@@ -6,6 +6,9 @@ use App\Domain\Auth\Models\UserSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin UserSettings
+ */
 class UserSettingsResource extends JsonResource
 {
     /**

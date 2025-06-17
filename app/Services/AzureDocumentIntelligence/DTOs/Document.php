@@ -12,7 +12,7 @@ use App\Services\AzureDocumentIntelligence\Concerns\DocumentFieldInterface;
  * @property array<string, DocumentFieldInterface> $fields
  * @property float                                 $confidence
  */
-class Document extends BaseDataDTO
+final class Document extends BaseDataDTO
 {
     /**
      * @param array<string, DocumentFieldInterface> $fields
@@ -43,7 +43,7 @@ class Document extends BaseDataDTO
             $fields[$key] = DocumentFieldFactory::fromArray($fieldData);
         }
 
-        return new static(
+        return new self(
             docType: $data['docType'] ?? '',
             fields: $fields,
             confidence: (float) ($data['confidence'] ?? 0)

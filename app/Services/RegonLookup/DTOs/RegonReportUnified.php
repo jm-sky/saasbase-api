@@ -67,7 +67,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * @property ?bool   $hasNotStartedActivity     | Example: false
  * @property ?bool   $cache
  */
-class RegonReportUnified implements Arrayable, \JsonSerializable
+final class RegonReportUnified implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly string $regon,
@@ -133,7 +133,7 @@ class RegonReportUnified implements Arrayable, \JsonSerializable
 
     public static function fromXml(\SimpleXMLElement $xml): static
     {
-        return new static(
+        return new self(
             regon: (string) $xml->xpath('praw_regon9|fiz_regon9')[0],
             nip: (string) $xml->xpath('praw_nip')[0] ?: null,
             nipStatus: (string) $xml->xpath('praw_statusNip')[0] ?: null,

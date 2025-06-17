@@ -10,7 +10,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  * @property bool     $sendEmail
  * @property string[] $emailTo
  */
-class InvoiceOptionsDTO extends BaseDataDTO
+final class InvoiceOptionsDTO extends BaseDataDTO
 {
     public function __construct(
         public ?string $language = null,
@@ -32,7 +32,7 @@ class InvoiceOptionsDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             language: isset($data['language']) ? $data['language'] : null,
             template: isset($data['template']) ? $data['template'] : null,
             sendEmail: isset($data['sendEmail']) ? $data['sendEmail'] : false,

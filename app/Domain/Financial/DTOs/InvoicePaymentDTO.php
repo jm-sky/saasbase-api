@@ -18,7 +18,7 @@ use Carbon\Carbon;
  * @property ?string       $terms
  * @property ?string       $notes
  */
-class InvoicePaymentDTO extends BaseDataDTO
+final class InvoicePaymentDTO extends BaseDataDTO
 {
     public function __construct(
         public PaymentStatus $status,
@@ -48,7 +48,7 @@ class InvoicePaymentDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             status: PaymentStatus::from($data['status']),
             dueDate: isset($data['dueDate']) ? Carbon::parse($data['dueDate']) : null,
             paidDate: isset($data['paidDate']) ? Carbon::parse($data['paidDate']) : null,

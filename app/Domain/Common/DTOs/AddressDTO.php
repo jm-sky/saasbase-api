@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon     $createdAt       Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon     $updatedAt       Internally Carbon, accepts/serializes ISO 8601
  */
-class AddressDTO extends BaseDTO
+final class AddressDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $country,

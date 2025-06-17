@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string       $stripe_invoice_item_id
  * @property Carbon        $purchased_at
  * @property ?Carbon       $expires_at
+ * @property ?int          $quantity
+ * @property ?float        $amount
+ * @property ?string       $currency
+ * @property ?string       $status
  * @property ?Model        $billable
  * @property ?AddonPackage $package
  */
@@ -26,11 +30,17 @@ class AddonPurchase extends BaseModel
         'stripe_invoice_item_id',
         'purchased_at',
         'expires_at',
+        'quantity',
+        'amount',
+        'currency',
+        'status',
     ];
 
     protected $casts = [
         'purchased_at' => 'datetime',
         'expires_at'   => 'datetime',
+        'quantity'     => 'integer',
+        'amount'       => 'float',
     ];
 
     public function billable()
@@ -41,5 +51,15 @@ class AddonPurchase extends BaseModel
     public function package()
     {
         return $this->belongsTo(AddonPackage::class, 'addon_package_id');
+    }
+
+    public function isActive(): bool
+    {
+        return 'active' === $this->status && (null === $this->expires_at || $this->expires_at->isFuture());
+    }
+
+    public function isExpired(): bool
+    {
+        return null !== $this->expires_at && $this->expires_at->isPast();
     }
 }

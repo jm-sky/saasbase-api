@@ -2,16 +2,23 @@
 
 namespace App\Domain\Projects\Models;
 
+use App\Domain\Common\Models\BaseModel;
 use App\Domain\Projects\Database\Factories\TaskStatusFactory;
 use App\Domain\Tenant\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class TaskStatus extends Model
+/**
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property string $color
+ * @property int    $sort_order
+ * @property bool   $is_default
+ * @property Task[] $tasks
+ */
+class TaskStatus extends BaseModel
 {
     use BelongsToTenant;
-    use HasFactory;
 
     protected $fillable = [
         'tenant_id',

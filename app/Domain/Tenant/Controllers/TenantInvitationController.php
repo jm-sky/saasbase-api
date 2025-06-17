@@ -3,7 +3,6 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Tenant\DTOs\TenantInvitationDTO;
 use App\Domain\Tenant\Enums\InvitationStatus;
 use App\Domain\Tenant\Enums\TenantActivityType;
@@ -22,7 +21,6 @@ use Symfony\Component\HttpFoundation\Response;
 class TenantInvitationController extends Controller
 {
     use AuthorizesRequests;
-    use HasActivityLogging;
 
     public const TOKEN_EXPIRATION_DAYS = 7;
 

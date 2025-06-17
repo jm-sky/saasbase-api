@@ -6,7 +6,7 @@ use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Common\Enums\VatRateType;
 use Illuminate\Database\Eloquent\Model;
 
-class VatRateDTO extends BaseDTO
+final class VatRateDTO extends BaseDTO
 {
     public function __construct(
         public string $id,
@@ -19,7 +19,7 @@ class VatRateDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var VatRate $model */
-        return new static(
+        return new self(
             id: $model->id,
             name: $model->name,
             rate: $model->rate,

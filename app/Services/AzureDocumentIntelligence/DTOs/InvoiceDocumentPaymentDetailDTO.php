@@ -11,7 +11,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  * @property string $swift
  * @property float  $confidence
  */
-class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
+final class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
 {
     public function __construct(
         public readonly string $iban,
@@ -20,7 +20,7 @@ class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
     ) {
     }
 
-    public static function fromAzureArray(array $data): self
+    public static function fromArray(array $data): self
     {
         return new self(
             iban: (string) ($data['IBAN']['valueString'] ?? ''),

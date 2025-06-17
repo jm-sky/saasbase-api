@@ -5,7 +5,7 @@ namespace App\Services\AzureDocumentIntelligence\DTOs\Fields;
 use App\Services\AzureDocumentIntelligence\Concerns\DocumentFieldInterface;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentFieldFactory;
 
-class ObjectField extends ValueWrapper
+final class ObjectField extends ValueWrapper
 {
     /**
      * @param array<string, DocumentFieldInterface> $fields
@@ -25,7 +25,7 @@ class ObjectField extends ValueWrapper
             $fields[$key] = DocumentFieldFactory::fromArray($fieldData);
         }
 
-        return new static(
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             fields: $fields
         );

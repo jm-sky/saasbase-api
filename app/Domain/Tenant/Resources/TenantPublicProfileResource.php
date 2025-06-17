@@ -2,9 +2,13 @@
 
 namespace App\Domain\Tenant\Resources;
 
+use App\Domain\Tenant\Models\TenantPublicProfile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin TenantPublicProfile
+ */
 class TenantPublicProfileResource extends JsonResource
 {
     /**

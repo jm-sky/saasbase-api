@@ -10,7 +10,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  * @property InvoiceExchangeDTO     $exchange
  * @property ?string                $description
  */
-class InvoiceBodyDTO extends BaseDataDTO
+final class InvoiceBodyDTO extends BaseDataDTO
 {
     public function __construct(
         /** @var InvoiceLineDTO[] */
@@ -34,7 +34,7 @@ class InvoiceBodyDTO extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             lines: array_map(fn (array $line) => InvoiceLineDTO::fromArray($line), $data['lines']),
             vatSummary: isset($data['vatSummary']) ? array_map(fn (array $summary) => InvoiceVatSummaryDTO::fromArray($summary), $data['vatSummary']) : [],
             exchange: InvoiceExchangeDTO::fromArray($data['exchange']),

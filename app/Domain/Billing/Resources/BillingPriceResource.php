@@ -2,9 +2,13 @@
 
 namespace App\Domain\Billing\Resources;
 
+use App\Domain\Billing\Models\BillingPrice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin BillingPrice
+ */
 class BillingPriceResource extends JsonResource
 {
     public function toArray(Request $request): array

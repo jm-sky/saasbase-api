@@ -17,7 +17,7 @@ class Ulid
     public static function deterministic(string|array $keywords, ?\DateTimeInterface $date = null): string
     {
         $env    = config('app.env', 'unknown');
-        $appKey = env('APP_KEY', 'no-key');
+        $appKey = config('app.key', 'no-key');
 
         $keyword = is_array($keywords) ? implode('|', $keywords) : $keywords;
         $date ??= new \DateTimeImmutable('2025-01-01T00:00:00Z', new \DateTimeZone('UTC'));

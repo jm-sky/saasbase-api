@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon  $createdAt
  * @property ?Carbon  $updatedAt
  */
-class TagDTO extends BaseDTO
+final class TagDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $tenantId,
@@ -34,7 +34,7 @@ class TagDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var Tag $model */
-        return new static(
+        return new self(
             name: $model->name,
             slug: $model->slug,
             id: $model->id,

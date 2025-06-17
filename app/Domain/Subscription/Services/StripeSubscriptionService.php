@@ -3,6 +3,7 @@
 namespace App\Domain\Subscription\Services;
 
 use App\Domain\Billing\Models\BillingPrice;
+use App\Domain\Subscription\DTOs\CheckoutDataDTO;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
@@ -235,8 +236,6 @@ class StripeSubscriptionService extends StripeService
      *
      * @param array $options Additional options for checkout session
      *
-     * @return array{url: string, sessionId: string} Checkout session data
-     *
      * @throws StripeException
      */
     public function createCheckoutSession(
@@ -244,7 +243,7 @@ class StripeSubscriptionService extends StripeService
         SubscriptionPlan $plan,
         BillingPrice $price,
         array $options = []
-    ): array {
+    ): CheckoutDataDTO {
         $this->billingCustomer = $billingCustomer;
 
         return $this->handleStripeException(function () use ($billingCustomer, $plan, $price, $options) {
@@ -273,10 +272,10 @@ class StripeSubscriptionService extends StripeService
 
             $session = $this->stripe->checkout->sessions->create($checkoutData);
 
-            return [
-                'url'       => $session->url,
-                'sessionId' => $session->id,
-            ];
+            return new CheckoutDataDTO(
+                checkoutUrl: $session->url,
+                sessionId: $session->id,
+            );
         });
     }
 

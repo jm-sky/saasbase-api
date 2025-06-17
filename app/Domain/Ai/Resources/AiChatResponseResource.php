@@ -2,16 +2,11 @@
 
 namespace App\Domain\Ai\Resources;
 
+use App\Domain\Ai\DTOs\AiChatResponseDTO;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property string $id
- * @property string $tempId
- * @property string $content
- * @property bool   $streaming
- * @property string $role
- * @property bool   $isAi
- * @property string $createdAt
+ * @mixin AiChatResponseDTO
  */
 class AiChatResponseResource extends JsonResource
 {
@@ -24,7 +19,7 @@ class AiChatResponseResource extends JsonResource
             'streaming' => $this->streaming,
             'role'      => $this->role ?? 'assistant',
             'isAi'      => $this->isAi ?? true,
-            'createdAt' => $this->createdAt ?? now()->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String() ?? now()->toIso8601String(),
         ];
     }
 }

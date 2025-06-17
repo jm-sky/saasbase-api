@@ -8,8 +8,9 @@ use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Contractors\Requests\ContractorRequest;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
+use App\Domain\Contractors\Requests\StoreContractorRequest;
+use App\Domain\Contractors\Requests\UpdateContractorRequest;
 use App\Domain\Tenant\Scopes\TenantScope;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -61,7 +62,7 @@ class AdminContractorController extends Controller
         return response()->json($result);
     }
 
-    public function store(ContractorRequest $request): JsonResponse
+    public function store(StoreContractorRequest $request): JsonResponse
     {
         $dto        = ContractorDTO::from($request->validated());
         $contractor = Contractor::withoutGlobalScope(TenantScope::class)->create((array) $dto);
@@ -81,7 +82,7 @@ class AdminContractorController extends Controller
         );
     }
 
-    public function update(ContractorRequest $request, Contractor $contractor): JsonResponse
+    public function update(UpdateContractorRequest $request, Contractor $contractor): JsonResponse
     {
         $contractor = Contractor::withoutGlobalScope(TenantScope::class)->findOrFail($contractor->getKey());
 

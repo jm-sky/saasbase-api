@@ -6,6 +6,9 @@ use App\Domain\Common\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Country
+ */
 class CountryResource extends JsonResource
 {
     /**
@@ -30,7 +33,7 @@ class CountryResource extends JsonResource
             'region'         => $this->region,
             'subregion'      => $this->subregion,
             'emoji'          => $this->emoji,
-            'emojiU'         => $this->emoji_u,
+            'emojiU'         => $this->emojiU,
             'createdAt'      => $this->created_at?->toIso8601String(),
             'updatedAt'      => $this->updated_at?->toIso8601String(),
             'deletedAt'      => $this->deleted_at?->toIso8601String(),

@@ -6,6 +6,9 @@ use App\Domain\Exchanges\Models\Exchange;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Exchange
+ */
 class ExchangeResource extends JsonResource
 {
     /**

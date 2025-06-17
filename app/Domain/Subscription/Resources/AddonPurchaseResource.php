@@ -2,16 +2,20 @@
 
 namespace App\Domain\Subscription\Resources;
 
+use App\Domain\Subscription\Models\AddonPurchase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AddonPurchaseResource extends JsonResource
+/**
+ * @mixin AddonPurchase
+ */
+final class AddonPurchaseResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         return [
             'id'        => $this->id,
-            'addon'     => new AddonResource($this->whenLoaded('addon')),
+            'addon'     => new AddonResource($this->whenLoaded('package')),
             'quantity'  => $this->quantity,
             'amount'    => $this->amount,
             'currency'  => $this->currency,

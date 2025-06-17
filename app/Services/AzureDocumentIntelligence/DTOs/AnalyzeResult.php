@@ -13,14 +13,14 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  * @property string     $contentFormat
  * @property Document[] $documents
  */
-class AnalyzeResult extends BaseDataDTO
+final class AnalyzeResult extends BaseDataDTO
 {
     public function __construct(
         public readonly string $apiVersion,
         public readonly string $modelId,
-        public readonly ?string $content = null,
         public readonly string $contentFormat,
-        public readonly array $documents
+        public readonly array $documents,
+        public readonly ?string $content = null,
     ) {
     }
 
@@ -37,7 +37,7 @@ class AnalyzeResult extends BaseDataDTO
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             apiVersion: $data['apiVersion'],
             modelId: $data['modelId'],
             content: $data['content'] ?? null,
@@ -47,7 +47,7 @@ class AnalyzeResult extends BaseDataDTO
                     unset($doc['boundingRegions']);
 
                     if (isset($doc['docType']) && 'invoice' === strtolower($doc['docType'])) {
-                        return InvoiceDocumentDTO::fromAzureArray($doc);
+                        return InvoiceDocumentDTO::fromArray($doc);
                     }
 
                     return Document::fromArray($doc);

@@ -4,29 +4,30 @@
 
 namespace App\Domain\Tenant\Models;
 
-use App\Models\Tenant;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\BaseModel;
 
-class OrganizationUnit extends Model
+/**
+ * @property string             $id
+ * @property string             $tenant_id
+ * @property string             $parent_id
+ * @property string             $name
+ * @property string             $short_name
+ * @property Tenant             $tenant
+ * @property OrganizationUnit   $parent
+ * @property OrganizationUnit[] $children
+ * @property User[]             $users
+ * @property OrgUnitUser[]      $orgUnitUsers
+ */
+class OrganizationUnit extends BaseModel
 {
-    use HasFactory;
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    protected $fillable = ['id', 'tenant_id', 'parent_id', 'name', 'short_name'];
-
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            $model->id ??= (string) Str::ulid();
-        });
-    }
+    protected $fillable = [
+        'id',
+        'tenant_id',
+        'parent_id',
+        'name',
+        'short_name',
+    ];
 
     public function parent()
     {

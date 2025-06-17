@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class SubjectByDTO
+final class SubjectByDTO
 {
     public function __construct(
         public readonly string $issuedByIdentifier,

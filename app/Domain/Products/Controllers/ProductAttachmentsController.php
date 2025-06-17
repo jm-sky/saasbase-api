@@ -136,7 +136,7 @@ class ProductAttachmentsController extends Controller
     protected function authorizeMedia(Product $product, Media $media): void
     {
         if (Product::class !== $media->model_type || $media->model_id !== $product->id) {
-            abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this product.');
+            abort(HttpResponse::HTTP_NOT_FOUND, 'Attachment not found for this product.');
         }
     }
 }

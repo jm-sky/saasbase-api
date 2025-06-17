@@ -20,6 +20,7 @@ return new class() extends Migration {
             $table->timestamp('current_period_end')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->boolean('cancel_at_period_end')->default(false);
+            $table->timestamp('canceled_at')->nullable();
             $table->timestamps();
         });
     }

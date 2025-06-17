@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
  */
-class SkillDTO extends BaseDTO
+final class SkillDTO extends BaseDTO
 {
     public function __construct(
         public readonly string $name,
@@ -34,7 +34,7 @@ class SkillDTO extends BaseDTO
     public static function fromModel(Model $model): static
     {
         /* @var Skill $model */
-        return new static(
+        return new self(
             name: $model->name,
             category: $model->category,
             id: $model->id,

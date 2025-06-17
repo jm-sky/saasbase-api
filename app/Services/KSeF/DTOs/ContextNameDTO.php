@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class ContextNameDTO
+final class ContextNameDTO
 {
     public function __construct(
         public readonly string $type,

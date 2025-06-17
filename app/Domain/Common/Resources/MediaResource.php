@@ -2,10 +2,13 @@
 
 namespace App\Domain\Common\Resources;
 
+use App\Domain\Common\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @mixin Media
+ */
 class MediaResource extends JsonResource
 {
     /**

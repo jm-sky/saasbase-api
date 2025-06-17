@@ -2,9 +2,13 @@
 
 namespace App\Domain\Auth\Resources;
 
+use App\Domain\Auth\Models\UserPersonalData;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin UserPersonalData
+ */
 class UserPersonalDataResource extends JsonResource
 {
     public function toArray(Request $request): array

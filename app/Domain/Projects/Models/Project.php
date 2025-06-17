@@ -7,6 +7,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Tenant\Traits\BelongsToTenant;
@@ -52,6 +53,7 @@ class Project extends BaseModel implements HasMedia
     use HasTags;
     use HasActivityLog;
     use HasActivityLogging;
+    use HasMediaSignedUrls;
 
     protected $fillable = [
         'tenant_id',

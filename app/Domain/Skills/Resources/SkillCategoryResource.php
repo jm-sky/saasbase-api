@@ -6,6 +6,9 @@ use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin SkillCategory
+ */
 class SkillCategoryResource extends JsonResource
 {
     /**

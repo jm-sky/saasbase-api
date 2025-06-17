@@ -5,48 +5,6 @@ namespace App\Domain\EDoreczenia\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 use Carbon\Carbon;
 
-class RecipientDto extends BaseDataDTO
-{
-    public function __construct(
-        public readonly string $email,
-        public readonly string $name,
-        public readonly ?string $identifier = null,
-    ) {
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'email'      => $this->email,
-            'name'       => $this->name,
-            'identifier' => $this->identifier,
-        ];
-    }
-}
-
-class AttachmentDto extends BaseDataDTO
-{
-    public function __construct(
-        public readonly string $fileName,
-        public readonly string $filePath,
-        public readonly int $fileSize,
-        public readonly string $mimeType,
-        public readonly ?Carbon $createdAt = null,
-    ) {
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'fileName'  => $this->fileName,
-            'filePath'  => $this->filePath,
-            'fileSize'  => $this->fileSize,
-            'mimeType'  => $this->mimeType,
-            'createdAt' => $this->createdAt?->toIso8601String(),
-        ];
-    }
-}
-
 class SendMessageDto extends BaseDataDTO
 {
     /**
@@ -61,6 +19,18 @@ class SendMessageDto extends BaseDataDTO
         public readonly ?string $refToMessageId = null,
         public readonly ?Carbon $createdAt = null,
     ) {
+    }
+
+    public static function fromArray(array $data): static
+    {
+        return new self(
+            subject: $data['subject'],
+            content: $data['content'],
+            recipients: array_map(fn (array $recipient) => RecipientDto::fromArray($recipient), $data['recipients']),
+            attachments: array_map(fn (array $attachment) => AttachmentDto::fromArray($attachment), $data['attachments']),
+            refToMessageId: $data['refToMessageId'],
+            createdAt: $data['createdAt'],
+        );
     }
 
     public function toArray(): array

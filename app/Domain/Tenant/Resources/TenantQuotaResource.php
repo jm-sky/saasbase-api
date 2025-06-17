@@ -2,9 +2,13 @@
 
 namespace App\Domain\Tenant\Resources;
 
+use App\Domain\Tenant\DTOs\TenantQuotaDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin TenantQuotaDTO
+ */
 class TenantQuotaResource extends JsonResource
 {
     /**
@@ -14,20 +18,11 @@ class TenantQuotaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /* @var TenantQuotaDTO $this */
         return [
-            'storage' => [
-                'used'      => $this->resource['storage']['used'],
-                'total'     => $this->resource['storage']['total'],
-                'unit'      => $this->resource['storage']['unit'],
-            ],
-            'users' => [
-                'used'      => $this->resource['users']['used'],
-                'total'     => $this->resource['users']['total'],
-            ],
-            'apiCalls' => [
-                'used'      => $this->resource['apiCalls']['used'],
-                'total'     => $this->resource['apiCalls']['total'],
-            ],
+            'storage'  => $this->storage->toArray(),
+            'users'    => $this->users->toArray(),
+            'apiCalls' => $this->apiCalls->toArray(),
         ];
     }
 }

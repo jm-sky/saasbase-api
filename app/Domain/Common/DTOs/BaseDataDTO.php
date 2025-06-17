@@ -6,10 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 abstract class BaseDataDTO implements Arrayable, \JsonSerializable
 {
-    public static function fromArray(array $data): static
-    {
-        return new static(...$data);
-    }
+    abstract public static function fromArray(array $data): static;
 
     public function jsonSerialize(): array
     {

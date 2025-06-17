@@ -2,7 +2,7 @@
 
 namespace App\Services\KSeF\DTOs;
 
-class InitSessionRequestDTO
+final class InitSessionRequestDTO
 {
     public function __construct(
         public readonly string $encryptedToken

@@ -15,7 +15,7 @@ use Illuminate\Contracts\Support\Arrayable;
  * Input: "POZNAŃSKA 16/4, 00-680 WARSZAWA"
  * Output: MfAddressDTO(street="POZNAŃSKA", buildingAndFlat="16/4", postalCode="00-680", city="WARSZAWA")
  */
-class MfAddressDTO implements Arrayable, \JsonSerializable
+final class MfAddressDTO implements Arrayable, \JsonSerializable
 {
     public function __construct(
         public readonly string $street,

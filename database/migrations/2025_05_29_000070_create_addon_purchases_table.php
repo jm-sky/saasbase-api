@@ -11,7 +11,16 @@ return new class() extends Migration {
     public function up(): void
     {
         Schema::create('addon_purchases', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('billable');
+            $table->ulid('addon_package_id');
+            $table->string('stripe_invoice_item_id')->nullable();
+            $table->dateTime('purchased_at');
+            $table->dateTime('expires_at')->nullable();
+            $table->integer('quantity')->nullable();
+            $table->float('amount')->nullable();
+            $table->string('currency')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -8,6 +8,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin User
+ *
+ * @property string  $fullName
+ * @property ?string $tenantScopedEmail
+ * @property ?string $tenantScopedPhone
+ * @property ?string $tenantScopedBirthDate
  */
 class UserProfileTenantScopedResource extends JsonResource
 {

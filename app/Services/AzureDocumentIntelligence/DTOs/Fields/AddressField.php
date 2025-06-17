@@ -2,7 +2,7 @@
 
 namespace App\Services\AzureDocumentIntelligence\DTOs\Fields;
 
-class AddressField extends ValueWrapper
+final class AddressField extends ValueWrapper
 {
     public function __construct(
         float $confidence,
@@ -27,7 +27,7 @@ class AddressField extends ValueWrapper
 
     public static function fromArray(array $data): static
     {
-        return new static(
+        return new self(
             confidence: (float) ($data['confidence'] ?? 0),
             houseNumber: $data['valueAddress']['houseNumber'] ?? null,
             road: $data['valueAddress']['road'] ?? null,
