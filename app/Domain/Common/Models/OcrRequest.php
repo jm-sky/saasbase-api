@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string                  $id
+ * @property string                  $tenant_id
  * @property string                  $processable_type
  * @property string                  $processable_id
  * @property string                  $media_id
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class OcrRequest extends BaseModel
 {
     protected $fillable = [
+        'tenant_id',
         'processable_type',
         'processable_id',
         'media_id',
@@ -50,7 +52,8 @@ class OcrRequest extends BaseModel
 
     public function processable(): MorphTo
     {
-        return $this->morphTo();
+        // TODO: Add where tenant_id or in FinishOcrJob
+        return $this->morphTo()->withoutGlobalScopes();
     }
 
     public function media(): BelongsTo

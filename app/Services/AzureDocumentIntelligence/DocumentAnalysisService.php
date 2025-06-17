@@ -9,6 +9,7 @@ use App\Services\AzureDocumentIntelligence\Requests\AnalyzeDocumentByUrlRequest;
 use App\Services\AzureDocumentIntelligence\Requests\AnalyzeDocumentRequest;
 use App\Services\AzureDocumentIntelligence\Requests\GetAnalysisResultRequest;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -85,6 +86,8 @@ class DocumentAnalysisService
         $response      = $this->connector->send($uploadRequest);
 
         if (!$response->successful()) {
+            Log::error('Failed to submit document to Azure.', ['response' => $response->json()]);
+
             throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
         }
 

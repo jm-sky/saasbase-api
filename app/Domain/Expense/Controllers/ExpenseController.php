@@ -162,6 +162,7 @@ class ExpenseController extends Controller
         $createdExpenses = [];
 
         foreach ($request->file('files') as $file) {
+            /** @var Expense $expense */
             $expense = Expense::create([
                 'type'                  => InvoiceType::Basic,
                 'issue_date'            => Carbon::now(),
@@ -186,16 +187,17 @@ class ExpenseController extends Controller
 
             $createdExpenses[] = $expense;
 
-            $media = $expense->addMediaFromDisk($file->getRealPath(), 'local')->toMediaCollection('attachments');
+            $media = $expense->addMedia($file)->toMediaCollection('attachments');
             $expense->ocrRequest()->create([
+                'tenant_id'            => $expense->tenant_id,
                 'media_id'             => $media->id,
-                'external_document_id' => $media->id,
                 'status'               => OcrRequestStatus::Pending->value,
+                'created_by'           => Auth::id(),
+                'external_document_id' => null,
                 'result'               => null,
                 'errors'               => null,
                 'started_at'           => null,
                 'finished_at'          => null,
-                'created_by'           => Auth::id(),
             ]);
 
             StartOcrJob::dispatch($expense->ocrRequest);

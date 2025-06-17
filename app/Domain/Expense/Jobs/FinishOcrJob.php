@@ -6,10 +6,11 @@ use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Events\OcrExpenseCompleted;
 use App\Domain\Expense\Models\Expense;
+use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentDTO;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -70,6 +71,7 @@ class FinishOcrJob implements ShouldQueue
             $expense->body->description = $document->invoiceType?->value ?? $expense->body->description;
             // $expense->payment = $result->payment ?? $expense->payment;
 
+            $expense->status = InvoiceStatus::OCR_COMPLETED;
             $expense->save();
 
             broadcast(new OcrExpenseCompleted(
@@ -78,6 +80,9 @@ class FinishOcrJob implements ShouldQueue
             ));
         } catch (\Exception $e) {
             Log::error('[OCR] Error finishing OCR job', ['id' => $this->ocrRequest->id, 'error' => $e->getMessage()]);
+            $expense         = $this->ocrRequest->processable;
+            $expense->status = InvoiceStatus::OCR_FAILED;
+            $expense->save();
 
             $this->failWithReason('Error finishing OCR job', $e);
         }

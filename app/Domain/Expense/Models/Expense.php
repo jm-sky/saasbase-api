@@ -22,7 +22,7 @@ use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\ExpenseFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -87,9 +87,9 @@ class Expense extends BaseModel implements HasMedia
         'options'       => InvoiceOptionsCast::class,
     ];
 
-    public function ocrRequest(): HasOne
+    public function ocrRequest(): MorphOne
     {
-        return $this->hasOne(OcrRequest::class, 'processable_id');
+        return $this->morphOne(OcrRequest::class, 'processable');
     }
 
     public function registerMediaCollections(): void

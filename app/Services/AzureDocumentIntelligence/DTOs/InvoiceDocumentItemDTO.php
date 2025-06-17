@@ -35,7 +35,7 @@ final class InvoiceDocumentItemDTO extends BaseDataDTO
     ) {
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
         return new self(
             description: isset($data['Description']) ? StringField::fromArray($data['Description']) : null,

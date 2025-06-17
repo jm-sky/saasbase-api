@@ -3,6 +3,8 @@
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Media;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Expense\Models\Expense;
+use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\Task;
 use App\Domain\Tenant\Models\Tenant;
@@ -101,11 +103,13 @@ return [
         // Model::class => PathGenerator::class
         // or
         // 'model_morph_alias' => PathGenerator::class
-        User::class       => App\Domain\Common\Support\UserMediaPathGenerator::class,
-        Tenant::class     => App\Domain\Common\Support\TenantMediaPathGenerator::class,
-        Contractor::class => App\Domain\Common\Support\TenantMediaPathGenerator::class,
-        Project::class    => App\Domain\Common\Support\TenantMediaPathGenerator::class,
-        Task::class       => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        User::class          => App\Domain\Common\Support\UserMediaPathGenerator::class,
+        Tenant::class        => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Contractor::class    => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Project::class       => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Task::class          => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Expense::class       => App\Domain\Common\Support\TenantMediaPathGenerator::class,
+        Invoice::class       => App\Domain\Common\Support\TenantMediaPathGenerator::class,
     ],
 
     /*

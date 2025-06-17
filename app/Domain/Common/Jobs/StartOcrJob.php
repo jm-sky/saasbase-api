@@ -3,7 +3,9 @@
 namespace App\Domain\Common\Jobs;
 
 use App\Domain\Common\Enums\OcrRequestStatus;
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\OcrRequest;
+use App\Domain\Expense\Jobs\FinishOcrJob;
 use App\Services\AzureDocumentIntelligence\DocumentAnalysisService;
 use App\Services\AzureDocumentIntelligence\Exceptions\AzureDocumentIntelligenceException;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -12,6 +14,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class StartOcrJob implements ShouldQueue, ShouldBeUnique
 {
@@ -24,6 +27,8 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
     public int $backoff = 10;
 
     public OcrRequest $ocrRequest;
+
+    protected string $temporaryFilePath;
 
     public function __construct(OcrRequest $ocrRequest)
     {
@@ -46,11 +51,18 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
                 throw new \Exception("Media not found for OCR request ID {$this->ocrRequest->id}");
             }
 
-            // Generate a temporary S3 URL (valid e.g. 5 minutes)
-            $temporaryUrl = $media->getTemporaryUrl(now()->addMinutes($temporaryUrlTtl));
+            if (config('filesystems.use_s3_temporary_urls')) {
+                // Generate a temporary S3 URL (valid e.g. 5 minutes)
+                $temporaryUrl = $media->getTemporaryUrl(now()->addMinutes($temporaryUrlTtl));
+            } else {
+                // Save to disk and use local filepath
+                $temporaryUrl = $this->saveMediaToDisk($media);
+            }
 
             // Analyze document
-            $result = $azure->analyzeByUrlInternal($temporaryUrl);
+            $result = $azure->analyze($temporaryUrl);
+
+            $this->deleteProcessedMediaFile();
 
             $this->ocrRequest->update([
                 'status'               => OcrRequestStatus::Completed,
@@ -58,6 +70,8 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
                 'external_document_id' => $result->documentId ?? null,
                 'finished_at'          => now(),
             ]);
+
+            FinishOcrJob::dispatch($this->ocrRequest);
         } catch (AzureDocumentIntelligenceException $ex) {
             $this->failWithReason('Azure error', $ex);
         } catch (\Exception $ex) {
@@ -79,5 +93,40 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
         ]);
 
         $this->fail($ex);
+    }
+
+    protected function saveMediaToDisk(Media $media): string
+    {
+        // Get extension from MIME type
+        $extension = Str::afterLast($media->mime_type, '/');
+
+        // Ensure extension is lowercase and has no leading dot
+        $extension = Str::lower(ltrim($extension, '.'));
+
+        // Generate a unique filename
+        $filename = $media->id . '.' . $extension;
+
+        // Get temporary URL and download the file
+        $temporaryUrl = $media->getTemporaryUrl(now()->addMinutes(5));
+        $fileContent  = file_get_contents($temporaryUrl);
+
+        $this->temporaryFilePath = storage_path('app/ocr-temp/' . $filename);
+
+        // Store in ocr-temp directory
+        file_put_contents(
+            $this->temporaryFilePath,
+            $fileContent
+        );
+
+        // Return the full path to the stored file
+
+        return $this->temporaryFilePath;
+    }
+
+    protected function deleteProcessedMediaFile(): void
+    {
+        if ($this->temporaryFilePath) {
+            unlink($this->temporaryFilePath);
+        }
     }
 }

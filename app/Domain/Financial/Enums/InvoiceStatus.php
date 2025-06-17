@@ -6,6 +6,8 @@ enum InvoiceStatus: string
 {
     case DRAFT          = 'draft';
     case OCR_PROCESSING = 'ocrProcessing';
+    case OCR_COMPLETED  = 'ocrCompleted';
+    case OCR_FAILED     = 'ocrFailed';
     case SENT           = 'sent';
     case PAID           = 'paid';
     case PARTIALLY_PAID = 'partiallyPaid';

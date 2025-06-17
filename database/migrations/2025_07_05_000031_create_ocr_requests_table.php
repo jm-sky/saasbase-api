@@ -9,6 +9,7 @@ return new class() extends Migration {
     {
         Schema::create('ocr_requests', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->ulid('tenant_id');
             $table->string('processable_type');
             $table->ulid('processable_id');
             $table->ulid('media_id');

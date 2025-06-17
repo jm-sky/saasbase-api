@@ -14,6 +14,8 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    'use_s3_temporary_urls' => env('USE_S3_TEMPORARY_URL', 'production' === env('APP_ENV')),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

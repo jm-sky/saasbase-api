@@ -7,11 +7,11 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 /**
  * DTO for Azure Document Intelligence analyzeResult.
  *
- * @property string     $apiVersion
- * @property string     $modelId
- * @property ?string    $content
- * @property string     $contentFormat
- * @property Document[] $documents
+ * @property string               $apiVersion
+ * @property string               $modelId
+ * @property ?string              $content
+ * @property string               $contentFormat
+ * @property InvoiceDocumentDTO[] $documents
  */
 final class AnalyzeResult extends BaseDataDTO
 {
@@ -46,11 +46,7 @@ final class AnalyzeResult extends BaseDataDTO
                 function ($doc) {
                     unset($doc['boundingRegions']);
 
-                    if (isset($doc['docType']) && 'invoice' === strtolower($doc['docType'])) {
-                        return InvoiceDocumentDTO::fromArray($doc);
-                    }
-
-                    return Document::fromArray($doc);
+                    return InvoiceDocumentDTO::fromArray($doc);
                 },
                 $data['documents'] ?? []
             )

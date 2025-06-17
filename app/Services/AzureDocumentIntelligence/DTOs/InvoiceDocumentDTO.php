@@ -79,7 +79,7 @@ final class InvoiceDocumentDTO extends BaseDataDTO
     /**
      * Map from Azure Document Intelligence response (fields array).
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
         $fields = $data['fields'] ?? [];
 
