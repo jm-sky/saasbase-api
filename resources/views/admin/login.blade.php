@@ -7,7 +7,12 @@
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gray-100 flex items-center justify-center">
+<body class="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+
+    <div class="flex flex-col items-center gap-2 mb-6">
+        <span class="text-4xl text-gray-800">{{ config('app.name') }}</span>
+        <span class="bg-gray-200 text-xs text-gray-500 uppercase tracking-widest px-2 py-1 rounded-md">{{ app()->environment() }}</span>
+    </div>
 
     <div class="w-full max-w-sm bg-white p-6 rounded-2xl shadow-md">
         <h2 class="text-2xl font-semibold text-center mb-6">Admin Login</h2>
