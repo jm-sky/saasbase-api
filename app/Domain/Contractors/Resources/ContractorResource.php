@@ -46,6 +46,7 @@ class ContractorResource extends JsonResource
             'logoUrl'               => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
             'logo'                  => $logoMedia ? new MediaResource($logoMedia) : null,
             'tags'                  => TagResource::collection($this->tags),
+            'preferences'           => $this->preferences ? new ContractorPreferencesResource($this->preferences) : null,
             'registryConfirmations' => $this->registryConfirmations?->count() ? RegistryConfirmationResource::collection($this->registryConfirmations) : null,
         ];
     }

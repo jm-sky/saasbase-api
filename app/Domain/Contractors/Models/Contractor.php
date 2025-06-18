@@ -6,6 +6,7 @@ use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Models\Tag;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
@@ -21,6 +22,7 @@ use App\Domain\Utils\Models\RegistryConfirmation;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -53,7 +55,8 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection|BankAccount[] $bankAccounts
  * @property Collection|Comment[]     $comments
  * @property Collection|Media[]       $media
- * @property Collection|string[]      $tags
+ * @property Collection|Tag[]         $tags
+ * @property ContractorPreferences    $preferences
  */
 class Contractor extends BaseModel implements HasMedia
 {
@@ -137,6 +140,11 @@ class Contractor extends BaseModel implements HasMedia
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function preferences(): HasOne
+    {
+        return $this->hasOne(ContractorPreferences::class);
     }
 
     protected static function newFactory()

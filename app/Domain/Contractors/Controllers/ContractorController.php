@@ -118,6 +118,8 @@ class ContractorController extends Controller
 
     public function show(Contractor $contractor): ContractorResource
     {
+        $contractor->load('preferences');
+
         return new ContractorResource($contractor);
     }
 
