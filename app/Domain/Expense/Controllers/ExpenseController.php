@@ -7,6 +7,7 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Jobs\StartOcrJob;
+use App\Domain\Common\Sorts\JsonbPathSort;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Expense\Models\Expense;
@@ -36,6 +37,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class ExpenseController extends Controller
 {
@@ -64,16 +66,17 @@ class ExpenseController extends Controller
         ];
 
         $this->sorts = [
-            'number',
-            'type',
-            'status',
-            'issueDate'  => 'issue_date',
-            'totalNet'   => 'total_net',
-            'totalTax'   => 'total_tax',
-            'totalGross' => 'total_gross',
-            'currency',
-            'createdAt' => 'created_at',
-            'updatedAt' => 'updated_at',
+            AllowedSort::custom('seller', new JsonbPathSort('seller', 'name')),
+            AllowedSort::field('number'),
+            AllowedSort::field('type'),
+            AllowedSort::field('status'),
+            AllowedSort::field('issueDate', 'issue_date'),
+            AllowedSort::field('totalNet', 'total_net'),
+            AllowedSort::field('totalTax', 'total_tax'),
+            AllowedSort::field('totalGross', 'total_gross'),
+            AllowedSort::field('currency'),
+            AllowedSort::field('createdAt', 'created_at'),
+            AllowedSort::field('updatedAt', 'updated_at'),
         ];
 
         $this->defaultSort   = '-created_at';

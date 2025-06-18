@@ -5,6 +5,7 @@ namespace App\Domain\Invoice\Controllers;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Sorts\JsonbPathSort;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Export\DTOs\ExportConfigDTO;
@@ -21,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class InvoiceController extends Controller
 {
@@ -50,6 +52,7 @@ class InvoiceController extends Controller
         ];
 
         $this->sorts = [
+            AllowedSort::custom('buyer', new JsonbPathSort('buyer', 'name')),
             'number',
             'type',
             'status',
