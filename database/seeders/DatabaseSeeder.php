@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CurrencySeeder::class,
             CountrySeeder::class,
             VatRateSeeder::class,
+            PaymentMethodSeeder::class,
             SkillCategorySeeder::class,
             SkillSeeder::class,
             ProjectRoleSeeder::class,
