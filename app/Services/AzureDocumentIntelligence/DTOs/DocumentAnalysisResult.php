@@ -11,6 +11,8 @@ use App\Services\AzureDocumentIntelligence\Enums\DocumentAnalysisStatus;
  * @property DocumentAnalysisStatus $status
  * @property ?AnalyzeResult         $analyzeResult
  * @property ?string                $error
+ *
+ * @see https://github.com/Azure-Samples/document-intelligence-code-samples/blob/main/schema/2024-07-31-preview/invoice.md
  */
 final class DocumentAnalysisResult extends BaseDataDTO
 {
