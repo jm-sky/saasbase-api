@@ -1,0 +1,28 @@
+name: Deploy on OVH
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.docs/**'
+  workflow_dispatch:  # ręczne uruchamianie z GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Run deploy commands on server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.OVH_SSH_HOST }}
+          port: ${{ secrets.OVH_SSH_PORT }}
+          username: ${{ secrets.OVH_SSH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            cd ${{ secrets.OVH_SSH_TARGET }}
+            git pull
+            ./scripts/upgrade.sh
