@@ -10,7 +10,7 @@ fi
 # Define environment variables
 export APP_PORT=${APP_PORT:-80}
 export APP_SERVICE=${APP_SERVICE:-"saasbase"}
-export APP_USER=${APP_USER:-"www-data"}
+export APP_USER=${APP_USER:-"sail"}
 export DB_PORT=${DB_PORT:-5432}
 export WWWUSER=${WWWUSER:-$UID}
 export WWWGROUP=${WWWGROUP:-$(id -g)}
