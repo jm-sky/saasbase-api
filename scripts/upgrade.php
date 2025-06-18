@@ -1,22 +1,22 @@
 #!/bin/bash
 
-CONTAINER=${1:-saasbase-api-saasbase-1}
+SERVICE=${1:-saasbase} # <- domyślnie "saasbase", czyli nazwa usługi z docker-compose.yml
 
-echo "📦 Target container: $CONTAINER"
+echo "📦 Target service: $SERVICE (via docker compose exec)"
 
 echo "🔧 Installing Composer dependencies..."
-docker exec -it "$CONTAINER" composer install
+docker compose exec "$SERVICE" composer install
 
 echo "🧱 Running database migrations..."
-docker exec -it "$CONTAINER" php artisan migrate
+docker compose exec "$SERVICE" php artisan migrate
 
 echo "♻️ Clearing caches..."
-docker exec -it "$CONTAINER" php artisan config:clear
-docker exec -it "$CONTAINER" php artisan cache:clear
-docker exec -it "$CONTAINER" php artisan route:clear
-docker exec -it "$CONTAINER" php artisan view:clear
+docker compose exec "$SERVICE" php artisan config:clear
+docker compose exec "$SERVICE" php artisan cache:clear
+docker compose exec "$SERVICE" php artisan route:clear
+docker compose exec "$SERVICE" php artisan view:clear
 
 echo "🚀 Optimizing application..."
-docker exec -it "$CONTAINER" php artisan optimize
+docker compose exec "$SERVICE" php artisan optimize
 
 echo "✅ Done."
