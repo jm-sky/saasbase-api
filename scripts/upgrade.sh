@@ -4,6 +4,8 @@ SERVICE=${1:-saasbase} # <- domyślnie "saasbase", czyli nazwa usługi z docker-
 
 echo "📦 Target service: $SERVICE (via docker compose exec)"
 
+docker compose down 
+
 echo "🔧 Installing Composer dependencies..."
 docker compose exec "$SERVICE" composer install
 
