@@ -4,6 +4,7 @@ namespace App\Domain\Expense\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
 use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Expense\Actions\CreateExpenseForOcr;
 use App\Domain\Expense\Enums\ExpenseActivityType;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Expense\Requests\ExpenseAttachmentRequest;
@@ -35,6 +36,10 @@ class ExpenseAttachmentsController extends Controller
         $file  = $request->file('file');
         $media = $expense->addMedia($file)->toMediaCollection('attachments');
         $expense->logModelActivity(ExpenseActivityType::AttachmentCreated->value, $media);
+
+        if (!$expense->ocrRequest) {
+            CreateExpenseForOcr::createOcrRequest($expense, $media);
+        }
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',

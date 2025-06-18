@@ -3,6 +3,8 @@
 namespace App\Domain\Expense\Actions;
 
 use App\Domain\Common\Enums\OcrRequestStatus;
+use App\Domain\Common\Models\Media;
+use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\DTOs\InvoiceExchangeDTO;
@@ -45,10 +47,16 @@ class CreateExpenseForOcr
             'options'               => new InvoiceOptionsDTO(),
         ]);
 
-        $createdExpenses[] = $expense;
-
         $media = $expense->addMedia($file)->toMediaCollection('attachments');
-        $expense->ocrRequest()->create([
+
+        self::createOcrRequest($expense, $media);
+
+        return $expense;
+    }
+
+    public static function createOcrRequest(Expense $expense, Media $media): OcrRequest
+    {
+        return $expense->ocrRequest()->create([
             'tenant_id'            => $expense->tenant_id,
             'media_id'             => $media->id,
             'status'               => OcrRequestStatus::Pending->value,
@@ -59,7 +67,5 @@ class CreateExpenseForOcr
             'started_at'           => null,
             'finished_at'          => null,
         ]);
-
-        return $expense;
     }
 }
