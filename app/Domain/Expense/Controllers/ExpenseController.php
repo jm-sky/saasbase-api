@@ -2,7 +2,6 @@
 
 namespace App\Domain\Expense\Controllers;
 
-use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
@@ -10,6 +9,7 @@ use App\Domain\Common\Jobs\StartOcrJob;
 use App\Domain\Common\Sorts\JsonbPathSort;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Expense\Actions\CreateExpenseForOcr;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Expense\Requests\StoreExpenseRequest;
 use App\Domain\Expense\Requests\UpdateExpenseRequest;
@@ -18,24 +18,12 @@ use App\Domain\Expense\Resources\ExpenseResource;
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ExpensesExport;
 use App\Domain\Export\Services\ExportService;
-use App\Domain\Financial\DTOs\InvoiceBodyDTO;
-use App\Domain\Financial\DTOs\InvoiceExchangeDTO;
-use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
-use App\Domain\Financial\DTOs\InvoicePartyDTO;
-use App\Domain\Financial\DTOs\InvoicePaymentDTO;
-use App\Domain\Financial\Enums\InvoiceStatus;
-use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Financial\Enums\PaymentMethod;
-use App\Domain\Financial\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
-use Brick\Math\BigDecimal;
-use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 
@@ -165,47 +153,24 @@ class ExpenseController extends Controller
         $createdExpenses = [];
 
         foreach ($request->file('files') as $file) {
-            /** @var Expense $expense */
-            $expense = Expense::create([
-                'type'                  => InvoiceType::Basic,
-                'issue_date'            => Carbon::now(),
-                'status'                => InvoiceStatus::OCR_PROCESSING,
-                'number'                => '',
-                'total_net'             => BigDecimal::of('0'),
-                'total_tax'             => BigDecimal::of('0'),
-                'total_gross'           => BigDecimal::of('0'),
-                'currency'              => 'PLN',
-                'exchange_rate'         => BigDecimal::of('1.0'),
-                'seller'                => new InvoicePartyDTO(),
-                'buyer'                 => new InvoicePartyDTO(),
-                'body'                  => new InvoiceBodyDTO(
-                    lines: [],
-                    vatSummary: [],
-                    exchange: new InvoiceExchangeDTO('PLN'),
-                    description: null,
-                ),
-                'payment'               => new InvoicePaymentDTO(PaymentStatus::PENDING, null, null, null, PaymentMethod::BANK_TRANSFER),
-                'options'               => new InvoiceOptionsDTO(),
-            ]);
-
-            $createdExpenses[] = $expense;
-
-            $media = $expense->addMedia($file)->toMediaCollection('attachments');
-            $expense->ocrRequest()->create([
-                'tenant_id'            => $expense->tenant_id,
-                'media_id'             => $media->id,
-                'status'               => OcrRequestStatus::Pending->value,
-                'created_by'           => Auth::id(),
-                'external_document_id' => null,
-                'result'               => null,
-                'errors'               => null,
-                'started_at'           => null,
-                'finished_at'          => null,
-            ]);
+            $expense = CreateExpenseForOcr::handle($file);
 
             StartOcrJob::dispatch($expense->ocrRequest);
+
+            $createdExpenses[] = $expense;
         }
 
         return ExpenseResource::collection(collect($createdExpenses));
+    }
+
+    public function startOcr(Expense $expense): JsonResponse
+    {
+        if (!$expense->ocrRequest) {
+            return response()->json(['message' => 'OCR is not pending.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        StartOcrJob::dispatch($expense->ocrRequest);
+
+        return response()->json(['message' => 'OCR started successfully.']);
     }
 }

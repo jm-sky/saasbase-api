@@ -5,6 +5,8 @@ namespace App\Domain\Expense\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Common\Models\Tag;
+use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Financial\Casts\BigDecimalCast;
@@ -54,6 +56,8 @@ class Expense extends BaseModel implements HasMedia
     use HasShareTokens;
     use HasTags;
     use InteractsWithMedia;
+    use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'type',
