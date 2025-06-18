@@ -4,6 +4,7 @@ namespace App\Services\LogoFetcher;
 
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
+use App\Helpers\FileNames;
 use App\Services\LogoFetcher\DTOs\LogoCandidate;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -201,21 +202,9 @@ class LogoFetcherService
     {
         $tempDir   = storage_path('app/public');
         $tempName  = uniqid('logo_', true);
-        $extension = $this->getExtensionFromMimeType($contentType);
+        $extension = FileNames::getExtensionFromMimeType($contentType, 'png');
 
         return "{$tempDir}/{$tempName}.{$extension}";
-    }
-
-    protected function getExtensionFromMimeType(string $mimeType): string
-    {
-        return match ($mimeType) {
-            'image/jpeg'               => 'jpg',
-            'image/png'                => 'png',
-            'image/gif'                => 'gif',
-            'image/webp'               => 'webp',
-            'image/vnd.microsoft.icon' => 'ico',
-            default                    => 'png',
-        };
     }
 
     protected function isIco(string $contentType): bool

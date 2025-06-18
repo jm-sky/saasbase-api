@@ -6,6 +6,7 @@ use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Jobs\FinishOcrJob;
+use App\Helpers\FileNames;
 use App\Services\AzureDocumentIntelligence\DocumentAnalysisService;
 use App\Services\AzureDocumentIntelligence\Exceptions\AzureDocumentIntelligenceException;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -14,7 +15,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class StartOcrJob implements ShouldQueue, ShouldBeUnique
 {
@@ -97,28 +98,18 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
 
     protected function saveMediaToDisk(Media $media): string
     {
-        // Get extension from MIME type
-        $extension = Str::afterLast($media->mime_type, '/');
-
-        // Ensure extension is lowercase and has no leading dot
-        $extension = Str::lower(ltrim($extension, '.'));
+        $extension = FileNames::getExtensionFromMimeType($media->mime_type);
 
         // Generate a unique filename
-        $filename = $media->id . '.' . $extension;
+        $filename = "{$media->id}.{$extension}";
 
         // Get temporary URL and download the file
         $temporaryUrl = $media->getTemporaryUrl(now()->addMinutes(5));
         $fileContent  = file_get_contents($temporaryUrl);
 
-        $this->temporaryFilePath = storage_path('app/ocr-temp/' . $filename);
+        Storage::disk('local')->put("ocr-temp/{$filename}", $fileContent);
 
-        // Store in ocr-temp directory
-        file_put_contents(
-            $this->temporaryFilePath,
-            $fileContent
-        );
-
-        // Return the full path to the stored file
+        $this->temporaryFilePath = Storage::disk('local')->path("ocr-temp/{$filename}");
 
         return $this->temporaryFilePath;
     }
