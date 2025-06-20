@@ -3,6 +3,7 @@
 namespace App\Domain\Skills\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Projects\Models\ProjectRequiredSkill;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,6 +40,6 @@ class Skill extends BaseModel
 
     public function projectRequiredSkills(): HasMany
     {
-        return $this->hasMany(\App\Domain\Projects\Models\ProjectRequiredSkill::class);
+        return $this->hasMany(ProjectRequiredSkill::class);
     }
 }

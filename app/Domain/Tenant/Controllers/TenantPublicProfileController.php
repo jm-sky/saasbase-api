@@ -14,6 +14,7 @@ class TenantPublicProfileController extends Controller
 {
     public function show(Tenant $tenant): TenantPublicProfileResource
     {
+        /** @var ?TenantPublicProfile $profile */
         $profile = $tenant->publicProfile;
 
         if (!$profile) {
@@ -25,6 +26,7 @@ class TenantPublicProfileController extends Controller
 
     public function update(TenantPublicProfileRequest $request, Tenant $tenant): TenantPublicProfileResource
     {
+        /** @var TenantPublicProfile $profile */
         $profile = $tenant->publicProfile ?? new TenantPublicProfile(['tenant_id' => $tenant->id]);
         $profile->fill($request->validated());
         $profile->save();
@@ -42,6 +44,7 @@ class TenantPublicProfileController extends Controller
 
     public function deleteMedia(Tenant $tenant, string $collection): JsonResponse
     {
+        /** @var ?TenantPublicProfile $profile */
         $profile = $tenant->publicProfile;
 
         if (!$profile) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Domain\Auth\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;

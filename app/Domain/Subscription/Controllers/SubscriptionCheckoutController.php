@@ -28,7 +28,7 @@ class SubscriptionCheckoutController
     {
         /** @var User $user */
         $user            = Auth::user();
-        $tenantId        = $user->tenant_id;
+        $tenantId        = $user->getTenantId();
         $tenant          = Tenant::findOrFail($tenantId);
         $plan            = SubscriptionPlan::findOrFail($request->planId);
         $price           = $this->provideBillingPrice($plan, $request->priceId);

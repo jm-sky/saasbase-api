@@ -2,6 +2,7 @@
 
 namespace App\Domain\Subscription\Actions;
 
+use App\Domain\Subscription\DTOs\CreateSubscriptionDTO;
 use App\Domain\Subscription\Events\SubscriptionCreated;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
@@ -25,33 +26,20 @@ class CreateSubscriptionAction
     /**
      * Create a new subscription for a billable entity.
      *
-     * @param array{
-     *     billing_customer_id: string,
-     *     plan_id: string,
-     *     trial_end?: string,
-     *     payment_behavior?: string,
-     *     payment_details?: array{
-     *         cardNumber: string,
-     *         expiry: string,
-     *         cvc: string,
-     *         name: string
-     *     },
-     *     metadata?: array<string, mixed>
-     * } $data
-     *
      * @throws StripeException
      */
-    public function __invoke(array $data): string
+    public function __invoke(CreateSubscriptionDTO $data): string
     {
         try {
             return DB::transaction(function () use ($data) {
                 // Find required models
-                $billingCustomer = BillingCustomer::findOrFail($data['billing_customer_id']);
-                $plan            = SubscriptionPlan::findOrFail($data['plan_id']);
+                $billingInterval = $data->billingInterval;
+                $billingCustomer = BillingCustomer::findOrFail($data->billingCustomerId);
+                $plan            = SubscriptionPlan::findOrFail($data->planId);
 
                 // Create payment method if provided
-                if (isset($data['payment_details'])) {
-                    $this->stripePaymentService->createPaymentMethod($billingCustomer, $data['payment_details']);
+                if (isset($data->paymentDetails)) {
+                    $this->stripePaymentService->createPaymentMethod($billingCustomer, $data->paymentDetails);
                 }
 
                 // Create subscription in Stripe and locally
@@ -59,9 +47,10 @@ class CreateSubscriptionAction
                     $billingCustomer,
                     $plan,
                     [
-                        'trial_end'        => $data['trial_end'] ?? null,
-                        'payment_behavior' => $data['payment_behavior'] ?? null,
-                        'metadata'         => $data['metadata'] ?? [],
+                        'trial_end'        => $data->trialEndsAt ?? null,
+                        'payment_behavior' => $data->paymentBehavior ?? null,
+                        'metadata'         => $data->metadata ?? [],
+                        'billing_interval' => $billingInterval,
                     ]
                 );
 

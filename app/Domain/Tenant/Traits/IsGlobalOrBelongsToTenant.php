@@ -18,6 +18,7 @@ trait IsGlobalOrBelongsToTenant
     protected static function bootIsGlobalOrBelongsToTenant(): void
     {
         static::creating(function (Model $model): void {
+            // @phpstan-ignore-next-line
             if (!$model->tenant_id) {
                 try {
                     /** @var ?User $user */

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Subscription\Requests;
 
+use App\Domain\Subscription\DTOs\CreateSubscriptionDTO;
 use App\Domain\Subscription\Enums\BillingInterval;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
@@ -16,6 +17,7 @@ class StoreSubscriptionRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
+            'billingCustomerId'         => ['required', 'exists:billing_customers,id'],
             'planId'                    => ['required', 'exists:subscription_plans,id'],
             'billingInterval'           => ['required', Rule::enum(BillingInterval::class)],
             'paymentDetails'            => ['required', 'array'],
@@ -50,5 +52,10 @@ class StoreSubscriptionRequest extends BaseFormRequest
             'trialEndsAt.after'                  => 'The trial end date must be in the future.',
             'couponCode.max'                     => 'The coupon code must not exceed 50 characters.',
         ];
+    }
+
+    public function toDto(): CreateSubscriptionDTO
+    {
+        return CreateSubscriptionDTO::fromArray($this->validated());
     }
 }

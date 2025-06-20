@@ -25,6 +25,7 @@ class TenantBrandingController extends Controller
 
     public function update(TenantBrandingRequest $request, Tenant $tenant): TenantBrandingResource
     {
+        /** @var TenantBranding $branding */
         $branding = $tenant->branding ?? new TenantBranding(['tenant_id' => $tenant->id]);
         $branding->fill($request->validated());
         $branding->save();

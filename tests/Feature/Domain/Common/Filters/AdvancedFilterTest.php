@@ -12,8 +12,6 @@ use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
 #[CoversClass(AdvancedFilter::class)]
 class AdvancedFilterTest extends TestCase

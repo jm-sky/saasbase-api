@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Resources;
 
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Resources\MediaResource;
 use App\Domain\Common\Resources\TagResource;
 use App\Domain\Contractors\Models\Contractor;
@@ -21,7 +22,7 @@ class ContractorResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /** @var Contractor $this->resource */
+        /** @var ?Media $logoMedia */
         $logoMedia = $this->getFirstMedia('logo');
 
         return [

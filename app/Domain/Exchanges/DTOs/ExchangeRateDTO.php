@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
 final class ExchangeRateDTO extends BaseDTO
 {
     public function __construct(
-        public readonly string $exchangeId,
         public readonly Carbon $date,
         public readonly float $rate,
         public readonly string $table,
@@ -36,7 +35,6 @@ final class ExchangeRateDTO extends BaseDTO
     {
         /* @var ExchangeRate $model */
         return new self(
-            exchangeId: $model->exchange_id,
             date: $model->date,
             rate: $model->rate,
             table: $model->table,
@@ -49,12 +47,11 @@ final class ExchangeRateDTO extends BaseDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            exchangeId: $data['exchange_id'],
+            id: $data['id'] ?? null,
             date: Carbon::parse($data['date']),
             rate: (float) $data['rate'],
             table: $data['table'],
             source: ExchangeRateSource::from($data['source']),
-            id: $data['id'] ?? null,
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
         );
     }
@@ -63,7 +60,6 @@ final class ExchangeRateDTO extends BaseDTO
     {
         return [
             'id'         => $this->id,
-            'exchangeId' => $this->exchangeId,
             'date'       => $this->date->toIso8601String(),
             'rate'       => $this->rate,
             'table'      => $this->table,

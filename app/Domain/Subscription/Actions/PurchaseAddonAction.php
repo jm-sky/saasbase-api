@@ -21,7 +21,7 @@ class PurchaseAddonAction
     }
 
     /**
-     * Purchase an addon (one-time or recurring).
+     * Purchase an addon (one-time).
      *
      * @param array{
      *     billing_customer_id: string,

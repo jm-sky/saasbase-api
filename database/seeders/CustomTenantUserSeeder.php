@@ -327,6 +327,8 @@ class CustomTenantUserSeeder extends Seeder
         ]);
 
         $users         = $tenant->users;
+
+        /** @var ProjectRole $developerRole */
         $developerRole = ProjectRole::where('name', 'Developer')->first();
 
         foreach ($users as $user) {
@@ -394,6 +396,7 @@ class CustomTenantUserSeeder extends Seeder
             Tenant::bypassTenant($tenant->id, function () use ($tenant) {
                 $users = $tenant->users;
 
+                /** @var User $user */
                 foreach ($users as $user) {
                     $user->apiKeys()->create([
                         'tenant_id' => $tenant->id,

@@ -53,29 +53,43 @@ use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * @property string                        $id
- * @property string                        $first_name
- * @property string                        $last_name
- * @property string                        $email
- * @property string                        $password
- * @property ?string                       $phone
- * @property bool                          $is_admin
- * @property bool                          $is_active
- * @property Carbon                        $created_at
- * @property Carbon                        $updated_at
- * @property ?Carbon                       $deleted_at
- * @property ?Carbon                       $email_verified_at
- * @property ?UserSettings                 $settings
- * @property ?UserPreference               $preferences
- * @property Collection<int, Address>      $addresses
- * @property Collection<int, BankAccount>  $bankAccounts
- * @property Collection<int, Media>        $media
- * @property Collection<int, OAuthAccount> $oauthAccounts
- * @property Collection<int, Project>      $projects
- * @property Collection<int, Skill>        $skills
- * @property Collection<int, Task>         $tasks
- * @property Collection<int, Tenant>       $tenants
- * @property Collection<int, UserSkill>    $userSkills
+ * @property string                               $id
+ * @property string                               $first_name
+ * @property string                               $last_name
+ * @property string                               $email
+ * @property string                               $password
+ * @property ?string                              $phone
+ * @property bool                                 $is_admin
+ * @property bool                                 $is_active
+ * @property Carbon                               $created_at
+ * @property Carbon                               $updated_at
+ * @property ?Carbon                              $deleted_at
+ * @property ?Carbon                              $email_verified_at
+ * @property ?string                              $tenant_id
+ * @property ?UserSettings                        $settings
+ * @property ?UserPreference                      $preferences
+ * @property ?UserProfile                         $profile
+ * @property ?string                              $public_email
+ * @property ?string                              $public_birth_date
+ * @property ?string                              $public_phone
+ * @property ?string                              $tenant_scoped_email
+ * @property ?string                              $tenant_scoped_birth_date
+ * @property ?string                              $tenant_scoped_phone
+ * @property Collection<int, Address>             $addresses
+ * @property Collection<int, BankAccount>         $bankAccounts
+ * @property Collection<int, Media>               $media
+ * @property Collection<int, OAuthAccount>        $oauthAccounts
+ * @property Collection<int, Project>             $projects
+ * @property Collection<int, Skill>               $skills
+ * @property Collection<int, Task>                $tasks
+ * @property Collection<int, Tenant>              $tenants
+ * @property Collection<int, UserSkill>           $userSkills
+ * @property Collection<int, UserSession>         $sessions
+ * @property Collection<int, UserTableSetting>    $tableSettings
+ * @property Collection<int, NotificationSetting> $notificationSettings
+ * @property Collection<int, TrustedDevice>       $trustedDevices
+ * @property Collection<int, SecurityEvent>       $securityEvents
+ * @property Collection<int, ApiKey>              $apiKeys
  */
 class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
 {

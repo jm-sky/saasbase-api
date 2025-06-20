@@ -7,6 +7,7 @@ use App\Domain\Subscription\Models\AddonPurchase;
 use App\Domain\Subscription\Requests\PurchaseAddonRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class AddonPurchaseController extends Controller
 {
@@ -18,9 +19,9 @@ class AddonPurchaseController extends Controller
 
     public function store(PurchaseAddonRequest $request, PurchaseAddonAction $purchaseAction)
     {
-        $addonId = $purchaseAction($request->validated(), $request->boolean('recurring'));
+        $addonId = $purchaseAction($request->validated());
 
-        return response()->json(['id' => $addonId], 201);
+        return response()->json(['id' => $addonId], Response::HTTP_CREATED);
     }
 
     public function show(string $id)

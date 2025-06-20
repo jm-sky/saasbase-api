@@ -2,6 +2,7 @@
 
 namespace App\Domain\Subscription\Services;
 
+use App\Domain\Subscription\DTOs\PaymentDetailsDTO;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 
@@ -10,29 +11,22 @@ class StripePaymentService extends StripeService
     /**
      * Create a payment method for a customer.
      *
-     * @param array{
-     *     cardNumber: string,
-     *     expiry: string,
-     *     cvc: string,
-     *     name: string
-     * } $paymentDetails
-     *
      * @throws StripeException
      */
-    public function createPaymentMethod(BillingCustomer $billingCustomer, array $paymentDetails): string
+    public function createPaymentMethod(BillingCustomer $billingCustomer, PaymentDetailsDTO $paymentDetails): string
     {
         return $this->handleStripeException(function () use ($billingCustomer, $paymentDetails) {
             // Create payment method in Stripe
             $paymentMethod = $this->stripe->paymentMethods->create([
                 'type' => 'card',
                 'card' => [
-                    'number'    => $paymentDetails['cardNumber'],
-                    'exp_month' => (int) explode('/', $paymentDetails['expiry'])[0],
-                    'exp_year'  => (int) '20' . explode('/', $paymentDetails['expiry'])[1],
-                    'cvc'       => $paymentDetails['cvc'],
+                    'number'    => $paymentDetails->cardNumber,
+                    'exp_month' => (int) explode('/', $paymentDetails->expiry)[0],
+                    'exp_year'  => (int) '20' . explode('/', $paymentDetails->expiry)[1],
+                    'cvc'       => $paymentDetails->cvc,
                 ],
                 'billing_details' => [
-                    'name' => $paymentDetails['name'],
+                    'name' => $paymentDetails->name,
                 ],
             ]);
 

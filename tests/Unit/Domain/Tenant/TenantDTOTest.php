@@ -110,8 +110,8 @@ class TenantDTOTest extends TestCase
         $this->assertEquals('123e4567-e89b-12d3-a456-426614174000', $array['id']);
         $this->assertEquals('Test Tenant', $array['name']);
         $this->assertEquals('test-tenant', $array['slug']);
-        $this->assertEquals('2024-01-01T00:00:00+00:00', $array['createdAt']);
-        $this->assertEquals('2024-01-01T00:00:00+00:00', $array['updatedAt']);
+        $this->assertEquals('2024-01-01T00:00:00+01:00', $array['createdAt']); // Poland/Warsaw timezone
+        $this->assertEquals('2024-01-01T00:00:00+01:00', $array['updatedAt']); // Poland/Warsaw timezone
         $this->assertNull($array['deletedAt']);
     }
 }

@@ -20,7 +20,6 @@ class UserPreviewResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /* @var User $this->resource */
         return [
             'id'        => $this->id,
             'name'      => $this->fullName,

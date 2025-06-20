@@ -23,7 +23,7 @@ class SubscriptionController extends Controller
 
     public function store(StoreSubscriptionRequest $request, CreateSubscriptionAction $createAction)
     {
-        $subscriptionId = $createAction($request->validated());
+        $subscriptionId = $createAction($request->toDto());
 
         return response()->json(['id' => $subscriptionId], Response::HTTP_CREATED);
     }

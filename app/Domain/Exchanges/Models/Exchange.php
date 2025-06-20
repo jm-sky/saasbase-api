@@ -3,6 +3,7 @@
 namespace App\Domain\Exchanges\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**

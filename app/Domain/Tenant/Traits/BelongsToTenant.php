@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenant\Traits;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Exceptions\TenantNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Scopes\TenantScope;
@@ -24,6 +25,7 @@ trait BelongsToTenant
     public static function bootBelongsToTenant(): void
     {
         static::creating(function (Model $model) {
+            // @phpstan-ignore-next-line
             if (!$model->tenant_id) {
                 try {
                     /** @var ?User $user */

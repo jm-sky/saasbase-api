@@ -61,6 +61,7 @@ class SubscriptionPlan extends BaseModel
 
     public function getFeature(FeatureName $feature)
     {
+        /** @var ?PlanFeature $planFeature */
         $planFeature = $this->features()
             ->whereHas('feature', function ($query) use ($feature) {
                 $query->where('name', $feature->value);
@@ -83,6 +84,7 @@ class SubscriptionPlan extends BaseModel
 
     public function setFeature(FeatureName $feature, $value): void
     {
+        /** @var ?Feature $featureModel */
         $featureModel = Feature::where('name', $feature->value)->first();
 
         if (!$featureModel) {

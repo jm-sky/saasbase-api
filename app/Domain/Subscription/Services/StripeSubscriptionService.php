@@ -4,6 +4,7 @@ namespace App\Domain\Subscription\Services;
 
 use App\Domain\Billing\Models\BillingPrice;
 use App\Domain\Subscription\DTOs\CheckoutDataDTO;
+use App\Domain\Subscription\Enums\BillingInterval;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
@@ -21,6 +22,7 @@ class StripeSubscriptionService extends StripeService
      * Create a new subscription for a customer.
      *
      * @param array $options Additional subscription options
+     *                       billing_interval: BillingInterval
      *
      * @throws StripeException
      */
@@ -29,13 +31,16 @@ class StripeSubscriptionService extends StripeService
         SubscriptionPlan $plan,
         array $options = []
     ): Subscription {
-        return $this->handleStripeException(function () use ($billingCustomer, $plan, $options) {
+        /** @var BillingPrice $price */
+        $price = $plan->getPriceForInterval($options['billing_interval']);
+
+        return $this->handleStripeException(function () use ($billingCustomer, $plan, $price, $options) {
             // Prepare subscription data
             $subscriptionData = [
                 'customer' => $billingCustomer->stripe_customer_id,
                 'items'    => [
                     [
-                        'price' => $plan->stripe_price_id,
+                        'price' => $price->stripe_price_id,
                     ],
                 ],
                 'metadata' => [
