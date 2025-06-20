@@ -2,6 +2,10 @@
 
 SERVICE=${1:-saasbase} # <- domyślnie "saasbase", czyli nazwa usługi z docker-compose.yml
 
+echo "🔧 Pullimg latest changes..."
+
+git pull
+
 echo "📦 Target service: $SERVICE (via docker compose exec)"
 
 docker compose down 
