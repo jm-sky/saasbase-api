@@ -3,14 +3,15 @@
 namespace App\Domain\Expense\Controllers;
 
 use App\Domain\Common\DTOs\MediaDTO;
+use App\Domain\Common\Models\Media;
+use App\Domain\Common\Resources\MediaResource;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Expense\Actions\CreateExpenseForOcr;
 use App\Domain\Expense\Enums\ExpenseActivityType;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Expense\Requests\ExpenseAttachmentRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Response;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExpenseAttachmentsController extends Controller
 {
@@ -23,9 +24,19 @@ class ExpenseAttachmentsController extends Controller
     {
         $media = $expense->getMedia('attachments');
 
-        return response()->json([
-            'data' => MediaDTO::collection($media),
-        ]);
+        $ocrMediaId = $expense->ocrRequest?->media_id;
+
+        $media = $media->map(function (Media $media) use ($ocrMediaId): Media {
+            if ($media->id === $ocrMediaId) {
+                $meta          = $media->meta ?? [];
+                $meta['isOcr'] = true;
+                $media->meta   = $meta;
+            }
+
+            return $media;
+        });
+
+        return MediaResource::collection($media);
     }
 
     /**

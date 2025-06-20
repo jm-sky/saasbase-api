@@ -6,6 +6,7 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Jobs\StartOcrJob;
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Sorts\JsonbPathSort;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
@@ -163,8 +164,16 @@ class ExpenseController extends Controller
         return ExpenseResource::collection(collect($createdExpenses));
     }
 
-    public function startOcr(Expense $expense): JsonResponse
+    public function startOcr(Expense $expense, Request $request): JsonResponse
     {
+        $ocrMediaId = $request->input('mediaId');
+
+        if ($ocrMediaId) {
+            $media = Media::where('id', $ocrMediaId)->where('model_id', $expense->id)->first();
+            $expense->ocrRequest?->delete();
+            CreateExpenseForOcr::createOcrRequest($expense, $media);
+        }
+
         if (!$expense->ocrRequest) {
             return response()->json(['message' => 'OCR is not pending.'], Response::HTTP_BAD_REQUEST);
         }

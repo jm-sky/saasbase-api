@@ -38,6 +38,36 @@ class Media extends MediaLibraryMedia
 
     protected $fillable = [
         'tenant_id',
+        'model_type',
+        'model_id',
+        'collection_name',
+        'name',
+        'file_name',
+        'mime_type',
+        'disk',
+        'conversions_disk',
+        'type',
+        'extension',
+        'humanReadableSize',
+        'preview_url',
+        'original_url',
+        'size',
+        'order_column',
+        'manipulations',
+        'custom_properties',
+        'generated_conversions',
+        'responsive_images',
+        'meta',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $casts = [
+        'manipulations'         => 'array',
+        'custom_properties'     => 'array',
+        'generated_conversions' => 'array',
+        'responsive_images'     => 'array',
+        'meta'                  => 'array',
     ];
 
     protected static function boot()
