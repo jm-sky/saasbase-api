@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @template TModel of Model
@@ -49,6 +50,24 @@ abstract class BaseDTO implements Arrayable, \JsonSerializable, CreatedFromModel
      * @param array<string,mixed> $data
      */
     abstract public static function fromArray(array $data): static;
+
+    /**
+     * Convert the DTO to an array that can be used to create a model.
+     *
+     * @return array<string,mixed>
+     */
+    public function toDbArray(): array
+    {
+        $array = $this->toArray();
+
+        $array = collect($array)->mapWithKeys(function ($value, $key) {
+            $key = Str::snake($key);
+
+            return [$key => $value];
+        })->toArray();
+
+        return $array;
+    }
 
     /**
      * Convert an array of items to DTOs.

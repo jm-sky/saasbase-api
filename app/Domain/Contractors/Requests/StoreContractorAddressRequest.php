@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Requests;
 
+use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\Enums\AddressType;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
@@ -34,5 +35,12 @@ class StoreContractorAddressRequest extends BaseFormRequest
             'type'        => ['required', Rule::enum(AddressType::class)],
             'isDefault'   => ['boolean'],
         ];
+    }
+
+    public function toAddressDto(): AddressDTO
+    {
+        $validated = $this->validated();
+
+        return AddressDTO::fromArray($validated);
     }
 }

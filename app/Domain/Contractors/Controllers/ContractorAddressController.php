@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Controllers;
 
 use App\Domain\Common\Resources\AddressResource;
 use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Contractors\Actions\CreateContractorAddress;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\StoreContractorAddressRequest;
@@ -32,9 +33,7 @@ class ContractorAddressController extends Controller
      */
     public function store(StoreContractorAddressRequest $request, Contractor $contractor): AddressResource
     {
-        $address = $contractor->addresses()->create($request->validated());
-
-        $contractor->logModelActivity(ContractorActivityType::AddressCreated->value, $address);
+        $address = CreateContractorAddress::execute($contractor, $request->toAddressDto());
 
         return new AddressResource($address);
     }

@@ -5,6 +5,7 @@ namespace App\Domain\Contractors\Controllers;
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Resources\BankAccountResource;
 use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Contractors\Actions\CreateContractorBankAccount;
 use App\Domain\Contractors\Enums\ContractorActivityType;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\StoreContractorBankAccountRequest;
@@ -33,8 +34,7 @@ class ContractorBankAccountController extends Controller
      */
     public function store(StoreContractorBankAccountRequest $request, Contractor $contractor): BankAccountResource
     {
-        $bankAccount = $contractor->bankAccounts()->create($request->validated());
-        $contractor->logModelActivity(ContractorActivityType::BankAccountCreated->value, $bankAccount);
+        $bankAccount = CreateContractorBankAccount::execute($contractor, $request->toBankAccountDto());
 
         return new BankAccountResource($bankAccount);
     }

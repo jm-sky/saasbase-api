@@ -15,6 +15,7 @@ use App\Services\ReCaptcha\Enums\ReCaptchaAction;
 use App\Services\ReCaptcha\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -128,8 +129,16 @@ class AuthController extends Controller
             // TODO: Implement $remember
             return $this->respondWithToken($newToken, $user, tenantId: $tenantId);
         } catch (TokenInvalidException $e) {
+            Log::debug('[AuthController][refresh][TokenInvalidException]', [
+                'message' => $e->getMessage(),
+            ]);
+
             return response()->json(['error' => 'Invalid token', 'message' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
         } catch (JWTException $e) {
+            Log::debug('[AuthController][refresh][JWTException]', [
+                'message' => $e->getMessage(),
+            ]);
+
             return response()->json(['error' => 'Token not provided or expired', 'message' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
         }
     }

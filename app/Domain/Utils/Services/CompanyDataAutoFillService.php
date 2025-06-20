@@ -31,6 +31,8 @@ class CompanyDataAutoFillService
         ?string $country = null,
         bool $force = false
     ): ?CommonCompanyLookupData {
+        // TODO: Use CompanyDataFetcherSevice
+
         $regonData = null;
         $mfData    = null;
         $viesData  = null;

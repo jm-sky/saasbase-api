@@ -27,7 +27,7 @@ final class BankAccountDTO extends BaseDTO
 {
     public function __construct(
         public string $iban,
-        public string $country,
+        public ?string $country = null,
         public ?string $bankableId = null,
         public ?string $bankableType = null,
         public ?string $tenantId = null,

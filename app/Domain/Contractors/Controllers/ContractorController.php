@@ -12,6 +12,7 @@ use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Requests\StoreContractorRequest;
 use App\Domain\Contractors\Requests\UpdateContractorRequest;
 use App\Domain\Contractors\Resources\ContractorResource;
+use App\Domain\Contractors\Services\ContractorRegistryConfirmationService;
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ContractorsExport;
 use App\Domain\Export\Services\ExportService;
@@ -30,10 +31,10 @@ class ContractorController extends Controller
 
     protected int $defaultPerPage = 15;
 
-    private ExportService $exportService;
-
-    public function __construct()
-    {
+    public function __construct(
+        private ExportService $exportService,
+        private ContractorRegistryConfirmationService $registryConfirmationService,
+    ) {
         $this->modelClass  = Contractor::class;
         $this->defaultWith = ['tags', 'registryConfirmations'];
 
@@ -68,7 +69,6 @@ class ContractorController extends Controller
         ];
 
         $this->defaultSort   = '-created_at';
-        $this->exportService = app(ExportService::class);
     }
 
     public function index(SearchContractorRequest $request): AnonymousResourceCollection
@@ -87,16 +87,7 @@ class ContractorController extends Controller
         $contractor = Contractor::create($validated['contractor']);
 
         if (isset($validated['registry_confirmation'])) {
-            // TODO: Implement registry confirmation backend logic
-            // $result = $this->autoFillService->autoFill($vatId, $regon, $country, $force);
-            $confirmations = collect($validated['registry_confirmation'])->filter(fn ($item) => $item)->map(fn ($item, $key) => [
-                'type'       => $key,
-                'payload'    => $item,
-                'result'     => $item,
-                'success'    => true,
-                'checked_at' => now(),
-            ])->toArray();
-            $contractor->registryConfirmations()->createMany($confirmations);
+            $this->registryConfirmationService->confirm($contractor);
         }
 
         if (isset($validated['address'])) {

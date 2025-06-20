@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Requests;
 
+use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Http\Requests\BaseFormRequest;
 
 class StoreContractorBankAccountRequest extends BaseFormRequest
@@ -29,5 +30,12 @@ class StoreContractorBankAccountRequest extends BaseFormRequest
             'description'   => ['nullable', 'string', 'max:1000'],
             'isDefault'     => ['sometimes', 'boolean'],
         ];
+    }
+
+    public function toBankAccountDto(): BankAccountDTO
+    {
+        $validated = $this->validated();
+
+        return BankAccountDTO::fromArray($validated);
     }
 }
