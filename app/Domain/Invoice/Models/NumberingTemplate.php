@@ -6,7 +6,9 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
+use Carbon\Carbon;
 use Database\Factories\NumberingTemplateFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

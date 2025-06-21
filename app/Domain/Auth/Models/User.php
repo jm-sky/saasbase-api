@@ -71,7 +71,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?UserPreference                      $preferences
  * @property ?UserProfile                         $profile
  * @property ?UserPersonalData                    $personalData
- * @property ?string                              $full_name
+ * @property ?string                              $name                     User's full name (first_name + last_name)
+ * @property ?string                              $full_name                User's full name (first_name + last_name)
  * @property ?string                              $public_email
  * @property ?string                              $public_birth_date
  * @property ?string                              $public_phone

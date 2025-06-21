@@ -36,7 +36,7 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
 
         return (new MailMessage())
             ->subject(__('notifications.password.changed.subject', ['app' => $appName]))
-            ->greeting(__('notifications.password.changed.greeting', ['name' => $notifiable->fullName]))
+            ->greeting(__('notifications.password.changed.greeting', ['name' => $notifiable->full_name]))
             ->line(__('notifications.password.changed.message', ['app' => $appName]))
             ->line(__('notifications.password.changed.warning'))
             ->line(__('notifications.password.changed.help'))

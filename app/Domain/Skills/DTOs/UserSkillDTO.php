@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon   $acquiredAt When the skill was acquired, Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon   $createdAt  Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon   $updatedAt  Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $deletedAt  Internally Carbon, accepts/serializes ISO 8601
  * @property ?SkillDTO $skill
  */
 final class UserSkillDTO extends BaseDTO
@@ -30,7 +29,6 @@ final class UserSkillDTO extends BaseDTO
         public readonly ?Carbon $acquiredAt = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-        public ?Carbon $deletedAt = null,
         public ?SkillDTO $skill = null,
     ) {
         if ($level < 1 || $level > 5) {
@@ -49,7 +47,6 @@ final class UserSkillDTO extends BaseDTO
             acquiredAt: $model->acquired_at,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
             skill: $model->skill ? SkillDTO::fromModel($model->skill) : null,
         );
     }
@@ -64,7 +61,6 @@ final class UserSkillDTO extends BaseDTO
             acquiredAt: isset($data['acquired_at']) ? Carbon::parse($data['acquired_at']) : null,
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
-            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
             skill: isset($data['skill']) ? SkillDTO::fromArray($data['skill']) : null,
         );
     }
@@ -79,7 +75,6 @@ final class UserSkillDTO extends BaseDTO
             'acquiredAt'  => $this->acquiredAt?->toDateString(),
             'createdAt'   => $this->createdAt?->toIso8601String(),
             'updatedAt'   => $this->updatedAt?->toIso8601String(),
-            'deletedAt'   => $this->deletedAt?->toIso8601String(),
             'skill'       => $this->skill?->toArray(),
         ];
     }

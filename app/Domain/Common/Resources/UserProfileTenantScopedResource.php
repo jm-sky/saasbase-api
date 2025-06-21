@@ -26,7 +26,7 @@ class UserProfileTenantScopedResource extends JsonResource
         /* @var User $this->resource */
         return [
             'id'           => $this->id,
-            'name'         => $this->fullName,
+            'name'         => $this->full_name,
             'email'        => $this->tenantScopedEmail,
             'phone'        => $this->tenantScopedPhone,
             'birthDate'    => $this->tenantScopedBirthDate,

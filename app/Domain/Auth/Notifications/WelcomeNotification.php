@@ -38,7 +38,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
 
         return (new MailMessage())
             ->subject(__('notifications.welcome.subject', ['app' => $appName]))
-            ->greeting(__('notifications.welcome.greeting', ['name' => $notifiable->fullName]))
+            ->greeting(__('notifications.welcome.greeting', ['name' => $notifiable->full_name]))
             ->line(__('notifications.welcome.message', ['app' => $appName]))
             ->line(__('notifications.welcome.excitement'))
             ->action(__('notifications.welcome.dashboard_button'), $dashboardUrl)
@@ -53,7 +53,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
         return [
             'type'    => 'welcome',
             'title'   => __('notifications.welcome.title', ['app' => $appName]),
-            'message' => __('notifications.welcome.notification_message', ['name' => $notifiable->fullName]),
+            'message' => __('notifications.welcome.notification_message', ['name' => $notifiable->full_name]),
             'source'  => 'System',
         ];
     }
@@ -82,7 +82,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
             'data'    => [
                 'type'    => 'welcome',
                 'title'   => __('notifications.welcome.title', ['app' => $appName]),
-                'message' => __('notifications.welcome.notification_message', ['name' => $this->notifiable->fullName]),
+                'message' => __('notifications.welcome.notification_message', ['name' => $this->notifiable->full_name]),
                 'source'  => 'System',
             ],
             'readAt'    => null,

@@ -11,17 +11,17 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Feed>
  *
- * @property ?string $id
- * @property string  $tenantId
- * @property string  $userId
- * @property string  $title
- * @property string  $content
- * @property ?string $contentHtml
- * @property ?Carbon $createdAt
- * @property ?Carbon $updatedAt
- * @property ?Carbon $deletedAt
- * @property ?array  $user
- * @property ?int    $commentsCount
+ * @property ?string         $id
+ * @property string          $tenantId
+ * @property string          $userId
+ * @property string          $title
+ * @property string          $content
+ * @property ?string         $contentHtml
+ * @property ?Carbon         $createdAt
+ * @property ?Carbon         $updatedAt
+ * @property ?Carbon         $deletedAt
+ * @property ?UserPreviewDTO $user
+ * @property ?int            $commentsCount
  */
 final class FeedDTO extends BaseDTO
 {

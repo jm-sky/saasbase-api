@@ -43,6 +43,7 @@ class FeedControllerTest extends TestCase
         // Mock ProfanityFilterService for all tests
         $profanityService = \Mockery::mock(ProfanityFilterService::class);
         $profanityService->shouldReceive('hasProfanity')->andReturn(false);
+        // @phpstan-ignore-next-line
         $profanityService->shouldReceive('filterText')->andReturnUsing(function ($text) {
             return $text;
         });
@@ -242,14 +243,13 @@ class FeedControllerTest extends TestCase
     {
         // Override the default mock for this specific test
         $profanityService = \Mockery::mock(ProfanityFilterService::class);
+        // @phpstan-ignore-next-line
         $profanityService->shouldReceive('hasProfanity')
             ->once()
             ->andReturn(true)
         ;
 
         $this->app->instance(ProfanityFilterService::class, $profanityService);
-
-        \Mockery::mock(Feed::class)->shouldReceive('addMedia')->andReturnSelf();
 
         $file = UploadedFile::fake()->create('image.jpg', 100);
 

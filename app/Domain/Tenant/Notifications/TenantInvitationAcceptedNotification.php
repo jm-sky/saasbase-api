@@ -36,7 +36,7 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
             'type'    => 'tenantInvitation.accepted',
             'title'   => __('notifications.tenant_invitation.accepted.title'),
             'message' => __('notifications.tenant_invitation.accepted.message', [
-                'name'   => $this->invitation->invitedUser->fullName,
+                'name'   => $this->invitation->invitedUser->full_name,
                 'tenant' => $this->invitation->tenant->name,
                 'role'   => $this->invitation->role,
             ]),
@@ -67,7 +67,7 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
                 'type'    => 'tenantInvitation.accepted',
                 'title'   => __('notifications.tenant_invitation.accepted.title'),
                 'message' => __('notifications.tenant_invitation.accepted.message', [
-                    'name'   => $this->invitation->invitedUser->fullName,
+                    'name'   => $this->invitation->invitedUser->full_name,
                     'tenant' => $this->invitation->tenant->name,
                     'role'   => $this->invitation->role,
                 ]),

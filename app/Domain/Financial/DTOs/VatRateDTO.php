@@ -4,6 +4,7 @@ namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
 use App\Domain\Common\Enums\VatRateType;
+use App\Domain\Common\Models\VatRate;
 use Illuminate\Database\Eloquent\Model;
 
 final class VatRateDTO extends BaseDTO
