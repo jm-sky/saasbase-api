@@ -3,6 +3,7 @@
 namespace App\Domain\Rights\Models;
 
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 

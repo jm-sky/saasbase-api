@@ -5,6 +5,7 @@ namespace App\Domain\Projects\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
+use App\Domain\Common\Models\Tag;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
@@ -41,8 +42,8 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection<int, ProjectUser>          $projectUsers
  * @property Collection<int, ProjectRequiredSkill> $requiredSkills
  * @property Collection<int, ProjectComment>       $comments
- * @property Collection|Media[]                    $media
- * @property Collection|string[]                   $tags
+ * @property Collection<int, Media>                $media
+ * @property Collection<int, Tag>                  $tags
  */
 class Project extends BaseModel implements HasMedia
 {

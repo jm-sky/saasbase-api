@@ -2,6 +2,7 @@
 
 namespace App\Domain\Subscription\Services;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Billing\Models\BillingPrice;
 use App\Domain\Subscription\DTOs\CheckoutDataDTO;
 use App\Domain\Subscription\Enums\BillingInterval;
@@ -9,6 +10,7 @@ use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Subscription\Models\SubscriptionPlan;
+use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 
 /**
@@ -286,7 +288,9 @@ class StripeSubscriptionService extends StripeService
 
     protected function buildCallbackUrl(string $url): string
     {
-        $tenantId = $this->billingCustomer->billable->getTenantId();
+        /** @var User|Tenant $billable */
+        $billable = $this->billingCustomer->billable;
+        $tenantId = $billable->getTenantId();
 
         if (str_contains($url, '?')) {
             return $url . '&session_id={CHECKOUT_SESSION_ID}';

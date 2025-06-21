@@ -3,6 +3,8 @@
 namespace App\Domain\Skills\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Skills\Models\Skill;
+use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Skills\Requests\StoreUserSkillRequest;
 use App\Domain\Skills\Requests\UpdateUserSkillRequest;
 use App\Domain\Skills\Resources\UserSkillResource;
@@ -32,12 +34,14 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        /** @var UserSkill $userSkill */
         $userSkill = $user->userSkills()->create([
             'skill_id'    => $data['skill_id'],
             'level'       => $data['level'],
             'acquired_at' => $data['acquired_at'] ?? null,
         ]);
 
+        /** @var Skill $skill */
         $skill = $user->skills()->find($userSkill->skill_id);
 
         return (new UserSkillResource($skill))
@@ -51,6 +55,7 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        /** @var ?Skill $skill */
         $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
         // Check if the user skill belongs to the authenticated user
@@ -66,6 +71,7 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        /** @var ?Skill $skill */
         $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
         // Check if the user skill belongs to the authenticated user
@@ -91,6 +97,7 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        /** @var ?Skill $skill */
         $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
         // Check if the user skill belongs to the authenticated user

@@ -37,8 +37,6 @@ class TenantSubscriptionController extends Controller
 
     /**
      * Calculate tenant quota usage and limits.
-     *
-     * @return array{usedStorageGb: float, availableStorageGb: float, usedUsers: int, availableUsers: int|string}
      */
     private function calculateQuota(Tenant $tenant): TenantQuotaDTO
     {
