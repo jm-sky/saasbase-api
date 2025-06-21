@@ -18,6 +18,7 @@ use App\Domain\Projects\Models\Task;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Models\BillingCustomer;
+use App\Domain\Subscription\Models\BillingInfo;
 use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
@@ -69,12 +70,17 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property ?UserSettings                        $settings
  * @property ?UserPreference                      $preferences
  * @property ?UserProfile                         $profile
+ * @property ?UserPersonalData                    $personalData
+ * @property ?string                              $full_name
  * @property ?string                              $public_email
  * @property ?string                              $public_birth_date
  * @property ?string                              $public_phone
  * @property ?string                              $tenant_scoped_email
  * @property ?string                              $tenant_scoped_birth_date
  * @property ?string                              $tenant_scoped_phone
+ * @property ?BillingCustomer                     $billingCustomer
+ * @property ?BillingInfo                         $billingInfo
+ * @property ?Subscription                        $subscription
  * @property Collection<int, Address>             $addresses
  * @property Collection<int, BankAccount>         $bankAccounts
  * @property Collection<int, Media>               $media
@@ -222,6 +228,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         return $this->hasOne(UserProfile::class);
     }
 
+    public function personalData(): HasOne
+    {
+        return $this->hasOne(UserPersonalData::class);
+    }
+
     public function preferences(): HasOne
     {
         return $this->hasOne(UserPreference::class);
@@ -325,6 +336,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
     public function billingCustomer(): HasOne
     {
         return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
+    }
+
+    public function billingInfo(): HasOne
+    {
+        return $this->hasOne(BillingInfo::class, 'billable_id', 'id');
     }
 
     public function subscription(): MorphOne

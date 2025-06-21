@@ -14,24 +14,24 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property string                          $id
- * @property string                          $project_id
- * @property string                          $title
- * @property ?string                         $description
- * @property string                          $status_id
- * @property string                          $priority
- * @property ?string                         $assignee_id
- * @property string                          $created_by_id
- * @property ?Carbon                         $due_date
- * @property Carbon                          $created_at
- * @property Carbon                          $updated_at
- * @property ?Carbon                         $deleted_at
- * @property Project                         $project
- * @property ?User                           $assignee
- * @property User                            $createdBy
- * @property TaskStatus                      $status
- * @property Collection<int, TaskWatcher>    $watchers
- * @property Collection<int, TaskComment>    $comments
+ * @property string                       $id
+ * @property string                       $project_id
+ * @property string                       $title
+ * @property ?string                      $description
+ * @property string                       $status_id
+ * @property string                       $priority
+ * @property ?string                      $assignee_id
+ * @property string                       $created_by_id
+ * @property ?Carbon                      $due_date
+ * @property Carbon                       $created_at
+ * @property Carbon                       $updated_at
+ * @property ?Carbon                      $deleted_at
+ * @property Project                      $project
+ * @property ?User                        $assignee
+ * @property User                         $createdBy
+ * @property TaskStatus                   $status
+ * @property Collection<int, TaskWatcher> $watchers
+ * @property Collection<int, TaskComment> $comments
  */
 class Task extends BaseModel implements HasMedia
 {

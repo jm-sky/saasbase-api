@@ -5,6 +5,7 @@ namespace App\Domain\Utils\Resources;
 use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\DTOs\CommonCompanyLookupData;
+use App\Domain\Common\DTOs\CommonCompanyLookupSources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

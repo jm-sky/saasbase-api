@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Domain\Common\Models\Concerns;
 
-use Tests\TestCase;
 use App\Domain\Auth\Models\User;
+use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Collection;
-use App\Domain\Contractors\Models\Contractor;
-use PHPUnit\Framework\Attributes\CoversNothing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use Tests\TestCase;
 
 /**
  * @internal

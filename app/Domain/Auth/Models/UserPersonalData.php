@@ -5,6 +5,15 @@ namespace App\Domain\Auth\Models;
 use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $id
+ * @property string $user_id
+ * @property string $gender
+ * @property string $pesel
+ * @property bool   $is_gender_verified
+ * @property bool   $is_birth_date_verified
+ * @property bool   $is_pesel_verified
+ */
 class UserPersonalData extends BaseModel
 {
     protected $fillable = [

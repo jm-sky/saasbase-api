@@ -106,7 +106,7 @@ class RegonLookupService
             $reportRequest = new GetFullReportRequest($searchResult->regon, $reportName, $searchResult->nip);
             $response      = $this->apiConnector->send($reportRequest);
 
-            /** @var RegonReportForLegalPerson|RegonReportForNaturalPerson $report */
+            /** @var RegonReportForLegalPerson|RegonReportForNaturalPerson $dto */
             $dto = $response->dto();
 
             return $dto->toUnifiedReportDto();

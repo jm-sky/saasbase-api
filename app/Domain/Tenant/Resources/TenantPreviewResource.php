@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenant\Resources;
 
+use App\Domain\Common\Models\Media;
 use App\Domain\Common\Resources\MediaResource;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class TenantPreviewResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /** @var Tenant $this->resource */
+        /** @var ?Media $logoMedia */
         $logoMedia = $this->getFirstMedia('logo');
         $logoUrl   = $this->getMediaSignedUrl('logo');
 

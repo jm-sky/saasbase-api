@@ -114,11 +114,12 @@ class AdvancedFilterTest extends TestCase
 
     public function testEqOperatorForNumbers()
     {
-        $id = Contractor::forTenant($this->tenant->id)->first()->id;
+        /** @var Contractor $contractor */
+        $contractor = Contractor::forTenant($this->tenant->id)->first();
 
         $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
-                'id' => ['eq' => $id],
+                'id' => ['eq' => $contractor->id],
             ],
         ]);
 

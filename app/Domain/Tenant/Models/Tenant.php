@@ -18,6 +18,7 @@ use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Products\Models\Product;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Subscription\Models\BillingCustomer;
+use App\Domain\Subscription\Models\BillingInfo;
 use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use Carbon\Carbon;
@@ -58,7 +59,9 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property Collection|Contractor[]        $contractors
  * @property Collection|Product[]           $products
  * @property Collection|Invoice[]           $invoices
- * @property BillingCustomer                $billingCustomer
+ * @property ?BillingCustomer               $billingCustomer
+ * @property ?BillingInfo                   $billingInfo
+ * @property ?Subscription                  $subscription
  */
 class Tenant extends BaseModel implements HasMedia
 {
@@ -149,6 +152,11 @@ class Tenant extends BaseModel implements HasMedia
     public function billingCustomer(): HasOne
     {
         return $this->hasOne(BillingCustomer::class, 'billable_id', 'id');
+    }
+
+    public function billingInfo(): HasOne
+    {
+        return $this->hasOne(BillingInfo::class, 'billable_id', 'id');
     }
 
     public function subscription(): MorphOne

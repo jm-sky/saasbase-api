@@ -2,9 +2,11 @@
 
 namespace App\Domain\Subscription\Services;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\BillingInfo;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use Stripe\Customer;
 
@@ -25,6 +27,7 @@ class StripeCustomerService extends StripeService
     {
         return $this->handleStripeException(function () use ($billable, $data) {
             // Create customer in Stripe
+            /** @var User|Tenant $billable */
             $stripeCustomer = $this->stripe->customers->create([
                 'email'    => $data['email'] ?? $billable->email,
                 'name'     => $data['name'] ?? $billable->name,
@@ -128,7 +131,9 @@ class StripeCustomerService extends StripeService
                 'notes'         => $data['notes'] ?? null,
             ]);
 
-            $billingCustomer->billingInfo()->save($billingInfo);
+            /** @var User|Tenant $billable */
+            $billable = $billingCustomer->billable;
+            $billable->billingInfo()->save($billingInfo);
 
             return $billingInfo;
         });
@@ -146,7 +151,9 @@ class StripeCustomerService extends StripeService
             $this->stripe->customers->delete($billingCustomer->stripe_customer_id);
 
             // Delete local records
-            $billingCustomer->billingInfo?->delete();
+            /** @var User|Tenant $billable */
+            $billable = $billingCustomer->billable;
+            $billable->billingInfo?->delete();
             $billingCustomer->delete();
 
             return true;
@@ -165,6 +172,7 @@ class StripeCustomerService extends StripeService
             $stripeCustomer = $this->stripe->customers->retrieve($stripeCustomerId);
 
             // Find or create local billing customer
+            /** @var BillingCustomer $billingCustomer */
             $billingCustomer = BillingCustomer::firstOrNew([
                 'stripe_customer_id' => $stripeCustomer->id,
             ]);
@@ -178,6 +186,7 @@ class StripeCustomerService extends StripeService
                 $billableClass = $stripeCustomer->metadata->billable_type;
                 $billableId    = $stripeCustomer->metadata->billable_id;
 
+                /** @var User|Tenant $billable */
                 $billable = $billableClass::find($billableId);
 
                 if (!$billable) {
@@ -189,6 +198,7 @@ class StripeCustomerService extends StripeService
 
             // Sync billing info
             if ($stripeCustomer->address || $stripeCustomer->shipping) {
+                /** @var BillingInfo $billingInfo */
                 $billingInfo = $billingCustomer->billingInfo ?? new BillingInfo();
 
                 $address = $stripeCustomer->address ?? $stripeCustomer->shipping->address;
@@ -206,7 +216,9 @@ class StripeCustomerService extends StripeService
                     'tax_id'        => $stripeCustomer->tax->ip_address ?? null,
                 ]);
 
-                $billingCustomer->billingInfo()->save($billingInfo);
+                /** @var User|Tenant $billable */
+                $billable = $billingCustomer->billable;
+                $billable->billingInfo()->save($billingInfo);
             }
 
             return $billingCustomer;

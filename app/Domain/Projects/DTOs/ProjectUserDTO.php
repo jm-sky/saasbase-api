@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string          $projectRoleId
  * @property ?Carbon         $createdAt     Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon         $updatedAt     Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon         $deletedAt     Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO        $user
  * @property ?ProjectRoleDTO $role
  */
@@ -30,7 +29,6 @@ final class ProjectUserDTO extends BaseDTO
         public readonly ?string $id = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-        public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
         public ?ProjectRoleDTO $role = null,
     ) {
@@ -46,7 +44,6 @@ final class ProjectUserDTO extends BaseDTO
             id: $model->id,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
             user: $model->user ? UserDTO::fromModel($model->user) : null,
             role: $model->role ? ProjectRoleDTO::fromModel($model->role) : null,
         );
@@ -61,7 +58,6 @@ final class ProjectUserDTO extends BaseDTO
             id: $data['id'] ?? null,
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
-            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
             user: isset($data['user']) ? UserDTO::fromArray($data['user']) : null,
             role: isset($data['role']) ? ProjectRoleDTO::fromArray($data['role']) : null,
         );
@@ -76,7 +72,6 @@ final class ProjectUserDTO extends BaseDTO
             'projectRoleId' => $this->projectRoleId,
             'createdAt'     => $this->createdAt?->toIso8601String(),
             'updatedAt'     => $this->updatedAt?->toIso8601String(),
-            'deletedAt'     => $this->deletedAt?->toIso8601String(),
             'user'          => $this->user?->toArray(),
             'role'          => $this->role?->toArray(),
         ];

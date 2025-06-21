@@ -5,6 +5,7 @@ namespace Tests\Unit\Domain\Tenant;
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
@@ -105,6 +106,7 @@ class BelongsToTenantTest extends TestCase
             'name'      => 'Other Tenant Model',
         ]);
 
+        /** @var Collection<int, Contractor> $otherTenantModels */
         $otherTenantModels = Contractor::withoutTenant()
             ->where('tenant_id', $this->otherTenant->id)
             ->get()
