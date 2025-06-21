@@ -22,13 +22,12 @@ class StoreTenantBankAccountRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'bankName'      => ['required', 'string', 'max:255'],
-            'accountNumber' => ['required', 'string', 'max:50'],
-            'swiftCode'     => ['nullable', 'string', 'max:20'],
-            'iban'          => ['nullable', 'string', 'max:50'],
-            'currency'      => ['required', 'string', 'max:3'],
+            'iban'          => ['required', 'string', 'max:50'],
+            'swift'         => ['nullable', 'string', 'max:20'],
+            'bankName'      => ['nullable', 'string', 'max:255'],
+            'currency'      => ['nullable', 'string', 'max:3'],
             'description'   => ['nullable', 'string', 'max:1000'],
-            'isDefault'     => ['boolean'],
+            'isDefault'     => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -41,7 +41,7 @@ class TenantBankAccountController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Tenant $tenant, int $bankAccountId): BankAccountResource
+    public function show(Tenant $tenant, string $bankAccountId): BankAccountResource
     {
         $bankAccount = $tenant->bankAccounts()->findOrFail($bankAccountId);
         $this->authorize('view', [$bankAccount, $tenant]);
@@ -52,7 +52,7 @@ class TenantBankAccountController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTenantBankAccountRequest $request, Tenant $tenant, int $bankAccountId): BankAccountResource
+    public function update(UpdateTenantBankAccountRequest $request, Tenant $tenant, string $bankAccountId): BankAccountResource
     {
         $bankAccount = $tenant->bankAccounts()->findOrFail($bankAccountId);
         $this->authorize('update', [$bankAccount, $tenant]);
@@ -65,7 +65,7 @@ class TenantBankAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tenant $tenant, int $bankAccountId): Response
+    public function destroy(Tenant $tenant, string $bankAccountId): Response
     {
         $bankAccount = $tenant->bankAccounts()->findOrFail($bankAccountId);
         $this->authorize('delete', [$bankAccount, $tenant]);
