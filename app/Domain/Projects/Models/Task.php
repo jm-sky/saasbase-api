@@ -32,7 +32,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property TaskStatus                      $status
  * @property Collection<int, TaskWatcher>    $watchers
  * @property Collection<int, TaskComment>    $comments
- * @property Collection<int, TaskAttachment> $attachments
  */
 class Task extends BaseModel implements HasMedia
 {

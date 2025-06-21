@@ -2,7 +2,6 @@
 
 namespace App\Domain\Products\Models;
 
-use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\MeasurementUnit;
@@ -145,16 +144,6 @@ class Product extends BaseModel implements HasMedia
         }
 
         return $this->getFirstMediaUrl($collectionName, $fileName);
-    }
-
-    public function logo(): MorphOne
-    {
-        return $this->morphOne(Attachment::class, 'attachable');
-    }
-
-    public function attachments(): MorphMany
-    {
-        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function comments(): MorphMany

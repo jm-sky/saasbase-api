@@ -5,11 +5,8 @@ namespace App\Domain\ShareToken\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 use App\Domain\ShareToken\Models\ShareToken;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * @extends BaseDataDTO<ShareToken>
- *
  * @property string  $id
  * @property string  $token
  * @property string  $shareableType
@@ -56,9 +53,8 @@ final class ShareTokenDTO extends BaseDataDTO
         );
     }
 
-    public static function fromModel(Model $model): static
+    public static function fromModel(ShareToken $model): static
     {
-        /* @var ShareToken $model */
         return new self(
             id: $model->id,
             token: $model->token,

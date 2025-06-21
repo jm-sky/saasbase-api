@@ -2,27 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\MeasurementUnit;
-use App\Domain\Common\Models\VatRate;
-use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Invoice\Models\Invoice;
-use App\Domain\Invoice\Models\NumberingTemplate;
-use App\Domain\Products\Enums\ProductType;
-use App\Domain\Projects\Models\ProjectRole;
-use App\Domain\Projects\Models\ProjectStatus;
-use App\Domain\Skills\Models\Skill;
-use App\Domain\Skills\Models\UserSkill;
-use App\Domain\Subscription\Enums\SubscriptionStatus;
-use App\Domain\Subscription\Models\SubscriptionPlan;
-use App\Domain\Tenant\Actions\InitializeTenantDefaults;
-use App\Domain\Tenant\Enums\UserTenantRole;
-use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
-use App\Domain\Tenant\Models\Tenant;
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use App\Domain\Auth\Models\User;
+use App\Domain\Skills\Models\Skill;
+use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Common\Models\VatRate;
+use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Skills\Models\UserSkill;
+use App\Domain\Products\Enums\ProductType;
+use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Projects\Models\ProjectRole;
+use App\Domain\Tenant\Enums\UserTenantRole;
+use Illuminate\Database\Eloquent\Collection;
+use App\Domain\Common\Models\MeasurementUnit;
+use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Projects\Models\ProjectStatus;
+use App\Domain\Invoice\Models\NumberingTemplate;
+use App\Domain\Subscription\Models\SubscriptionPlan;
+use App\Domain\Subscription\Enums\SubscriptionStatus;
+use App\Domain\Tenant\Actions\InitializeTenantDefaults;
+use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 
 class CustomTenantUserSeeder extends Seeder
 {
@@ -396,7 +397,7 @@ class CustomTenantUserSeeder extends Seeder
             Tenant::bypassTenant($tenant->id, function () use ($tenant) {
                 $users = $tenant->users;
 
-                /** @var User $user */
+                /** @var Collection<int, User> $users */
                 foreach ($users as $user) {
                     $user->apiKeys()->create([
                         'tenant_id' => $tenant->id,

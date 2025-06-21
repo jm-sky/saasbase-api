@@ -3,7 +3,6 @@
 namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\Address;
-use App\Domain\Common\Models\Attachment;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
@@ -138,11 +137,6 @@ class Contractor extends BaseModel implements HasMedia
         }
 
         return $this->getFirstMediaUrl($collectionName, $conversionName);
-    }
-
-    public function attachments(): MorphMany
-    {
-        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function preferences(): HasOne
