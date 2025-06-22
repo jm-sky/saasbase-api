@@ -17,9 +17,11 @@ final class VatRateDTO extends BaseDTO
     ) {
     }
 
+    /**
+     * @param VatRate $model
+     */
     public static function fromModel(Model $model): static
     {
-        /* @var VatRate $model */
         return new self(
             id: $model->id,
             name: $model->name,
