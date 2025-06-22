@@ -5,6 +5,7 @@ namespace App\Domain\Auth\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Traits\BelongsToTenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

@@ -2,12 +2,14 @@
 
 namespace App\Domain\Subscription\Services;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Subscription\Enums\SubscriptionInvoiceStatus;
 use App\Domain\Subscription\Events\InvoicePaid;
 use App\Domain\Subscription\Events\InvoicePaymentFailed;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\SubscriptionInvoice;
+use App\Domain\Tenant\Models\Tenant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -73,8 +75,11 @@ class StripeInvoiceService extends StripeService
     {
         return $this->handleStripeException(function () use ($invoiceId) {
             $invoice     = SubscriptionInvoice::findOrFail($invoiceId);
+            /** @var BillingCustomer $customer */
             $customer    = $invoice->billingCustomer;
-            $billingInfo = $customer->billingInfo;
+            /** @var User|Tenant $billable */
+            $billable    = $customer->billable;
+            $billingInfo = $billable->billingInfo;
 
             // Generate PDF using Laravel PDF package
             $pdf = Pdf::loadView('subscription.invoices.pdf', [
