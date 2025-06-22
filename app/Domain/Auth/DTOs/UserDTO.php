@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string  $lastName
  * @property string  $email
  * @property ?string $id                 UUID
- * @property ?string $description
+ * @property ?string $bio
  * @property ?string $birthDate
  * @property ?string $phone
  * @property bool    $isAdmin
@@ -33,7 +33,7 @@ final class UserDTO extends BaseDTO
         public readonly string $lastName,
         public readonly string $email,
         public readonly ?string $id = null,
-        public readonly ?string $description = null,
+        public readonly ?string $bio = null,
         public readonly ?string $birthDate = null,
         public readonly ?string $phone = null,
         public readonly bool $isAdmin = false,
@@ -55,7 +55,7 @@ final class UserDTO extends BaseDTO
             lastName: $model->last_name,
             email: $model->email,
             id: $model->id,
-            description: $model->description,
+            bio: $model->profile?->bio,
             birthDate: $model->birth_date,
             phone: $model->phone,
             isAdmin: $model->is_admin,
@@ -76,7 +76,7 @@ final class UserDTO extends BaseDTO
             lastName: $data['last_name'],
             email: $data['email'],
             id: $data['id'] ?? null,
-            description: $data['description'] ?? null,
+            bio: $data['bio'] ?? null,
             birthDate: $data['birth_date'] ?? null,
             phone: $data['phone'] ?? null,
             isAdmin: $data['is_admin'] ?? false,
@@ -97,7 +97,7 @@ final class UserDTO extends BaseDTO
             'firstName'          => $this->firstName,
             'lastName'           => $this->lastName,
             'email'              => $this->email,
-            'description'        => $this->description,
+            'bio'                => $this->bio,
             'birthDate'          => $this->birthDate,
             'phone'              => $this->phone,
             'isAdmin'            => $this->isAdmin,

@@ -50,6 +50,7 @@ class MessageController extends Controller
 
     public function store(SendMessageRequest $request): EDoreczeniaMessageResource
     {
+        /** @var EDoreczeniaMessage $message */
         $message = EDoreczeniaMessage::create([
             'tenant_id' => $request->user()->tenant_id,
             'user_id'   => $request->user()->id,

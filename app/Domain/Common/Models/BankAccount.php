@@ -5,6 +5,7 @@ namespace App\Domain\Common\Models;
 use App\Domain\Contractor\Model\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\User\Model\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -20,8 +21,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property bool                   $is_default
  * @property ?string                $currency
  * @property ?string                $description
- * @property string                 $created_at
- * @property string                 $updated_at
+ * @property Carbon                 $created_at
+ * @property Carbon                 $updated_at
  * @property Tenant                 $tenant
  * @property User|Contractor|Tenant $bankable
  */

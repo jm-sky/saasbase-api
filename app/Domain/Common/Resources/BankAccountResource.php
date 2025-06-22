@@ -18,7 +18,6 @@ class BankAccountResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /* @var BankAccount $this->resource */
         return [
             'id'           => $this->id,
             'tenantId'     => $this->tenant_id,

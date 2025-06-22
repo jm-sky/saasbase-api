@@ -59,7 +59,7 @@ class ContractorRegistryConfirmationService
 
         return $contractor
             ->registryConfirmations()
-            ->firstOrCr([
+            ->firstOrCreate([
                 'type' => RegistryConfirmationType::Regon->value,
             ], [
                 'payload'    => $payload,

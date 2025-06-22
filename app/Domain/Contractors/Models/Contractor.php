@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Models;
 
 use App\Domain\Common\Models\Address;
+use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\Media;
@@ -21,6 +22,7 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use App\Domain\Utils\Models\RegistryConfirmation;
 use Carbon\Carbon;
 use Database\Factories\ContractorFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -31,35 +33,35 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @property string                   $id
- * @property string                   $tenant_id
- * @property string                   $name
- * @property ?string                  $country
- * @property ContractorType           $type
- * @property ?string                  $vat_id
- * @property ?string                  $tax_id
- * @property ?string                  $regon
- * @property ?string                  $description
- * @property ?string                  $email
- * @property ?string                  $phone
- * @property ?string                  $website
- * @property bool                     $is_active
- * @property bool                     $is_buyer
- * @property bool                     $is_supplier
- * @property ?string                  $edelivery_address
- * @property ?string                  $external_id
- * @property ?string                  $source_system
- * @property Carbon                   $created_at
- * @property Carbon                   $updated_at
- * @property ?Carbon                  $deleted_at
- * @property Collection|Address[]     $addresses
- * @property ?Address                 $defaultAddress
- * @property Collection|BankAccount[] $bankAccounts
- * @property ?BankAccount             $defaultbankAccount
- * @property Collection|Comment[]     $comments
- * @property Collection|Media[]       $media
- * @property Collection|Tag[]         $tags
- * @property ContractorPreferences    $preferences
+ * @property string                  $id
+ * @property string                  $tenant_id
+ * @property string                  $name
+ * @property ?string                 $country
+ * @property ContractorType          $type
+ * @property ?string                 $vat_id
+ * @property ?string                 $tax_id
+ * @property ?string                 $regon
+ * @property ?string                 $description
+ * @property ?string                 $email
+ * @property ?string                 $phone
+ * @property ?string                 $website
+ * @property bool                    $is_active
+ * @property bool                    $is_buyer
+ * @property bool                    $is_supplier
+ * @property ?string                 $edelivery_address
+ * @property ?string                 $external_id
+ * @property ?string                 $source_system
+ * @property Carbon                  $created_at
+ * @property Carbon                  $updated_at
+ * @property ?Carbon                 $deleted_at
+ * @property Collection<Address>     $addresses
+ * @property ?Address                $defaultAddress
+ * @property Collection<BankAccount> $bankAccounts
+ * @property ?BankAccount            $defaultbankAccount
+ * @property Collection<Comment>     $comments
+ * @property Collection<Media>       $media
+ * @property Collection<Tag>         $tags
+ * @property ContractorPreferences   $preferences
  */
 class Contractor extends BaseModel implements HasMedia
 {

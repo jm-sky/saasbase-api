@@ -6,6 +6,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string  $id
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ApiKey extends BaseModel
 {
     use BelongsToTenant;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
