@@ -10,6 +10,7 @@ use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Database\Factories\ContactFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;

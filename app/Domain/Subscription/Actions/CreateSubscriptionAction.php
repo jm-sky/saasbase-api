@@ -3,6 +3,7 @@
 namespace App\Domain\Subscription\Actions;
 
 use App\Domain\Subscription\DTOs\CreateSubscriptionDTO;
+use App\Domain\Subscription\DTOs\CreateSubscriptionOptionsDTO;
 use App\Domain\Subscription\Events\SubscriptionCreated;
 use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
@@ -33,8 +34,9 @@ class CreateSubscriptionAction
         try {
             return DB::transaction(function () use ($data) {
                 // Find required models
-                $billingInterval = $data->billingInterval;
+                /** @var BillingCustomer $billingCustomer */
                 $billingCustomer = BillingCustomer::findOrFail($data->billingCustomerId);
+                /** @var SubscriptionPlan $plan */
                 $plan            = SubscriptionPlan::findOrFail($data->planId);
 
                 // Create payment method if provided
@@ -46,12 +48,7 @@ class CreateSubscriptionAction
                 $subscription = $this->stripeSubscriptionService->createSubscription(
                     $billingCustomer,
                     $plan,
-                    [
-                        'trial_end'        => $data->trialEndsAt ?? null,
-                        'payment_behavior' => $data->paymentBehavior ?? null,
-                        'metadata'         => $data->metadata ?? [],
-                        'billing_interval' => $billingInterval,
-                    ]
+                    CreateSubscriptionOptionsDTO::fromArray($data->toArray())
                 );
 
                 // Dispatch event

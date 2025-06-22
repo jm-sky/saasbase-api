@@ -109,6 +109,7 @@ class StripeAddonService extends StripeService
     {
         return $this->handleStripeException(function () use ($stripeInvoiceItemId) {
             // Fetch invoice item from Stripe
+            /** @var \Stripe\InvoiceItem $invoiceItem */
             $invoiceItem = $this->stripe->invoiceItems->retrieve($stripeInvoiceItemId);
 
             // Find or create local purchase record
@@ -124,7 +125,7 @@ class StripeAddonService extends StripeService
                     throw new StripeException('Cannot sync addon purchase: customer not found');
                 }
 
-                $addon = AddonPackage::where('stripe_price_id', $invoiceItem->price)->first();
+                $addon = AddonPackage::where('stripe_price_id', $invoiceItem['price']['id'])->first();
 
                 if (!$addon) {
                     throw new StripeException('Cannot sync addon purchase: addon package not found');
@@ -137,9 +138,9 @@ class StripeAddonService extends StripeService
             // Update purchase data
             $purchase->fill([
                 'quantity'     => $invoiceItem->quantity,
-                'purchased_at' => Carbon::createFromTimestamp($invoiceItem->created),
+                'purchased_at' => Carbon::createFromTimestamp($invoiceItem->date),
                 'expires_at'   => $this->calculateExpiryDate($purchase->addonPackage, [
-                    'purchased_at' => $invoiceItem->created,
+                    'purchased_at' => $invoiceItem->date,
                 ]),
             ]);
 
@@ -173,7 +174,7 @@ class StripeAddonService extends StripeService
             return null;
         }
 
-        $purchasedAt = isset($options['purchased_at'])
+        $purchasedAt = ($options['purchased_at'] ?? false)
             ? Carbon::createFromTimestamp($options['purchased_at'])
             : Carbon::now();
 

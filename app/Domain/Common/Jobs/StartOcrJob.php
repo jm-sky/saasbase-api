@@ -8,6 +8,7 @@ use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Jobs\FinishOcrJob;
 use App\Helpers\FileNames;
 use App\Services\AzureDocumentIntelligence\DocumentAnalysisService;
+use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use App\Services\AzureDocumentIntelligence\Exceptions\AzureDocumentIntelligenceException;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -61,6 +62,7 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
             }
 
             // Analyze document
+            /** @var DocumentAnalysisResult $result */
             $result = $azure->analyze($temporaryUrl);
 
             $this->deleteProcessedMediaFile();
@@ -68,7 +70,6 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
             $this->ocrRequest->update([
                 'status'               => OcrRequestStatus::Completed,
                 'result'               => $result,
-                'external_document_id' => $result->documentId ?? null,
                 'finished_at'          => now(),
             ]);
 

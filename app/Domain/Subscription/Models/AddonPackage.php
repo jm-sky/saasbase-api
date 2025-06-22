@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string                     $description
  * @property AddonType                  $type
  * @property ?float                     $price
+ * @property ?int                       $duration_days
  * @property Collection|AddonPurchase[] $purchases
  */
 class AddonPackage extends BaseModel

@@ -2,10 +2,11 @@
 
 namespace App\Domain\Subscription\Models;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Subscription\Enums\SubscriptionInvoiceStatus;
+use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string                    $id
@@ -24,7 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?Carbon                   $due_date
  * @property ?Carbon                   $paid_at
  * @property array                     $items
- * @property ?Model                    $billable
+ * @property Tenant|User               $billable
+ * @property ?BillingCustomer          $billingCustomer
  */
 class SubscriptionInvoice extends BaseModel
 {
@@ -59,6 +61,11 @@ class SubscriptionInvoice extends BaseModel
     public function billable()
     {
         return $this->morphTo();
+    }
+
+    public function billingCustomer()
+    {
+        return $this->morphTo('billable');
     }
 
     public function isPaid(): bool

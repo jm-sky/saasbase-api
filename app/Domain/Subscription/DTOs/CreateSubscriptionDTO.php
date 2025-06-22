@@ -12,6 +12,7 @@ final class CreateSubscriptionDTO extends BaseDataDTO
         public string $billingCustomerId,
         public BillingInterval $billingInterval,
         public PaymentDetailsDTO $paymentDetails,
+        public ?string $paymentBehavior,
         public ?string $trialEndsAt,
         public ?string $couponCode,
         public ?array $metadata = null
@@ -25,6 +26,7 @@ final class CreateSubscriptionDTO extends BaseDataDTO
             billingCustomerId: $data['billingCustomerId'],
             billingInterval: $data['billingInterval'],
             paymentDetails: PaymentDetailsDTO::fromArray($data['paymentDetails']),
+            paymentBehavior: $data['paymentBehavior'],
             trialEndsAt: $data['trialEndsAt'],
             couponCode: $data['couponCode'],
             metadata: $data['metadata'] ?? null,
@@ -38,6 +40,7 @@ final class CreateSubscriptionDTO extends BaseDataDTO
             'billingCustomerId' => $this->billingCustomerId,
             'billingInterval'   => $this->billingInterval,
             'paymentDetails'    => $this->paymentDetails->toArray(),
+            'paymentBehavior'   => $this->paymentBehavior,
             'trialEndsAt'       => $this->trialEndsAt,
             'couponCode'        => $this->couponCode,
             'metadata'          => $this->metadata ?? [],

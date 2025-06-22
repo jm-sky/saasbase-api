@@ -18,6 +18,7 @@ return new class() extends Migration {
             $table->text('description');
             $table->enum('type', array_map(fn (AddonType $type) => $type->value, AddonType::cases()));
             $table->decimal('price', 10, 2)->nullable();
+            $table->integer('duration_days')->nullable();
             $table->timestamps();
         });
     }

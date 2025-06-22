@@ -169,6 +169,7 @@ class StripeCustomerService extends StripeService
     {
         return $this->handleStripeException(function () use ($stripeCustomerId) {
             // Fetch customer from Stripe
+            /** @var Customer $stripeCustomer */
             $stripeCustomer = $this->stripe->customers->retrieve($stripeCustomerId);
 
             // Find or create local billing customer
@@ -179,12 +180,12 @@ class StripeCustomerService extends StripeService
 
             if (!$billingCustomer->exists) {
                 // If this is a new customer, we need the billable model
-                if (!isset($stripeCustomer->metadata->billable_type) || !isset($stripeCustomer->metadata->billable_id)) {
+                if (!isset($stripeCustomer['metadata']['billable_type']) || !isset($stripeCustomer['metadata']['billable_id'])) {
                     throw new StripeException('Cannot sync customer: missing billable information in Stripe metadata');
                 }
 
-                $billableClass = $stripeCustomer->metadata->billable_type;
-                $billableId    = $stripeCustomer->metadata->billable_id;
+                $billableClass = $stripeCustomer['metadata']['billable_type'];
+                $billableId    = $stripeCustomer['metadata']['billable_id'];
 
                 /** @var User|Tenant $billable */
                 $billable = $billableClass::find($billableId);
@@ -197,23 +198,23 @@ class StripeCustomerService extends StripeService
             }
 
             // Sync billing info
-            if ($stripeCustomer->address || $stripeCustomer->shipping) {
+            if ($stripeCustomer['address'] || $stripeCustomer['shipping']) {
                 /** @var BillingInfo $billingInfo */
                 $billingInfo = $billingCustomer->billingInfo ?? new BillingInfo();
 
-                $address = $stripeCustomer->address ?? $stripeCustomer->shipping->address;
-                $name    = $stripeCustomer->name ?? $stripeCustomer->shipping->name;
+                $address = $stripeCustomer['address'] ?? $stripeCustomer['shipping']['address'];
+                $name    = $stripeCustomer['name'] ?? $stripeCustomer['shipping']['name'];
 
                 $billingInfo->fill([
                     'name'          => $name,
-                    'email'         => $stripeCustomer->email,
-                    'address_line1' => $address->line1,
-                    'address_line2' => $address->line2,
-                    'city'          => $address->city,
-                    'state'         => $address->state,
-                    'postal_code'   => $address->postal_code,
-                    'country'       => $address->country,
-                    'tax_id'        => $stripeCustomer->tax->ip_address ?? null,
+                    'email'         => $stripeCustomer['email'],
+                    'address_line1' => $address['line1'] ?? null,
+                    'address_line2' => $address['line2'] ?? null,
+                    'city'          => $address['city'] ?? null,
+                    'state'         => $address['state'] ?? null,
+                    'postal_code'   => $address['postal_code'] ?? null,
+                    'country'       => $address['country'] ?? null,
+                    'tax_id'        => $stripeCustomer['tax_ids']['data'][0]['value'] ?? null,
                 ]);
 
                 /** @var User|Tenant $billable */

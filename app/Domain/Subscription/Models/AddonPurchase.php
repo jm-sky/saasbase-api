@@ -4,22 +4,21 @@ namespace App\Domain\Subscription\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string        $id
- * @property string        $billable_type
- * @property string        $billable_id
- * @property string        $addon_package_id
- * @property ?string       $stripe_invoice_item_id
- * @property Carbon        $purchased_at
- * @property ?Carbon       $expires_at
- * @property ?int          $quantity
- * @property ?float        $amount
- * @property ?string       $currency
- * @property ?string       $status
- * @property ?Model        $billable
- * @property ?AddonPackage $package
+ * @property string           $id
+ * @property string           $billable_type
+ * @property string           $billable_id
+ * @property string           $addon_package_id
+ * @property ?string          $stripe_invoice_item_id
+ * @property Carbon           $purchased_at
+ * @property ?Carbon          $expires_at
+ * @property ?int             $quantity
+ * @property ?float           $amount
+ * @property ?string          $currency
+ * @property ?string          $status
+ * @property ?BillingCustomer $billable
+ * @property ?AddonPackage    $addonPackage
  */
 class AddonPurchase extends BaseModel
 {
@@ -48,7 +47,12 @@ class AddonPurchase extends BaseModel
         return $this->morphTo();
     }
 
-    public function package()
+    public function billingCustomer()
+    {
+        return $this->morphTo('billable');
+    }
+
+    public function addonPackage()
     {
         return $this->belongsTo(AddonPackage::class, 'addon_package_id');
     }

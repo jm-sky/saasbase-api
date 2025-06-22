@@ -6,6 +6,7 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Contractors\Enums\ContractorActivityType;
+use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

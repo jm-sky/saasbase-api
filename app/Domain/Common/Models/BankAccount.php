@@ -2,9 +2,9 @@
 
 namespace App\Domain\Common\Models;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Contractor\Model\Contractor;
 use App\Domain\Tenant\Models\Tenant;
-use App\Domain\User\Model\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

@@ -102,7 +102,7 @@ class SubscriptionPlan extends BaseModel
         return $this->features()
             ->with('feature')
             ->get()
-            ->mapWithKeys(function ($planFeature) {
+            ->mapWithKeys(function (PlanFeature $planFeature) {
                 return [$planFeature->feature->name => $planFeature->value];
             })
             ->toArray()
