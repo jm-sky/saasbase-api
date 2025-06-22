@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\Models;
 
+use App\Domain\Common\Concerns\HasMediaUrl;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\MeasurementUnit;
@@ -47,7 +48,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property ?VatRate            $vatRate
  * @property Collection|string[] $tags
  */
-class Product extends BaseModel implements HasMedia
+class Product extends BaseModel implements HasMedia, HasMediaUrl
 {
     use SoftDeletes;
     use BelongsToTenant;

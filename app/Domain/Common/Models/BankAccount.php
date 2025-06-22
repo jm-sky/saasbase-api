@@ -3,7 +3,7 @@
 namespace App\Domain\Common\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Contractor\Model\Contractor;
+use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Common\DTOs;
 
+use App\Domain\Common\Concerns\HasMediaUrl;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 final class MediaDTO implements Arrayable, \JsonSerializable
@@ -23,7 +23,7 @@ final class MediaDTO implements Arrayable, \JsonSerializable
     ) {
     }
 
-    public static function fromModel(Media $media, ?Model $parent = null): static
+    public static function fromModel(Media $media, ?HasMediaUrl $parent = null): static
     {
         $url = null;
 

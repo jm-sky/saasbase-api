@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Models;
 
+use App\Domain\Common\Concerns\HasMediaUrl;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Models\BaseModel;
@@ -63,7 +64,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Collection<Tag>         $tags
  * @property ContractorPreferences   $preferences
  */
-class Contractor extends BaseModel implements HasMedia
+class Contractor extends BaseModel implements HasMedia, HasMediaUrl
 {
     use SoftDeletes;
     use BelongsToTenant;

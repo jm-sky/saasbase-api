@@ -3,6 +3,7 @@
 namespace App\Domain\Projects\Models;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Concerns\HasMediaUrl;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\Tag;
@@ -46,7 +47,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Collection<int, Media>                $media
  * @property Collection<int, Tag>                  $tags
  */
-class Project extends BaseModel implements HasMedia
+class Project extends BaseModel implements HasMedia, HasMediaUrl
 {
     use BelongsToTenant;
     use SoftDeletes;

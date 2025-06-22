@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Common\Concerns\HasMediaUrl;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Models\BaseModel;
@@ -64,7 +65,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property ?BillingInfo                  $billingInfo
  * @property ?Subscription                 $subscription
  */
-class Tenant extends BaseModel implements HasMedia
+class Tenant extends BaseModel implements HasMedia, HasMediaUrl
 {
     use SoftDeletes;
     use InteractsWithMedia;

@@ -6,6 +6,7 @@ use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Auth\Traits\HasUsersPublicScopedFields;
 use App\Domain\Auth\Traits\HasUsersTenantScopedFields;
+use App\Domain\Common\Concerns\HasMediaUrl;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Models\Media;
@@ -100,7 +101,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Collection<int, SecurityEvent>       $securityEvents
  * @property Collection<int, ApiKey>              $apiKeys
  */
-class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEmail
+class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;

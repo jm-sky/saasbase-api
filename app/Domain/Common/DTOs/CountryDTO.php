@@ -7,14 +7,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @extends BaseDTO<Country>
- *
  * @property string  $name
  * @property string  $code
  * @property string  $code3
  * @property string  $numericCode
  * @property string  $phoneCode
- * @property ?string $id             UUID
  * @property ?string $capital
  * @property ?string $currency
  * @property ?string $currencyCode
@@ -37,7 +34,6 @@ final class CountryDTO extends BaseDTO
         public readonly string $code3,
         public readonly string $numericCode,
         public readonly string $phoneCode,
-        public readonly ?string $id = null,
         public readonly ?string $capital = null,
         public readonly ?string $currency = null,
         public readonly ?string $currencyCode = null,
@@ -54,16 +50,17 @@ final class CountryDTO extends BaseDTO
     ) {
     }
 
+    /**
+     * @param Country $model
+     */
     public static function fromModel(Model $model): static
     {
-        /* @var Country $model */
         return new self(
             name: $model->name,
             code: $model->code,
             code3: $model->code3,
             numericCode: $model->numeric_code,
             phoneCode: $model->phone_code,
-            id: $model->id,
             capital: $model->capital,
             currency: $model->currency,
             currencyCode: $model->currency_code,
@@ -88,7 +85,6 @@ final class CountryDTO extends BaseDTO
             code3: $data['code3'],
             numericCode: $data['numeric_code'],
             phoneCode: $data['phone_code'],
-            id: $data['id'] ?? null,
             capital: $data['capital'] ?? null,
             currency: $data['currency'] ?? null,
             currencyCode: $data['currency_code'] ?? null,
@@ -108,7 +104,6 @@ final class CountryDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'             => $this->id,
             'name'           => $this->name,
             'code'           => $this->code,
             'code3'          => $this->code3,
