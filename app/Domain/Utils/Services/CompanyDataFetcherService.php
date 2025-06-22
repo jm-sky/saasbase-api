@@ -9,6 +9,7 @@ use App\Services\RegonLookup\Services\RegonLookupService;
 use App\Services\ViesLookup\Services\ViesLookupService;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class CompanyDataFetcherService
@@ -70,23 +71,40 @@ class CompanyDataFetcherService
         }
     }
 
+    /**
+     * Merges results from the completed batch jobs.
+     *
+     * Each job in the batch is responsible for storing its own result in the cache,
+     * using a unique key composed of the batch ID and the job type. This method
+     * retrieves those results from the cache and consolidates them into a single DTO.
+     *
+     * @param Batch $batch the completed job batch
+     *
+     * @return AllLookupResults a DTO containing the merged results from all lookups
+     */
     private function mergeResults(Batch $batch): AllLookupResults
     {
         $result = new AllLookupResults();
 
-        // Collect results from successful jobs
-        foreach ($batch->jobs as $job) {
-            if ($job->hasSucceeded()) {
-                $result = $job->getResult();
+        $regonData = Cache::get("batch:{$batch->id}:regon");
 
-                if ($job instanceof \App\Domain\Utils\Jobs\RegonLookupJob) {
-                    $result->regon = $result;
-                } elseif ($job instanceof \App\Domain\Utils\Jobs\MfLookupJob) {
-                    $result->mf = $result;
-                } elseif ($job instanceof \App\Domain\Utils\Jobs\ViesLookupJob) {
-                    $result->vies = $result;
-                }
-            }
+        if ($regonData) {
+            $result->regon = $regonData;
+            Cache::forget("batch:{$batch->id}:regon");
+        }
+
+        $mfData = Cache::get("batch:{$batch->id}:mf");
+
+        if ($mfData) {
+            $result->mf = $mfData;
+            Cache::forget("batch:{$batch->id}:mf");
+        }
+
+        $viesData = Cache::get("batch:{$batch->id}:vies");
+
+        if ($viesData) {
+            $result->vies = $viesData;
+            Cache::forget("batch:{$batch->id}:vies");
         }
 
         return $result;
