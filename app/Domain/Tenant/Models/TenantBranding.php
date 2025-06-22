@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
  * @property string $id
@@ -73,24 +74,21 @@ class TenantBranding extends BaseModel implements HasMedia
         ;
     }
 
-    public function registerAllMediaConversions(): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('thumb')
-            ->width(256)
-            ->height(256)
-            ->nonQueued()
+            ->width(config('domains.tenants.logo.size', 256))
+            ->height(config('domains.tenants.logo.size', 256))
         ;
 
         $this->addMediaConversion('pdf')
-            ->width(800)
-            ->height(800)
-            ->nonQueued()
+            ->width(config('domains.tenants.pdf_logo.size', 800))
+            ->height(config('domains.tenants.pdf_logo.size', 800))
         ;
 
         $this->addMediaConversion('email')
-            ->width(600)
-            ->height(200)
-            ->nonQueued()
+            ->width(config('domains.tenants.email_header_image.size', 600))
+            ->height(config('domains.tenants.email_header_image.size', 200))
         ;
     }
 }

@@ -55,6 +55,7 @@ class TenantBrandingController extends Controller
 
     public function deleteMedia(Tenant $tenant, string $collection): JsonResponse
     {
+        /** @var TenantBranding $branding */
         $branding = $tenant->branding;
 
         if (!$branding) {

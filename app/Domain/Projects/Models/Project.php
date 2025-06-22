@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
  * @property string                                $id
@@ -120,12 +121,11 @@ class Project extends BaseModel implements HasMedia
         $this->addMediaCollection('attachments');
     }
 
-    public function registerAllMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.projects.logo.size', 256))
             ->height(config('domains.projects.logo.size', 256))
-            ->nonQueued()
         ;
     }
 

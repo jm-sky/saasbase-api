@@ -5,7 +5,6 @@ namespace App\Domain\Products\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\Comment;
 use App\Domain\Common\Models\MeasurementUnit;
-use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
@@ -26,6 +25,7 @@ use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
  * @property string              $id
@@ -127,12 +127,11 @@ class Product extends BaseModel implements HasMedia
         $this->addMediaCollection('attachments');
     }
 
-    public function registerAllMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.products.logo.size', 256))
             ->height(config('domains.products.logo.size', 256))
-            ->nonQueued()
         ;
     }
 

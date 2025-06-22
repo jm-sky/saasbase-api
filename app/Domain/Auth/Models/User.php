@@ -50,6 +50,7 @@ use Spatie\Image\Enums\CropPosition;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -359,7 +360,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
         ;
     }
 
-    public function registerAllMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->crop(
@@ -367,7 +368,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia, MustVerifyEm
                 config('domains.users.avatar.size', 256),
                 CropPosition::Center,
             )
-            ->nonQueued()
         ;
     }
 
