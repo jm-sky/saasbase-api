@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property SkillCategory                         $skillCategory
  * @property Collection<int, UserSkill>            $userSkills
  * @property Collection<int, ProjectRequiredSkill> $projectRequiredSkills
+ * @property UserSkill                             $pivot
  */
 class Skill extends BaseModel
 {

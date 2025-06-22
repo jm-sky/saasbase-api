@@ -22,11 +22,11 @@ final class UserSkillResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /* @var UserSkill $this->resource */
+        /* @var Skill $this->resource */
         return [
-            'id'          => $this->id,
+            'id'          => $this->pivot->id,
             'userId'      => $this->pivot->user_id,
-            'skillId'     => $this->pivot->skill_id,
+            'skillId'     => $this->id,
             'category'    => $this->category,
             'name'        => $this->name,
             'description' => $this->description,
@@ -44,7 +44,7 @@ final class UserSkillResource extends JsonResource
     {
         parent::__construct($resource);
 
-        if ($resource instanceof UserSkill && $resource->wasRecentlyCreated) {
+        if ($this->resource->pivot?->wasRecentlyCreated) {
             $this->response()->setStatusCode(Response::HTTP_CREATED);
         }
     }

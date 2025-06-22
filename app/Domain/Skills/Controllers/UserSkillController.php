@@ -55,17 +55,15 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        /** @var UserSkill|null $userSkill */
-        $userSkill = $user->userSkills()->find($userSkillId);
+        /** @var ?Skill $skill */
+        $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
-        if (!$userSkill) {
+        // Check if the user skill belongs to the authenticated user
+        if (!$skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
-        // We need to load the skill relation to pass it to the resource
-        $userSkill->load('skill');
-
-        return new UserSkillResource($userSkill->skill);
+        return new UserSkillResource($skill);
     }
 
     public function update(UpdateUserSkillRequest $request, string $userSkillId): UserSkillResource
@@ -73,25 +71,25 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        /** @var UserSkill|null $userSkill */
-        $userSkill = $user->userSkills()->find($userSkillId);
+        /** @var ?Skill $skill */
+        $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
-        if (!$userSkill) {
+        // Check if the user skill belongs to the authenticated user
+        if (!$skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
         $data = $request->validated();
 
         // Update the pivot data
-        $userSkill->update([
+        $skill->pivot->update([
             'level'       => $data['level'],
             'acquired_at' => $data['acquired_at'] ?? null,
         ]);
 
-        $userSkill->load('skill');
-        $userSkill->skill->refresh();
+        $skill->refresh();
 
-        return new UserSkillResource($userSkill->skill);
+        return new UserSkillResource($skill);
     }
 
     public function destroy(string $userSkillId): JsonResponse
@@ -99,14 +97,15 @@ class UserSkillController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        /** @var UserSkill|null $userSkill */
-        $userSkill = $user->userSkills()->find($userSkillId);
+        /** @var ?Skill $skill */
+        $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
-        if (!$userSkill) {
+        // Check if the user skill belongs to the authenticated user
+        if (!$skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
-        $userSkill->delete();
+        $skill->pivot->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
