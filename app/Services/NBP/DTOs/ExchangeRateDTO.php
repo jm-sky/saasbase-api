@@ -3,7 +3,6 @@
 namespace App\Services\NBP\DTOs;
 
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 readonly class ExchangeRateDTO
 {
@@ -14,7 +13,8 @@ readonly class ExchangeRateDTO
         public Carbon $effectiveDate,
         public string $table,
         public string $no
-    ) {}
+    ) {
+    }
 
     public static function fromArray(array $data, string $effectiveDate, string $table, string $no): self
     {
@@ -31,24 +31,24 @@ readonly class ExchangeRateDTO
     public function toArray(): array
     {
         return [
-            'currency_code' => $this->currencyCode,
-            'currency_name' => $this->currencyName,
-            'rate' => $this->rate,
+            'currency_code'  => $this->currencyCode,
+            'currency_name'  => $this->currencyName,
+            'rate'           => $this->rate,
             'effective_date' => $this->effectiveDate->format('Y-m-d'),
-            'table' => $this->table,
-            'no' => $this->no
+            'table'          => $this->table,
+            'no'             => $this->no,
         ];
     }
 
     public function toModel(): array
     {
         return [
-            'currency_code' => $this->currencyCode,
-            'currency_name' => $this->currencyName,
-            'rate' => $this->rate,
-            'effective_date' => $this->effectiveDate, // TODO: We want just "date" maybe 
-            'table' => $this->table,
-            'no' => $this->no
+            'currency_code'  => $this->currencyCode,
+            'currency_name'  => $this->currencyName,
+            'rate'           => $this->rate,
+            'effective_date' => $this->effectiveDate, // TODO: We want just "date" maybe
+            'table'          => $this->table,
+            'no'             => $this->no,
         ];
     }
 }

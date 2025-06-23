@@ -16,13 +16,14 @@ readonly class ExchangeRateTableDTO
         public string $no,
         public Carbon $effectiveDate,
         public Collection $rates
-    ) {}
+    ) {
+    }
 
     public static function fromArray(array $data): self
     {
         /** @var Collection<int, ExchangeRateDTO> $rates */
         $rates = collect($data['rates'])->map(
-            fn(array $rate) => ExchangeRateDTO::fromArray(
+            fn (array $rate) => ExchangeRateDTO::fromArray(
                 $rate,
                 $data['effectiveDate'],
                 $data['table'],
@@ -41,7 +42,7 @@ readonly class ExchangeRateTableDTO
     public function getRateForCurrency(string $currencyCode): ?ExchangeRateDTO
     {
         return $this->rates->first(
-            fn(ExchangeRateDTO $rate) => $rate->currencyCode === strtoupper($currencyCode)
+            fn (ExchangeRateDTO $rate) => $rate->currencyCode === strtoupper($currencyCode)
         );
     }
 }

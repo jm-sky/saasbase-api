@@ -14,16 +14,17 @@ class GetCurrencyRateRequest extends Request
         protected NBPTableEnum $table,
         protected string $code,
         protected ?string $date = null
-    ) {}
+    ) {
+    }
 
     public function resolveEndpoint(): string
     {
         $endpoint = "/exchangerates/rates/{$this->table->value}/{$this->code}";
-        
+
         if ($this->date) {
             $endpoint .= "/{$this->date}";
         }
-        
+
         return $endpoint;
     }
 }

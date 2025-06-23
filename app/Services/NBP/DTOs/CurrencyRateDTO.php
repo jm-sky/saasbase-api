@@ -11,15 +11,16 @@ readonly class CurrencyRateDTO
         public string $currency,
         public string $code,
         public Collection $rates // Collection of rate data
-    ) {}
+    ) {
+    }
 
     public static function fromArray(array $data): self
     {
         $rates = collect($data['rates'])->map(function (array $rate) {
             return [
-                'no' => $rate['no'],
+                'no'            => $rate['no'],
                 'effectiveDate' => Carbon::parse($rate['effectiveDate']),
-                'mid' => (float) $rate['mid']
+                'mid'           => (float) $rate['mid'],
             ];
         });
 
@@ -39,7 +40,7 @@ readonly class CurrencyRateDTO
     public function toExchangeRateDTO(): ?ExchangeRateDTO
     {
         $latestRate = $this->getLatestRate();
-        
+
         if (!$latestRate) {
             return null;
         }

@@ -25,7 +25,7 @@ class ImportExchangeRatesCommand extends Command
         try {
             $table = $this->option('table');
             $force = $this->option('force');
-            
+
             if ($specificDate = $this->option('date')) {
                 $date = Carbon::parse($specificDate);
                 $this->importForDate($nbpService, $date, $table, $force);
@@ -35,10 +35,11 @@ class ImportExchangeRatesCommand extends Command
             }
 
             $this->info('Exchange rates import completed successfully!');
-            return self::SUCCESS;
 
+            return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error('Import failed: ' . $e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -51,35 +52,36 @@ class ImportExchangeRatesCommand extends Command
 
         if ($rates->isEmpty()) {
             $this->warn("No rates found for {$date->format('Y-m-d')}");
+
             return;
         }
 
         $imported = 0;
-        $skipped = 0;
+        $skipped  = 0;
 
         DB::transaction(function () use ($rates, $force, &$imported, &$skipped) {
             foreach ($rates as $rateDTO) {
                 $exists = ExchangeRate::where([
-                    'currency_code' => $rateDTO->currencyCode,
+                    'currency_code'  => $rateDTO->currencyCode,
                     'effective_date' => $rateDTO->effectiveDate->format('Y-m-d'),
-                    'table' => $rateDTO->table
+                    'table'          => $rateDTO->table,
                 ])->exists();
 
                 if ($exists && !$force) {
-                    $skipped++;
+                    ++$skipped;
                     continue;
                 }
 
                 ExchangeRate::updateOrCreate(
                     [
-                        'currency_code' => $rateDTO->currencyCode,
+                        'currency_code'  => $rateDTO->currencyCode,
                         'effective_date' => $rateDTO->effectiveDate->format('Y-m-d'),
-                        'table' => $rateDTO->table
+                        'table'          => $rateDTO->table,
                     ],
                     $rateDTO->toModel()
                 );
 
-                $imported++;
+                ++$imported;
             }
         });
 
@@ -88,9 +90,9 @@ class ImportExchangeRatesCommand extends Command
 
     protected function importRecentDays(NBPService $nbpService, int $days, string $table, bool $force): void
     {
-        for ($i = 0; $i < $days; $i++) {
+        for ($i = 0; $i < $days; ++$i) {
             $date = Carbon::now()->subDays($i);
-            
+
             // Skip weekends for NBP data
             if ($date->isSaturday() || $date->isSunday()) {
                 continue;
