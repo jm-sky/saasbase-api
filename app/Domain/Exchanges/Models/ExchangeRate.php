@@ -12,8 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string   $currency
  * @property Carbon   $date
  * @property float    $rate
- * @property string   $table
- * @property string   $source
+ * @property string   $table e.g. A
+ * @property string   $source e.g. NBP
+ * @property ?string  $no  Internal publication number, e.g. 001/A/NBP/2025
  * @property Carbon   $created_at
  * @property Currency $baseCurrency
  * @property Currency $quoteCurrency
@@ -30,6 +31,7 @@ class ExchangeRate extends BaseModel
         'rate',
         'table',
         'source',
+        'no',
         'created_at',
     ];
 
