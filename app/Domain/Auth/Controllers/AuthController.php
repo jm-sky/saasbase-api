@@ -10,6 +10,7 @@ use App\Domain\Auth\Requests\LoginRequest;
 use App\Domain\Auth\Requests\RegisterRequest;
 use App\Domain\Auth\Services\UserSessionService;
 use App\Domain\Auth\Traits\RespondsWithToken;
+use App\Domain\Tenant\Models\Tenant;
 use App\Http\Controllers\Controller;
 use App\Services\ReCaptcha\Enums\ReCaptchaAction;
 use App\Services\ReCaptcha\ReCaptchaService;
@@ -48,6 +49,7 @@ class AuthController extends Controller
         $user  = Auth::user();
 
         if ($this->shouldChooseFirstTenant($user)) {
+            /** @var Tenant $tenant */
             $tenant = $user->tenants()->first();
             $token  = JwtHelper::createTokenWithTenant($user, $tenant->id);
         } else {

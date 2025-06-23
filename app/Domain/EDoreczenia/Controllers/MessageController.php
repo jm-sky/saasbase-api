@@ -7,6 +7,7 @@ use App\Domain\EDoreczenia\DTOs\AttachmentDto;
 use App\Domain\EDoreczenia\DTOs\RecipientDto;
 use App\Domain\EDoreczenia\DTOs\SendMessageDto;
 use App\Domain\EDoreczenia\Models\EDoreczeniaMessage;
+use App\Domain\EDoreczenia\Models\EDoreczeniaMessageAttachment;
 use App\Domain\EDoreczenia\Providers\EDoreczeniaProviderManager;
 use App\Domain\EDoreczenia\Requests\SearchMessageRequest;
 use App\Domain\EDoreczenia\Requests\SendMessageRequest;
@@ -68,8 +69,15 @@ class MessageController extends Controller
 
         $attachments = collect($request->file('attachments'))
             ->map(function (UploadedFile $file) use ($message) {
-                $media = $message->addMedia($file)
-                    ->toMediaCollection('attachments')
+                /** @var EDoreczeniaMessageAttachment $attachment */
+                $attachment = $message->attachments()->create([
+                    'tenant_id' => $message->tenant_id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ]);
+                $media = $attachment->addMedia($file)
+                    ->toMediaCollection('attachment')
                 ;
 
                 return new AttachmentDto(
@@ -135,8 +143,15 @@ class MessageController extends Controller
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $message->addMedia($file)
-                    ->toMediaCollection('attachments')
+                /** @var EDoreczeniaMessageAttachment $attachment */
+                $attachment = $message->attachments()->create([
+                    'tenant_id' => $message->tenant_id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ]);
+                $attachment->addMedia($file)
+                    ->toMediaCollection('attachment')
                 ;
             }
         }

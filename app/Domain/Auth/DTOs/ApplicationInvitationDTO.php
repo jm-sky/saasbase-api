@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string          $id
  * @property string          $inviterId
  * @property string          $email
- * @property string          $role
  * @property string          $token
  * @property string          $status
  * @property ?Carbon         $acceptedAt
@@ -30,7 +29,6 @@ final class ApplicationInvitationDTO extends BaseDTO
         public readonly string $id,
         public readonly string $inviterId,
         public readonly string $email,
-        public readonly string $role,
         public readonly string $token,
         public readonly string $status,
         public readonly Carbon $expiresAt,
@@ -48,7 +46,6 @@ final class ApplicationInvitationDTO extends BaseDTO
             id: $data['id'],
             inviterId: $data['inviterId'],
             email: $data['email'],
-            role: $data['role'],
             token: $data['token'],
             status: $data['status'],
             acceptedAt: $data['acceptedAt'],
@@ -60,14 +57,15 @@ final class ApplicationInvitationDTO extends BaseDTO
         );
     }
 
+    /**
+     * @param ApplicationInvitation $model
+     */
     public static function fromModel(Model $model): static
     {
-        /* @var TenantInvitation $model */
         return new static(
             id: $model->id,
             inviterId: $model->inviter_id,
             email: $model->email,
-            role: $model->role,
             token: $model->token,
             status: $model->status,
             acceptedAt: $model->accepted_at,
@@ -85,7 +83,6 @@ final class ApplicationInvitationDTO extends BaseDTO
             'id'          => $this->id,
             'inviterId'   => $this->inviterId,
             'email'       => $this->email,
-            'role'        => $this->role,
             'token'       => $this->token,
             'status'      => $this->status,
             'inviter'     => $this->inviter->toArray(),

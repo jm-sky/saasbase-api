@@ -47,16 +47,18 @@ final class UserDTO extends BaseDTO
     ) {
     }
 
+    /**
+     * @param User $model
+     */
     public static function fromModel(Model $model): static
     {
-        /* @var User $model */
         return new self(
             firstName: $model->first_name,
             lastName: $model->last_name,
             email: $model->email,
             id: $model->id,
             bio: $model->profile?->bio,
-            birthDate: $model->birth_date,
+            birthDate: $model->profile?->birth_date,
             phone: $model->phone,
             isAdmin: $model->is_admin,
             isEmailVerified: $model->isEmailVerified(),

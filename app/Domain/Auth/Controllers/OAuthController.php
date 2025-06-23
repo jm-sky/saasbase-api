@@ -16,14 +16,13 @@ class OAuthController extends Controller
 
     public function redirect(string $provider): RedirectResponse
     {
-        return Socialite::driver($provider)
-            ->stateless()
-            ->redirect()
-        ;
+        // @phpstan-ignore-next-line
+        return Socialite::driver($provider)->stateless()->redirect();
     }
 
     public function callback(string $provider): RedirectResponse
     {
+        // @phpstan-ignore-next-line
         $socialUser = Socialite::driver($provider)->stateless()->user();
 
         /** @var User $user */

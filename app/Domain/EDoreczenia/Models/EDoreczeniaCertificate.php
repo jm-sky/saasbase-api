@@ -9,6 +9,8 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string $id
@@ -23,10 +25,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Tenant $tenant
  * @property User   $creator
  */
-class EDoreczeniaCertificate extends BaseModel
+class EDoreczeniaCertificate extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -52,5 +55,12 @@ class EDoreczeniaCertificate extends BaseModel
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('certificate')
+            ->singleFile()
+        ;
     }
 }

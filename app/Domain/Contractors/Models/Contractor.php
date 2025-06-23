@@ -58,7 +58,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Collection<Address>     $addresses
  * @property ?Address                $defaultAddress
  * @property Collection<BankAccount> $bankAccounts
- * @property ?BankAccount            $defaultbankAccount
+ * @property ?BankAccount            $defaultBankAccount
  * @property Collection<Comment>     $comments
  * @property Collection<Media>       $media
  * @property Collection<Tag>         $tags

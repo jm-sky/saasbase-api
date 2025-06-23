@@ -2,6 +2,7 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use App\Domain\Auth\Models\EmailVerificationToken;
 use App\Domain\Auth\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
@@ -35,6 +36,7 @@ class VerifyEmailController extends Controller
             ], Response::HTTP_OK);
         }
 
+        /** @var ?EmailVerificationToken $token */
         $token = $user->emailVerificationToken;
 
         if (!$token || $token->token !== $request->token) {

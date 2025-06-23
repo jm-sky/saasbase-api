@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string  $numericCode
  * @property string  $phoneCode
  * @property ?string $capital
- * @property ?string $currency
  * @property ?string $currencyCode
  * @property ?string $currencySymbol
  * @property ?string $tld
@@ -24,7 +23,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $emojiU
  * @property ?Carbon $createdAt      Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt      Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt      Internally Carbon, accepts/serializes ISO 8601
  */
 final class CountryDTO extends BaseDTO
 {
@@ -35,7 +33,6 @@ final class CountryDTO extends BaseDTO
         public readonly string $numericCode,
         public readonly string $phoneCode,
         public readonly ?string $capital = null,
-        public readonly ?string $currency = null,
         public readonly ?string $currencyCode = null,
         public readonly ?string $currencySymbol = null,
         public readonly ?string $tld = null,
@@ -46,7 +43,6 @@ final class CountryDTO extends BaseDTO
         public readonly ?string $emojiU = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-        public ?Carbon $deletedAt = null,
     ) {
     }
 
@@ -62,7 +58,6 @@ final class CountryDTO extends BaseDTO
             numericCode: $model->numeric_code,
             phoneCode: $model->phone_code,
             capital: $model->capital,
-            currency: $model->currency,
             currencyCode: $model->currency_code,
             currencySymbol: $model->currency_symbol,
             tld: $model->tld,
@@ -70,10 +65,9 @@ final class CountryDTO extends BaseDTO
             region: $model->region,
             subregion: $model->subregion,
             emoji: $model->emoji,
-            emojiU: $model->emoji_u,
+            emojiU: $model->emojiU,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,
-            deletedAt: $model->deleted_at,
         );
     }
 
@@ -86,7 +80,6 @@ final class CountryDTO extends BaseDTO
             numericCode: $data['numeric_code'],
             phoneCode: $data['phone_code'],
             capital: $data['capital'] ?? null,
-            currency: $data['currency'] ?? null,
             currencyCode: $data['currency_code'] ?? null,
             currencySymbol: $data['currency_symbol'] ?? null,
             tld: $data['tld'] ?? null,
@@ -94,10 +87,9 @@ final class CountryDTO extends BaseDTO
             region: $data['region'] ?? null,
             subregion: $data['subregion'] ?? null,
             emoji: $data['emoji'] ?? null,
-            emojiU: $data['emoji_u'] ?? null,
+            emojiU: $data['emojiU'] ?? null,
             createdAt: isset($data['created_at']) ? Carbon::parse($data['created_at']) : null,
             updatedAt: isset($data['updated_at']) ? Carbon::parse($data['updated_at']) : null,
-            deletedAt: isset($data['deleted_at']) ? Carbon::parse($data['deleted_at']) : null,
         );
     }
 
@@ -110,7 +102,6 @@ final class CountryDTO extends BaseDTO
             'numericCode'    => $this->numericCode,
             'phoneCode'      => $this->phoneCode,
             'capital'        => $this->capital,
-            'currency'       => $this->currency,
             'currencyCode'   => $this->currencyCode,
             'currencySymbol' => $this->currencySymbol,
             'tld'            => $this->tld,
@@ -121,7 +112,6 @@ final class CountryDTO extends BaseDTO
             'emojiU'         => $this->emojiU,
             'createdAt'      => $this->createdAt?->toIso8601String(),
             'updatedAt'      => $this->updatedAt?->toIso8601String(),
-            'deletedAt'      => $this->deletedAt?->toIso8601String(),
         ];
     }
 }
