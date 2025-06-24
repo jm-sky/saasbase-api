@@ -31,10 +31,10 @@ readonly class ExchangeRateDTO
     public function toArray(): array
     {
         return [
-            'currency_code'  => $this->currencyCode,
+            'currency'       => $this->currencyCode,
             'currency_name'  => $this->currencyName,
             'rate'           => $this->rate,
-            'effective_date' => $this->effectiveDate->format('Y-m-d'),
+            'date'           => $this->effectiveDate->format('Y-m-d'),
             'table'          => $this->table,
             'no'             => $this->no,
         ];
@@ -43,10 +43,10 @@ readonly class ExchangeRateDTO
     public function toModel(): array
     {
         return [
-            'currency_code'  => $this->currencyCode,
+            'currency'       => $this->currencyCode,
             'currency_name'  => $this->currencyName,
             'rate'           => $this->rate,
-            'effective_date' => $this->effectiveDate, // TODO: We want just "date" maybe
+            'date'           => $this->effectiveDate, // TODO: We want just "date" maybe
             'table'          => $this->table,
             'no'             => $this->no,
         ];

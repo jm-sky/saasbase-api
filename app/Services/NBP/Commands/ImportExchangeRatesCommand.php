@@ -2,15 +2,15 @@
 
 namespace App\Services\NBP\Commands;
 
-use App\Domain\Exchanges\Models\ExchangeRate;
+use App\Services\NBP\Actions\CreateExchangeRatesFromImport;
+use App\Services\NBP\Enums\NBPTableEnum;
 use App\Services\NBP\NBPService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class ImportExchangeRatesCommand extends Command
 {
-    protected $signature = 'nbp:import-rates 
+    protected $signature = 'nbp:import-rates
                             {--date= : Specific date to import (Y-m-d format)}
                             {--days=1 : Number of days back to import}
                             {--table=A : NBP table (A, B, or C)}
@@ -23,7 +23,7 @@ class ImportExchangeRatesCommand extends Command
         $this->info('Starting NBP exchange rates import...');
 
         try {
-            $table = $this->option('table');
+            $table = NBPTableEnum::from($this->option('table'));
             $force = $this->option('force');
 
             if ($specificDate = $this->option('date')) {
@@ -44,7 +44,7 @@ class ImportExchangeRatesCommand extends Command
         }
     }
 
-    protected function importForDate(NBPService $nbpService, Carbon $date, string $table, bool $force): void
+    protected function importForDate(NBPService $nbpService, Carbon $date, NBPTableEnum $table, bool $force): void
     {
         $this->info("Importing rates for {$date->format('Y-m-d')}...");
 
@@ -59,36 +59,12 @@ class ImportExchangeRatesCommand extends Command
         $imported = 0;
         $skipped  = 0;
 
-        DB::transaction(function () use ($rates, $force, &$imported, &$skipped) {
-            foreach ($rates as $rateDTO) {
-                $exists = ExchangeRate::where([
-                    'currency_code'  => $rateDTO->currencyCode,
-                    'effective_date' => $rateDTO->effectiveDate->format('Y-m-d'),
-                    'table'          => $rateDTO->table,
-                ])->exists();
-
-                if ($exists && !$force) {
-                    ++$skipped;
-                    continue;
-                }
-
-                ExchangeRate::updateOrCreate(
-                    [
-                        'currency_code'  => $rateDTO->currencyCode,
-                        'effective_date' => $rateDTO->effectiveDate->format('Y-m-d'),
-                        'table'          => $rateDTO->table,
-                    ],
-                    $rateDTO->toModel()
-                );
-
-                ++$imported;
-            }
-        });
+        CreateExchangeRatesFromImport::handle($rates, $force, $imported, $skipped);
 
         $this->info("Imported: {$imported}, Skipped: {$skipped}");
     }
 
-    protected function importRecentDays(NBPService $nbpService, int $days, string $table, bool $force): void
+    protected function importRecentDays(NBPService $nbpService, int $days, NBPTableEnum $table, bool $force): void
     {
         for ($i = 0; $i < $days; ++$i) {
             $date = Carbon::now()->subDays($i);

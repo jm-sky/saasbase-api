@@ -2,9 +2,11 @@
 
 namespace App\Services\NBP;
 
+use App\Domain\Exchanges\Models\Currency;
 use App\Services\NBP\DTOs\CurrencyRateDTO;
 use App\Services\NBP\DTOs\ExchangeRateDTO;
 use App\Services\NBP\DTOs\ExchangeRateTableDTO;
+use App\Services\NBP\Enums\NBPTableEnum;
 use App\Services\NBP\Requests\GetCurrencyRateRequest;
 use App\Services\NBP\Requests\GetExchangeRatesRequest;
 use Carbon\Carbon;
@@ -13,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 
 class NBPService
 {
+    public const BASE_CURRENCY = Currency::POLISH_CURRENCY_CODE;
+
     public function __construct(
         protected NBPConnector $connector
     ) {
@@ -21,7 +25,7 @@ class NBPService
     /**
      * Get exchange rate table for a specific date.
      */
-    public function getExchangeRatesTable(string $table = 'A', ?Carbon $date = null): ?ExchangeRateTableDTO
+    public function getExchangeRatesTable(NBPTableEnum $table = NBPTableEnum::A, ?Carbon $date = null): ?ExchangeRateTableDTO
     {
         $dateString = $date ? $date->format('Y-m-d') : null;
 
@@ -49,7 +53,7 @@ class NBPService
     /**
      * Get all exchange rates as DTOs for a specific date.
      */
-    public function getExchangeRates(string $table = 'A', ?Carbon $date = null): Collection
+    public function getExchangeRates(NBPTableEnum $table = NBPTableEnum::A, ?Carbon $date = null): Collection
     {
         $tableDTO = $this->getExchangeRatesTable($table, $date);
 
@@ -59,7 +63,7 @@ class NBPService
     /**
      * Get exchange rate for a specific currency.
      */
-    public function getCurrencyRate(string $currencyCode, string $table = 'A', ?Carbon $date = null): ?ExchangeRateDTO
+    public function getCurrencyRate(string $currencyCode, NBPTableEnum $table = NBPTableEnum::A, ?Carbon $date = null): ?ExchangeRateDTO
     {
         $dateString = $date ? $date->format('Y-m-d') : null;
 
@@ -133,7 +137,7 @@ class NBPService
     /**
      * Get specific currency rate from table (convenience method).
      */
-    public function getCurrencyFromTable(string $currencyCode, string $table = 'A', ?Carbon $date = null): ?ExchangeRateDTO
+    public function getCurrencyFromTable(string $currencyCode, NBPTableEnum $table = NBPTableEnum::A, ?Carbon $date = null): ?ExchangeRateDTO
     {
         $tableDTO = $this->getExchangeRatesTable($table, $date);
 

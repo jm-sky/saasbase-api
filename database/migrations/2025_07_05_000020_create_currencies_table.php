@@ -10,7 +10,7 @@ return new class() extends Migration {
         Schema::create('currencies', function (Blueprint $table) {
             $table->string('code', 3)->primary(); // ISO-4217 code
             $table->string('name');
-            $table->string('symbol');
+            $table->string('symbol')->nullable();
         });
     }
 

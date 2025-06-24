@@ -3,6 +3,7 @@
 namespace App\Services\NBP\DTOs;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 readonly class CurrencyRateDTO
 {

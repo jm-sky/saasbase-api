@@ -2,7 +2,8 @@
 
 namespace App\Services\NBP\Jobs;
 
-use App\Domain\Exchanges\Models\ExchangeRate;
+use App\Services\NBP\Actions\CreateExchangeRatesFromImport;
+use App\Services\NBP\Enums\NBPTableEnum;
 use App\Services\NBP\NBPService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -10,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ImportExchangeRatesJob implements ShouldQueue
@@ -22,7 +22,7 @@ class ImportExchangeRatesJob implements ShouldQueue
 
     public function __construct(
         protected ?Carbon $date = null,
-        protected string $table = 'A'
+        protected NBPTableEnum $table = NBPTableEnum::A
     ) {
     }
 
@@ -48,21 +48,7 @@ class ImportExchangeRatesJob implements ShouldQueue
                 return;
             }
 
-            $imported = 0;
-
-            DB::transaction(function () use ($rates, &$imported) {
-                foreach ($rates as $rateDTO) {
-                    ExchangeRate::updateOrCreate(
-                        [
-                            'currency_code'  => $rateDTO->currencyCode,
-                            'effective_date' => $rateDTO->effectiveDate->format('Y-m-d'),
-                            'table'          => $rateDTO->table,
-                        ],
-                        $rateDTO->toModel()
-                    );
-                    ++$imported;
-                }
-            });
+            $imported = CreateExchangeRatesFromImport::handle($rates);
 
             Log::info("NBP import completed. Imported {$imported} rates for {$date->format('Y-m-d')}");
         } catch (\Exception $e) {
