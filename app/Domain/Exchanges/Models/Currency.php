@@ -2,6 +2,8 @@
 
 namespace App\Domain\Exchanges\Models;
 
+use Database\Factories\Domain\Exchanges\CurrencyFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -15,6 +17,10 @@ use Illuminate\Support\Collection;
  */
 class Currency extends Model
 {
+    use HasFactory;
+
+    public const POLISH_CURRENCY_CODE = 'PLN';
+
     public $timestamps = false;
 
     public $incrementing = false;
@@ -43,5 +49,10 @@ class Currency extends Model
     public function quoteExchangeRates(): HasMany
     {
         return $this->hasMany(ExchangeRate::class, 'currency', 'code');
+    }
+
+    protected static function newFactory()
+    {
+        return CurrencyFactory::new();
     }
 }
