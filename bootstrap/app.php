@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -34,6 +35,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'is_in_tenant' => \App\Http\Middleware\IsInTenant::class,
             'is_admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->job(new \App\Services\NBP\Jobs\ImportExchangeRatesJob())
+            ->weekdays()
+            ->dailyAt('18:00')
+            ->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
