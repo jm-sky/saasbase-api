@@ -3,6 +3,7 @@
 namespace App\Domain\Export\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
+use App\Domain\Exchanges\Models\Currency;
 
 /**
  * Data Transfer Object for Excel export configuration.
@@ -19,7 +20,7 @@ final class ExportConfigDTO extends BaseDataDTO
         public readonly array $formatting = [
             'date'     => 'Y-m-d',
             'datetime' => 'Y-m-d H:i',
-            'currency' => 'PLN',
+            'currency' => Currency::POLISH_CURRENCY_CODE,
         ]
     ) {
     }

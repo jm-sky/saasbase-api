@@ -5,6 +5,7 @@ namespace App\Domain\Expense\Actions;
 use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\Media;
 use App\Domain\Common\Models\OcrRequest;
+use App\Domain\Exchanges\Models\Currency;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\DTOs\InvoiceExchangeDTO;
@@ -33,14 +34,14 @@ class CreateExpenseForOcr
             'total_net'             => BigDecimal::of('0'),
             'total_tax'             => BigDecimal::of('0'),
             'total_gross'           => BigDecimal::of('0'),
-            'currency'              => 'PLN',
+            'currency'              => Currency::POLISH_CURRENCY_CODE,
             'exchange_rate'         => BigDecimal::of('1.0'),
             'seller'                => new InvoicePartyDTO(),
             'buyer'                 => new InvoicePartyDTO(),
             'body'                  => new InvoiceBodyDTO(
                 lines: [],
                 vatSummary: [],
-                exchange: new InvoiceExchangeDTO('PLN'),
+                exchange: new InvoiceExchangeDTO(Currency::POLISH_CURRENCY_CODE),
                 description: null,
             ),
             'payment'               => new InvoicePaymentDTO(PaymentStatus::PENDING, null, null, null, PaymentMethod::BANK_TRANSFER),
