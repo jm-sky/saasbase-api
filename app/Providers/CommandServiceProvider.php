@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\AzureDocumentIntelligence\Commands\AnalyzeDocumentCommand;
 use App\Services\IbanInfo\Commands\IbanInfoCommand;
 use App\Services\MfLookup\Commands\MfLookupCommand;
+use App\Services\NBP\Commands\ImportExchangeRatesCommand;
 use App\Services\RegonLookup\Commands\RegonLookupCommand;
 use App\Services\Signatures\Commands\VerifyXmlSignatureCommand;
 use App\Services\ViesLookup\Commands\ViesLookupCommand;
@@ -16,12 +17,13 @@ class CommandServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                RegonLookupCommand::class,
-                ViesLookupCommand::class,
-                MfLookupCommand::class,
-                IbanInfoCommand::class,
                 AnalyzeDocumentCommand::class,
+                IbanInfoCommand::class,
+                ImportExchangeRatesCommand::class,
+                MfLookupCommand::class,
+                RegonLookupCommand::class,
                 VerifyXmlSignatureCommand::class,
+                ViesLookupCommand::class,
             ]);
         }
     }

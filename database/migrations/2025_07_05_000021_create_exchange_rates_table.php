@@ -15,6 +15,7 @@ return new class() extends Migration {
             $table->decimal('rate', 18, 8);
             $table->string('table'); // Table name of the rate i.e. A
             $table->string('source'); // Provider of the rate i.e. NPB
+            $table->string('no')->nullable();  // Internal publishing number
             $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('base_currency')->references('code')->on('currencies')->cascadeOnUpdate()->restrictOnDelete();

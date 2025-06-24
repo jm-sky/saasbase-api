@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
- * @property string                    $code
- * @property string                    $name
- * @property string                    $symbol
- * @property Collection|ExchangeRate[] $baseExchangeRates
- * @property Collection|ExchangeRate[] $quoteExchangeRates
+ * @property string                   $code
+ * @property string                   $name
+ * @property ?string                  $symbol
+ * @property Collection<ExchangeRate> $baseExchangeRates
+ * @property Collection<ExchangeRate> $quoteExchangeRates
  */
 class Currency extends Model
 {
