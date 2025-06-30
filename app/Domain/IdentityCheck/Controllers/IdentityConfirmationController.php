@@ -107,12 +107,18 @@ class IdentityConfirmationController extends Controller
         // }
 
         // 7. Store signed XML in identity_confirmation_final, remove previous template
-        $signedMedia = $user->addMedia($file)
+        $user->addMedia($file)
             ->usingFileName('identity_confirmation_' . $user->id . '_' . time() . '.xml')
             ->toMediaCollection('identity_confirmation_final')
         ;
 
         $user->clearMediaCollection('identity_confirmation_template');
+
+        // dd([
+        //     'confirmed' => $confirmed,
+        //     'verifyResult' => $verifyResult,
+        //     'signatureValid' => $signatureValid,
+        // ]);
 
         return response()->json(
             new IdentityConfirmationResponseResource(

@@ -40,11 +40,13 @@ final class IdentityConfirmationResponseDTO extends BaseDataDTO
         GenericSignaturesVerificationResultDTO $verifyResult,
         bool $signatureValid,
     ): static {
+        $signatureInfo = $verifyResult->getSignatureBySignerName($confirmedIdentityData->fullName);
+
         return new self(
-            status: $confirmedIdentityData->fullName && $confirmedIdentityData->pesel && $confirmedIdentityData->birthDate ? IdentityConfirmationResponseStatus::VERIFIED : IdentityConfirmationResponseStatus::UNVERIFIED,
-            confirmed: $confirmedIdentityData->fullName && $confirmedIdentityData->pesel && $confirmedIdentityData->birthDate && $signatureValid,
+            status: $confirmedIdentityData->fullName ? IdentityConfirmationResponseStatus::VERIFIED : IdentityConfirmationResponseStatus::UNVERIFIED,
+            confirmed: $confirmedIdentityData->fullName && $signatureValid,
             errors: null,
-            signatureInfo: $signatureValid ? $verifyResult->signatures[0]->toArray() : null,
+            signatureInfo: $signatureInfo ? $signatureInfo->toArray() : null,
         );
     }
 

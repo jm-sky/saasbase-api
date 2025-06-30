@@ -33,4 +33,9 @@ final class GenericSignatureDetailsDTO extends BaseDataDTO
             $data['certificate'] ?? null,
         );
     }
+
+    public function getSignerName(): string
+    {
+        return trim("{$this->signerIdentity->firstName} {$this->signerIdentity->lastName}");
+    }
 }

@@ -40,4 +40,9 @@ final class GenericSignaturesVerificationResultDTO extends BaseDataDTO
             $data['error'] ?? null,
         );
     }
+
+    public function getSignatureBySignerName(string $name): ?GenericSignatureDetailsDTO
+    {
+        return collect($this->signatures)->first(fn (GenericSignatureDetailsDTO $signature) => strtolower($signature->getSignerName()) === strtolower($name));
+    }
 }
