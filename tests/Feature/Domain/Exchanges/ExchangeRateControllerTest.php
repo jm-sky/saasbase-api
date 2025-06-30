@@ -111,13 +111,17 @@ class ExchangeRateControllerTest extends TestCase
         $date = now()->toDateString();
 
         Currency::factory()->create(['code' => 'PLN']);
+        Currency::factory()->create(['code' => 'JPY']);
+        Currency::factory()->create(['code' => 'USD']);
 
         ExchangeRate::factory()->create([
-            'date' => $date,
+            'currency' => 'JPY',
+            'date'     => $date,
         ]);
 
         ExchangeRate::factory()->create([
-            'date' => now()->subDay()->toDateString(),
+            'currency' => 'USD',
+            'date'     => now()->subDay()->toDateString(),
         ]);
 
         $response = $this->getJson($this->baseUrl . '?filter[date]=' . $date);
