@@ -2,8 +2,8 @@
 
 namespace App\Domain\Auth\Controllers;
 
+use App\Domain\Auth\Actions\GenerateTemplateXml;
 use App\Domain\Auth\Models\User;
-use App\Domain\Auth\Models\UserPersonalData;
 use App\Domain\Auth\Requests\SubmitSignedIdentityConfirmationRequest;
 use App\Domain\Common\Models\Media;
 use App\Http\Controllers\Controller;
@@ -17,8 +17,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class IdentityConfirmationController extends Controller
 {
@@ -26,22 +26,28 @@ class IdentityConfirmationController extends Controller
      * POST /api/identity/confirmation/template
      * Generates an XML for identity confirmation and returns file URL and expiry.
      */
-    public function generateTemplate(Request $request): BinaryFileResponse
+    public function generateTemplate(Request $request): StreamedResponse
     {
         /** @var User $user */
         $user    = Auth::user();
         $token   = (string) Str::ulid();
 
         $media = $user->getFirstMedia('identity_confirmation_template');
+        $media?->delete();
+        $media = null;
 
         if (!$media) {
             $media = $this->generateAndStoreTemplateXml($user, $token);
         }
 
-        $path     = $media->getPath();
+        // For S3, stream the file content instead of using local path
+        $stream   = $media->stream();
         $filename = $media->file_name;
 
-        return response()->download($path, $filename, [
+        return response()->streamDownload(function () use ($stream) {
+            echo stream_get_contents($stream);
+            fclose($stream);
+        }, $filename, [
             'Content-Type'        => 'application/xml',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
@@ -64,7 +70,7 @@ class IdentityConfirmationController extends Controller
         try {
             $xmlValidator->validate($xmlContent, $xsdPath);
         } catch (\RuntimeException $e) {
-            return response()->json(['status' => 'invalid_xml', 'error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['status' => 'invalid_xml', 'message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         // 2. Verify signature (reuse PdfSignatureVerifierService for CMS signature)
@@ -147,24 +153,11 @@ class IdentityConfirmationController extends Controller
         ;
     }
 
-    /**
-     * Helper to generate XML for identity confirmation.
-     */
-    protected function generateIdentityXml(array $data): string
-    {
-        $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><IdentityConfirmation xmlns="https://saasbase.madeyski.org/xml/identity/v1"></IdentityConfirmation>');
-
-        foreach ($data as $key => $value) {
-            $xml->addChild($key, htmlspecialchars($value));
-        }
-
-        return $xml->asXML();
-    }
-
     protected function generateAndStoreTemplateXml(User $user, string $token): Media
     {
+        $xml    = GenerateTemplateXml::generateTemplateXml($user, $token);
+
         $now    = Carbon::now('UTC');
-        $xml    = $this->generateTemplateXml($user, $token);
         $stream = fopen('php://memory', 'r+');
         fwrite($stream, $xml);
         rewind($stream);
@@ -177,26 +170,5 @@ class IdentityConfirmationController extends Controller
         fclose($stream);
 
         return $media;
-    }
-
-    protected function generateTemplateXml(User $user, string $token): string
-    {
-        $now     = Carbon::now('UTC');
-        $appName = config('app.name');
-
-        $fullName  = $user->full_name;
-        $birthDate = $user->profile?->birth_date ? Carbon::parse($user->profile->birth_date)->toDateString() : '';
-        $pesel     = $user->personalData?->pesel ?? '';
-
-        return $this->generateIdentityXml([
-            'FirstName'         => $user->first_name,
-            'LastName'          => $user->last_name,
-            'FullName'          => $fullName,
-            'BirthDate'         => $birthDate,
-            'PESEL'             => $pesel,
-            'GeneratedAt'       => $now->toIso8601String(),
-            'ConfirmationToken' => $token,
-            'ApplicationName'   => $appName,
-        ]);
     }
 }

@@ -360,6 +360,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
             ->singleFile()
             ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
         ;
+
+        $this->addMediaCollection('identity_confirmation_template')
+            ->singleFile()
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['application/xml', 'text/xml']))
+        ;
     }
 
     public function registerMediaConversions(?SpatieMedia $media = null): void
