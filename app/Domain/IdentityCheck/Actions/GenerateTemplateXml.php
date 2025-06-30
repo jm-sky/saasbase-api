@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Auth\Actions;
+namespace App\Domain\IdentityCheck\Actions;
 
 use App\Domain\Auth\Models\User;
 use Carbon\Carbon;

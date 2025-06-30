@@ -14,11 +14,27 @@ class XmlValidatorService
             throw new \RuntimeException('Niepoprawna struktura XML: ' . $this->formatErrors());
         }
 
-        if (!$dom->schemaValidate($xsdPath)) {
+        // Dynamicznie generuj XSD z odpowiednią przestrzenią nazw
+        $dynamicXsd = $this->generateDynamicXsd($xsdPath);
+
+        if (!$dom->schemaValidateSource($dynamicXsd)) {
             throw new \RuntimeException('XML niezgodny z XSD: ' . $this->formatErrors());
         }
 
         libxml_clear_errors();
+    }
+
+    protected function generateDynamicXsd(string $xsdPath): string
+    {
+        $xsdContent  = file_get_contents($xsdPath);
+        $frontendUrl = config('app.frontend_url');
+
+        // Zamień hardkodowaną przestrzeń nazw na dynamiczną
+        return str_replace(
+            'https://saasbase.madeyski.org/xml/identity/v1',
+            $frontendUrl . '/xml/identity/v1',
+            $xsdContent
+        );
     }
 
     protected function formatErrors(): string

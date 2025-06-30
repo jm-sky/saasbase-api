@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Auth\Resources;
+namespace App\Domain\IdentityCheck\Resources;
 
 use App\Domain\Common\Models\Media;
 use Illuminate\Http\Request;

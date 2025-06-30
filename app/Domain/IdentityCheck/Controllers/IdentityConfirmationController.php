@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Domain\Auth\Controllers;
+namespace App\Domain\IdentityCheck\Controllers;
 
-use App\Domain\Auth\Actions\GenerateTemplateXml;
 use App\Domain\Auth\Models\User;
-use App\Domain\Auth\Requests\SubmitSignedIdentityConfirmationRequest;
 use App\Domain\Common\Models\Media;
+use App\Domain\IdentityCheck\Actions\GenerateTemplateXml;
+use App\Domain\IdentityCheck\DTOs\ConfirmedIdentityDataDTO;
+use App\Domain\IdentityCheck\DTOs\IdentityConfirmationResponseDTO;
+use App\Domain\IdentityCheck\Requests\SubmitSignedIdentityConfirmationRequest;
+use App\Domain\IdentityCheck\Resources\IdentityConfirmationResponseResource;
 use App\Http\Controllers\Controller;
 use App\Services\Signatures\DTOs\GenericSignatureDetailsDTO;
 use App\Services\Signatures\DTOs\GenericSignaturesVerificationResultDTO;
@@ -70,21 +73,23 @@ class IdentityConfirmationController extends Controller
         try {
             $xmlValidator->validate($xmlContent, $xsdPath);
         } catch (\RuntimeException $e) {
-            return response()->json(['status' => 'invalid_xml', 'message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(
+                new IdentityConfirmationResponseResource(IdentityConfirmationResponseDTO::fromXmlValidationException($e)),
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
         }
 
         // 2. Verify signature (reuse PdfSignatureVerifierService for CMS signature)
-        $verifier     = app(SignatureVerifierDispatcher::class);
+        $verifier = app(SignatureVerifierDispatcher::class);
 
         /** @var GenericSignaturesVerificationResultDTO $verifyResult */
         $verifyResult = $verifier->verify($xmlContent, SignatureType::XAdES);
 
-        if (empty($verifyResult['valid'])) {
-            return response()->json([
-                'status'         => 'invalid_signature',
-                'error'          => $verifyResult['error'] ?? 'Signature invalid',
-                'signature_info' => $verifyResult['details'] ?? null,
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (empty($verifyResult->valid)) {
+            return response()->json(
+                new IdentityConfirmationResponseResource(IdentityConfirmationResponseDTO::fromEmptySignatureVerificationResult($verifyResult)),
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
         }
 
         // 3. Confirm that XML is for the current user
@@ -109,14 +114,14 @@ class IdentityConfirmationController extends Controller
 
         $user->clearMediaCollection('identity_confirmation_template');
 
-        return response()->json([
-            'status'         => ($confirmed['full_name'] && $confirmed['pesel'] && $confirmed['birth_date']) ? 'verified' : 'unverified',
-            'confirmed'      => $confirmed && $signatureValid,
-            'signatureInfo'  => $verifyResult['details'] ?? null,
-        ]);
+        return response()->json(
+            new IdentityConfirmationResponseResource(
+                IdentityConfirmationResponseDTO::fromConfirmedIdentityData($confirmed, $verifyResult, $signatureValid)
+            )
+        );
     }
 
-    protected function confirmIdentity(User $user, string $xmlContent): array
+    protected function confirmIdentity(User $user, string $xmlContent): ConfirmedIdentityDataDTO
     {
         $xml  = simplexml_load_string($xmlContent);
         $ns   = $xml->getNamespaces(true);
@@ -132,11 +137,11 @@ class IdentityConfirmationController extends Controller
         ];
 
         // 4. Confirm that XML is for the current user
-        return [
-            'full_name'  => trim($user->full_name) === trim($data['full_name']),
-            'pesel'      => $user->personalData?->pesel && $user->personalData?->pesel === $data['pesel'],
-            'birth_date' => $user->profile?->birth_date && Carbon::parse($user->profile?->birth_date)->toDateString() === $data['birth_date'],
-        ];
+        return new ConfirmedIdentityDataDTO(
+            fullName: trim($user->full_name) === trim($data['full_name']) ? trim($user->full_name) : null,
+            pesel: $user->personalData?->pesel && $user->personalData?->pesel === $data['pesel'] ? $user->personalData?->pesel : null,
+            birthDate: $user->profile?->birth_date && Carbon::parse($user->profile?->birth_date)->toDateString() === $data['birth_date'] ? $user->profile?->birth_date : null,
+        );
     }
 
     protected function confirmSignature(User $user, GenericSignaturesVerificationResultDTO $verifyResult): bool
@@ -149,13 +154,13 @@ class IdentityConfirmationController extends Controller
                 && $signature->signerIdentity->lastName === $user->last_name
                 // PESEL is optional, but if it's present, it must match
                 && ($user->personalData?->pesel ? $signature->signerIdentity?->pesel === $user->personalData?->pesel : true)
-            )->valid
+            )?->valid ?? false
         ;
     }
 
     protected function generateAndStoreTemplateXml(User $user, string $token): Media
     {
-        $xml    = GenerateTemplateXml::generateTemplateXml($user, $token);
+        $xml = GenerateTemplateXml::generateTemplateXml($user, $token);
 
         $now    = Carbon::now('UTC');
         $stream = fopen('php://memory', 'r+');

@@ -81,7 +81,7 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
 
     // User Identity Confirmation (EPUAP)
     Route::prefix('identity/confirmation')->group(function () {
-        Route::get('template', [App\Domain\Auth\Controllers\IdentityConfirmationController::class, 'generateTemplate']);
-        Route::post('submit', [App\Domain\Auth\Controllers\IdentityConfirmationController::class, 'submitSigned']);
+        Route::get('template', [App\Domain\IdentityCheck\Controllers\IdentityConfirmationController::class, 'generateTemplate']);
+        Route::post('submit', [App\Domain\IdentityCheck\Controllers\IdentityConfirmationController::class, 'submitSigned']);
     });
 });
