@@ -44,7 +44,11 @@ class TenantActivityLogController extends Controller
         $query = $this->getIndexQuery($request);
         $query->where('subject_type', Tenant::class)
             ->where('subject_id', $tenant->id)
-            ->where('tenant_id', $request->user()->tenant_id)
+            ->where(function ($query) use ($request) {
+                $query->where('tenant_id', $request->user()->getTenantId())
+                    ->orWhere('tenant_id', null)
+                ;
+            })
         ;
 
         $result         = $this->getIndexPaginator($request, query: $query);

@@ -22,6 +22,7 @@ class UserSessionResource extends JsonResource
             'id'           => $this->id,
             'type'         => $this->type->value,
             'deviceName'   => $this->device_name,
+            'userAgent'    => $this->user_agent,
             'ipAddress'    => $this->ip_address,
             'lastActiveAt' => $this->last_active_at->toIso8601String(),
             'expiresAt'    => $this->expires_at?->toIso8601String(),
