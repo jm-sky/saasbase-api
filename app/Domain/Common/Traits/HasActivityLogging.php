@@ -17,6 +17,7 @@ trait HasActivityLogging
 
         activity()
             ->performedOn($this)
+            ->causedBy(request()->user())
             ->withProperties(array_merge($baseProperties, $properties))
             ->event($event)
             ->log($description ?? $event)

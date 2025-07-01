@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Auth\Controllers\ApiKeyController;
+use App\Domain\Auth\Controllers\MeActivityLogsController;
 use App\Domain\Auth\Controllers\MeController;
 use App\Domain\Auth\Controllers\NotificationController;
 use App\Domain\Auth\Controllers\UserIdentityController;
@@ -20,6 +21,7 @@ Route::withoutMiddleware(['auth:api', 'is_active'])
 ;
 
 Route::middleware('auth:api')->get('me', MeController::class);
+Route::middleware('auth:api')->get('me/logs', MeActivityLogsController::class);
 
 Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () {
     Route::get('profile', [UserProfileController::class, 'show']);
