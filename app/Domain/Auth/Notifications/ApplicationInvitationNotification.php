@@ -13,6 +13,9 @@ class ApplicationInvitationNotification extends Notification implements ShouldQu
 {
     use Queueable;
 
+    /**
+     * @param ?string $locale
+     */
     public function __construct(
         public ApplicationInvitation $invitation,
         public $locale = null

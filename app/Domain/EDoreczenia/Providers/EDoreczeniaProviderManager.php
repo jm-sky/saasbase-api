@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class EDoreczeniaProviderManager
 {
     /**
-     * @var array<string, class-string<EDoreczeniaProviderInterface>>
+     * @var array<string, EDoreczeniaProviderInterface>
      */
     private array $providers = [];
 

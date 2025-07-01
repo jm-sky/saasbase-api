@@ -28,11 +28,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class BankAccount extends BaseModel
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'tenant_id',
         'bankable_id',
@@ -46,18 +41,10 @@ class BankAccount extends BaseModel
         'description',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'is_default' => 'boolean',
     ];
 
-    /**
-     * Get the tenant that owns the bank account.
-     */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

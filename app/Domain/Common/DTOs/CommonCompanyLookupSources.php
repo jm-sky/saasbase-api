@@ -7,7 +7,7 @@ namespace App\Domain\Common\DTOs;
  * @property bool $regon
  * @property bool $vies
  */
-class CommonCompanyLookupSources extends BaseDataDTO
+final class CommonCompanyLookupSources extends BaseDataDTO
 {
     public function __construct(
         public bool $mf = false,

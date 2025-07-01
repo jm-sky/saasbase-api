@@ -5,7 +5,7 @@ namespace App\Domain\EDoreczenia\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 use Carbon\Carbon;
 
-class CertificateInfoDto extends BaseDataDTO
+final class CertificateInfoDto extends BaseDataDTO
 {
     public function __construct(
         public readonly string $filePath,

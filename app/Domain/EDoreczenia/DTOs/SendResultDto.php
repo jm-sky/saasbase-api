@@ -5,7 +5,7 @@ namespace App\Domain\EDoreczenia\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 use Carbon\Carbon;
 
-class SendResultDto extends BaseDataDTO
+final class SendResultDto extends BaseDataDTO
 {
     public function __construct(
         public readonly bool $success,

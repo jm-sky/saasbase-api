@@ -3,6 +3,7 @@
 namespace App\Domain\EDoreczenia\Services;
 
 use App\Domain\EDoreczenia\Contracts\EDoreczeniaProviderInterface;
+use App\Domain\EDoreczenia\DTOs\AttachmentDto;
 use App\Domain\EDoreczenia\DTOs\CertificateInfoDto;
 use App\Domain\EDoreczenia\DTOs\SendMessageDto;
 use App\Domain\EDoreczenia\DTOs\SendResultDto;
@@ -45,7 +46,7 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
             foreach ($message->attachments as $attachment) {
                 $attachmentResponse = Http::withHeaders([
                     'MailboxAddress' => $this->mailboxAddress,
-                ])->attach('file', file_get_contents($attachment['path']), $attachment['name'])
+                ])->attach('file', $this->getAttachmentContent($attachment), $attachment->fileName)
                     ->post("{$this->baseUrl}/api/conversations/{$draftId}/drafts/{$draftId}/attachment")
                 ;
 
@@ -128,5 +129,10 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
 
             return new SyncResultDto(false, 0, 0, $e->getMessage());
         }
+    }
+
+    private function getAttachmentContent(AttachmentDto $attachment): string
+    {
+        return file_get_contents($attachment->filePath);
     }
 }

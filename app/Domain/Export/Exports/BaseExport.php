@@ -53,11 +53,12 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
     /**
      * Return the query with filters and includes applied.
      */
-    public function query(): QueryBuilder
+    public function query(): Builder
     {
         return QueryBuilder::for($this->baseQuery())
             ->allowedFilters($this->allowedFilters())
             ->allowedIncludes($this->allowedIncludes())
+            ->getEloquentBuilder()
         ;
     }
 

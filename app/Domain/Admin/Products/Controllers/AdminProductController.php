@@ -13,10 +13,8 @@ use App\Domain\Products\Requests\SearchProductRequest;
 use App\Domain\Tenant\Scopes\TenantScope;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class AdminProductController extends Controller
 {
@@ -49,6 +47,7 @@ class AdminProductController extends Controller
         ];
 
         $this->defaultSort = '-created_at';
+        $this->defaultWith = ['unit', 'vatRate'];
     }
 
     public function index(SearchProductRequest $request): JsonResponse
@@ -106,15 +105,5 @@ class AdminProductController extends Controller
         $product->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    protected function getIndexQuery(Request $request): QueryBuilder
-    {
-        return QueryBuilder::for(Product::withoutGlobalScope(TenantScope::class))
-            ->allowedFilters($this->filters)
-            ->allowedSorts($this->sorts)
-            ->defaultSort($this->defaultSort)
-            ->with(['unit', 'vatRate'])
-        ;
     }
 }

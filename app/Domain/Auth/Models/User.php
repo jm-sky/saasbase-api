@@ -311,7 +311,14 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
 
     public function currentTenant(): ?Tenant
     {
-        return $this->tenants()->find($this->getTenantId());
+        $tenantId = $this->getTenantId();
+
+        if (!$tenantId) {
+            return null;
+        }
+
+        // @phpstan-ignore-next-line
+        return $this->tenants()->find($tenantId);
     }
 
     public function organizationUnits()

@@ -16,6 +16,9 @@ class WelcomeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @param ?string $locale
+     */
     public function __construct(
         public User $notifiable,
         public $locale = null
@@ -63,9 +66,9 @@ class WelcomeNotification extends Notification implements ShouldQueue
         return new BroadcastMessage($this->toDatabase($notifiable));
     }
 
-    public function broadcastOn(): PrivateChannel
+    public function broadcastOn(): array
     {
-        return new PrivateChannel("users.{$this->notifiable->id}.notifications");
+        return [new PrivateChannel("users.{$this->notifiable->id}.notifications")];
     }
 
     public function broadcastAs(): string

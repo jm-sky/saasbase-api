@@ -57,6 +57,7 @@ class CreateExpenseForOcr
 
     public static function createOcrRequest(Expense $expense, Media $media): OcrRequest
     {
+        // @phpstan-ignore-next-line
         return $expense->ocrRequest()->create([
             'tenant_id'            => $expense->tenant_id,
             'media_id'             => $media->id,

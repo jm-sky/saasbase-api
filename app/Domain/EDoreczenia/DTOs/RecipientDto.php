@@ -4,7 +4,7 @@ namespace App\Domain\EDoreczenia\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-class RecipientDto extends BaseDataDTO
+final class RecipientDto extends BaseDataDTO
 {
     public function __construct(
         public readonly string $email,

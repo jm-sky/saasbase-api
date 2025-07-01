@@ -173,6 +173,7 @@ class IdentityConfirmationController extends Controller
         fwrite($stream, $xml);
         rewind($stream);
 
+        /** @var Media $media */
         $media = $user->addMediaFromStream($stream)
             ->usingFileName('identity_confirmation_' . $user->id . '_' . $now->timestamp . '.xml')
             ->withCustomProperties(['token' => $token])

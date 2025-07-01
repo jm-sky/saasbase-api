@@ -22,7 +22,10 @@ class PublicUserController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $this->tenant = $user->tenants()->firstWhere('tenants.id', $user->getTenantId());
+        /** @var Tenant $tenant */
+        $tenant = $user->tenants()->firstWhere('tenants.id', $user->getTenantId());
+
+        $this->tenant = $tenant;
     }
 
     public function index(Request $request): AnonymousResourceCollection

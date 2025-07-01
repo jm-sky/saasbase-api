@@ -5,7 +5,7 @@ namespace App\Domain\EDoreczenia\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 use Carbon\Carbon;
 
-class SyncResultDto extends BaseDataDTO
+final class SyncResultDto extends BaseDataDTO
 {
     public function __construct(
         public readonly bool $success,

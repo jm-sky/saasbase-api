@@ -68,6 +68,7 @@ class SubscriptionCheckoutController
 
     protected function provideBillingPrice(SubscriptionPlan $plan, string $priceId): BillingPrice
     {
+        // @phpstan-ignore-next-line
         return $plan->prices()
             ->where('id', $priceId)
             ->where('is_active', true)

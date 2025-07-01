@@ -22,11 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class TenantIntegration extends BaseModel
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'tenant_id',
         'type',
@@ -36,11 +31,6 @@ class TenantIntegration extends BaseModel
         'last_synced_at',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'type'           => TenantIntegrationType::class,
         'enabled'        => 'boolean',

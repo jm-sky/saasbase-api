@@ -4,7 +4,7 @@ namespace App\Services\IbanApi\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
-class IbanApiResponse extends BaseDataDTO
+final class IbanApiResponse extends BaseDataDTO
 {
     public function __construct(
         public int $result,

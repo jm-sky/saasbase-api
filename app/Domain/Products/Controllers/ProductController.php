@@ -20,7 +20,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
@@ -120,16 +119,6 @@ class ProductController extends Controller
         ;
 
         return ProductResource::collection($results);
-    }
-
-    protected function getIndexQuery(Request $request): QueryBuilder
-    {
-        return QueryBuilder::for($this->modelClass)
-            ->allowedFilters($this->filters)
-            ->allowedSorts($this->sorts)
-            ->defaultSort($this->defaultSort)
-            ->with(['unit', 'vatRate'])
-        ;
     }
 
     /**

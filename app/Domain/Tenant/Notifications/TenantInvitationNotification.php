@@ -13,6 +13,9 @@ class TenantInvitationNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @param ?string $locale
+     */
     public function __construct(
         public TenantInvitation $invitation,
         public $locale = null

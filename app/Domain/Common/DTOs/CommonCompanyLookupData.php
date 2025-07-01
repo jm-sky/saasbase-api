@@ -16,7 +16,7 @@ namespace App\Domain\Common\DTOs;
  * @property ?CommonCompanyLookupSources $sources
  * @property ?bool                       $cache
  */
-class CommonCompanyLookupData extends BaseDataDTO
+final class CommonCompanyLookupData extends BaseDataDTO
 {
     public function __construct(
         public string $name,

@@ -17,6 +17,7 @@ class CreateContractorBankAccount
             $data->isDefault = true;
         }
 
+        /** @var BankAccount $bankAccount */
         $bankAccount = $contractor->bankAccounts()->create($data->toDbArray());
 
         $contractor->logModelActivity(ContractorActivityType::BankAccountCreated->value, $bankAccount);

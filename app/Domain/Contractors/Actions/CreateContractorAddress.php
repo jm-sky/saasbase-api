@@ -17,6 +17,7 @@ class CreateContractorAddress
             $data->isDefault = true;
         }
 
+        /** @var Address $address */
         $address = $contractor->addresses()->create($data->toDbArray());
 
         $contractor->logModelActivity(ContractorActivityType::AddressCreated->value, $address);

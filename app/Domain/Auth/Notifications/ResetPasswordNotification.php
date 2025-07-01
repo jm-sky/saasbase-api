@@ -12,6 +12,9 @@ class ResetPasswordNotification extends Notification
 {
     use Queueable;
 
+    /**
+     * @param ?string $locale
+     */
     public function __construct(
         public string $token,
         public $locale = null

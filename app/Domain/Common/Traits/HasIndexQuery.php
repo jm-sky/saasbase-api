@@ -3,6 +3,7 @@
 namespace App\Domain\Common\Traits;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -46,7 +47,7 @@ trait HasIndexQuery
     /**
      * Create the base query using Spatie QueryBuilder.
      */
-    public function getIndexQuery(Request $request): QueryBuilder
+    public function getIndexQuery(Request $request): Builder
     {
         return QueryBuilder::for($this->modelClass)
             ->allowedFilters($this->filters)

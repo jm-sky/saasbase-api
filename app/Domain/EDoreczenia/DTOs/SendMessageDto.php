@@ -5,7 +5,7 @@ namespace App\Domain\EDoreczenia\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 use Carbon\Carbon;
 
-class SendMessageDto extends BaseDataDTO
+final class SendMessageDto extends BaseDataDTO
 {
     /**
      * @param RecipientDto[]  $recipients

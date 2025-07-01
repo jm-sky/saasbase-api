@@ -111,6 +111,7 @@ class SubscriptionPlan extends BaseModel
 
     public function getPriceForInterval(BillingInterval $interval): ?BillingPrice
     {
+        // @phpstan-ignore-next-line
         return $this->prices()
             ->where('billing_period', $interval->value)
             ->where('is_active', true)

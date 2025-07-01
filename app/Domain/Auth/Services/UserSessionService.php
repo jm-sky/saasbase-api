@@ -40,6 +40,7 @@ class UserSessionService
             return null;
         }
 
+        // @phpstan-ignore-next-line
         return $user->sessions()->whereNull('revoked_at')->where('token_id', $tokenId)->first();
     }
 
