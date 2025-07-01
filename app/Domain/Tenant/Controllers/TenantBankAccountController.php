@@ -4,11 +4,13 @@ namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Resources\BankAccountResource;
+use App\Domain\Tenant\Enums\TenantActivityType;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\StoreTenantBankAccountRequest;
 use App\Domain\Tenant\Requests\UpdateTenantBankAccountRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -73,5 +75,16 @@ class TenantBankAccountController extends Controller
         $bankAccount->delete();
 
         return response()->noContent();
+    }
+
+    public function setDefault(Tenant $tenant, BankAccount $bankAccount): JsonResponse
+    {
+        abort_if($bankAccount->bankable_id !== $tenant->id, Response::HTTP_NOT_FOUND);
+
+        $tenant->bankAccounts()->update(['is_default' => false]);
+        $bankAccount->update(['is_default' => true]);
+        $tenant->logModelActivity(TenantActivityType::BankAccountSetDefault->value, $bankAccount);
+
+        return response()->json(['message' => 'Bank account set as default successfully.'], Response::HTTP_NO_CONTENT);
     }
 }

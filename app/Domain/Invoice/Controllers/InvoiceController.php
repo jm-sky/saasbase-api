@@ -82,7 +82,9 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::create($request->validated());
 
-        return response()->json(new InvoiceResource($invoice), Response::HTTP_CREATED);
+        return response()->json([
+            'data' => new InvoiceResource($invoice),
+        ], Response::HTTP_CREATED);
     }
 
     public function show(Invoice $invoice): InvoiceResource

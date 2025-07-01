@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::get('contractors/search', [ContractorController::class, 'search'])->name('contractors.search');
+    Route::get('contractors/lookup', [ContractorController::class, 'lookup'])->name('contractors.lookup');
     Route::get('contractors/export', [ContractorController::class, 'export']);
     Route::apiResource('contractors', ContractorController::class);
 

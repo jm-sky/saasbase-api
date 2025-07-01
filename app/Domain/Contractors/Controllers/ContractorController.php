@@ -11,6 +11,7 @@ use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Requests\StoreContractorRequest;
 use App\Domain\Contractors\Requests\UpdateContractorRequest;
+use App\Domain\Contractors\Resources\ContractorLookupResource;
 use App\Domain\Contractors\Resources\ContractorResource;
 use App\Domain\Contractors\Services\ContractorRegistryConfirmationService;
 use App\Domain\Export\DTOs\ExportConfigDTO;
@@ -76,6 +77,16 @@ class ContractorController extends Controller
         $contractors = $this->getIndexPaginator($request);
 
         return ContractorResource::collection($contractors['data'])
+            ->additional(['meta' => $contractors['meta']])
+        ;
+    }
+
+    public function lookup(SearchContractorRequest $request): AnonymousResourceCollection
+    {
+        $this->defaultWith = ['defaultAddress', 'preferences'];
+        $contractors       = $this->getIndexPaginator($request);
+
+        return ContractorLookupResource::collection($contractors['data'])
             ->additional(['meta' => $contractors['meta']])
         ;
     }

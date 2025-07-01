@@ -85,7 +85,9 @@ class ExpenseController extends Controller
     {
         $expense = Expense::create($request->validated());
 
-        return response()->json(new ExpenseResource($expense), Response::HTTP_CREATED);
+        return response()->json([
+            'data' => new ExpenseResource($expense),
+        ], Response::HTTP_CREATED);
     }
 
     public function show(Expense $expense): ExpenseResource

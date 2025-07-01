@@ -7,7 +7,7 @@ use Brick\Math\BigDecimal;
 
 /**
  * @property string     $id
- * @property string     $description
+ * @property ?string    $description
  * @property BigDecimal $quantity
  * @property BigDecimal $unitPrice
  * @property VatRateDTO $vatRate
@@ -20,7 +20,7 @@ final class InvoiceLineDTO extends BaseDataDTO
 {
     public function __construct(
         public string $id,
-        public string $description,
+        public ?string $description,
         public BigDecimal $quantity,
         public BigDecimal $unitPrice,
         public VatRateDTO $vatRate,
@@ -35,7 +35,7 @@ final class InvoiceLineDTO extends BaseDataDTO
     {
         return [
             'id'          => $this->id,
-            'description' => $this->description,
+            'description' => $this->description ?? '',
             'quantity'    => $this->quantity->toFloat(),
             'unitPrice'   => $this->unitPrice->toFloat(),
             'vatRate'     => $this->vatRate->toArray(),
@@ -50,7 +50,7 @@ final class InvoiceLineDTO extends BaseDataDTO
     {
         return new self(
             id: $data['id'],
-            description: $data['description'],
+            description: $data['description'] ?? null,
             quantity: BigDecimal::of($data['quantity']),
             unitPrice: BigDecimal::of($data['unitPrice']),
             vatRate: VatRateDTO::fromArray($data['vatRate']),
