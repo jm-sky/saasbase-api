@@ -49,19 +49,21 @@ trait HasIndexQuery
      */
     public function getIndexQuery(Request $request): Builder
     {
+        // @phpstan-ignore-next-line
         return QueryBuilder::for($this->modelClass)
             ->allowedFilters($this->filters)
             ->allowedSorts($this->sorts)
             ->defaultSort($this->defaultSort)
             ->with($this->defaultWith)
             ->withoutGlobalScopes($this->withoutGlobalScopes)
+            ->getEloquentBuilder()
         ;
     }
 
     /**
      * Return paginated results with metadata.
      */
-    public function getIndexPaginator(Request $request, ?int $perPage = null, ?QueryBuilder $query = null): array
+    public function getIndexPaginator(Request $request, ?int $perPage = null, ?Builder $query = null): array
     {
         $query ??= $this->getIndexQuery($request);
 
