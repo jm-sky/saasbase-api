@@ -40,6 +40,7 @@ class TenantResource extends JsonResource
             'deletedAt'   => $this->deleted_at?->toIso8601String(),
             'logoUrl'     => $logoMedia ? $this->getMediaSignedUrl('logo') : null,
             'logo'        => $logoMedia ? new MediaResource($logoMedia) : null,
+            'preferences' => $this->whenLoaded('preferences', fn () => new TenantPreferencesResource($this->preferences)),
         ];
     }
 }

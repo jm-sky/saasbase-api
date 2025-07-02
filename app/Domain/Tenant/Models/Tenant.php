@@ -51,6 +51,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Carbon                        $updated_at
  * @property ?Carbon                       $deleted_at
  * @property ?User                         $owner
+ * @property ?TenantPreferences            $preferences
+ * @property ?TenantBranding               $branding
+ * @property ?TenantPublicProfile          $publicProfile
  * @property Collection<Tag>               $tags
  * @property Collection<Address>           $addresses
  * @property Collection<BankAccount>       $bankAccounts
@@ -134,6 +137,11 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
             ->withPivot(['role'])
             ->withTimestamps()
         ;
+    }
+
+    public function preferences(): HasOne
+    {
+        return $this->hasOne(TenantPreferences::class);
     }
 
     public function invitations(): HasMany
