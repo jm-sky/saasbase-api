@@ -21,6 +21,7 @@ class ProductLookupResource extends JsonResource
             'id'           => $this->id,
             'tenantId'     => $this->tenant_id,
             'name'         => $this->name,
+            'type'         => $this->type,
             'description'  => $this->description,
             'priceNet'     => $this->price_net,
             'unitId'       => $this->unit_id,
