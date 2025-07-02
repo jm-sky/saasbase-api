@@ -40,6 +40,13 @@ class ExpenseResource extends JsonResource
             'createdAt'           => $this->created_at?->toIso8601String(),
             'updatedAt'           => $this->updated_at?->toIso8601String(),
             'tags'                => TagResource::collection($this->tags),
+            // Allocation information
+            'totalAllocated'       => $this->when($this->relationLoaded('allocations'), fn () => $this->total_allocated->toFloat()),
+            'remainingToAllocate'  => $this->when($this->relationLoaded('allocations'), fn () => $this->remaining_to_allocate->toFloat()),
+            'isFullyAllocated'     => $this->when($this->relationLoaded('allocations'), fn () => $this->is_fully_allocated),
+            'isPartiallyAllocated' => $this->when($this->relationLoaded('allocations'), fn () => $this->is_partially_allocated),
+            'hasAllocations'       => $this->when($this->relationLoaded('allocations'), fn () => $this->hasAllocations()),
+            'allocations'          => ExpenseAllocationResource::collection($this->whenLoaded('allocations')),
         ];
     }
 }

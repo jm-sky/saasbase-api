@@ -72,7 +72,7 @@ class InitializeTenantDefaults
             [
                 'id'         => (string) Str::ulid(),
                 'name'       => $tenant->name,
-                'short_name' => Str::slug($tenant->name),
+                'code'       => Str::slug($tenant->name),
             ]
         );
 

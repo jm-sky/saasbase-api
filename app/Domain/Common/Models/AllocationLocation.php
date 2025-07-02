@@ -34,4 +34,32 @@ class AllocationLocation extends BaseModel
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected $attributes = [
+        'is_active' => true,
+    ];
+
+    /**
+     * Scope to active records only.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Get display name with code prefix.
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        return "{$this->code} - {$this->name}";
+    }
+
+    /**
+     * Get full address for display.
+     */
+    public function getFullAddressAttribute(): string
+    {
+        return $this->address ? "{$this->name}, {$this->address}" : $this->name;
+    }
 }

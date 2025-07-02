@@ -25,29 +25,31 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property string            $id
- * @property string            $tenant_id
- * @property InvoiceType       $type
- * @property InvoiceStatus     $status
- * @property string            $number
- * @property BigDecimal        $total_net
- * @property BigDecimal        $total_tax
- * @property BigDecimal        $total_gross
- * @property string            $currency
- * @property BigDecimal        $exchange_rate
- * @property InvoicePartyDTO   $seller
- * @property InvoicePartyDTO   $buyer
- * @property InvoiceBodyDTO    $body
- * @property InvoicePaymentDTO $payment
- * @property InvoiceOptionsDTO $options
- * @property Collection<Tag>   $tags
- * @property OcrRequest        $ocrRequest
+ * @property string                             $id
+ * @property string                             $tenant_id
+ * @property InvoiceType                        $type
+ * @property InvoiceStatus                      $status
+ * @property string                             $number
+ * @property BigDecimal                         $total_net
+ * @property BigDecimal                         $total_tax
+ * @property BigDecimal                         $total_gross
+ * @property string                             $currency
+ * @property BigDecimal                         $exchange_rate
+ * @property InvoicePartyDTO                    $seller
+ * @property InvoicePartyDTO                    $buyer
+ * @property InvoiceBodyDTO                     $body
+ * @property InvoicePaymentDTO                  $payment
+ * @property InvoiceOptionsDTO                  $options
+ * @property Collection<Tag>                    $tags
+ * @property OcrRequest                         $ocrRequest
+ * @property Collection<int, ExpenseAllocation> $allocations
  */
 class Expense extends BaseModel implements HasMedia
 {
@@ -95,6 +97,56 @@ class Expense extends BaseModel implements HasMedia
     public function ocrRequest(): MorphOne
     {
         return $this->morphOne(OcrRequest::class, 'processable');
+    }
+
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(ExpenseAllocation::class);
+    }
+
+    /**
+     * Get the total amount allocated across all allocations.
+     */
+    public function getTotalAllocatedAttribute(): BigDecimal
+    {
+        return $this->allocations->reduce(
+            fn ($carry, $allocation) => $carry->plus($allocation->amount),
+            BigDecimal::zero()
+        );
+    }
+
+    /**
+     * Check if the expense is fully allocated.
+     */
+    public function getIsFullyAllocatedAttribute(): bool
+    {
+        return $this->total_gross->isEqualTo($this->getTotalAllocatedAttribute());
+    }
+
+    /**
+     * Check if the expense is partially allocated.
+     */
+    public function getIsPartiallyAllocatedAttribute(): bool
+    {
+        $allocated = $this->getTotalAllocatedAttribute();
+
+        return $allocated->isGreaterThan(BigDecimal::zero()) && $allocated->isLessThan($this->total_gross);
+    }
+
+    /**
+     * Get the remaining amount to be allocated.
+     */
+    public function getRemainingToAllocateAttribute(): BigDecimal
+    {
+        return $this->total_gross->minus($this->getTotalAllocatedAttribute());
+    }
+
+    /**
+     * Check if expense has any allocations.
+     */
+    public function hasAllocations(): bool
+    {
+        return $this->allocations()->exists();
     }
 
     public function registerMediaCollections(): void

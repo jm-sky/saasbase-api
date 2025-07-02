@@ -60,7 +60,7 @@ enum AllocationDimensionType: string
             self::REVENUE_TYPE         => \App\Domain\Financial\Models\AllocationRevenueType::class,
             self::TRANSACTION_TYPE     => \App\Domain\Financial\Models\AllocationTransactionType::class,
             self::COST_TYPE            => \App\Domain\Financial\Models\AllocationCostType::class,
-            self::STRUCTURE            => \App\Domain\Tenant\Models\AllocationOrganizationUnit::class,
+            self::STRUCTURE            => \App\Domain\Tenant\Models\OrganizationUnit::class,
             self::RELATED_TRANSACTIONS => \App\Domain\Financial\Models\AllocationRelatedTransactionCategory::class,
             self::CONTRACTS            => \App\Domain\Common\Models\AllocationContractType::class,
             self::EQUIPMENT            => \App\Domain\Common\Models\AllocationEquipmentType::class,

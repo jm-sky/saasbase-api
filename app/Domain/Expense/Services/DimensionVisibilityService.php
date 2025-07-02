@@ -3,6 +3,7 @@
 namespace App\Domain\Expense\Services;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Expense\DTOs\DimensionConfigurationDTO;
 use App\Domain\Expense\Enums\AllocationDimensionType;
 use App\Domain\Expense\Models\TenantDimensionConfiguration;
 use Illuminate\Support\Collection as SupportCollection;
@@ -71,16 +72,14 @@ class DimensionVisibilityService
         foreach (AllocationDimensionType::cases() as $dimension) {
             $config = $configurations->get($dimension->value);
 
-            $allDimensions->push([
-                'dimension'         => $dimension,
-                'is_enabled'        => $config?->is_enabled ?? $dimension->getDefaultEnabledState(),
-                'display_order'     => $config?->display_order ?? $dimension->getDefaultDisplayOrder(),
-                'is_always_visible' => $dimension->isAlwaysVisible(),
-                'is_configurable'   => $dimension->isConfigurable(),
-            ]);
+            $allDimensions->push(DimensionConfigurationDTO::fromDimensionType(
+                $dimension,
+                $config?->is_enabled ?? $dimension->getDefaultEnabledState(),
+                $config?->display_order ?? $dimension->getDefaultDisplayOrder()
+            ));
         }
 
-        return $allDimensions->sortBy('display_order')->values();
+        return $allDimensions->sortBy('displayOrder')->values();
     }
 
     public function initializeDefaultConfigurationForTenant(string $tenantId): void
