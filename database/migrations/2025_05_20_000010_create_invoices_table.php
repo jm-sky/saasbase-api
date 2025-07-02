@@ -12,7 +12,12 @@ return new class() extends Migration {
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('type');
             $table->date('issue_date');
-            $table->string('status');
+            $table->string('general_status')->default('draft');
+            $table->string('ocr_status')->nullable();
+            $table->string('allocation_status')->nullable();
+            $table->string('approval_status')->nullable();
+            $table->string('delivery_status')->nullable();
+            $table->string('payment_status')->nullable();
             $table->string('number');
             $table->foreignUlid('numbering_template_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_net', 12, 2);

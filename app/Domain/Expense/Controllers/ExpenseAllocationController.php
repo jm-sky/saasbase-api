@@ -169,8 +169,8 @@ class ExpenseAllocationController extends Controller
 
         $expense->allocations()->delete();
 
-        // Update expense status back to pending allocation
-        $expense->update(['status' => \App\Domain\Financial\Enums\InvoiceStatus::PENDING_ALLOCATION]);
+        // Update expense status back to processing
+        $expense->update(['general_status' => \App\Domain\Financial\Enums\InvoiceStatus::PROCESSING]);
 
         return response()->json([
             'message' => 'All allocations cleared successfully',

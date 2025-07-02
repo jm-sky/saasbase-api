@@ -100,7 +100,7 @@ class ApplyOcrResultToExpenseAction
             ];
         }
 
-        $expense->status = InvoiceStatus::OCR_COMPLETED;
+        $expense->general_status = InvoiceStatus::PROCESSING;
         $expense->save();
     }
 

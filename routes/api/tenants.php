@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
+use App\Domain\Tenant\Controllers\OrganizationUnitController;
 use App\Domain\Tenant\Controllers\TenantActivityLogController;
 use App\Domain\Tenant\Controllers\TenantAddressController;
 use App\Domain\Tenant\Controllers\TenantAttachmentsController;
@@ -29,6 +30,8 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::delete('/', 'delete')->name('delete');
         })
     ;
+
+    Route::apiResource('tenants/{tenant}/organization-units', OrganizationUnitController::class)->names('tenants.organizationUnits');
 
     Route::apiResource('tenants/{tenant}/addresses', TenantAddressController::class)->names('tenants.addresses');
     Route::post('tenants/{tenant}/addresses/{address}/set-default', [TenantAddressController::class, 'setDefault'])

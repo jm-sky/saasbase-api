@@ -29,7 +29,7 @@ class CreateExpenseForOcr
         $expense = Expense::create([
             'type'                  => InvoiceType::Basic,
             'issue_date'            => Carbon::now(),
-            'status'                => InvoiceStatus::OCR_PROCESSING,
+            'general_status'        => InvoiceStatus::PROCESSING,
             'number'                => '',
             'total_net'             => BigDecimal::of('0'),
             'total_tax'             => BigDecimal::of('0'),

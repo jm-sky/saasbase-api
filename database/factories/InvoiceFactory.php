@@ -31,7 +31,12 @@ class InvoiceFactory extends Factory
             'id'                    => Str::ulid()->toString(),
             'tenant_id'             => Tenant::factory(),
             'type'                  => fake()->randomElement(InvoiceType::cases()),
-            'status'                => fake()->randomElement(InvoiceStatus::cases()),
+            'general_status'        => fake()->randomElement(InvoiceStatus::cases()),
+            'ocr_status'            => null,
+            'allocation_status'     => null,
+            'approval_status'       => null,
+            'delivery_status'       => null,
+            'payment_status'        => null,
             'number'                => fake()->unique()->numerify('2025/####'),
             'numbering_template_id' => null, // Will be set when creating
             'total_net'             => $totalNet,
@@ -51,29 +56,31 @@ class InvoiceFactory extends Factory
     public function draft(): self
     {
         return $this->state(fn (array $attributes) => [
-            'status' => InvoiceStatus::DRAFT->value,
+            'general_status' => InvoiceStatus::DRAFT->value,
         ]);
     }
 
     public function sent(): self
     {
         return $this->state(fn (array $attributes) => [
-            'status' => InvoiceStatus::SENT->value,
+            'general_status'  => InvoiceStatus::ACTIVE->value,
+            'delivery_status' => \App\Domain\Financial\Enums\DeliveryStatus::SENT->value,
         ]);
     }
 
     public function paid(): self
     {
         return $this->state(fn (array $attributes) => [
-            'status'  => InvoiceStatus::PAID->value,
-            'payment' => (new InvoicePaymentDTOFactory())->paid(),
+            'general_status' => InvoiceStatus::COMPLETED->value,
+            'payment_status' => \App\Domain\Financial\Enums\PaymentStatus::PAID->value,
+            'payment'        => (new InvoicePaymentDTOFactory())->paid(),
         ]);
     }
 
     public function cancelled(): self
     {
         return $this->state(fn (array $attributes) => [
-            'status' => InvoiceStatus::CANCELLED->value,
+            'general_status' => InvoiceStatus::CANCELLED->value,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Expense\Models;
 
+use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Common\Models\Tag;
@@ -18,8 +19,12 @@ use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
 use App\Domain\Financial\DTOs\InvoicePartyDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentDTO;
+use App\Domain\Financial\Enums\AllocationStatus;
+use App\Domain\Financial\Enums\ApprovalStatus;
+use App\Domain\Financial\Enums\DeliveryStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Financial\Enums\PaymentStatus;
 use App\Domain\ShareToken\Traits\HasShareTokens;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
@@ -35,7 +40,12 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string                             $id
  * @property string                             $tenant_id
  * @property InvoiceType                        $type
- * @property InvoiceStatus                      $status
+ * @property InvoiceStatus                      $generalStatus
+ * @property OcrRequestStatus                   $ocrStatus
+ * @property AllocationStatus                   $allocationStatus
+ * @property ApprovalStatus                     $approvalStatus
+ * @property DeliveryStatus                     $deliveryStatus
+ * @property PaymentStatus                      $paymentStatus
  * @property string                             $number
  * @property BigDecimal                         $total_net
  * @property BigDecimal                         $total_tax
@@ -65,7 +75,12 @@ class Expense extends BaseModel implements HasMedia
     protected $fillable = [
         'type',
         'issue_date',
-        'status',
+        'general_status',
+        'ocr_status',
+        'allocation_status',
+        'approval_status',
+        'delivery_status',
+        'payment_status',
         'number',
         'total_net',
         'total_tax',
@@ -80,18 +95,23 @@ class Expense extends BaseModel implements HasMedia
     ];
 
     protected $casts = [
-        'type'          => InvoiceType::class,
-        'status'        => InvoiceStatus::class,
-        'issue_date'    => 'date',
-        'total_net'     => BigDecimalCast::class,
-        'total_tax'     => BigDecimalCast::class,
-        'total_gross'   => BigDecimalCast::class,
-        'exchange_rate' => BigDecimalCast::class,
-        'seller'        => InvoicePartyCast::class,
-        'buyer'         => InvoicePartyCast::class,
-        'body'          => InvoiceBodyCast::class,
-        'payment'       => InvoicePaymentCast::class,
-        'options'       => InvoiceOptionsCast::class,
+        'type'              => InvoiceType::class,
+        'general_status'    => InvoiceStatus::class,
+        'ocr_status'        => OcrRequestStatus::class,
+        'allocation_status' => AllocationStatus::class,
+        'approval_status'   => ApprovalStatus::class,
+        'delivery_status'   => DeliveryStatus::class,
+        'payment_status'    => PaymentStatus::class,
+        'issue_date'        => 'date',
+        'total_net'         => BigDecimalCast::class,
+        'total_tax'         => BigDecimalCast::class,
+        'total_gross'       => BigDecimalCast::class,
+        'exchange_rate'     => BigDecimalCast::class,
+        'seller'            => InvoicePartyCast::class,
+        'buyer'             => InvoicePartyCast::class,
+        'body'              => InvoiceBodyCast::class,
+        'payment'           => InvoicePaymentCast::class,
+        'options'           => InvoiceOptionsCast::class,
     ];
 
     public function ocrRequest(): MorphOne
@@ -152,6 +172,52 @@ class Expense extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('attachments');
+    }
+
+    /**
+     * Get comprehensive status information as DTO.
+     */
+    public function getStatusDTO(): \App\Domain\Financial\DTOs\InvoiceStatusDTO
+    {
+        return new \App\Domain\Financial\DTOs\InvoiceStatusDTO(
+            general: $this->general_status ?? InvoiceStatus::DRAFT,
+            ocr: $this->ocr_status,
+            allocation: $this->allocation_status,
+            approval: $this->approval_status,
+            delivery: $this->delivery_status,
+            payment: $this->payment_status
+        );
+    }
+
+    /**
+     * Update status using the status service.
+     */
+    public function updateStatusFromDTO(\App\Domain\Financial\DTOs\InvoiceStatusDTO $statusDTO): void
+    {
+        $this->update([
+            'general_status'    => $statusDTO->general,
+            'ocr_status'        => $statusDTO->ocr,
+            'allocation_status' => $statusDTO->allocation,
+            'approval_status'   => $statusDTO->approval,
+            'delivery_status'   => $statusDTO->delivery,
+            'payment_status'    => $statusDTO->payment,
+        ]);
+    }
+
+    /**
+     * Backward compatibility: get the general status when accessing 'status'.
+     */
+    public function getStatusAttribute(): InvoiceStatus
+    {
+        return $this->general_status ?? InvoiceStatus::DRAFT;
+    }
+
+    /**
+     * Backward compatibility: set the general status when setting 'status'.
+     */
+    public function setStatusAttribute(InvoiceStatus $value): void
+    {
+        $this->general_status = $value;
     }
 
     protected static function newFactory()

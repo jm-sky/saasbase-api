@@ -65,7 +65,7 @@ class InitializeTenantDefaults
         ]);
     }
 
-    public function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): void
+    public function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): OrganizationUnit
     {
         $rootUnit = OrganizationUnit::firstOrCreate(
             ['tenant_id' => $tenant->id, 'parent_id' => null],
@@ -88,6 +88,8 @@ class InitializeTenantDefaults
                 ]
             );
         }
+
+        return $rootUnit;
     }
 
     public function seedDefaultMeasurementUnits(Tenant $tenant): void

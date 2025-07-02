@@ -20,7 +20,9 @@ use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
+use App\Helpers\Ulid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
@@ -95,10 +97,12 @@ class CustomTenantUserSeeder extends Seeder
                 ]);
 
                 $initializer = new InitializeTenantDefaults();
-                $initializer->createRootOrganizationUnit($tenant);
+                $rootUnit    = $initializer->createRootOrganizationUnit($tenant);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);
+
+                $this->createOrganizationUnits($tenant, $rootUnit);
             });
 
             $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));
@@ -413,6 +417,25 @@ class CustomTenantUserSeeder extends Seeder
                     ]);
                 }
             });
+        }
+    }
+
+    protected function createOrganizationUnits(Tenant $tenant, OrganizationUnit $rootUnit): void
+    {
+        $units = [
+            'IT Department',
+            'HR Department',
+            'Finance Department',
+        ];
+
+        foreach ($units as $unit) {
+            OrganizationUnit::create([
+                'id'         => Ulid::deterministic([$tenant->id, $unit]),
+                'tenant_id'  => $tenant->id,
+                'parent_id'  => $rootUnit->id,
+                'name'       => $unit,
+                'code'       => Str::slug($unit),
+            ]);
         }
     }
 }
