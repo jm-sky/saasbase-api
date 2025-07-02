@@ -16,7 +16,7 @@ return new class() extends Migration {
             $table->string('code', 100);
             $table->string('name');
             $table->text('description')->nullable();
-            $table->foreignUlid('parent_id')->nullable()->constrained('allocation_organization_units')->nullOnDelete();
+            $table->ulid('parent_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
@@ -29,6 +29,11 @@ return new class() extends Migration {
             // Unique constraint: code must be unique per tenant (global records have tenant_id = null)
             $table->unique(['code', 'tenant_id']);
         });
+
+        // Add self-referencing foreign key constraint after table creation
+        Schema::table('allocation_organization_units', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('allocation_organization_units')->nullOnDelete();
+        });
     }
 
     /**
@@ -36,6 +41,13 @@ return new class() extends Migration {
      */
     public function down(): void
     {
+        // Drop foreign key constraint first if table exists
+        if (Schema::hasTable('allocation_organization_units')) {
+            Schema::table('allocation_organization_units', function (Blueprint $table) {
+                $table->dropForeign(['parent_id']);
+            });
+        }
+
         Schema::dropIfExists('allocation_organization_units');
     }
 };
