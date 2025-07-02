@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
     Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
+    Route::get('products/lookup', [ProductController::class, 'lookup'])->name('products.lookup');
     Route::get('products/export', [ProductController::class, 'export']);
     Route::apiResource('products', ProductController::class);
 

@@ -13,6 +13,7 @@ use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
+use App\Domain\Products\Resources\ProductLookupResource;
 use App\Domain\Products\Resources\ProductResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -38,6 +39,7 @@ class ProductController extends Controller
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
             AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('type', new AdvancedFilter()),
             AllowedFilter::custom('description', new AdvancedFilter()),
             AllowedFilter::custom('unitId', new AdvancedFilter(), 'unit_id'),
             AllowedFilter::custom('vatRateId', new AdvancedFilter(), 'vat_rate_id'),
@@ -61,6 +63,15 @@ class ProductController extends Controller
         $products = $this->getIndexPaginator($request);
 
         return ProductResource::collection($products['data'])
+            ->additional(['meta' => $products['meta']])
+        ;
+    }
+
+    public function lookup(SearchProductRequest $request): AnonymousResourceCollection
+    {
+        $products = $this->getIndexPaginator($request);
+
+        return ProductLookupResource::collection($products['data'])
             ->additional(['meta' => $products['meta']])
         ;
     }
