@@ -180,4 +180,46 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
         return false;
     }
+
+    public function positions(): HasMany
+    {
+        return $this->hasMany(Position::class);
+    }
+
+    public function activePositions(): HasMany
+    {
+        return $this->positions()->active();
+    }
+
+    public function getUsersWithPositions()
+    {
+        return $this->orgUnitUsers()
+            ->active()
+            ->with(['user', 'position.category'])
+            ->get()
+            ->map(function ($orgUnitUser) {
+                return [
+                    'user'       => $orgUnitUser->user,
+                    'position'   => $orgUnitUser->position,
+                    'category'   => $orgUnitUser->position?->category,
+                    'is_primary' => $orgUnitUser->is_primary,
+                    'start_date' => $orgUnitUser->start_date,
+                    'role'       => $orgUnitUser->role,
+                ];
+            })
+        ;
+    }
+
+    public function getDirectors()
+    {
+        return $this->orgUnitUsers()
+            ->active()
+            ->whereHas('position', function ($query) {
+                $query->where('is_director', true);
+            })
+            ->with(['user', 'position'])
+            ->get()
+            ->pluck('user')
+        ;
+    }
 }

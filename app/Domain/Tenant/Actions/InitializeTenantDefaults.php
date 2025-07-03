@@ -43,6 +43,7 @@ class InitializeTenantDefaults
         $this->seedDefaultMeasurementUnits($tenant);
         $this->createSubscription($tenant);
         $this->seedDefaultTags($tenant);
+        $this->createDefaultPositionCategories($tenant);
         // 3. (Optional) Add more default setup here
     }
 
@@ -131,6 +132,43 @@ class InitializeTenantDefaults
             ], [
                 'color'     => $meta['color'],
             ]);
+        }
+    }
+
+    public function createDefaultPositionCategories(Tenant $tenant): void
+    {
+        $defaultCategories = [
+            [
+                'name'        => 'Director',
+                'slug'        => 'director',
+                'description' => 'Leadership positions',
+                'sort_order'  => 1,
+            ],
+            [
+                'name'        => 'Manager',
+                'slug'        => 'manager',
+                'description' => 'Management positions',
+                'sort_order'  => 2,
+            ],
+            [
+                'name'        => 'Employee',
+                'slug'        => 'employee',
+                'description' => 'Regular employee positions',
+                'sort_order'  => 3,
+            ],
+            [
+                'name'        => 'Trainee',
+                'slug'        => 'trainee',
+                'description' => 'Learning and training positions',
+                'sort_order'  => 4,
+            ],
+        ];
+
+        foreach ($defaultCategories as $category) {
+            \App\Domain\Tenant\Models\PositionCategory::firstOrCreate([
+                'tenant_id' => $tenant->id,
+                'name'      => $category['name'],
+            ], $category);
         }
     }
 }

@@ -119,4 +119,49 @@ class OrgUnitUser extends BaseModel
     {
         return $query->where('workflow_role_level', $roleLevel);
     }
+
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    // Enhanced isActive method to consider both date fields
+    public function isActiveWithDates(): bool
+    {
+        $now = now();
+
+        // Check validity period (existing logic)
+        $validPeriodActive = $this->valid_from <= $now
+                            && (null === $this->valid_until || $this->valid_until >= $now);
+
+        // Check date range (new logic)
+        $startOk = $this->start_date ? $this->start_date <= $now->toDateString() : true;
+        $endOk   = $this->end_date ? $this->end_date >= $now->toDateString() : true;
+
+        return $validPeriodActive && $startOk && $endOk;
+    }
+
+    // Scopes
+    public function scopeWithPosition($query)
+    {
+        return $query->whereNotNull('position_id');
+    }
+
+    public function scopeWithoutPosition($query)
+    {
+        return $query->whereNull('position_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('valid_from', '<=', now())
+                ->where(function ($q2) {
+                    $q2->whereNull('valid_until')
+                        ->orWhere('valid_until', '>=', now())
+                    ;
+                })
+            ;
+        });
+    }
 }

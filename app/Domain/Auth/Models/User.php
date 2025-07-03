@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -418,5 +419,86 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
         }
 
         return $this->getFirstMediaUrl($collectionName, $fileName);
+    }
+
+    public function positions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            \App\Domain\Tenant\Models\Position::class,
+            \App\Domain\Tenant\Models\OrgUnitUser::class,
+            'user_id',
+            'id',
+            'id',
+            'position_id'
+        );
+    }
+
+    public function currentPositions(): HasManyThrough
+    {
+        return $this->positions()
+            ->whereHas('orgUnitUsers', function ($query) {
+                $query->where('user_id', $this->id)->active();
+            })
+        ;
+    }
+
+    public function primaryPosition(): ?\App\Domain\Tenant\Models\Position
+    {
+        $primaryOrgUnit = $this->orgUnitUsers()->where('is_primary', true)->active()->first();
+
+        return $primaryOrgUnit?->position;
+    }
+
+    // Assign user to organization unit with position
+    public function assignToPosition(OrganizationUnit $unit, ?\App\Domain\Tenant\Models\Position $position = null, array $options = []): \App\Domain\Tenant\Models\OrgUnitUser
+    {
+        $options = array_merge([
+            'start_date' => now()->toDateString(),
+            'is_primary' => false,
+            'notes'      => null,
+            'role'       => \App\Domain\Tenant\Enums\OrgUnitRole::Employee,
+        ], $options);
+
+        // Create org unit user assignment
+        $orgUnitUser = $this->orgUnitUsers()->create([
+            'tenant_id'            => $unit->tenant_id,
+            'organization_unit_id' => $unit->id,
+            'position_id'          => $position?->id,
+            'role'                 => $options['role']->value,
+            'start_date'           => $options['start_date'],
+            'is_primary'           => $options['is_primary'],
+            'notes'                => $options['notes'],
+            'valid_from'           => now(),
+        ]);
+
+        // Assign role if position has one
+        if ($position && $position->role_name) {
+            $this->assignRole($position->role_name);
+        }
+
+        return $orgUnitUser;
+    }
+
+    // Check user status
+    public function isDirector(): bool
+    {
+        return $this->currentPositions()->where('is_director', true)->exists();
+    }
+
+    public function isLearning(): bool
+    {
+        return $this->currentPositions()->where('is_learning', true)->exists();
+    }
+
+    // Get user's position in specific unit
+    public function getPositionInUnit(OrganizationUnit $unit): ?\App\Domain\Tenant\Models\Position
+    {
+        $orgUnitUser = $this->orgUnitUsers()
+            ->active()
+            ->where('organization_unit_id', $unit->id)
+            ->first()
+        ;
+
+        return $orgUnitUser?->position;
     }
 }
