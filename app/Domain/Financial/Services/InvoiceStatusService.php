@@ -29,12 +29,12 @@ class InvoiceStatusService
 
         // If sent and has payment activity, mark as active
         if ($status->delivery->isCompleted() && PaymentStatus::PENDING !== $status->payment) {
-            return InvoiceStatus::ACTIVE;
+            return InvoiceStatus::ISSUED;
         }
 
         // If all processing is complete and ready to send
         if ($this->isReadyToSend($status)) {
-            return InvoiceStatus::READY;
+            return InvoiceStatus::ISSUED;
         }
 
         // If any processing is happening or needed
@@ -208,7 +208,7 @@ class InvoiceStatusService
             $actions[] = 'Address approval rejection';
         }
 
-        if ($status->isReadyForNextStage() && InvoiceStatus::READY === $status->general) {
+        if ($status->isReadyForNextStage() && InvoiceStatus::ISSUED === $status->general) {
             $actions[] = 'Ready to send';
         }
 

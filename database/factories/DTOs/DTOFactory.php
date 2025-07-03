@@ -13,5 +13,5 @@ abstract class DTOFactory
         $this->faker = fake();
     }
 
-    abstract public function make(): object;
+    abstract public function make(?array $attributes = []): object;
 }

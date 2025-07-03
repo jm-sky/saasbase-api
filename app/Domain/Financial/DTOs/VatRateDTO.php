@@ -7,6 +7,12 @@ use App\Domain\Common\Enums\VatRateType;
 use App\Domain\Common\Models\VatRate;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string      $id   ULID
+ * @property string      $name
+ * @property float       $rate
+ * @property VatRateType $type
+ */
 final class VatRateDTO extends BaseDTO
 {
     public function __construct(

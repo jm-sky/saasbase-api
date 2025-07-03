@@ -65,7 +65,7 @@ class InvoiceController extends Controller
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort   = '-created_at';
+        $this->defaultSort   = '-issue_date';
         $this->exportService = app(ExportService::class);
     }
 

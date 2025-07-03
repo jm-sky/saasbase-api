@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property ?Carbon     $created_at
  * @property ?Carbon     $updated_at
  * @property AddressMeta $meta
+ * @property string      $full_address
  */
 class Address extends BaseModel
 {
@@ -55,6 +56,27 @@ class Address extends BaseModel
     public function addressable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function getFullAddressAttribute(): string
+    {
+        return implode(', ', array_filter([
+            implode(
+                ' ',
+                array_filter([
+                    $this->street,
+                    implode(' / ', array_filter([
+                        $this->building,
+                        $this->flat,
+                    ])),
+                ])
+            ),
+            implode(' ', array_filter([
+                $this->postal_code,
+                $this->city,
+            ])),
+            $this->country,
+        ]));
     }
 
     protected static function newFactory()

@@ -6,17 +6,17 @@ use App\Domain\Financial\DTOs\InvoicePartyDTO;
 
 class InvoicePartyDTOFactory extends DTOFactory
 {
-    public function make(): InvoicePartyDTO
+    public function make(?array $attributes = []): InvoicePartyDTO
     {
         return new InvoicePartyDTO(
-            contractorType: fake()->randomElement(['company', 'individual']),
-            name: fake()->company(),
-            address: fake()->address(),
-            country: fake()->countryCode(),
-            contractorId: null,
-            taxId: fake()->numerify('##########'),
-            iban: fake()->optional()->iban(),
-            email: fake()->email(),
+            contractorType: $attributes['contractorType'] ?? fake()->randomElement(['company', 'individual']),
+            name: $attributes['name'] ?? fake()->company(),
+            address: $attributes['address'] ?? fake()->address(),
+            country: $attributes['country'] ?? fake()->countryCode(),
+            contractorId: $attributes['contractorId'] ?? null,
+            taxId: $attributes['taxId'] ?? fake()->numerify('##########'),
+            iban: $attributes['iban'] ?? fake()->optional()->iban(),
+            email: $attributes['email'] ?? fake()->email(),
         );
     }
 }

@@ -15,6 +15,7 @@ use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Expense\Models\Expense;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Products\Models\Product;
 use App\Domain\Projects\Models\Project;
@@ -64,6 +65,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Collection<Contractor>        $contractors
  * @property Collection<Product>           $products
  * @property Collection<Invoice>           $invoices
+ * @property Collection<Expense>           $expenses
  * @property ?BillingCustomer              $billingCustomer
  * @property ?BillingInfo                  $billingInfo
  * @property ?Subscription                 $subscription
@@ -197,6 +199,11 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 
     public function projects(): HasMany

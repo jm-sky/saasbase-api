@@ -25,7 +25,7 @@ class StatusArchitectureExample
 
         // Example 1: Invoice that is SENT and OVERDUE simultaneously
         $sentAndOverdue = new InvoiceStatusDTO(
-            general: InvoiceStatus::ACTIVE,          // General state: active in the system
+            general: InvoiceStatus::ISSUED,          // General state: active in the system
             ocr: OcrRequestStatus::Completed,       // OCR: completed
             allocation: AllocationStatus::FULLY_ALLOCATED, // Allocation: complete
             approval: ApprovalStatus::APPROVED,     // Approval: approved

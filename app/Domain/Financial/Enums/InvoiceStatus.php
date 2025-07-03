@@ -6,8 +6,7 @@ enum InvoiceStatus: string
 {
     case DRAFT      = 'draft';
     case PROCESSING = 'processing';  // General processing state (OCR, allocation, approval)
-    case READY      = 'ready';       // Ready for delivery/sending
-    case ACTIVE     = 'active';      // Sent and active
+    case ISSUED     = 'issued';      // Ready for delivery/sending
     case COMPLETED  = 'completed';   // Fully paid
     case CANCELLED  = 'cancelled';
 
@@ -16,8 +15,7 @@ enum InvoiceStatus: string
         return match ($this) {
             self::DRAFT      => 'Draft',
             self::PROCESSING => 'Processing',
-            self::READY      => 'Ready',
-            self::ACTIVE     => 'Active',
+            self::ISSUED     => 'Issued',
             self::COMPLETED  => 'Completed',
             self::CANCELLED  => 'Cancelled',
         };
@@ -27,9 +25,8 @@ enum InvoiceStatus: string
     {
         return match ($this) {
             self::DRAFT      => 'Szkic',
-            self::PROCESSING => 'W Trakcie Przetwarzania',
-            self::READY      => 'Gotowe',
-            self::ACTIVE     => 'Aktywne',
+            self::PROCESSING => 'W trakcie przetwarzania',
+            self::ISSUED     => 'Wystawiona',
             self::COMPLETED  => 'Zakończone',
             self::CANCELLED  => 'Anulowane',
         };
@@ -50,12 +47,9 @@ enum InvoiceStatus: string
                 self::PROCESSING, self::CANCELLED,
             ], true),
             self::PROCESSING => in_array($newStatus, [
-                self::READY, self::DRAFT, self::CANCELLED,
+                self::ISSUED, self::DRAFT, self::CANCELLED,
             ], true),
-            self::READY => in_array($newStatus, [
-                self::ACTIVE, self::PROCESSING, self::CANCELLED,
-            ], true),
-            self::ACTIVE => in_array($newStatus, [
+            self::ISSUED => in_array($newStatus, [
                 self::COMPLETED, self::CANCELLED,
             ], true),
             self::COMPLETED, self::CANCELLED => false, // Final states
@@ -75,6 +69,6 @@ enum InvoiceStatus: string
      */
     public function canBeSent(): bool
     {
-        return self::READY === $this;
+        return self::ISSUED === $this;
     }
 }
