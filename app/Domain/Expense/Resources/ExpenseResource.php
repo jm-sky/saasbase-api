@@ -26,7 +26,7 @@ class ExpenseResource extends JsonResource
             'type'                => $this->type->value,
             'status'              => $this->status->value, // Backward compatibility
             'statusInfo'          => [
-                'general'    => $this->general_status?->value,
+                'general'    => $this->status?->value,
                 'ocr'        => $this->ocr_status?->value,
                 'allocation' => $this->allocation_status?->value,
                 'approval'   => $this->approval_status?->value,

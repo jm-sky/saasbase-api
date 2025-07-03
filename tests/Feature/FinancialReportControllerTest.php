@@ -42,14 +42,14 @@ class FinancialReportControllerTest extends TestCase
         // Create test invoices and expenses for current month
         Invoice::factory()->create([
             'tenant_id'      => $this->tenant->id,
-            'general_status' => InvoiceStatus::COMPLETED,
+            'status'         => InvoiceStatus::COMPLETED,
             'issue_date'     => Carbon::now()->startOfMonth(),
             'total_gross'    => 1000.00,
         ]);
 
         Expense::factory()->create([
             'tenant_id'      => $this->tenant->id,
-            'general_status' => InvoiceStatus::COMPLETED,
+            'status'         => InvoiceStatus::COMPLETED,
             'issue_date'     => Carbon::now()->startOfMonth(),
             'total_gross'    => 300.00,
         ]);

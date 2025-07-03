@@ -3,8 +3,12 @@
 namespace Database\Factories;
 
 use App\Domain\Expense\Models\Expense;
+use App\Domain\Financial\DTOs\InvoicePaymentBankAccountDTO;
+use App\Domain\Financial\Enums\AllocationStatus;
+use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Financial\Enums\PaymentStatus;
 use App\Domain\Tenant\Models\Tenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\DTOs\InvoiceBodyDTOFactory;
@@ -33,12 +37,20 @@ class ExpenseFactory extends Factory
             'id'                => Str::ulid()->toString(),
             'tenant_id'         => Tenant::factory(),
             'type'              => fake()->randomElement(InvoiceType::cases()),
-            'general_status'    => fake()->randomElement(InvoiceStatus::cases()),
+            'status'            => fake()->randomElement([
+                ...InvoiceStatus::cases(),
+                InvoiceStatus::ISSUED,
+                InvoiceStatus::COMPLETED,
+                InvoiceStatus::ISSUED,
+                InvoiceStatus::ISSUED,
+                InvoiceStatus::COMPLETED,
+                InvoiceStatus::COMPLETED,
+            ]),
             'ocr_status'        => null,
-            'allocation_status' => null,
-            'approval_status'   => null,
+            'allocation_status' => AllocationStatus::PENDING,
+            'approval_status'   => ApprovalStatus::NOT_REQUIRED,
             'delivery_status'   => null,
-            'payment_status'    => null,
+            'payment_status'    => PaymentStatus::PAID,
             'number'            => fake()->unique()->numerify('INV-####'),
             'total_net'         => $totalNet,
             'total_tax'         => $totalTax,
@@ -57,14 +69,14 @@ class ExpenseFactory extends Factory
     public function draft(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status' => InvoiceStatus::DRAFT->value,
+            'status' => InvoiceStatus::DRAFT->value,
         ]);
     }
 
     public function sent(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status'  => InvoiceStatus::ISSUED->value,
+            'status'          => InvoiceStatus::ISSUED->value,
             'delivery_status' => \App\Domain\Financial\Enums\DeliveryStatus::SENT->value,
         ]);
     }
@@ -72,8 +84,8 @@ class ExpenseFactory extends Factory
     public function paid(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status' => InvoiceStatus::COMPLETED->value,
-            'payment_status' => \App\Domain\Financial\Enums\PaymentStatus::PAID->value,
+            'status'         => InvoiceStatus::COMPLETED->value,
+            'payment_status' => PaymentStatus::PAID->value,
             'payment'        => (new InvoicePaymentDTOFactory())->paid(),
         ]);
     }
@@ -81,7 +93,7 @@ class ExpenseFactory extends Factory
     public function cancelled(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status' => InvoiceStatus::CANCELLED->value,
+            'status' => InvoiceStatus::CANCELLED->value,
         ]);
     }
 
@@ -140,13 +152,18 @@ class ExpenseFactory extends Factory
     public function receivedFromBp(Tenant $tenant): self
     {
         // Add randomness to pricing
-        $basePrice1 = fake()->numberBetween(12000, 18000); // 12k-18k per month
-        $quantity1  = fake()->numberBetween(2, 4);         // 2-4 months
-        $total1     = $basePrice1 * $quantity1;
+        $basePrice1 = fake()->numberBetween(100, 500);
+        $quantity1  = fake()->numberBetween(2, 4);
+        $totalNet   = $basePrice1 * $quantity1;
+        $totalVat   = $totalNet * 0.23;
+        $totalGross = $totalNet + $totalVat;
 
         return $this->state(fn (array $attributes) => [
-            'currency' => 'PLN',
-            'seller'   => (new InvoicePartyDTOFactory())->make([
+            'currency'          => 'PLN',
+            'total_net'         => $totalNet,
+            'total_tax'         => $totalVat,
+            'total_gross'       => $totalGross,
+            'seller'            => (new InvoicePartyDTOFactory())->make([
                 'contractorType' => 'company',
                 'name'           => 'BP Polska Sp. z o.o.',
                 'address'        => 'ul. Pawia 9, 31-154 Kraków',
@@ -179,9 +196,9 @@ class ExpenseFactory extends Factory
                             rate: 23,
                             type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
                         ),
-                        'totalNet'   => BigDecimal::of($total1),
-                        'totalVat'   => BigDecimal::of($total1 * 0.23),
-                        'totalGross' => BigDecimal::of($total1 + ($total1 * 0.23)),
+                        'totalNet'   => BigDecimal::of($totalNet),
+                        'totalVat'   => BigDecimal::of($totalVat),
+                        'totalGross' => BigDecimal::of($totalGross),
                         'productId'  => null,
                     ]),
                 ],
@@ -193,7 +210,7 @@ class ExpenseFactory extends Factory
                 'description' => 'Services provided under Contract #BP-2024-SB-001. Payment due within 30 days.',
             ]),
             'payment' => (new InvoicePaymentDTOFactory())->make([
-                'status'     => \App\Domain\Financial\Enums\PaymentStatus::PENDING,
+                'status'     => PaymentStatus::PENDING,
                 'dueDate'    => null, // Will be set by withDates method
                 'paidDate'   => null,
                 'paidAmount' => BigDecimal::of('0'),
@@ -205,35 +222,33 @@ class ExpenseFactory extends Factory
         ]);
     }
 
-    public function receivedFromNasa(Tenant $tenant): self
+    public function receivedFromOvh(Tenant $tenant): self
     {
-        // Add randomness to pricing
-        $basePrice1 = fake()->numberBetween(12000, 18000); // 12k-18k per month
-        $quantity1  = fake()->numberBetween(2, 4);         // 2-4 months
-        $total1     = $basePrice1 * $quantity1;
+        // Constant server cost
+        $serverCost = 500;
 
-        $basePrice2 = fake()->numberBetween(20000, 30000); // 20k-30k
+        // Random storage cost between 5-200 PLN
+        $storageCost = fake()->numberBetween(5, 200);
 
-        $basePrice3 = fake()->numberBetween(400, 600);     // 400-600 per hour
-        $quantity3  = fake()->numberBetween(30, 50);       // 30-50 hours
-        $total3     = $basePrice3 * $quantity3;
-
-        $totalNet   = $total1 + $basePrice2 + $total3;
+        $totalNet   = $serverCost + $storageCost;
         $vatRate    = 0.23;
         $totalVat   = $totalNet * $vatRate;
         $totalGross = $totalNet + $totalVat;
 
         return $this->state(fn (array $attributes) => [
-            'currency' => 'PLN',
-            'seller'   => (new InvoicePartyDTOFactory())->make([
+            'currency'          => 'PLN',
+            'total_net'         => $totalNet,
+            'total_tax'         => $totalVat,
+            'total_gross'       => $totalGross,
+            'seller'            => (new InvoicePartyDTOFactory())->make([
                 'contractorType' => 'company',
-                'name'           => 'National Aeronautics and Space Administration',
-                'address'        => '300 E Street SW, Washington, DC 20546',
-                'country'        => 'US',
+                'name'           => 'OVH Sp. z o.o.',
+                'address'        => 'Powstańców Śląskich 9, 53-332 Wrocław',
+                'country'        => 'PL',
                 'contractorId'   => null,
-                'taxId'          => 'US-NASA-2024',
-                'iban'           => null,
-                'email'          => 'procurement@nasa.gov',
+                'taxId'          => 'PL7010439804',
+                'iban'           => 'PL75114011400000215160001002',
+                'email'          => 'billing@ovh.pl',
             ]),
             'buyer' => (new InvoicePartyDTOFactory())->make([
                 'contractorType' => 'company',
@@ -249,50 +264,34 @@ class ExpenseFactory extends Factory
                 'lines' => [
                     (new InvoiceLineDTOFactory())->make([
                         'id'          => Str::ulid()->toString(),
-                        'description' => 'Monthly cloud infrastructure hosting and satellite data storage services',
-                        'quantity'    => BigDecimal::of($quantity1),
-                        'unitPrice'   => BigDecimal::of($basePrice1),
-                        'vatRate'     => new \App\Domain\Financial\DTOs\VatRateDTO(
-                            id: Str::ulid()->toString(),
-                            name: '23% VAT',
-                            rate: 23,
-                            type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
-                        ),
-                        'totalNet'   => BigDecimal::of($total1),
-                        'totalVat'   => BigDecimal::of($total1 * $vatRate),
-                        'totalGross' => BigDecimal::of($total1 * (1 + $vatRate)),
-                        'productId'  => null,
-                    ]),
-                    (new InvoiceLineDTOFactory())->make([
-                        'id'          => Str::ulid()->toString(),
-                        'description' => 'Enterprise software licensing for data processing tools',
+                        'description' => 'Monthly dedicated server hosting',
                         'quantity'    => BigDecimal::of(1),
-                        'unitPrice'   => BigDecimal::of($basePrice2),
+                        'unitPrice'   => BigDecimal::of($serverCost),
                         'vatRate'     => new \App\Domain\Financial\DTOs\VatRateDTO(
                             id: Str::ulid()->toString(),
                             name: '23% VAT',
                             rate: 23,
                             type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
                         ),
-                        'totalNet'   => BigDecimal::of($basePrice2),
-                        'totalVat'   => BigDecimal::of($basePrice2 * $vatRate),
-                        'totalGross' => BigDecimal::of($basePrice2 * (1 + $vatRate)),
+                        'totalNet'   => BigDecimal::of($serverCost),
+                        'totalVat'   => BigDecimal::of($serverCost * $vatRate),
+                        'totalGross' => BigDecimal::of($serverCost * (1 + $vatRate)),
                         'productId'  => null,
                     ]),
                     (new InvoiceLineDTOFactory())->make([
                         'id'          => Str::ulid()->toString(),
-                        'description' => 'Specialized consulting services for mission-critical applications',
-                        'quantity'    => BigDecimal::of($quantity3),
-                        'unitPrice'   => BigDecimal::of($basePrice3),
+                        'description' => 'Additional storage services',
+                        'quantity'    => BigDecimal::of(1),
+                        'unitPrice'   => BigDecimal::of($storageCost),
                         'vatRate'     => new \App\Domain\Financial\DTOs\VatRateDTO(
                             id: Str::ulid()->toString(),
                             name: '23% VAT',
                             rate: 23,
                             type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
                         ),
-                        'totalNet'   => BigDecimal::of($total3),
-                        'totalVat'   => BigDecimal::of($total3 * $vatRate),
-                        'totalGross' => BigDecimal::of($total3 * (1 + $vatRate)),
+                        'totalNet'   => BigDecimal::of($storageCost),
+                        'totalVat'   => BigDecimal::of($storageCost * $vatRate),
+                        'totalGross' => BigDecimal::of($storageCost * (1 + $vatRate)),
                         'productId'  => null,
                     ]),
                 ],
@@ -301,23 +300,23 @@ class ExpenseFactory extends Factory
                     'exchangeRate' => BigDecimal::of('1.0'),
                     'date'         => now()->toDateString(),
                 ]),
-                'description' => 'Services provided under Contract #NASA-2024-SB-001. Payment due within 30 days.',
+                'description' => 'Services provided under Contract #OVH-2024-SB-001. Payment due within 30 days.',
             ]),
             'payment' => (new InvoicePaymentDTOFactory())->make([
-                'status'     => \App\Domain\Financial\Enums\PaymentStatus::PENDING,
-                'dueDate'    => null, // Will be set by withDates method
-                'paidDate'   => null,
-                'paidAmount' => BigDecimal::of('0'),
-                'method'     => \App\Domain\Financial\Enums\PaymentMethod::BANK_TRANSFER,
-                'reference'  => 'NASA-EXP-2024-001',
-                'terms'      => 'Net 30',
-                'notes'      => 'Expense from NASA services',
-            ]),
-            'options' => (new InvoiceOptionsDTOFactory())->make([
-                'language'  => 'en',
-                'template'  => 'standard',
-                'sendEmail' => false,
-                'emailTo'   => [$tenant->email ?? fake()->email()],
+                'status'      => PaymentStatus::PENDING,
+                'dueDate'     => null, // Will be set by withDates method
+                'paidDate'    => null,
+                'paidAmount'  => BigDecimal::of('0'),
+                'method'      => \App\Domain\Financial\Enums\PaymentMethod::BANK_TRANSFER,
+                'reference'   => 'OVH-EXP-2024-001',
+                'terms'       => 'Net 30',
+                'notes'       => 'Expense from OVH services',
+                'bankAccount' => new InvoicePaymentBankAccountDTO(
+                    iban: 'PL75114011400000215160001002',
+                    country: 'PL',
+                    swift: 'BREXPLPWROC',
+                    bankName: 'mBank S.A.',
+                ),
             ]),
         ]);
     }

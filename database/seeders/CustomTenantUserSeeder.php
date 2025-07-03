@@ -456,6 +456,19 @@ class CustomTenantUserSeeder extends Seeder
                     ])->toArray()
             );
         }
+
+        $tenant->invoices()->create(
+            Invoice::factory()
+                ->soldServicesToContractor($tenant, $contractor, $product)
+                ->withDates(now(), now()->addDays(14))
+                ->make([
+                    'number'                => "DEMO/{$template->generateNextNumber()}",
+                    'type'                  => InvoiceType::Basic,
+                    'numbering_template_id' => $template->id,
+                    'status'                => InvoiceStatus::ISSUED,
+                    'created_at'            => now(),
+                ])->toArray()
+        );
     }
 
     protected function createExpenses(Tenant $tenant): void
@@ -469,7 +482,7 @@ class CustomTenantUserSeeder extends Seeder
 
             $tenant->expenses()->create(
                 Expense::factory()
-                    ->receivedFromNasa($tenant)
+                    ->receivedFromOvh($tenant)
                     ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
                     ->make([
                         'type'       => InvoiceType::Import,

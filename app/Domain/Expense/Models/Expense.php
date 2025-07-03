@@ -2,6 +2,7 @@
 
 namespace App\Domain\Expense\Models;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Common\Models\OcrRequest;
@@ -9,6 +10,7 @@ use App\Domain\Common\Models\Tag;
 use App\Domain\Common\Traits\HasActivityLog;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasTags;
+use App\Domain\Common\Traits\IsCreatableByUser;
 use App\Domain\Common\Traits\IsSearchable;
 use App\Domain\Financial\Casts\BigDecimalCast;
 use App\Domain\Financial\Casts\InvoiceBodyCast;
@@ -40,7 +42,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string                             $id
  * @property string                             $tenant_id
  * @property InvoiceType                        $type
- * @property InvoiceStatus                      $generalStatus
+ * @property InvoiceStatus                      $status
  * @property OcrRequestStatus                   $ocrStatus
  * @property AllocationStatus                   $allocationStatus
  * @property ApprovalStatus                     $approvalStatus
@@ -60,6 +62,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Collection<Tag>                    $tags
  * @property OcrRequest                         $ocrRequest
  * @property Collection<int, ExpenseAllocation> $allocations
+ * @property User                               $createdByUser
  */
 class Expense extends BaseModel implements HasMedia
 {
@@ -71,11 +74,12 @@ class Expense extends BaseModel implements HasMedia
     use InteractsWithMedia;
     use HasActivityLog;
     use HasActivityLogging;
+    use IsCreatableByUser;
 
     protected $fillable = [
         'type',
         'issue_date',
-        'general_status',
+        'status',
         'ocr_status',
         'allocation_status',
         'approval_status',
@@ -96,7 +100,7 @@ class Expense extends BaseModel implements HasMedia
 
     protected $casts = [
         'type'              => InvoiceType::class,
-        'general_status'    => InvoiceStatus::class,
+        'status'            => InvoiceStatus::class,
         'ocr_status'        => OcrRequestStatus::class,
         'allocation_status' => AllocationStatus::class,
         'approval_status'   => ApprovalStatus::class,
@@ -180,7 +184,7 @@ class Expense extends BaseModel implements HasMedia
     public function getStatusDTO(): \App\Domain\Financial\DTOs\InvoiceStatusDTO
     {
         return new \App\Domain\Financial\DTOs\InvoiceStatusDTO(
-            general: $this->general_status ?? InvoiceStatus::DRAFT,
+            general: $this->status ?? InvoiceStatus::DRAFT,
             ocr: $this->ocr_status,
             allocation: $this->allocation_status,
             approval: $this->approval_status,
@@ -195,29 +199,13 @@ class Expense extends BaseModel implements HasMedia
     public function updateStatusFromDTO(\App\Domain\Financial\DTOs\InvoiceStatusDTO $statusDTO): void
     {
         $this->update([
-            'general_status'    => $statusDTO->general,
+            'status'            => $statusDTO->general,
             'ocr_status'        => $statusDTO->ocr,
             'allocation_status' => $statusDTO->allocation,
             'approval_status'   => $statusDTO->approval,
             'delivery_status'   => $statusDTO->delivery,
             'payment_status'    => $statusDTO->payment,
         ]);
-    }
-
-    /**
-     * Backward compatibility: get the general status when accessing 'status'.
-     */
-    public function getStatusAttribute(): InvoiceStatus
-    {
-        return $this->general_status ?? InvoiceStatus::DRAFT;
-    }
-
-    /**
-     * Backward compatibility: set the general status when setting 'status'.
-     */
-    public function setStatusAttribute(InvoiceStatus $value): void
-    {
-        $this->general_status = $value;
     }
 
     protected static function newFactory()

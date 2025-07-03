@@ -4,6 +4,9 @@ namespace Database\Factories;
 
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Financial\DTOs\InvoicePaymentBankAccountDTO;
+use App\Domain\Financial\Enums\AllocationStatus;
+use App\Domain\Financial\Enums\ApprovalStatus;
+use App\Domain\Financial\Enums\DeliveryStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Models\Invoice;
@@ -36,11 +39,19 @@ class InvoiceFactory extends Factory
             'id'                    => Str::ulid()->toString(),
             'tenant_id'             => Tenant::factory(),
             'type'                  => fake()->randomElement(InvoiceType::cases()),
-            'general_status'        => fake()->randomElement(InvoiceStatus::cases()),
+            'status'                => fake()->randomElement([
+                ...InvoiceStatus::cases(),
+                InvoiceStatus::ISSUED,
+                InvoiceStatus::ISSUED,
+                InvoiceStatus::ISSUED,
+                InvoiceStatus::COMPLETED,
+                InvoiceStatus::COMPLETED,
+                InvoiceStatus::COMPLETED,
+            ]),
             'ocr_status'            => null,
-            'allocation_status'     => null,
-            'approval_status'       => null,
-            'delivery_status'       => null,
+            'allocation_status'     => AllocationStatus::PENDING,
+            'approval_status'       => ApprovalStatus::NOT_REQUIRED,
+            'delivery_status'       => DeliveryStatus::NOT_SENT,
             'payment_status'        => null,
             'number'                => fake()->unique()->numerify('2025/####'),
             'numbering_template_id' => null, // Will be set when creating
@@ -61,22 +72,22 @@ class InvoiceFactory extends Factory
     public function draft(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status' => InvoiceStatus::DRAFT->value,
+            'status' => InvoiceStatus::DRAFT->value,
         ]);
     }
 
     public function sent(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status'  => InvoiceStatus::ISSUED->value,
-            'delivery_status' => \App\Domain\Financial\Enums\DeliveryStatus::SENT->value,
+            'status'          => InvoiceStatus::ISSUED->value,
+            'delivery_status' => DeliveryStatus::SENT->value,
         ]);
     }
 
     public function paid(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status' => InvoiceStatus::COMPLETED->value,
+            'status'         => InvoiceStatus::COMPLETED->value,
             'payment_status' => \App\Domain\Financial\Enums\PaymentStatus::PAID->value,
             'payment'        => (new InvoicePaymentDTOFactory())->paid(),
         ]);
@@ -85,7 +96,7 @@ class InvoiceFactory extends Factory
     public function cancelled(): self
     {
         return $this->state(fn (array $attributes) => [
-            'general_status' => InvoiceStatus::CANCELLED->value,
+            'status' => InvoiceStatus::CANCELLED->value,
         ]);
     }
 
@@ -144,15 +155,18 @@ class InvoiceFactory extends Factory
     public function soldServicesToContractor(Tenant $tenant, Contractor $contractor, ?Product $product = null): self
     {
         // Add randomness to base prices (±20%)
-        $basePrice1 = fake()->numberBetween(100000, 150000); // 100k-150k instead of fixed 125k
+        $basePrice1 = fake()->numberBetween(5_000, 50_000);
 
         $totalNet   = $basePrice1;
         $totalTax   = $totalNet * 0.23;
         $totalGross = $totalNet + $totalTax;
 
         return $this->state(fn (array $attributes) => [
-            'currency' => 'PLN',
-            'seller'   => (new InvoicePartyDTOFactory())->make([
+            'currency'          => 'PLN',
+            'total_net'         => $totalNet,
+            'total_tax'         => $totalTax,
+            'total_gross'       => $totalGross,
+            'seller'            => (new InvoicePartyDTOFactory())->make([
                 'contractorType' => 'company',
                 'name'           => $tenant->name,
                 'address'        => $tenant->defaultAddress?->full_address ?? $tenant->addresses->first()?->full_address ?? 'You know our address',
@@ -232,8 +246,11 @@ class InvoiceFactory extends Factory
         $totalGross = $totalNet;
 
         return $this->state(fn (array $attributes) => [
-            'currency' => 'PLN',
-            'seller'   => (new InvoicePartyDTOFactory())->make([
+            'currency'          => 'PLN',
+            'total_net'         => $totalNet,
+            'total_tax'         => $totalTax,
+            'total_gross'       => $totalGross,
+            'seller'            => (new InvoicePartyDTOFactory())->make([
                 'contractorType' => 'company',
                 'name'           => $tenant->name,
                 'address'        => $tenant->defaultAddress?->full_address ?? $tenant->addresses->first()?->full_address ?? 'You know our address',

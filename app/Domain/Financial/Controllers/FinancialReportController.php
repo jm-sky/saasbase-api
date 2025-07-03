@@ -221,7 +221,7 @@ class FinancialReportController extends Controller
     private function getRevenueForPeriod(string $tenantId, Carbon $startDate, Carbon $endDate): float
     {
         $result = Invoice::where('tenant_id', $tenantId)
-            ->whereIn('general_status', [InvoiceStatus::ISSUED, InvoiceStatus::COMPLETED])
+            ->whereIn('status', [InvoiceStatus::ISSUED, InvoiceStatus::COMPLETED])
             ->whereBetween('issue_date', [$startDate, $endDate])
             ->get()
             ->sum(function ($invoice) {
@@ -239,7 +239,7 @@ class FinancialReportController extends Controller
     private function getExpensesForPeriod(string $tenantId, Carbon $startDate, Carbon $endDate): float
     {
         $result = Expense::where('tenant_id', $tenantId)
-            ->where('general_status', '!=', InvoiceStatus::CANCELLED)
+            ->where('status', '!=', InvoiceStatus::CANCELLED)
             ->whereBetween('issue_date', [$startDate, $endDate])
             ->get()
             ->sum(function ($expense) {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Financial\Enums\InvoiceStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +13,7 @@ return new class() extends Migration {
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('type');
             $table->date('issue_date');
-            $table->string('general_status')->default('draft');
+            $table->string('status')->default(InvoiceStatus::DRAFT->value);
             $table->string('ocr_status')->nullable();
             $table->string('allocation_status')->nullable();
             $table->string('approval_status')->nullable();
@@ -30,6 +31,7 @@ return new class() extends Migration {
             $table->json('body');
             $table->json('payment');
             $table->json('options');
+            $table->foreignUlid('created_by_user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

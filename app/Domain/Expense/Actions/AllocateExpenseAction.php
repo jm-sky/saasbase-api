@@ -50,7 +50,7 @@ class AllocateExpenseAction
             }
 
             // Update expense status - allocation completed
-            $expense->update(['general_status' => InvoiceStatus::PROCESSING]);
+            $expense->update(['status' => InvoiceStatus::PROCESSING]);
         });
     }
 
@@ -159,8 +159,8 @@ class AllocateExpenseAction
      */
     public function canAllocate(Expense $expense): bool
     {
-        return InvoiceStatus::PROCESSING === $expense->general_status
-               || InvoiceStatus::DRAFT === $expense->general_status;
+        return InvoiceStatus::PROCESSING === $expense->status
+               || InvoiceStatus::DRAFT === $expense->status;
     }
 
     /**
