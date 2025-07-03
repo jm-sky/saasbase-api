@@ -16,6 +16,8 @@ class WelcomeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    protected array $viaList = ['mail', 'database', 'broadcast'];
+
     /**
      * @param ?string $locale
      */
@@ -30,7 +32,14 @@ class WelcomeNotification extends Notification implements ShouldQueue
 
     public function via($notifiable): array
     {
-        return ['mail', 'database', 'broadcast'];
+        return $this->viaList;
+    }
+
+    public function viaDatabaseOnly(): self
+    {
+        $this->viaList = ['database'];
+
+        return $this;
     }
 
     public function toMail($notifiable): MailMessage
