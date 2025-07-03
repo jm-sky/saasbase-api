@@ -151,17 +151,4 @@ class OrgUnitUser extends BaseModel
     {
         return $query->whereNull('position_id');
     }
-
-    public function scopeActive($query)
-    {
-        return $query->where(function ($q) {
-            $q->where('valid_from', '<=', now())
-                ->where(function ($q2) {
-                    $q2->whereNull('valid_until')
-                        ->orWhere('valid_until', '>=', now())
-                    ;
-                })
-            ;
-        });
-    }
 }
