@@ -16,6 +16,7 @@ use App\Domain\Products\Models\AllocationProductCategory;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -31,6 +32,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class AllocationDimension extends BaseModel
 {
+    use HasFactory;
+
     protected $fillable = [
         'allocation_id',
         'dimension_type',

@@ -7,6 +7,7 @@ use App\Domain\Expense\Contracts\AllocationDimensionInterface;
 use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property string  $id
@@ -22,6 +23,7 @@ class AllocationTransactionType extends BaseModel implements AllocationDimension
 {
     use IsGlobalOrBelongsToTenant;
     use HasAllocationDimensionInterface;
+    use HasFactory;
 
     protected $table = 'allocation_transaction_types';
 

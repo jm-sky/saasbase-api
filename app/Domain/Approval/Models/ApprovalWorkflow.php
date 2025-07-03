@@ -9,6 +9,7 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ApprovalWorkflow extends BaseModel
 {
     use BelongsToTenant;
+    use HasFactory;
 
     protected $fillable = [
         'tenant_id',
