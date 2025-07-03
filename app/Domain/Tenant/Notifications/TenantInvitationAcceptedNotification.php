@@ -15,6 +15,8 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
 {
     use Queueable;
 
+    protected array $viaList = ['database', 'broadcast'];
+
     /**
      * @param ?string $locale
      */
@@ -30,7 +32,14 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
 
     public function via($notifiable): array
     {
-        return ['database', 'broadcast'];
+        return $this->viaList;
+    }
+
+    public function viaDatabaseOnly(): self
+    {
+        $this->viaList = ['database'];
+
+        return $this;
     }
 
     public function toDatabase($notifiable): array
