@@ -10,21 +10,22 @@ use Carbon\Carbon;
 
 class InvoicePaymentDTOFactory extends DTOFactory
 {
-    public function make(): InvoicePaymentDTO
+    public function make(?array $attributes = []): InvoicePaymentDTO
     {
         return new InvoicePaymentDTO(
-            status: PaymentStatus::PENDING,
-            dueDate: Carbon::now()->addDays(14),
-            paidDate: null,
-            paidAmount: BigDecimal::of('0'),
-            method: fake()->randomElement(PaymentMethod::cases()),
-            reference: fake()->numerify('PAY-####'),
-            terms: 'Net 14',
-            notes: fake()->optional()->sentence(),
+            status: $attributes['status'] ?? PaymentStatus::PENDING,
+            dueDate: $attributes['dueDate'] ?? Carbon::now()->addDays(14),
+            paidDate: $attributes['paidDate'] ?? null,
+            paidAmount: $attributes['paidAmount'] ?? BigDecimal::of('0'),
+            method: $attributes['method'] ?? fake()->randomElement(PaymentMethod::cases()),
+            reference: $attributes['reference'] ?? fake()->numerify('PAY-####'),
+            terms: $attributes['terms'] ?? 'Net 14',
+            notes: $attributes['notes'] ?? fake()->optional()->sentence(),
+            bankAccount: $attributes['bankAccount'] ?? (new InvoicePaymentBankAccountDTOFactory())->make(),
         );
     }
 
-    public function paid(): InvoicePaymentDTO
+    public function paid(?array $attributes = []): InvoicePaymentDTO
     {
         return new InvoicePaymentDTO(
             status: PaymentStatus::PAID,
@@ -35,6 +36,7 @@ class InvoicePaymentDTOFactory extends DTOFactory
             reference: fake()->numerify('PAY-####'),
             terms: 'Net 14',
             notes: fake()->optional()->sentence(),
+            bankAccount: $attributes['bankAccount'] ?? (new InvoicePaymentBankAccountDTOFactory())->make(),
         );
     }
 }

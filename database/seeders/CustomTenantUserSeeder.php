@@ -3,13 +3,17 @@
 namespace Database\Seeders;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Auth\Notifications\WelcomeNotification;
 use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Models\VatRate;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Expense\Models\Expense;
+use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Products\Enums\ProductType;
+use App\Domain\Products\Models\Product;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectRole;
 use App\Domain\Projects\Models\ProjectStatus;
@@ -20,7 +24,9 @@ use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Tenant;
+use App\Helpers\Ulid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
@@ -95,10 +101,12 @@ class CustomTenantUserSeeder extends Seeder
                 ]);
 
                 $initializer = new InitializeTenantDefaults();
-                $initializer->createRootOrganizationUnit($tenant);
+                $rootUnit    = $initializer->createRootOrganizationUnit($tenant);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);
+
+                $this->createOrganizationUnits($tenant, $rootUnit);
             });
 
             $this->createTenantLogo($tenant, Arr::get($tenantInput, 'meta.logoUrl'));
@@ -113,6 +121,8 @@ class CustomTenantUserSeeder extends Seeder
 
         foreach ($users as $userData) {
             $userPayload             = collect($userData)->except(['relations', 'meta'])->toArray();
+
+            /** @var User $user */
             $user                    = User::create($userPayload);
             $user->is_active         = true;
             $user->email_verified_at = now();
@@ -125,6 +135,10 @@ class CustomTenantUserSeeder extends Seeder
             $this->createUserTenant($user, Arr::get($userData, 'relations.tenant'));
             $this->createUserSkills($user, Arr::get($userData, 'relations.skills'));
             $this->createUserAvatar($user, Arr::get($userData, 'meta.avatarUrl'));
+
+            if ($user->is_admin) {
+                $user->notify((new WelcomeNotification($user))->viaDatabaseOnly());
+            }
 
             $this->users[$user->id] = $user;
         }
@@ -349,6 +363,7 @@ class CustomTenantUserSeeder extends Seeder
             Tenant::bypassTenant($tenant->id, function () use ($tenant) {
                 $this->createProducts($tenant);
                 $this->createInvoices($tenant);
+                $this->createExpenses($tenant);
             });
         }
     }
@@ -384,13 +399,111 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createInvoices(Tenant $tenant): void
     {
+        /** @var NumberingTemplate $template */
         $template = NumberingTemplate::where('invoice_type', InvoiceType::Basic->value)->where('is_default', true)->first();
 
-        $tenant->invoices()->create(Invoice::factory()->make([
-            'number'                => "TEST/{$template->generateNextNumber()}",
-            'type'                  => InvoiceType::Basic,
-            'numbering_template_id' => $template,
-        ])->toArray());
+        // Generate invoices for the previous year (all 12 months)
+        $previousYear = now()->subYear()->startOfYear();
+
+        for ($i = 0; $i < 12; ++$i) {
+            $invoiceDate = $previousYear->copy()->addMonths($i);
+
+            $tenant->invoices()->create(
+                Invoice::factory()
+                    ->soldServicesToNasa($tenant)
+                    ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
+                    ->make([
+                        'number'                => "TEST/{$template->generateNextNumber()}",
+                        'type'                  => InvoiceType::Basic,
+                        'status'                => InvoiceStatus::COMPLETED,
+                        'numbering_template_id' => $template->id,
+                        'created_at'            => $invoiceDate,
+                    ])->toArray()
+            );
+        }
+
+        // Generate invoices for the current year up to current month
+        $currentYear  = now()->startOfYear();
+        $currentMonth = now()->month;
+
+        $contractor = Contractor::where('tenant_id', $tenant->id)->first();
+        $product    = Product::where('tenant_id', $tenant->id)->first();
+
+        for ($i = 0; $i < $currentMonth; ++$i) {
+            $invoiceDate = $currentYear->copy()->addMonths($i);
+
+            $tenant->invoices()->create(
+                Invoice::factory()
+                    ->soldServicesToNasa($tenant)
+                    ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
+                    ->make([
+                        'number'                => "TEST/{$template->generateNextNumber()}",
+                        'type'                  => InvoiceType::Export,
+                        'numbering_template_id' => $template->id,
+                        'created_at'            => $invoiceDate,
+                    ])->toArray()
+            );
+
+            $tenant->invoices()->create(
+                Invoice::factory()
+                    ->soldServicesToContractor($tenant, $contractor, $product)
+                    ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
+                    ->make([
+                        'number'                => "TEST/{$template->generateNextNumber()}",
+                        'type'                  => InvoiceType::Basic,
+                        'numbering_template_id' => $template->id,
+                        'created_at'            => $invoiceDate,
+                    ])->toArray()
+            );
+        }
+
+        $tenant->invoices()->create(
+            Invoice::factory()
+                ->soldServicesToContractor($tenant, $contractor, $product)
+                ->withDates(now(), now()->addDays(14))
+                ->make([
+                    'number'                => "DEMO/{$template->generateNextNumber()}",
+                    'type'                  => InvoiceType::Basic,
+                    'numbering_template_id' => $template->id,
+                    'status'                => InvoiceStatus::ISSUED,
+                    'created_at'            => now(),
+                ])->toArray()
+        );
+    }
+
+    protected function createExpenses(Tenant $tenant): void
+    {
+        // Generate invoices for the current year up to current month
+        $currentYear  = now()->startOfYear();
+        $currentMonth = now()->month;
+
+        for ($i = 0; $i < $currentMonth; ++$i) {
+            $invoiceDate = $currentYear->copy()->addMonths($i);
+
+            $tenant->expenses()->create(
+                Expense::factory()
+                    ->receivedFromOvh($tenant)
+                    ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
+                    ->make([
+                        'type'       => InvoiceType::Import,
+                        'status'     => InvoiceStatus::ISSUED,
+                        'created_at' => $invoiceDate,
+                    ])->toArray()
+            );
+
+            $invoiceDate = $invoiceDate->copy()->addDays(7);
+
+            $tenant->expenses()->create(
+                Expense::factory()
+                    ->receivedFromBp($tenant)
+                    ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
+                    ->make([
+                        'type'       => InvoiceType::Basic,
+                        'status'     => InvoiceStatus::ISSUED,
+                        'created_at' => $invoiceDate,
+                    ])->toArray()
+            );
+        }
     }
 
     protected function createApiKeys(): void
@@ -413,6 +526,25 @@ class CustomTenantUserSeeder extends Seeder
                     ]);
                 }
             });
+        }
+    }
+
+    protected function createOrganizationUnits(Tenant $tenant, OrganizationUnit $rootUnit): void
+    {
+        $units = [
+            'IT Department',
+            'HR Department',
+            'Finance Department',
+        ];
+
+        foreach ($units as $unit) {
+            OrganizationUnit::create([
+                'id'         => Ulid::deterministic([$tenant->id, $unit]),
+                'tenant_id'  => $tenant->id,
+                'parent_id'  => $rootUnit->id,
+                'name'       => $unit,
+                'code'       => Str::slug($unit),
+            ]);
         }
     }
 }

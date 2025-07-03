@@ -13,9 +13,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 final class InvoiceBodyDTO extends BaseDataDTO
 {
     public function __construct(
-        /** @var InvoiceLineDTO[] */
         public array $lines,
-        /** @var InvoiceVatSummaryDTO[] */
         public array $vatSummary,
         public InvoiceExchangeDTO $exchange,
         public ?string $description,

@@ -59,7 +59,7 @@ class NumberingTemplate extends BaseModel
     /**
      * Generate the next invoice number based on the template format.
      */
-    public function generateNextNumber(): string
+    public function generateNextNumber(bool $increment = true): string
     {
         $number = str_pad((string) $this->next_number, 3, '0', STR_PAD_LEFT);
 
@@ -76,6 +76,11 @@ class NumberingTemplate extends BaseModel
 
         if ($this->suffix) {
             $format = $format . $this->suffix;
+        }
+
+        if ($increment) {
+            ++$this->next_number;
+            $this->save();
         }
 
         return $format;

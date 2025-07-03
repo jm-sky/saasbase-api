@@ -45,6 +45,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
@@ -106,7 +107,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
     use HasApiTokens;
     use HasFactory;
     use HasUlids;
-    use UlidNotifiable;
+    // use UlidNotifiable;
+    use Notifiable;
     use SoftDeletes;
     use InteractsWithMedia;
     use HasMediaSignedUrls;

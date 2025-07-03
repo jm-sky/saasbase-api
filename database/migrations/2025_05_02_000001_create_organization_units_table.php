@@ -11,10 +11,13 @@ return new class() extends Migration {
             $table->ulid('id')->primary();
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->string('short_name')->nullable();
+            $table->string('code');
+            $table->string('description')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->unique(['tenant_id', 'name']);
+            $table->unique(['tenant_id', 'code']);
         });
 
         Schema::table('organization_units', function (Blueprint $table) {

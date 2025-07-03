@@ -23,7 +23,15 @@ class InvoiceResource extends JsonResource
             'id'                  => $this->id,
             'tenantId'            => $this->tenant_id,
             'type'                => $this->type->value,
-            'status'              => $this->status->value,
+            'status'              => $this->status->value, // Backward compatibility
+            'statusInfo'          => [
+                'general'    => $this->status?->value,
+                'ocr'        => $this->ocr_status?->value,
+                'allocation' => $this->allocation_status?->value,
+                'approval'   => $this->approval_status?->value,
+                'delivery'   => $this->delivery_status?->value,
+                'payment'    => $this->payment_status?->value,
+            ],
             'number'              => $this->number,
             'numberingTemplateId' => $this->numbering_template_id,
             'totalNet'            => $this->total_net->toFloat(),

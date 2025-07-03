@@ -15,7 +15,7 @@ class MarkNotificationsAsReadRequest extends BaseFormRequest
     {
         return [
             'ids'   => ['required', 'array'],
-            'ids.*' => ['required', 'ulid', 'exists:notifications,id'],
+            'ids.*' => ['required', 'uuid', 'exists:notifications,id'],
         ];
     }
 }

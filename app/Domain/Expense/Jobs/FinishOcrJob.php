@@ -61,7 +61,7 @@ class FinishOcrJob implements ShouldQueue
         ]);
 
         $this->ocrRequest->processable->update([
-            'status' => InvoiceStatus::OCR_FAILED,
+            'status' => InvoiceStatus::DRAFT,
         ]);
 
         $this->fail($ex);
