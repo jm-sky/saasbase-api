@@ -2,7 +2,6 @@
 
 namespace App\Domain\Tenant\Resources;
 
-use App\Domain\Common\Resources\UserPreviewResource;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +19,7 @@ class OrganizationUnitResource extends JsonResource
             'description' => $this->description,
             'isActive'    => $this->is_active,
             'parentId'    => $this->parent_id,
-            'users'       => UserPreviewResource::collection($this->users),
+            'users'       => OrganizationUnitUserResource::collection($this->users),
             'createdAt'   => $this->created_at->toIso8601String(),
             'updatedAt'   => $this->updated_at->toIso8601String(),
         ];

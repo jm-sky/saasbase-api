@@ -22,6 +22,7 @@ use App\Domain\Projects\Models\Project;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\BillingInfo;
 use App\Domain\Subscription\Models\Subscription;
+use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Enums\TenantActivityType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -209,6 +210,26 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function organizationUnits(): HasMany
+    {
+        return $this->hasMany(OrganizationUnit::class);
+    }
+
+    public function rootOrganizationUnit(): HasOne
+    {
+        return $this->hasOne(OrganizationUnit::class)->whereNull('parent_id');
+    }
+
+    public function attachUserToRootOrganizationUnit(User $user, OrgUnitRole $role): void
+    {
+        OrgUnitUser::firstOrCreate([
+            'organization_unit_id' => $this->rootOrganizationUnit->id,
+            'user_id'              => $user->id,
+        ], [
+            'role' => $role->value,
+        ]);
     }
 
     public function registerMediaCollections(): void

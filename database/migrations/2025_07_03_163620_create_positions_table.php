@@ -38,7 +38,8 @@ return new class() extends Migration {
             $table->index(['tenant_id', 'organization_unit_id']);
 
             // Foreign key for role_name (optional constraint)
-            $table->foreign('role_name')->references('name')->on('roles')->nullOnDelete();
+            // $table->foreign('role_name')->references('name')->on('roles')->nullOnDelete();
+            $table->foreign(['tenant_id', 'role_name'])->references(['tenant_id', 'name'])->on('roles')->nullOnDelete();
         });
     }
 

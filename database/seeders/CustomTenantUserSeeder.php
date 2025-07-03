@@ -22,6 +22,7 @@ use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
 use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
+use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\OrganizationUnit;
@@ -101,7 +102,7 @@ class CustomTenantUserSeeder extends Seeder
                 ]);
 
                 $initializer = new InitializeTenantDefaults();
-                $rootUnit    = $initializer->createRootOrganizationUnit($tenant);
+                $rootUnit    = $initializer->createRootOrganizationUnit($tenant, $tenant->owner);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);
@@ -165,6 +166,14 @@ class CustomTenantUserSeeder extends Seeder
         if ($isOwner) {
             $tenant->owner_id = $user->id;
             $tenant->save();
+
+            Tenant::bypassTenant($tenant->id, function () use ($tenant, $user) {
+                $tenant->attachUserToRootOrganizationUnit($user, OrgUnitRole::Owner);
+            });
+        } else {
+            Tenant::bypassTenant($tenant->id, function () use ($tenant, $user) {
+                $tenant->attachUserToRootOrganizationUnit($user, OrgUnitRole::Employee);
+            });
         }
     }
 

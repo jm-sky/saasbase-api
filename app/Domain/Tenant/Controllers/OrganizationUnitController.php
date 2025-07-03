@@ -21,6 +21,7 @@ class OrganizationUnitController extends Controller
         $tenantId = $user->tenant_id;
 
         $units = OrganizationUnit::query()
+            ->with('users')
             ->where('tenant_id', $tenantId)
             ->get()
         ;
