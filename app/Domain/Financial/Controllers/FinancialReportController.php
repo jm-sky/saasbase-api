@@ -57,12 +57,16 @@ class FinancialReportController extends Controller
         $previousYearBalance  = $previousYearRevenue - $previousYearExpenses;
 
         $data = [
-            'currentMonth' => [
-                'balance'       => $currentMonthBalance,
+            'month' => [
+                'current'       => $currentMonthBalance,
+                'previous'      => $previousMonthBalance,
+                'year'          => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousMonthBalance, $currentMonthBalance),
             ],
-            'currentYear' => [
-                'balance'       => $currentYearBalance,
+            'year' => [
+                'current'       => $currentYearBalance,
+                'previous'      => $previousYearBalance,
+                'year'          => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousYearBalance, $currentYearBalance),
             ],
         ];
@@ -102,12 +106,16 @@ class FinancialReportController extends Controller
         $previousYearRevenue = $this->getRevenueForPeriod($tenantId, $previousYear, $previousYear->copy()->endOfYear());
 
         $data = [
-            'currentMonth' => [
-                'revenue'       => $currentMonthRevenue,
+            'month' => [
+                'current'       => $currentMonthRevenue,
+                'previous'      => $previousMonthRevenue,
+                'year'          => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousMonthRevenue, $currentMonthRevenue),
             ],
-            'currentYear' => [
-                'revenue'       => $currentYearRevenue,
+            'year' => [
+                'current'       => $currentYearRevenue,
+                'previous'      => $previousYearRevenue,
+                'year'          => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousYearRevenue, $currentYearRevenue),
             ],
         ];
@@ -147,12 +155,16 @@ class FinancialReportController extends Controller
         $previousYearExpenses = $this->getExpensesForPeriod($tenantId, $previousYear, $previousYear->copy()->endOfYear());
 
         $data = [
-            'currentMonth' => [
-                'expenses'      => $currentMonthExpenses,
+            'month' => [
+                'current'       => $currentMonthExpenses,
+                'previous'      => $previousMonthExpenses,
+                'year'          => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousMonthExpenses, $currentMonthExpenses),
             ],
-            'currentYear' => [
-                'expenses'      => $currentYearExpenses,
+            'year' => [
+                'current'       => $currentYearExpenses,
+                'previous'      => $previousYearExpenses,
+                'year'          => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousYearExpenses, $currentYearExpenses),
             ],
         ];

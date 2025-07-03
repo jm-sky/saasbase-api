@@ -15,14 +15,8 @@ class FinancialRevenueWidgetResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'currentMonth' => [
-                'revenue'       => $this->resource['currentMonth']['revenue'],
-                'changePercent' => $this->resource['currentMonth']['changePercent'],
-            ],
-            'currentYear' => [
-                'revenue'       => $this->resource['currentYear']['revenue'],
-                'changePercent' => $this->resource['currentYear']['changePercent'],
-            ],
+            'month' => FinancialWidgetMetricsResource::make($this->resource['month']),
+            'year'  => FinancialWidgetMetricsResource::make($this->resource['year']),
         ];
     }
 }

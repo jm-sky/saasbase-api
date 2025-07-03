@@ -19,7 +19,6 @@ class FinancialOverviewWidgetResource extends JsonResource
             'months' => collect($this->resource['months'])->map(function ($month) {
                 return [
                     'month'     => $month['month'],
-                    'monthName' => $month['monthName'],
                     'revenue'   => $month['revenue'],
                     'expenses'  => $month['expenses'],
                     'balance'   => $month['balance'],
