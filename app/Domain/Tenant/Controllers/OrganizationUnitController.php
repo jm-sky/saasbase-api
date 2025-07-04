@@ -51,8 +51,13 @@ class OrganizationUnitController extends Controller
         return new OrganizationUnitResource($unit);
     }
 
-    public function show(OrganizationUnit $unit): OrganizationUnitResource
+    public function show(string $tenantId, string $unitId): OrganizationUnitResource
     {
+        $unit = OrganizationUnit::where('tenant_id', $tenantId)
+            ->where('id', $unitId)
+            ->firstOrFail()
+        ;
+
         return new OrganizationUnitResource($unit);
     }
 
