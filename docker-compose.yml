@@ -1,5 +1,5 @@
 services:
-    saasbase.test:
+    laravel.test:
         build:
             context: './docker/dev/php'
             dockerfile: Dockerfile
@@ -8,7 +8,7 @@ services:
                 NODE_VERSION: '20'
         image: 'sail-8.3/app'
         extra_hosts:
-            - 'host.docker.internal:host-gateway'
+        - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
         environment:

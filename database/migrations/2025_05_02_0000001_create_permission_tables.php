@@ -36,7 +36,8 @@ return new class() extends Migration {
             $table->foreignUlid('tenant_id')->nullable()->constrained('tenants')->onDelete('cascade');
             $table->timestamps();
 
-            $table->unique(['name', 'guard_name', 'tenant_id']);
+            // $table->unique(['name', 'guard_name', 'tenant_id']);
+            $table->unique(['name', 'tenant_id']);
         });
 
         Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission) {

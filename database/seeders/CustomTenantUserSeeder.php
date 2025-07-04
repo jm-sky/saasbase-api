@@ -22,10 +22,13 @@ use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
 use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
+use App\Domain\Tenant\Enums\DefaultPositionCategory;
 use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\OrganizationUnit;
+use App\Domain\Tenant\Models\PositionCategory;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Services\OrganizationPositionService;
 use App\Helpers\Ulid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
@@ -38,8 +41,14 @@ class CustomTenantUserSeeder extends Seeder
 
     protected array $data = [];
 
+    /**
+     * @var array<string, Tenant>
+     */
     protected array $tenants = [];
 
+    /**
+     * @var array<string, User>
+     */
     protected array $users = [];
 
     public function run(): void
@@ -101,7 +110,8 @@ class CustomTenantUserSeeder extends Seeder
                 ]);
 
                 $initializer = new InitializeTenantDefaults();
-                $rootUnit    = $initializer->createRootOrganizationUnit($tenant);
+                $initializer->createDefaultPositionCategories($tenant);
+                $rootUnit    = $initializer->createOrganizationUnits($tenant, $tenant->owner);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);
@@ -162,9 +172,20 @@ class CustomTenantUserSeeder extends Seeder
 
         $tenant->users()->attach($user, ['role' => $role]);
 
+        $organizationPositionService = new OrganizationPositionService($tenant);
+
         if ($isOwner) {
             $tenant->owner_id = $user->id;
             $tenant->save();
+
+            Tenant::bypassTenant($tenant->id, function () use ($tenant, $user, $organizationPositionService) {
+                $directorPosition = $tenant->rootOrganizationUnit->positions()->where('name', DefaultPositionCategory::Director->value)->first();
+                $organizationPositionService->assignUserToPosition($user, $tenant->rootOrganizationUnit, $directorPosition);
+            });
+        } else {
+            Tenant::bypassTenant($tenant->id, function () use ($tenant, $user, $organizationPositionService) {
+                $organizationPositionService->assignUserToPosition($user, $tenant->unassignedOrganizationUnit);
+            });
         }
     }
 
@@ -538,13 +559,33 @@ class CustomTenantUserSeeder extends Seeder
         ];
 
         foreach ($units as $unit) {
-            OrganizationUnit::create([
+            $unit = OrganizationUnit::create([
                 'id'         => Ulid::deterministic([$tenant->id, $unit]),
                 'tenant_id'  => $tenant->id,
                 'parent_id'  => $rootUnit->id,
                 'name'       => $unit,
                 'code'       => Str::slug($unit),
             ]);
+
+            $categories = [
+                DefaultPositionCategory::Director,
+                DefaultPositionCategory::Employee,
+                DefaultPositionCategory::Trainee,
+            ];
+
+            foreach ($categories as $category) {
+                $position = $unit->positions()->create([
+                    'id'                   => Ulid::deterministic([$tenant->id, $unit, 'position', $category->value]),
+                    'tenant_id'            => $tenant->id,
+                    'organization_unit_id' => $unit->id,
+                    'position_category_id' => PositionCategory::where('name', $category->value)->first()->id,
+                    'name'                 => $category->value,
+                    'description'          => $category->value . ' position',
+                    'is_active'            => true,
+                    'is_director'          => DefaultPositionCategory::Director === $category,
+                    'is_learning'          => DefaultPositionCategory::Trainee === $category,
+                ]);
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ return new class() extends Migration {
             $table->string('code');
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_technical')->default(false);
             $table->timestamps();
 
             $table->unique(['tenant_id', 'name']);

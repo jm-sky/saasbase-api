@@ -90,7 +90,7 @@
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" --names=server,queue,logs"
         ],
-        "stan": [
+        "larastan": [
             "./vendor/bin/phpstan analyse --memory-limit=2G"
         ],
         "cs": [
