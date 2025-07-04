@@ -2,18 +2,33 @@
 
 namespace App\Domain\Tenant\Controllers;
 
+use Illuminate\Http\Request;
 use App\Domain\Auth\Models\User;
-use App\Domain\Tenant\Models\OrganizationUnit;
-use App\Domain\Tenant\Requests\StoreOrganizationUnitRequest;
-use App\Domain\Tenant\Resources\OrganizationUnitResource;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Domain\Tenant\Models\Tenant;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Domain\Tenant\Models\Position;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use Symfony\Component\HttpFoundation\Response;
+use App\Domain\Tenant\Support\TenantIdResolver;
+use App\Domain\Tenant\Resources\OrganizationUnitResource;
+use App\Domain\Tenant\Services\OrganizationPositionService;
+use App\Domain\Tenant\Requests\StoreOrganizationUnitRequest;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrganizationUnitController extends Controller
 {
+    private Tenant $tenant;
+
+    private OrganizationPositionService $organizationPositionService;
+
+    public function __construct()
+    {
+        $this->tenant                      = Tenant::find(TenantIdResolver::resolve());
+        $this->organizationPositionService = new OrganizationPositionService($this->tenant);
+    }
+
     public function index(): AnonymousResourceCollection
     {
         /** @var User $user */
@@ -21,7 +36,7 @@ class OrganizationUnitController extends Controller
         $tenantId = $user->tenant_id;
 
         $units = OrganizationUnit::query()
-            ->with('users', 'parent')
+            ->with('activeUsers', 'parent', 'positions')
             ->where('tenant_id', $tenantId)
             ->get()
         ;
@@ -64,6 +79,20 @@ class OrganizationUnitController extends Controller
         }
 
         $unit->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function assignUserToUnit(Request $request, string $tenantId, string $unitId): JsonResponse
+    {
+        /** @var OrganizationUnit $unit */
+        $unit     = $this->tenant->organizationUnits()->findOrFail($unitId);
+        /** @var User $user */
+        $user     = $this->tenant->users()->findOrFail($request->input('userId'));
+        /** @var Position $position */
+        $position = $unit->positions()->findOrFail($request->input('positionId'));
+
+        $this->organizationPositionService->assignUserToPosition($user, $unit, $position);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

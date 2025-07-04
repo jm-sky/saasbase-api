@@ -31,6 +31,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         })
     ;
 
+    Route::post('tenants/{tenant}/organization-units/{organizationUnit}/users', [OrganizationUnitController::class, 'assignUserToUnit'])->name('tenants.organizationUnits.assignUserToUnit');
     Route::apiResource('tenants/{tenant}/organization-units', OrganizationUnitController::class)->names('tenants.organizationUnits');
 
     Route::apiResource('tenants/{tenant}/addresses', TenantAddressController::class)->names('tenants.addresses');

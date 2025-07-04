@@ -72,6 +72,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property ?BillingInfo                  $billingInfo
  * @property ?Subscription                 $subscription
  * @property ?OrganizationUnit             $rootOrganizationUnit
+ * @property ?OrganizationUnit             $unassignedOrganizationUnit
+ * @property ?OrganizationUnit             $formerEmployeesOrganizationUnit
  */
 class Tenant extends BaseModel implements HasMedia, HasMediaUrl
 {
@@ -224,6 +226,16 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
         return $this->hasOne(OrganizationUnit::class)->whereNull('parent_id');
     }
 
+    public function unassignedOrganizationUnit(): HasOne
+    {
+        return $this->hasOne(OrganizationUnit::class)->unassigned();
+    }
+
+    public function formerEmployeesOrganizationUnit(): HasOne
+    {
+        return $this->hasOne(OrganizationUnit::class)->formerEmployees();
+    }
+
     public function attachUserToRootOrganizationUnit(User $user, OrgUnitRole $role): void
     {
         OrgUnitUser::firstOrCreate([
@@ -231,6 +243,16 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
             'user_id'              => $user->id,
         ], [
             'role' => $role->value,
+        ]);
+    }
+
+    public function attachUserToUnassignedOrganizationUnit(User $user): void
+    {
+        OrgUnitUser::firstOrCreate([
+            'organization_unit_id' => $this->unassignedOrganizationUnit->id,
+            'user_id'              => $user->id,
+        ], [
+            'role' => OrgUnitRole::Employee->value,
         ]);
     }
 

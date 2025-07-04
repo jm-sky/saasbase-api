@@ -13,7 +13,7 @@ class TenantIdResolver
     /**
      * @throws TenantNotFoundException
      */
-    public static function resolve(): string
+    public static function resolve(): ?string
     {
         try {
             /** @var ?User $user */

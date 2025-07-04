@@ -3,33 +3,30 @@
 namespace App\Domain\Tenant\Services;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Tenant\Actions\CreateTechnicalOrganizationUnits;
 use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\OrgUnitUser;
 use App\Domain\Tenant\Models\Position;
+use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Support\TenantIdResolver;
 use Illuminate\Support\Facades\DB;
 
 class OrganizationPositionService
 {
+    private Tenant $tenant;
+
+    public function __construct(?Tenant $tenant = null)
+    {
+        $this->tenant = $tenant ?? Tenant::find(TenantIdResolver::resolve());
+    }
+
     public function createSpecialUnits(): array
     {
-        $awaiting = OrganizationUnit::firstOrCreate([
-            'name' => 'Awaiting Assignment',
-            'code' => 'awaiting-assignment',
-        ], [
-            'description' => 'Temporary unit for new users awaiting assignment',
-            'is_active'   => true,
-        ]);
+        $unassigned = CreateTechnicalOrganizationUnits::createUnassignedUnit($this->tenant, $this->tenant->rootOrganizationUnit);
+        $inactive   = CreateTechnicalOrganizationUnits::createFormerEmployeesUnit($this->tenant, $this->tenant->rootOrganizationUnit);
 
-        $inactive = OrganizationUnit::firstOrCreate([
-            'name' => 'Not Working Anymore',
-            'code' => 'not-working-anymore',
-        ], [
-            'description' => 'Unit for inactive users',
-            'is_active'   => false,
-        ]);
-
-        return [$awaiting, $inactive];
+        return [$unassigned, $inactive];
     }
 
     public function assignUserToPosition(
@@ -40,19 +37,19 @@ class OrganizationPositionService
     ): void {
         DB::transaction(function () use ($user, $unit, $position, $options) {
             // Remove from awaiting if exists
-            $this->removeFromAwaitingAssignment($user);
+            $this->removeFromUnassignedUnit($user);
 
             // Assign to unit with position
             $user->assignToPosition($unit, $position, $options);
         });
     }
 
-    public function removeFromAwaitingAssignment(User $user): void
+    public function removeFromUnassignedUnit(User $user): void
     {
-        $awaitingUnit = OrganizationUnit::where('code', 'awaiting-assignment')->first();
+        $unassignedUnit = $this->tenant->unassignedOrganizationUnit;
 
-        if ($awaitingUnit) {
-            $this->removeUserFromUnit($user, $awaitingUnit);
+        if ($unassignedUnit) {
+            $this->removeUserFromUnit($user, $unassignedUnit);
         }
     }
 
@@ -87,7 +84,7 @@ class OrganizationPositionService
         }
     }
 
-    public function moveToInactive(User $user): void
+    public function moveToFormerEmployees(User $user): void
     {
         DB::transaction(function () use ($user) {
             // @phpstan-ignore-next-line
@@ -101,7 +98,7 @@ class OrganizationPositionService
             $user->syncRoles([]);
 
             // Move to inactive unit
-            $inactiveUnit = OrganizationUnit::where('code', 'not-working-anymore')->first();
+            $inactiveUnit = $this->tenant->formerEmployeesOrganizationUnit;
 
             if ($inactiveUnit) {
                 $user->assignToPosition($inactiveUnit, null, [

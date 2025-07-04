@@ -11,9 +11,9 @@ use App\Domain\Projects\Models\DefaultProjectStatus;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
 use App\Domain\Subscription\Models\SubscriptionPlan;
-use App\Domain\Tenant\Enums\OrgUnitRole;
+use App\Domain\Tenant\Enums\DefaultPositionCategory;
 use App\Domain\Tenant\Models\OrganizationUnit;
-use App\Domain\Tenant\Models\OrgUnitUser;
+use App\Domain\Tenant\Models\PositionCategory;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Support\Str;
 
@@ -39,30 +39,50 @@ class InitializeTenantDefaults
 
     public function execute(Tenant $tenant, ?User $owner = null): void
     {
-        $this->createOrganizationUnits($tenant, $owner);
-        $this->seedDefaultMeasurementUnits($tenant);
-        $this->createSubscription($tenant);
-        $this->seedDefaultTags($tenant);
-        $this->createDefaultPositionCategories($tenant);
+        Tenant::bypassTenant($tenant->id, function () use ($tenant, $owner) {
+            $this->createDefaultPositionCategories($tenant);
+            $this->createOrganizationUnits($tenant, $owner);
+            $this->seedDefaultMeasurementUnits($tenant);
+            $this->seedDefaultTags($tenant);
+            $this->createSubscription($tenant);
+        });
     }
 
-    protected function createSubscription(Tenant $tenant)
+    public function createDefaultPositionCategories(Tenant $tenant): void
     {
-        $subscriptionPlan = SubscriptionPlan::where('name', 'Free')->first();
+        $defaultCategories = [
+            [
+                'name'        => DefaultPositionCategory::Director->value,
+                'slug'        => Str::slug(DefaultPositionCategory::Director->value),
+                'description' => 'Leadership positions',
+                'sort_order'  => 1,
+            ],
+            [
+                'name'        => DefaultPositionCategory::Manager->value,
+                'slug'        => Str::slug(DefaultPositionCategory::Manager->value),
+                'description' => 'Management positions',
+                'sort_order'  => 2,
+            ],
+            [
+                'name'        => DefaultPositionCategory::Employee->value,
+                'slug'        => Str::slug(DefaultPositionCategory::Employee->value),
+                'description' => 'Regular employee positions',
+                'sort_order'  => 3,
+            ],
+            [
+                'name'        => DefaultPositionCategory::Trainee->value,
+                'slug'        => Str::slug(DefaultPositionCategory::Trainee->value),
+                'description' => 'Learning and training positions',
+                'sort_order'  => 4,
+            ],
+        ];
 
-        if (!$subscriptionPlan) {
-            return;
+        foreach ($defaultCategories as $category) {
+            PositionCategory::firstOrCreate([
+                'tenant_id' => $tenant->id,
+                'name'      => $category['name'],
+            ], $category);
         }
-
-        $tenant->subscription()->create([
-            'id'                     => (string) Str::ulid(),
-            'subscription_plan_id'   => $subscriptionPlan->id,
-            'stripe_subscription_id' => null,
-            'status'                 => SubscriptionStatus::ACTIVE,
-            'current_period_start'   => now(),
-            'current_period_end'     => now()->addYear(),
-            'cancel_at_period_end'   => false,
-        ]);
     }
 
     public function createOrganizationUnits(Tenant $tenant, ?User $owner = null): OrganizationUnit
@@ -76,26 +96,12 @@ class InitializeTenantDefaults
 
     public function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): OrganizationUnit
     {
-        $rootUnit = OrganizationUnit::firstOrCreate(
-            ['tenant_id' => $tenant->id, 'parent_id' => null],
-            [
-                'id'         => (string) Str::ulid(),
-                'name'       => $tenant->name,
-                'code'       => Str::slug($tenant->name),
-            ]
-        );
+        $rootUnit = CreateRootOrganizationUnit::createUnit($tenant);
+
+        CreateRootOrganizationUnit::createPositions($rootUnit);
 
         if ($owner) {
-            OrgUnitUser::firstOrCreate(
-                [
-                    'organization_unit_id' => $rootUnit->id,
-                    'user_id'              => $owner->id,
-                ],
-                [
-                    'id'   => (string) Str::ulid(),
-                    'role' => OrgUnitRole::Owner,
-                ]
-            );
+            CreateRootOrganizationUnit::createOwner($tenant, $rootUnit);
         }
 
         return $rootUnit;
@@ -136,6 +142,25 @@ class InitializeTenantDefaults
         }
     }
 
+    protected function createSubscription(Tenant $tenant)
+    {
+        $subscriptionPlan = SubscriptionPlan::where('name', 'Free')->first();
+
+        if (!$subscriptionPlan) {
+            return;
+        }
+
+        $tenant->subscription()->create([
+            'id'                     => (string) Str::ulid(),
+            'subscription_plan_id'   => $subscriptionPlan->id,
+            'stripe_subscription_id' => null,
+            'status'                 => SubscriptionStatus::ACTIVE,
+            'current_period_start'   => now(),
+            'current_period_end'     => now()->addYear(),
+            'cancel_at_period_end'   => false,
+        ]);
+    }
+
     public function seedDefaultTags(Tenant $tenant): void
     {
         foreach (self::$defaultTags as $name => $meta) {
@@ -146,43 +171,6 @@ class InitializeTenantDefaults
             ], [
                 'color'     => $meta['color'],
             ]);
-        }
-    }
-
-    public function createDefaultPositionCategories(Tenant $tenant): void
-    {
-        $defaultCategories = [
-            [
-                'name'        => 'Director',
-                'slug'        => 'director',
-                'description' => 'Leadership positions',
-                'sort_order'  => 1,
-            ],
-            [
-                'name'        => 'Manager',
-                'slug'        => 'manager',
-                'description' => 'Management positions',
-                'sort_order'  => 2,
-            ],
-            [
-                'name'        => 'Employee',
-                'slug'        => 'employee',
-                'description' => 'Regular employee positions',
-                'sort_order'  => 3,
-            ],
-            [
-                'name'        => 'Trainee',
-                'slug'        => 'trainee',
-                'description' => 'Learning and training positions',
-                'sort_order'  => 4,
-            ],
-        ];
-
-        foreach ($defaultCategories as $category) {
-            \App\Domain\Tenant\Models\PositionCategory::firstOrCreate([
-                'tenant_id' => $tenant->id,
-                'name'      => $category['name'],
-            ], $category);
         }
     }
 }

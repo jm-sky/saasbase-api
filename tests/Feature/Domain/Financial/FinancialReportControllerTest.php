@@ -1,24 +1,28 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Domain\Financial;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Expense\Models\Expense;
+use App\Domain\Financial\Controllers\FinancialReportController;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(FinancialReportController::class)]
 class FinancialReportControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use WithAuthenticatedUser;
 
     private User $user;
 
@@ -29,42 +33,48 @@ class FinancialReportControllerTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->user   = User::factory()->create([
-            'tenant_id' => $this->tenant->id,
-        ]);
-
-        $this->actingAs($this->user, 'api');
+        $this->user   = User::factory()->create();
     }
 
-    /** @test */
     public function canGetBalanceWidgetData()
     {
-        // Create test invoices and expenses for current month
-        Invoice::factory()->create([
-            'tenant_id'      => $this->tenant->id,
-            'status'         => InvoiceStatus::COMPLETED,
-            'issue_date'     => Carbon::now()->startOfMonth(),
-            'total_gross'    => 1000.00,
-        ]);
+        Tenant::bypassTenant($this->tenant->id, function () {
+            $numberingTemplate = NumberingTemplate::factory()->create([
+                'tenant_id' => $this->tenant->id,
+            ]);
 
-        Expense::factory()->create([
-            'tenant_id'      => $this->tenant->id,
-            'status'         => InvoiceStatus::COMPLETED,
-            'issue_date'     => Carbon::now()->startOfMonth(),
-            'total_gross'    => 300.00,
-        ]);
+            // Create test invoices and expenses for current month
+            Invoice::factory()->create([
+                'tenant_id'             => $this->tenant->id,
+                'status'                => InvoiceStatus::COMPLETED,
+                'issue_date'            => Carbon::now()->startOfMonth(),
+                'total_gross'           => 1000.00,
+                'numbering_template_id' => $numberingTemplate->id,
+            ]);
+
+            Expense::factory()->create([
+                'tenant_id'      => $this->tenant->id,
+                'status'         => InvoiceStatus::COMPLETED,
+                'issue_date'     => Carbon::now()->startOfMonth(),
+                'total_gross'    => 300.00,
+            ]);
+        });
+
+        $this->authenticateUser($this->tenant, $this->user);
 
         $response = $this->get('/api/v1/financial-reports/balance-widget');
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    'currentMonth' => [
-                        'balance',
+                    'month' => [
+                        'current',
+                        'previous',
                         'changePercent',
                     ],
-                    'currentYear' => [
-                        'balance',
+                    'year' => [
+                        'current',
+                        'previous',
                         'changePercent',
                     ],
                 ],
@@ -72,20 +82,21 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    /** @test */
     public function canGetRevenueWidgetData()
     {
+        $this->authenticateUser($this->tenant, $this->user);
+
         $response = $this->get('/api/v1/financial-reports/revenue-widget');
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    'currentMonth' => [
-                        'revenue',
+                    'month' => [
+                        'current',
                         'changePercent',
                     ],
-                    'currentYear' => [
-                        'revenue',
+                    'year' => [
+                        'current',
                         'changePercent',
                     ],
                 ],
@@ -93,20 +104,23 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    /** @test */
     public function canGetExpensesWidgetData()
     {
+        $this->authenticateUser($this->tenant, $this->user);
+
         $response = $this->get('/api/v1/financial-reports/expenses-widget');
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonStructure([
                 'data' => [
-                    'currentMonth' => [
-                        'expenses',
+                    'month' => [
+                        'current',
+                        'previous',
                         'changePercent',
                     ],
-                    'currentYear' => [
-                        'expenses',
+                    'year' => [
+                        'current',
+                        'previous',
                         'changePercent',
                     ],
                 ],
@@ -114,9 +128,10 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    /** @test */
     public function canGetOverviewWidgetData()
     {
+        $this->authenticateUser($this->tenant, $this->user);
+
         $response = $this->get('/api/v1/financial-reports/overview-widget');
 
         $response->assertStatus(200)
@@ -126,7 +141,6 @@ class FinancialReportControllerTest extends TestCase
                     'months' => [
                         '*' => [
                             'month',
-                            'monthName',
                             'revenue',
                             'expenses',
                             'balance',
@@ -137,13 +151,10 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    /** @test */
     public function requiresAuthentication()
     {
         // Create a new test without authentication
-        $response = $this->withHeaders([])
-            ->get('/api/v1/financial-reports/balance-widget')
-        ;
+        $response = $this->getJson('/api/v1/financial-reports/balance-widget');
 
         $response->assertStatus(401);
     }

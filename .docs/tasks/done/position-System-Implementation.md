@@ -567,7 +567,7 @@ class OrganizationPositionService
         }
     }
     
-    public function moveToInactive(User $user): void
+    public function moveToFormerEmployees(User $user): void
     {
         DB::transaction(function() use ($user) {
             // End all current assignments

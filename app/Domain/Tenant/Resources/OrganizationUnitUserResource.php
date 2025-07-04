@@ -28,6 +28,7 @@ class OrganizationUnitUserResource extends JsonResource
             'email'     => $this->email,
             'avatarUrl' => $this->getMediaSignedUrl('profile'),
             'role'      => $this->pivot->role,
+            'position'  => $this->pivot->position?->name,
         ];
     }
 }

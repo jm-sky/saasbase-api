@@ -22,7 +22,8 @@ class OrganizationUnitResource extends JsonResource
             'isTechnical' => $this->is_technical,
             'parentId'    => $this->parent_id,
             'parent'      => new OrganizationUnitPreviewResource($this->parent),
-            'users'       => OrganizationUnitUserResource::collection($this->users),
+            'users'       => OrganizationUnitUserResource::collection($this->activeUsers),
+            'positions'   => PositionResource::collection($this->activePositions),
             'createdAt'   => $this->created_at->toIso8601String(),
             'updatedAt'   => $this->updated_at->toIso8601String(),
         ];

@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Expense\Contracts\AllocationDimensionInterface;
 use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
+use App\Domain\Tenant\Enums\TechnicalOrganizationUnit;
 use App\Domain\Tenant\Enums\UnitRoleLevel;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Carbon\Carbon;
@@ -33,6 +34,8 @@ use Illuminate\Support\Str;
  * @property Collection<int, User>             $users
  * @property Collection<int, OrgUnitUser>      $orgUnitUsers
  * @property Collection<int, OrgUnitUser>      $workflowMemberships
+ * @property Collection<int, Position>         $positions
+ * @property Collection<int, Position>         $activePositions
  */
 class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 {
@@ -93,6 +96,22 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
     {
         return $this->belongsToMany(User::class, 'org_unit_user')
             ->withPivot(['role', 'workflow_role_level', 'is_primary', 'valid_from', 'valid_until'])
+            ->withTimestamps()
+        ;
+    }
+
+    // Legacy relationship - keep for backward compatibility
+    public function activeUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'org_unit_user')
+            ->withPivot(['role', 'workflow_role_level', 'is_primary', 'valid_from', 'valid_until'])
+            ->wherePivot('is_active', true)
+            ->wherePivot('valid_from', '<=', now())
+            ->where(function ($query) {
+                $query->whereNull('valid_until')
+                    ->orWhere('valid_until', '>=', now())
+                ;
+            })
             ->withTimestamps()
         ;
     }
@@ -242,6 +261,21 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeTechnical($query)
+    {
+        return $query->where('is_technical', true);
+    }
+
+    public function scopeUnassigned($query)
+    {
+        return $query->technical()->where('code', TechnicalOrganizationUnit::Unassigned->value);
+    }
+
+    public function scopeFormerEmployees($query)
+    {
+        return $query->technical()->where('code', TechnicalOrganizationUnit::FormerEmployees->value);
     }
 
     /**
