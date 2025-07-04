@@ -2,20 +2,20 @@
 
 namespace App\Domain\Tenant\Controllers;
 
-use Illuminate\Http\Request;
 use App\Domain\Auth\Models\User;
-use Illuminate\Http\JsonResponse;
-use App\Domain\Tenant\Models\Tenant;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Domain\Tenant\Models\Position;
 use App\Domain\Tenant\Models\OrganizationUnit;
-use Symfony\Component\HttpFoundation\Response;
-use App\Domain\Tenant\Support\TenantIdResolver;
+use App\Domain\Tenant\Models\Position;
+use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Requests\StoreOrganizationUnitRequest;
 use App\Domain\Tenant\Resources\OrganizationUnitResource;
 use App\Domain\Tenant\Services\OrganizationPositionService;
-use App\Domain\Tenant\Requests\StoreOrganizationUnitRequest;
+use App\Domain\Tenant\Support\TenantIdResolver;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrganizationUnitController extends Controller
 {
