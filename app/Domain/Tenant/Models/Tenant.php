@@ -65,11 +65,13 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Collection<Project>           $projects
  * @property Collection<Contractor>        $contractors
  * @property Collection<Product>           $products
+ * @property Collection<OrganizationUnit>  $organizationUnits
  * @property Collection<Invoice>           $invoices
  * @property Collection<Expense>           $expenses
  * @property ?BillingCustomer              $billingCustomer
  * @property ?BillingInfo                  $billingInfo
  * @property ?Subscription                 $subscription
+ * @property ?OrganizationUnit             $rootOrganizationUnit
  */
 class Tenant extends BaseModel implements HasMedia, HasMediaUrl
 {

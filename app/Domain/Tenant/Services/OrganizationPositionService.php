@@ -5,6 +5,7 @@ namespace App\Domain\Tenant\Services;
 use App\Domain\Auth\Models\User;
 use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Models\OrganizationUnit;
+use App\Domain\Tenant\Models\OrgUnitUser;
 use App\Domain\Tenant\Models\Position;
 use Illuminate\Support\Facades\DB;
 
@@ -55,21 +56,20 @@ class OrganizationPositionService
         }
     }
 
-    public function removeUserFromUnit(User $user, OrganizationUnit $unit, $endDate = null): void
+    public function removeUserFromUnit(User $user, OrganizationUnit $unit, $validUntil = null): void
     {
-        $endDate = $endDate ?? now()->toDateString();
+        $validUntil = $validUntil ?? now();
 
+        /** @var ?OrgUnitUser $orgUnitUser */
         $orgUnitUser = $user->orgUnitUsers()
             ->where('organization_unit_id', $unit->id)
-            ->whereNull('end_date')
             ->whereNull('valid_until')
             ->first()
         ;
 
         if ($orgUnitUser) {
             $orgUnitUser->update([
-                'end_date'    => $endDate,
-                'valid_until' => now(),
+                'valid_until' => $validUntil,
             ]);
 
             // Remove role if no other positions have same role
@@ -90,11 +90,9 @@ class OrganizationPositionService
     public function moveToInactive(User $user): void
     {
         DB::transaction(function () use ($user) {
-            // End all current assignments
-            $user->orgUnitUsers()
-                ->active()
+            // @phpstan-ignore-next-line
+            $user->orgUnitUsers()->active()
                 ->update([
-                    'end_date'    => now()->toDateString(),
                     'valid_until' => now(),
                 ])
             ;
@@ -117,6 +115,7 @@ class OrganizationPositionService
     public function getAllDirectors()
     {
         return User::whereHas('orgUnitUsers', function ($query) {
+            /* @phpstan-ignore-next-line */
             $query->active()
                 ->whereHas('position', function ($q) {
                     $q->where('is_director', true);
@@ -128,6 +127,7 @@ class OrganizationPositionService
     public function getAllLearningPositions()
     {
         return User::whereHas('orgUnitUsers', function ($query) {
+            /* @phpstan-ignore-next-line */
             $query->active()
                 ->whereHas('position', function ($q) {
                     $q->where('is_learning', true);
@@ -138,15 +138,17 @@ class OrganizationPositionService
 
     public function getOrganizationChart()
     {
-        return OrganizationUnit::with([
+        $units = OrganizationUnit::with([
             'positions.category',
             'orgUnitUsers.user',
             'orgUnitUsers.position',
-        ])->get()->map(function ($unit) {
+        ])->get();
+
+        return $units->map(function (OrganizationUnit $unit) {
             return [
                 'unit'                 => $unit,
                 'users_with_positions' => $unit->getUsersWithPositions(),
-                'positions'            => $unit->positions->map(function ($position) {
+                'positions'            => $unit->positions->map(function (Position $position) {
                     return [
                         'position'            => $position,
                         'category'            => $position->category,

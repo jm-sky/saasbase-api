@@ -3,13 +3,15 @@
 namespace App\Domain\Tenant\Resources;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Tenant\Models\OrgUnitUser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin User
  *
- * @property string $fullName
+ * @property string      $fullName
+ * @property OrgUnitUser $pivot
  */
 class OrganizationUnitUserResource extends JsonResource
 {

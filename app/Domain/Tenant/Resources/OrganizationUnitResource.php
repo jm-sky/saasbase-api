@@ -14,11 +14,14 @@ class OrganizationUnitResource extends JsonResource
     {
         return [
             'id'          => $this->id,
+            'tenantId'    => $this->tenant_id,
             'name'        => $this->name,
             'code'        => $this->code,
             'description' => $this->description,
             'isActive'    => $this->is_active,
+            'isTechnical' => $this->is_technical,
             'parentId'    => $this->parent_id,
+            'parent'      => new OrganizationUnitPreviewResource($this->parent),
             'users'       => OrganizationUnitUserResource::collection($this->users),
             'createdAt'   => $this->created_at->toIso8601String(),
             'updatedAt'   => $this->updated_at->toIso8601String(),

@@ -23,6 +23,8 @@ use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\BillingInfo;
 use App\Domain\Subscription\Models\Subscription;
 use App\Domain\Tenant\Models\OrganizationUnit;
+use App\Domain\Tenant\Models\OrgUnitUser;
+use App\Domain\Tenant\Models\Position;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\UserTenant;
 use App\Domain\Users\Models\NotificationSetting;
@@ -332,6 +334,11 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
         ;
     }
 
+    public function orgUnitUsers(): HasMany
+    {
+        return $this->hasMany(OrgUnitUser::class, 'user_id');
+    }
+
     public function emailVerificationToken(): HasOne
     {
         return $this->hasOne(EmailVerificationToken::class);
@@ -424,8 +431,8 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
     public function positions(): HasManyThrough
     {
         return $this->hasManyThrough(
-            \App\Domain\Tenant\Models\Position::class,
-            \App\Domain\Tenant\Models\OrgUnitUser::class,
+            Position::class,
+            OrgUnitUser::class,
             'user_id',
             'id',
             'id',
@@ -437,38 +444,40 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
     {
         return $this->positions()
             ->whereHas('orgUnitUsers', function ($query) {
+                /* @phpstan-ignore-next-line */
                 $query->where('user_id', $this->id)->active();
             })
         ;
     }
 
-    public function primaryPosition(): ?\App\Domain\Tenant\Models\Position
+    public function primaryPosition(): ?Position
     {
-        $primaryOrgUnit = $this->orgUnitUsers()->where('is_primary', true)->active()->first();
+        /** @var ?OrgUnitUser $primaryOrgUnit */
+        $primaryOrgUnit = $this->orgUnitUsers()->activePrimary()->first(); // @phpstan-ignore-line
 
         return $primaryOrgUnit?->position;
     }
 
     // Assign user to organization unit with position
-    public function assignToPosition(OrganizationUnit $unit, ?\App\Domain\Tenant\Models\Position $position = null, array $options = []): \App\Domain\Tenant\Models\OrgUnitUser
+    public function assignToPosition(OrganizationUnit $unit, ?Position $position = null, array $options = []): OrgUnitUser
     {
         $options = array_merge([
-            'start_date' => now()->toDateString(),
+            'valid_from' => now(),
             'is_primary' => false,
             'notes'      => null,
             'role'       => \App\Domain\Tenant\Enums\OrgUnitRole::Employee,
         ], $options);
 
         // Create org unit user assignment
+        /** @var OrgUnitUser $orgUnitUser */
         $orgUnitUser = $this->orgUnitUsers()->create([
             'tenant_id'            => $unit->tenant_id,
             'organization_unit_id' => $unit->id,
             'position_id'          => $position?->id,
             'role'                 => $options['role']->value,
-            'start_date'           => $options['start_date'],
             'is_primary'           => $options['is_primary'],
             'notes'                => $options['notes'],
-            'valid_from'           => now(),
+            'valid_from'           => $options['valid_from'],
         ]);
 
         // Assign role if position has one
@@ -491,13 +500,10 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
     }
 
     // Get user's position in specific unit
-    public function getPositionInUnit(OrganizationUnit $unit): ?\App\Domain\Tenant\Models\Position
+    public function getPositionInUnit(OrganizationUnit $unit): ?Position
     {
-        $orgUnitUser = $this->orgUnitUsers()
-            ->active()
-            ->where('organization_unit_id', $unit->id)
-            ->first()
-        ;
+        /** @var ?OrgUnitUser $orgUnitUser */
+        $orgUnitUser = $this->orgUnitUsers()->where('organization_unit_id', $unit->id)->active()->first(); // @phpstan-ignore-line
 
         return $orgUnitUser?->position;
     }

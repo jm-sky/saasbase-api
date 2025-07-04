@@ -149,8 +149,8 @@ class ApprovalResolutionService
         if (!$primaryMembership) {
             // Fallback: get the first active membership
             $primaryMembership = $user->organizationUnitMemberships()
-                ->whereNull('end_date')
-                ->orWhere('end_date', '>', now())
+                ->whereNull('valid_until')
+                ->orWhere('valid_until', '>', now())
                 ->first()
             ;
         }
@@ -202,8 +202,8 @@ class ApprovalResolutionService
         $memberships = $unit->memberships()
             ->where('role', $role)
             ->where(function ($query) {
-                $query->whereNull('end_date')
-                    ->orWhere('end_date', '>', now())
+                $query->whereNull('valid_until')
+                    ->orWhere('valid_until', '>', now())
                 ;
             })
             ->with('user')

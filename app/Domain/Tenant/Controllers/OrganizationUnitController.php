@@ -21,7 +21,7 @@ class OrganizationUnitController extends Controller
         $tenantId = $user->tenant_id;
 
         $units = OrganizationUnit::query()
-            ->with('users')
+            ->with('users', 'parent')
             ->where('tenant_id', $tenantId)
             ->get()
         ;
@@ -48,8 +48,21 @@ class OrganizationUnitController extends Controller
         return new OrganizationUnitResource($unit);
     }
 
-    public function destroy(OrganizationUnit $unit): JsonResponse
+    public function destroy(string $tenantId, string $unitId): JsonResponse
     {
+        $unit = OrganizationUnit::where('tenant_id', $tenantId)
+            ->where('id', $unitId)
+            ->firstOrFail()
+        ;
+
+        if ($unit->is_technical) {
+            return response()->json(['message' => 'Cannot delete technical organization unit'], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!$unit->parent_id) {
+            return response()->json(['message' => 'Cannot delete root organization unit'], Response::HTTP_BAD_REQUEST);
+        }
+
         $unit->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

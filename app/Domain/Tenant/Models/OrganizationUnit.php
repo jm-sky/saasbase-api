@@ -24,6 +24,7 @@ use Illuminate\Support\Str;
  * @property ?string                           $code
  * @property ?string                           $description
  * @property bool                              $is_active
+ * @property bool                              $is_technical
  * @property Carbon                            $created_at
  * @property Carbon                            $updated_at
  * @property ?Tenant                           $tenant
@@ -45,14 +46,17 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
         'code',
         'description',
         'is_active',
+        'is_technical',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active'    => 'boolean',
+        'is_technical' => 'boolean',
     ];
 
     protected $attributes = [
-        'is_active' => true,
+        'is_active'    => true,
+        'is_technical' => false,
     ];
 
     protected static function boot()
@@ -88,7 +92,7 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'org_unit_user')
-            ->withPivot('role')
+            ->withPivot(['role', 'workflow_role_level', 'is_primary', 'valid_from', 'valid_until'])
             ->withTimestamps()
         ;
     }
@@ -118,22 +122,6 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
             ->get()
             ->pluck('user')
         ;
-    }
-
-    /**
-     * Scope to active records only.
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    /**
-     * Scope to root level units (no parent).
-     */
-    public function scopeRootLevel($query)
-    {
-        return $query->whereNull('parent_id');
     }
 
     /**
@@ -188,11 +176,13 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
     public function activePositions(): HasMany
     {
+        // @phpstan-ignore-next-line
         return $this->positions()->active();
     }
 
     public function getUsersWithPositions()
     {
+        // @phpstan-ignore-next-line
         return $this->orgUnitUsers()
             ->active()
             ->with(['user', 'position.category'])
@@ -203,7 +193,7 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
                     'position'   => $orgUnitUser->position,
                     'category'   => $orgUnitUser->position?->category,
                     'is_primary' => $orgUnitUser->is_primary,
-                    'start_date' => $orgUnitUser->start_date,
+                    'valid_from' => $orgUnitUser->valid_from,
                     'role'       => $orgUnitUser->role,
                 ];
             })
@@ -212,6 +202,7 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
     public function getDirectors()
     {
+        // @phpstan-ignore-next-line
         return $this->orgUnitUsers()
             ->active()
             ->whereHas('position', function ($query) {
@@ -221,5 +212,43 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
             ->get()
             ->pluck('user')
         ;
+    }
+
+    /**
+     * Get only active organization unit users.
+     *
+     * @return HasMany<OrgUnitUser,OrganizationUnit>
+     */
+    public function activeOrgUnitUsers(): HasMany
+    {
+        /* @phpstan-ignore-next-line */
+        return $this->orgUnitUsers()->active();
+    }
+
+    /**
+     * Get only primary organization unit users.
+     *
+     * @return HasMany<OrgUnitUser,OrganizationUnit>
+     */
+    public function primaryOrgUnitUsers(): HasMany
+    {
+        /* @phpstan-ignore-next-line */
+        return $this->orgUnitUsers()->primary();
+    }
+
+    /**
+     * Scope to active records only.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope to root level units (no parent).
+     */
+    public function scopeRootLevel($query)
+    {
+        return $query->whereNull('parent_id');
     }
 }

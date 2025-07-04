@@ -2,6 +2,7 @@
 
 namespace App\Domain\Expense\Models;
 
+use App\Domain\Approval\Models\ApprovalExpenseExecution;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\BaseModel;
@@ -33,6 +34,7 @@ use Brick\Math\BigDecimal;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -60,9 +62,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property InvoicePaymentDTO                  $payment
  * @property InvoiceOptionsDTO                  $options
  * @property Collection<Tag>                    $tags
+ * @property User                               $createdByUser
  * @property OcrRequest                         $ocrRequest
  * @property Collection<int, ExpenseAllocation> $allocations
- * @property User                               $createdByUser
+ * @property ApprovalExpenseExecution           $approvalExecution
  */
 class Expense extends BaseModel implements HasMedia
 {
@@ -126,6 +129,11 @@ class Expense extends BaseModel implements HasMedia
     public function allocations(): HasMany
     {
         return $this->hasMany(ExpenseAllocation::class);
+    }
+
+    public function approvalExecution(): HasOne
+    {
+        return $this->hasOne(ApprovalExpenseExecution::class, 'expense_id');
     }
 
     /**

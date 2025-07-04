@@ -102,7 +102,7 @@ class CustomTenantUserSeeder extends Seeder
                 ]);
 
                 $initializer = new InitializeTenantDefaults();
-                $rootUnit    = $initializer->createRootOrganizationUnit($tenant, $tenant->owner);
+                $rootUnit    = $initializer->createOrganizationUnits($tenant, $tenant->owner);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);

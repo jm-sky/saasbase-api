@@ -42,8 +42,20 @@ class PositionCategory extends BaseModel
             User::class,
             Position::class,
             'position_category_id',
+            'id',
+            'id',
             'id'
-        )->through('orgUnitUsers');
+        );
+    }
+
+    /**
+     * Get users who have positions in this category.
+     */
+    public function getUsersWithPositions()
+    {
+        return User::whereHas('orgUnitUsers.position', function ($query) {
+            $query->where('position_category_id', $this->id);
+        });
     }
 
     // Scopes

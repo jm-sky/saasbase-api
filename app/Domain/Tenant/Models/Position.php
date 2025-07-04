@@ -5,11 +5,32 @@ namespace App\Domain\Tenant\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\Permission\Models\Role;
 
+/**
+ * @property string                      $id
+ * @property string                      $tenant_id
+ * @property string                      $organization_unit_id
+ * @property string                      $position_category_id
+ * @property string                      $role_name
+ * @property string                      $name
+ * @property string                      $description
+ * @property bool                        $is_director
+ * @property bool                        $is_learning
+ * @property bool                        $is_temporary
+ * @property float                       $hourly_rate
+ * @property int                         $sort_order
+ * @property bool                        $is_active
+ * @property OrganizationUnit            $organizationUnit
+ * @property PositionCategory            $category
+ * @property Collection<int,OrgUnitUser> $orgUnitUsers
+ * @property Collection<int,User>        $users
+ * @property Collection<int,User>        $currentUsers
+ */
 class Position extends BaseModel
 {
     use IsGlobalOrBelongsToTenant;
@@ -36,6 +57,10 @@ class Position extends BaseModel
         'is_active'    => 'boolean',
         'hourly_rate'  => 'decimal:2',
         'sort_order'   => 'integer',
+    ];
+
+    protected $attributes = [
+        'is_active' => true,
     ];
 
     protected $appends = ['full_name'];
@@ -71,7 +96,8 @@ class Position extends BaseModel
     {
         return $this->users()
             ->whereHas('orgUnitUsers', function ($query) {
-                $query->active();
+                /* @phpstan-ignore-next-line */
+                $query->where('position_id', $this->id)->active();
             })
         ;
     }

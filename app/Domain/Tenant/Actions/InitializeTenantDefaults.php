@@ -39,12 +39,11 @@ class InitializeTenantDefaults
 
     public function execute(Tenant $tenant, ?User $owner = null): void
     {
-        $this->createRootOrganizationUnit($tenant, $owner);
+        $this->createOrganizationUnits($tenant, $owner);
         $this->seedDefaultMeasurementUnits($tenant);
         $this->createSubscription($tenant);
         $this->seedDefaultTags($tenant);
         $this->createDefaultPositionCategories($tenant);
-        // 3. (Optional) Add more default setup here
     }
 
     protected function createSubscription(Tenant $tenant)
@@ -64,6 +63,15 @@ class InitializeTenantDefaults
             'current_period_end'     => now()->addYear(),
             'cancel_at_period_end'   => false,
         ]);
+    }
+
+    public function createOrganizationUnits(Tenant $tenant, ?User $owner = null): OrganizationUnit
+    {
+        $rootUnit = $this->createRootOrganizationUnit($tenant, $owner);
+
+        $this->createTechnicalOrganizationUnits($tenant, $rootUnit);
+
+        return $rootUnit;
     }
 
     public function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): OrganizationUnit
@@ -91,6 +99,12 @@ class InitializeTenantDefaults
         }
 
         return $rootUnit;
+    }
+
+    public function createTechnicalOrganizationUnits(Tenant $tenant, OrganizationUnit $rootUnit): void
+    {
+        CreateTechnicalOrganizationUnits::createUnassignedUnit($tenant, $rootUnit);
+        CreateTechnicalOrganizationUnits::createFormerEmployeesUnit($tenant, $rootUnit);
     }
 
     public function seedDefaultMeasurementUnits(Tenant $tenant): void
