@@ -17,6 +17,7 @@ use App\Domain\Products\Models\Product;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectRole;
 use App\Domain\Projects\Models\ProjectStatus;
+use App\Domain\Projects\Models\TaskStatus;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
@@ -114,6 +115,7 @@ class CustomTenantUserSeeder extends Seeder
                 $rootUnit    = $initializer->createOrganizationUnits($tenant, $tenant->owner);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
+                $initializer->seedDefaultTaskStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);
 
                 $this->createOrganizationUnits($tenant, $rootUnit);
@@ -374,6 +376,16 @@ class CustomTenantUserSeeder extends Seeder
         foreach ($users as $user) {
             $user->projects()->attach($project->id, ['project_role_id' => $developerRole->id]);
         }
+
+        Tenant::bypassTenant($tenant->id, function () use ($tenant, $users, $project) {
+            $project->tasks()->create([
+                'title'         => 'Task 1',
+                'description'   => 'Task 1 description',
+                'status_id'     => TaskStatus::orderBy('sort_order', 'asc')->first()->id,
+                'assignee_id'   => $users->first()->id,
+                'created_by_id' => $tenant->owner_id,
+            ]);
+        });
     }
 
     protected function createProductsForTenants(): void

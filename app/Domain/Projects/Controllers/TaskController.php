@@ -58,12 +58,13 @@ class TaskController extends Controller
         ];
 
         $this->defaultSort   = '-created_at';
+        $this->defaultWith   = ['assignee', 'status'];
         $this->exportService = app(ExportService::class);
     }
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
 
         return TaskResource::collection($result['data'])
             ->additional(['meta' => $result['meta']])
