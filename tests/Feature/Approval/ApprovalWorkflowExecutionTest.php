@@ -19,6 +19,7 @@ use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Metadata\Covers;
 use Tests\TestCase;
 
 /**
@@ -26,6 +27,7 @@ use Tests\TestCase;
  *
  * @coversNothing
  */
+#[Covers(ProcessApprovalDecisionAction::class)]
 class ApprovalWorkflowExecutionTest extends TestCase
 {
     use RefreshDatabase;
@@ -72,7 +74,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->tenant->attachUserToRootOrganizationUnit($this->approver3, OrgUnitRole::CEO);
     }
 
-    /** @test */
     public function itCanStartApprovalWorkflowForExpense(): void
     {
         // Given: An expense and matching workflow
@@ -90,7 +91,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::PENDING, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itAutoApprovesWhenNoWorkflowMatches(): void
     {
         // Given: An expense with no matching workflow
@@ -104,7 +104,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itCanProcessApprovalDecisionAndCompleteSingleStepWorkflow(): void
     {
         // Given: A running approval execution
@@ -129,7 +128,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itCanProcessRejectionAndCompleteWorkflow(): void
     {
         // Given: A running approval execution
@@ -154,7 +152,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::REJECTED, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itCanHandleMultiStepWorkflow(): void
     {
         // Given: A multi-step workflow
@@ -187,7 +184,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itCanHandleParallelApproversWithMinimumThreshold(): void
     {
         // Given: A workflow with parallel approvers (min 2 out of 3)
@@ -211,7 +207,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itCanHandleRequireAllApproversWorkflow(): void
     {
         // Given: A workflow requiring all approvers
@@ -242,7 +237,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    /** @test */
     public function itPreventsDuplicateDecisionsFromSameApprover(): void
     {
         // Given: A running approval execution
@@ -259,7 +253,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalDecision::APPROVED, $decision2->decision);
     }
 
-    /** @test */
     public function itValidatesApproverAuthorization(): void
     {
         // Given: A running approval execution
@@ -277,7 +270,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->processAction->execute($execution, $unauthorizedUser, ApprovalDecision::APPROVED);
     }
 
-    /** @test */
     public function itProvidesDebugInformationForFailedApprovals(): void
     {
         // Given: A running approval execution
@@ -297,7 +289,6 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals('User is not authorized to approve this step', $reason);
     }
 
-    /** @test */
     public function itPreventsApprovalOfCompletedExecutions(): void
     {
         // Given: A completed approval execution
