@@ -34,10 +34,10 @@ Examples:
 7. **1.1.7**: Test models work correctly with global/tenant scope
 
 #### Acceptance Criteria:
-- [ ] All three tables created with correct schema
-- [ ] Models correctly use `IsGlobalOrBelongsToTenant` trait
-- [ ] Can create both global (tenant_id = null) and tenant-specific records
-- [ ] Basic CRUD operations work for all three models
+- [x] All three tables created with correct schema
+- [x] Models correctly use `IsGlobalOrBelongsToTenant` trait
+- [x] Can create both global (tenant_id = null) and tenant-specific records
+- [x] Basic CRUD operations work for all three models
 
 ---
 
@@ -56,10 +56,10 @@ Examples:
 8. **1.2.8**: Test hierarchical relationships work for `AllocationOrganizationUnit`
 
 #### Acceptance Criteria:
-- [ ] All dimension tables created successfully
-- [ ] All models work with global/tenant scoping
-- [ ] AllocationOrganizationUnit parent/child relationships work correctly
-- [ ] AllocationLocation model includes address field correctly
+- [x] All dimension tables created successfully
+- [x] All models work with global/tenant scoping
+- [x] AllocationOrganizationUnit parent/child relationships work correctly
+- [x] AllocationLocation model includes address field correctly
 
 ---
 
@@ -77,10 +77,10 @@ Examples:
 7. **1.3.7**: Run all seeders and verify global data exists
 
 #### Acceptance Criteria:
-- [ ] All seeders create global records (tenant_id = null)
-- [ ] Polish transaction types exactly match specification
-- [ ] Seeders are idempotent (can run multiple times safely)
-- [ ] Default data is useful for real businesses
+- [x] All seeders create global records (tenant_id = null)
+- [x] Polish transaction types exactly match specification
+- [x] Seeders are idempotent (can run multiple times safely)
+- [x] Default data is useful for real businesses
 
 ---
 
@@ -100,11 +100,13 @@ Examples:
 7. **2.1.7**: Test membership creation and role hierarchy
 
 #### Acceptance Criteria:
-- [ ] Users can be assigned to multiple units with different roles
-- [ ] Role hierarchy works (unit-owner > unit-deputy > unit-member)
-- [ ] Primary unit detection works correctly
-- [ ] Valid date ranges for memberships work
-- [ ] Service methods return correct users for unit roles
+- [x] Users can be assigned to multiple units with different roles
+- [x] Role hierarchy works (unit-owner > unit-deputy > unit-member)
+- [x] Primary unit detection works correctly
+- [x] Valid date ranges for memberships work
+- [x] Service methods return correct users for unit roles
+
+**Note: This task is implemented using the existing `OrgUnitUser` model with `workflow_role_level` field (UnitRoleLevel enum) instead of a separate `AllocationOrganizationUnitMembership` model. The functionality is equivalent and fully working.**
 
 ---
 
@@ -121,10 +123,10 @@ Examples:
 6. **2.2.6**: Test RTR is always visible, others are configurable
 
 #### Acceptance Criteria:
-- [ ] RTR dimension is always visible regardless of configuration
-- [ ] Other dimensions can be enabled/disabled per tenant
-- [ ] Service returns dimensions in correct display order
-- [ ] Default configurations are reasonable for new tenants
+- [x] RTR dimension is always visible regardless of configuration
+- [x] Other dimensions can be enabled/disabled per tenant
+- [x] Service returns dimensions in correct display order
+- [x] Default configurations are reasonable for new tenants
 
 ---
 
@@ -144,11 +146,11 @@ Examples:
 7. **3.1.7**: Test allocation creation with multiple dimensions
 
 #### Acceptance Criteria:
-- [ ] Can allocate expense amounts across different dimensions
-- [ ] Morphic relationships work for all dimension types
-- [ ] BigDecimal amounts work correctly for precision
-- [ ] Allocation status changes work properly
-- [ ] Expense totals calculate correctly
+- [x] Can allocate expense amounts across different dimensions
+- [x] Morphic relationships work for all dimension types
+- [x] BigDecimal amounts work correctly for precision
+- [x] Allocation status changes work properly
+- [x] Expense totals calculate correctly
 
 ---
 
@@ -165,11 +167,11 @@ Examples:
 6. **3.2.6**: Test complex allocation scenarios
 
 #### Acceptance Criteria:
-- [ ] Cannot allocate more than expense total amount
-- [ ] Cannot allocate to disabled dimensions
-- [ ] Expense status updates correctly through allocation flow
-- [ ] All allocation operations are transactional
-- [ ] Clear error messages for validation failures
+- [x] Cannot allocate more than expense total amount
+- [x] Cannot allocate to disabled dimensions
+- [x] Expense status updates correctly through allocation flow
+- [x] All allocation operations are transactional
+- [x] Clear error messages for validation failures
 
 ---
 
@@ -190,10 +192,10 @@ Examples:
 8. **4.1.8**: Test workflow creation and step relationships
 
 #### Acceptance Criteria:
-- [ ] Can create workflows with multiple ordered steps
-- [ ] Step approvers support user, unit_role, and system_permission types
-- [ ] Approval executions track current step correctly
-- [ ] All relationships between models work properly
+- [x] Can create workflows with multiple ordered steps
+- [x] Step approvers support user, unit_role, and system_permission types
+- [x] Approval executions track current step correctly
+- [x] All relationships between models work properly
 
 ---
 
@@ -210,11 +212,11 @@ Examples:
 6. **4.2.6**: Test all approver resolution scenarios
 
 #### Acceptance Criteria:
-- [ ] Correctly finds specific users for approval
-- [ ] Correctly finds unit role holders (owners, deputies, etc.)
-- [ ] Handles parent unit approvals correctly
-- [ ] Falls back gracefully when no approvers found
-- [ ] Returns empty collection for invalid configurations
+- [x] Correctly finds specific users for approval
+- [x] Correctly finds unit role holders (owners, deputies, etc.)
+- [x] Handles parent unit approvals correctly
+- [x] Falls back gracefully when no approvers found
+- [x] Returns empty collection for invalid configurations
 
 ---
 
@@ -232,10 +234,10 @@ Examples:
 5. **5.1.5**: Test workflow matching with various expense scenarios
 
 #### Acceptance Criteria:
-- [ ] Matches workflows based on expense amount ranges
-- [ ] Matches workflows based on allocation dimensions
-- [ ] Selects highest priority workflow when multiple match
-- [ ] Returns null when no workflows match (auto-approve)
+- [x] Matches workflows based on expense amount ranges
+- [x] Matches workflows based on allocation dimensions
+- [x] Selects highest priority workflow when multiple match
+- [x] Returns null when no workflows match (auto-approve)
 
 ---
 
@@ -252,11 +254,11 @@ Examples:
 6. **5.2.6**: Test complete approval workflows end-to-end
 
 #### Acceptance Criteria:
-- [ ] Workflows start automatically after allocation
-- [ ] Steps progress correctly after decisions
-- [ ] Parallel approvals require correct number of approvers
-- [ ] Sequential approvals wait for each step
-- [ ] Expense status updates correctly at workflow completion
+- [x] Workflows start automatically after allocation
+- [x] Steps progress correctly after decisions
+- [x] Parallel approvals require correct number of approvers
+- [x] Sequential approvals wait for each step
+- [x] Expense status updates correctly at workflow completion
 
 ---
 
@@ -275,11 +277,11 @@ Examples:
 6. **6.1.6**: Test API endpoints with Postman/tests
 
 #### Acceptance Criteria:
-- [ ] Can create allocations via API
-- [ ] Can view expense allocations via API  
-- [ ] Proper validation error responses
-- [ ] API responses follow camelCase convention
-- [ ] Proper authorization checks
+- [x] Can create allocations via API
+- [x] Can view expense allocations via API  
+- [x] Proper validation error responses
+- [x] API responses follow camelCase convention
+- [x] Proper authorization checks
 
 ---
 
@@ -296,11 +298,11 @@ Examples:
 6. **6.2.6**: Test approval workflows via API
 
 #### Acceptance Criteria:
-- [ ] Users can approve/reject via API
-- [ ] Users can view their pending approvals
-- [ ] Users can view approval history
-- [ ] Proper authorization prevents unauthorized approvals
-- [ ] Clear error messages for invalid actions
+- [x] Users can approve/reject via API
+- [x] Users can view their pending approvals
+- [x] Users can view approval history
+- [x] Proper authorization prevents unauthorized approvals
+- [x] Clear error messages for invalid actions
 
 ---
 
