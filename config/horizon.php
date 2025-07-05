@@ -181,7 +181,7 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection'          => 'redis',
-            'queue'               => ['default'],
+            'queue'               => ['default', 'registry-confirmations'],
             'balance'             => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses'        => 1,
