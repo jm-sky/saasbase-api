@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class CompanyDataFetcherService
 {
+    private const BATCH_TIMEOUT = 10;
+
     public function __construct(
         private readonly RegonLookupService $regonLookupService,
         private readonly MfLookupService $mfLookupService,
@@ -56,16 +58,23 @@ class CompanyDataFetcherService
     private function pollJobs($batch)
     {
         // Wait for completion (with timeout)
-        $timeout   = 30; // seconds
+        $timeout   = self::BATCH_TIMEOUT; // seconds
         $startTime = time();
+        $batchId   = $batch->id; // Store batch ID for logging
 
         while (!$batch->finished() && (time() - $startTime) < $timeout) {
             sleep(1);
-            $batch->refresh();
+            // Refresh the batch by fetching it again from the database
+            $batch = Bus::findBatch($batchId);
+
+            if (!$batch) {
+                Log::warning('Batch not found during polling', ['batch_id' => $batchId]);
+                break;
+            }
         }
 
-        if (!$batch->finished()) {
-            Log::warning('Company data auto-fill batch timed out', ['batch_id' => $batch->id]);
+        if ($batch && !$batch->finished()) {
+            Log::warning('Company data auto-fill batch timed out', ['batch_id' => $batchId]);
 
             return null;
         }

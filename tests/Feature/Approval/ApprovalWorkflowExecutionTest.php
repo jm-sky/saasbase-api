@@ -19,7 +19,7 @@ use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Metadata\Covers;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
@@ -27,7 +27,7 @@ use Tests\TestCase;
  *
  * @coversNothing
  */
-#[Covers(ProcessApprovalDecisionAction::class)]
+#[CoversClass(ProcessApprovalDecisionAction::class)]
 class ApprovalWorkflowExecutionTest extends TestCase
 {
     use RefreshDatabase;
