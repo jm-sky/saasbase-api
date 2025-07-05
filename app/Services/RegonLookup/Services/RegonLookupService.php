@@ -133,7 +133,10 @@ class RegonLookupService
                 regon: $regon
             ));
 
-            return $response->dto();
+            /** @var RegonReportForLegalPerson|RegonReportForNaturalPerson $dto */
+            $dto = $response->dto();
+
+            return $dto->toUnifiedReportDto();
         } catch (\Exception $e) {
             if ($throw) {
                 throw $e;
