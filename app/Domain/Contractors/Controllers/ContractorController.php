@@ -6,7 +6,7 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
-use App\Domain\Contractors\Enums\ContractorActivityType;
+use App\Domain\Contractors\Jobs\ProcessContractorRegistryConfirmationJob;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Requests\StoreContractorRequest;
@@ -98,7 +98,7 @@ class ContractorController extends Controller
         $contractor = Contractor::create($validated['contractor']);
 
         if (isset($validated['registry_confirmation'])) {
-            $this->registryConfirmationService->confirm($contractor);
+            ProcessContractorRegistryConfirmationJob::dispatch($contractor);
         }
 
         if (isset($validated['address'])) {
@@ -108,8 +108,6 @@ class ContractorController extends Controller
         if (isset($validated['bank_account'])) {
             $contractor->bankAccounts()->create($validated['bank_account']);
         }
-
-        $contractor->logModelActivity(ContractorActivityType::Created->value, $contractor);
 
         if ($this->shouldFetchLogo($contractor, $request)) {
             $logoFetcherService->fetchAndStore($contractor, $contractor->website, $contractor->email);
@@ -128,7 +126,6 @@ class ContractorController extends Controller
     public function update(UpdateContractorRequest $request, Contractor $contractor, LogoFetcherService $logoFetcherService): ContractorResource
     {
         $contractor->update($request->validated('contractor'));
-        $contractor->logModelActivity(ContractorActivityType::Updated->value, $contractor);
 
         if ($this->shouldFetchLogo($contractor, $request)) {
             $logoFetcherService->fetchAndStore($contractor, $contractor->website, $contractor->email);
@@ -139,7 +136,6 @@ class ContractorController extends Controller
 
     public function destroy(Contractor $contractor): JsonResponse
     {
-        $contractor->logModelActivity(ContractorActivityType::Deleted->value, $contractor);
         $contractor->delete();
 
         return response()->json(['message' => 'Contractor deleted successfully.'], Response::HTTP_NO_CONTENT);

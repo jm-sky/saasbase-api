@@ -6,13 +6,13 @@ use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\Enums\AddressType;
 use App\Domain\Contractors\Services\RegistryConfirmation\DataComparatorService;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(DataComparatorService::class)]
 class DataComparatorServiceTest extends TestCase
 {
     private DataComparatorService $service;
@@ -23,9 +23,6 @@ class DataComparatorServiceTest extends TestCase
         $this->service = new DataComparatorService();
     }
 
-    /**
-     * @dataProvider nameComparisonProvider
-     */
     public function testCompareNames(string $contractorName, string $registryName, bool $expectedResult): void
     {
         $result = $this->service->compareNames($contractorName, $registryName);
@@ -37,7 +34,7 @@ class DataComparatorServiceTest extends TestCase
         );
     }
 
-    public function nameComparisonProvider(): array
+    public static function nameComparisonProvider(): array
     {
         return [
             // Exact matches
@@ -71,9 +68,6 @@ class DataComparatorServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider vatIdComparisonProvider
-     */
     public function testCompareVatIds(?string $contractorVatId, ?string $registryVatId, bool $expectedResult): void
     {
         $result = $this->service->compareVatIds($contractorVatId, $registryVatId);
@@ -81,7 +75,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    public function vatIdComparisonProvider(): array
+    public static function vatIdComparisonProvider(): array
     {
         return [
             // Exact matches
@@ -108,9 +102,6 @@ class DataComparatorServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider regonComparisonProvider
-     */
     public function testCompareRegons(?string $contractorRegon, ?string $registryRegon, bool $expectedResult): void
     {
         $result = $this->service->compareRegons($contractorRegon, $registryRegon);
@@ -118,7 +109,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    public function regonComparisonProvider(): array
+    public static function regonComparisonProvider(): array
     {
         return [
             // Exact matches

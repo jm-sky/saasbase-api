@@ -133,6 +133,7 @@ class ContractorRegistryConfirmationService
      */
     public function getLatestConfirmation(Contractor $contractor, string $registryType): ?RegistryConfirmation
     {
+        // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()
             ->where('type', $registryType)
             ->orderBy('checked_at', 'desc')

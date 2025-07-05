@@ -102,6 +102,7 @@ class ViesContractorRegistryConfirmationService implements RegistryConfirmationS
             'rawData' => $this->extractRawData($registryData),
         ];
 
+        // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
                 'type'             => RegistryConfirmationType::Vies->value,

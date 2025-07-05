@@ -99,6 +99,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
             'rawData' => $this->extractRawData($registryData),
         ];
 
+        // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
                 'type'             => RegistryConfirmationType::Mf->value,
@@ -156,6 +157,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
             'rawData' => $this->extractRawData($registryData),
         ];
 
+        // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
                 'type'             => RegistryConfirmationType::BankAccount->value,

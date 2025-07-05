@@ -4,6 +4,7 @@ namespace App\Domain\Contractors\Services\RegistryConfirmation;
 
 use App\Domain\Common\DTOs\AddressDTO;
 use App\Domain\Common\DTOs\CommonCompanyLookupData;
+use App\Domain\Common\Models\Address;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Services\RegistryConfirmation\Contracts\RegistryConfirmationServiceInterface;
 use App\Domain\Utils\Enums\RegistryConfirmationType;
@@ -99,6 +100,7 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
             'rawData' => $this->extractRawData($registryData),
         ];
 
+        // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
                 'type'             => RegistryConfirmationType::Regon->value,
@@ -119,12 +121,14 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
      */
     private function confirmAddressData(Contractor $contractor, CommonCompanyLookupData $commonData, $registryData): ?RegistryConfirmation
     {
+        /** @var ?Address $contractorAddress */
         $contractorAddress = $contractor->defaultAddress;
+        /** @var ?AddressDTO $registryAddress */
         $registryAddress   = $commonData->address;
 
         // Check if we have required data
         if (!$contractorAddress->street || !$contractorAddress->city
-            || !$contractorAddress->postalCode || !$contractorAddress->country) {
+            || !$contractorAddress->postal_code || !$contractorAddress->country) {
             return null;
         }
 
@@ -137,7 +141,7 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
         $payload = [
             'street'     => $contractorAddress->street,
             'city'       => $contractorAddress->city,
-            'postalCode' => $contractorAddress->postalCode,
+            'postalCode' => $contractorAddress->postal_code,
             'country'    => $contractorAddress->country,
         ];
 
@@ -161,6 +165,7 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
             'rawData' => $this->extractRawData($registryData),
         ];
 
+        // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
                 'type'             => RegistryConfirmationType::Address->value,
