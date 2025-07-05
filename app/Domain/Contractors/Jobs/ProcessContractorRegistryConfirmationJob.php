@@ -2,8 +2,14 @@
 
 namespace App\Domain\Contractors\Jobs;
 
-use App\Domain\Contractors\Models\Contractor;
-use App\Domain\Contractors\Services\ContractorRegistryConfirmationService;
+use App\Domain\Contractors\Services\RegistryConfirmation\MfContractorRegistryConfirmationService;
+use App\Domain\Contractors\Services\RegistryConfirmation\RegonContractorRegistryConfirmationService;
+use App\Domain\Contractors\Services\RegistryConfirmation\ViesContractorRegistryConfirmationService;
+use App\Domain\Utils\DTOs\CompanyContext;
+use App\Domain\Utils\Enums\RegistryConfirmationStatus;
+use App\Domain\Utils\Enums\RegistryConfirmationType;
+use App\Domain\Utils\Models\RegistryConfirmation;
+use App\Domain\Utils\Services\CompanyDataFetcherService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,53 +24,117 @@ class ProcessContractorRegistryConfirmationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public int $timeout = 120;
+
     public int $tries = 3;
 
-    public int $maxExceptions = 3;
-
-    public int $timeout = 120; // 2 minutes timeout for external API calls
-
     public function __construct(
-        protected Contractor $contractor
+        public RegistryConfirmation $confirmation,
     ) {
-        // Set queue name for better organization
         $this->onQueue('registry-confirmations');
     }
 
-    public function handle(ContractorRegistryConfirmationService $confirmationService): void
-    {
+    public function handle(
+        CompanyDataFetcherService $dataFetcherService,
+        RegonContractorRegistryConfirmationService $regonService,
+        ViesContractorRegistryConfirmationService $viesService,
+        MfContractorRegistryConfirmationService $mfService,
+    ): void {
         try {
-            Log::info('Starting registry confirmation process', [
-                'contractor_id'   => $this->contractor->id,
-                'contractor_name' => $this->contractor->name,
+            Log::info('Processing registry confirmation', [
+                'confirmation_id' => $this->confirmation->id,
+                'type'            => $this->confirmation->type,
+                'job_id'          => $this->job?->getJobId(),
             ]);
 
-            $confirmations = $confirmationService->confirm($this->contractor);
+            $result = $this->processConfirmation(
+                $dataFetcherService,
+                $regonService,
+                $viesService,
+                $mfService
+            );
 
-            Log::info('Registry confirmation process completed', [
-                'contractor_id'       => $this->contractor->id,
-                'confirmations_count' => count($confirmations),
-                'confirmation_ids'    => collect($confirmations)->pluck('id')->toArray(),
+            $this->confirmation->update([
+                'result'     => $result,
+                'status'     => RegistryConfirmationStatus::Success,
+                'checked_at' => now(),
+            ]);
+
+            Log::info('Registry confirmation completed successfully', [
+                'confirmation_id' => $this->confirmation->id,
+                'type'            => $this->confirmation->type,
+                'job_id'          => $this->job?->getJobId(),
             ]);
         } catch (\Exception $e) {
-            Log::error('Registry confirmation process failed', [
-                'contractor_id'   => $this->contractor->id,
-                'contractor_name' => $this->contractor->name,
-                'error'           => $e->getMessage(),
-                'trace'           => $e->getTraceAsString(),
+            $this->confirmation->update([
+                'result'     => ['error' => $e->getMessage()],
+                'status'     => RegistryConfirmationStatus::Failed,
+                'checked_at' => now(),
             ]);
 
-            throw $e; // Re-throw to trigger retry mechanism
+            Log::error('Registry confirmation failed', [
+                'confirmation_id' => $this->confirmation->id,
+                'type'            => $this->confirmation->type,
+                'error'           => $e->getMessage(),
+                'job_id'          => $this->job?->getJobId(),
+            ]);
+
+            throw $e;
         }
     }
 
-    public function failed(\Throwable $exception): void
+    private function processConfirmation(
+        CompanyDataFetcherService $dataFetcherService,
+        RegonContractorRegistryConfirmationService $regonService,
+        ViesContractorRegistryConfirmationService $viesService,
+        MfContractorRegistryConfirmationService $mfService,
+    ): array {
+        $payload = $this->confirmation->payload;
+        $context = new CompanyContext(
+            nip: $payload['nip'] ?? null,
+            regon: $payload['regon'] ?? null,
+            country: $payload['country'] ?? null,
+            force: $payload['force'] ?? false,
+        );
+
+        // Fetch data from external services
+        $lookupResults = $dataFetcherService->fetch($context);
+
+        if (!$lookupResults) {
+            throw new \Exception('No data available from external registries');
+        }
+
+        $contractor = $this->confirmation->load('confirmable')->confirmable;
+        $type       = RegistryConfirmationType::from($this->confirmation->type);
+
+        // Process based on confirmation type
+        return match ($type) {
+            RegistryConfirmationType::Regon => $lookupResults->regon
+                ? $regonService->confirmContractorData($contractor, $lookupResults->regon)
+                : [],
+            RegistryConfirmationType::Vies => $lookupResults->vies
+                ? $viesService->confirmContractorData($contractor, $lookupResults->vies)
+                : [],
+            RegistryConfirmationType::Mf => $lookupResults->mf
+                ? $mfService->confirmContractorData($contractor, $lookupResults->mf)
+                : [],
+            default => throw new \Exception("Unsupported confirmation type: {$type->value}"),
+        };
+    }
+
+    public function failed(\Exception $exception): void
     {
-        Log::error('Registry confirmation job failed permanently', [
-            'contractor_id'   => $this->contractor->id,
-            'contractor_name' => $this->contractor->name,
+        $this->confirmation->update([
+            'result'     => ['error' => $exception->getMessage()],
+            'status'     => RegistryConfirmationStatus::Failed,
+            'checked_at' => now(),
+        ]);
+
+        Log::error('Registry confirmation job permanently failed', [
+            'confirmation_id' => $this->confirmation->id,
+            'type'            => $this->confirmation->type,
             'error'           => $exception->getMessage(),
-            'attempts'        => $this->attempts(),
+            'job_id'          => $this->job?->getJobId(),
         ]);
     }
 }

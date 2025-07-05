@@ -7,6 +7,7 @@ use App\Domain\Contractors\Services\RegistryConfirmation\MfContractorRegistryCon
 use App\Domain\Contractors\Services\RegistryConfirmation\RegonContractorRegistryConfirmationService;
 use App\Domain\Contractors\Services\RegistryConfirmation\ViesContractorRegistryConfirmationService;
 use App\Domain\Utils\DTOs\CompanyContext;
+use App\Domain\Utils\Enums\RegistryConfirmationStatus;
 use App\Domain\Utils\Models\RegistryConfirmation;
 use App\Domain\Utils\Services\CompanyDataFetcherService;
 use Illuminate\Support\Facades\Log;
@@ -147,7 +148,7 @@ class ContractorRegistryConfirmationService
     public function hasSuccessfulConfirmations(Contractor $contractor): bool
     {
         return $contractor->registryConfirmations()
-            ->where('success', true)
+            ->where('status', RegistryConfirmationStatus::Success)
             ->exists()
         ;
     }

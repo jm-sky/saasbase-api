@@ -6,13 +6,13 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
-use App\Domain\Contractors\Jobs\ProcessContractorRegistryConfirmationJob;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Requests\SearchContractorRequest;
 use App\Domain\Contractors\Requests\StoreContractorRequest;
 use App\Domain\Contractors\Requests\UpdateContractorRequest;
 use App\Domain\Contractors\Resources\ContractorLookupResource;
 use App\Domain\Contractors\Resources\ContractorResource;
+use App\Domain\Contractors\Services\ContractorRegistryConfirmationQueueService;
 use App\Domain\Contractors\Services\ContractorRegistryConfirmationService;
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ContractorsExport;
@@ -98,7 +98,8 @@ class ContractorController extends Controller
         $contractor = Contractor::create($validated['contractor']);
 
         if (isset($validated['registry_confirmation'])) {
-            ProcessContractorRegistryConfirmationJob::dispatch($contractor);
+            // Queue registry confirmations
+            app(ContractorRegistryConfirmationQueueService::class)->queueConfirmations($contractor);
         }
 
         if (isset($validated['address'])) {

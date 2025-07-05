@@ -18,7 +18,7 @@ class RegistryConfirmationResource extends JsonResource
             'type'      => $this->type,
             'payload'   => $this->payload,
             'result'    => $this->result,
-            'success'   => $this->success,
+            'status'    => $this->status,
             'checkedAt' => $this->checked_at,
         ];
     }

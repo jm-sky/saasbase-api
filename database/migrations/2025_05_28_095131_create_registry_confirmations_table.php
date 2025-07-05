@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Utils\Enums\RegistryConfirmationStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,8 +17,8 @@ return new class() extends Migration {
             $table->string('type'); // 'GUS', 'VIES', 'WhiteList'
             $table->json('payload')->nullable();
             $table->json('result')->nullable();
-            $table->boolean('success')->default(false);
-            $table->timestamp('checked_at');
+            $table->enum('status', RegistryConfirmationStatus::values())->default(RegistryConfirmationStatus::Pending->value);
+            $table->timestamp('checked_at')->nullable();
             $table->timestamps();
         });
     }
