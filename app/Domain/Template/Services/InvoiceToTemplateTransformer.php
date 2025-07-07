@@ -28,14 +28,15 @@ class InvoiceToTemplateTransformer
             dueDate: $this->formatDate($invoice->payment->dueDate ?? $invoice->issue_date), // fallback to issue_date
             seller: $this->transformParty($invoice->seller),
             buyer: $this->transformParty($invoice->buyer),
-            items: $this->transformItems($invoice->body->lines ?? []),
-            totalNet: $this->currencyFormatter->formatWithoutCurrency($invoice->total_net),
-            totalTax: $this->currencyFormatter->formatWithoutCurrency($invoice->total_tax),
-            totalGross: $this->currencyFormatter->formatWithoutCurrency($invoice->total_gross),
+            lines: $this->transformLines($invoice->body->lines ?? []),
+            vatSummary: $this->transformVatSummary($invoice->body->vatSummary ?? []),
+            formattedTotalNet: $this->currencyFormatter->format($invoice->total_net, $invoice->currency),
+            formattedTotalTax: $this->currencyFormatter->format($invoice->total_tax, $invoice->currency),
+            formattedTotalGross: $this->currencyFormatter->format($invoice->total_gross, $invoice->currency),
             currency: $invoice->currency,
             payment: $this->transformPayment($invoice->payment),
             options: $invoice->options->toArray(),
-            notes: $invoice->body->description ?? null,
+            description: $invoice->body->description ?? null,
             logoUrl: $this->getLogoUrl($invoice),
         );
     }
@@ -57,9 +58,9 @@ class InvoiceToTemplateTransformer
     }
 
     /**
-     * Transform invoice items.
+     * Transform invoice lines to match template expectations.
      */
-    private function transformItems(array $lines): array
+    private function transformLines(array $lines): array
     {
         return array_map(function ($line) {
             // Handle both InvoiceLineDTO objects and arrays
@@ -69,20 +70,51 @@ class InvoiceToTemplateTransformer
                 $lineData = is_array($line) ? $line : [];
             }
 
+            $vatRate    = $lineData['vatRate']['rate'] ?? 0;
+            $unitPrice  = $lineData['unitPrice'] ?? '0';
+            $quantity   = $lineData['quantity'] ?? 0;
+            $totalNet   = $lineData['totalNet'] ?? '0';
+            $totalVat   = $lineData['totalVat'] ?? '0';
+            $totalGross = $lineData['totalGross'] ?? '0';
+
             return [
-                'name'        => $lineData['description'] ?? '',
-                'description' => $lineData['description'] ?? '',
-                'quantity'    => $lineData['quantity'] ?? 0,
-                'unit'        => '', // Unit not available in InvoiceLineDTO
-                'priceNet'    => $this->currencyFormatter->formatWithoutCurrency($lineData['unitPrice'] ?? '0'),
-                'vatRate'     => $lineData['vatRate']['rate'] ?? 0,
-                'vatAmount'   => $this->currencyFormatter->formatWithoutCurrency($lineData['totalVat'] ?? '0'),
-                'priceGross'  => $this->currencyFormatter->formatWithoutCurrency($lineData['totalGross'] ?? '0'),
-                'totalNet'    => $this->currencyFormatter->formatWithoutCurrency($lineData['totalNet'] ?? '0'),
-                'totalTax'    => $this->currencyFormatter->formatWithoutCurrency($lineData['totalVat'] ?? '0'),
-                'totalGross'  => $this->currencyFormatter->formatWithoutCurrency($lineData['totalGross'] ?? '0'),
+                'description'         => $lineData['description'] ?? '',
+                'formattedQuantity'   => number_format((float) $quantity, 2),
+                'formattedUnitPrice'  => $this->currencyFormatter->formatWithoutCurrency($unitPrice),
+                'formattedTotalNet'   => $this->currencyFormatter->formatWithoutCurrency($totalNet),
+                'formattedTotalVat'   => $this->currencyFormatter->formatWithoutCurrency($totalVat),
+                'formattedTotalGross' => $this->currencyFormatter->formatWithoutCurrency($totalGross),
+                'vatRateName'         => 'Standard VAT',
+                'vatRateValue'        => (float) $vatRate,
             ];
         }, $lines);
+    }
+
+    /**
+     * Transform VAT summary.
+     */
+    private function transformVatSummary(array $vatSummary): array
+    {
+        return array_map(function ($vatLine) {
+            if (is_object($vatLine) && method_exists($vatLine, 'toArray')) {
+                $vatData = $vatLine->toArray();
+            } else {
+                $vatData = is_array($vatLine) ? $vatLine : [];
+            }
+
+            $vatRate     = $vatData['vatRate'] ?? 0;
+            $netAmount   = $vatData['netAmount'] ?? '0';
+            $vatAmount   = $vatData['vatAmount'] ?? '0';
+            $grossAmount = $vatData['grossAmount'] ?? '0';
+
+            return [
+                'vatRateName'    => 'Standard VAT',
+                'vatRateValue'   => (float) $vatRate,
+                'formattedNet'   => $this->currencyFormatter->formatWithoutCurrency($netAmount),
+                'formattedVat'   => $this->currencyFormatter->formatWithoutCurrency($vatAmount),
+                'formattedGross' => $this->currencyFormatter->formatWithoutCurrency($grossAmount),
+            ];
+        }, $vatSummary);
     }
 
     /**
@@ -91,7 +123,7 @@ class InvoiceToTemplateTransformer
     private function transformPayment(InvoicePaymentDTO $paymentDTO): array
     {
         return [
-            'method'      => $paymentDTO->method ?? null,
+            'method'      => $paymentDTO->method?->value ?? null,
             'dueDate'     => isset($paymentDTO->dueDate) ? $this->formatDate($paymentDTO->dueDate) : null,
             'bankAccount' => $paymentDTO->bankAccount ?? null,
             'terms'       => $paymentDTO->terms ?? null,

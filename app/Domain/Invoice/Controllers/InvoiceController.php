@@ -196,11 +196,13 @@ class InvoiceController extends Controller
     {
         $templateId = $request->getTemplateId();
         $collection = $request->getCollection();
+        $language   = $request->getLanguage();
 
         $media = $this->invoiceGenerator->generateAndAttachPdf(
             $invoice,
             $templateId,
-            $collection
+            $collection,
+            $language,
         );
 
         return response()->json([

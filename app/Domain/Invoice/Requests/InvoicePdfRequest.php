@@ -15,9 +15,10 @@ class InvoicePdfRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'template_id' => ['sometimes', 'nullable', 'string', 'exists:templates,id'],
+            'templateId'  => ['sometimes', 'nullable', 'string', 'exists:templates,id'],
             'collection'  => ['sometimes', 'string', 'max:255'],
             'action'      => ['sometimes', 'string', 'in:download,stream,attach,preview'],
+            'language'    => ['sometimes', 'string', 'in:pl,en'],
         ];
     }
 
@@ -26,7 +27,7 @@ class InvoicePdfRequest extends BaseFormRequest
      */
     public function getTemplateId(): ?string
     {
-        return $this->validated('template_id');
+        return $this->validated('templateId');
     }
 
     /**
@@ -43,5 +44,13 @@ class InvoicePdfRequest extends BaseFormRequest
     public function getAction(): string
     {
         return $this->validated('action', 'attach');
+    }
+
+    /**
+     * Get the validated language.
+     */
+    public function getLanguage(): string
+    {
+        return $this->validated('language', 'pl');
     }
 }

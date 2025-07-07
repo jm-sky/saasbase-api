@@ -25,7 +25,7 @@ class InvoiceTemplatesSeeder extends Seeder
             ]);
 
             InvoiceTemplate::withoutGlobalScopes()->create([
-                'tenant_id' => Tenant::GLOBAL_TENANT_ID,
+                'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                 'name'         => 'modern',
                 'description'  => 'Modern design with accent colors',
                 'content'      => $this->getModernTemplate(),

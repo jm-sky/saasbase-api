@@ -2,7 +2,7 @@
 
 namespace App\Domain\Template\Services;
 
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Domain\Common\Models\Media;
 
 class MediaUrlService
 {

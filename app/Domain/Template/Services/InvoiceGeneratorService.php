@@ -2,13 +2,13 @@
 
 namespace App\Domain\Template\Services;
 
+use App\Domain\Common\Models\Media;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class InvoiceGeneratorService
 {
@@ -24,7 +24,7 @@ class InvoiceGeneratorService
     /**
      * Generate PDF for an invoice.
      */
-    public function generatePdf(Invoice $invoice, ?string $templateId = null): string
+    public function generatePdf(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): string
     {
         // Get template
         $template = $this->getTemplate($invoice, $templateId);
@@ -35,14 +35,17 @@ class InvoiceGeneratorService
         // Render HTML content
         $htmlContent = $this->templatingService->render(
             $template->content,
-            $templateData->toArray()
+            ['invoice' => $templateData->toArray()]
         );
 
+        // Add CSS styling for Tailwind classes
+        $styledHtml = $this->addCssToHtml($htmlContent, $language);
+
         // Generate PDF
-        $pdf = Pdf::loadHTML($htmlContent);
+        $pdf = Pdf::loadHTML($styledHtml);
 
         // Apply template settings if available
-        $this->applyPdfSettings($pdf, $template->settings);
+        $this->applyPdfSettings($pdf, $template->settings ?? []);
 
         return $pdf->output();
     }
@@ -50,10 +53,10 @@ class InvoiceGeneratorService
     /**
      * Generate PDF and attach to Invoice model.
      */
-    public function generateAndAttachPdf(Invoice $invoice, ?string $templateId = null, string $collection = self::COLLECTION): Media
+    public function generateAndAttachPdf(Invoice $invoice, ?string $templateId = null, string $collection = self::COLLECTION, ?string $language = 'pl'): Media
     {
         // Generate PDF content
-        $pdfContent = $this->generatePdf($invoice, $templateId);
+        $pdfContent = $this->generatePdf($invoice, $templateId, $language);
 
         // Create temporary file
         $filename = $this->generateFilename($invoice);
@@ -81,6 +84,7 @@ class InvoiceGeneratorService
             }
 
             // Add PDF to invoice media collection
+            // @phpstan-ignore-next-line
             return $invoice
                 ->addMedia($tempPath)
                 ->withCustomProperties([
@@ -110,11 +114,12 @@ class InvoiceGeneratorService
 
         $htmlContent = $this->templatingService->render(
             $template->content,
-            $templateData->toArray()
+            ['invoice' => $templateData->toArray()]
         );
 
-        $pdf = Pdf::loadHTML($htmlContent);
-        $this->applyPdfSettings($pdf, $template->settings);
+        $styledHtml = $this->addCssToHtml($htmlContent);
+        $pdf        = Pdf::loadHTML($styledHtml);
+        $this->applyPdfSettings($pdf, $template->settings ?? []);
 
         $filename = $this->generateFilename($invoice);
 
@@ -131,11 +136,12 @@ class InvoiceGeneratorService
 
         $htmlContent = $this->templatingService->render(
             $template->content,
-            $templateData->toArray()
+            ['invoice' => $templateData->toArray()]
         );
 
-        $pdf = Pdf::loadHTML($htmlContent);
-        $this->applyPdfSettings($pdf, $template->settings);
+        $styledHtml = $this->addCssToHtml($htmlContent);
+        $pdf        = Pdf::loadHTML($styledHtml);
+        $this->applyPdfSettings($pdf, $template->settings ?? []);
 
         $filename = $this->generateFilename($invoice);
 
@@ -150,10 +156,12 @@ class InvoiceGeneratorService
         $template     = $this->getTemplate($invoice, $templateId);
         $templateData = $this->transformer->transform($invoice);
 
-        return $this->templatingService->render(
+        $htmlContent = $this->templatingService->render(
             $template->content,
-            $templateData->toArray()
+            ['invoice' => $templateData->toArray()]
         );
+
+        return $this->addCssToHtml($htmlContent);
     }
 
     /**
@@ -217,5 +225,143 @@ class InvoiceGeneratorService
         $number = str_replace(['/', '\\'], '-', $invoice->number);
 
         return "invoice-{$number}.pdf";
+    }
+
+    /**
+     * Add CSS styling to HTML for PDF generation.
+     */
+    private function addCssToHtml(string $html, ?string $language = 'pl'): string
+    {
+        $css = $this->generateCss();
+
+        return "<!DOCTYPE html>
+<html lang=\"{$language}\">
+<head>
+    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
+    <meta charset=\"utf-8\">
+    <style>{$css}</style>
+</head>
+<body>
+    {$html}
+</body>
+</html>";
+    }
+
+    /**
+     * Generate CSS for PDF styling.
+     */
+    private function generateCss(): string
+    {
+        return '
+        /* Base styles */
+        body {
+            font-family: "DejaVu Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Layout utilities */
+        .w-full { width: 100%; }
+        .w-1\/2 { width: 50%; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-left { text-align: left; }
+        .float-left { float: left; }
+        .float-right { float: right; }
+        .ml-auto { margin-left: auto; }
+
+        /* Typography */
+        .font-bold { font-weight: bold; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+        .font-light { font-weight: 300; }
+        .text-sm { font-size: 11px; }
+        .text-base { font-size: 12px; }
+        .text-lg { font-size: 14px; }
+        .text-xl { font-size: 16px; }
+        .text-2xl { font-size: 20px; }
+        .text-3xl { font-size: 24px; }
+
+        /* Spacing */
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .mb-8 { margin-bottom: 32px; }
+        .mt-4 { margin-top: 16px; }
+        .mt-6 { margin-top: 24px; }
+        .mt-8 { margin-top: 32px; }
+        .p-4 { padding: 16px; }
+        .p-6 { padding: 24px; }
+        .py-2 { padding-top: 8px; padding-bottom: 8px; }
+        .py-3 { padding-top: 12px; padding-bottom: 12px; }
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .pt-4 { padding-top: 16px; }
+        .pb-1 { padding-bottom: 4px; }
+
+        /* Colors */
+        .accent-bg { background-color: #3B82F6; }
+        .accent-text { color: #3B82F6; }
+        .accent-border { border-color: #3B82F6; }
+        .secondary-text { color: #6B7280; }
+        .text-white { color: white; }
+        .text-gray-600 { color: #4B5563; }
+        .text-gray-900 { color: #111827; }
+        .bg-gray-50 { background-color: #F9FAFB; }
+        .bg-gray-800 { background-color: #1F2937; }
+
+        /* Borders */
+        .border { border: 1px solid #D1D5DB; }
+        .border-b { border-bottom: 1px solid #D1D5DB; }
+        .border-t { border-top: 1px solid #D1D5DB; }
+        .border-gray-300 { border-color: #D1D5DB; }
+        .border-gray-200 { border-color: #E5E7EB; }
+
+        /* Tables */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #E5E7EB;
+            padding: 8px;
+            text-align: left;
+        }
+        .invoice-table th {
+            background-color: #3B82F6;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Grid */
+        .grid { display: table; width: 100%; }
+        .grid-cols-2 { }
+        .grid-cols-2 > div { display: table-cell; width: 50%; vertical-align: top; }
+        .gap-4 > * { margin-right: 16px; }
+
+        /* Container */
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Clear floats */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Negative margins fix */
+        .-mx-6 { margin-left: -24px; margin-right: -24px; }
+        ';
     }
 }
