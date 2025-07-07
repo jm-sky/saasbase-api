@@ -360,7 +360,7 @@
         },
         "method": {
           "type": "string",
-          "enum": ["bankTransfer", "cash", "creditCard", "paypal", "other"],
+          "enum": ["bankTransfer", "cash", "creditCard", "payPal", "other"],
           "description": "Payment method (PaymentMethod enum)"
         },
         "reference": {

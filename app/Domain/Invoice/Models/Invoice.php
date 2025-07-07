@@ -31,6 +31,8 @@ use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string            $id
@@ -56,8 +58,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property InvoiceOptionsDTO $options
  * @property Collection<Tag>   $tags
  * @property User              $createdByUser
+ *
+ * @method \Spatie\MediaLibrary\MediaCollections\Models\Media|null getFirstMedia(string $collectionName = 'default')
+ * @method \Spatie\MediaLibrary\MediaCollections\FileAdder         addMedia(string|\Symfony\Component\HttpFoundation\File\UploadedFile $file)
  */
-class Invoice extends BaseModel
+class Invoice extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use BelongsToTenant;
@@ -65,6 +70,7 @@ class Invoice extends BaseModel
     use HasShareTokens;
     use HasTags;
     use IsCreatableByUser;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'type',

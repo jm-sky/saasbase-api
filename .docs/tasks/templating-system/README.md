@@ -177,10 +177,13 @@ console/commands/
 ### **Dependencies**
 ```bash
 # PHP Dependencies
-composer require mpdf/mpdf zordius/lightncandy spatie/laravel-medialibrary
+composer require zordius/lightncandy
+# Note: barryvdh/laravel-dompdf already installed (using instead of mpdf)
+# Note: spatie/laravel-medialibrary already installed
 
-# JavaScript Dependencies  
-npm install @heroicons/vue axios vue-i18n
+# JavaScript Dependencies (for frontend - if needed later)
+npm install @heroicons/vue vue-i18n
+# Note: axios already available in existing setup
 ```
 
 ### **Environment Configuration**

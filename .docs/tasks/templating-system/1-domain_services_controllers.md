@@ -1,14 +1,13 @@
-```php
 <?php
 
 // App/Domain/Template/Services/InvoiceGeneratorService.php
 namespace App\Domain\Template\Services;
 
-use App\Domain\Financial\DTOs\InvoiceDTO;
+use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Template\DTOs\TemplateOptionsDTO;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Template\Exceptions\TemplateRenderingException;
-use Mpdf\Mpdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceGeneratorService
 {
@@ -19,7 +18,7 @@ class InvoiceGeneratorService
     ) {}
     
     public function generatePdf(
-        InvoiceDTO $invoice, 
+        Invoice $invoice, 
         string $templateName = 'default',
         ?TemplateOptionsDTO $options = null
     ): string {
@@ -39,7 +38,11 @@ class InvoiceGeneratorService
             $templateInvoice = $this->transformer->transform($invoice, $options);
             
             // Render HTML
-            $html = $this->templatingService->render($template->content, $templateInvoice, $options);
+            $html = $this->templatingService->render(
+                $template->content, 
+                ['invoice' => $templateInvoice->toArray()], 
+                $options
+            );
             
             // Generate PDF with page numbers
             return $this->generatePdfFromHtml($html, $options);
@@ -50,31 +53,32 @@ class InvoiceGeneratorService
     
     private function generatePdfFromHtml(string $html, TemplateOptionsDTO $options): string
     {
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'margin_top' => 20,
-            'margin_bottom' => 30, // Extra space for footer
-            'margin_left' => 15,
-            'margin_right' => 15,
-            'default_font' => 'arial',
-        ]);
-        
-        // Set footer with page numbers
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: center; font-size: 10px; color: #666;">
-                ' . __('invoices.page') . ' {PAGENO}/{nbpg}
-            </div>
-        ');
-        
-        // Add CSS with custom colors
+        // Add CSS with custom colors to HTML
         $css = $this->generateCSS($options);
-        $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $htmlWithCss = "<style>{$css}</style>" . $html;
         
-        // Add HTML content
-        $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+        // Add footer with page numbers
+        $htmlWithCss .= '
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $pdf->page_script("
+                        \$font = \$fontMetrics->get_font(\"arial\", \"normal\");
+                        \$size = 10;
+                        \$pageText = \"' . __('invoices.page') . ' \" . \$PAGE_NUM . \"/\" . \$PAGE_COUNT;
+                        \$pdf->text(270, 820, \$pageText, \$font, \$size);
+                    ");
+                }
+            </script>';
         
-        return $mpdf->Output('', 'S');
+        $pdf = Pdf::loadHTML($htmlWithCss)
+            ->setPaper('A4', 'portrait')
+            ->setOptions([
+                'isPhpEnabled' => true,
+                'isRemoteEnabled' => false,
+                'defaultFont' => 'arial',
+            ]);
+        
+        return $pdf->output();
     }
     
     private function generateCSS(TemplateOptionsDTO $options): string
@@ -175,116 +179,99 @@ class TemplateRenderingException extends Exception
     }
 }
 
-// App/Http/Controllers/Api/Template/InvoiceTemplateController.php
-namespace App\Http\Controllers\Api\Template;
+// App/Domain/Template/Controllers/InvoiceTemplateController.php
+namespace App\Domain\Template\Controllers;
 
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
+use App\Domain\Common\Filters\DateRangeFilter;
+use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Template\DTOs\InvoiceTemplateDTO;
+use App\Domain\Template\Models\InvoiceTemplate;
+use App\Domain\Template\Requests\CreateInvoiceTemplateRequest;
+use App\Domain\Template\Requests\UpdateInvoiceTemplateRequest;
+use App\Domain\Template\Requests\PreviewTemplateRequest;
+use App\Domain\Template\Resources\InvoiceTemplateResource;
 use App\Domain\Template\Services\InvoiceTemplateService;
 use App\Domain\Template\Services\TemplatingService;
-use App\Domain\Template\DTOs\TemplateOptionsDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Template\StoreTemplateRequest;
-use App\Http\Requests\Template\UpdateTemplateRequest;
-use App\Http\Requests\Template\PreviewTemplateRequest;
-use App\Http\Resources\Template\InvoiceTemplateResource;
-use App\Domain\Template\Models\InvoiceTemplate;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Spatie\QueryBuilder\AllowedFilter;
+use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceTemplateController extends Controller
 {
+    use HasIndexQuery;
+    use AuthorizesRequests;
+
+    protected int $defaultPerPage = 15;
+
     public function __construct(
         private readonly InvoiceTemplateService $templateService,
         private readonly TemplatingService $templatingService,
-    ) {}
+    ) {
+        $this->modelClass = InvoiceTemplate::class;
 
-    public function index(): JsonResponse
-    {
-        /** @var string|null $userId */
-        $userId = Auth::id();
-        
-        $templates = $this->templateService->getAvailableTemplates($userId);
-        
-        return response()->json([
-            'system' => InvoiceTemplateResource::collection($templates['system']),
-            'user' => InvoiceTemplateResource::collection($templates['user']),
-        ]);
+        $this->filters = [
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('category', new AdvancedFilter()),
+            AllowedFilter::exact('isActive', 'is_active'),
+            AllowedFilter::exact('isDefault', 'is_default'),
+            AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
+        ];
+
+        $this->sorts = [
+            'name',
+            'category',
+            'isActive' => 'is_active',
+            'isDefault' => 'is_default',
+            'createdAt' => 'created_at',
+        ];
+
+        $this->defaultSort = '-created_at';
     }
 
-    public function store(StoreTemplateRequest $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
-        try {
-            /** @var string|null $userId */
-            $userId = Auth::id();
-            
-            $template = $this->templateService->createTemplate(
-                $request->validated(),
-                $userId
-            );
+        $templates = $this->getIndexPaginator($request);
 
-            return response()->json(
-                new InvoiceTemplateResource($template),
-                Response::HTTP_CREATED
-            );
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        return InvoiceTemplateResource::collection($templates['data'])
+            ->additional(['meta' => $templates['meta']]);
     }
 
-    public function show(string $templateName): JsonResponse
+    public function store(CreateInvoiceTemplateRequest $request): InvoiceTemplateResource
     {
-        /** @var string|null $userId */
-        $userId = Auth::id();
-        
-        $template = $this->templateService->getTemplate($templateName, $userId);
+        $dto = InvoiceTemplateDTO::from($request->validated());
+        $template = InvoiceTemplate::create((array) $dto);
 
-        if (!$template) {
-            return response()->json([
-                'error' => __('invoices.template_not_found')
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        return response()->json(new InvoiceTemplateResource($template));
+        return new InvoiceTemplateResource($template);
     }
 
-    public function update(UpdateTemplateRequest $request, InvoiceTemplate $template): JsonResponse
+    public function show(InvoiceTemplate $invoiceTemplate): InvoiceTemplateResource
     {
-        try {
-            /** @var string|null $userId */
-            $userId = Auth::id();
-            
-            $updatedTemplate = $this->templateService->updateTemplate(
-                $template->id,
-                $request->validated(),
-                $userId
-            );
+        $this->authorize('view', $invoiceTemplate);
 
-            return response()->json(new InvoiceTemplateResource($updatedTemplate));
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
-        } catch (\UnauthorizedException $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], Response::HTTP_FORBIDDEN);
-        }
+        return new InvoiceTemplateResource($invoiceTemplate);
     }
 
-    public function destroy(InvoiceTemplate $template): JsonResponse
+    public function update(UpdateInvoiceTemplateRequest $request, InvoiceTemplate $invoiceTemplate): InvoiceTemplateResource
     {
-        /** @var string|null $userId */
-        $userId = Auth::id();
-        
-        if ($template->user_id !== $userId && $template->user_id !== null) {
-            return response()->json([
-                'error' => __('invoices.unauthorized_template_access')
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('update', $invoiceTemplate);
 
-        $template->delete();
+        $invoiceTemplate->update($request->validated());
+
+        return new InvoiceTemplateResource($invoiceTemplate);
+    }
+
+    public function destroy(InvoiceTemplate $invoiceTemplate): JsonResponse
+    {
+        $this->authorize('delete', $invoiceTemplate);
+
+        $invoiceTemplate->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
@@ -319,15 +306,14 @@ class InvoiceTemplateController extends Controller
     }
 }
 
-// App/Http/Controllers/Api/Invoice/InvoiceGenerationController.php
-namespace App\Http\Controllers\Api\Invoice;
+// App/Domain/Template/Controllers/InvoiceGenerationController.php
+namespace App\Domain\Template\Controllers;
 
-use App\Domain\Financial\DTOs\InvoiceDTO;
-use App\Domain\Financial\Models\Invoice;
+use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Template\DTOs\TemplateOptionsDTO;
+use App\Domain\Template\Requests\GenerateInvoiceRequest;
 use App\Domain\Template\Services\InvoiceGeneratorService;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Invoice\GenerateInvoiceRequest;
 use Illuminate\Http\Response;
 
 class InvoiceGenerationController extends Controller
@@ -336,14 +322,8 @@ class InvoiceGenerationController extends Controller
         private readonly InvoiceGeneratorService $generatorService,
     ) {}
 
-    public function generate(GenerateInvoiceRequest $request, string $invoiceId): Response
+    public function generate(GenerateInvoiceRequest $request, Invoice $invoice): Response
     {
-        /** @var Invoice|null $invoice */
-        $invoice = Invoice::with(['items', 'customer'])->find($invoiceId);
-        
-        if (!$invoice) {
-            abort(Response::HTTP_NOT_FOUND, __('invoices.invoice_not_found'));
-        }
 
         try {
             $validated = $request->validated();
@@ -358,16 +338,13 @@ class InvoiceGenerationController extends Controller
                 dateFormat: $validated['dateFormat'] ?? 'Y-m-d',
             );
 
-            // Convert Eloquent model to DTO (you would implement this based on your existing DTO mapping)
-            $invoiceDTO = $this->mapToInvoiceDTO($invoice);
-            
             $pdfContent = $this->generatorService->generatePdf(
-                $invoiceDTO,
+                $invoice,
                 $validated['template'] ?? 'default',
                 $options
             );
 
-            $filename = "invoice-{$invoice->number}.pdf";
+            $filename = "invoice-{$invoice->id}.pdf";
 
             return response($pdfContent)
                 ->header('Content-Type', 'application/pdf')
@@ -378,25 +355,15 @@ class InvoiceGenerationController extends Controller
             abort(Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
     }
-
-    /**
-     * Map Eloquent model to DTO - implement this based on your existing DTO mapping logic
-     */
-    private function mapToInvoiceDTO(Invoice $invoice): InvoiceDTO
-    {
-        // This would use your existing DTO mapping logic
-        // Placeholder - replace with your actual mapping service/transformer
-        throw new \Exception('Implement DTO mapping based on your existing structure');
-    }
 }
 
-// App/Http/Requests/Template/StoreTemplateRequest.php
-namespace App\Http\Requests\Template;
+// App/Domain/Template/Requests/CreateInvoiceTemplateRequest.php
+namespace App\Domain\Template\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreTemplateRequest extends FormRequest
+class CreateInvoiceTemplateRequest extends BaseFormRequest
 {
     /**
      * @return array<string, mixed>
@@ -420,13 +387,13 @@ class StoreTemplateRequest extends FormRequest
     }
 }
 
-// App/Http/Requests/Template/UpdateTemplateRequest.php
-namespace App\Http\Requests\Template;
+// App/Domain/Template/Requests/UpdateInvoiceTemplateRequest.php
+namespace App\Domain\Template\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateTemplateRequest extends FormRequest
+class UpdateInvoiceTemplateRequest extends BaseFormRequest
 {
     /**
      * @return array<string, mixed>
@@ -452,12 +419,12 @@ class UpdateTemplateRequest extends FormRequest
     }
 }
 
-// App/Http/Requests/Template/PreviewTemplateRequest.php
-namespace App\Http\Requests\Template;
+// App/Domain/Template/Requests/PreviewTemplateRequest.php
+namespace App\Domain\Template\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class PreviewTemplateRequest extends FormRequest
+class PreviewTemplateRequest extends BaseFormRequest
 {
     /**
      * @return array<string, mixed>
@@ -479,12 +446,12 @@ class PreviewTemplateRequest extends FormRequest
     }
 }
 
-// App/Http/Requests/Invoice/GenerateInvoiceRequest.php
-namespace App\Http\Requests\Invoice;
+// App/Domain/Template/Requests/GenerateInvoiceRequest.php
+namespace App\Domain\Template\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseFormRequest;
 
-class GenerateInvoiceRequest extends FormRequest
+class GenerateInvoiceRequest extends BaseFormRequest
 {
     /**
      * @return array<string, mixed>
@@ -505,8 +472,8 @@ class GenerateInvoiceRequest extends FormRequest
     }
 }
 
-// App/Http/Resources/Template/InvoiceTemplateResource.php
-namespace App\Http\Resources\Template;
+// App/Domain/Template/Resources/InvoiceTemplateResource.php
+namespace App\Domain\Template\Resources;
 
 use App\Domain\Template\Models\InvoiceTemplate;
 use Illuminate\Http\Request;
@@ -535,6 +502,69 @@ class InvoiceTemplateResource extends JsonResource
             'createdAt' => $this->resource->created_at?->toISOString(),
             'updatedAt' => $this->resource->updated_at?->toISOString(),
         ];
+    }
+}
+
+// App/Domain/Template/Models/InvoiceTemplate.php
+namespace App\Domain\Template\Models;
+
+use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\BaseModel;
+use App\Domain\Template\Casts\TemplatePreviewDataCast;
+use App\Domain\Template\Casts\TemplateSettingsCast;
+use App\Domain\Template\Enums\TemplateCategory;
+use App\Domain\Tenant\Traits\BelongsToTenant;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property ?string $description
+ * @property string $content
+ * @property array $preview_data
+ * @property bool $is_active
+ * @property bool $is_default
+ * @property ?string $user_id
+ * @property TemplateCategory $category
+ * @property array $settings
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property ?User $user
+ */
+class InvoiceTemplate extends BaseModel
+{
+    use BelongsToTenant;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'tenant_id',
+        'name',
+        'description',
+        'content',
+        'preview_data',
+        'is_active',
+        'is_default',
+        'user_id',
+        'category',
+        'settings',
+    ];
+
+    protected $casts = [
+        'preview_data' => TemplatePreviewDataCast::class,
+        'settings' => TemplateSettingsCast::class,
+        'is_active' => 'boolean',
+        'is_default' => 'boolean',
+        'category' => TemplateCategory::class,
+        'deleted_at' => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
 
@@ -636,19 +666,22 @@ class InvoiceTemplateFactory extends Factory
     }
 }
 
-// Routes - add to routes/api.php
-/*
-Route::prefix('templates')->name('templates.')->group(function () {
-    Route::get('/invoice', [InvoiceTemplateController::class, 'index'])->name('index');
-    Route::post('/invoice', [InvoiceTemplateController::class, 'store'])->name('store');
-    Route::get('/invoice/{templateName}', [InvoiceTemplateController::class, 'show'])->name('show');
-    Route::put('/invoice/{template}', [InvoiceTemplateController::class, 'update'])->name('update');
-    Route::delete('/invoice/{template}', [InvoiceTemplateController::class, 'destroy'])->name('destroy');
-    Route::post('/invoice/preview', [InvoiceTemplateController::class, 'preview'])->name('preview');
+// Routes - add to routes/api/templates.php (create new file following existing pattern)
+<?php
+
+use App\Domain\Template\Controllers\InvoiceTemplateController;
+use App\Domain\Template\Controllers\InvoiceGenerationController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+    // Invoice Templates
+    Route::apiResource('invoice-templates', InvoiceTemplateController::class);
+    Route::post('invoice-templates/preview', [InvoiceTemplateController::class, 'preview'])->name('invoice-templates.preview');
+    
+    // Invoice PDF Generation 
+    Route::post('invoices/{invoice}/generate-pdf', [InvoiceGenerationController::class, 'generate'])->name('invoices.generate-pdf');
 });
 
-Route::prefix('invoices')->name('invoices.')->group(function () {
-    Route::post('/{invoice}/generate', [InvoiceGenerationController::class, 'generate'])->name('generate');
-});
-*/
+// Then add to main routes/api.php:
+// require __DIR__ . '/api/templates.php';
 ```
