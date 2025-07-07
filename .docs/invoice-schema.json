@@ -1,0 +1,636 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Invoice Model Schema",
+  "description": "Complete schema for Invoice model in SaasBase API - Laravel backend with domain-driven structure",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ULID primary key",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenantId": {
+      "type": "string",
+      "description": "Tenant identifier (ULID)",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "basic-correction",
+        "advance-payment",
+        "advance-payment-correction",
+        "export",
+        "export-correction",
+        "settlement",
+        "settlement-correction",
+        "proforma",
+        "ue",
+        "ue-correction",
+        "debit-note",
+        "debit-note-correction",
+        "import",
+        "import-correction"
+      ],
+      "description": "Type of invoice (InvoiceType enum)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "processing", "issued", "completed", "cancelled"],
+      "description": "General invoice status (InvoiceStatus enum)"
+    },
+    "ocrStatus": {
+      "type": "string",
+      "enum": ["pending", "processing", "completed", "failed"],
+      "description": "OCR processing status (OcrRequestStatus enum)"
+    },
+    "allocationStatus": {
+      "type": "string",
+      "enum": ["notRequired", "pending", "partiallyAllocated", "fullyAllocated"],
+      "description": "Cost allocation status (AllocationStatus enum)"
+    },
+    "approvalStatus": {
+      "type": "string",
+      "enum": ["notRequired", "pending", "approved", "rejected", "cancelled"],
+      "description": "Approval workflow status (ApprovalStatus enum)"
+    },
+    "deliveryStatus": {
+      "type": "string",
+      "enum": ["notSent", "pending", "sent", "delivered", "failed"],
+      "description": "Delivery/sending status (DeliveryStatus enum)"
+    },
+    "paymentStatus": {
+      "type": "string",
+      "enum": ["pending", "partiallyPaid", "paid", "overdue", "cancelled"],
+      "description": "Payment status (PaymentStatus enum)"
+    },
+    "number": {
+      "type": "string",
+      "description": "Invoice number"
+    },
+    "numberingTemplateId": {
+      "type": "string",
+      "description": "Numbering template identifier (ULID)",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "totalNet": {
+      "type": "number",
+      "description": "Total net amount (BigDecimal converted to float)"
+    },
+    "totalTax": {
+      "type": "number",
+      "description": "Total tax amount (BigDecimal converted to float)"
+    },
+    "totalGross": {
+      "type": "number",
+      "description": "Total gross amount (BigDecimal converted to float)"
+    },
+    "currency": {
+      "type": "string",
+      "maxLength": 3,
+      "description": "ISO 4217 currency code (e.g., USD, EUR, PLN)"
+    },
+    "exchangeRate": {
+      "type": "number",
+      "description": "Currency exchange rate (BigDecimal converted to float)"
+    },
+    "issueDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Invoice issue date (YYYY-MM-DD)"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Record creation timestamp (ISO 8601)"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Record last update timestamp (ISO 8601)"
+    },
+    "deletedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Soft delete timestamp (ISO 8601, null if not deleted)"
+    },
+    "seller": {
+      "type": "object",
+      "description": "Seller party information (InvoicePartyDTO)",
+      "properties": {
+        "contractorId": {
+          "type": ["string", "null"],
+          "description": "Reference to contractor record (ULID)"
+        },
+        "contractorType": {
+          "type": ["string", "null"],
+          "description": "Type of contractor"
+        },
+        "name": {
+          "type": ["string", "null"],
+          "description": "Party name"
+        },
+        "taxId": {
+          "type": ["string", "null"],
+          "description": "Tax identification number"
+        },
+        "address": {
+          "type": ["string", "null"],
+          "description": "Full address"
+        },
+        "country": {
+          "type": ["string", "null"],
+          "description": "Country code (ISO 3166-1 alpha-2)"
+        },
+        "iban": {
+          "type": ["string", "null"],
+          "description": "Bank account IBAN"
+        },
+        "email": {
+          "type": ["string", "null"],
+          "description": "Email address"
+        }
+      }
+    },
+    "buyer": {
+      "type": "object",
+      "description": "Buyer party information (InvoicePartyDTO)",
+      "properties": {
+        "contractorId": {
+          "type": ["string", "null"],
+          "description": "Reference to contractor record (ULID)"
+        },
+        "contractorType": {
+          "type": ["string", "null"],
+          "description": "Type of contractor"
+        },
+        "name": {
+          "type": ["string", "null"],
+          "description": "Party name"
+        },
+        "taxId": {
+          "type": ["string", "null"],
+          "description": "Tax identification number"
+        },
+        "address": {
+          "type": ["string", "null"],
+          "description": "Full address"
+        },
+        "country": {
+          "type": ["string", "null"],
+          "description": "Country code (ISO 3166-1 alpha-2)"
+        },
+        "iban": {
+          "type": ["string", "null"],
+          "description": "Bank account IBAN"
+        },
+        "email": {
+          "type": ["string", "null"],
+          "description": "Email address"
+        }
+      }
+    },
+    "body": {
+      "type": "object",
+      "description": "Invoice body with line items (InvoiceBodyDTO)",
+      "properties": {
+        "lines": {
+          "type": "array",
+          "description": "Invoice line items",
+          "items": {
+            "type": "object",
+            "description": "Invoice line item (InvoiceLineDTO)",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Line item identifier"
+              },
+              "description": {
+                "type": ["string", "null"],
+                "description": "Item description"
+              },
+              "quantity": {
+                "type": "number",
+                "description": "Quantity (BigDecimal converted to float)"
+              },
+              "unitPrice": {
+                "type": "number",
+                "description": "Unit price (BigDecimal converted to float)"
+              },
+              "vatRate": {
+                "type": "object",
+                "description": "VAT rate information (VatRateDTO)",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "VAT rate identifier (ULID)"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "VAT rate name"
+                  },
+                  "rate": {
+                    "type": "number",
+                    "description": "VAT rate percentage"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["percentage", "zero_percent", "exempt", "not_subject", "reverse_charge", "margin_scheme"],
+                    "description": "VAT rate type (VatRateType enum)"
+                  }
+                },
+                "required": ["id", "name", "rate", "type"]
+              },
+              "totalNet": {
+                "type": "number",
+                "description": "Line total net amount (BigDecimal converted to float)"
+              },
+              "totalVat": {
+                "type": "number",
+                "description": "Line total VAT amount (BigDecimal converted to float)"
+              },
+              "totalGross": {
+                "type": "number",
+                "description": "Line total gross amount (BigDecimal converted to float)"
+              },
+              "productId": {
+                "type": ["string", "null"],
+                "description": "Reference to product record (ULID)"
+              }
+            },
+            "required": ["id", "quantity", "unitPrice", "vatRate", "totalNet", "totalVat", "totalGross"]
+          }
+        },
+        "vatSummary": {
+          "type": "array",
+          "description": "VAT summary by rate",
+          "items": {
+            "type": "object",
+            "description": "VAT summary entry (InvoiceVatSummaryDTO)",
+            "properties": {
+              "vatRate": {
+                "type": "object",
+                "description": "VAT rate information (VatRateDTO)",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "VAT rate identifier (ULID)"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "VAT rate name"
+                  },
+                  "rate": {
+                    "type": "number",
+                    "description": "VAT rate percentage"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["percentage", "zero_percent", "exempt", "not_subject", "reverse_charge", "margin_scheme"],
+                    "description": "VAT rate type (VatRateType enum)"
+                  }
+                },
+                "required": ["id", "name", "rate", "type"]
+              },
+              "net": {
+                "type": "number",
+                "description": "Net amount for this VAT rate (BigDecimal converted to float)"
+              },
+              "vat": {
+                "type": "number",
+                "description": "VAT amount for this rate (BigDecimal converted to float)"
+              },
+              "gross": {
+                "type": "number",
+                "description": "Gross amount for this VAT rate (BigDecimal converted to float)"
+              }
+            },
+            "required": ["vatRate", "net", "vat", "gross"]
+          }
+        },
+        "exchange": {
+          "type": "object",
+          "description": "Currency exchange information (InvoiceExchangeDTO)",
+          "properties": {
+            "currency": {
+              "type": "string",
+              "description": "Exchange currency code"
+            },
+            "exchangeRate": {
+              "type": ["number", "null"],
+              "description": "Exchange rate (BigDecimal converted to float)"
+            },
+            "date": {
+              "type": ["string", "null"],
+              "description": "Exchange rate date"
+            }
+          },
+          "required": ["currency"]
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Invoice body description"
+        }
+      },
+      "required": ["lines", "vatSummary", "exchange"]
+    },
+    "payment": {
+      "type": "object",
+      "description": "Payment information (InvoicePaymentDTO)",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "partiallyPaid", "paid", "overdue", "cancelled"],
+          "description": "Payment status (PaymentStatus enum)"
+        },
+        "dueDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Payment due date (ISO 8601)"
+        },
+        "paidDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Date when payment was received (ISO 8601)"
+        },
+        "paidAmount": {
+          "type": ["number", "null"],
+          "description": "Amount paid (BigDecimal converted to float)"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["bankTransfer", "cash", "creditCard", "paypal", "other"],
+          "description": "Payment method (PaymentMethod enum)"
+        },
+        "reference": {
+          "type": ["string", "null"],
+          "description": "Payment reference number"
+        },
+        "terms": {
+          "type": ["string", "null"],
+          "description": "Payment terms"
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "description": "Payment notes"
+        },
+        "bankAccount": {
+          "type": ["object", "null"],
+          "description": "Bank account information (InvoicePaymentBankAccountDTO)",
+          "properties": {
+            "iban": {
+              "type": ["string", "null"],
+              "description": "Bank account IBAN"
+            },
+            "country": {
+              "type": ["string", "null"],
+              "description": "Bank country code"
+            },
+            "swift": {
+              "type": ["string", "null"],
+              "description": "SWIFT/BIC code"
+            },
+            "bankName": {
+              "type": ["string", "null"],
+              "description": "Bank name"
+            }
+          }
+        }
+      },
+      "required": ["status", "method"]
+    },
+    "options": {
+      "type": "object",
+      "description": "Invoice options (InvoiceOptionsDTO)",
+      "properties": {
+        "language": {
+          "type": ["string", "null"],
+          "description": "Invoice language code"
+        },
+        "template": {
+          "type": ["string", "null"],
+          "description": "Template identifier"
+        },
+        "sendEmail": {
+          "type": "boolean",
+          "description": "Whether to send email notification"
+        },
+        "emailTo": {
+          "type": "array",
+          "description": "Email recipients",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "required": ["sendEmail", "emailTo"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Associated tags (HasTags trait)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Tag identifier (ULID)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tag name"
+          },
+          "color": {
+            "type": "string",
+            "enum": ["default", "success", "success-intense", "danger", "danger-intense", "info", "info-intense", "warning", "warning-intense", "dark", "dark-intense", "notice", "notice-intense"],
+            "description": "Tag color (TagColor enum)"
+          }
+        },
+        "required": ["id", "name", "color"]
+      }
+    },
+    "createdByUser": {
+      "type": ["object", "null"],
+      "description": "User who created the invoice (IsCreatableByUser trait)",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "User identifier (ULID)"
+        },
+        "name": {
+          "type": "string",
+          "description": "User name"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email"
+        }
+      },
+      "required": ["id", "name", "email"]
+    },
+    "numberingTemplate": {
+      "type": ["object", "null"],
+      "description": "Numbering template relationship",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Template identifier (ULID)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Template name"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Numbering pattern"
+        }
+      },
+      "required": ["id", "name", "pattern"]
+    }
+  },
+  "required": [
+    "id",
+    "tenantId",
+    "type",
+    "status",
+    "ocrStatus",
+    "allocationStatus",
+    "approvalStatus",
+    "deliveryStatus",
+    "paymentStatus",
+    "number",
+    "numberingTemplateId",
+    "totalNet",
+    "totalTax",
+    "totalGross",
+    "currency",
+    "exchangeRate",
+    "seller",
+    "buyer",
+    "body",
+    "payment",
+    "options"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "01HW2MXVN8K3Q4R5T6Y7U8W9Z0",
+      "tenantId": "01HW2MXVN8K3Q4R5T6Y7U8W9Z1",
+      "type": "basic",
+      "status": "issued",
+      "ocrStatus": "completed",
+      "allocationStatus": "notRequired",
+      "approvalStatus": "approved",
+      "deliveryStatus": "sent",
+      "paymentStatus": "pending",
+      "number": "INV-2024-001",
+      "numberingTemplateId": "01HW2MXVN8K3Q4R5T6Y7U8W9Z2",
+      "totalNet": 1000.00,
+      "totalTax": 230.00,
+      "totalGross": 1230.00,
+      "currency": "PLN",
+      "exchangeRate": 1.0,
+      "issueDate": "2024-01-15",
+      "seller": {
+        "name": "Example Company Ltd.",
+        "taxId": "PL1234567890",
+        "address": "123 Business St, Warsaw, Poland",
+        "country": "PL",
+        "email": "invoice@example.com"
+      },
+      "buyer": {
+        "name": "Client Corp.",
+        "taxId": "PL0987654321",
+        "address": "456 Client Ave, Krakow, Poland",
+        "country": "PL"
+      },
+      "body": {
+        "lines": [
+          {
+            "id": "1",
+            "description": "Software Development Services",
+            "quantity": 10,
+            "unitPrice": 100.00,
+            "vatRate": {
+              "id": "01HW2MXVN8K3Q4R5T6Y7U8W9Z3",
+              "name": "VAT 23%",
+              "rate": 23.0,
+              "type": "percentage"
+            },
+            "totalNet": 1000.00,
+            "totalVat": 230.00,
+            "totalGross": 1230.00
+          }
+        ],
+        "vatSummary": [
+          {
+            "vatRate": {
+              "id": "01HW2MXVN8K3Q4R5T6Y7U8W9Z3",
+              "name": "VAT 23%",
+              "rate": 23.0,
+              "type": "percentage"
+            },
+            "net": 1000.00,
+            "vat": 230.00,
+            "gross": 1230.00
+          }
+        ],
+        "exchange": {
+          "currency": "PLN"
+        },
+        "description": "Monthly development services"
+      },
+      "payment": {
+        "status": "pending",
+        "dueDate": "2024-02-15T00:00:00.000Z",
+        "method": "bankTransfer",
+        "terms": "Net 30",
+        "bankAccount": {
+          "iban": "PL12345678901234567890123456",
+          "swift": "PKOPPLPW",
+          "bankName": "Example Bank"
+        }
+      },
+      "options": {
+        "language": "en",
+        "sendEmail": true,
+        "emailTo": ["client@clientcorp.com"]
+      }
+    }
+  ],
+  "definitions": {
+    "InvoiceStatusDTO": {
+      "type": "object",
+      "description": "Comprehensive status tracking DTO",
+      "properties": {
+        "general": {
+          "type": "string",
+          "enum": ["draft", "processing", "issued", "completed", "cancelled"]
+        },
+        "ocr": {
+          "type": "string",
+          "enum": ["pending", "processing", "completed", "failed"]
+        },
+        "allocation": {
+          "type": "string",
+          "enum": ["notRequired", "pending", "partiallyAllocated", "fullyAllocated"]
+        },
+        "approval": {
+          "type": "string",
+          "enum": ["notRequired", "pending", "approved", "rejected", "cancelled"]
+        },
+        "delivery": {
+          "type": "string",
+          "enum": ["notSent", "pending", "sent", "delivered", "failed"]
+        },
+        "payment": {
+          "type": "string",
+          "enum": ["pending", "partiallyPaid", "paid", "overdue", "cancelled"]
+        }
+      },
+      "required": ["general", "ocr", "allocation", "approval", "delivery", "payment"]
+    }
+  }
+}
