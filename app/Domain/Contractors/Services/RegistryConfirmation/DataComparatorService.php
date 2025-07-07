@@ -11,7 +11,7 @@ class DataComparatorService
     /**
      * Maximum Levenshtein distance for names to be considered a match.
      */
-    private const MAX_NAME_DISTANCE = 3;
+    private const MAX_NAME_DISTANCE = 2;
 
     /**
      * Compare company names using fuzzy matching.
@@ -51,7 +51,19 @@ class DataComparatorService
             return false;
         }
 
-        return $this->normalizeVatId($contractorVatId) === $this->normalizeVatId($registryVatId);
+        $normalizedContractor = $this->normalizeVatId($contractorVatId);
+        $normalizedRegistry   = $this->normalizeVatId($registryVatId);
+
+        // If both have country prefixes, they must match exactly
+        if (preg_match('/^[A-Z]{2}/', $normalizedContractor) && preg_match('/^[A-Z]{2}/', $normalizedRegistry)) {
+            return $normalizedContractor === $normalizedRegistry;
+        }
+
+        // If one has country prefix and other doesn't, compare numeric parts only
+        $contractorNumeric = preg_replace('/^[A-Z]{2}/', '', $normalizedContractor);
+        $registryNumeric   = preg_replace('/^[A-Z]{2}/', '', $normalizedRegistry);
+
+        return $contractorNumeric === $registryNumeric;
     }
 
     /**
@@ -165,15 +177,12 @@ class DataComparatorService
     }
 
     /**
-     * Normalize VAT ID by removing country prefix and special characters.
+     * Normalize VAT ID by removing special characters but keeping country prefix.
      */
     private function normalizeVatId(string $vatId): string
     {
-        // Remove country prefix if present (e.g., "PL" from "PL1234567890")
-        $normalized = preg_replace('/^[A-Z]{2}/', '', strtoupper($vatId));
-
-        // Remove any non-digit characters
-        return preg_replace('/[^0-9]/', '', $normalized);
+        // Remove any non-alphanumeric characters but keep country code
+        return preg_replace('/[^A-Z0-9]/', '', strtoupper($vatId));
     }
 
     /**

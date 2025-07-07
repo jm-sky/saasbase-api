@@ -7,6 +7,7 @@ use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\Enums\AddressType;
 use App\Domain\Contractors\Services\RegistryConfirmation\DataComparatorService;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,6 +24,7 @@ class DataComparatorServiceTest extends TestCase
         $this->service = new DataComparatorService();
     }
 
+    #[DataProvider('nameComparisonProvider')]
     public function testCompareNames(string $contractorName, string $registryName, bool $expectedResult): void
     {
         $result = $this->service->compareNames($contractorName, $registryName);
@@ -68,6 +70,7 @@ class DataComparatorServiceTest extends TestCase
         ];
     }
 
+    #[DataProvider('vatIdComparisonProvider')]
     public function testCompareVatIds(?string $contractorVatId, ?string $registryVatId, bool $expectedResult): void
     {
         $result = $this->service->compareVatIds($contractorVatId, $registryVatId);
@@ -102,6 +105,7 @@ class DataComparatorServiceTest extends TestCase
         ];
     }
 
+    #[DataProvider('regonComparisonProvider')]
     public function testCompareRegons(?string $contractorRegon, ?string $registryRegon, bool $expectedResult): void
     {
         $result = $this->service->compareRegons($contractorRegon, $registryRegon);

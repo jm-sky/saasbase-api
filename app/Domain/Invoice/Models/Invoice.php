@@ -5,7 +5,11 @@ namespace App\Domain\Invoice\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Models\Media;
+use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Common\Models\Tag;
+use App\Domain\Common\Traits\HasActivityLog;
+use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\IsCreatableByUser;
 use App\Domain\Common\Traits\IsSearchable;
@@ -30,9 +34,11 @@ use Brick\Math\BigDecimal;
 use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\FileAdder;
 
 /**
  * @property string            $id
@@ -58,9 +64,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property InvoiceOptionsDTO $options
  * @property Collection<Tag>   $tags
  * @property User              $createdByUser
+ * @property OcrRequest        $ocrRequest
  *
- * @method \Spatie\MediaLibrary\MediaCollections\Models\Media|null getFirstMedia(string $collectionName = 'default')
- * @method \Spatie\MediaLibrary\MediaCollections\FileAdder         addMedia(string|\Symfony\Component\HttpFoundation\File\UploadedFile $file)
+ * @method Media|null getFirstMedia(string $collectionName = 'default')
+ * @method FileAdder  addMedia(string|\Symfony\Component\HttpFoundation\File\UploadedFile $file)
  */
 class Invoice extends BaseModel implements HasMedia
 {
@@ -71,6 +78,8 @@ class Invoice extends BaseModel implements HasMedia
     use HasTags;
     use IsCreatableByUser;
     use InteractsWithMedia;
+    use HasActivityLog;
+    use HasActivityLogging;
 
     protected $fillable = [
         'type',
@@ -118,6 +127,11 @@ class Invoice extends BaseModel implements HasMedia
     public function numberingTemplate(): BelongsTo
     {
         return $this->belongsTo(NumberingTemplate::class);
+    }
+
+    public function ocrRequest(): MorphOne
+    {
+        return $this->morphOne(OcrRequest::class, 'processable');
     }
 
     /**
