@@ -33,5 +33,7 @@ class DatabaseSeeder extends Seeder
         } else {
             $this->call(DefaultTenantSeeder::class);
         }
+
+        $this->call(InvoiceTemplatesSeeder::class);
     }
 }

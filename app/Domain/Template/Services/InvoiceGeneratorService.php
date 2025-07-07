@@ -5,12 +5,15 @@ namespace App\Domain\Template\Services;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
+use App\Domain\Tenant\Models\Tenant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class InvoiceGeneratorService
 {
+    public const COLLECTION = 'attachments';
+
     public function __construct(
         private InvoiceTemplateService $templateService,
         private InvoiceToTemplateTransformer $transformer,
@@ -47,7 +50,7 @@ class InvoiceGeneratorService
     /**
      * Generate PDF and attach to Invoice model.
      */
-    public function generateAndAttachPdf(Invoice $invoice, ?string $templateId = null, string $collection = 'invoices'): Media
+    public function generateAndAttachPdf(Invoice $invoice, ?string $templateId = null, string $collection = self::COLLECTION): Media
     {
         // Generate PDF content
         $pdfContent = $this->generatePdf($invoice, $templateId);
@@ -66,7 +69,12 @@ class InvoiceGeneratorService
 
         try {
             // Remove existing PDF from the same collection if exists
-            $existingMedia = $invoice->getFirstMedia($collection);
+            $existingMedia = $invoice->getMedia($collection)
+                ->filter(function (Media $media) {
+                    return true === $media->getCustomProperty('generated', false);
+                })
+                ->first()
+            ;
 
             if ($existingMedia) {
                 $existingMedia->delete();
@@ -75,6 +83,11 @@ class InvoiceGeneratorService
             // Add PDF to invoice media collection
             return $invoice
                 ->addMedia($tempPath)
+                ->withCustomProperties([
+                    'generated'   => true,
+                    'generator'   => 'invoice_generator',
+                    'template_id' => $templateId,
+                ])
                 ->usingName("Invoice {$invoice->number}")
                 ->usingFileName($filename)
                 ->toMediaCollection($collection)
@@ -157,6 +170,13 @@ class InvoiceGeneratorService
             $invoice->tenant_id,
             TemplateCategory::INVOICE
         );
+
+        if (!$template) {
+            $template = $this->templateService->getDefaultForCategory(
+                Tenant::GLOBAL_TENANT_ID,
+                TemplateCategory::INVOICE
+            );
+        }
 
         if (!$template) {
             throw new TemplateNotFoundException('No default invoice template found for tenant');

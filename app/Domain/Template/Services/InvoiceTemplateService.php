@@ -73,7 +73,7 @@ class InvoiceTemplateService
     /**
      * Get default template for category.
      */
-    public function getDefaultForCategory(string $tenantId, TemplateCategory $category): ?InvoiceTemplate
+    public function getDefaultForCategory(?string $tenantId, TemplateCategory $category): ?InvoiceTemplate
     {
         return InvoiceTemplate::query()
             ->where('tenant_id', $tenantId)
@@ -184,6 +184,7 @@ class InvoiceTemplateService
             ->where('tenant_id', $tenantId)
             ->byCategory($category)
             ->where('is_default', true)
-            ->update(['is_default' => false]);
+            ->update(['is_default' => false])
+        ;
     }
 }

@@ -10,6 +10,7 @@ use App\Domain\Invoice\Enums\InvoiceActivityType;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Requests\InvoiceAttachmentRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceAttachmentsController extends Controller
@@ -71,14 +72,22 @@ class InvoiceAttachmentsController extends Controller
     public function download(Invoice $invoice, Media $media)
     {
         $this->authorizeMedia($invoice, $media);
-        $disk    = $media->disk;
-        $path    = $media->getPath();
+
+        $disk = Storage::disk($media->disk);
+        $path = $media->getPathRelativeToRoot();
+
+        if (!$disk->exists($path)) {
+            abort(Response::HTTP_NOT_FOUND, 'File not found.');
+        }
+
         $headers = [
             'Content-Type'        => $media->mime_type,
             'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
         ];
 
-        return response()->download($path, $media->file_name, $headers);
+        return response()->streamDownload(function () use ($disk, $path) {
+            echo $disk->get($path);
+        }, $media->file_name, $headers);
     }
 
     /**
@@ -87,14 +96,22 @@ class InvoiceAttachmentsController extends Controller
     public function preview(Invoice $invoice, Media $media)
     {
         $this->authorizeMedia($invoice, $media);
-        $disk    = $media->disk;
-        $path    = $media->getPath();
+
+        $disk = Storage::disk($media->disk);
+        $path = $media->getPathRelativeToRoot();
+
+        if (!$disk->exists($path)) {
+            abort(Response::HTTP_NOT_FOUND, 'File not found.');
+        }
+
         $headers = [
             'Content-Type'        => $media->mime_type,
             'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
         ];
 
-        return response()->file($path, $headers);
+        return response()->streamDownload(function () use ($disk, $path) {
+            echo $disk->get($path);
+        }, $media->file_name, $headers);
     }
 
     /**

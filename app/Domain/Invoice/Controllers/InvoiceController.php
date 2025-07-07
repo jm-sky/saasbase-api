@@ -12,9 +12,11 @@ use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\InvoicesExport;
 use App\Domain\Export\Services\ExportService;
 use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Invoice\Requests\InvoicePdfRequest;
 use App\Domain\Invoice\Requests\StoreInvoiceRequest;
 use App\Domain\Invoice\Requests\UpdateInvoiceRequest;
 use App\Domain\Invoice\Resources\InvoiceResource;
+use App\Domain\Template\Services\InvoiceGeneratorService;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -33,6 +35,8 @@ class InvoiceController extends Controller
     protected int $defaultPerPage = 15;
 
     private ExportService $exportService;
+
+    private InvoiceGeneratorService $invoiceGenerator;
 
     public function __construct()
     {
@@ -65,8 +69,9 @@ class InvoiceController extends Controller
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort   = '-issue_date';
-        $this->exportService = app(ExportService::class);
+        $this->defaultSort      = '-issue_date';
+        $this->exportService    = app(ExportService::class);
+        $this->invoiceGenerator = app(InvoiceGeneratorService::class);
     }
 
     public function index(Request $request): AnonymousResourceCollection
@@ -145,5 +150,84 @@ class InvoiceController extends Controller
             $config,
             'invoices.xlsx'
         );
+    }
+
+    /**
+     * Generate PDF for an invoice.
+     * Supports multiple actions: download, stream, attach, preview.
+     */
+    public function generatePdf(InvoicePdfRequest $request, Invoice $invoice): mixed
+    {
+        $action = $request->getAction();
+
+        return match ($action) {
+            'attach'   => $this->attachPdf($request, $invoice),
+            'download' => $this->downloadPdf($request, $invoice),
+            'stream'   => $this->streamPdf($request, $invoice),
+            'preview'  => $this->previewPdf($request, $invoice),
+            default    => $this->downloadPdf($request, $invoice),
+        };
+    }
+
+    /**
+     * Download invoice PDF.
+     */
+    public function downloadPdf(InvoicePdfRequest $request, Invoice $invoice): Response
+    {
+        $templateId = $request->getTemplateId();
+
+        return $this->invoiceGenerator->downloadPdf($invoice, $templateId);
+    }
+
+    /**
+     * Stream invoice PDF.
+     */
+    public function streamPdf(InvoicePdfRequest $request, Invoice $invoice): Response
+    {
+        $templateId = $request->getTemplateId();
+
+        return $this->invoiceGenerator->streamPdf($invoice, $templateId);
+    }
+
+    /**
+     * Generate and attach PDF to invoice.
+     */
+    public function attachPdf(InvoicePdfRequest $request, Invoice $invoice): JsonResponse
+    {
+        $templateId = $request->getTemplateId();
+        $collection = $request->getCollection();
+
+        $media = $this->invoiceGenerator->generateAndAttachPdf(
+            $invoice,
+            $templateId,
+            $collection
+        );
+
+        return response()->json([
+            'message' => 'PDF generated and attached successfully.',
+            'data'    => [
+                'media_id'        => $media->id,
+                'file_name'       => $media->file_name,
+                'size'            => $media->size,
+                'collection_name' => $media->collection_name,
+                'url'             => $media->getUrl(),
+            ],
+        ], Response::HTTP_CREATED);
+    }
+
+    /**
+     * Preview invoice as HTML (without generating PDF).
+     */
+    public function previewPdf(InvoicePdfRequest $request, Invoice $invoice): JsonResponse
+    {
+        $templateId = $request->getTemplateId();
+
+        $htmlContent = $this->invoiceGenerator->previewHtml($invoice, $templateId);
+
+        return response()->json([
+            'data' => [
+                'html_content' => $htmlContent,
+            ],
+        ]);
     }
 }

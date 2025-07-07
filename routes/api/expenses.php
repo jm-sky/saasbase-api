@@ -35,6 +35,8 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
     Route::post('dimension-configurations/reset', [DimensionConfigurationController::class, 'resetToDefaults'])->name('dimensions.configurations.reset');
     Route::get('available-dimensions', [DimensionConfigurationController::class, 'availableDimensions'])->name('dimensions.available');
 
+    Route::get('expenses/{expense}/attachments/{media}/download', [ExpenseAttachmentsController::class, 'download'])->name('expenses.attachments.download');
+    Route::get('expenses/{expense}/attachments/{media}/preview', [ExpenseAttachmentsController::class, 'preview'])->name('expenses.attachments.preview');
     Route::apiResource('expenses/{expense}/attachments', ExpenseAttachmentsController::class);
     Route::apiResource('expenses', ExpenseController::class);
 });

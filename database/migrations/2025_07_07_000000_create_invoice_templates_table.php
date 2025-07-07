@@ -12,7 +12,7 @@ return new class() extends Migration {
     {
         Schema::create('invoice_templates', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUlid('tenant_id')->nullable()->constrained('tenants')->onDelete('cascade');
             $table->foreignUlid('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('name');
             $table->text('description')->nullable();

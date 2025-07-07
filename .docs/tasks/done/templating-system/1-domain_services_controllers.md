@@ -513,14 +513,14 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Template\Casts\TemplatePreviewDataCast;
 use App\Domain\Template\Casts\TemplateSettingsCast;
 use App\Domain\Template\Enums\TemplateCategory;
-use App\Domain\Tenant\Traits\BelongsToTenant;
+use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $id
- * @property string $tenant_id
+ * @property ?string $tenant_id
  * @property string $name
  * @property ?string $description
  * @property string $content
@@ -537,7 +537,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class InvoiceTemplate extends BaseModel
 {
-    use BelongsToTenant;
+    use IsGlobalOrBelongsToTenant;
     use SoftDeletes;
 
     protected $fillable = [
@@ -579,7 +579,7 @@ class CreateInvoiceTemplatesTable extends Migration
     {
         Schema::create('invoice_templates', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('tenant_id')->index();
+            $table->string('tenant_id')->nullable()->index();
             $table->string('name');
             $table->text('description')->nullable();
             $table->longText('content');

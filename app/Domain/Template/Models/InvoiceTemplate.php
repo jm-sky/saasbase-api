@@ -7,12 +7,13 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Template\Casts\TemplatePreviewDataCast;
 use App\Domain\Template\Casts\TemplateSettingsCast;
 use App\Domain\Template\Enums\TemplateCategory;
-use App\Domain\Tenant\Traits\BelongsToTenant;
+use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property string           $id
- * @property string           $tenant_id
+ * @property ?string          $tenant_id
  * @property ?string          $user_id
  * @property string           $name
  * @property ?string          $description
@@ -22,12 +23,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array            $settings
  * @property bool             $is_active
  * @property bool             $is_default
- * @property ?\Carbon\Carbon  $created_at
- * @property ?\Carbon\Carbon  $updated_at
+ * @property ?Carbon          $created_at
+ * @property ?Carbon          $updated_at
  */
 class InvoiceTemplate extends BaseModel
 {
-    use BelongsToTenant;
+    use IsGlobalOrBelongsToTenant;
 
     protected $table = 'invoice_templates';
 
