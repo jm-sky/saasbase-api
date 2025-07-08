@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Controllers\TenantInvitationController;
 use App\Domain\Tenant\Enums\InvitationStatus;
 use App\Domain\Tenant\Models\Tenant;
@@ -37,7 +38,7 @@ class TenantInvitationControllerTest extends TestCase
             "/api/v1/tenants/{$tenant->id}/invitations",
             [
                 'email' => 'invitee@example.com',
-                'role'  => 'member',
+                'role'  => RoleName::ProjectMember->value,
             ]
         );
 
@@ -45,7 +46,7 @@ class TenantInvitationControllerTest extends TestCase
         $this->assertDatabaseHas('tenant_invitations', [
             'tenant_id' => $tenant->id,
             'email'     => 'invitee@example.com',
-            'role'      => 'member',
+            'role'      => RoleName::ProjectMember->value,
             'status'    => InvitationStatus::PENDING->value,
         ]);
     }
@@ -59,7 +60,7 @@ class TenantInvitationControllerTest extends TestCase
             'tenant_id'   => $tenant->id,
             'inviter_id'  => $user->id,
             'email'       => 'invitee@example.com',
-            'role'        => 'member',
+            'role'        => RoleName::ProjectMember->value,
             'token'       => $token,
             'status'      => InvitationStatus::PENDING->value,
             'expires_at'  => now()->addDays(7),
@@ -78,7 +79,7 @@ class TenantInvitationControllerTest extends TestCase
         $this->assertDatabaseHas('user_tenants', [
             'user_id'   => $invitee->id,
             'tenant_id' => $tenant->id,
-            'role'      => 'member',
+            'role'      => RoleName::ProjectMember->value,
         ]);
     }
 }
