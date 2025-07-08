@@ -4,8 +4,8 @@ namespace App\Domain\Tenant\Listeners;
 
 use App\Domain\Auth\Events\UserCreated;
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
-use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Support\Str;
 
@@ -25,7 +25,7 @@ class CreateTenantForNewUser
 
         $tenant = Tenant::create(self::prepareTenantData($event->user));
 
-        $event->user->tenants()->attach($tenant, ['role' => UserTenantRole::Admin->value]);
+        $event->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
         (new InitializeTenantDefaults())->execute($tenant, $event->user);
     }

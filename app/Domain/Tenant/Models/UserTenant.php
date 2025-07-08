@@ -3,13 +3,15 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
-use App\Domain\Tenant\Enums\UserTenantRole;
+use App\Domain\Rights\Enums\RoleName;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @property UserTenantRole $role
+ * @property RoleName $role
+ * @property User     $user
+ * @property Tenant   $tenant
  */
 class UserTenant extends Pivot
 {
@@ -36,6 +38,19 @@ class UserTenant extends Pivot
     protected $casts = [
         'role' => 'string',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            $model->user->assignRole($model->role);
+        });
+
+        static::deleted(function ($model) {
+            $model->user->removeRole($model->role);
+        });
+    }
 
     /**
      * Get the user that owns the tenant membership.

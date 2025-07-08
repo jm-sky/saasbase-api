@@ -26,6 +26,7 @@ class InvoiceTemplateResource extends JsonResource
             'settings'    => $this->settings,
             'isActive'    => $this->is_active,
             'isDefault'   => $this->is_default,
+            'isSystem'    => null === $this->tenant_id,
             'createdAt'   => $this->created_at?->toIso8601String(),
             'updatedAt'   => $this->updated_at?->toIso8601String(),
             'user'        => $this->whenLoaded('user', fn () => new UserPreviewResource($this->user)),

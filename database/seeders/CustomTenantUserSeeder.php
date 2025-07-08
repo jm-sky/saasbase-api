@@ -18,13 +18,13 @@ use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectRole;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Projects\Models\TaskStatus;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
 use App\Domain\Subscription\Models\SubscriptionPlan;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Enums\DefaultPositionCategory;
-use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\PositionCategory;
@@ -163,8 +163,11 @@ class CustomTenantUserSeeder extends Seeder
         }
 
         $tenantId = Arr::get($tenantData, 'id');
-        $role     = Arr::get($tenantData, 'role') ?? UserTenantRole::User->value;
         $isOwner  = Arr::get($tenantData, 'isOwner') ?? false;
+        $role     = $user->is_admin ? RoleName::Admin : null;
+        $role     = $role ?? ($isOwner ? RoleName::Owner : $role);
+        $role     = $role ?? (Arr::get($tenantData, 'role') ? RoleName::fromCaseInsensitive(Arr::get($tenantData, 'role')) : $role);
+        $role     = $role ?? RoleName::Manager;
 
         $tenant = $this->tenants[$tenantId] ?? null;
 
@@ -172,7 +175,7 @@ class CustomTenantUserSeeder extends Seeder
             return;
         }
 
-        $tenant->users()->attach($user, ['role' => $role]);
+        $tenant->users()->attach($user, ['role' => $role->value]);
 
         $organizationPositionService = new OrganizationPositionService($tenant);
 

@@ -7,6 +7,7 @@ use App\Domain\Common\Models\AllocationContractType;
 use App\Domain\Common\Models\AllocationEquipmentType;
 use App\Domain\Common\Models\AllocationLocation;
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Common\Traits\UsesAllocationMorphMap;
 use App\Domain\Expense\Enums\AllocationDimensionType;
 use App\Domain\Financial\Models\AllocationCostType;
 use App\Domain\Financial\Models\AllocationRelatedTransactionCategory;
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class AllocationDimension extends BaseModel
 {
     use HasFactory;
+    use UsesAllocationMorphMap;
 
     protected $fillable = [
         'allocation_id',

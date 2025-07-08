@@ -21,6 +21,7 @@ class InvoiceTemplatePreviewResource extends JsonResource
             'settings'    => $this->settings,
             'isActive'    => $this->is_active,
             'isDefault'   => $this->is_default,
+            'isSystem'    => null === $this->tenant_id,
         ];
     }
 }

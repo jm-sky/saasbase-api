@@ -12,7 +12,7 @@ class InvoiceTemplatePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('invoice_templates.view');
+        return $user->hasPermissionTo('invoice_templates.manage');
     }
 
     /**
@@ -20,7 +20,7 @@ class InvoiceTemplatePolicy
      */
     public function view(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->hasPermissionTo('invoice_templates.view')
+        return $user->hasPermissionTo('invoice_templates.manage')
                && $this->belongsToUserTenant($user, $invoiceTemplate);
     }
 
@@ -29,7 +29,7 @@ class InvoiceTemplatePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('invoice_templates.create');
+        return $user->hasPermissionTo('invoice_templates.manage');
     }
 
     /**
@@ -37,7 +37,7 @@ class InvoiceTemplatePolicy
      */
     public function update(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->hasPermissionTo('invoice_templates.update')
+        return $user->hasPermissionTo('invoice_templates.manage')
                && $this->belongsToUserTenant($user, $invoiceTemplate);
     }
 
@@ -46,7 +46,7 @@ class InvoiceTemplatePolicy
      */
     public function delete(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->hasPermissionTo('invoice_templates.delete')
+        return $user->hasPermissionTo('invoice_templates.manage')
                && $this->belongsToUserTenant($user, $invoiceTemplate);
     }
 
@@ -55,7 +55,7 @@ class InvoiceTemplatePolicy
      */
     public function restore(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->hasPermissionTo('invoice_templates.restore')
+        return $user->hasPermissionTo('invoice_templates.manage')
                && $this->belongsToUserTenant($user, $invoiceTemplate);
     }
 
@@ -64,7 +64,7 @@ class InvoiceTemplatePolicy
      */
     public function forceDelete(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->hasPermissionTo('invoice_templates.force_delete')
+        return $user->hasPermissionTo('invoice_templates.manage')
                && $this->belongsToUserTenant($user, $invoiceTemplate);
     }
 
@@ -73,7 +73,7 @@ class InvoiceTemplatePolicy
      */
     public function setDefault(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->hasPermissionTo('invoice_templates.set_default')
+        return $user->hasPermissionTo('invoice_templates.manage')
                && $this->belongsToUserTenant($user, $invoiceTemplate);
     }
 
@@ -82,7 +82,7 @@ class InvoiceTemplatePolicy
      */
     public function preview(User $user): bool
     {
-        return $user->hasPermissionTo('invoice_templates.preview');
+        return $user->hasPermissionTo('invoice_templates.manage');
     }
 
     /**
@@ -90,7 +90,7 @@ class InvoiceTemplatePolicy
      */
     public function generatePdf(User $user): bool
     {
-        return $user->hasPermissionTo('invoice_templates.generate_pdf');
+        return $user->hasPermissionTo('invoice_templates.manage');
     }
 
     /**
@@ -98,6 +98,6 @@ class InvoiceTemplatePolicy
      */
     private function belongsToUserTenant(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return $user->tenant_id === $invoiceTemplate->tenant_id;
+        return null === $invoiceTemplate->tenant_id || $user->tenant_id === $invoiceTemplate->tenant_id;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Rights\Models\Permission;
 use App\Domain\Rights\Models\Role;
 use App\Domain\Tenant\Models\Tenant;
@@ -31,6 +32,9 @@ class RolesAndPermissionsSeeder extends Seeder
             // Product permissions
             'product.view',
             'product.manage',
+
+            // Invoice template permissions
+            'invoice_templates.manage',
         ];
 
         foreach ($permissions as $permission) {
@@ -45,25 +49,28 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create roles and assign permissions
         $roles = [
-            'Admin'            => $permissions,
-            'Owner'            => $permissions,
-            'FinancialManager' => [
+            RoleName::Admin->value            => $permissions,
+            RoleName::Owner->value            => $permissions,
+            RoleName::Manager->value          => $permissions,
+            RoleName::FinancialManager->value => [
                 'contractor.view',
                 'contractor.manage',
                 'product.view',
                 'product.manage',
+                'invoice_templates.manage',
             ],
-            'ProjectManager' => [
+            RoleName::ProjectManager->value => [
                 'project.view',
                 'project.manage',
                 'task.view',
                 'task.manage',
             ],
-            'ProjectMember' => [
+            RoleName::ProjectMember->value => [
                 'project.view',
                 'task.view',
                 'task.manage',
             ],
+            RoleName::User->value => [],
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {

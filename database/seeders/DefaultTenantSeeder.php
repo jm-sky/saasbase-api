@@ -8,8 +8,8 @@ use App\Domain\Auth\Notifications\PasswordChangedNotification;
 use App\Domain\Auth\Notifications\WelcomeNotification;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Products\Models\Product;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Actions\InitializeTenantDefaults;
-use App\Domain\Tenant\Enums\UserTenantRole;
 use App\Domain\Tenant\Listeners\CreateTenantForNewUser;
 use App\Domain\Tenant\Models\Tenant;
 use Database\Factories\AddressFactory;
@@ -59,7 +59,7 @@ class DefaultTenantSeeder extends Seeder
     {
         $tenant = Tenant::factory()->create(CreateTenantForNewUser::prepareTenantData($user));
 
-        $user->tenants()->attach($tenant, ['role' => UserTenantRole::Admin->value]);
+        $user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
         (new InitializeTenantDefaults())->execute($tenant, $user);
 

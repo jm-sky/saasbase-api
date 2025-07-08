@@ -2,7 +2,6 @@
 
 namespace App\Domain\Users\Resources;
 
-use App\Domain\Auth\Models\User;
 use App\Domain\Common\Resources\UserSkillPreviewResource;
 use App\Domain\Users\Models\UserProfile;
 use Illuminate\Http\Request;
@@ -29,6 +28,7 @@ class UserProfileResource extends JsonResource
             'createdAt'   => $this->created_at,
             'updatedAt'   => $this->updated_at,
             'skills'      => UserSkillPreviewResource::collection($this->user?->skills ?? collect()),
+            'roles'       => $this->user?->roles->pluck('name'),
         ];
     }
 }

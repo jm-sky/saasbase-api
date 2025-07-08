@@ -16,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SignedFileController extends Controller
 {
+    public const MAX_AGE = 900; // 15 minutes
+
     public function show(Request $request, string $modelName, string $modelId, string $mediaId, string $fileName)
     {
         $modelClass = $this->resolveModelClass($modelName);
@@ -36,7 +38,7 @@ class SignedFileController extends Controller
             'Content-Type'        => $media->mime_type,
             'Content-Length'      => $media->size,
             'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
-            'Cache-Control'       => 'private, max-age=900', // 15 minutes
+            'Cache-Control'       => 'private, max-age=' . self::MAX_AGE,
         ]);
     }
 

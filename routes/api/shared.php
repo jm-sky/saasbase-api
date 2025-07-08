@@ -4,6 +4,7 @@ use App\Domain\Common\Controllers\MeasurementUnitController;
 use App\Domain\Common\Controllers\VatRateController;
 use App\Domain\Financial\Controllers\PaymentMethodController;
 use App\Domain\Invoice\Controllers\NumberingTemplateController;
+use App\Domain\Template\Controllers\InvoiceTemplateController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api', 'is_active'])->group(function () {
@@ -16,4 +17,6 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
     ;
 
     Route::apiResource('payment-methods', PaymentMethodController::class)->only(['index', 'store', 'destroy']);
+
+    Route::apiResource('invoice-templates', InvoiceTemplateController::class);
 });
