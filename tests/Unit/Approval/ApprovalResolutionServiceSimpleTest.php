@@ -3,14 +3,14 @@
 namespace Tests\Unit\Approval;
 
 use App\Domain\Approval\Services\ApprovalResolutionService;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(ApprovalResolutionService::class)]
 class ApprovalResolutionServiceSimpleTest extends TestCase
 {
     private ApprovalResolutionService $service;

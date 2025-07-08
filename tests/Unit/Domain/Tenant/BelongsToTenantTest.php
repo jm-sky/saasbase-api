@@ -4,6 +4,7 @@ namespace Tests\Unit\Domain\Tenant;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -37,7 +38,7 @@ class BelongsToTenantTest extends TestCase
         $this->otherTenant = Tenant::factory()->create();
         $this->model       = new Contractor();
 
-        $this->user->tenants()->attach($this->tenant, ['role' => 'admin']);
+        $this->user->tenants()->attach($this->tenant, ['role' => RoleName::Admin->value]);
 
         Tenant::$BYPASSED_TENANT_ID = $this->tenant->id;
     }

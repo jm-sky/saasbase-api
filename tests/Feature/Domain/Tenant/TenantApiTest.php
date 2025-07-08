@@ -3,6 +3,7 @@
 namespace Tests\Feature\Domain\Tenant;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Controllers\TenantController;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,7 +40,7 @@ class TenantApiTest extends TestCase
         Tenant::query()->forceDelete();
 
         $tenants = Tenant::factory()->count(3)->create();
-        $this->user->tenants()->attach($tenants, ['role' => 'admin']);
+        $this->user->tenants()->attach($tenants, ['role' => RoleName::Admin->value]);
 
         $response = $this->getJson($this->baseUrl);
 
@@ -119,7 +120,7 @@ class TenantApiTest extends TestCase
     public function testCanShowTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
+        $this->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
         $response = $this->getJson($this->baseUrl . '/' . $tenant->id);
 
@@ -147,7 +148,7 @@ class TenantApiTest extends TestCase
     public function testCanUpdateTenant(): void
     {
         $tenant     = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
+        $this->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
         $updateData = [
             'name' => 'Updated Name',
             'slug' => 'updated-slug',
@@ -180,7 +181,7 @@ class TenantApiTest extends TestCase
     public function testCanDeleteTenant(): void
     {
         $tenant = Tenant::factory()->create();
-        $this->user->tenants()->attach($tenant, ['role' => 'admin']);
+        $this->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
         $response = $this->deleteJson($this->baseUrl . '/' . $tenant->id);
 

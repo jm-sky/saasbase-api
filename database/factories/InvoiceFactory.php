@@ -9,6 +9,9 @@ use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\DeliveryStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Financial\Enums\PaymentMethod;
+use App\Domain\Financial\Enums\PaymentStatus;
+use App\Domain\Financial\Enums\VatRateType;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;
@@ -88,7 +91,7 @@ class InvoiceFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status'         => InvoiceStatus::COMPLETED->value,
-            'payment_status' => \App\Domain\Financial\Enums\PaymentStatus::PAID->value,
+            'payment_status' => PaymentStatus::PAID->value,
             'payment'        => (new InvoicePaymentDTOFactory())->paid(),
         ]);
     }
@@ -197,7 +200,7 @@ class InvoiceFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: '23% VAT',
                             rate: 23,
-                            type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
+                            type: VatRateType::PERCENTAGE
                         ),
                         'totalNet'   => BigDecimal::of($basePrice1),
                         'totalVat'   => BigDecimal::of($totalTax),
@@ -213,11 +216,11 @@ class InvoiceFactory extends Factory
                 'description' => '',
             ]),
             'payment' => (new InvoicePaymentDTOFactory())->make([
-                'status'      => \App\Domain\Financial\Enums\PaymentStatus::PENDING,
+                'status'      => PaymentStatus::PENDING,
                 'dueDate'     => null, // Will be set by withDates method
                 'paidDate'    => null,
                 'paidAmount'  => BigDecimal::of('0'),
-                'method'      => \App\Domain\Financial\Enums\PaymentMethod::BANK_TRANSFER,
+                'method'      => PaymentMethod::BANK_TRANSFER,
                 'terms'       => '',
                 'notes'       => '',
                 'bankAccount' => $contractor->defaultBankAccount
@@ -281,7 +284,7 @@ class InvoiceFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: 'Tax Exempt',
                             rate: 0,
-                            type: \App\Domain\Common\Enums\VatRateType::EXEMPT
+                            type: VatRateType::EXEMPT
                         ),
                         'totalNet'   => BigDecimal::of($basePrice1),
                         'totalVat'   => BigDecimal::of(0),
@@ -297,7 +300,7 @@ class InvoiceFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: 'Tax Exempt',
                             rate: 0,
-                            type: \App\Domain\Common\Enums\VatRateType::EXEMPT
+                            type: VatRateType::EXEMPT
                         ),
                         'totalNet'   => BigDecimal::of($basePrice2),
                         'totalVat'   => BigDecimal::of(0),
@@ -313,7 +316,7 @@ class InvoiceFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: 'Tax Exempt',
                             rate: 0,
-                            type: \App\Domain\Common\Enums\VatRateType::EXEMPT
+                            type: VatRateType::EXEMPT
                         ),
                         'totalNet'   => BigDecimal::of($total3),
                         'totalVat'   => BigDecimal::of(0),
@@ -329,11 +332,11 @@ class InvoiceFactory extends Factory
                 'description' => 'Payment terms: Net 30 days. All services delivered according to Contract #NASA-2024-SB-001.',
             ]),
             'payment' => (new InvoicePaymentDTOFactory())->make([
-                'status'     => \App\Domain\Financial\Enums\PaymentStatus::PENDING,
+                'status'     => PaymentStatus::PENDING,
                 'dueDate'    => null, // Will be set by withDates method
                 'paidDate'   => null,
                 'paidAmount' => BigDecimal::of('0'),
-                'method'     => \App\Domain\Financial\Enums\PaymentMethod::BANK_TRANSFER,
+                'method'     => PaymentMethod::BANK_TRANSFER,
                 'reference'  => 'NASA-Contract-2024-SB-001',
                 'terms'      => 'Net 30',
                 'notes'      => 'Government contract payment',

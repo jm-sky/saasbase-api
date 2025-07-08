@@ -4,12 +4,12 @@ namespace App\Domain\Expense\Actions;
 
 use App\Domain\Common\Exceptions\UnsupportedProcessableTypeException;
 use App\Domain\Common\Models\OcrRequest;
-use App\Domain\Common\Models\VatRate;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\DTOs\InvoiceLineDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentBankAccountDTO;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\PaymentMethod;
+use App\Domain\Financial\Models\VatRate;
 use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentDTO;
 use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentItemDTO;
 use Brick\Math\BigDecimal;

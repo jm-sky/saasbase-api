@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Domain\Common\Enums\VatRateType;
-use App\Domain\Common\Models\VatRate;
+use App\Domain\Financial\Enums\VatRateType;
+use App\Domain\Financial\Models\VatRate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Common\Models\VatRate>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Financial\Models\VatRate>
  */
 class VatRateFactory extends Factory
 {

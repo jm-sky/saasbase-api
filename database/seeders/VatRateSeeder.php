@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Common\Enums\VatRateType;
-use App\Domain\Common\Models\VatRate;
+use App\Domain\Financial\Enums\VatRateType;
+use App\Domain\Financial\Models\VatRate;
 use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 

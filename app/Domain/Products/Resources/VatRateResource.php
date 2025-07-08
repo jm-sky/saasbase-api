@@ -2,7 +2,7 @@
 
 namespace App\Domain\Products\Resources;
 
-use App\Domain\Common\Models\VatRate;
+use App\Domain\Financial\Models\VatRate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

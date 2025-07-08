@@ -8,7 +8,9 @@ use App\Domain\Financial\Enums\AllocationStatus;
 use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Financial\Enums\PaymentMethod;
 use App\Domain\Financial\Enums\PaymentStatus;
+use App\Domain\Financial\Enums\VatRateType;
 use App\Domain\Tenant\Models\Tenant;
 use Brick\Math\BigDecimal;
 use Database\Factories\DTOs\InvoiceBodyDTOFactory;
@@ -194,7 +196,7 @@ class ExpenseFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: '23% VAT',
                             rate: 23,
-                            type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
+                            type: VatRateType::PERCENTAGE
                         ),
                         'totalNet'   => BigDecimal::of($totalNet),
                         'totalVat'   => BigDecimal::of($totalVat),
@@ -214,7 +216,7 @@ class ExpenseFactory extends Factory
                 'dueDate'    => null, // Will be set by withDates method
                 'paidDate'   => null,
                 'paidAmount' => BigDecimal::of('0'),
-                'method'     => \App\Domain\Financial\Enums\PaymentMethod::CREDIT_CARD,
+                'method'     => PaymentMethod::CREDIT_CARD,
                 'reference'  => 'BP-EXP-2024-001',
                 'terms'      => 'Net 30',
                 'notes'      => 'Expense from BP services',
@@ -271,7 +273,7 @@ class ExpenseFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: '23% VAT',
                             rate: 23,
-                            type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
+                            type: VatRateType::PERCENTAGE
                         ),
                         'totalNet'   => BigDecimal::of($serverCost),
                         'totalVat'   => BigDecimal::of($serverCost * $vatRate),
@@ -287,7 +289,7 @@ class ExpenseFactory extends Factory
                             id: Str::ulid()->toString(),
                             name: '23% VAT',
                             rate: 23,
-                            type: \App\Domain\Common\Enums\VatRateType::PERCENTAGE
+                            type: VatRateType::PERCENTAGE
                         ),
                         'totalNet'   => BigDecimal::of($storageCost),
                         'totalVat'   => BigDecimal::of($storageCost * $vatRate),
@@ -307,7 +309,7 @@ class ExpenseFactory extends Factory
                 'dueDate'     => null, // Will be set by withDates method
                 'paidDate'    => null,
                 'paidAmount'  => BigDecimal::of('0'),
-                'method'      => \App\Domain\Financial\Enums\PaymentMethod::BANK_TRANSFER,
+                'method'      => PaymentMethod::BANK_TRANSFER,
                 'reference'   => 'OVH-EXP-2024-001',
                 'terms'       => 'Net 30',
                 'notes'       => 'Expense from OVH services',

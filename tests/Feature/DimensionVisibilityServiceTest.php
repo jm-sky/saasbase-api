@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Expense\Enums\AllocationDimensionType;
 use App\Domain\Expense\Models\TenantDimensionConfiguration;
 use App\Domain\Expense\Services\DimensionVisibilityService;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class DimensionVisibilityServiceTest extends TestCase
         $this->user   = User::factory()->create();
 
         // Associate user with tenant
-        $this->user->tenants()->attach($this->tenant->id, ['role' => 'admin']);
+        $this->user->tenants()->attach($this->tenant->id, ['role' => RoleName::Admin->value]);
     }
 
     public function testInitializeDefaultConfigurationForTenant(): void

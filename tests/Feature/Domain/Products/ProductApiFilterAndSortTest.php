@@ -3,7 +3,7 @@
 namespace Tests\Feature\Domain\Products;
 
 use App\Domain\Common\Models\MeasurementUnit;
-use App\Domain\Common\Models\VatRate;
+use App\Domain\Financial\Models\VatRate;
 use App\Domain\Products\Controllers\ProductController;
 use App\Domain\Products\Models\Product;
 use App\Domain\Tenant\Models\Tenant;

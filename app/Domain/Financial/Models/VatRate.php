@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Domain\Common\Models;
+namespace App\Domain\Financial\Models;
 
-use App\Domain\Common\Enums\VatRateType;
+use App\Domain\Common\Models\BaseModel;
 use App\Domain\Financial\DTOs\VatRateDTO;
+use App\Domain\Financial\Enums\VatRateType;
 use App\Domain\Products\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;

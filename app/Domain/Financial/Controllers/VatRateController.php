@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\Common\Controllers;
+namespace App\Domain\Financial\Controllers;
 
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
-use App\Domain\Common\Models\VatRate;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Financial\Models\VatRate;
 use App\Domain\Products\Resources\VatRateResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

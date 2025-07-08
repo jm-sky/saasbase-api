@@ -3,17 +3,18 @@
 namespace Tests\Unit\Domain\Tenant\Actions;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Actions\GenerateTenantJwtAction;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(GenerateTenantJwtAction::class)]
 class GenerateTenantJwtActionTest extends TestCase
 {
     use RefreshDatabase;
@@ -33,7 +34,7 @@ class GenerateTenantJwtActionTest extends TestCase
         // Arrange
         $user   = User::factory()->create();
         $tenant = Tenant::factory()->create();
-        $role   = 'admin';
+        $role   = RoleName::Admin->value;
 
         // Associate user with tenant
         $user->tenants()->attach($tenant, ['role' => $role]);

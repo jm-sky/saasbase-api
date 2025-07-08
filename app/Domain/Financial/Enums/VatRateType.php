@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Common\Enums;
+namespace App\Domain\Financial\Enums;
 
 enum VatRateType: string
 {

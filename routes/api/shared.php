@@ -1,8 +1,8 @@
 <?php
 
 use App\Domain\Common\Controllers\MeasurementUnitController;
-use App\Domain\Common\Controllers\VatRateController;
 use App\Domain\Financial\Controllers\PaymentMethodController;
+use App\Domain\Financial\Controllers\VatRateController;
 use App\Domain\Invoice\Controllers\NumberingTemplateController;
 use App\Domain\Template\Controllers\InvoiceTemplateController;
 use Illuminate\Support\Facades\Route;

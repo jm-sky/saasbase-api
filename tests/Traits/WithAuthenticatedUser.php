@@ -4,6 +4,7 @@ namespace Tests\Traits;
 
 use App\Domain\Auth\JwtHelper;
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Models\Tenant;
 
 trait WithAuthenticatedUser
@@ -15,7 +16,7 @@ trait WithAuthenticatedUser
         if (!$tenant) {
             $token = JwtHelper::createTokenWithoutTenant($user);
         } else {
-            $user->tenants()->attach($tenant, ['role' => 'admin']);
+            $user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
             $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
         }
 

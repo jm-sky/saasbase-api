@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\Traits\HasActivityLogging;
+use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\StoreTenantRequest;
 use App\Domain\Tenant\Requests\UpdateTenantRequest;
@@ -47,7 +48,7 @@ class TenantController extends Controller
             $tenant->addresses()->create($request->validated('address'));
         }
 
-        $request->user()->tenants()->attach($tenant, ['role' => 'admin']);
+        $request->user()->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
         return new TenantResource($tenant);
     }

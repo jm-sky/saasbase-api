@@ -3,8 +3,8 @@
 namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDTO;
-use App\Domain\Common\Enums\VatRateType;
-use App\Domain\Common\Models\VatRate;
+use App\Domain\Financial\Enums\VatRateType;
+use App\Domain\Financial\Models\VatRate;
 use Illuminate\Database\Eloquent\Model;
 
 /**
