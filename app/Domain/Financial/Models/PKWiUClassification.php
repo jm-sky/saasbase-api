@@ -12,14 +12,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string  $code
- * @property ?string $parent_code
- * @property string  $name
- * @property ?string $description
- * @property int     $level
- * @property bool    $is_active
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property string                          $code
+ * @property ?string                         $parent_code
+ * @property string                          $name
+ * @property ?string                         $description
+ * @property int                             $level
+ * @property bool                            $is_active
+ * @property Carbon                          $created_at
+ * @property Carbon                          $updated_at
+ * @property PKWiUClassification             $parent
+ * @property Collection<PKWiUClassification> $children
+ * @property Collection<Product>             $products
  */
 class PKWiUClassification extends Model
 {

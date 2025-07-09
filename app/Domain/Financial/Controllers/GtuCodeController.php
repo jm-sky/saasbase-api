@@ -6,16 +6,17 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Financial\Models\GtuCode;
+use App\Domain\Financial\Requests\AssignGtuToInvoiceLineRequest;
+use App\Domain\Financial\Requests\AssignGtuToProductRequest;
+use App\Domain\Financial\Requests\GtuForInvoiceRequest;
 use App\Domain\Financial\Requests\SearchGtuCodeRequest;
 use App\Domain\Financial\Requests\StoreGtuCodeRequest;
-use App\Domain\Financial\Requests\UpdateGtuCodeRequest;
 use App\Domain\Financial\Resources\GtuCodeResource;
 use App\Domain\Financial\Services\GTUAssignmentService;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Products\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -73,29 +74,8 @@ class GtuCodeController extends Controller
         ]);
     }
 
-    public function update(UpdateGtuCodeRequest $request, GtuCode $gtuCode): JsonResponse
+    public function assignToInvoiceLine(AssignGtuToInvoiceLineRequest $request, string $invoiceId, string $lineId): JsonResponse
     {
-        $gtuCode->update($request->validated());
-
-        return response()->json([
-            'data' => new GtuCodeResource($gtuCode),
-        ]);
-    }
-
-    public function destroy(GtuCode $gtuCode): JsonResponse
-    {
-        $gtuCode->delete();
-
-        return response()->json(['message' => 'GtuCode deleted successfully.'], Response::HTTP_NO_CONTENT);
-    }
-
-    public function assignToInvoiceLine(Request $request, string $invoiceId, string $lineId): JsonResponse
-    {
-        $request->validate([
-            'gtu_code'          => 'required|exists:gtu_codes,code',
-            'assignment_reason' => 'nullable|string|max:500',
-        ]);
-
         $invoice              = Invoice::findOrFail($invoiceId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
@@ -184,12 +164,8 @@ class GtuCodeController extends Controller
         ]);
     }
 
-    public function assignToProduct(Request $request, string $productId): JsonResponse
+    public function assignToProduct(AssignGtuToProductRequest $request, string $productId): JsonResponse
     {
-        $request->validate([
-            'gtu_code' => 'required|exists:gtu_codes,code',
-        ]);
-
         $product              = Product::findOrFail($productId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
@@ -204,12 +180,8 @@ class GtuCodeController extends Controller
         ]);
     }
 
-    public function autoAssign(Request $request): JsonResponse
+    public function autoAssign(GtuForInvoiceRequest $request): JsonResponse
     {
-        $request->validate([
-            'invoice_id' => 'required|exists:invoices,id',
-        ]);
-
         $invoice              = Invoice::findOrFail($request->input('invoice_id'));
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
@@ -224,12 +196,8 @@ class GtuCodeController extends Controller
         ]);
     }
 
-    public function validateAssignment(Request $request): JsonResponse
+    public function validateAssignment(GtuForInvoiceRequest $request): JsonResponse
     {
-        $request->validate([
-            'invoice_id' => 'required|exists:invoices,id',
-        ]);
-
         $invoice              = Invoice::findOrFail($request->input('invoice_id'));
         $gtuAssignmentService = app(GTUAssignmentService::class);
 

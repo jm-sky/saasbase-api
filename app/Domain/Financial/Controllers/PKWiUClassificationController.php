@@ -3,6 +3,8 @@
 namespace App\Domain\Financial\Controllers;
 
 use App\Domain\Financial\Models\PKWiUClassification;
+use App\Domain\Financial\Requests\SearchPKWiURequest;
+use App\Domain\Financial\Requests\ValidatePKWiUCodeRequest;
 use App\Domain\Financial\Resources\PKWiUClassificationResource;
 use App\Domain\Financial\Services\PKWiUService;
 use App\Http\Controllers\Controller;
@@ -66,15 +68,10 @@ class PKWiUClassificationController extends Controller
         ]);
     }
 
-    public function search(Request $request): JsonResponse
+    public function search(SearchPKWiURequest $request): JsonResponse
     {
-        $request->validate([
-            'query' => 'required|string|min:2|max:255',
-            'limit' => 'sometimes|integer|min:1|max:100',
-        ]);
-
         $results = $this->pkwiuService->searchByName(
-            $request->query,
+            $request->getQuery(),
             $request->limit ?? 50
         );
 
@@ -83,12 +80,8 @@ class PKWiUClassificationController extends Controller
         ]);
     }
 
-    public function validateCode(Request $request): JsonResponse
+    public function validateCode(ValidatePKWiUCodeRequest $request): JsonResponse
     {
-        $request->validate([
-            'code' => 'required|string|regex:/^[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]$/',
-        ]);
-
         $isValid = $this->pkwiuService->validateCode($request->code);
 
         return response()->json([
