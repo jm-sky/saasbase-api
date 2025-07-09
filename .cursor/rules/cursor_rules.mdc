@@ -1,8 +1,3 @@
----
-description: Guidelines for creating and maintaining Cursor rules to ensure consistency and effectiveness.
-globs: .cursor/rules/*.mdc
-alwaysApply: true
----
 
 - **Required Rule Structure:**
   ```markdown
@@ -27,7 +22,7 @@ alwaysApply: true
   ```typescript
   // ✅ DO: Show good examples
   const goodExample = true;
-  
+
   // ❌ DON'T: Show anti-patterns
   const badExample = false;
   ```
@@ -50,4 +45,31 @@ alwaysApply: true
   - Keep descriptions concise
   - Include both DO and DON'T examples
   - Reference actual code over theoretical examples
-  - Use consistent formatting across rules 
+  - Use consistent formatting across rules
+
+- **Use the MakeDomainModel Command for Model Generation**
+  - When creating a new domain model (and its DTO, controller, resource, and requests), always use the custom artisan command:
+    ```bash
+    php artisan make:domain-model {name} {domain}
+    ```
+    - Replace `{name}` with the model name (StudlyCase)
+    - Replace `{domain}` with the domain name (StudlyCase)
+  - This command will generate:
+    - Model (in `app/Domain/{Domain}/Models/`)
+    - DTO (in `app/Domain/{Domain}/DTOs/`)
+    - Controller (in `app/Domain/{Domain}/Controllers/`)
+    - Resource (in `app/Domain/{Domain}/Resources/`)
+    - Requests (in `app/Domain/{Domain}/Requests/`)
+  - Do **not** manually create these files—always use the generator for consistency.
+  - Follow up with any required customization after generation.
+
+- **Example Usage:**
+  ```bash
+  php artisan make:domain-model Invoice Billing
+  ```
+  This will generate all necessary files for the `Invoice` model in the `Billing` domain.
+  - Use bullet points for clarity
+  - Keep descriptions concise
+  - Include both DO and DON'T examples
+  - Reference actual code over theoretical examples
+  - Use consistent formatting across rules
