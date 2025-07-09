@@ -5,7 +5,7 @@ namespace App\Domain\Invoice\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Enums\ResetPeriod;
-use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\NumberingTemplateFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string              $id
- * @property ?string             $tenant_id
+ * @property string              $tenant_id
  * @property string              $name
  * @property InvoiceType         $invoice_type
  * @property string              $format
@@ -30,11 +30,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class NumberingTemplate extends BaseModel
 {
-    use IsGlobalOrBelongsToTenant;
+    use BelongsToTenant;
     use SoftDeletes;
 
     protected $fillable = [
         'name',
+        'tenant_id',
         'invoice_type',
         'format',
         'next_number',

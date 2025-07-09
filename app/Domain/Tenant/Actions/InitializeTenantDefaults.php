@@ -47,6 +47,7 @@ class InitializeTenantDefaults
             $this->seedDefaultMeasurementUnits($tenant);
             $this->seedDefaultTags($tenant);
             $this->createSubscription($tenant);
+            $this->createNumberingTemplates($tenant);
         });
     }
 
@@ -189,5 +190,10 @@ class InitializeTenantDefaults
                 'color'     => $meta['color'],
             ]);
         }
+    }
+
+    public function createNumberingTemplates(Tenant $tenant): void
+    {
+        (new CreateNumberingTemplates())->execute($tenant);
     }
 }

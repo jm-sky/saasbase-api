@@ -9,7 +9,7 @@ return new class() extends Migration {
     {
         Schema::create('numbering_templates', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('tenant_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('invoice_type');
             $table->string('format');

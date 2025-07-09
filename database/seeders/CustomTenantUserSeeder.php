@@ -117,6 +117,7 @@ class CustomTenantUserSeeder extends Seeder
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTaskStatuses($tenant);
                 $initializer->seedDefaultTags($tenant);
+                $initializer->createNumberingTemplates($tenant);
 
                 $this->createOrganizationUnits($tenant, $rootUnit);
             });
