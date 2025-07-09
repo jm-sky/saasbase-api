@@ -11,9 +11,10 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
     Route::apiResource('vat-rates', VatRateController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('measurement-units', MeasurementUnitController::class)->only(['index', 'store', 'destroy']);
 
+    Route::post('numbering-templates/preview', [NumberingTemplateController::class, 'preview'])->name('numbering-templates.preview');
     Route::post('numbering-templates/{numbering_template}/set-default', [NumberingTemplateController::class, 'setDefault']);
     Route::apiResource('numbering-templates', NumberingTemplateController::class)
-        ->only(['index', 'update', 'destroy'])
+        ->only(['index', 'store', 'update', 'destroy'])
     ;
 
     Route::apiResource('payment-methods', PaymentMethodController::class)->only(['index', 'store', 'destroy']);

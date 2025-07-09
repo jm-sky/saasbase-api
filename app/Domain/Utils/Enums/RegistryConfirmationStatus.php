@@ -2,14 +2,13 @@
 
 namespace App\Domain\Utils\Enums;
 
+use App\Traits\HasEnumValues;
+
 enum RegistryConfirmationStatus: string
 {
+    use HasEnumValues;
+
     case Pending = 'pending';
     case Success = 'success';
     case Failed  = 'failed';
-
-    public static function values(): array
-    {
-        return array_column(self::cases(), 'value');
-    }
 }

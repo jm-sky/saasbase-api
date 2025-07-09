@@ -2,8 +2,12 @@
 
 namespace App\Domain\Common\Enums;
 
+use App\Traits\HasEnumValues;
+
 enum AdvancedFilterOperator: string
 {
+    use HasEnumValues;
+
     case Equals             = 'eq';
     case NotEquals          = 'ne';
     case NotEqualsAlt       = 'neq';
@@ -26,9 +30,4 @@ enum AdvancedFilterOperator: string
     case NotIn              = 'nin';
     case NotInAlt           = 'notin';
     case Between            = 'between';
-
-    public static function values(): array
-    {
-        return array_column(self::cases(), 'value');
-    }
 }

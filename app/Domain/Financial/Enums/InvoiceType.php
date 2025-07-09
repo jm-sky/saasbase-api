@@ -2,8 +2,12 @@
 
 namespace App\Domain\Financial\Enums;
 
+use App\Traits\HasEnumValues;
+
 enum InvoiceType: string
 {
+    use HasEnumValues;
+
     case Basic                    = 'basic'; // Faktura podstawowa
     case BasicCorrection          = 'basic-correction'; // Korekta
     case AdvancePayment           = 'advance-payment'; // Faktura zaliczka

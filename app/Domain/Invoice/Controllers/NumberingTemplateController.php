@@ -3,6 +3,8 @@
 namespace App\Domain\Invoice\Controllers;
 
 use App\Domain\Invoice\Models\NumberingTemplate;
+use App\Domain\Invoice\Requests\PreviewNumberingTemplateRequest;
+use App\Domain\Invoice\Requests\StoreNumberingTemplateRequest;
 use App\Domain\Invoice\Requests\UpdateNumberingTemplateRequest;
 use App\Domain\Invoice\Resources\NumberingTemplateResource;
 use App\Http\Controllers\Controller;
@@ -20,6 +22,15 @@ class NumberingTemplateController extends Controller
 
         // Optionally filter by tenant/global here if needed
         return NumberingTemplateResource::collection($query->get());
+    }
+
+    public function store(StoreNumberingTemplateRequest $request): JsonResponse
+    {
+        $template = NumberingTemplate::create($request->validated());
+
+        return response()->json([
+            'data' => new NumberingTemplateResource($template),
+        ], Response::HTTP_CREATED);
     }
 
     public function update(UpdateNumberingTemplateRequest $request, NumberingTemplate $numberingTemplate): NumberingTemplateResource
@@ -41,6 +52,7 @@ class NumberingTemplateController extends Controller
         DB::transaction(function () use ($numberingTemplate) {
             NumberingTemplate::query()
                 ->where('tenant_id', $numberingTemplate->tenant_id)
+                ->where('invoice_type', $numberingTemplate->invoice_type)
                 ->update(['is_default' => false])
             ;
             $numberingTemplate->is_default = true;
@@ -48,5 +60,36 @@ class NumberingTemplateController extends Controller
         });
 
         return new NumberingTemplateResource($numberingTemplate);
+    }
+
+    public function preview(PreviewNumberingTemplateRequest $request): JsonResponse
+    {
+        $format     = $request->input('format');
+        $nextNumber = $request->input('nextNumber');
+        $prefix     = $request->input('prefix', '');
+        $suffix     = $request->input('suffix', '');
+
+        $now   = now();
+        $year  = $now->format('Y');
+        $month = $now->format('m');
+        // Zero-pad nextNumber to 3 digits
+        $number = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        $preview = $format;
+        $preview = str_replace('YYYY', $year, $preview);
+        $preview = str_replace('MM', $month, $preview);
+        $preview = str_replace('NNN', $number, $preview);
+
+        if ($prefix) {
+            $preview = $prefix . $preview;
+        }
+
+        if ($suffix) {
+            $preview = $preview . $suffix;
+        }
+
+        return response()->json([
+            'preview' => $preview,
+        ]);
     }
 }
