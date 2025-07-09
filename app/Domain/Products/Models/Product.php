@@ -39,6 +39,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property float                $price_net
  * @property ?string              $vat_rate_id
  * @property ?string              $pkwiu_code
+ * @property ?array               $gtu_codes
  * @property string               $symbol
  * @property ?string              $ean
  * @property ?string              $external_id
@@ -72,6 +73,7 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
         'price_net',
         'vat_rate_id',
         'pkwiu_code',
+        'gtu_codes',
         'symbol',
         'ean',
         'external_id',
@@ -86,6 +88,7 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
     protected $casts = [
         'price_net' => 'float',
         'type'      => ProductType::class,
+        'gtu_codes' => 'json',
     ];
 
     protected static function boot()
@@ -120,6 +123,32 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
     public function pkwiuClassification(): BelongsTo
     {
         return $this->belongsTo(PKWiUClassification::class, 'pkwiu_code', 'code');
+    }
+
+    public function getGtuCodes(): array
+    {
+        return $this->gtu_codes ?? [];
+    }
+
+    public function hasGtuCode(string $code): bool
+    {
+        return in_array($code, $this->getGtuCodes());
+    }
+
+    public function addGtuCode(string $code): void
+    {
+        $codes = $this->getGtuCodes();
+
+        if (!in_array($code, $codes)) {
+            $codes[]         = $code;
+            $this->gtu_codes = $codes;
+        }
+    }
+
+    public function removeGtuCode(string $code): void
+    {
+        $codes           = array_values(array_filter($this->getGtuCodes(), fn ($c) => $c !== $code));
+        $this->gtu_codes = $codes;
     }
 
     protected static function newFactory()

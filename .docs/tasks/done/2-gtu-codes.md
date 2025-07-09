@@ -3,7 +3,7 @@
 ## Context
 I'm extending my existing Laravel Invoice system for Polish tax compliance. GTU (Grupa Towarów i Usług) codes are 13 specific tax classification codes (GTU_01 through GTU_13) required by Polish tax authorities to identify special types of transactions like alcoholic beverages, tobacco, vehicles, etc. These codes must be assigned to applicable invoice items for KSeF submission and JPK-VAT reporting.
 
-The system already has `Invoice`, `InvoiceItem` models and uses domain-driven architecture in `app/Domain/Financial/`. I need to implement GTU code support that integrates seamlessly with the existing invoice workflow. Backend stores only official Polish names - frontend handles translations.
+The system already has `Invoice` model with invoice items stored as JSON in the `body` field (using `InvoiceLineDTO`) and `Product` model with PKWiU classification. The architecture uses domain-driven design in `app/Domain/Financial/`. I need to implement GTU code support that integrates seamlessly with the existing invoice workflow. Backend stores only official Polish names - frontend handles translations.
 
 ## Task: Complete GTU Codes Implementation
 
@@ -35,46 +35,17 @@ Schema::create('gtu_codes', function (Blueprint $table) {
 });
 ```
 
-**Migration: `create_invoice_item_gtu_codes_table`**
+**Migration: `add_gtu_codes_to_products_table`**
 ```php
-Schema::create('invoice_item_gtu_codes', function (Blueprint $table) {
-    $table->ulid('id')->primary();
-    $table->ulid('invoice_item_id');
-    $table->string('gtu_code', 10);
-    $table->enum('assignment_type', ['automatic', 'manual', 'inherited']);
-    $table->ulid('assigned_by_user_id')->nullable();
-    $table->text('assignment_reason')->nullable();
-    $table->timestamps();
-    
-    $table->foreign('invoice_item_id')->references('id')->on('invoice_items')->onDelete('cascade');
-    $table->foreign('gtu_code')->references('code')->on('gtu_codes');
-    $table->foreign('assigned_by_user_id')->references('id')->on('users');
-    
-    $table->unique(['invoice_item_id', 'gtu_code']);
-    $table->index(['gtu_code', 'assignment_type']);
+Schema::table('products', function (Blueprint $table) {
+    $table->json('gtu_codes')->nullable()->after('pkwiu_code');
 });
 ```
 
-**Migration: `create_product_gtu_mappings_table`**
-```php
-Schema::create('product_gtu_mappings', function (Blueprint $table) {
-    $table->ulid('id')->primary();
-    $table->ulid('tenant_id');
-    $table->ulid('product_id');
-    $table->string('gtu_code', 10);
-    $table->boolean('is_automatic')->default(true);
-    $table->ulid('created_by_user_id');
-    $table->timestamps();
-    
-    $table->foreign('tenant_id')->references('id')->on('tenants');
-    $table->foreign('product_id')->references('id')->on('products');
-    $table->foreign('gtu_code')->references('code')->on('gtu_codes');
-    $table->foreign('created_by_user_id')->references('id')->on('users');
-    
-    $table->unique(['product_id', 'gtu_code']);
-    $table->index(['tenant_id', 'gtu_code']);
-});
-```
+**Note**: No separate `invoice_item_gtu_codes` or `product_gtu_mappings` tables needed since:
+- Invoice items are stored as JSON in the `Invoice.body` field
+- GTU codes can be stored directly on the Product model as JSON array
+- Final GTU codes are stored in the `InvoiceLineDTO` during invoice creation
 
 ### Domain Structure:
 
@@ -129,35 +100,38 @@ class GTUCode extends Model
 }
 ```
 
-**Model: `app/Domain/Financial/Models/InvoiceItemGTUCode.php`**
+**Update: `app/Domain/Financial/DTOs/InvoiceLineDTO.php`**
 ```php
-<?php
+// Add GTU codes field to existing InvoiceLineDTO
+public readonly ?array $gtuCodes = null; // Array of GTU code strings
+```
 
-namespace App\Domain\Financial\Models;
+**Update: `app/Domain/Products/Models/Product.php`**
+```php
+// Add to existing Product model casts
+protected $casts = [
+    // ... existing casts
+    'gtu_codes' => 'json',
+];
 
-class InvoiceItemGTUCode extends Model
+// Add helper methods
+public function getGtuCodes(): array
 {
-    use BelongsToTenant;
-    
-    protected $fillable = [
-        'invoice_item_id',
-        'gtu_code',
-        'assignment_type',
-        'assigned_by_user_id',
-        'assignment_reason'
-    ];
-    
-    protected $casts = [
-        'assignment_type' => AssignmentTypeEnum::class
-    ];
-    
-    public function invoiceItem(): BelongsTo;
-    public function gtuCode(): BelongsTo;
-    public function assignedBy(): BelongsTo;
-    
-    // Audit methods
-    public function isManuallyAssigned(): bool;
-    public function isAutomaticallyAssigned(): bool;
+    return $this->gtu_codes ?? [];
+}
+
+public function hasGtuCode(string $code): bool
+{
+    return in_array($code, $this->getGtuCodes());
+}
+
+public function addGtuCode(string $code): void
+{
+    $codes = $this->getGtuCodes();
+    if (!in_array($code, $codes)) {
+        $codes[] = $code;
+        $this->gtu_codes = $codes;
+    }
 }
 ```
 
@@ -198,28 +172,28 @@ namespace App\Domain\Financial\Services;
 class GTUAssignmentService
 {
     // Core assignment logic
-    public function autoAssignGTUCodes(InvoiceItem $item): Collection;
-    public function assignGTUCode(InvoiceItem $item, string $gtuCode, string $assignmentType, ?User $user = null): InvoiceItemGTUCode;
-    public function removeGTUCode(InvoiceItem $item, string $gtuCode): bool;
+    public function autoAssignGTUCodes(InvoiceLineDTO $line, ?Product $product = null): array;
+    public function assignGTUCode(InvoiceLineDTO $line, string $gtuCode): InvoiceLineDTO;
+    public function removeGTUCode(InvoiceLineDTO $line, string $gtuCode): InvoiceLineDTO;
     
     // Validation methods
-    public function validateGTUAssignment(InvoiceItem $item, string $gtuCode): ValidationResult;
-    public function validateAmountThreshold(InvoiceItem $item, GTUCode $gtuCode): bool;
-    public function validateApplicabilityConditions(InvoiceItem $item, GTUCode $gtuCode): bool;
+    public function validateGTUAssignment(InvoiceLineDTO $line, string $gtuCode): ValidationResult;
+    public function validateAmountThreshold(InvoiceLineDTO $line, GTUCode $gtuCode): bool;
+    public function validateApplicabilityConditions(InvoiceLineDTO $line, GTUCode $gtuCode): bool;
     
     // Product integration
-    public function assignGTUToProduct(Product $product, string $gtuCode, User $user): ProductGTUMapping;
-    public function getProductGTUCodes(Product $product): Collection;
+    public function assignGTUToProduct(Product $product, string $gtuCode, User $user): Product;
+    public function getProductGTUCodes(Product $product): array;
     public function bulkAssignByCategory(string $category, string $gtuCode, User $user): int;
     
     // Invoice processing
-    public function processInvoiceGTUAssignments(Invoice $invoice): InvoiceGTUProcessingResult;
+    public function processInvoiceGTUAssignments(Invoice $invoice): Invoice;
     public function validateInvoiceGTUCompliance(Invoice $invoice): ValidationResult;
     
     // Detection algorithms
-    public function detectGTUByProductCategory(Product $product): Collection;
-    public function detectGTUByAmount(InvoiceItem $item): Collection;
-    public function detectGTUByKeywords(string $description): Collection;
+    public function detectGTUByProductCategory(Product $product): array;
+    public function detectGTUByAmount(InvoiceLineDTO $line): array;
+    public function detectGTUByKeywords(string $description): array;
     
     // Reporting
     public function getGTUStatistics(Carbon $from, Carbon $to): array;
@@ -239,8 +213,8 @@ class GTUController extends Controller
 {
     public function index(): JsonResponse; // List all GTU codes
     public function show(string $code): JsonResponse; // Show specific GTU code
-    public function assignToInvoiceItem(AssignGTURequest $request, string $invoiceItemId): JsonResponse;
-    public function removeFromInvoiceItem(string $invoiceItemId, string $gtuCode): JsonResponse;
+    public function assignToInvoiceLine(AssignGTURequest $request, string $invoiceId, string $lineId): JsonResponse;
+    public function removeFromInvoiceLine(string $invoiceId, string $lineId, string $gtuCode): JsonResponse;
     public function bulkAssign(BulkAssignGTURequest $request): JsonResponse;
     public function autoAssign(AutoAssignGTURequest $request): JsonResponse;
     public function suggest(string $productId): JsonResponse;
@@ -271,7 +245,8 @@ class BulkAssignGTURequest extends FormRequest
     {
         return [
             'assignments' => 'required|array|min:1',
-            'assignments.*.invoice_item_id' => 'required|exists:invoice_items,id',
+            'assignments.*.invoice_id' => 'required|exists:invoices,id',
+            'assignments.*.line_id' => 'required|string',
             'assignments.*.gtu_code' => 'required|exists:gtu_codes,code',
             'force_override' => 'boolean'
         ];
@@ -283,8 +258,8 @@ class BulkAssignGTURequest extends FormRequest
 
 - `GET /api/gtu-codes` - List all GTU codes with descriptions and thresholds
 - `GET /api/gtu-codes/{code}` - Get specific GTU code details
-- `POST /api/invoice-items/{id}/gtu-codes` - Assign GTU codes to invoice item
-- `DELETE /api/invoice-items/{id}/gtu-codes/{code}` - Remove GTU assignment
+- `POST /api/invoices/{id}/lines/{lineId}/gtu-codes` - Assign GTU codes to invoice line
+- `DELETE /api/invoices/{id}/lines/{lineId}/gtu-codes/{code}` - Remove GTU assignment
 - `POST /api/gtu-codes/bulk-assign` - Bulk assignment for multiple items
 - `POST /api/gtu-codes/auto-assign` - Trigger automatic assignment
 - `GET /api/gtu-codes/suggest/{productId}` - Get GTU suggestions for product
@@ -350,25 +325,33 @@ class GTUCodeSeeder extends Seeder
 
 ### Integration Points:
 
-**Extend InvoiceItem Model:**
+**Extend InvoiceLineDTO:**
 ```php
-// Add to existing InvoiceItem model
-public function gtuCodes(): BelongsToMany
+// Add to existing InvoiceLineDTO
+public readonly ?array $gtuCodes = null; // Array of GTU code strings
+
+// Helper methods in InvoiceLineDTO
+public function hasGTUCode(string $code): bool
 {
-    return $this->belongsToMany(GTUCode::class, 'invoice_item_gtu_codes')
-        ->withPivot(['assignment_type', 'assigned_by_user_id', 'assignment_reason'])
-        ->withTimestamps();
+    return in_array($code, $this->gtuCodes ?? []);
 }
 
-public function hasGTUCode(string $code): bool;
-public function getGTUCodes(): Collection;
-public function requiresGTU(): bool;
-```
+public function getGTUCodes(): array
+{
+    return $this->gtuCodes ?? [];
+}
 
-**Extend InvoiceItemDTO:**
-```php
-// Update existing InvoiceItemDTO
-public readonly ?array $gtuCodes = null; // Array of GTU code strings
+public function withGTUCode(string $code): self
+{
+    $codes = $this->getGTUCodes();
+    if (!in_array($code, $codes)) {
+        $codes[] = $code;
+    }
+    return new self(
+        // ... existing properties
+        gtuCodes: $codes
+    );
+}
 ```
 
 **Invoice Validation Integration:**

@@ -15,6 +15,7 @@ use Brick\Math\BigDecimal;
  * @property BigDecimal $totalVat
  * @property BigDecimal $totalGross
  * @property ?string    $productId
+ * @property ?array     $gtuCodes
  */
 final class InvoiceLineDTO extends BaseDataDTO
 {
@@ -28,6 +29,7 @@ final class InvoiceLineDTO extends BaseDataDTO
         public BigDecimal $totalVat,
         public BigDecimal $totalGross,
         public ?string $productId = null,
+        public ?array $gtuCodes = null,
     ) {
     }
 
@@ -43,6 +45,7 @@ final class InvoiceLineDTO extends BaseDataDTO
             'totalVat'    => $this->totalVat->toFloat(),
             'totalGross'  => $this->totalGross->toFloat(),
             'productId'   => $this->productId,
+            'gtuCodes'    => $this->gtuCodes ?? [],
         ];
     }
 
@@ -58,6 +61,57 @@ final class InvoiceLineDTO extends BaseDataDTO
             totalVat: BigDecimal::of($data['totalVat']),
             totalGross: BigDecimal::of($data['totalGross']),
             productId: $data['productId'] ?? null,
+            gtuCodes: $data['gtuCodes'] ?? null,
+        );
+    }
+
+    public function hasGtuCode(string $code): bool
+    {
+        return in_array($code, $this->gtuCodes ?? []);
+    }
+
+    public function getGtuCodes(): array
+    {
+        return $this->gtuCodes ?? [];
+    }
+
+    public function withGtuCode(string $code): self
+    {
+        $codes = $this->getGtuCodes();
+
+        if (!in_array($code, $codes)) {
+            $codes[] = $code;
+        }
+
+        return new self(
+            id: $this->id,
+            description: $this->description,
+            quantity: $this->quantity,
+            unitPrice: $this->unitPrice,
+            vatRate: $this->vatRate,
+            totalNet: $this->totalNet,
+            totalVat: $this->totalVat,
+            totalGross: $this->totalGross,
+            productId: $this->productId,
+            gtuCodes: $codes,
+        );
+    }
+
+    public function withoutGtuCode(string $code): self
+    {
+        $codes = array_values(array_filter($this->getGtuCodes(), fn ($c) => $c !== $code));
+
+        return new self(
+            id: $this->id,
+            description: $this->description,
+            quantity: $this->quantity,
+            unitPrice: $this->unitPrice,
+            vatRate: $this->vatRate,
+            totalNet: $this->totalNet,
+            totalVat: $this->totalVat,
+            totalGross: $this->totalGross,
+            productId: $this->productId,
+            gtuCodes: $codes,
         );
     }
 }

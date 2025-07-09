@@ -2,24 +2,31 @@
 
 namespace Tests\Feature\Domain\Financial;
 
+use App\Domain\Auth\Models\User;
+use App\Domain\Financial\Controllers\PKWiUClassificationController;
 use App\Domain\Financial\Models\PKWiUClassification;
 use App\Domain\Products\Models\Product;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
-use Tests\WithAuthenticatedUser;
+use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversClass(PKWiUClassificationController::class)]
 class PKWiUClassificationTest extends TestCase
 {
     use WithAuthenticatedUser;
 
+    protected User $user;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->setUpAuthenticatedUser();
+
+        $this->user = User::factory()->create();
+
+        $this->authenticateUser(null, $this->user);
     }
 
     public function testCanListPkwiuClassifications(): void
