@@ -4,15 +4,18 @@ namespace Tests\Feature\GTU;
 
 use App\Domain\Financial\DTOs\InvoiceLineDTO;
 use App\Domain\Financial\DTOs\VatRateDTO;
+use App\Domain\Financial\Enums\VatRateType;
 use App\Domain\Financial\Services\GTUAssignmentService;
 use Brick\Math\BigDecimal;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \App\Domain\Financial\Services\GTUAssignmentService
  */
+#[CoversClass(GTUAssignmentService::class)]
 class GTUAssignmentTest extends TestCase
 {
     private GTUAssignmentService $service;
@@ -34,8 +37,8 @@ class GTUAssignmentTest extends TestCase
             vatRate: new VatRateDTO(
                 id: 'vat-1',
                 name: '23%',
-                rate: BigDecimal::of(0.23),
-                type: 'standard'
+                rate: BigDecimal::of(0.23)->toFloat(),
+                type: VatRateType::PERCENTAGE,
             ),
             totalNet: BigDecimal::of(60000),
             totalVat: BigDecimal::of(13800),
@@ -65,8 +68,8 @@ class GTUAssignmentTest extends TestCase
             vatRate: new VatRateDTO(
                 id: 'vat-1',
                 name: '23%',
-                rate: BigDecimal::of(0.23),
-                type: 'standard'
+                rate: BigDecimal::of(0.23)->toFloat(),
+                type: VatRateType::PERCENTAGE,
             ),
             totalNet: BigDecimal::of(100),
             totalVat: BigDecimal::of(23),
@@ -91,8 +94,8 @@ class GTUAssignmentTest extends TestCase
             vatRate: new VatRateDTO(
                 id: 'vat-1',
                 name: '23%',
-                rate: BigDecimal::of(0.23),
-                type: 'standard'
+                rate: BigDecimal::of(0.23)->toFloat(),
+                type: VatRateType::PERCENTAGE,
             ),
             totalNet: BigDecimal::of(100),
             totalVat: BigDecimal::of(23),
@@ -118,8 +121,8 @@ class GTUAssignmentTest extends TestCase
             vatRate: new VatRateDTO(
                 id: 'vat-1',
                 name: '23%',
-                rate: BigDecimal::of(0.23),
-                type: 'standard'
+                rate: BigDecimal::of(0.23)->toFloat(),
+                type: VatRateType::PERCENTAGE,
             ),
             totalNet: BigDecimal::of(60000),
             totalVat: BigDecimal::of(13800),
@@ -139,8 +142,8 @@ class GTUAssignmentTest extends TestCase
             vatRate: new VatRateDTO(
                 id: 'vat-1',
                 name: '23%',
-                rate: BigDecimal::of(0.23),
-                type: 'standard'
+                rate: BigDecimal::of(0.23)->toFloat(),
+                type: VatRateType::PERCENTAGE,
             ),
             totalNet: BigDecimal::of(100),
             totalVat: BigDecimal::of(23),
@@ -182,8 +185,8 @@ class GTUAssignmentTest extends TestCase
             vatRate: new VatRateDTO(
                 id: 'vat-1',
                 name: '23%',
-                rate: BigDecimal::of(0.23),
-                type: 'standard'
+                rate: BigDecimal::of(0.23)->toFloat(),
+                type: VatRateType::PERCENTAGE,
             ),
             totalNet: BigDecimal::of(100),
             totalVat: BigDecimal::of(23),

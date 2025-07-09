@@ -5,13 +5,13 @@ namespace Tests\Unit\Domain\Skills;
 use App\Domain\Skills\DTOs\SkillDTO;
 use App\Domain\Skills\Models\Skill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(SkillDTO::class)]
 class SkillDTOTest extends TestCase
 {
     use RefreshDatabase;

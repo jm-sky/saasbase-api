@@ -4,13 +4,13 @@ namespace Tests\Unit\Domain\Skills;
 
 use App\Domain\Skills\DTOs\SkillCategoryDTO;
 use App\Domain\Skills\Models\SkillCategory;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(SkillCategoryDTO::class)]
 class SkillCategoryDTOTest extends TestCase
 {
     public function testCanCreateSkillCategoryDtoFromModel(): void

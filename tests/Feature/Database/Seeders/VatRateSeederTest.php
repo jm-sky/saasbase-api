@@ -4,13 +4,13 @@ namespace Tests\Feature\Database\Seeders;
 
 use Database\Seeders\VatRateSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(VatRateSeeder::class)]
 class VatRateSeederTest extends TestCase
 {
     use RefreshDatabase;

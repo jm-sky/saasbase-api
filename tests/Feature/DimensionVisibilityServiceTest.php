@@ -9,13 +9,15 @@ use App\Domain\Expense\Services\DimensionVisibilityService;
 use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \App\Domain\Expense\Services\DimensionVisibilityService
  */
+#[CoversClass(DimensionVisibilityService::class)]
 class DimensionVisibilityServiceTest extends TestCase
 {
     use RefreshDatabase;

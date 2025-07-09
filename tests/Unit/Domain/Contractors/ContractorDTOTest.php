@@ -5,13 +5,13 @@ namespace Tests\Unit\Domain\Contractors;
 use App\Domain\Contractors\DTOs\ContractorDTO;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(ContractorDTO::class)]
 class ContractorDTOTest extends TestCase
 {
     public function testCanCreateContractorDtoFromModel(): void

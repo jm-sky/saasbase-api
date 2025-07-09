@@ -6,13 +6,13 @@ use App\Domain\Auth\DTOs\UserDTO;
 use App\Domain\Auth\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(UserDTO::class)]
 class UserDTOTest extends TestCase
 {
     use RefreshDatabase;

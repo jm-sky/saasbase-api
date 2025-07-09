@@ -4,13 +4,13 @@ namespace Tests\Feature\Database\Seeders;
 
 use Database\Seeders\DefaultMeasurementUnitSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(DefaultMeasurementUnitSeeder::class)]
 class DefaultMeasurementUnitSeederTest extends TestCase
 {
     use RefreshDatabase;

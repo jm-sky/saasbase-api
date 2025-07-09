@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \App\Domain\Common\Rules\ValidAdvancedFilterRule
  */
 #[CoversClass(ValidAdvancedFilterRule::class)]
 class ValidAdvancedFilterRuleTest extends TestCase

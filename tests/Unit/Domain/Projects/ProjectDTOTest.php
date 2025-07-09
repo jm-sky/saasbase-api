@@ -9,14 +9,14 @@ use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(ProjectDTO::class)]
 class ProjectDTOTest extends TestCase
 {
     use RefreshDatabase;

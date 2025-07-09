@@ -6,13 +6,13 @@ use App\Domain\Tenant\DTOs\TenantDTO;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(TenantDTO::class)]
 class TenantDTOTest extends TestCase
 {
     use RefreshDatabase;

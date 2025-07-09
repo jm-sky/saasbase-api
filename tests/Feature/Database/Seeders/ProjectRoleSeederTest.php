@@ -5,13 +5,13 @@ namespace Tests\Feature\Database\Seeders;
 use App\Domain\Projects\Models\ProjectRole;
 use Database\Seeders\ProjectRoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(ProjectRoleSeeder::class)]
 class ProjectRoleSeederTest extends TestCase
 {
     use RefreshDatabase;

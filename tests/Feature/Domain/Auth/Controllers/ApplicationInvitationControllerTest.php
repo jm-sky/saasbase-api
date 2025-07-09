@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Domain\Auth\Controllers;
 
+use App\Domain\Auth\Controllers\ApplicationInvitationController;
 use App\Domain\Auth\Models\ApplicationInvitation;
 use App\Domain\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(ApplicationInvitationController::class)]
 class ApplicationInvitationControllerTest extends TestCase
 {
     use RefreshDatabase;

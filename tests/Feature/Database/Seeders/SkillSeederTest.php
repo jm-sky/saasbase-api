@@ -7,13 +7,13 @@ use App\Domain\Skills\Models\SkillCategory;
 use Database\Seeders\SkillCategorySeeder;
 use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(SkillSeeder::class)]
 class SkillSeederTest extends TestCase
 {
     use RefreshDatabase;

@@ -5,15 +5,16 @@ namespace Tests\Unit\Domain\Common\Models\Concerns;
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  */
-#[CoversNothing]
+#[CoversClass(BelongsToTenant::class)]
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;

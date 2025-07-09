@@ -12,14 +12,16 @@ use App\Domain\Projects\Models\Project;
 use App\Domain\Tenant\Models\Tenant;
 use Brick\Math\BigDecimal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \App\Domain\Approval\Services\WorkflowMatchingService
  */
+#[CoversClass(WorkflowMatchingService::class)]
 class WorkflowMatchingServiceTest extends TestCase
 {
     use RefreshDatabase;

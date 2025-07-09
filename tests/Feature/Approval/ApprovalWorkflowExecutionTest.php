@@ -25,7 +25,7 @@ use Tests\TestCase;
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \App\Domain\Approval\Actions\ProcessApprovalDecisionAction
  */
 #[CoversClass(ProcessApprovalDecisionAction::class)]
 class ApprovalWorkflowExecutionTest extends TestCase

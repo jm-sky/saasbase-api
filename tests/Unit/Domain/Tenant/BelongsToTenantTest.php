@@ -6,17 +6,18 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Rights\Enums\RoleName;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 
 /**
  * @internal
  *
- * @coversNothing
+ * @covers \App\Domain\Tenant\Traits\BelongsToTenant
  */
-#[CoversNothing]
+#[CoversClass(BelongsToTenant::class)]
 class BelongsToTenantTest extends TestCase
 {
     use RefreshDatabase;
