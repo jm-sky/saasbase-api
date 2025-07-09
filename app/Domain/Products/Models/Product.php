@@ -12,6 +12,7 @@ use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
 use App\Domain\Common\Traits\IsSearchable;
+use App\Domain\Financial\Models\PKWiUClassification;
 use App\Domain\Financial\Models\VatRate;
 use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Enums\ProductType;
@@ -29,24 +30,26 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @property string              $id
- * @property string              $tenant_id
- * @property string              $name
- * @property ProductType         $type
- * @property ?string             $description
- * @property string              $unit_id
- * @property float               $price_net
- * @property ?string             $vat_rate_id
- * @property string              $symbol
- * @property ?string             $ean
- * @property ?string             $external_id
- * @property ?string             $source_system
- * @property Carbon              $created_at
- * @property Carbon              $updated_at
- * @property ?Carbon             $deleted_at
- * @property MeasurementUnit     $unit
- * @property ?VatRate            $vatRate
- * @property Collection|string[] $tags
+ * @property string               $id
+ * @property string               $tenant_id
+ * @property string               $name
+ * @property ProductType          $type
+ * @property ?string              $description
+ * @property string               $unit_id
+ * @property float                $price_net
+ * @property ?string              $vat_rate_id
+ * @property ?string              $pkwiu_code
+ * @property string               $symbol
+ * @property ?string              $ean
+ * @property ?string              $external_id
+ * @property ?string              $source_system
+ * @property Carbon               $created_at
+ * @property Carbon               $updated_at
+ * @property ?Carbon              $deleted_at
+ * @property MeasurementUnit      $unit
+ * @property ?VatRate             $vatRate
+ * @property ?PKWiUClassification $pkwiuClassification
+ * @property Collection|string[]  $tags
  */
 class Product extends BaseModel implements HasMedia, HasMediaUrl
 {
@@ -68,6 +71,7 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
         'unit_id',
         'price_net',
         'vat_rate_id',
+        'pkwiu_code',
         'symbol',
         'ean',
         'external_id',
@@ -111,6 +115,11 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
     public function vatRate(): BelongsTo
     {
         return $this->belongsTo(VatRate::class);
+    }
+
+    public function pkwiuClassification(): BelongsTo
+    {
+        return $this->belongsTo(PKWiUClassification::class, 'pkwiu_code', 'code');
     }
 
     protected static function newFactory()
