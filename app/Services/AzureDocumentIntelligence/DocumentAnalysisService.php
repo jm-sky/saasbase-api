@@ -14,6 +14,62 @@ use Illuminate\Support\Str;
 
 /**
  * Service for handling Azure Document Intelligence analysis workflow.
+ *
+ * ## Custom Credentials Usage
+ *
+ * This service supports tenant-specific Azure credentials to bypass subscription limits.
+ *
+ * ### Basic Usage with Custom Credentials
+ *
+ * ```php
+ * use App\Domain\Tenant\Services\IntegrationCredentialService;
+ * use App\Domain\Tenant\Enums\TenantIntegrationType;
+ *
+ * // Resolve credentials for tenant (custom or global)
+ * $credentialService = app(IntegrationCredentialService::class);
+ * $credentials = $credentialService->getCredentials($tenantId, TenantIntegrationType::AzureAi);
+ *
+ * // Create service with custom credentials
+ * $service = new DocumentAnalysisService($credentials);
+ * $result = $service->analyze($filePath);
+ * ```
+ *
+ * ### Check Limits and Permissions
+ *
+ * ```php
+ * use App\Domain\Tenant\Services\IntegrationLimitService;
+ *
+ * $limitService = app(IntegrationLimitService::class);
+ *
+ * // Check if tenant can use this integration
+ * if (!$limitService->canUseIntegration($tenantId, TenantIntegrationType::AzureAi)) {
+ *     throw new UnauthorizedException('Azure AI integration not available for this tenant');
+ * }
+ *
+ * // Check if tenant bypasses limits (has custom credentials)
+ * $bypassesLimits = $limitService->shouldBypassApiLimits($tenantId, TenantIntegrationType::AzureAi);
+ * ```
+ *
+ * ### Setting Up Custom Credentials
+ *
+ * Tenants can configure custom Azure credentials through the TenantIntegration API:
+ *
+ * ```json
+ * POST /api/tenants/{tenant}/integrations
+ * {
+ *   "type": "azureAi",
+ *   "mode": "custom",
+ *   "enabled": true,
+ *   "credentials": {
+ *     "endpoint": "https://tenant-azure.cognitiveservices.azure.com/",
+ *     "key": "tenant-specific-subscription-key",
+ *     "region": "westus2"
+ *   }
+ * }
+ * ```
+ *
+ * @see \App\Domain\Tenant\Services\IntegrationCredentialService
+ * @see \App\Domain\Tenant\Services\IntegrationLimitService
  */
 class DocumentAnalysisService
 {
@@ -27,9 +83,9 @@ class DocumentAnalysisService
 
     protected bool $useMock = false;
 
-    public function __construct()
+    public function __construct(?array $customCredentials = null)
     {
-        $this->connector = new AzureConnector();
+        $this->connector = new AzureConnector($customCredentials);
         $this->useMock   = config('azure_doc_intel.use_mock', false);
     }
 

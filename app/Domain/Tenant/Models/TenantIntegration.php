@@ -3,6 +3,7 @@
 namespace App\Domain\Tenant\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Tenant\Enums\TenantIntegrationMode;
 use App\Domain\Tenant\Enums\TenantIntegrationType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string                $id
  * @property string                $tenant_id
  * @property TenantIntegrationType $type
+ * @property TenantIntegrationMode $mode
  * @property bool                  $enabled
  * @property ?array                $credentials
  * @property ?array                $meta
@@ -25,6 +27,7 @@ class TenantIntegration extends BaseModel
     protected $fillable = [
         'tenant_id',
         'type',
+        'mode',
         'enabled',
         'credentials',
         'meta',
@@ -33,6 +36,7 @@ class TenantIntegration extends BaseModel
 
     protected $casts = [
         'type'           => TenantIntegrationType::class,
+        'mode'           => TenantIntegrationMode::class,
         'enabled'        => 'boolean',
         'credentials'    => 'encrypted:json',
         'meta'           => 'json',

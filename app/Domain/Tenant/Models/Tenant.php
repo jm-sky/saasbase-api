@@ -71,6 +71,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property ?BillingCustomer              $billingCustomer
  * @property ?BillingInfo                  $billingInfo
  * @property ?Subscription                 $subscription
+ * @property ?Subscription                 $currentSubscription
  * @property ?OrganizationUnit             $rootOrganizationUnit
  * @property ?OrganizationUnit             $unassignedOrganizationUnit
  * @property ?OrganizationUnit             $formerEmployeesOrganizationUnit
@@ -179,6 +180,14 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     public function subscription(): MorphOne
     {
         return $this->morphOne(Subscription::class, 'billable');
+    }
+
+    public function currentSubscription(): ?Subscription
+    {
+        // @phpstan-ignore-next-line
+        return $this->subscription()->where(function ($query) {
+            $query->where('status', 'active')->orWhere('status', 'trialing');
+        })->first();
     }
 
     public function integrations(): HasMany

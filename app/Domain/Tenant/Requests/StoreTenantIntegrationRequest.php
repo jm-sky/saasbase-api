@@ -2,7 +2,10 @@
 
 namespace App\Domain\Tenant\Requests;
 
+use App\Domain\Tenant\Enums\TenantIntegrationMode;
+use App\Domain\Tenant\Enums\TenantIntegrationType;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreTenantIntegrationRequest extends BaseFormRequest
 {
@@ -14,9 +17,10 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'type'        => ['required', 'string'],
+            'type'        => ['required', new Enum(TenantIntegrationType::class)],
+            'mode'        => ['required', new Enum(TenantIntegrationMode::class)],
             'enabled'     => ['boolean'],
-            'credentials' => ['nullable', 'array'],
+            'credentials' => ['nullable', 'array', 'required_if:mode,custom'],
             'meta'        => ['nullable', 'array'],
         ];
     }
@@ -25,6 +29,7 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
     {
         return [
             'type'        => 'integration type',
+            'mode'        => 'integration mode',
             'credentials' => 'integration credentials',
             'meta'        => 'integration metadata',
         ];

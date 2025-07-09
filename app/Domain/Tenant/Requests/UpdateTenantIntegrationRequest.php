@@ -2,7 +2,9 @@
 
 namespace App\Domain\Tenant\Requests;
 
+use App\Domain\Tenant\Enums\TenantIntegrationMode;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateTenantIntegrationRequest extends BaseFormRequest
 {
@@ -14,8 +16,9 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
+            'mode'        => ['sometimes', new Enum(TenantIntegrationMode::class)],
             'enabled'     => ['boolean'],
-            'credentials' => ['nullable', 'array'],
+            'credentials' => ['nullable', 'array', 'required_if:mode,custom'],
             'meta'        => ['nullable', 'array'],
         ];
     }
@@ -23,6 +26,7 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
     public function attributes(): array
     {
         return [
+            'mode'        => 'integration mode',
             'credentials' => 'integration credentials',
             'meta'        => 'integration metadata',
         ];
