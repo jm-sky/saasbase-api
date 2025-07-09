@@ -40,14 +40,15 @@ class MakeDomainModel extends Command
 
 namespace App\\Domain\\{$domain}\\Models;
 
+use Carbon\\Carbon;
 use App\\Domain\\Common\\Models\\BaseModel;
 use App\\Domain\\Tenant\\Traits\\BelongsToTenant;
 
 /**
  * @property string \$id
  * @property string \$tenant_id
- * @property string \$created_at
- * @property string \$updated_at
+ * @property Carbon \$created_at
+ * @property Carbon \$updated_at
  */
 class {$name} extends BaseModel
 {
