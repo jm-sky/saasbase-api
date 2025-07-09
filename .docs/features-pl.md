@@ -46,7 +46,7 @@
 - [ ] 5.4 Powiadomienia w systemie (w tym na żywo, WebSockets)  
 
 ## 6. Faktury / Koszty  
-- [ ] 6.1 Przeglądanie listy faktur i kosztów z filtrowaniem i przeszukiwaniem (wspólny mechanizm z Common)  
+- [x] 6.1 Przeglądanie listy faktur i kosztów z filtrowaniem i przeszukiwaniem (wspólny mechanizm z Common)  
 - [ ] 6.2 Podstawowe funkcje modułu faktur/kosztów:  
   - [ ] 6.2.1 Tworzenie, edycja, usuwanie  
   - [ ] 6.2.2 Statusy faktur/kosztów  
@@ -72,15 +72,15 @@
     - Wysyłka do KSeF masowa  
     - Zmiana statusu masowa  
 - [x] 6.4 Mechanizm tagów/etykiet (wspólny z Kontrahentami i Produktami)  
-- [ ] 6.5 Eksport do Excela (lista faktur/kosztów)  
+- [x] 6.5 Eksport do Excela (lista faktur/kosztów)  
 
 ## 7. Produkty  
-- [ ] 7.1 Przeglądanie listy produktów z filtrowaniem i przeszukiwaniem (wspólny mechanizm z Common)  
-- [ ] 7.2 Dodawanie, edycja i usuwanie produktów  
-- [ ] 7.3 Obsługa obrazków produktów  
-- [ ] 7.4 Mechanizm tagów/etykiet (wspólny z Kontrahentami i Fakturami/Kosztami)  
-- [ ] 7.5 Mechanizm komentarzy przy produktach  
-- [ ] 7.6 Eksport do Excela (lista produktów)  
+- [x] 7.1 Przeglądanie listy produktów z filtrowaniem i przeszukiwaniem (wspólny mechanizm z Common)  
+- [x] 7.2 Dodawanie, edycja i usuwanie produktów  
+- [x] 7.3 Obsługa obrazków produktów  
+- [x] 7.4 Mechanizm tagów/etykiet (wspólny z Kontrahentami i Fakturami/Kosztami)  
+- [x] 7.5 Mechanizm komentarzy przy produktach  
+- [x] 7.6 Eksport do Excela (lista produktów)  
 
 ## 8. Globalne Kontakty (In progress)  
 - [ ] 8.1 Zarządzanie globalnymi kontaktami (tworzenie, edycja, usuwanie)  
@@ -90,7 +90,7 @@
 
 ## 9. Komunikacja i Chat  
 - [ ] 9.1 System chatu pomiędzy użytkownikami  
-- [ ] 9.2 Chat AI (integracja z OpenRouter)  
+- [x] 9.2 Chat AI (integracja z OpenRouter)  
 
 ## 10. Projekty  
 - [ ] 10.1 Zarządzanie projektami (tworzenie, edycja, usuwanie)  
@@ -98,8 +98,8 @@
 - [ ] 10.3 Rejestracja czasu pracy (timesheet)  
 
 ## 11. Subscription  
-- [ ] 11.1 Różne plany subskrypcyjne (np. Free, Basic, Pro, Enterprise)  
+- [x] 11.1 Różne plany subskrypcyjne (np. Free, Basic, Pro, Enterprise)  
 - [ ] 11.2 Zarządzanie subskrypcją w panelu użytkownika  
-- [ ] 11.3 Płatności online przez Stripe (karty kredytowe, faktury)  
+- [x] 11.3 Płatności online przez Stripe (karty kredytowe, faktury)  
 - [ ] 11.4 Automatyczne odnawianie subskrypcji  
 - [ ] 11.5 Blokady funkcji po wygaśnięciu płatności  
