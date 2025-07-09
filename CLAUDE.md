@@ -7,24 +7,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Testing and Quality Assurance
 ```bash
 # Run all tests
-php artisan test
+./vendor/bin/sail artisan test
 
 # Run PHPUnit directly
-vendor/bin/phpunit
+./vendor/bin/sail vendor/bin/phpunit
 
 # Run specific test file
-php artisan test tests/Feature/Auth/UserSettingsTest.php
+./vendor/bin/sail artisan test tests/Feature/Auth/UserSettingsTest.php
 
 # Run static analysis with PHPStan
-vendor/bin/phpstan analyse --memory-limit=2G
+./vendor/bin/sail vendor/bin/phpstan analyse --memory-limit=2G
 # Or use composer shortcut
-composer run larastan
+./vendor/bin/sail composer larastan
 
 # Code style check (dry run)
-composer run cs
+./vendor/bin/sail composer cs
 
 # Code style fix
-composer run csf
+./vendor/bin/sail composer csf
 ```
 
 ### Development Server
@@ -41,22 +41,22 @@ php artisan pail --timeout=0
 ### Database Management
 ```bash
 # Run migrations
-php artisan migrate
+./vendor/bin/sail artisan migrate
 
 # Run seeders
-php artisan db:seed
+./vendor/bin/sail artisan db:seed
 
 # Fresh database with seeders
-php artisan migrate:fresh --seed
+./vendor/bin/sail artisan migrate:fresh --seed
 ```
 
 ### Code Generation
 ```bash
 # Generate complete domain model with all scaffolding
-php artisan make:domain-model {ModelName} {DomainName}
+./vendor/bin/sail artisan make:domain-model {ModelName} {DomainName}
 
 # Example: Create Invoice model in Billing domain
-php artisan make:domain-model Invoice Billing
+./vendor/bin/sail artisan make:domain-model Invoice Billing
 ```
 
 ## Architecture Overview
