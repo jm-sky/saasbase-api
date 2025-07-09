@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string  $contractor_id
  * @property ?string $default_payment_method_id
  * @property ?string $default_currency
+ * @property ?string $default_language
  * @property ?int    $default_payment_days
  * @property ?array  $default_tags
  */
@@ -29,6 +30,7 @@ class ContractorPreferences extends BaseModel
         'contractor_id',
         'default_payment_method_id',
         'default_currency',
+        'default_language',
         'default_payment_days',
         'default_tags',
     ];

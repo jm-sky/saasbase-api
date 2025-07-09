@@ -3,17 +3,20 @@
 namespace Tests\Feature\Domain\Skills;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Skills\Controllers\SkillCategoryController;
 use App\Domain\Skills\Models\SkillCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
 /**
  * @internal
+ *
+ * @covers \App\Domain\Skills\Controllers\SkillCategoryController
  */
-#[CoversNothing]
+#[CoversClass(SkillCategoryController::class)]
 class SkillCategoryApiTest extends TestCase
 {
     use RefreshDatabase;

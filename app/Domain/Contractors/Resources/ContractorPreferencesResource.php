@@ -17,6 +17,7 @@ class ContractorPreferencesResource extends JsonResource
             'id'                     => $this->id,
             'defaultPaymentMethodId' => $this->default_payment_method_id,
             'defaultCurrency'        => $this->default_currency,
+            'defaultLanguage'        => $this->default_language,
             'defaultPaymentDays'     => $this->default_payment_days,
             'defaultTags'            => $this->default_tags,
             'defaultPaymentMethod'   => $this->whenLoaded('defaultPaymentMethod', function () {
