@@ -87,7 +87,7 @@ final class {$name}DTO extends BaseDataDTO
 {
     public function __construct(
         public string \$id,
-        public ?Carnon \$createdAt = null,
+        public ?Carbon \$createdAt = null,
         // Add your DTO properties here
     ) {
     }
