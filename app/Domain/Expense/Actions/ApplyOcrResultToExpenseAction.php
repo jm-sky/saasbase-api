@@ -7,8 +7,8 @@ use App\Domain\Common\Models\OcrRequest;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\DTOs\InvoiceLineDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentBankAccountDTO;
+use App\Domain\Financial\DTOs\PaymentMethodDTO;
 use App\Domain\Financial\Enums\InvoiceStatus;
-use App\Domain\Financial\Enums\PaymentMethod;
 use App\Domain\Financial\Models\VatRate;
 use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentDTO;
 use App\Services\AzureDocumentIntelligence\DTOs\InvoiceDocumentItemDTO;
@@ -63,7 +63,11 @@ class ApplyOcrResultToExpenseAction
 
         // Payment Information
         $expense->payment->dueDate = $document->dueDate?->getDate() ?? $expense->payment->dueDate;
-        $expense->payment->method  = PaymentMethod::tryFrom($document->paymentTerm?->value ?? '') ?? $expense->payment->method;
+        $expense->payment->method  = $document->paymentTerm?->value ? new PaymentMethodDTO(
+            name: $document->paymentTerm?->value ?? $expense->payment->method->name,
+            id: $expense->payment->method->id,
+            paymentDays: $expense->payment->method->paymentDays,
+        ) : $expense->payment->method;
         $expense->payment->terms   = $document->paymentTerm?->value ?? $expense->payment->terms;
 
         $expense->payment->bankAccount        = $document->paymentDetails[0]?->bankAccount ?? new InvoicePaymentBankAccountDTO();

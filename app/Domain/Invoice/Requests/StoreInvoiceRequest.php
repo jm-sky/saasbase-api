@@ -8,7 +8,6 @@ use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\DeliveryStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Financial\Enums\PaymentMethod;
 use App\Domain\Financial\Enums\PaymentStatus;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -101,7 +100,10 @@ class StoreInvoiceRequest extends BaseFormRequest
             'payment.dueDate'             => ['nullable', 'date'],
             'payment.paidDate'            => ['nullable', 'date'],
             'payment.paidAmount'          => ['nullable', 'numeric', 'min:0'],
-            'payment.method'              => ['required', new Enum(PaymentMethod::class)],
+            'payment.method'              => ['required', 'array'],
+            'payment.method.id'           => ['required', 'string', 'exists:payment_methods,id'],
+            'payment.method.name'         => ['required', 'string', 'max:255'],
+            'payment.method.paymentDays'  => ['nullable', 'integer', 'min:0'],
             'payment.reference'           => ['nullable', 'string', 'max:255'],
             'payment.terms'               => ['nullable', 'string', 'max:500'],
             'payment.notes'               => ['nullable', 'string', 'max:1000'],

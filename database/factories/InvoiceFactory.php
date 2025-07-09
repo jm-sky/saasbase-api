@@ -4,12 +4,12 @@ namespace Database\Factories;
 
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Financial\DTOs\InvoicePaymentBankAccountDTO;
+use App\Domain\Financial\DTOs\PaymentMethodDTO;
 use App\Domain\Financial\Enums\AllocationStatus;
 use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\DeliveryStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Financial\Enums\PaymentMethod;
 use App\Domain\Financial\Enums\PaymentStatus;
 use App\Domain\Financial\Enums\VatRateType;
 use App\Domain\Invoice\Models\Invoice;
@@ -22,6 +22,7 @@ use Database\Factories\DTOs\InvoiceLineDTOFactory;
 use Database\Factories\DTOs\InvoiceOptionsDTOFactory;
 use Database\Factories\DTOs\InvoicePartyDTOFactory;
 use Database\Factories\DTOs\InvoicePaymentDTOFactory;
+use Database\Factories\DTOs\PaymentMethodDTOFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -220,7 +221,7 @@ class InvoiceFactory extends Factory
                 'dueDate'     => null, // Will be set by withDates method
                 'paidDate'    => null,
                 'paidAmount'  => BigDecimal::of('0'),
-                'method'      => PaymentMethod::BANK_TRANSFER,
+                'method'      => (new PaymentMethodDTOFactory())->make(),
                 'terms'       => '',
                 'notes'       => '',
                 'bankAccount' => $contractor->defaultBankAccount
@@ -336,7 +337,7 @@ class InvoiceFactory extends Factory
                 'dueDate'    => null, // Will be set by withDates method
                 'paidDate'   => null,
                 'paidAmount' => BigDecimal::of('0'),
-                'method'     => PaymentMethod::BANK_TRANSFER,
+                'method'     => PaymentMethodDTO::default(),
                 'reference'  => 'NASA-Contract-2024-SB-001',
                 'terms'      => 'Net 30',
                 'notes'      => 'Government contract payment',

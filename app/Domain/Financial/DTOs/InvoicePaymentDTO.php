@@ -3,8 +3,8 @@
 namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Financial\Enums\PaymentMethod;
 use App\Domain\Financial\Enums\PaymentStatus;
+use App\Domain\Financial\Models\PaymentMethod;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 
@@ -13,7 +13,7 @@ use Carbon\Carbon;
  * @property ?Carbon                       $dueDate
  * @property ?Carbon                       $paidDate
  * @property ?BigDecimal                   $paidAmount
- * @property PaymentMethod                 $method
+ * @property PaymentMethodDTO              $method
  * @property ?string                       $reference
  * @property ?string                       $terms
  * @property ?string                       $notes
@@ -23,10 +23,10 @@ final class InvoicePaymentDTO extends BaseDataDTO
 {
     public function __construct(
         public PaymentStatus $status,
-        public ?Carbon $dueDate,
-        public ?Carbon $paidDate,
-        public ?BigDecimal $paidAmount,
-        public PaymentMethod $method = PaymentMethod::BANK_TRANSFER,
+        public PaymentMethodDTO $method,
+        public ?Carbon $dueDate = null,
+        public ?Carbon $paidDate = null,
+        public ?BigDecimal $paidAmount = null,
         public ?string $reference = null,
         public ?string $terms = null,
         public ?string $notes = null,
@@ -41,7 +41,7 @@ final class InvoicePaymentDTO extends BaseDataDTO
             'dueDate'     => $this->dueDate?->format('Y-m-d\TH:i:s.u\Z'),
             'paidDate'    => $this->paidDate?->format('Y-m-d\TH:i:s.u\Z'),
             'paidAmount'  => $this->paidAmount?->toFloat(),
-            'method'      => $this->method->value,
+            'method'      => $this->method->toArray(),
             'reference'   => $this->reference,
             'terms'       => $this->terms,
             'notes'       => $this->notes,
@@ -56,11 +56,19 @@ final class InvoicePaymentDTO extends BaseDataDTO
             dueDate: isset($data['dueDate']) ? Carbon::parse($data['dueDate']) : null,
             paidDate: isset($data['paidDate']) ? Carbon::parse($data['paidDate']) : null,
             paidAmount: isset($data['paidAmount']) ? BigDecimal::of($data['paidAmount']) : null,
-            method: PaymentMethod::from($data['method']),
+            method: PaymentMethodDTO::fromArray($data['method']),
             reference: isset($data['reference']) ? $data['reference'] : null,
             terms: isset($data['terms']) ? $data['terms'] : null,
             notes: $data['notes'] ?? null,
             bankAccount: isset($data['bankAccount']) ? InvoicePaymentBankAccountDTO::fromArray($data['bankAccount']) : null,
+        );
+    }
+
+    public static function default(?PaymentMethod $method = null): static
+    {
+        return new self(
+            status: PaymentStatus::PENDING,
+            method: PaymentMethodDTO::default($method),
         );
     }
 }

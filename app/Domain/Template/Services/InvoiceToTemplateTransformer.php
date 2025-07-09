@@ -123,7 +123,7 @@ class InvoiceToTemplateTransformer
     private function transformPayment(InvoicePaymentDTO $paymentDTO): array
     {
         return [
-            'method'      => $paymentDTO->method?->value ?? null,
+            'method'      => $paymentDTO->method?->name ?? null,
             'dueDate'     => isset($paymentDTO->dueDate) ? $this->formatDate($paymentDTO->dueDate) : null,
             'bankAccount' => $paymentDTO->bankAccount ?? null,
             'terms'       => $paymentDTO->terms ?? null,

@@ -3,13 +3,14 @@
 namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
+use App\Domain\Financial\Enums\PaymentMethodKey;
 use App\Domain\Financial\Models\PaymentMethod;
 
 final class PaymentMethodDTO extends BaseDataDTO
 {
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
+        public readonly ?string $name = null,
+        public readonly ?string $id = null,
         public readonly ?int $paymentDays = null,
     ) {
     }
@@ -35,9 +36,20 @@ final class PaymentMethodDTO extends BaseDataDTO
     public static function fromArray(array $data): static
     {
         return new static(
-            $data['id'],
-            $data['name'],
+            $data['name'] ?? null,
+            $data['id'] ?? null,
             $data['paymentDays'] ?? null,
+        );
+    }
+
+    public static function default(?PaymentMethod $method = null): static
+    {
+        $method = $method ?? PaymentMethod::whereKey(PaymentMethodKey::BankTransfer->value)->first();
+
+        return new self(
+            name: $method->name,
+            id: $method->id,
+            paymentDays: $method->payment_days,
         );
     }
 }

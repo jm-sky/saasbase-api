@@ -55,7 +55,6 @@ class AzureConnector extends Connector
 
     public function __construct(?array $customCredentials = null)
     {
-        parent::__construct();
         $this->customCredentials = $customCredentials;
     }
 

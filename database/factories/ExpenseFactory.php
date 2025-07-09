@@ -4,11 +4,11 @@ namespace Database\Factories;
 
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\DTOs\InvoicePaymentBankAccountDTO;
+use App\Domain\Financial\DTOs\PaymentMethodDTO;
 use App\Domain\Financial\Enums\AllocationStatus;
 use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Financial\Enums\PaymentMethod;
 use App\Domain\Financial\Enums\PaymentStatus;
 use App\Domain\Financial\Enums\VatRateType;
 use App\Domain\Tenant\Models\Tenant;
@@ -216,7 +216,7 @@ class ExpenseFactory extends Factory
                 'dueDate'    => null, // Will be set by withDates method
                 'paidDate'   => null,
                 'paidAmount' => BigDecimal::of('0'),
-                'method'     => PaymentMethod::CREDIT_CARD,
+                'method'     => PaymentMethodDTO::default(),
                 'reference'  => 'BP-EXP-2024-001',
                 'terms'      => 'Net 30',
                 'notes'      => 'Expense from BP services',
@@ -309,7 +309,7 @@ class ExpenseFactory extends Factory
                 'dueDate'     => null, // Will be set by withDates method
                 'paidDate'    => null,
                 'paidAmount'  => BigDecimal::of('0'),
-                'method'      => PaymentMethod::BANK_TRANSFER,
+                'method'      => PaymentMethodDTO::default(),
                 'reference'   => 'OVH-EXP-2024-001',
                 'terms'       => 'Net 30',
                 'notes'       => 'Expense from OVH services',

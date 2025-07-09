@@ -5,6 +5,7 @@ namespace App\Domain\Financial\Models;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Contractors\Models\ContractorPreferences;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
+use Database\Factories\Domain\Financial\Models\PaymentMethodFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -30,5 +31,10 @@ class PaymentMethod extends BaseModel
     public function contractorPreferences(): HasMany
     {
         return $this->hasMany(ContractorPreferences::class, 'default_payment_method_id');
+    }
+
+    protected static function newFactory()
+    {
+        return PaymentMethodFactory::new();
     }
 }

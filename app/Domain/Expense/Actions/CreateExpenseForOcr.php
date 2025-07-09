@@ -14,8 +14,6 @@ use App\Domain\Financial\DTOs\InvoicePartyDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentDTO;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
-use App\Domain\Financial\Enums\PaymentMethod;
-use App\Domain\Financial\Enums\PaymentStatus;
 use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
@@ -44,7 +42,7 @@ class CreateExpenseForOcr
                 exchange: new InvoiceExchangeDTO(Currency::POLISH_CURRENCY_CODE),
                 description: null,
             ),
-            'payment'               => new InvoicePaymentDTO(PaymentStatus::PENDING, null, null, null, PaymentMethod::BANK_TRANSFER),
+            'payment'               => InvoicePaymentDTO::default(),
             'options'               => new InvoiceOptionsDTO(),
         ]);
 
