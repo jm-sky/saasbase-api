@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool                $is_default
  * @property Carbon              $created_at
  * @property Carbon              $updated_at
- * @property Carbon              $deleted_at
+ * @property ?Carbon             $deleted_at
  * @property Collection<Invoice> $invoices
  */
 class NumberingTemplate extends BaseModel
