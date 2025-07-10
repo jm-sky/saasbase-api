@@ -2,14 +2,14 @@
 
 namespace App\Domain\Approval\Models;
 
-use Carbon\Carbon;
-use App\Domain\Auth\Models\User;
-use App\Domain\Expense\Models\Expense;
-use App\Domain\Common\Models\BaseModel;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Domain\Approval\Enums\ApprovalExecutionStatus;
+use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\BaseModel;
+use App\Domain\Expense\Models\Expense;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string                                   $id

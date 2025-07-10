@@ -2,10 +2,10 @@
 
 namespace App\Domain\Approval\Services;
 
-use Illuminate\Support\Facades\Log;
+use App\Domain\Approval\Models\ApprovalWorkflow;
 use App\Domain\Expense\Models\Expense;
 use Illuminate\Database\Eloquent\Collection;
-use App\Domain\Approval\Models\ApprovalWorkflow;
+use Illuminate\Support\Facades\Log;
 
 class WorkflowMatchingService
 {
