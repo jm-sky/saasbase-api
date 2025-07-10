@@ -39,7 +39,7 @@ return new class() extends Migration {
 
             // Foreign key for role_name (optional constraint)
             // $table->foreign('role_name')->references('name')->on('roles')->nullOnDelete();
-            $table->foreign(['tenant_id', 'role_name'])->references(['tenant_id', 'name'])->on('roles')->nullOnDelete();
+            // $table->foreign(['tenant_id', 'role_name'])->references(['tenant_id', 'name'])->on('roles')->nullOnDelete();
         });
     }
 
