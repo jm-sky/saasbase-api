@@ -15,6 +15,7 @@ return new class() extends Migration {
             $table->foreignUlid('expense_id')->constrained('expenses')->cascadeOnDelete();
             $table->foreignUlid('workflow_id')->constrained('approval_workflows')->cascadeOnDelete();
             $table->foreignUlid('current_step_id')->nullable()->constrained('approval_workflow_steps')->nullOnDelete();
+            $table->foreignUlid('initiator_id')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
             $table->timestamp('started_at');
             $table->timestamp('completed_at')->nullable();

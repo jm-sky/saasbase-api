@@ -26,7 +26,7 @@ class ProcessApprovalDecisionAction
         ApprovalExpenseExecution $execution,
         User $approver,
         ApprovalDecision $decision,
-        ?string $notes = null
+        ?string $reason = null
     ): ApprovalExpenseDecision {
         Log::info('Processing approval decision', [
             'execution_id' => $execution->id,
@@ -36,13 +36,7 @@ class ProcessApprovalDecisionAction
             'step_id'      => $execution->current_step_id,
         ]);
 
-        // Validate execution can receive decisions
-        $this->validateExecution($execution);
-
-        // Validate approver can make decision for current step
-        $this->validateApprover($execution, $approver);
-
-        // Check if approver already made a decision for this step
+        // Check if approver already made a decision for this step first
         $existingDecision = $this->getExistingDecision($execution, $approver);
 
         if ($existingDecision) {
@@ -56,9 +50,15 @@ class ProcessApprovalDecisionAction
             return $existingDecision;
         }
 
-        return DB::transaction(function () use ($execution, $approver, $decision, $notes) {
+        // Validate execution can receive decisions
+        $this->validateExecution($execution);
+
+        // Validate approver can make decision for current step
+        $this->validateApprover($execution, $approver);
+
+        return DB::transaction(function () use ($execution, $approver, $decision, $reason) {
             // Record the decision
-            $decisionRecord = $this->recordDecision($execution, $approver, $decision, $notes);
+            $decisionRecord = $this->recordDecision($execution, $approver, $decision, $reason);
 
             // Check if current step is complete
             if ($this->isStepComplete($execution)) {
@@ -107,6 +107,9 @@ class ProcessApprovalDecisionAction
         // Check if approver is valid for any of the step's approver configurations
         $isValidApprover = false;
 
+        // Load expense relationship if not already loaded
+        $execution->loadMissing('expense');
+
         foreach ($currentStep->approvers as $stepApprover) {
             $validApprovers = $this->approvalResolver->resolveApprovers($stepApprover, $execution->expense);
 
@@ -141,14 +144,14 @@ class ProcessApprovalDecisionAction
         ApprovalExpenseExecution $execution,
         User $approver,
         ApprovalDecision $decision,
-        ?string $notes
+        ?string $reason
     ): ApprovalExpenseDecision {
         return ApprovalExpenseDecision::create([
             'execution_id' => $execution->id,
             'step_id'      => $execution->current_step_id,
             'approver_id'  => $approver->id,
             'decision'     => $decision,
-            'notes'        => $notes,
+            'reason'       => $reason,
             'decided_at'   => now(),
         ]);
     }
@@ -199,6 +202,9 @@ class ProcessApprovalDecisionAction
      */
     private function getTotalApproversForStep(ApprovalExpenseExecution $execution, $step): int
     {
+        // Load expense relationship if not already loaded
+        $execution->loadMissing('expense');
+
         $totalApprovers = 0;
 
         foreach ($step->approvers as $stepApprover) {

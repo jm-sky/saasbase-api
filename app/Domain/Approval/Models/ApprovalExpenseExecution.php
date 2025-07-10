@@ -2,14 +2,14 @@
 
 namespace App\Domain\Approval\Models;
 
-use App\Domain\Approval\Enums\ApprovalExecutionStatus;
-use App\Domain\Auth\Models\User;
-use App\Domain\Common\Models\BaseModel;
-use App\Domain\Expense\Models\Expense;
 use Carbon\Carbon;
+use App\Domain\Auth\Models\User;
+use App\Domain\Expense\Models\Expense;
+use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Domain\Approval\Enums\ApprovalExecutionStatus;
 
 /**
  * @property string                                   $id
@@ -52,7 +52,7 @@ class ApprovalExpenseExecution extends BaseModel
 
     public function expense(): BelongsTo
     {
-        return $this->belongsTo(Expense::class, 'expense_id');
+        return $this->belongsTo(Expense::class, 'expense_id')->withoutGlobalScopes();
     }
 
     public function workflow(): BelongsTo
@@ -63,11 +63,6 @@ class ApprovalExpenseExecution extends BaseModel
     public function currentStep(): BelongsTo
     {
         return $this->belongsTo(ApprovalWorkflowStep::class, 'current_step_id');
-    }
-
-    public function initiator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'initiator_id');
     }
 
     public function decisions(): HasMany

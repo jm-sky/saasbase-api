@@ -75,7 +75,6 @@ class StartApprovalWorkflowAction
             'expense_id'       => $expense->id,
             'workflow_id'      => $workflow->id,
             'current_step_id'  => $firstStep->id,
-            'initiator_id'     => $initiatorId,
             'started_at'       => now(),
         ]);
 

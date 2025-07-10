@@ -17,7 +17,7 @@ class ProcessApprovalDecisionRequest extends BaseFormRequest
     {
         return [
             'decision' => ['required', new Enum(ApprovalDecision::class)],
-            'notes'    => ['nullable', 'string', 'max:1000'],
+            'reason'   => ['nullable', 'string', 'max:1000'],
         ];
     }
 

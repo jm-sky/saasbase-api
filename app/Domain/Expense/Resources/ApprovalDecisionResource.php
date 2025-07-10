@@ -26,7 +26,7 @@ class ApprovalDecisionResource extends JsonResource
             'approverId'    => $this->approver_id,
             'decision'      => $this->decision->value,
             'decisionLabel' => $this->decision->label(),
-            'notes'         => $this->notes,
+            'reason'        => $this->reason,
             'decidedAt'     => $this->decided_at?->toIso8601String(),
             'createdAt'     => $this->created_at?->toIso8601String(),
             'updatedAt'     => $this->updated_at?->toIso8601String(),

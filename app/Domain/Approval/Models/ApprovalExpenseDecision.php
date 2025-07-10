@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string                   $step_id
  * @property string                   $approver_id
  * @property ApprovalDecision         $decision
- * @property ?string                  $notes
+ * @property ?string                  $reason
  * @property Carbon                   $decided_at
  * @property Carbon                   $created_at
  * @property Carbon                   $updated_at
@@ -29,7 +29,7 @@ class ApprovalExpenseDecision extends BaseModel
         'step_id',
         'approver_id',
         'decision',
-        'notes',
+        'reason',
         'decided_at',
     ];
 

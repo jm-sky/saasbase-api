@@ -187,9 +187,9 @@ class ExpenseApprovalController extends Controller
 
         try {
             $decision = ApprovalDecision::from($validated['decision']);
-            $notes    = $validated['notes'] ?? null;
+            $reason   = $validated['reason'] ?? null;
 
-            $decisionRecord = $this->processAction->execute($execution, $user, $decision, $notes);
+            $decisionRecord = $this->processAction->execute($execution, $user, $decision, $reason);
 
             // Reload execution with fresh data
             $execution->refresh();
@@ -207,7 +207,7 @@ class ExpenseApprovalController extends Controller
                     'decision'  => [
                         'id'        => $decisionRecord->id,
                         'decision'  => $decisionRecord->decision->value,
-                        'notes'     => $decisionRecord->notes,
+                        'reason'    => $decisionRecord->reason,
                         'decidedAt' => $decisionRecord->decided_at->toIso8601String(),
                     ],
                     'execution' => new ApprovalExecutionResource($execution),

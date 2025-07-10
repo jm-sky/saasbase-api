@@ -2,9 +2,10 @@
 
 namespace App\Domain\Approval\Services;
 
-use App\Domain\Approval\Models\ApprovalWorkflow;
-use App\Domain\Expense\Models\Expense;
 use Illuminate\Support\Facades\Log;
+use App\Domain\Expense\Models\Expense;
+use Illuminate\Database\Eloquent\Collection;
+use App\Domain\Approval\Models\ApprovalWorkflow;
 
 class WorkflowMatchingService
 {
@@ -21,7 +22,9 @@ class WorkflowMatchingService
         ]);
 
         // Get all active workflows for the tenant, ordered by priority (highest first)
-        $workflows = ApprovalWorkflow::where('tenant_id', $expense->tenant_id)
+        // @phpstan-ignore-next-line
+        $workflows = ApprovalWorkflow::withoutTenant()
+            ->where('tenant_id', $expense->tenant_id)
             ->active()
             ->byPriority()
             ->get()
@@ -231,7 +234,9 @@ class WorkflowMatchingService
      */
     public function getPotentialWorkflows(Expense $expense): \Illuminate\Support\Collection
     {
-        $workflows = ApprovalWorkflow::where('tenant_id', $expense->tenant_id)
+        // @phpstan-ignore-next-line
+        $workflows = ApprovalWorkflow::withoutTenant()
+            ->where('tenant_id', $expense->tenant_id)
             ->active()
             ->byPriority()
             ->get()
@@ -252,7 +257,9 @@ class WorkflowMatchingService
      */
     public function hasWorkflowsForTenant(string $tenantId): bool
     {
-        return ApprovalWorkflow::where('tenant_id', $tenantId)
+        // @phpstan-ignore-next-line
+        return ApprovalWorkflow::withoutTenant()
+            ->where('tenant_id', $tenantId)
             ->active()
             ->exists()
         ;
@@ -263,7 +270,8 @@ class WorkflowMatchingService
      */
     public function getWorkflowStats(string $tenantId): array
     {
-        $workflows = ApprovalWorkflow::where('tenant_id', $tenantId)->get();
+        /** @var Collection<int, ApprovalWorkflow> $workflows */
+        $workflows = ApprovalWorkflow::withoutTenant()->where('tenant_id', $tenantId)->get();
 
         return [
             'total'                      => $workflows->count(),

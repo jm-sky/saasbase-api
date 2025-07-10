@@ -90,15 +90,6 @@ class InitializeTenantDefaults
 
     public function createOrganizationUnits(Tenant $tenant, ?User $owner = null): OrganizationUnit
     {
-        $rootUnit = $this->createRootOrganizationUnit($tenant, $owner);
-
-        $this->createTechnicalOrganizationUnits($tenant, $rootUnit);
-
-        return $rootUnit;
-    }
-
-    public function createRootOrganizationUnit(Tenant $tenant, ?User $owner = null): OrganizationUnit
-    {
         $rootUnit = CreateRootOrganizationUnit::createUnit($tenant);
 
         CreateRootOrganizationUnit::createPositions($rootUnit);
@@ -107,13 +98,10 @@ class InitializeTenantDefaults
             CreateRootOrganizationUnit::createOwner($tenant, $rootUnit);
         }
 
-        return $rootUnit;
-    }
-
-    public function createTechnicalOrganizationUnits(Tenant $tenant, OrganizationUnit $rootUnit): void
-    {
         CreateTechnicalOrganizationUnits::createUnassignedUnit($tenant, $rootUnit);
         CreateTechnicalOrganizationUnits::createFormerEmployeesUnit($tenant, $rootUnit);
+
+        return $rootUnit;
     }
 
     public function seedDefaultMeasurementUnits(Tenant $tenant): void

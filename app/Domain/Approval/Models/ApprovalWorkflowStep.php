@@ -45,7 +45,7 @@ class ApprovalWorkflowStep extends BaseModel
 
     public function workflow(): BelongsTo
     {
-        return $this->belongsTo(ApprovalWorkflow::class, 'workflow_id');
+        return $this->belongsTo(ApprovalWorkflow::class, 'workflow_id')->withoutGlobalScopes();
     }
 
     public function approvers(): HasMany
