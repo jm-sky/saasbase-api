@@ -38,8 +38,8 @@ final class InvoicePaymentDTO extends BaseDataDTO
     {
         return [
             'status'      => $this->status->value,
-            'dueDate'     => $this->dueDate?->format('Y-m-d\TH:i:s.u\Z'),
-            'paidDate'    => $this->paidDate?->format('Y-m-d\TH:i:s.u\Z'),
+            'dueDate'     => $this->dueDate?->toDateString(),
+            'paidDate'    => $this->paidDate?->toDateString(),
             'paidAmount'  => $this->paidAmount?->toFloat(),
             'method'      => $this->method->toArray(),
             'reference'   => $this->reference,
@@ -64,11 +64,12 @@ final class InvoicePaymentDTO extends BaseDataDTO
         );
     }
 
-    public static function default(?PaymentMethod $method = null): static
+    public static function default(?PaymentMethod $method = null, ?Carbon $dueDate = null): static
     {
         return new self(
             status: PaymentStatus::PENDING,
             method: PaymentMethodDTO::default($method),
+            dueDate: $dueDate,
         );
     }
 }

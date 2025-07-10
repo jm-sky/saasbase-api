@@ -15,7 +15,7 @@ class PaymentMethodResource extends JsonResource
         return [
             'id'          => $this->id,
             'tenantId'    => $this->tenant_id,
-            'key'         => $this->key,
+            'code'        => $this->code,
             'name'        => $this->name,
             'paymentDays' => $this->payment_days,
             'createdAt'   => $this->created_at?->toIso8601String(),

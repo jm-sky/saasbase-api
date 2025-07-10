@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon                   $valid_to
  * @property Carbon                   $created_at
  * @property Carbon                   $updated_at
- * @property ?Carbon                  $deleted_at
  * @property Collection<int, Product> $products
  */
 class VatRate extends BaseModel

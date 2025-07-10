@@ -14,7 +14,7 @@ class StorePaymentMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'key'         => ['required', 'string', 'max:64', 'unique:payment_methods,key,NULL,id,tenant_id,' . $this->tenant_id],
+            'code'        => ['required', 'string', 'max:64', 'unique:payment_methods,code,NULL,id,tenant_id,' . $this->tenant_id],
             'name'        => ['required', 'string', 'max:255'],
             'paymentDays' => ['nullable', 'integer'],
         ];

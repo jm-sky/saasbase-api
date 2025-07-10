@@ -28,8 +28,6 @@ class VatRateResource extends JsonResource
             'active'      => $this->active,
             'validFrom'   => $this->valid_from?->toIso8601String(),
             'validTo'     => $this->valid_to?->toIso8601String(),
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
         ];
     }
 }

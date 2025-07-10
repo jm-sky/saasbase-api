@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string  $id
  * @property ?string $tenant_id
  * @property string  $name
+ * @property string  $code
  * @property ?int    $payment_days
  */
 class PaymentMethod extends BaseModel
@@ -21,6 +22,7 @@ class PaymentMethod extends BaseModel
     protected $fillable = [
         'tenant_id',
         'name',
+        'code',
         'payment_days',
     ];
 

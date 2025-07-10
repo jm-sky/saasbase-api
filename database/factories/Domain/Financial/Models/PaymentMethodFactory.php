@@ -12,9 +12,12 @@ class PaymentMethodFactory extends Factory
 
     public function definition(): array
     {
+        $name = $this->faker->unique()->word;
+
         return [
             'tenant_id'    => Str::ulid(),
-            'name'         => $this->faker->word,
+            'name'         => $name,
+            'code'         => Str::slug($name),
             'payment_days' => $this->faker->optional()->numberBetween(0, 60),
         ];
     }

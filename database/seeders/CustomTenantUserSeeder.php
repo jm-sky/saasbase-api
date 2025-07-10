@@ -133,7 +133,7 @@ class CustomTenantUserSeeder extends Seeder
         CreateTenantForNewUser::$BYPASSED = true;
 
         foreach ($users as $userData) {
-            $userPayload             = collect($userData)->except(['relations', 'meta'])->toArray();
+            $userPayload = collect($userData)->except(['relations', 'meta'])->toArray();
 
             /** @var User $user */
             $user                    = User::create($userPayload);

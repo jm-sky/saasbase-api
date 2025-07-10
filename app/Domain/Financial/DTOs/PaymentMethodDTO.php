@@ -3,7 +3,7 @@
 namespace App\Domain\Financial\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
-use App\Domain\Financial\Enums\PaymentMethodKey;
+use App\Domain\Financial\Enums\PaymentMethodCode;
 use App\Domain\Financial\Models\PaymentMethod;
 
 final class PaymentMethodDTO extends BaseDataDTO
@@ -44,7 +44,7 @@ final class PaymentMethodDTO extends BaseDataDTO
 
     public static function default(?PaymentMethod $method = null): static
     {
-        $method = $method ?? PaymentMethod::whereKey(PaymentMethodKey::BankTransfer->value)->first();
+        $method = $method ?? PaymentMethod::firstWhere('code', PaymentMethodCode::BankTransfer->value);
 
         return new self(
             name: $method->name,

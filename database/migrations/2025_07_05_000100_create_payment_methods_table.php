@@ -11,11 +11,11 @@ return new class() extends Migration {
             $table->ulid('id')->primary();
             $table->ulid('tenant_id')->nullable()->index();
             $table->string('name');
-            $table->string('key');
+            $table->string('code');
             $table->integer('payment_days')->nullable();
             $table->timestamps();
             $table->unique(['tenant_id', 'name']); // Prevent duplicate names per tenant/global
-            $table->unique(['tenant_id', 'key']); // Prevent duplicate keys per tenant/global
+            $table->unique(['tenant_id', 'code']); // Prevent duplicate codes per tenant/global
         });
     }
 

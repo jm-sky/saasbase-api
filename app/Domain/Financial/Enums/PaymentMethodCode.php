@@ -2,7 +2,7 @@
 
 namespace App\Domain\Financial\Enums;
 
-enum PaymentMethodKey: string
+enum PaymentMethodCode: string
 {
     case BankTransfer       = 'bankTransfer';
     case Cash               = 'cash';
