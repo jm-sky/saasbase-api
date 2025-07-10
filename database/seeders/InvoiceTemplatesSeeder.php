@@ -12,6 +12,8 @@ class InvoiceTemplatesSeeder extends Seeder
     public function run(): void
     {
         Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () {
+            InvoiceTemplate::query()->delete();
+
             InvoiceTemplate::withoutGlobalScopes()->create([
                 'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                 'name'         => 'default',
@@ -67,24 +69,24 @@ class InvoiceTemplatesSeeder extends Seeder
     private function getDefaultTemplate(): string
     {
         return '
-<div class="invoice-container">
+<div class="invoice-container" style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, \'Noto Sans\', sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\', \'Noto Color Emoji\';">
     {{#if invoice.seller.logoUrl}}
-    <div class="logo-header mb-8">
+    <div class="logo-header mb-4">
         <div class="flex justify-between items-center">
-            <div class="logo-container">
-                {{{logoUrl invoice.seller.logoUrl width="180px"}}}
+            <div>
+                {{{logoUrl invoice.seller.logoUrl width="140px"}}}
             </div>
             <div class="text-right">
-                <h1 class="text-3xl font-bold accent-text">{{t "invoices.invoice"}}</h1>
+                <h1 class="text-2xl font-bold accent-text">{{t "invoices.invoice"}}</h1>
                 <p class="secondary-text">{{invoice.number}}</p>
             </div>
         </div>
     </div>
     {{else}}
-    <div class="invoice-header mb-8">
+    <div class="invoice-header mb-4">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold accent-text">{{t "invoices.invoice"}}</h1>
+                <h1 class="text-2xl font-bold accent-text">{{t "invoices.invoice"}}</h1>
                 <p class="secondary-text">{{invoice.number}}</p>
             </div>
             <div class="text-right">
@@ -99,83 +101,85 @@ class InvoiceTemplatesSeeder extends Seeder
     </div>
     {{/if}}
 
-    <div class="invoice-parties flex justify-between mb-8">
-        <div class="invoice-from w-1/2">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{t "invoices.from"}}</h3>
-            <div class="text-gray-600">
-                {{#if invoice.seller.name}}
-                <p class="font-medium">{{invoice.seller.name}}</p>
-                {{/if}}
-                {{#if invoice.seller.address}}
-                <p>{{invoice.seller.address}}</p>
-                {{/if}}
-                {{#if invoice.seller.country}}
-                <p>{{invoice.seller.country}}</p>
-                {{/if}}
-                {{#if invoice.seller.taxId}}
-                <p>{{t "invoices.tax_id"}} {{invoice.seller.taxId}}</p>
-                {{/if}}
-                {{#if invoice.seller.email}}
-                <p>{{invoice.seller.email}}</p>
-                {{/if}}
+    <div class="invoice-parties mb-4">
+        <div class="flex justify-between">
+            <div class="w-1/2 pr-4">
+                <h3 class="text-base font-semibold text-gray-900 mb-1">{{t "invoices.from"}}</h3>
+                <div class="text-gray-600 text-sm">
+                    {{#if invoice.seller.name}}
+                    <p class="font-medium">{{invoice.seller.name}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.address}}
+                    <p>{{invoice.seller.address}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.country}}
+                    <p>{{invoice.seller.country}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.taxId}}
+                    <p>{{t "invoices.tax_id"}} {{invoice.seller.taxId}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.email}}
+                    <p>{{invoice.seller.email}}</p>
+                    {{/if}}
+                </div>
             </div>
-        </div>
 
-        <div class="invoice-to w-1/2">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{t "invoices.to"}}</h3>
-            <div class="text-gray-600">
-                {{#if invoice.buyer.name}}
-                <p class="font-medium">{{invoice.buyer.name}}</p>
-                {{/if}}
-                {{#if invoice.buyer.address}}
-                <p>{{invoice.buyer.address}}</p>
-                {{/if}}
-                {{#if invoice.buyer.country}}
-                <p>{{invoice.buyer.country}}</p>
-                {{/if}}
-                {{#if invoice.buyer.taxId}}
-                <p>{{t "invoices.tax_id"}} {{invoice.buyer.taxId}}</p>
-                {{/if}}
-                {{#if invoice.buyer.email}}
-                <p>{{invoice.buyer.email}}</p>
-                {{/if}}
+            <div class="w-1/2 pl-4">
+                <h3 class="text-base font-semibold text-gray-900 mb-1">{{t "invoices.to"}}</h3>
+                <div class="text-gray-600 text-sm">
+                    {{#if invoice.buyer.name}}
+                    <p class="font-medium">{{invoice.buyer.name}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.address}}
+                    <p>{{invoice.buyer.address}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.country}}
+                    <p>{{invoice.buyer.country}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.taxId}}
+                    <p>{{t "invoices.tax_id"}} {{invoice.buyer.taxId}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.email}}
+                    <p>{{invoice.buyer.email}}</p>
+                    {{/if}}
+                </div>
             </div>
         </div>
     </div>
 
     {{#if invoice.description}}
-    <div class="invoice-description mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{t "invoices.description"}}</h3>
-        <p class="text-gray-600">{{invoice.description}}</p>
+    <div class="invoice-description mb-4">
+        <h3 class="text-base font-semibold text-gray-900 mb-1">{{t "invoices.description"}}</h3>
+        <p class="text-gray-600 text-sm">{{invoice.description}}</p>
     </div>
     {{/if}}
 
-    <div class="invoice-items mb-8">
+    <div class="invoice-items mb-4">
         <table class="invoice-table w-full">
             <thead>
                 <tr class="accent-bg text-white">
-                    <th class="text-left py-3 px-4">{{t "invoices.description"}}</th>
-                    <th class="text-center py-3 px-4">{{t "invoices.quantity"}}</th>
-                    <th class="text-right py-3 px-4">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right py-3 px-4">{{t "invoices.total_net"}}</th>
-                    <th class="text-right py-3 px-4">{{t "invoices.vat"}}</th>
-                    <th class="text-right py-3 px-4">{{t "invoices.total_gross"}}</th>
+                    <th class="text-left py-2 px-2 text-sm">{{t "invoices.description"}}</th>
+                    <th class="text-center py-2 px-2 text-sm">{{t "invoices.quantity"}}</th>
+                    <th class="text-right py-2 px-2 text-sm">{{t "invoices.unit_price"}}</th>
+                    <th class="text-right py-2 px-2 text-sm">{{t "invoices.total_net"}}</th>
+                    <th class="text-right py-2 px-2 text-sm">{{t "invoices.vat"}}</th>
+                    <th class="text-right py-2 px-2 text-sm">{{t "invoices.total_gross"}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each invoice.lines}}
                 <tr>
-                    <td class="py-3 px-4">
+                    <td class="py-2 px-2 text-sm">
                         {{#if description}}
                         <div class="font-medium">{{description}}</div>
                         {{/if}}
-                        <div class="text-sm text-gray-600">{{vatRateName}} ({{vatRateValue}}%)</div>
+                        <div class="text-xs text-gray-600">{{vatRateName}} ({{vatRateValue}}%)</div>
                     </td>
-                    <td class="text-center py-3 px-4">{{formattedQuantity}}</td>
-                    <td class="text-right py-3 px-4">{{formattedUnitPrice}}</td>
-                    <td class="text-right py-3 px-4">{{formattedTotalNet}}</td>
-                    <td class="text-right py-3 px-4">{{formattedTotalVat}}</td>
-                    <td class="text-right py-3 px-4 font-semibold">{{formattedTotalGross}}</td>
+                    <td class="text-center py-2 px-2 text-sm">{{formattedQuantity}}</td>
+                    <td class="text-right py-2 px-2 text-sm">{{formattedUnitPrice}}</td>
+                    <td class="text-right py-2 px-2 text-sm">{{formattedTotalNet}}</td>
+                    <td class="text-right py-2 px-2 text-sm">{{formattedTotalVat}}</td>
+                    <td class="text-right py-2 px-2 text-sm font-semibold">{{formattedTotalGross}}</td>
                 </tr>
                 {{/each}}
             </tbody>
@@ -183,24 +187,24 @@ class InvoiceTemplatesSeeder extends Seeder
     </div>
 
     {{#if invoice.vatSummary}}
-    <div class="vat-summary mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{t "invoices.vat_summary"}}</h3>
+    <div class="vat-summary mb-4">
+        <h3 class="text-base font-semibold text-gray-900 mb-2">{{t "invoices.vat_summary"}}</h3>
         <table class="w-full border border-gray-300">
             <thead>
                 <tr class="bg-gray-50">
-                    <th class="text-left py-2 px-4 border-b">{{t "invoices.vat_rate"}}</th>
-                    <th class="text-right py-2 px-4 border-b">{{t "invoices.net_amount"}}</th>
-                    <th class="text-right py-2 px-4 border-b">{{t "invoices.vat_amount"}}</th>
-                    <th class="text-right py-2 px-4 border-b">{{t "invoices.gross_amount"}}</th>
+                    <th class="text-left py-1 px-2 border-b text-sm">{{t "invoices.vat_rate"}}</th>
+                    <th class="text-right py-1 px-2 border-b text-sm">{{t "invoices.net_amount"}}</th>
+                    <th class="text-right py-1 px-2 border-b text-sm">{{t "invoices.vat_amount"}}</th>
+                    <th class="text-right py-1 px-2 border-b text-sm">{{t "invoices.gross_amount"}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each invoice.vatSummary}}
                 <tr>
-                    <td class="py-2 px-4 border-b">{{vatRateName}} ({{vatRateValue}}%)</td>
-                    <td class="text-right py-2 px-4 border-b">{{formattedNet}}</td>
-                    <td class="text-right py-2 px-4 border-b">{{formattedVat}}</td>
-                    <td class="text-right py-2 px-4 border-b font-semibold">{{formattedGross}}</td>
+                    <td class="py-1 px-2 border-b text-sm">{{vatRateName}} ({{vatRateValue}}%)</td>
+                    <td class="text-right py-1 px-2 border-b text-sm">{{formattedNet}}</td>
+                    <td class="text-right py-1 px-2 border-b text-sm">{{formattedVat}}</td>
+                    <td class="text-right py-1 px-2 border-b text-sm font-semibold">{{formattedGross}}</td>
                 </tr>
                 {{/each}}
             </tbody>
@@ -208,17 +212,17 @@ class InvoiceTemplatesSeeder extends Seeder
     </div>
     {{/if}}
 
-    <div class="invoice-totals mb-8">
+    <div class="invoice-totals mb-4">
         <div class="w-1/2 ml-auto">
-            <div class="flex justify-between py-2 border-b border-gray-300">
+            <div class="flex justify-between py-1 border-b border-gray-300 text-sm">
                 <span class="text-gray-600">{{t "invoices.subtotal"}}</span>
                 <span class="font-medium">{{invoice.formattedTotalNet}}</span>
             </div>
-            <div class="flex justify-between py-2 border-b border-gray-300">
+            <div class="flex justify-between py-1 border-b border-gray-300 text-sm">
                 <span class="text-gray-600">{{t "invoices.vat"}}:</span>
                 <span class="font-medium">{{invoice.formattedTotalTax}}</span>
             </div>
-            <div class="flex justify-between py-3 text-xl font-bold accent-text">
+            <div class="flex justify-between py-2 text-lg font-bold accent-text">
                 <span>{{t "invoices.total"}}</span>
                 <span>{{invoice.formattedTotalGross}}</span>
             </div>
@@ -226,20 +230,20 @@ class InvoiceTemplatesSeeder extends Seeder
     </div>
 
     {{#if invoice.exchange}}
-    <div class="exchange-info mb-6 bg-gray-50 p-4">
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
+    <div class="exchange-info mb-4 bg-gray-50 p-2">
+        <h3 class="text-base font-semibold text-gray-900 mb-1">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
         {{#if invoice.exchange.formattedExchangeRate}}
-        <p class="text-gray-600">{{t "invoices.exchange_rate"}} {{invoice.exchange.formattedExchangeRate}}</p>
+        <p class="text-gray-600 text-sm">{{t "invoices.exchange_rate"}} {{invoice.exchange.formattedExchangeRate}}</p>
         {{/if}}
         {{#if invoice.exchange.date}}
-        <p class="text-gray-600">{{t "invoices.date"}} {{invoice.exchange.date}}</p>
+        <p class="text-gray-600 text-sm">{{t "invoices.date"}} {{invoice.exchange.date}}</p>
         {{/if}}
     </div>
     {{/if}}
 
     {{#if invoice.payment}}
-    <div class="payment-info mb-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{t "invoices.payment_details"}}</h3>
+    <div class="payment-info mb-4">
+        <h3 class="text-base font-semibold text-gray-900 mb-2">{{t "invoices.payment_details"}}</h3>
         <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
                 <p><strong>{{t "invoices.payment_method"}}</strong> {{invoice.payment.method}}</p>
@@ -259,70 +263,70 @@ class InvoiceTemplatesSeeder extends Seeder
         </div>
 
         {{#if invoice.payment.bankAccount}}
-        <div class="bank-details mt-4 bg-gray-50 p-4">
-            <h4 class="font-semibold mb-2">{{t "invoices.bank_account"}}</h4>
+        <div class="bank-details mt-2 bg-gray-50 p-2">
+            <h4 class="font-semibold mb-1 text-sm">{{t "invoices.bank_account"}}</h4>
             {{#if invoice.payment.bankAccount.bankName}}
-            <p><strong>{{t "invoices.bank_name"}}</strong> {{invoice.payment.bankAccount.bankName}}</p>
+            <p class="text-sm"><strong>{{t "invoices.bank_name"}}</strong> {{invoice.payment.bankAccount.bankName}}</p>
             {{/if}}
             {{#if invoice.payment.bankAccount.iban}}
-            <p><strong>{{t "invoices.iban"}}</strong> {{invoice.payment.bankAccount.iban}}</p>
+            <p class="text-sm"><strong>{{t "invoices.iban"}}</strong> {{invoice.payment.bankAccount.iban}}</p>
             {{/if}}
             {{#if invoice.payment.bankAccount.swift}}
-            <p><strong>{{t "invoices.swift"}}</strong> {{invoice.payment.bankAccount.swift}}</p>
+            <p class="text-sm"><strong>{{t "invoices.swift"}}</strong> {{invoice.payment.bankAccount.swift}}</p>
             {{/if}}
         </div>
         {{/if}}
 
         {{#if invoice.payment.terms}}
-        <div class="payment-terms mt-4">
-            <h4 class="font-semibold mb-2">{{t "invoices.payment_terms"}}</h4>
-            <p class="text-gray-600">{{invoice.payment.terms}}</p>
+        <div class="payment-terms mt-2">
+            <h4 class="font-semibold mb-1 text-sm">{{t "invoices.payment_terms"}}</h4>
+            <p class="text-gray-600 text-sm">{{invoice.payment.terms}}</p>
         </div>
         {{/if}}
 
         {{#if invoice.payment.notes}}
-        <div class="payment-notes mt-4">
-            <h4 class="font-semibold mb-2">{{t "invoices.notes"}}</h4>
-            <p class="text-gray-600">{{invoice.payment.notes}}</p>
+        <div class="payment-notes mt-2">
+            <h4 class="font-semibold mb-1 text-sm">{{t "invoices.notes"}}</h4>
+            <p class="text-gray-600 text-sm">{{invoice.payment.notes}}</p>
         </div>
         {{/if}}
     </div>
     {{/if}}
 
     {{#if options.includeSignatures}}
-    <div class="signatures-section mt-8">
+    <div class="signatures-section mt-4">
         {{#if options.issuerSignature}}
         <div class="signature-block w-1/2 float-left">
-            <h4 class="font-semibold mb-2">{{t "invoices.authorized_by"}}</h4>
-            <div class="signature-line mb-2" style="border-bottom: 1px solid #000; height: 40px; position: relative;">
+            <h4 class="font-semibold mb-1 text-sm">{{t "invoices.authorized_by"}}</h4>
+            <div class="signature-line mb-1" style="border-bottom: 1px solid #000; height: 30px; position: relative;">
                 {{#if options.issuerSignature.imageUrl}}
                 {{{signatureUrl options.issuerSignature.imageUrl}}}
                 {{/if}}
             </div>
-            <div class="signature-name font-medium">{{options.issuerSignature.name}}</div>
+            <div class="signature-name font-medium text-sm">{{options.issuerSignature.name}}</div>
             {{#if options.issuerSignature.title}}
-            <div class="signature-title text-sm text-gray-600">{{options.issuerSignature.title}}</div>
+            <div class="signature-title text-xs text-gray-600">{{options.issuerSignature.title}}</div>
             {{/if}}
             {{#if options.issuerSignature.date}}
-            <div class="signature-date text-sm text-gray-600">{{options.issuerSignature.date}}</div>
+            <div class="signature-date text-xs text-gray-600">{{options.issuerSignature.date}}</div>
             {{/if}}
         </div>
         {{/if}}
 
         {{#if options.receiverSignature}}
         <div class="signature-block w-1/2 float-right">
-            <h4 class="font-semibold mb-2">{{t "invoices.received_by"}}</h4>
-            <div class="signature-line mb-2" style="border-bottom: 1px solid #000; height: 40px; position: relative;">
+            <h4 class="font-semibold mb-1 text-sm">{{t "invoices.received_by"}}</h4>
+            <div class="signature-line mb-1" style="border-bottom: 1px solid #000; height: 30px; position: relative;">
                 {{#if options.receiverSignature.imageUrl}}
                 {{{signatureUrl options.receiverSignature.imageUrl}}}
                 {{/if}}
             </div>
-            <div class="signature-name font-medium">{{options.receiverSignature.name}}</div>
+            <div class="signature-name font-medium text-sm">{{options.receiverSignature.name}}</div>
             {{#if options.receiverSignature.title}}
-            <div class="signature-title text-sm text-gray-600">{{options.receiverSignature.title}}</div>
+            <div class="signature-title text-xs text-gray-600">{{options.receiverSignature.title}}</div>
             {{/if}}
             {{#if options.receiverSignature.date}}
-            <div class="signature-date text-sm text-gray-600">{{options.receiverSignature.date}}</div>
+            <div class="signature-date text-xs text-gray-600">{{options.receiverSignature.date}}</div>
             {{/if}}
         </div>
         {{/if}}
@@ -331,8 +335,8 @@ class InvoiceTemplatesSeeder extends Seeder
     {{/if}}
 
     {{#if invoice.seller.logoUrl}}
-    <div class="logo-footer text-center mt-8 pt-4 border-t border-gray-200">
-        {{{logoUrl invoice.seller.logoUrl width="120px"}}}
+    <div class="logo-footer text-center mt-4 pt-2 border-t border-gray-200">
+        {{{logoUrl invoice.seller.logoUrl width="100px"}}}
     </div>
     {{/if}}
 </div>

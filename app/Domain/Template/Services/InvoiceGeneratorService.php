@@ -7,8 +7,9 @@ use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Tenant\Models\Tenant;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
+use Mccarlosen\LaravelMpdf\LaravelMpdf;
 
 class InvoiceGeneratorService
 {
@@ -41,8 +42,10 @@ class InvoiceGeneratorService
         // Add CSS styling for Tailwind classes
         $styledHtml = $this->addCssToHtml($htmlContent, $language);
 
-        // Generate PDF
-        $pdf = Pdf::loadHTML($styledHtml);
+        $this->saveHtmlToFile($styledHtml, $invoice->id);
+
+        // Generate PDF with mPDF
+        $pdf = PDF::loadHTML($styledHtml);
 
         // Apply template settings if available
         $this->applyPdfSettings($pdf, $template->settings ?? []);
@@ -118,12 +121,18 @@ class InvoiceGeneratorService
         );
 
         $styledHtml = $this->addCssToHtml($htmlContent);
-        $pdf        = Pdf::loadHTML($styledHtml);
+        $pdf        = PDF::loadHTML($styledHtml);
         $this->applyPdfSettings($pdf, $template->settings ?? []);
 
         $filename = $this->generateFilename($invoice);
 
-        return $pdf->download($filename);
+        $symfonyResponse = $pdf->download($filename);
+
+        return response(
+            $symfonyResponse->getContent(),
+            $symfonyResponse->getStatusCode(),
+            $symfonyResponse->headers->all()
+        );
     }
 
     /**
@@ -140,7 +149,7 @@ class InvoiceGeneratorService
         );
 
         $styledHtml = $this->addCssToHtml($htmlContent);
-        $pdf        = Pdf::loadHTML($styledHtml);
+        $pdf        = PDF::loadHTML($styledHtml);
         $this->applyPdfSettings($pdf, $template->settings ?? []);
 
         $filename = $this->generateFilename($invoice);
@@ -196,25 +205,32 @@ class InvoiceGeneratorService
     /**
      * Apply PDF settings from template.
      */
-    private function applyPdfSettings($pdf, array $settings): void
+    private function applyPdfSettings(LaravelMpdf $pdf, array $settings): void
     {
-        if (isset($settings['orientation'])) {
-            $pdf->setPaper('A4', $settings['orientation']);
-        } else {
-            $pdf->setPaper('A4', 'portrait');
-        }
+        // mPDF configuration - format and orientation
+        $format      = 'A4';
+        $orientation = $settings['orientation'] ?? 'P'; // P for portrait, L for landscape
+
+        // mPDF uses different format: [width, height] for custom sizes or standard format strings
+        $pdf->getMpdf()->_setPageSize($format, $orientation);
 
         if (isset($settings['margins'])) {
             $margins = $settings['margins'];
-            $pdf->setOption('margin-top', $margins['top'] ?? 10);
-            $pdf->setOption('margin-right', $margins['right'] ?? 10);
-            $pdf->setOption('margin-bottom', $margins['bottom'] ?? 10);
-            $pdf->setOption('margin-left', $margins['left'] ?? 10);
+            $pdf->getMpdf()->SetMargins(
+                $margins['left'] ?? 10,
+                $margins['right'] ?? 10,
+                $margins['top'] ?? 10
+            );
+            $pdf->getMpdf()->SetAutoPageBreak(true, $margins['bottom'] ?? 10);
+        } else {
+            // Default margins
+            $pdf->getMpdf()->SetMargins(10, 10, 10);
+            $pdf->getMpdf()->SetAutoPageBreak(true, 10);
         }
 
-        // Additional PDF options
-        $pdf->setOption('enable-local-file-access', true);
-        $pdf->setOption('isRemoteEnabled', true);
+        // mPDF specific configurations for better rendering
+        $pdf->getMpdf()->useSubstitutions = false;
+        $pdf->getMpdf()->simpleTables     = false;
     }
 
     /**
@@ -225,6 +241,18 @@ class InvoiceGeneratorService
         $number = str_replace(['/', '\\'], '-', $invoice->number);
 
         return "invoice-{$number}.pdf";
+    }
+
+    private function saveHtmlToFile(string $html, string $invoiceId): void
+    {
+        if (!app()->environment('local')) {
+            return;
+        }
+
+        $filename = "invoice-{$invoiceId}.html";
+        $path     = storage_path("app/temp/{$filename}");
+
+        file_put_contents($path, $html);
     }
 
     /**
@@ -255,9 +283,9 @@ class InvoiceGeneratorService
         return '
         /* Base styles */
         body {
-            font-family: "DejaVu Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
+            font-family: "DejaVu Sans", "Noto Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
             color: #333;
             margin: 0;
             padding: 0;
@@ -266,43 +294,58 @@ class InvoiceGeneratorService
         /* Layout utilities */
         .w-full { width: 100%; }
         .w-1\/2 { width: 50%; }
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; }
         .float-left { float: left; }
         .float-right { float: right; }
         .ml-auto { margin-left: auto; }
+        .pr-4 { padding-right: 16px; }
+        .pl-4 { padding-left: 16px; }
+
+        /* Flexbox layout (mPDF supports flexbox) */
+        .flex { display: flex; }
+        .flex-table { display: flex; width: 100%; }
+        .flex-row { display: flex; width: 100%; }
+        .flex-cell { flex: 1; }
+        .flex-cell-center { flex: 1; align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
 
         /* Typography */
         .font-bold { font-weight: bold; }
         .font-semibold { font-weight: 600; }
         .font-medium { font-weight: 500; }
         .font-light { font-weight: 300; }
-        .text-sm { font-size: 11px; }
-        .text-base { font-size: 12px; }
-        .text-lg { font-size: 14px; }
-        .text-xl { font-size: 16px; }
-        .text-2xl { font-size: 20px; }
-        .text-3xl { font-size: 24px; }
+        .text-xs { font-size: 8px; }
+        .text-sm { font-size: 9px; }
+        .text-base { font-size: 10px; }
+        .text-lg { font-size: 12px; }
+        .text-xl { font-size: 14px; }
+        .text-2xl { font-size: 16px; }
+        .text-3xl { font-size: 20px; }
 
         /* Spacing */
+        .mb-1 { margin-bottom: 4px; }
         .mb-2 { margin-bottom: 8px; }
-        .mb-4 { margin-bottom: 16px; }
-        .mb-6 { margin-bottom: 24px; }
-        .mb-8 { margin-bottom: 32px; }
-        .mt-4 { margin-top: 16px; }
-        .mt-6 { margin-top: 24px; }
-        .mt-8 { margin-top: 32px; }
-        .p-4 { padding: 16px; }
-        .p-6 { padding: 24px; }
-        .py-2 { padding-top: 8px; padding-bottom: 8px; }
-        .py-3 { padding-top: 12px; padding-bottom: 12px; }
-        .px-4 { padding-left: 16px; padding-right: 16px; }
-        .pt-4 { padding-top: 16px; }
-        .pb-1 { padding-bottom: 4px; }
+        .mb-4 { margin-bottom: 12px; }
+        .mb-6 { margin-bottom: 20px; }
+        .mb-8 { margin-bottom: 24px; }
+        .mt-2 { margin-top: 6px; }
+        .mt-4 { margin-top: 12px; }
+        .mt-6 { margin-top: 20px; }
+        .mt-8 { margin-top: 24px; }
+        .p-2 { padding: 6px; }
+        .p-4 { padding: 12px; }
+        .p-6 { padding: 20px; }
+        .py-1 { padding-top: 3px; padding-bottom: 3px; }
+        .py-2 { padding-top: 6px; padding-bottom: 6px; }
+        .py-3 { padding-top: 8px; padding-bottom: 8px; }
+        .px-2 { padding-left: 6px; padding-right: 6px; }
+        .px-4 { padding-left: 12px; padding-right: 12px; }
+        .pt-2 { padding-top: 6px; }
+        .pt-4 { padding-top: 12px; }
+        .pb-1 { padding-bottom: 3px; }
 
         /* Colors */
         .accent-bg { background-color: #3B82F6; }
@@ -326,12 +369,12 @@ class InvoiceGeneratorService
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         .invoice-table th,
         .invoice-table td {
             border: 1px solid #E5E7EB;
-            padding: 8px;
+            padding: 6px;
             text-align: left;
         }
         .invoice-table th {
@@ -340,17 +383,17 @@ class InvoiceGeneratorService
             font-weight: bold;
         }
 
-        /* Grid */
+        /* Grid replacement with table */
         .grid { display: table; width: 100%; }
-        .grid-cols-2 { }
-        .grid-cols-2 > div { display: table-cell; width: 50%; vertical-align: top; }
-        .gap-4 > * { margin-right: 16px; }
+        .grid-cols-2 { display: table-row; }
+        .grid-cols-2 > div { display: table-cell; width: 50%; vertical-align: top; padding-right: 12px; }
+        .grid-cols-2 > div:last-child { padding-right: 0; }
 
         /* Container */
         .invoice-container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 12px;
         }
 
         /* Clear floats */
@@ -361,7 +404,7 @@ class InvoiceGeneratorService
         }
 
         /* Negative margins fix */
-        .-mx-6 { margin-left: -24px; margin-right: -24px; }
+        .-mx-6 { margin-left: -20px; margin-right: -20px; }
         ';
     }
 }

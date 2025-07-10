@@ -10,8 +10,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "barryvdh/laravel-dompdf": "*",
         "brick/math": "^0.12.3",
+        "carlos-meneses/laravel-mpdf": "^2.1",
         "consoletvs/profanity": "^3.5",
         "doctrine/dbal": "^4.2",
         "globalcitizen/php-iban": "^4.2",
