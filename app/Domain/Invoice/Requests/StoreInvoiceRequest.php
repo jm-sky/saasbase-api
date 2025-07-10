@@ -9,6 +9,7 @@ use App\Domain\Financial\Enums\DeliveryStatus;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Financial\Enums\PaymentStatus;
+use App\Domain\Financial\Enums\VatRateType;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -73,15 +74,17 @@ class StoreInvoiceRequest extends BaseFormRequest
             'body.lines.*.quantity'              => ['required', 'numeric', 'min:0'],
             'body.lines.*.unitPrice'             => ['required', 'numeric', 'min:0'],
             'body.lines.*.vatRate'               => ['required', 'array'],
+            'body.lines.*.vatRate.id'            => ['required', 'ulid', 'exists:vat_rates,id'],
             'body.lines.*.vatRate.rate'          => ['required', 'numeric', 'min:0', 'max:100'],
-            'body.lines.*.vatRate.category'      => ['nullable', 'string', 'max:50'],
+            'body.lines.*.vatRate.name'          => ['nullable', 'string', 'max:255'],
+            'body.lines.*.vatRate.type'          => ['nullable', new Enum(VatRateType::class)],
             'body.lines.*.totalNet'              => ['required', 'numeric', 'min:0'],
             'body.lines.*.totalVat'              => ['required', 'numeric', 'min:0'],
             'body.lines.*.totalGross'            => ['required', 'numeric', 'min:0'],
             'body.lines.*.productId'             => ['nullable', 'string', 'exists:products,id'],
             'body.lines.*.gtuCodes'              => ['nullable', 'array'],
             'body.lines.*.gtuCodes.*'            => ['string', 'max:10'],
-            'body.vatSummary'                    => ['required', 'array'],
+            'body.vatSummary'                    => ['sometimes', 'array'],
             'body.vatSummary.*.vatRate'          => ['required', 'array'],
             'body.vatSummary.*.vatRate.rate'     => ['required', 'numeric', 'min:0', 'max:100'],
             'body.vatSummary.*.vatRate.category' => ['nullable', 'string', 'max:50'],
@@ -118,7 +121,7 @@ class StoreInvoiceRequest extends BaseFormRequest
             'options.language'         => ['nullable', 'string', 'max:5'],
             'options.template'         => ['nullable', 'string', 'max:255'],
             'options.sendEmail'        => ['required', 'boolean'],
-            'options.emailTo'          => ['required', 'array'],
+            'options.emailTo'          => ['nullable', 'sometimes', 'array'],
             'options.emailTo.*'        => ['email', 'max:255'],
         ];
     }

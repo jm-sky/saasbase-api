@@ -41,7 +41,7 @@ class VatRate extends BaseModel
      * @var array<string, string>
      */
     protected $casts = [
-        'rate'       => 'decimal:2',
+        'rate'       => 'float',
         'type'       => VatRateType::class,
         'active'     => 'boolean',
         'valid_from' => 'date',

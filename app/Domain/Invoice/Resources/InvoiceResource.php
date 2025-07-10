@@ -23,7 +23,7 @@ class InvoiceResource extends JsonResource
             'id'                  => $this->id,
             'tenantId'            => $this->tenant_id,
             'type'                => $this->type->value,
-            'status'              => $this->status->value, // Backward compatibility
+            'status'              => $this->status?->value, // Backward compatibility
             'statusInfo'          => [
                 'general'    => $this->status?->value,
                 'ocr'        => $this->ocr_status?->value,
