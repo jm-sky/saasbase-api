@@ -12,7 +12,7 @@ return new class() extends Migration {
             $table->ulid('tenant_id');
             $table->ulid('contractor_id');
             $table->ulid('default_payment_method_id')->nullable();
-            $table->string('default_currency', 3)->nullable();
+            $table->string('default_currency_code', 3)->nullable();
             $table->string('default_language', 2)->nullable();
             $table->integer('default_payment_days')->nullable();
             $table->json('default_tags')->nullable();

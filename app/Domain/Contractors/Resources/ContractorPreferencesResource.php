@@ -3,6 +3,7 @@
 namespace App\Domain\Contractors\Resources;
 
 use App\Domain\Contractors\Models\ContractorPreferences;
+use App\Domain\Exchanges\Resources\CurrencyResource;
 use App\Domain\Financial\Resources\PaymentMethodResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,10 +17,13 @@ class ContractorPreferencesResource extends JsonResource
         return [
             'id'                     => $this->id,
             'defaultPaymentMethodId' => $this->default_payment_method_id,
-            'defaultCurrency'        => $this->default_currency,
+            'defaultCurrencyCode'    => $this->default_currency_code,
             'defaultLanguage'        => $this->default_language,
             'defaultPaymentDays'     => $this->default_payment_days,
             'defaultTags'            => $this->default_tags,
+            'defaultCurrency'        => $this->whenLoaded('defaultCurrency', function () {
+                return new CurrencyResource($this->defaultCurrency);
+            }),
             'defaultPaymentMethod'   => $this->whenLoaded('defaultPaymentMethod', function () {
                 return new PaymentMethodResource($this->defaultPaymentMethod);
             }),

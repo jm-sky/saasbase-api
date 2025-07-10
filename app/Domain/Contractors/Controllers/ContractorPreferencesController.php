@@ -19,7 +19,7 @@ class ContractorPreferencesController extends Controller
                 'tenant_id'                 => $contractor->tenant_id,
                 'contractor_id'             => $contractor->id,
                 'default_payment_method_id' => null,
-                'default_currency'          => null,
+                'default_currency_code'     => null,
                 'default_language'          => null,
                 'default_payment_days'      => null,
                 'default_tags'              => null,
