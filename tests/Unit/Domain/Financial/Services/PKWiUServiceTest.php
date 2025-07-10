@@ -5,6 +5,7 @@ namespace Tests\Unit\Domain\Financial\Services;
 use App\Domain\Financial\Models\PKWiUClassification;
 use App\Domain\Financial\Services\PKWiUService;
 use App\Domain\Products\Models\Product;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
@@ -17,10 +18,13 @@ class PKWiUServiceTest extends TestCase
 {
     private PKWiUService $service;
 
+    private Tenant $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->service = new PKWiUService();
+        $this->tenant  = Tenant::factory()->create();
     }
 
     public function testValidatesPkwiuCodeFormat(): void
@@ -111,9 +115,14 @@ class PKWiUServiceTest extends TestCase
     public function testAssignsPkwiuToProduct(): void
     {
         PKWiUClassification::factory()->create(['code' => '62.01.11.0']);
-        $product = Product::factory()->create();
 
-        $result = $this->service->assignPKWiUToProduct($product->id, '62.01.11.0');
+        $product = Tenant::bypassTenant($this->tenant->id, function () {
+            return Product::factory()->create(['tenant_id' => $this->tenant->id]);
+        });
+
+        $result = Tenant::bypassTenant($this->tenant->id, function () use ($product) {
+            return $this->service->assignPKWiUToProduct($product->id, '62.01.11.0');
+        });
 
         $this->assertTrue($result);
         $product->refresh();
@@ -122,7 +131,9 @@ class PKWiUServiceTest extends TestCase
 
     public function testCannotAssignInvalidPkwiuToProduct(): void
     {
-        $product = Product::factory()->create();
+        $product = Tenant::bypassTenant($this->tenant->id, function () {
+            return Product::factory()->create(['tenant_id' => $this->tenant->id]);
+        });
 
         $result = $this->service->assignPKWiUToProduct($product->id, 'invalid');
 
@@ -133,15 +144,23 @@ class PKWiUServiceTest extends TestCase
     {
         PKWiUClassification::factory()->create(['code' => '62.01.11.0']);
         PKWiUClassification::factory()->create(['code' => '62.01.12.0']);
-        $product1 = Product::factory()->create();
-        $product2 = Product::factory()->create();
+
+        $product1 = Tenant::bypassTenant($this->tenant->id, function () {
+            return Product::factory()->create(['tenant_id' => $this->tenant->id]);
+        });
+
+        $product2 = Tenant::bypassTenant($this->tenant->id, function () {
+            return Product::factory()->create(['tenant_id' => $this->tenant->id]);
+        });
 
         $assignments = [
             ['product_id' => $product1->id, 'pkwiu_code' => '62.01.11.0'],
             ['product_id' => $product2->id, 'pkwiu_code' => '62.01.12.0'],
         ];
 
-        $successCount = $this->service->bulkAssignPKWiUToProducts($assignments);
+        $successCount = Tenant::bypassTenant($this->tenant->id, function () use ($assignments) {
+            return $this->service->bulkAssignPKWiUToProducts($assignments);
+        });
 
         $this->assertEquals(2, $successCount);
     }
@@ -164,15 +183,20 @@ class PKWiUServiceTest extends TestCase
     public function testEnrichesInvoiceItemsWithPkwiu(): void
     {
         PKWiUClassification::factory()->create(['code' => '62.01.11.0']);
-        $product = Product::factory()->create(['pkwiu_code' => '62.01.11.0']);
+
+        $product = Tenant::bypassTenant($this->tenant->id, function () {
+            return Product::factory()->create(['tenant_id' => $this->tenant->id, 'pkwiu_code' => '62.01.11.0']);
+        });
 
         $invoiceItems = [
             ['product_id' => $product->id, 'name' => 'Software'],
         ];
 
-        $enriched = $this->service->enrichInvoiceItemsWithPKWiU($invoiceItems);
+        $enriched = Tenant::bypassTenant($this->tenant->id, function () use ($invoiceItems) {
+            return $this->service->enrichInvoiceItemsWithPKWiU($invoiceItems);
+        });
 
-        $this->assertEquals('62.01.11.0', $enriched[0]['pkwiu_code']);
+        $this->assertEquals('62.01.11.0', $enriched[0]['pkwiu_code'] ?? null);
     }
 
     public function testExtractsPkwiuCodesFromInvoiceBody(): void

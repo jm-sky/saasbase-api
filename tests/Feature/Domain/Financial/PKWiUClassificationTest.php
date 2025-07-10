@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Financial\Controllers\PKWiUClassificationController;
 use App\Domain\Financial\Models\PKWiUClassification;
 use App\Domain\Products\Models\Product;
+use App\Domain\Tenant\Models\Tenant;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -20,13 +21,17 @@ class PKWiUClassificationTest extends TestCase
 
     protected User $user;
 
+    private Tenant $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->create();
 
-        $this->authenticateUser(null, $this->user);
+        $this->tenant = Tenant::factory()->create();
+
+        $this->authenticateUser($this->tenant, $this->user);
     }
 
     public function testCanListPkwiuClassifications(): void
@@ -170,10 +175,12 @@ class PKWiUClassificationTest extends TestCase
             'code' => '62.01.11.0',
         ]);
 
-        $product = Product::factory()->create([
-            'tenant_id'  => $this->user->tenant_id,
-            'pkwiu_code' => '62.01.11.0',
-        ]);
+        $product = Tenant::bypassTenant($this->tenant->id, function () {
+            return Product::factory()->create([
+                'tenant_id'  => $this->user->tenant_id,
+                'pkwiu_code' => '62.01.11.0',
+            ]);
+        });
 
         $this->assertNotNull($product->pkwiuClassification);
         $this->assertEquals('62.01.11.0', $product->pkwiuClassification->code);

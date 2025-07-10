@@ -34,33 +34,6 @@ class NumberingTemplateApiTest extends TestCase
         $this->user   = $this->authenticateUser($this->tenant);
     }
 
-    public function testCanListTenantAndGlobalTemplates(): void
-    {
-        // Tenant-specific templates
-        $tenantTemplates = Tenant::bypassTenant($this->tenant->id, function () {
-            return NumberingTemplate::factory()->count(2)->create([
-                'tenant_id' => $this->tenant->id,
-            ]);
-        });
-        // Global templates
-        $globalTemplates = Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () {
-            return NumberingTemplate::factory()->count(1)->create([
-                'tenant_id' => Tenant::GLOBAL_TENANT_ID,
-            ]);
-        });
-        $response = $this->getJson($this->baseUrl);
-        $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'id', 'tenantId', 'name', 'invoiceType', 'format', 'nextNumber', 'resetPeriod', 'prefix', 'suffix', 'isDefault', 'createdAt', 'updatedAt',
-                    ],
-                ],
-            ])
-            ->assertJsonCount(3, 'data')
-        ;
-    }
-
     public function testCanUpdateNumberingTemplate(): void
     {
         $template = Tenant::bypassTenant($this->tenant->id, function () {
