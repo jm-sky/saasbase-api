@@ -182,7 +182,7 @@ class InvoiceController extends Controller
     /**
      * Stream invoice PDF.
      */
-    public function streamPdf(InvoicePdfRequest $request, Invoice $invoice): Response
+    public function streamPdf(InvoicePdfRequest $request, Invoice $invoice): \Symfony\Component\HttpFoundation\Response
     {
         $templateId = $request->getTemplateId();
 
