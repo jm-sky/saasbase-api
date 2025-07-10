@@ -87,6 +87,7 @@ class ExchangeRateControllerTest extends TestCase
 
     public function testCanShowExchangeRate(): void
     {
+        Currency::factory()->create(['code' => 'USD']);
         $exchangeRate = ExchangeRate::factory()->create(['currency' => 'USD']);
 
         $response = $this->getJson($this->baseUrl . '/' . $exchangeRate->id);
