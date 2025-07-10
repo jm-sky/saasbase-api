@@ -122,9 +122,9 @@ class ExpenseAttachmentsController extends Controller
     /**
      * Delete an attachment.
      */
-    public function destroy(Expense $expense, $mediaUuid)
+    public function destroy(Expense $expense, $mediaId)
     {
-        $media = Media::findByUuid($mediaUuid);
+        $media = Media::findOrFail($mediaId);
         $this->authorizeMedia($expense, $media);
         $expense->logModelActivity(ExpenseActivityType::AttachmentDeleted->value, $media);
         $media->delete();

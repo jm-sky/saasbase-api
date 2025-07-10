@@ -89,9 +89,9 @@ class ContractorAttachmentsController extends Controller
     /**
      * Delete an attachment.
      */
-    public function destroy(Contractor $contractor, $mediaUuid)
+    public function destroy(Contractor $contractor, $mediaId)
     {
-        $media = Media::findByUuid($mediaUuid);
+        $media = Media::findOrFail($mediaId);
         $this->authorizeMedia($contractor, $media);
         $contractor->logModelActivity(ContractorActivityType::AttachmentDeleted->value, $media);
         $media->delete();

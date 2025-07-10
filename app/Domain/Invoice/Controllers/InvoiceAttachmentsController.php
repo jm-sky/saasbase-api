@@ -117,9 +117,9 @@ class InvoiceAttachmentsController extends Controller
     /**
      * Delete an attachment.
      */
-    public function destroy(Invoice $invoice, $mediaUuid)
+    public function destroy(Invoice $invoice, $mediaId)
     {
-        $media = Media::findByUuid($mediaUuid);
+        $media = Media::findOrFail($mediaId);
         $this->authorizeMedia($invoice, $media);
         $invoice->logModelActivity(InvoiceActivityType::AttachmentDeleted->value, $media);
         $media->delete();
