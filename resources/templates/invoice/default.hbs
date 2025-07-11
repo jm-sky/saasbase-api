@@ -1,315 +1,784 @@
-<div class="invoice-container">
-    <!-- Header Section -->
-    <table class="w-full mb-8">
-        <tr>
-            <td class="w-1/2" style="vertical-align: top;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{t "invoices.invoice"}} {{invoice.number}}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .header-left {
+            flex: 1;
+        }
+        
+        .logo-section {
+            margin-bottom: 20px;
+        }
+        
+        .logo-section img {
+            max-height: 60px;
+            max-width: 200px;
+        }
+        
+        .invoice-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 10px 0;
+        }
+        
+        .invoice-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+        
+        .invoice-info-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 20px;
+            min-width: 200px;
+        }
+        
+        .invoice-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .invoice-info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .invoice-info-label {
+            font-weight: 500;
+            color: #6b7280;
+        }
+        
+        .invoice-info-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .status-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .parties-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .business-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 20px;
+        }
+        
+        .business-card-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .business-card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        
+        .company-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .address-line {
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+        
+        .detail-line {
+            color: #4b5563;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #6b7280;
+        }
+        
+        .description-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .description-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 16px;
+            color: #4b5563;
+        }
+        
+        .items-section {
+            margin-bottom: 40px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .items-table th {
+            background: #f9fafb;
+            color: #374151;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .items-table th:last-child {
+            text-align: right;
+        }
+        
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: top;
+        }
+        
+        .items-table tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        .items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .item-description {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .item-vat {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        
+        .item-cell {
+            color: #4b5563;
+        }
+        
+        .item-total {
+            font-weight: 600;
+            color: #1f2937;
+            text-align: right;
+        }
+        
+        .vat-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .vat-summary-table th {
+            background: #f9fafb;
+            color: #374151;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .vat-summary-table th:last-child {
+            text-align: right;
+        }
+        
+        .vat-summary-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .vat-cell {
+            color: #4b5563;
+        }
+        
+        .vat-cell:last-child {
+            text-align: right;
+        }
+        
+        .total-summary-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+        
+        .total-summary-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 20px;
+            min-width: 300px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .total-row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1f2937;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .total-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .total-value {
+            color: #1f2937;
+            font-weight: 500;
+        }
+        
+        .total-final-label {
+            color: #1f2937;
+            font-weight: 700;
+        }
+        
+        .total-final-value {
+            color: #1f2937;
+            font-weight: 700;
+        }
+        
+        .payment-section {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .payment-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .payment-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .payment-info {
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .payment-info p {
+            margin-bottom: 6px;
+        }
+        
+        .payment-info strong {
+            color: #1f2937;
+        }
+        
+        .bank-account-section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .bank-account-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        
+        .bank-account-info {
+            color: #4b5563;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        
+        .bank-account-info p {
+            margin-bottom: 6px;
+        }
+        
+        .bank-account-info strong {
+            color: #1f2937;
+        }
+        
+        .footer-section {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .footer-section img {
+            max-height: 40px;
+            opacity: 0.6;
+        }
+        
+        .footer-text {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+        
+        .text-left {
+            text-align: left;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .font-semibold {
+            font-weight: 600;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+        
+        .mb-8 {
+            margin-bottom: 32px;
+        }
+        
+        .w-1-2 {
+            width: 50%;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .float-left {
+            float: left;
+        }
+        
+        .float-right {
+            float: right;
+        }
+        
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .invoice-container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-left">
                 {{#if invoice.seller.logoUrl}}
-                    <div class="mb-6">
+                    <div class="logo-section">
                         {{{logoUrl invoice.seller.logoUrl width="180px"}}}
                     </div>
                 {{/if}}
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{t "invoices.invoice"}}</h1>
-                <p class="text-xl font-semibold accent-text">#{{invoice.number}}</p>
-            </td>
-            <td class="w-1/2 text-right" style="vertical-align: top;">
-                <div class="invoice-info-card">
-                    {{#if invoice.issueDate}}
-                        <p class="invoice-info-row">
-                            <span class="invoice-info-label">{{t "invoices.issue_date"}}</span>
-                            <span class="invoice-info-value">{{invoice.issueDate}}</span>
-                        </p>
-                    {{/if}}
-                    {{#if invoice.dueDate}}
-                        <p class="invoice-info-row">
-                            <span class="invoice-info-label">{{t "invoices.due_date"}}</span>
-                            <span class="invoice-info-value">{{invoice.dueDate}}</span>
-                        </p>
-                    {{/if}}
-                    {{#if invoice.status}}
-                        <p class="invoice-info-row">
-                            <span class="invoice-info-label">{{t "invoices.status"}}</span>
-                            <span class="invoice-info-value status-badge">{{invoice.status}}</span>
-                        </p>
-                    {{/if}}
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Business Information Section -->
-    <table class="w-full mb-8">
-        <tr>
-            <td class="w-1/2" style="vertical-align: top; padding-right: 20px;">
-                <div class="business-card seller-card">
-                    <div class="business-card-header">
-                        <h3 class="business-card-title">{{t "invoices.from"}}</h3>
+                <h1 class="invoice-title">{{t "invoices.invoice"}}</h1>
+                <p class="invoice-number">#{{invoice.number}}</p>
+            </div>
+            <div class="invoice-info-card">
+                {{#if invoice.issueDate}}
+                    <div class="invoice-info-row">
+                        <span class="invoice-info-label">{{t "invoices.issue_date"}}</span>
+                        <span class="invoice-info-value">{{invoice.issueDate}}</span>
                     </div>
-                    <div class="business-card-content">
-                        {{#if invoice.seller.name}}
-                            <p class="company-name">{{invoice.seller.name}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.address}}
-                            <p class="address-line">{{invoice.seller.address}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.country}}
-                            <p class="address-line">{{invoice.seller.country}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.taxId}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.seller.taxId}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.email}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.seller.email}}</p>
-                        {{/if}}
+                {{/if}}
+                {{#if invoice.dueDate}}
+                    <div class="invoice-info-row">
+                        <span class="invoice-info-label">{{t "invoices.due_date"}}</span>
+                        <span class="invoice-info-value">{{invoice.dueDate}}</span>
                     </div>
-                </div>
-            </td>
-            <td class="w-1/2" style="vertical-align: top; padding-left: 20px;">
-                <div class="business-card buyer-card">
-                    <div class="business-card-header">
-                        <h3 class="business-card-title">{{t "invoices.to"}}</h3>
+                {{/if}}
+                {{#if invoice.status}}
+                    <div class="invoice-info-row">
+                        <span class="invoice-info-label">{{t "invoices.status"}}</span>
+                        <span class="invoice-info-value status-badge">{{invoice.status}}</span>
                     </div>
-                    <div class="business-card-content">
-                        {{#if invoice.buyer.name}}
-                            <p class="company-name">{{invoice.buyer.name}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.address}}
-                            <p class="address-line">{{invoice.buyer.address}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.country}}
-                            <p class="address-line">{{invoice.buyer.country}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.taxId}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.buyer.taxId}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.email}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.buyer.email}}</p>
-                        {{/if}}
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Description Section -->
-    {{#if invoice.description}}
-        <div class="mb-8">
-            <h3 class="section-title">{{t "invoices.description"}}</h3>
-            <div class="description-card">
-                {{invoice.description}}
+                {{/if}}
             </div>
         </div>
-    {{/if}}
 
-    <!-- Invoice Items Table -->
-    <div class="mb-8">
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th class="text-left py-3 px-3">{{t "invoices.description"}}</th>
-                    <th class="text-center py-3 px-3" style="width: 10%;">{{t "invoices.quantity"}}</th>
-                    <th class="text-right py-3 px-3" style="width: 15%;">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right py-3 px-3" style="width: 15%;">{{t "invoices.total_net"}}</th>
-                    <th class="text-right py-3 px-3" style="width: 10%;">{{t "invoices.vat"}}</th>
-                    <th class="text-right py-3 px-3" style="width: 15%;">{{t "invoices.total_gross"}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each invoice.lines}}
-                    <tr>
-                        <td class="py-3 px-3 item-description">
-                            {{#if description}}
-                                <div class="item-name">{{description}}</div>
-                            {{/if}}
-                            <div class="item-vat">{{vatRateName}} ({{vatRateValue}}%)</div>
-                        </td>
-                        <td class="text-center py-3 px-3 item-cell">{{formattedQuantity}}</td>
-                        <td class="text-right py-3 px-3 item-cell">{{formattedUnitPrice}}</td>
-                        <td class="text-right py-3 px-3 item-cell">{{formattedTotalNet}}</td>
-                        <td class="text-right py-3 px-3 item-cell">{{formattedTotalVat}}</td>
-                        <td class="text-right py-3 px-3 item-total">{{formattedTotalGross}}</td>
-                    </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </div>
+        <!-- Business Information Section -->
+        <div class="parties-section">
+            <div class="business-card seller-card">
+                <div class="business-card-header">
+                    <h3 class="business-card-title">{{t "invoices.from"}}</h3>
+                </div>
+                <div class="business-card-content">
+                    {{#if invoice.seller.name}}
+                        <p class="company-name">{{invoice.seller.name}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.address}}
+                        <p class="address-line">{{invoice.seller.address}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.country}}
+                        <p class="address-line">{{invoice.seller.country}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.taxId}}
+                        <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.seller.taxId}}</p>
+                    {{/if}}
+                    {{#if invoice.seller.email}}
+                        <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.seller.email}}</p>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="business-card buyer-card">
+                <div class="business-card-header">
+                    <h3 class="business-card-title">{{t "invoices.to"}}</h3>
+                </div>
+                <div class="business-card-content">
+                    {{#if invoice.buyer.name}}
+                        <p class="company-name">{{invoice.buyer.name}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.address}}
+                        <p class="address-line">{{invoice.buyer.address}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.country}}
+                        <p class="address-line">{{invoice.buyer.country}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.taxId}}
+                        <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.buyer.taxId}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.email}}
+                        <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.buyer.email}}</p>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
 
-    <!-- VAT Summary (if applicable) -->
-    {{#if invoice.vatSummary}}
-        <div class="mb-6">
-            <h3 class="section-title">{{t "invoices.vat_summary"}}</h3>
-            <table class="vat-summary-table">
+        <!-- Description Section -->
+        {{#if invoice.description}}
+            <div class="description-section">
+                <h3 class="section-title">{{t "invoices.description"}}</h3>
+                <div class="description-card">
+                    {{invoice.description}}
+                </div>
+            </div>
+        {{/if}}
+
+        <!-- Invoice Items Table -->
+        <div class="items-section">
+            <table class="items-table">
                 <thead>
                     <tr>
-                        <th class="text-left py-2 px-3">{{t "invoices.vat_rate"}}</th>
-                        <th class="text-right py-2 px-3">{{t "invoices.net_amount"}}</th>
-                        <th class="text-right py-2 px-3">{{t "invoices.vat_amount"}}</th>
-                        <th class="text-right py-2 px-3">{{t "invoices.gross_amount"}}</th>
+                        <th class="text-left">{{t "invoices.description"}}</th>
+                        <th class="text-center">{{t "invoices.quantity"}}</th>
+                        <th class="text-right">{{t "invoices.unit_price"}}</th>
+                        <th class="text-right">{{t "invoices.total_net"}}</th>
+                        <th class="text-right">{{t "invoices.vat"}}</th>
+                        <th class="text-right">{{t "invoices.total_gross"}}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each invoice.vatSummary}}
+                    {{#each invoice.lines}}
                         <tr>
-                            <td class="py-2 px-3 vat-cell">{{vatRateName}} ({{vatRateValue}}%)</td>
-                            <td class="text-right py-2 px-3 vat-cell">{{formattedNet}}</td>
-                            <td class="text-right py-2 px-3 vat-cell">{{formattedVat}}</td>
-                            <td class="text-right py-2 px-3 vat-cell font-semibold">{{formattedGross}}</td>
+                            <td class="item-description">
+                                {{#if description}}
+                                    <div class="item-name">{{description}}</div>
+                                {{/if}}
+                                <div class="item-vat">{{vatRateName}} ({{vatRateValue}}%)</div>
+                            </td>
+                            <td class="text-center item-cell">{{formattedQuantity}}</td>
+                            <td class="text-right item-cell">{{formattedUnitPrice}}</td>
+                            <td class="text-right item-cell">{{formattedTotalNet}}</td>
+                            <td class="text-right item-cell">{{formattedTotalVat}}</td>
+                            <td class="item-total">{{formattedTotalGross}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
-    {{/if}}
 
-    <!-- Total Summary -->
-    <div class="mb-8">
-        <table class="w-full">
-            <tr>
-                <td class="w-1/2"></td>
-                <td class="w-1/2">
-                    <div class="total-summary-card">
-                        <table class="w-full">
-                            <tr class="total-row">
-                                <td class="total-label">{{t "invoices.subtotal"}}</td>
-                                <td class="total-value">{{invoice.formattedTotalNet}}</td>
+        <!-- VAT Summary -->
+        {{#if invoice.vatSummary}}
+            <div class="mb-6">
+                <h3 class="section-title">{{t "invoices.vat_summary"}}</h3>
+                <table class="vat-summary-table">
+                    <thead>
+                        <tr>
+                            <th class="text-left">{{t "invoices.vat_rate"}}</th>
+                            <th class="text-right">{{t "invoices.net_amount"}}</th>
+                            <th class="text-right">{{t "invoices.vat_amount"}}</th>
+                            <th class="text-right">{{t "invoices.gross_amount"}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each invoice.vatSummary}}
+                            <tr>
+                                <td class="vat-cell">{{vatRateName}} ({{vatRateValue}}%)</td>
+                                <td class="text-right vat-cell">{{formattedNet}}</td>
+                                <td class="text-right vat-cell">{{formattedVat}}</td>
+                                <td class="text-right vat-cell font-semibold">{{formattedGross}}</td>
                             </tr>
-                            <tr class="total-row">
-                                <td class="total-label">{{t "invoices.vat"}}</td>
-                                <td class="total-value">{{invoice.formattedTotalTax}}</td>
-                            </tr>
-                            <tr class="total-final-row">
-                                <td class="total-final-label">{{t "invoices.total"}}</td>
-                                <td class="total-final-value">{{invoice.formattedTotalGross}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        {{/if}}
 
-    <!-- Exchange Rate Information -->
-    {{#if invoice.exchange}}
-        <div class="mb-6 bg-gray-50 p-4 border border-gray-200">
-            <h3 class="text-base font-bold text-gray-900 mb-2">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
-            {{#if invoice.exchange.formattedExchangeRate}}
-                <p class="text-sm text-gray-700 mb-1">{{t "invoices.exchange_rate"}}: {{invoice.exchange.formattedExchangeRate}}</p>
-            {{/if}}
-            {{#if invoice.exchange.date}}
-                <p class="text-sm text-gray-700">{{t "invoices.date"}}: {{invoice.exchange.date}}</p>
-            {{/if}}
+        <!-- Total Summary -->
+        <div class="total-summary-section">
+            <div class="total-summary-card">
+                <div class="total-row">
+                    <span class="total-label">{{t "invoices.subtotal"}}</span>
+                    <span class="total-value">{{invoice.formattedTotalNet}}</span>
+                </div>
+                <div class="total-row">
+                    <span class="total-label">{{t "invoices.vat"}}</span>
+                    <span class="total-value">{{invoice.formattedTotalTax}}</span>
+                </div>
+                <div class="total-row">
+                    <span class="total-final-label">{{t "invoices.total"}}</span>
+                    <span class="total-final-value">{{invoice.formattedTotalGross}}</span>
+                </div>
+            </div>
         </div>
-    {{/if}}
 
-    <!-- Payment Information -->
-    {{#if invoice.payment}}
-        <div class="mb-6">
-            <h3 class="text-base font-bold text-gray-900 mb-2">{{t "invoices.payment_details"}}</h3>
-            <div class="border border-gray-200 p-4 bg-gray-50">
-                <div class="flex justify-between text-sm">
-                    <div class="w-1/2 pr-4">
-                        <p class="mb-1"><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
-                        <p class="mb-1"><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
+        <!-- Exchange Rate Information -->
+        {{#if invoice.exchange}}
+            <div class="payment-section">
+                <h3 class="payment-title">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
+                <div class="payment-info">
+                    {{#if invoice.exchange.formattedExchangeRate}}
+                        <p><strong>{{t "invoices.exchange_rate"}}:</strong> {{invoice.exchange.formattedExchangeRate}}</p>
+                    {{/if}}
+                    {{#if invoice.exchange.date}}
+                        <p><strong>{{t "invoices.date"}}:</strong> {{invoice.exchange.date}}</p>
+                    {{/if}}
+                </div>
+            </div>
+        {{/if}}
+
+        <!-- Payment Information -->
+        {{#if invoice.payment}}
+            <div class="payment-section">
+                <h3 class="payment-title">{{t "invoices.payment_details"}}</h3>
+                <div class="payment-content">
+                    <div class="payment-info">
+                        <p><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
+                        <p><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
                         {{#if invoice.payment.reference}}
-                            <p class="mb-1"><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
+                            <p><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
                         {{/if}}
                     </div>
-                    <div class="w-1/2 pl-4">
+                    <div class="payment-info">
                         {{#if invoice.payment.formattedPaidAmount}}
-                            <p class="mb-1"><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
+                            <p><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
                         {{/if}}
                         {{#if invoice.payment.paidDate}}
-                            <p class="mb-1"><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
+                            <p><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
                         {{/if}}
                     </div>
                 </div>
 
                 {{#if invoice.payment.bankAccount}}
-                    <div class="mt-4 p-3 bg-white border border-gray-200">
-                        <h4 class="font-semibold mb-2 text-sm">{{t "invoices.bank_account"}}</h4>
-                        <div class="text-sm text-gray-700">
+                    <div class="bank-account-section">
+                        <h4 class="bank-account-title">{{t "invoices.bank_account"}}</h4>
+                        <div class="bank-account-info">
                             {{#if invoice.payment.bankAccount.bankName}}
-                                <p class="mb-1"><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
+                                <p><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
                             {{/if}}
                             {{#if invoice.payment.bankAccount.iban}}
-                                <p class="mb-1"><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
+                                <p><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
                             {{/if}}
                             {{#if invoice.payment.bankAccount.swift}}
-                                <p class="mb-1"><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
+                                <p><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
                             {{/if}}
                         </div>
                     </div>
                 {{/if}}
 
                 {{#if invoice.payment.terms}}
-                    <div class="mt-4">
-                        <h4 class="font-semibold mb-1 text-sm">{{t "invoices.payment_terms"}}</h4>
-                        <p class="text-sm text-gray-700">{{invoice.payment.terms}}</p>
+                    <div class="payment-info" style="margin-top: 16px;">
+                        <h4 class="payment-title">{{t "invoices.payment_terms"}}</h4>
+                        <p>{{invoice.payment.terms}}</p>
                     </div>
                 {{/if}}
 
                 {{#if invoice.payment.notes}}
-                    <div class="mt-4">
-                        <h4 class="font-semibold mb-1 text-sm">{{t "invoices.notes"}}</h4>
-                        <p class="text-sm text-gray-700">{{invoice.payment.notes}}</p>
+                    <div class="payment-info" style="margin-top: 16px;">
+                        <h4 class="payment-title">{{t "invoices.notes"}}</h4>
+                        <p>{{invoice.payment.notes}}</p>
                     </div>
                 {{/if}}
             </div>
-        </div>
-    {{/if}}
+        {{/if}}
 
-    <!-- Signatures Section -->
-    {{#if options.includeSignatures}}
-        <div class="mt-6 clearfix">
-            {{#if options.issuerSignature}}
-                <div class="w-1/2 float-left pr-4">
-                    <div class="text-center">
-                        <h4 class="font-semibold mb-2 text-sm">{{t "invoices.authorized_by"}}</h4>
-                        <div class="border-b border-gray-800 mb-2" style="height: 40px; position: relative;">
-                            {{#if options.issuerSignature.imageUrl}}
-                                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
-                                    {{{signatureUrl options.issuerSignature.imageUrl}}}
-                                </div>
+        <!-- Signatures Section -->
+        {{#if options.includeSignatures}}
+            <div class="clearfix" style="margin-top: 40px;">
+                {{#if options.issuerSignature}}
+                    <div class="w-1-2 float-left" style="padding-right: 20px;">
+                        <div class="text-center">
+                            <h4 class="font-semibold mb-2" style="font-size: 0.9rem;">{{t "invoices.authorized_by"}}</h4>
+                            <div style="border-bottom: 1px solid #374151; margin-bottom: 8px; height: 40px; position: relative;">
+                                {{#if options.issuerSignature.imageUrl}}
+                                    <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
+                                        {{{signatureUrl options.issuerSignature.imageUrl}}}
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div style="font-size: 0.9rem; font-weight: 500;">{{options.issuerSignature.name}}</div>
+                            {{#if options.issuerSignature.title}}
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{options.issuerSignature.title}}</div>
+                            {{/if}}
+                            {{#if options.issuerSignature.date}}
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{options.issuerSignature.date}}</div>
                             {{/if}}
                         </div>
-                        <div class="text-sm font-medium">{{options.issuerSignature.name}}</div>
-                        {{#if options.issuerSignature.title}}
-                            <div class="text-xs text-gray-600">{{options.issuerSignature.title}}</div>
-                        {{/if}}
-                        {{#if options.issuerSignature.date}}
-                            <div class="text-xs text-gray-600">{{options.issuerSignature.date}}</div>
-                        {{/if}}
                     </div>
-                </div>
-            {{/if}}
+                {{/if}}
 
-            {{#if options.receiverSignature}}
-                <div class="w-1/2 float-right pl-4">
-                    <div class="text-center">
-                        <h4 class="font-semibold mb-2 text-sm">{{t "invoices.received_by"}}</h4>
-                        <div class="border-b border-gray-800 mb-2" style="height: 40px; position: relative;">
-                            {{#if options.receiverSignature.imageUrl}}
-                                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
-                                    {{{signatureUrl options.receiverSignature.imageUrl}}}
-                                </div>
+                {{#if options.receiverSignature}}
+                    <div class="w-1-2 float-right" style="padding-left: 20px;">
+                        <div class="text-center">
+                            <h4 class="font-semibold mb-2" style="font-size: 0.9rem;">{{t "invoices.received_by"}}</h4>
+                            <div style="border-bottom: 1px solid #374151; margin-bottom: 8px; height: 40px; position: relative;">
+                                {{#if options.receiverSignature.imageUrl}}
+                                    <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
+                                        {{{signatureUrl options.receiverSignature.imageUrl}}}
+                                    </div>
+                                {{/if}}
+                            </div>
+                            <div style="font-size: 0.9rem; font-weight: 500;">{{options.receiverSignature.name}}</div>
+                            {{#if options.receiverSignature.title}}
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{options.receiverSignature.title}}</div>
+                            {{/if}}
+                            {{#if options.receiverSignature.date}}
+                                <div style="font-size: 0.8rem; color: #6b7280;">{{options.receiverSignature.date}}</div>
                             {{/if}}
                         </div>
-                        <div class="text-sm font-medium">{{options.receiverSignature.name}}</div>
-                        {{#if options.receiverSignature.title}}
-                            <div class="text-xs text-gray-600">{{options.receiverSignature.title}}</div>
-                        {{/if}}
-                        {{#if options.receiverSignature.date}}
-                            <div class="text-xs text-gray-600">{{options.receiverSignature.date}}</div>
-                        {{/if}}
                     </div>
-                </div>
-            {{/if}}
-        </div>
-    {{/if}}
+                {{/if}}
+            </div>
+        {{/if}}
 
-    <!-- Footer Logo -->
-    {{#if invoice.seller.logoUrl}}
-        <div class="text-center mt-6 pt-4 border-t border-gray-200">
-            {{{logoUrl invoice.seller.logoUrl width="100px"}}}
+        <!-- Footer -->
+        <div class="footer-section">
+            {{#if invoice.seller.logoUrl}}
+                {{{logoUrl invoice.seller.logoUrl width="100px"}}}
+            {{/if}}
+            <div class="footer-text">
+                {{t "invoices.invoice"}} {{invoice.number}}
+            </div>
         </div>
-    {{/if}}
-</div>
+    </div>
+</body>
+</html>

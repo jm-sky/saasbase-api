@@ -164,7 +164,7 @@ class PuppeteerEngine implements PdfEngineInterface
     {
         $chromeFlags = implode("', '", $settings['chrome_flags'] ?? []);
         $viewport    = $settings['viewport'] ?? ['width' => 1200, 'height' => 800];
-        $margins     = $settings['margins'] ?? ['top' => '10mm', 'right' => '10mm', 'bottom' => '15mm', 'left' => '10mm'];
+        $margins     = $settings['margins'] ?? ['top' => '5mm', 'right' => '5mm', 'bottom' => '10mm', 'left' => '5mm'];
 
         $footerTemplate = $settings['footer_template'] ?? '';
 
@@ -287,10 +287,10 @@ const fs = require('fs');
         if (isset($mpdfSettings['margins'])) {
             $margins                      = $mpdfSettings['margins'];
             $puppeteerSettings['margins'] = [
-                'top'    => ($margins['top'] ?? 10) . 'mm',
-                'right'  => ($margins['right'] ?? 10) . 'mm',
-                'bottom' => ($margins['bottom'] ?? 15) . 'mm',
-                'left'   => ($margins['left'] ?? 10) . 'mm',
+                'top'    => ($margins['top'] ?? 5) . 'mm',
+                'right'  => ($margins['right'] ?? 5) . 'mm',
+                'bottom' => ($margins['bottom'] ?? 10) . 'mm',
+                'left'   => ($margins['left'] ?? 5) . 'mm',
             ];
         }
 
@@ -303,10 +303,10 @@ const fs = require('fs');
             'format'      => 'A4',
             'orientation' => 'portrait',
             'margins'     => [
-                'top'    => '10mm',
-                'right'  => '10mm',
-                'bottom' => '15mm',
-                'left'   => '10mm',
+                'top'    => '5mm',
+                'right'  => '5mm',
+                'bottom' => '10mm',
+                'left'   => '5mm',
             ],
             'print_background'      => true,
             'prefer_css_page_size'  => false,

@@ -66,6 +66,32 @@ class InvoiceTemplatesSeeder extends Seeder
                 'category'     => TemplateCategory::INVOICE,
                 'preview_data' => $this->getDefaultPreviewData(),
             ]);
+
+            InvoiceTemplate::withoutGlobalScopes()->create([
+                'id'           => Ulid::deterministic(['creative']),
+                'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
+                'name'         => 'creative',
+                'description'  => 'Creative design with gradient background and modern styling',
+                'content'      => $this->loadTemplateFromFile('creative'),
+                'is_active'    => true,
+                'is_default'   => false,
+                'user_id'      => null,
+                'category'     => TemplateCategory::INVOICE,
+                'preview_data' => $this->getDefaultPreviewData(),
+            ]);
+
+            InvoiceTemplate::withoutGlobalScopes()->create([
+                'id'           => Ulid::deterministic(['clean']),
+                'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
+                'name'         => 'clean',
+                'description'  => 'Clean, minimalist design with excellent readability',
+                'content'      => $this->loadTemplateFromFile('clean'),
+                'is_active'    => true,
+                'is_default'   => false,
+                'user_id'      => null,
+                'category'     => TemplateCategory::INVOICE,
+                'preview_data' => $this->getDefaultPreviewData(),
+            ]);
         });
     }
 

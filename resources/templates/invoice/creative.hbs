@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{t "invoices.invoice"}} {{invoice.number}}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="30" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.1;
+            transform: rotate(45deg);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .logo-section {
+            flex: 1;
+        }
+        
+        .logo-section img {
+            max-height: 60px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .invoice-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 20px 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .invoice-number {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .invoice-details {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .invoice-details p {
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .parties-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .party-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+        
+        .party-card.buyer {
+            border-left-color: #764ba2;
+        }
+        
+        .party-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #667eea;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+        
+        .party-card.buyer .party-title {
+            color: #764ba2;
+        }
+        
+        .company-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+        
+        .party-info {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .items-section {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .items-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .items-table th:last-child {
+            text-align: right;
+        }
+        
+        .items-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+        
+        .items-table tbody tr:hover {
+            background: #f1f5f9;
+        }
+        
+        .items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .item-description {
+            font-weight: 500;
+            color: #1a202c;
+        }
+        
+        .item-vat {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        .item-total {
+            font-weight: 600;
+            color: #1a202c;
+            text-align: right;
+        }
+        
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+        }
+        
+        .total-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            min-width: 300px;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .total-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .payment-section {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .payment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 15px;
+        }
+        
+        .payment-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .payment-info {
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .bank-account {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-top: 15px;
+        }
+        
+        .bank-title {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        
+        .footer-section {
+            background: #f8fafc;
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .footer-section img {
+            max-height: 40px;
+            opacity: 0.6;
+        }
+        
+        .footer-text {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 10px;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .font-semibold {
+            font-weight: 600;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        
+        .opacity-75 {
+            opacity: 0.75;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .invoice-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <div class="logo-section">
+                    {{#if invoice.seller.logoUrl}}
+                        <div class="mb-4">
+                            {{{logoUrl invoice.seller.logoUrl}}}
+                        </div>
+                    {{/if}}
+                    <h1 class="invoice-title">{{t "invoices.invoice"}}</h1>
+                    <p class="invoice-number">#{{invoice.number}}</p>
+                </div>
+                <div class="invoice-details">
+                    {{#if invoice.issueDate}}
+                        <p><strong>{{t "invoices.issue_date"}}:</strong> {{invoice.issueDate}}</p>
+                    {{/if}}
+                    {{#if invoice.dueDate}}
+                        <p><strong>{{t "invoices.due_date"}}:</strong> {{invoice.dueDate}}</p>
+                    {{/if}}
+                    {{#if invoice.status}}
+                        <p><strong>{{t "invoices.status"}}:</strong> {{invoice.status}}</p>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Business Information -->
+            <div class="parties-section">
+                <div class="party-card">
+                    <div class="party-title">{{t "invoices.from"}}</div>
+                    <div class="party-info">
+                        {{#if invoice.seller.name}}
+                            <div class="company-name">{{invoice.seller.name}}</div>
+                        {{/if}}
+                        {{#if invoice.seller.address}}
+                            <div>{{invoice.seller.address}}</div>
+                        {{/if}}
+                        {{#if invoice.seller.country}}
+                            <div>{{invoice.seller.country}}</div>
+                        {{/if}}
+                        {{#if invoice.seller.taxId}}
+                            <div><strong>{{t "invoices.tax_id"}}:</strong> {{invoice.seller.taxId}}</div>
+                        {{/if}}
+                        {{#if invoice.seller.email}}
+                            <div><strong>{{t "invoices.email"}}:</strong> {{invoice.seller.email}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <div class="party-card buyer">
+                    <div class="party-title">{{t "invoices.to"}}</div>
+                    <div class="party-info">
+                        {{#if invoice.buyer.name}}
+                            <div class="company-name">{{invoice.buyer.name}}</div>
+                        {{/if}}
+                        {{#if invoice.buyer.address}}
+                            <div>{{invoice.buyer.address}}</div>
+                        {{/if}}
+                        {{#if invoice.buyer.country}}
+                            <div>{{invoice.buyer.country}}</div>
+                        {{/if}}
+                        {{#if invoice.buyer.taxId}}
+                            <div><strong>{{t "invoices.tax_id"}}:</strong> {{invoice.buyer.taxId}}</div>
+                        {{/if}}
+                        {{#if invoice.buyer.email}}
+                            <div><strong>{{t "invoices.email"}}:</strong> {{invoice.buyer.email}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            {{#if invoice.description}}
+                <div class="items-section mb-4">
+                    <h3 class="payment-title">{{t "invoices.description"}}</h3>
+                    <div class="payment-info">{{invoice.description}}</div>
+                </div>
+            {{/if}}
+
+            <!-- Items Table -->
+            <div class="items-section">
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>{{t "invoices.description"}}</th>
+                            <th class="text-center">{{t "invoices.quantity"}}</th>
+                            <th class="text-right">{{t "invoices.unit_price"}}</th>
+                            <th class="text-right">{{t "invoices.total_net"}}</th>
+                            <th class="text-right">{{t "invoices.vat"}}</th>
+                            <th class="text-right">{{t "invoices.total_gross"}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each invoice.lines}}
+                            <tr>
+                                <td>
+                                    {{#if description}}
+                                        <div class="item-description">{{description}}</div>
+                                    {{/if}}
+                                    <div class="item-vat">{{vatRateName}} ({{vatRateValue}}%)</div>
+                                </td>
+                                <td class="text-center">{{formattedQuantity}}</td>
+                                <td class="text-right">{{formattedUnitPrice}}</td>
+                                <td class="text-right">{{formattedTotalNet}}</td>
+                                <td class="text-right">{{formattedTotalVat}}</td>
+                                <td class="item-total">{{formattedTotalGross}}</td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- VAT Summary -->
+            {{#if invoice.vatSummary}}
+                <div class="items-section">
+                    <h3 class="payment-title">{{t "invoices.vat_summary"}}</h3>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>{{t "invoices.vat_rate"}}</th>
+                                <th class="text-right">{{t "invoices.net_amount"}}</th>
+                                <th class="text-right">{{t "invoices.vat_amount"}}</th>
+                                <th class="text-right">{{t "invoices.gross_amount"}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each invoice.vatSummary}}
+                                <tr>
+                                    <td>{{vatRateName}} ({{vatRateValue}}%)</td>
+                                    <td class="text-right">{{formattedNet}}</td>
+                                    <td class="text-right">{{formattedVat}}</td>
+                                    <td class="text-right font-semibold">{{formattedGross}}</td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            {{/if}}
+
+            <!-- Total Summary -->
+            <div class="total-section">
+                <div class="total-card">
+                    <div class="total-row">
+                        <span>{{t "invoices.subtotal"}}</span>
+                        <span>{{invoice.formattedTotalNet}}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>{{t "invoices.vat"}}</span>
+                        <span>{{invoice.formattedTotalTax}}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>{{t "invoices.total"}}</span>
+                        <span>{{invoice.formattedTotalGross}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            {{#if invoice.payment}}
+                <div class="payment-section">
+                    <h3 class="payment-title">{{t "invoices.payment_details"}}</h3>
+                    <div class="payment-details">
+                        <div class="payment-info">
+                            <p><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
+                            <p><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
+                            {{#if invoice.payment.reference}}
+                                <p><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
+                            {{/if}}
+                        </div>
+                        <div class="payment-info">
+                            {{#if invoice.payment.formattedPaidAmount}}
+                                <p><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
+                            {{/if}}
+                            {{#if invoice.payment.paidDate}}
+                                <p><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
+                            {{/if}}
+                        </div>
+                    </div>
+
+                    {{#if invoice.payment.bankAccount}}
+                        <div class="bank-account">
+                            <div class="bank-title">{{t "invoices.bank_account"}}</div>
+                            <div class="payment-info">
+                                {{#if invoice.payment.bankAccount.bankName}}
+                                    <p><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
+                                {{/if}}
+                                {{#if invoice.payment.bankAccount.iban}}
+                                    <p><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
+                                {{/if}}
+                                {{#if invoice.payment.bankAccount.swift}}
+                                    <p><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
+                                {{/if}}
+                            </div>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/if}}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            {{#if invoice.seller.logoUrl}}
+                {{{logoUrl invoice.seller.logoUrl}}}
+            {{/if}}
+            <div class="footer-text">
+                {{t "invoices.invoice"}} {{invoice.number}} | {{invoice.issueDate}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

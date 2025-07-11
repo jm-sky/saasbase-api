@@ -1,212 +1,376 @@
-# mPDF Invoice Templates - HTML/CSS Support Guide
+# Invoice Templates - Design Guide & CSS Support
 
-This document provides comprehensive information about HTML/CSS support and limitations when working with mPDF for invoice templates in SaasBase.
+This document provides comprehensive information about invoice template design concepts, styling approaches, and CSS support when working with Puppeteer for PDF generation in SaasBase.
 
 ## Overview
 
-Our invoice templates use mPDF library for PDF generation. mPDF has specific limitations compared to modern web browsers, and this guide helps you understand what works and what doesn't.
+Our invoice templates use Puppeteer for PDF generation, which provides full modern CSS support including Flexbox, Grid, and advanced styling features. This allows for sophisticated designs and layouts that weren't possible with mPDF.
 
-## CSS Support Status
+## Template Collection
 
-### ✅ **Supported & Working Well**
+### 1. **Default Template** (`default.hbs`)
+**Design Concept**: Clean, professional, and versatile
+- **Style**: Modern business standard with subtle shadows and clean typography
+- **Target Audience**: General business use, professional services
+- **Color Scheme**: Neutral grays with blue accents
+- **Typography**: Segoe UI font stack for excellent readability
+- **Layout**: Flexbox-based with proper semantic structure
 
-#### Basic Typography
-- `font-family`, `font-size`, `font-weight`, `font-style`
-- `color`, `text-align`, `text-decoration`
-- `line-height` (use numeric values, not keywords)
+**Key Features**:
+- Responsive grid layout for business information
+- Card-based design with subtle borders
+- Professional color palette (#1f2937, #3b82f6, #f9fafb)
+- Clean table design for invoice items
+- Proper spacing and visual hierarchy
 
-#### Box Model
-- `margin`, `padding` (all variations)
-- `border`, `border-width`, `border-style`, `border-color`
-- `background-color`, `background-image`
-
-#### Tables
-- All table properties work excellently
-- `border-collapse`, `border-spacing`
-- `vertical-align` in table cells
-- Complex table layouts are recommended over flexbox/grid
-
-#### Positioning
-- `position: relative` (limited)
-- `float: left/right` (works but use tables instead)
-- `clear: both`
-
-#### Colors
-- Hex colors: `#3B82F6`
-- RGB colors: `rgb(59, 130, 246)`
-- Named colors: `red`, `blue`, etc.
-- RGBA with transparency (background only)
-
-### ⚠️ **Partially Supported**
-
-#### Flexbox
-- **Status**: Basic support but unreliable
-- **Recommendation**: Use tables instead
-- **Working**: `display: flex` (basic)
-- **Not Working**: `justify-content`, `align-items`, `flex-wrap`
-
-#### Modern CSS Units
-- `rem` - Supported since mPDF 5.7, but use `px` when possible
-- `em` - Supported but can be inconsistent
-- `vh`, `vw` - Not supported
-
-#### Pseudo-elements
-- `::before`, `::after` - Limited support
-- `::first-line`, `::first-letter` - Not supported
-
-### ❌ **Not Supported**
-
-#### Modern Layout Systems
-- **CSS Grid**: `display: grid` - Not supported
-- **CSS Flexbox**: Advanced properties not working
-- **CSS Transforms**: `transform`, `rotate`, `scale` - Not supported
-- **CSS Transitions/Animations**: Not supported
-
-#### Advanced Selectors
-- `:nth-child()`, `:nth-of-type()` - Not supported
-- `:hover`, `:active`, `:focus` - Not applicable in PDF
-- Complex combinators - Limited support
-
-#### Modern CSS Features
-- `calc()` - Not supported
-- CSS Variables - Not supported
-- `@media` queries - Limited support
-- `@supports` - Not supported
-
-## Best Practices
-
-### 1. Use Tables for Layout
-```html
-<!-- ✅ Good: Table-based layout -->
-<table class="w-full">
-    <tr>
-        <td class="w-1/2" style="vertical-align: top;">Left content</td>
-        <td class="w-1/2" style="vertical-align: top;">Right content</td>
-    </tr>
-</table>
-
-<!-- ❌ Avoid: Flexbox layout -->
-<div class="flex justify-between">
-    <div class="w-1/2">Left content</div>
-    <div class="w-1/2">Right content</div>
-</div>
-```
-
-### 2. Use Inline Styles for Critical Properties
-```html
-<!-- ✅ Good: Inline styles for positioning -->
-<td style="vertical-align: top; padding-right: 16px;">
-
-<!-- ⚠️ Okay: CSS classes for basic styling -->
-<p class="text-sm font-bold">
-```
-
-### 3. Stick to Basic CSS Properties
+**CSS Highlights**:
 ```css
-/* ✅ Good: Basic properties */
-.invoice-header {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 12px;
-    padding: 8px;
-    border-bottom: 2px solid #3B82F6;
+/* Clean, modern styling */
+.invoice-container {
+    max-width: 800px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
 }
 
-/* ❌ Avoid: Modern CSS */
-.invoice-header {
+/* Professional header */
+.header-section {
     display: flex;
     justify-content: space-between;
-    transform: translateY(-10px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid #e5e7eb;
 }
 ```
 
-### 4. Font Handling
-```css
-/* ✅ Good: Font stack with fallbacks */
-font-family: "DejaVu Sans", "Noto Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
+### 2. **Modern Template** (`modern.hbs`)
+**Design Concept**: Contemporary design with accent colors and bold styling
+- **Style**: Gradient backgrounds, accent colors, bold typography
+- **Target Audience**: Creative agencies, modern businesses, tech companies
+- **Color Scheme**: Dynamic accent colors with gradient backgrounds
+- **Typography**: Bold headings with modern font weights
+- **Layout**: Accent-driven design with colored sections
 
-/* ✅ Good: Standard font sizes */
-font-size: 12px; /* Not 1.2rem */
+**Key Features**:
+- Gradient header backgrounds
+- Accent color theming throughout
+- Bold typography with varied font weights
+- Colored borders and highlights
+- Modern card designs with accent borders
+
+**CSS Highlights**:
+```css
+/* Accent-driven styling */
+.accent-bg {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.accent-text {
+    color: #3b82f6;
+}
+
+.accent-border {
+    border-color: #3b82f6;
+}
+```
+
+### 3. **Minimal Template** (`minimal.hbs`)
+**Design Concept**: Clean, minimal design with maximum readability
+- **Style**: Minimal styling, focus on content, clean lines
+- **Target Audience**: Consultants, freelancers, minimal aesthetic preference
+- **Color Scheme**: Monochromatic with minimal color usage
+- **Typography**: Simple, readable fonts
+- **Layout**: Spacious, clean lines, minimal decoration
+
+**Key Features**:
+- Minimal color usage
+- Clean typography without heavy styling
+- Spacious layouts with ample whitespace
+- Simple borders and dividers
+- Focus on content over decoration
+
+### 4. **Corporate Template** (`corporate.hbs`)
+**Design Concept**: Professional corporate identity
+- **Style**: Traditional business layout, conservative styling
+- **Target Audience**: Large corporations, formal business environments
+- **Color Scheme**: Professional blues and grays
+- **Typography**: Traditional business fonts
+- **Layout**: Formal structure with clear sections
+
+**Key Features**:
+- Traditional business layout
+- Conservative color scheme
+- Formal typography
+- Clear section divisions
+- Professional styling throughout
+
+### 5. **Creative Template** (`creative.hbs`) ⭐ *New*
+**Design Concept**: Striking design with gradient backgrounds and modern effects
+- **Style**: Bold gradients, modern CSS effects, contemporary styling
+- **Target Audience**: Creative agencies, design studios, modern businesses
+- **Color Scheme**: Blue to purple gradient (#667eea to #764ba2)
+- **Typography**: Modern font stack with varied weights
+- **Layout**: Card-based with advanced CSS effects
+
+**Key Features**:
+- Stunning gradient backgrounds
+- Advanced CSS effects (backdrop-filter, box-shadow)
+- Modern card-based layout
+- Dynamic color schemes
+- Professional yet creative aesthetic
+
+**CSS Highlights**:
+```css
+/* Gradient header with effects */
+.header-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Advanced card styling */
+.party-card {
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Modern table design */
+.items-table {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+```
+
+### 6. **Clean Template** (`clean.hbs`) ⭐ *New*
+**Design Concept**: Minimalist, clean design with excellent readability
+- **Style**: Ultra-clean, focused on readability and professionalism
+- **Target Audience**: Professional services, consultants, minimalist preference
+- **Color Scheme**: Light grays and blues with high contrast
+- **Typography**: Highly readable font stack
+- **Layout**: Grid-based with clean sections
+
+**Key Features**:
+- Ultra-clean design aesthetic
+- Excellent readability and contrast
+- Organized grid layouts
+- Subtle backgrounds and borders
+- Professional color palette
+
+**CSS Highlights**:
+```css
+/* Clean, minimal styling */
+.invoice-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* Minimal header design */
+.header-section {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Clean card design */
+.party-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+```
+
+## Design Principles
+
+### 1. **Typography Hierarchy**
+All templates follow consistent typography patterns:
+- **H1** (Invoice Title): 2.5rem, bold, primary color
+- **H2** (Section Headers): 1.1rem, semibold, dark gray
+- **H3** (Subsections): 1rem, medium, secondary color
+- **Body Text**: 0.9rem, regular, readable color
+- **Small Text**: 0.8rem, for details and metadata
+
+### 2. **Color Systems**
+Each template uses a consistent color system:
+- **Primary**: Main brand/accent color
+- **Secondary**: Supporting colors
+- **Neutral**: Grays for backgrounds and borders
+- **Text**: High contrast colors for readability
+
+### 3. **Spacing & Layout**
+- **Consistent spacing**: 8px, 16px, 24px, 32px, 40px scale
+- **Grid systems**: CSS Grid and Flexbox for responsive layouts
+- **Card-based designs**: Consistent card styling across templates
+- **Proper margins**: Optimized for PDF generation
+
+### 4. **Responsive Design**
+All templates are designed to:
+- Work well in PDF format
+- Scale properly for different content lengths
+- Maintain readability at various sizes
+- Handle edge cases (long text, missing data)
+
+## CSS Support with Puppeteer
+
+### ✅ **Fully Supported**
+- **Modern CSS**: Flexbox, Grid, transforms, animations
+- **Advanced selectors**: nth-child, pseudo-elements, combinators
+- **CSS Variables**: Custom properties fully supported
+- **Modern units**: rem, em, vh, vw, calc()
+- **Advanced effects**: Box-shadow, border-radius, gradients
+- **Typography**: Advanced font features, text-shadow
+- **Responsive**: Media queries, container queries
+
+### 🎨 **Advanced Features Used**
+```css
+/* CSS Variables for theming */
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #6b7280;
+    --background-color: #f9fafb;
+}
+
+/* Modern layouts */
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.flex-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Advanced effects */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
 ```
 
 ## Template Structure
 
-### Header and Footer
-- Headers/footers are set via mPDF's `SetHTMLHeader()` and `SetHTMLFooter()`
-- Footer includes: "Generated at {datetime} | {appName} | Page {pageNo} of {totalPages}"
-- CSS classes work in headers/footers
+### Common Elements
+All templates include these standard sections:
+1. **Header**: Logo, title, invoice number, dates
+2. **Parties**: Seller and buyer information
+3. **Items Table**: Line items with calculations
+4. **VAT Summary**: Tax breakdown (if applicable)
+5. **Totals**: Final amounts summary
+6. **Payment Info**: Payment methods and bank details
+7. **Footer**: Additional information and branding
 
-### Page Breaks
-```css
-/* Page break control */
-page-break-before: always;
-page-break-after: always;
-page-break-inside: avoid;
+### Handlebars Integration
+Templates use Handlebars for dynamic content:
+```handlebars
+<!-- Company information -->
+{{#if invoice.seller.name}}
+    <div class="company-name">{{invoice.seller.name}}</div>
+{{/if}}
+
+<!-- Dynamic styling -->
+<div class="total-amount {{#if invoice.isPaid}}paid{{/if}}">
+    {{invoice.formattedTotalGross}}
+</div>
+
+<!-- Conditional sections -->
+{{#if invoice.vatSummary}}
+    <div class="vat-summary">
+        {{#each invoice.vatSummary}}
+            <div class="vat-row">{{vatRateName}}: {{formattedVat}}</div>
+        {{/each}}
+    </div>
+{{/if}}
 ```
 
-### Margins and Spacing
-- Use `mm` units for page margins: `margin: 20mm;`
-- Use `px` for content spacing: `padding: 12px;`
+## Best Practices
 
-## Common Issues and Solutions
+### 1. **Performance Optimization**
+- Use efficient CSS selectors
+- Minimize DOM complexity
+- Optimize for PDF rendering
+- Use appropriate image formats
 
-### Issue: Layout Not Aligning Properly
-**Solution**: Replace flexbox with table layout
+### 2. **Accessibility**
+- High contrast ratios
+- Readable font sizes
+- Proper semantic HTML
+- Clear visual hierarchy
 
-### Issue: Colors Not Showing
-**Solution**: Use hex colors instead of CSS variables
+### 3. **Maintainability**
+- Consistent naming conventions
+- Modular CSS structure
+- Clear documentation
+- Version control for changes
 
-### Issue: Fonts Not Loading
-**Solution**: Stick to web-safe fonts or configure mPDF font directory
+### 4. **Testing Approach**
+- Test with real data
+- Verify PDF output quality
+- Check different content lengths
+- Validate responsive behavior
 
-### Issue: Complex Layouts Breaking
-**Solution**: Simplify using tables and basic CSS
+## Customization Guide
 
-## Template Files
+### Adding New Templates
+1. Create new `.hbs` file in templates directory
+2. Include complete HTML structure with embedded CSS
+3. Follow existing naming conventions
+4. Add to seeder with proper metadata
+5. Test thoroughly with various data
 
-### Current Templates
-- `default.hbs` - Clean, professional layout
-- `modern.hbs` - Modern design with accent colors
-- `minimal.hbs` - Clean, minimal design
-- `corporate.hbs` - Professional corporate design
+### Modifying Existing Templates
+1. Update CSS within `<style>` tags
+2. Test changes in PDF output
+3. Verify responsive behavior
+4. Update documentation
 
-### CSS File
-- `resources/css/invoice-pdf.css` - Main stylesheet with mPDF-compatible classes
+### Color Customization
+Templates support dynamic color customization through CSS variables:
+```css
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #6b7280;
+    --accent-color: #10b981;
+}
+```
 
-## Testing
+## Technical Specifications
 
-When testing templates:
-1. Always test in PDF output, not browser preview
-2. Test with different content lengths
-3. Check page breaks and footer positioning
-4. Verify all data fields render correctly
+### PDF Generation
+- **Engine**: Puppeteer with headless Chrome
+- **Format**: A4 (210mm × 297mm)
+- **Margins**: 5mm (top/sides), 10mm (bottom)
+- **Font rendering**: Full system font support
+- **Image support**: PNG, JPG, SVG, WebP
 
-## Debugging Tips
+### Browser Compatibility
+Templates are optimized for:
+- Chrome/Chromium (Puppeteer)
+- Modern CSS features
+- Print media queries
+- High DPI displays
 
-1. **HTML Preview**: Use `InvoiceGeneratorService::previewHtml()` to see rendered HTML
-2. **Save HTML**: Enable local development HTML saving in `InvoiceGeneratorService`
-3. **CSS Issues**: Check browser console for CSS warnings (not all apply to mPDF)
-4. **Layout Issues**: Use border debugging: `border: 1px solid red;`
+## Future Enhancements
 
-## Resources
+### Planned Features
+- Dynamic theme switching
+- Custom font integration
+- Interactive elements (for web preview)
+- Advanced layout templates
+- Template inheritance system
 
-- [mPDF Manual](https://mpdf.github.io/) - Official documentation
-- [Supported CSS](https://mpdf.github.io/css-stylesheets/supported-css.html) - Complete CSS support matrix
-- [mPDF Limitations](https://mpdf.github.io/about-mpdf/limitations.html) - Known limitations
-
-## Migration Notes
-
-When migrating from HTML/CSS to mPDF:
-1. Replace all flexbox layouts with tables
-2. Convert CSS Grid to table-based layouts
-3. Use inline styles for critical positioning
-4. Test thoroughly in PDF output
-5. Simplify complex CSS animations/transitions
+### Template Roadmap
+- Industry-specific templates
+- Multi-language layouts
+- Advanced calculation displays
+- Custom branding options
 
 ---
 
-**Last Updated**: 2024-07-11
-**mPDF Version**: 8.x
-**Tested With**: Laravel 10.x, PHP 8.1+
+**Last Updated**: 2024-01-11  
+**Puppeteer Version**: Latest  
+**Tested With**: Laravel 11.x, PHP 8.3+  
+**CSS Support**: Full modern CSS support
