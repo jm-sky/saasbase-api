@@ -262,13 +262,31 @@ class InvoiceGeneratorService
      */
     private function loadCss(): string
     {
-        $cssPath = resource_path('css/invoice-pdf.css');
+        // Determine which CSS file to use based on PDF engine
+        $engineName = $this->pdfEngine->getName();
+
+        if ('mpdf' === $engineName || false !== strpos(strtolower($engineName), 'mpdf')) {
+            // Use legacy CSS for mPDF (no CSS variables)
+            $cssPath = resource_path('css/invoice-pdf-legacy.css');
+        } else {
+            // Use modern CSS for Puppeteer (with CSS variables)
+            $cssPath = resource_path('css/invoice-pdf.css');
+        }
 
         if (file_exists($cssPath)) {
             return file_get_contents($cssPath);
         }
 
-        // Fallback to basic CSS if file not found
+        // Try fallback to the other CSS file
+        $fallbackPath = $cssPath === resource_path('css/invoice-pdf.css')
+            ? resource_path('css/invoice-pdf-legacy.css')
+            : resource_path('css/invoice-pdf.css');
+
+        if (file_exists($fallbackPath)) {
+            return file_get_contents($fallbackPath);
+        }
+
+        // Last resort: basic CSS
         return 'body { font-family: Arial, sans-serif; font-size: 12px; }';
     }
 }
