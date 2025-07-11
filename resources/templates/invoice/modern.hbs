@@ -28,53 +28,58 @@
     </div>
 
     <!-- Business Information Section -->
-    <div class="flex justify-between mb-6">
-        <div class="w-1/2 pr-4">
-            <div class="border-l-4 accent-border pl-4 bg-gray-50 p-4">
-                <h3 class="text-base font-bold text-gray-900 mb-2 accent-text">{{t "invoices.from"}}</h3>
-                <div class="text-sm text-gray-700">
-                    {{#if invoice.seller.name}}
-                        <p class="font-semibold mb-1">{{invoice.seller.name}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.address}}
-                        <p class="mb-1">{{invoice.seller.address}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.country}}
-                        <p class="mb-1">{{invoice.seller.country}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.taxId}}
-                        <p class="mb-1"><strong>{{t "invoices.tax_id"}}:</strong> {{invoice.seller.taxId}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.email}}
-                        <p class="mb-1"><strong>{{t "invoices.email"}}:</strong> {{invoice.seller.email}}</p>
-                    {{/if}}
+    <table class="w-full mb-8">
+        <tr>
+            <td class="w-1/2" style="vertical-align: top; padding-right: 20px;">
+                <div class="modern-card seller-card">
+                    <div class="modern-card-header">
+                        <h3 class="modern-card-title">{{t "invoices.from"}}</h3>
+                    </div>
+                    <div class="modern-card-content">
+                        {{#if invoice.seller.name}}
+                            <p class="company-name">{{invoice.seller.name}}</p>
+                        {{/if}}
+                        {{#if invoice.seller.address}}
+                            <p class="address-line">{{invoice.seller.address}}</p>
+                        {{/if}}
+                        {{#if invoice.seller.country}}
+                            <p class="address-line">{{invoice.seller.country}}</p>
+                        {{/if}}
+                        {{#if invoice.seller.taxId}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.seller.taxId}}</p>
+                        {{/if}}
+                        {{#if invoice.seller.email}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.seller.email}}</p>
+                        {{/if}}
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="w-1/2 pl-4">
-            <div class="border border-gray-200 p-4 bg-white">
-                <h3 class="text-base font-bold text-gray-900 mb-2">{{t "invoices.to"}}</h3>
-                <div class="text-sm text-gray-700">
-                    {{#if invoice.buyer.name}}
-                        <p class="font-semibold mb-1">{{invoice.buyer.name}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.address}}
-                        <p class="mb-1">{{invoice.buyer.address}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.country}}
-                        <p class="mb-1">{{invoice.buyer.country}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.taxId}}
-                        <p class="mb-1"><strong>{{t "invoices.tax_id"}}:</strong> {{invoice.buyer.taxId}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.email}}
-                        <p class="mb-1"><strong>{{t "invoices.email"}}:</strong> {{invoice.buyer.email}}</p>
-                    {{/if}}
+            </td>
+            <td class="w-1/2" style="vertical-align: top; padding-left: 20px;">
+                <div class="modern-card buyer-card">
+                    <div class="modern-card-header-light">
+                        <h3 class="modern-card-title-dark">{{t "invoices.to"}}</h3>
+                    </div>
+                    <div class="modern-card-content">
+                        {{#if invoice.buyer.name}}
+                            <p class="company-name">{{invoice.buyer.name}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.address}}
+                            <p class="address-line">{{invoice.buyer.address}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.country}}
+                            <p class="address-line">{{invoice.buyer.country}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.taxId}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.buyer.taxId}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.email}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.buyer.email}}</p>
+                        {{/if}}
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+    </table>
 
     <!-- Description Section -->
     {{#if invoice.description}}
@@ -87,32 +92,32 @@
     {{/if}}
 
     <!-- Invoice Items Table -->
-    <div class="mb-6">
-        <table class="invoice-table">
+    <div class="mb-8">
+        <table class="modern-items-table">
             <thead>
-                <tr class="accent-bg text-white">
-                    <th class="text-left py-4 px-4 font-bold">{{t "invoices.description"}}</th>
-                    <th class="text-center py-4 px-4 font-bold">{{t "invoices.quantity"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.total_net"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.vat"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.total_gross"}}</th>
+                <tr>
+                    <th class="text-left py-3 px-3">{{t "invoices.description"}}</th>
+                    <th class="text-center py-3 px-3" style="width: 10%;">{{t "invoices.quantity"}}</th>
+                    <th class="text-right py-3 px-3" style="width: 15%;">{{t "invoices.unit_price"}}</th>
+                    <th class="text-right py-3 px-3" style="width: 15%;">{{t "invoices.total_net"}}</th>
+                    <th class="text-right py-3 px-3" style="width: 10%;">{{t "invoices.vat"}}</th>
+                    <th class="text-right py-3 px-3" style="width: 15%;">{{t "invoices.total_gross"}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each invoice.lines}}
-                    <tr class="border-b border-gray-200">
-                        <td class="py-4 px-4">
+                    <tr>
+                        <td class="py-3 px-3 modern-item-description">
                             {{#if description}}
-                                <div class="font-medium mb-1">{{description}}</div>
+                                <div class="item-name">{{description}}</div>
                             {{/if}}
-                            <div class="text-xs accent-text">{{vatRateName}} ({{vatRateValue}}%)</div>
+                            <div class="item-vat modern-accent">{{vatRateName}} ({{vatRateValue}}%)</div>
                         </td>
-                        <td class="text-center py-4 px-4">{{formattedQuantity}}</td>
-                        <td class="text-right py-4 px-4">{{formattedUnitPrice}}</td>
-                        <td class="text-right py-4 px-4">{{formattedTotalNet}}</td>
-                        <td class="text-right py-4 px-4">{{formattedTotalVat}}</td>
-                        <td class="text-right py-4 px-4 font-bold accent-text">{{formattedTotalGross}}</td>
+                        <td class="text-center py-3 px-3 modern-item-cell">{{formattedQuantity}}</td>
+                        <td class="text-right py-3 px-3 modern-item-cell">{{formattedUnitPrice}}</td>
+                        <td class="text-right py-3 px-3 modern-item-cell">{{formattedTotalNet}}</td>
+                        <td class="text-right py-3 px-3 modern-item-cell">{{formattedTotalVat}}</td>
+                        <td class="text-right py-3 px-3 modern-item-total">{{formattedTotalGross}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -122,23 +127,23 @@
     <!-- VAT Summary -->
     {{#if invoice.vatSummary}}
         <div class="mb-6">
-            <h3 class="text-base font-bold accent-text mb-2">{{t "invoices.vat_summary"}}</h3>
-            <table class="w-full border accent-border">
+            <h3 class="section-title modern-accent">{{t "invoices.vat_summary"}}</h3>
+            <table class="modern-vat-table">
                 <thead>
-                    <tr class="accent-bg text-white">
-                        <th class="text-left py-3 px-4 font-bold">{{t "invoices.vat_rate"}}</th>
-                        <th class="text-right py-3 px-4 font-bold">{{t "invoices.net_amount"}}</th>
-                        <th class="text-right py-3 px-4 font-bold">{{t "invoices.vat_amount"}}</th>
-                        <th class="text-right py-3 px-4 font-bold">{{t "invoices.gross_amount"}}</th>
+                    <tr>
+                        <th class="text-left py-2 px-3">{{t "invoices.vat_rate"}}</th>
+                        <th class="text-right py-2 px-3">{{t "invoices.net_amount"}}</th>
+                        <th class="text-right py-2 px-3">{{t "invoices.vat_amount"}}</th>
+                        <th class="text-right py-2 px-3">{{t "invoices.gross_amount"}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each invoice.vatSummary}}
-                        <tr class="border-b border-gray-200">
-                            <td class="py-3 px-4">{{vatRateName}} ({{vatRateValue}}%)</td>
-                            <td class="text-right py-3 px-4">{{formattedNet}}</td>
-                            <td class="text-right py-3 px-4">{{formattedVat}}</td>
-                            <td class="text-right py-3 px-4 font-bold accent-text">{{formattedGross}}</td>
+                        <tr>
+                            <td class="py-2 px-3 modern-vat-cell">{{vatRateName}} ({{vatRateValue}}%)</td>
+                            <td class="text-right py-2 px-3 modern-vat-cell">{{formattedNet}}</td>
+                            <td class="text-right py-2 px-3 modern-vat-cell">{{formattedVat}}</td>
+                            <td class="text-right py-2 px-3 modern-vat-cell font-semibold modern-accent">{{formattedGross}}</td>
                         </tr>
                     {{/each}}
                 </tbody>

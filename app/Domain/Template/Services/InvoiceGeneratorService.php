@@ -6,6 +6,7 @@ use App\Domain\Common\Models\Media;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
+use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Response;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
@@ -14,6 +15,8 @@ use Mccarlosen\LaravelMpdf\LaravelMpdf;
 class InvoiceGeneratorService
 {
     public const COLLECTION = 'attachments';
+
+    public ?InvoiceTemplate $lastUsedInvoiceTemplate = null;
 
     public function __construct(
         private InvoiceTemplateService $templateService,
@@ -192,6 +195,8 @@ class InvoiceGeneratorService
         if (!$template) {
             throw new TemplateNotFoundException('No default invoice template found for tenant');
         }
+
+        $this->lastUsedInvoiceTemplate = $template;
 
         return $template;
     }

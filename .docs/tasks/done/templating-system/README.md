@@ -1,5 +1,7 @@
 # Invoice Template System - Technical Specification
 
+> This file should be updated after every refactor to keep track of changes, what works and what not.
+
 ## 🎯 **System Purpose**
 
 Create a comprehensive invoice template management system for a multi-tenant SaaS application that allows:

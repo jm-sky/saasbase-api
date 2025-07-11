@@ -214,6 +214,7 @@ class InvoiceController extends Controller
                 'size'            => $media->size,
                 'collectionName'  => $media->collection_name,
                 'url'             => RelativeRouteUrl::generate('invoices.attachments.download', [$invoice, $media]),
+                'templateName'    => $this->invoiceGenerator->lastUsedInvoiceTemplate?->name,
             ],
         ], Response::HTTP_CREATED);
     }

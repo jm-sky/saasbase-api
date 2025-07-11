@@ -54,10 +54,10 @@ body {
 
 /* Spacing */
 .mb-1 { margin-bottom: 4px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-4 { margin-bottom: 12px; }
-.mb-6 { margin-bottom: 20px; }
-.mb-8 { margin-bottom: 24px; }
+.mb-2 { margin-bottom: 6px; }
+.mb-4 { margin-bottom: 10px; }
+.mb-6 { margin-bottom: 16px; }
+.mb-8 { margin-bottom: 20px; }
 .mt-2 { margin-top: 6px; }
 .mt-4 { margin-top: 12px; }
 .mt-6 { margin-top: 20px; }
@@ -109,7 +109,591 @@ body {
 .border-white { border-color: white; }
 .border-opacity-30 { border-color: rgba(255, 255, 255, 0.3); }
 
-/* Tables */
+/* Enhanced Invoice Styling */
+
+/* Invoice header info card */
+.invoice-info-card {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure no borders on spans and divs inside info card */
+.invoice-info-card span,
+.invoice-info-card div {
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.invoice-info-card span {
+    display: inline !important;
+}
+
+.invoice-info-row {
+    margin-bottom: 6px;
+    line-height: 1.4;
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+}
+
+.invoice-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.invoice-info-label {
+    color: #64748B;
+    font-size: 10px;
+    font-weight: 500;
+    display: inline;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.invoice-info-label:after {
+    content: ": ";
+}
+
+.invoice-info-value {
+    color: #1E293B;
+    font-size: 10px;
+    font-weight: 600;
+    float: right;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.status-badge {
+    background-color: #10B981;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+/* Business cards */
+.business-card {
+    border: none;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.business-card-header {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    padding: 10px 14px;
+    border: none;
+    border-bottom: none;
+}
+
+.business-card-title {
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.business-card-content {
+    padding: 12px;
+    border: none;
+}
+
+.company-name {
+    color: #1E293B;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    border: none;
+    padding: 0;
+}
+
+.address-line {
+    color: #475569;
+    font-size: 11px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    border: none;
+    padding: 0;
+}
+
+.detail-line {
+    color: #64748B;
+    font-size: 10px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    border: none;
+    padding: 0;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #374151;
+    border: none;
+    padding: 0;
+}
+
+.detail-label:after {
+    content: ": ";
+}
+
+/* Ensure no borders on business card elements */
+.business-card p,
+.business-card span,
+.business-card div {
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 4px !important;
+}
+
+.business-card p:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Section titles */
+.section-title {
+    color: #1E293B;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #3B82F6;
+}
+
+/* Description card */
+.description-card {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 16px;
+    color: #374151;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* Items table */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.items-table th {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    color: #1E293B;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    border: none;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.items-table td {
+    padding: 12px 8px;
+    border: none;
+    border-bottom: 1px solid #F8FAFC;
+    vertical-align: top;
+}
+
+.item-description {
+    border-right: none;
+}
+
+.item-name {
+    color: #1E293B;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.item-vat {
+    color: #64748B;
+    font-size: 9px;
+    font-style: italic;
+}
+
+.item-cell {
+    color: #374151;
+    font-size: 11px;
+    font-weight: 500;
+    border-right: none;
+}
+
+.item-total {
+    color: #1E293B;
+    font-size: 11px;
+    font-weight: 700;
+    background-color: #F8FAFC;
+}
+
+/* Total summary card */
+.total-summary-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 2px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.total-row {
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.total-label {
+    color: #64748B;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 0;
+    text-align: left;
+}
+
+.total-label:after {
+    content: ": ";
+}
+
+.total-value {
+    color: #374151;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 0;
+    text-align: right;
+}
+
+.total-final-row {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    border-radius: 6px;
+    margin-top: 8px;
+}
+
+.total-final-label {
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.total-final-label:after {
+    content: ": ";
+}
+
+/* VAT Summary table */
+.vat-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.vat-summary-table th {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    color: #1E293B;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 8px;
+    border: none;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.vat-summary-table td {
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #F8FAFC;
+    vertical-align: top;
+}
+
+.vat-cell {
+    color: #374151;
+    font-size: 10px;
+    font-weight: 500;
+    border: none;
+}
+
+/* Corporate template styles */
+.corporate-info-card {
+    background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    color: white;
+}
+
+.corporate-info-row {
+    margin-bottom: 6px;
+    line-height: 1.4;
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+}
+
+.corporate-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.corporate-info-label {
+    color: #D1D5DB;
+    font-size: 10px;
+    font-weight: 500;
+    display: inline;
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+}
+
+.corporate-info-label:after {
+    content: ": ";
+}
+
+.corporate-info-value {
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    float: right;
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+}
+
+/* Corporate business cards */
+.corporate-card {
+    border: none;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.corporate-card-header {
+    background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+    padding: 10px 14px;
+    border: none;
+}
+
+.corporate-card-header-light {
+    background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+    padding: 10px 14px;
+    border: none;
+    border-bottom: 2px solid #374151;
+}
+
+.corporate-card-title {
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.corporate-card-title-dark {
+    color: #1F2937;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.corporate-card-content {
+    padding: 12px;
+    border: none;
+}
+
+/* Ensure no borders on corporate card elements */
+.corporate-card p,
+.corporate-card span,
+.corporate-card div,
+.corporate-info-card p,
+.corporate-info-card span,
+.corporate-info-card div {
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 4px !important;
+}
+
+.corporate-card p:last-child,
+.corporate-info-card p:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Modern template styles */
+.modern-card {
+    border: none;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.modern-card-header {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    padding: 10px 14px;
+    border: none;
+    border-left: 4px solid #1D4ED8;
+}
+
+.modern-card-header-light {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    padding: 10px 14px;
+    border: none;
+    border-left: 4px solid #3B82F6;
+}
+
+.modern-card-title {
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.modern-card-title-dark {
+    color: #3B82F6;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.modern-card-content {
+    padding: 12px;
+    border: none;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+}
+
+.modern-accent {
+    color: #3B82F6;
+}
+
+/* Modern items table */
+.modern-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modern-items-table th {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    border: none;
+}
+
+.modern-items-table td {
+    padding: 12px 8px;
+    border: none;
+    border-bottom: 1px solid #F8FAFC;
+    vertical-align: top;
+}
+
+.modern-item-description {
+    border-right: none;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+}
+
+.modern-item-cell {
+    color: #374151;
+    font-size: 11px;
+    font-weight: 500;
+    border-right: none;
+}
+
+.modern-item-total {
+    color: #1E293B;
+    font-size: 11px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #F8FAFC 0%, #EBF4FF 100%);
+    border: none;
+}
+
+/* Modern VAT table */
+.modern-vat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modern-vat-table th {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 8px;
+    border: none;
+}
+
+.modern-vat-table td {
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #F8FAFC;
+    vertical-align: top;
+}
+
+.modern-vat-cell {
+    color: #374151;
+    font-size: 10px;
+    font-weight: 500;
+    border: none;
+}
+
+/* Ensure no borders on modern card elements */
+.modern-card p,
+.modern-card span,
+.modern-card div {
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 4px !important;
+}
+
+.modern-card p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.total-final-value {
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 12px 16px;
+    text-align: right;
+}
+
+/* Original invoice table kept for backward compatibility */
 .invoice-table {
     width: 100%;
     border-collapse: collapse;
@@ -138,6 +722,7 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 12px;
+    background-color: #FFFFFF;
 }
 
 /* Clear floats */

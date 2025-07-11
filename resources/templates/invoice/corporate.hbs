@@ -1,82 +1,94 @@
 <div class="invoice-container">
     <!-- Corporate Header -->
-    <div class="mb-6">
-        <div class="flex justify-between items-center">
-            <div class="w-1/2">
+    <table class="w-full mb-8">
+        <tr>
+            <td class="w-1/2" style="vertical-align: top;">
                 {{#if invoice.seller.logoUrl}}
-                    <div class="mb-4">
+                    <div class="mb-6">
                         {{{logoUrl invoice.seller.logoUrl width="180px"}}}
                     </div>
                 {{/if}}
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">{{t "invoices.invoice"}}</h1>
-                <p class="text-lg font-semibold text-gray-700">{{invoice.number}}</p>
-            </div>
-            <div class="w-1/2 text-right">
-                <div class="bg-gray-800 text-white p-4">
-                    <div class="text-sm">
-                        {{#if invoice.issueDate}}
-                            <p class="mb-1"><strong>{{t "invoices.issue_date"}}:</strong> {{invoice.issueDate}}</p>
+                <p class="text-xl font-semibold text-gray-700">#{{invoice.number}}</p>
+            </td>
+            <td class="w-1/2 text-right" style="vertical-align: top;">
+                <div class="corporate-info-card">
+                    {{#if invoice.issueDate}}
+                        <p class="corporate-info-row">
+                            <span class="corporate-info-label">{{t "invoices.issue_date"}}</span>
+                            <span class="corporate-info-value">{{invoice.issueDate}}</span>
+                        </p>
+                    {{/if}}
+                    {{#if invoice.dueDate}}
+                        <p class="corporate-info-row">
+                            <span class="corporate-info-label">{{t "invoices.due_date"}}</span>
+                            <span class="corporate-info-value">{{invoice.dueDate}}</span>
+                        </p>
+                    {{/if}}
+                    {{#if invoice.status}}
+                        <p class="corporate-info-row">
+                            <span class="corporate-info-label">{{t "invoices.status"}}</span>
+                            <span class="corporate-info-value status-badge">{{invoice.status}}</span>
+                        </p>
+                    {{/if}}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Business Information with Professional Layout -->
+    <table class="w-full mb-8">
+        <tr>
+            <td class="w-1/2" style="vertical-align: top; padding-right: 20px;">
+                <div class="corporate-card seller-card">
+                    <div class="corporate-card-header">
+                        <h3 class="corporate-card-title">{{t "invoices.from"}}</h3>
+                    </div>
+                    <div class="corporate-card-content">
+                        {{#if invoice.seller.name}}
+                            <p class="company-name">{{invoice.seller.name}}</p>
                         {{/if}}
-                        {{#if invoice.dueDate}}
-                            <p class="mb-1"><strong>{{t "invoices.due_date"}}:</strong> {{invoice.dueDate}}</p>
+                        {{#if invoice.seller.address}}
+                            <p class="address-line">{{invoice.seller.address}}</p>
                         {{/if}}
-                        {{#if invoice.status}}
-                            <p><strong>{{t "invoices.status"}}:</strong> {{invoice.status}}</p>
+                        {{#if invoice.seller.country}}
+                            <p class="address-line">{{invoice.seller.country}}</p>
+                        {{/if}}
+                        {{#if invoice.seller.taxId}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.seller.taxId}}</p>
+                        {{/if}}
+                        {{#if invoice.seller.email}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.seller.email}}</p>
                         {{/if}}
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Business Information with Professional Layout -->
-    <div class="flex justify-between mb-6">
-        <div class="w-1/2 pr-4">
-            <div class="bg-gray-800 text-white p-4">
-                <h3 class="text-base font-bold mb-3 border-b border-gray-600 pb-2">{{t "invoices.from"}}</h3>
-                <div class="text-sm">
-                    {{#if invoice.seller.name}}
-                        <p class="font-bold mb-2">{{invoice.seller.name}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.address}}
-                        <p class="mb-1">{{invoice.seller.address}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.country}}
-                        <p class="mb-1">{{invoice.seller.country}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.taxId}}
-                        <p class="mb-1"><strong>{{t "invoices.tax_id"}}:</strong> {{invoice.seller.taxId}}</p>
-                    {{/if}}
-                    {{#if invoice.seller.email}}
-                        <p class="mb-1"><strong>{{t "invoices.email"}}:</strong> {{invoice.seller.email}}</p>
-                    {{/if}}
+            </td>
+            <td class="w-1/2" style="vertical-align: top; padding-left: 20px;">
+                <div class="corporate-card buyer-card">
+                    <div class="corporate-card-header-light">
+                        <h3 class="corporate-card-title-dark">{{t "invoices.to"}}</h3>
+                    </div>
+                    <div class="corporate-card-content">
+                        {{#if invoice.buyer.name}}
+                            <p class="company-name">{{invoice.buyer.name}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.address}}
+                            <p class="address-line">{{invoice.buyer.address}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.country}}
+                            <p class="address-line">{{invoice.buyer.country}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.taxId}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.buyer.taxId}}</p>
+                        {{/if}}
+                        {{#if invoice.buyer.email}}
+                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.buyer.email}}</p>
+                        {{/if}}
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="w-1/2 pl-4">
-            <div class="border-2 border-gray-800 p-4">
-                <h3 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2">{{t "invoices.to"}}</h3>
-                <div class="text-sm text-gray-700">
-                    {{#if invoice.buyer.name}}
-                        <p class="font-bold mb-2 text-gray-900">{{invoice.buyer.name}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.address}}
-                        <p class="mb-1">{{invoice.buyer.address}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.country}}
-                        <p class="mb-1">{{invoice.buyer.country}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.taxId}}
-                        <p class="mb-1"><strong>{{t "invoices.tax_id"}}:</strong> {{invoice.buyer.taxId}}</p>
-                    {{/if}}
-                    {{#if invoice.buyer.email}}
-                        <p class="mb-1"><strong>{{t "invoices.email"}}:</strong> {{invoice.buyer.email}}</p>
-                    {{/if}}
-                </div>
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+    </table>
 
     <!-- Description Section -->
     {{#if invoice.description}}

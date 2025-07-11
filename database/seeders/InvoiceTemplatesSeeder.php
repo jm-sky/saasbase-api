@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Tenant\Models\Tenant;
+use App\Helpers\Ulid;
 use Illuminate\Database\Seeder;
 
 class InvoiceTemplatesSeeder extends Seeder
@@ -15,6 +16,7 @@ class InvoiceTemplatesSeeder extends Seeder
             InvoiceTemplate::query()->delete();
 
             InvoiceTemplate::withoutGlobalScopes()->create([
+                'id'           => Ulid::deterministic(['default']),
                 'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                 'name'         => 'default',
                 'description'  => 'Clean, professional invoice template',
@@ -27,6 +29,7 @@ class InvoiceTemplatesSeeder extends Seeder
             ]);
 
             InvoiceTemplate::withoutGlobalScopes()->create([
+                'id'           => Ulid::deterministic(['modern']),
                 'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                 'name'         => 'modern',
                 'description'  => 'Modern design with accent colors',
@@ -39,6 +42,7 @@ class InvoiceTemplatesSeeder extends Seeder
             ]);
 
             InvoiceTemplate::withoutGlobalScopes()->create([
+                'id'           => Ulid::deterministic(['minimal']),
                 'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                 'name'         => 'minimal',
                 'description'  => 'Clean, minimal design',
@@ -51,6 +55,7 @@ class InvoiceTemplatesSeeder extends Seeder
             ]);
 
             InvoiceTemplate::withoutGlobalScopes()->create([
+                'id'           => Ulid::deterministic(['corporate']),
                 'tenant_id'    => Tenant::GLOBAL_TENANT_ID,
                 'name'         => 'corporate',
                 'description'  => 'Professional corporate design',
