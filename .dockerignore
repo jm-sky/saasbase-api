@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Development files
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Testing
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# Development tools
+.editorconfig
+phpstan.neon
+codestyle.php
+
+# Cache and logs
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
+storage/app/temp/
+
+# Media files (usually not needed in container)
+storage/app/public/
+public/storage/
+
+# Documentation
+*.md
+!README.md

@@ -1,0 +1,18 @@
+{
+  "name": "html",
+  "version": "1.0.0",
+  "description": "A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a modular architecture. Includes GitHub Actions for CI, static analysis (Larastan), and tests (PHPUnit).",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^24.12.1"
+  }
+}

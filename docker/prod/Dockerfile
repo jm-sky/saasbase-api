@@ -44,10 +44,13 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install Node.js and Puppeteer for PDF generation
+# Install Node.js and Chrome for Puppeteer
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g puppeteer \
+    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
     && apt-get install -y \
        fonts-liberation \
        libappindicator3-1 \
@@ -77,6 +80,10 @@ RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 RUN userdel -r ubuntu
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
+
+# Copy and install Node.js dependencies for Puppeteer
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
 COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

@@ -94,6 +94,13 @@ class PuppeteerEngine implements PdfEngineInterface
             return false;
         }
 
+        // Check if Puppeteer package is actually installed
+        exec("{$nodeExecutable} -e \"require('puppeteer')\" 2>/dev/null", $output, $returnCode);
+
+        if (0 !== $returnCode) {
+            return false;
+        }
+
         return true;
     }
 
@@ -162,9 +169,10 @@ class PuppeteerEngine implements PdfEngineInterface
 
     private function generatePuppeteerScript(string $htmlFile, string $pdfFile, array $settings): string
     {
-        $chromeFlags = implode("', '", $settings['chrome_flags'] ?? []);
-        $viewport    = $settings['viewport'] ?? ['width' => 1200, 'height' => 800];
-        $margins     = $settings['margins'] ?? ['top' => '5mm', 'right' => '5mm', 'bottom' => '10mm', 'left' => '5mm'];
+        $chromeFlags      = implode("', '", $settings['chrome_flags'] ?? []);
+        $viewport         = $settings['viewport'] ?? ['width' => 1200, 'height' => 800];
+        $margins          = $settings['margins'] ?? ['top' => '5mm', 'right' => '5mm', 'bottom' => '10mm', 'left' => '5mm'];
+        $chromeExecutable = config('pdf.puppeteer.chrome_executable', '/usr/bin/google-chrome-stable');
 
         $footerTemplate = $settings['footer_template'] ?? '';
 
@@ -180,6 +188,7 @@ const fs = require('fs');
 (async () => {
     const browser = await puppeteer.launch({
         headless: 'new',
+        executablePath: '{$chromeExecutable}',
         args: ['{$chromeFlags}']
     });
     

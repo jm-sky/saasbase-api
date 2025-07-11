@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'default' => env('PDF_ENGINE', 'mpdf'),
+    'default' => env('PDF_ENGINE', 'puppeteer'),
 
     /*
     |--------------------------------------------------------------------------
@@ -87,7 +87,7 @@ return [
     */
 
     'puppeteer' => [
-        'chrome_executable'  => env('PUPPETEER_CHROME_EXECUTABLE', null),
+        'chrome_executable'  => env('PUPPETEER_CHROME_EXECUTABLE', '/usr/bin/google-chrome-stable'),
         'node_executable'    => env('PUPPETEER_NODE_EXECUTABLE', 'node'),
         'npm_executable'     => env('PUPPETEER_NPM_EXECUTABLE', 'npm'),
         'script_timeout'     => env('PUPPETEER_SCRIPT_TIMEOUT', 60),
