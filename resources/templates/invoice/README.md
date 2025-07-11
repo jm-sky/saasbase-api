@@ -253,6 +253,34 @@ All templates are designed to:
 
 ## Template Structure
 
+### Important: Why Templates Don't Include HTML Document Structure
+
+**Template files (.hbs) contain only the content that goes inside the `<body>` tag, NOT complete HTML documents.**
+
+This is by design because:
+- The `InvoiceGeneratorService::addCssToHtml()` method automatically wraps template content with complete HTML structure
+- All CSS styling is managed centrally in `/resources/css/invoice-pdf.css`
+- This ensures consistent HTML document structure, meta tags, and CSS loading across all templates
+- Templates focus purely on content structure while the service handles HTML document boilerplate
+
+**Example Architecture:**
+```php
+// InvoiceGeneratorService wraps template content like this:
+return "<!DOCTYPE html>
+<html lang='{$language}'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <meta charset='utf-8'>
+    <style>{$css}</style>  <!-- Loads from invoice-pdf.css -->
+</head>
+<body>
+    {$templateContent}  <!-- Your .hbs template content goes here -->
+</body>
+</html>";
+```
+
+If you add `<!DOCTYPE html>`, `<html>`, `<head>`, or `<body>` tags to templates, you'll end up with invalid nested HTML documents.
+
 ### Common Elements
 All templates include these standard sections:
 1. **Header**: Logo, title, invoice number, dates

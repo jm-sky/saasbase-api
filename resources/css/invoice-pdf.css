@@ -685,6 +685,326 @@ body {
     margin-bottom: 0 !important;
 }
 
+/* Modern template specific styles */
+.modern-accent-bg {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    color: white;
+}
+
+.modern-accent-border {
+    border-left: 4px solid #3B82F6;
+}
+
+.modern-info-card {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 16px;
+    color: white;
+}
+
+.modern-info-row {
+    margin-bottom: 6px;
+    line-height: 1.4;
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+}
+
+.modern-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.modern-info-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 10px;
+    font-weight: 500;
+    display: inline;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.modern-info-label:after {
+    content: ": ";
+}
+
+.modern-info-value {
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    float: right;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.modern-total-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 2px solid #3B82F6;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.modern-total-final-row {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    border-radius: 6px;
+    margin-top: 8px;
+    padding: 12px 16px;
+}
+
+.modern-total-final-row .total-final-label,
+.modern-total-final-row .total-final-value {
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Minimal template specific styles */
+.minimal-template {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #ffffff;
+    color: #333333;
+    line-height: 1.7;
+}
+
+.minimal-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.minimal-logo {
+    margin-bottom: 30px;
+}
+
+.minimal-logo img {
+    max-height: 50px;
+    opacity: 0.8;
+}
+
+.minimal-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: #333333;
+    margin: 0 0 15px 0;
+    letter-spacing: 1px;
+}
+
+.minimal-number {
+    font-size: 1.1rem;
+    color: #666666;
+    font-weight: 400;
+}
+
+.minimal-dates {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 0.9rem;
+    color: #666666;
+}
+
+.minimal-date-item {
+    margin: 0 20px;
+}
+
+.minimal-party {
+    padding: 0;
+}
+
+.minimal-party-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+}
+
+.minimal-party-content {
+    margin: 0;
+    padding: 0;
+}
+
+.minimal-description {
+    margin-bottom: 40px;
+}
+
+.minimal-description-text {
+    font-size: 0.9rem;
+    color: #666666;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.minimal-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.minimal-items-table th {
+    color: #333333;
+    padding: 15px 0;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.minimal-items-table th:last-child {
+    text-align: right;
+}
+
+.minimal-items-table td {
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+}
+
+.minimal-items-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.minimal-item-description {
+    margin-bottom: 4px;
+}
+
+.minimal-item-total {
+    font-weight: 500;
+    color: #333333;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+.minimal-vat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.minimal-vat-table th {
+    color: #333333;
+    padding: 12px 0;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.minimal-vat-table th:last-child {
+    text-align: right;
+}
+
+.minimal-vat-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.minimal-totals {
+    margin-bottom: 50px;
+}
+
+.minimal-totals-card {
+    margin-left: auto;
+    width: 300px;
+    border-top: 2px solid #e0e0e0;
+    padding-top: 20px;
+}
+
+.minimal-total-final {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+}
+
+.minimal-exchange {
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+    color: #666666;
+}
+
+.minimal-exchange p {
+    margin-bottom: 6px;
+}
+
+.minimal-exchange strong {
+    color: #333333;
+    font-weight: 500;
+}
+
+.minimal-payment {
+    margin-bottom: 40px;
+}
+
+.minimal-payment-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 20px;
+}
+
+.minimal-bank-account {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.minimal-bank-title {
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+.minimal-payment-terms {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.minimal-signatures {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+
+.minimal-signature-box {
+    text-align: center;
+}
+
+.minimal-signature-title {
+    font-weight: 500;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #333333;
+}
+
+.minimal-signature-line {
+    border-bottom: 1px solid #cccccc;
+    margin-bottom: 12px;
+    height: 40px;
+    position: relative;
+}
+
+.minimal-footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.minimal-footer img {
+    max-height: 30px;
+    opacity: 0.5;
+}
+
 .total-final-value {
     color: white;
     font-size: 16px;

@@ -1,132 +1,123 @@
-<div class="invoice-container">
+<div class="invoice-container corporate-template">
     <!-- Corporate Header -->
-    <table class="w-full mb-8">
-        <tr>
-            <td class="w-1/2" style="vertical-align: top;">
-                {{#if invoice.seller.logoUrl}}
-                    <div class="mb-6">
-                        {{{logoUrl invoice.seller.logoUrl width="180px"}}}
-                    </div>
-                {{/if}}
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{t "invoices.invoice"}}</h1>
-                <p class="text-xl font-semibold text-gray-700">#{{invoice.number}}</p>
-            </td>
-            <td class="w-1/2 text-right" style="vertical-align: top;">
-                <div class="corporate-info-card">
-                    {{#if invoice.issueDate}}
-                        <p class="corporate-info-row">
-                            <span class="corporate-info-label">{{t "invoices.issue_date"}}</span>
-                            <span class="corporate-info-value">{{invoice.issueDate}}</span>
-                        </p>
-                    {{/if}}
-                    {{#if invoice.dueDate}}
-                        <p class="corporate-info-row">
-                            <span class="corporate-info-label">{{t "invoices.due_date"}}</span>
-                            <span class="corporate-info-value">{{invoice.dueDate}}</span>
-                        </p>
-                    {{/if}}
-                    {{#if invoice.status}}
-                        <p class="corporate-info-row">
-                            <span class="corporate-info-label">{{t "invoices.status"}}</span>
-                            <span class="corporate-info-value status-badge">{{invoice.status}}</span>
-                        </p>
-                    {{/if}}
+    <div class="corporate-header">
+        <div class="header-left">
+            {{#if invoice.seller.logoUrl}}
+                <div class="corporate-logo">
+                    {{{logoUrl invoice.seller.logoUrl width="180px"}}}
                 </div>
-            </td>
-        </tr>
-    </table>
+            {{/if}}
+            <h1 class="corporate-title">{{t "invoices.invoice"}}</h1>
+            <p class="corporate-number">#{{invoice.number}}</p>
+        </div>
+        <div class="corporate-info-card">
+            {{#if invoice.issueDate}}
+                <div class="corporate-info-row">
+                    <span class="corporate-info-label">{{t "invoices.issue_date"}}</span>
+                    <span class="corporate-info-value">{{invoice.issueDate}}</span>
+                </div>
+            {{/if}}
+            {{#if invoice.dueDate}}
+                <div class="corporate-info-row">
+                    <span class="corporate-info-label">{{t "invoices.due_date"}}</span>
+                    <span class="corporate-info-value">{{invoice.dueDate}}</span>
+                </div>
+            {{/if}}
+            {{#if invoice.status}}
+                <div class="corporate-info-row">
+                    <span class="corporate-info-label">{{t "invoices.status"}}</span>
+                    <span class="corporate-info-value status-badge">{{invoice.status}}</span>
+                </div>
+            {{/if}}
+        </div>
+    </div>
 
-    <!-- Business Information with Professional Layout -->
-    <table class="w-full mb-8">
-        <tr>
-            <td class="w-1/2" style="vertical-align: top; padding-right: 20px;">
-                <div class="corporate-card seller-card">
-                    <div class="corporate-card-header">
-                        <h3 class="corporate-card-title">{{t "invoices.from"}}</h3>
-                    </div>
-                    <div class="corporate-card-content">
-                        {{#if invoice.seller.name}}
-                            <p class="company-name">{{invoice.seller.name}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.address}}
-                            <p class="address-line">{{invoice.seller.address}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.country}}
-                            <p class="address-line">{{invoice.seller.country}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.taxId}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.seller.taxId}}</p>
-                        {{/if}}
-                        {{#if invoice.seller.email}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.seller.email}}</p>
-                        {{/if}}
-                    </div>
-                </div>
-            </td>
-            <td class="w-1/2" style="vertical-align: top; padding-left: 20px;">
-                <div class="corporate-card buyer-card">
-                    <div class="corporate-card-header-light">
-                        <h3 class="corporate-card-title-dark">{{t "invoices.to"}}</h3>
-                    </div>
-                    <div class="corporate-card-content">
-                        {{#if invoice.buyer.name}}
-                            <p class="company-name">{{invoice.buyer.name}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.address}}
-                            <p class="address-line">{{invoice.buyer.address}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.country}}
-                            <p class="address-line">{{invoice.buyer.country}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.taxId}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span> {{invoice.buyer.taxId}}</p>
-                        {{/if}}
-                        {{#if invoice.buyer.email}}
-                            <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span> {{invoice.buyer.email}}</p>
-                        {{/if}}
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <!-- Business Information -->
+    <div class="grid-cols-2">
+        <div class="corporate-card seller-card">
+            <div class="corporate-card-header">
+                <h3 class="corporate-card-title">{{t "invoices.from"}}</h3>
+            </div>
+            <div class="corporate-card-content">
+                {{#if invoice.seller.name}}
+                    <p class="company-name">{{invoice.seller.name}}</p>
+                {{/if}}
+                {{#if invoice.seller.address}}
+                    <p class="address-line">{{invoice.seller.address}}</p>
+                {{/if}}
+                {{#if invoice.seller.country}}
+                    <p class="address-line">{{invoice.seller.country}}</p>
+                {{/if}}
+                {{#if invoice.seller.taxId}}
+                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.seller.taxId}}</p>
+                {{/if}}
+                {{#if invoice.seller.email}}
+                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.seller.email}}</p>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="corporate-card buyer-card">
+            <div class="corporate-card-header-light">
+                <h3 class="corporate-card-title-dark">{{t "invoices.to"}}</h3>
+            </div>
+            <div class="corporate-card-content">
+                {{#if invoice.buyer.name}}
+                    <p class="company-name">{{invoice.buyer.name}}</p>
+                {{/if}}
+                {{#if invoice.buyer.address}}
+                    <p class="address-line">{{invoice.buyer.address}}</p>
+                {{/if}}
+                {{#if invoice.buyer.country}}
+                    <p class="address-line">{{invoice.buyer.country}}</p>
+                {{/if}}
+                {{#if invoice.buyer.taxId}}
+                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.buyer.taxId}}</p>
+                {{/if}}
+                {{#if invoice.buyer.email}}
+                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.buyer.email}}</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
 
     <!-- Description Section -->
     {{#if invoice.description}}
-        <div class="mb-6">
-            <h3 class="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">{{t "invoices.description"}}</h3>
-            <div class="bg-gray-50 p-4 border border-gray-200 text-sm">
+        <div class="description-section">
+            <h3 class="section-title">{{t "invoices.description"}}</h3>
+            <div class="description-card">
                 {{invoice.description}}
             </div>
         </div>
     {{/if}}
 
     <!-- Professional Invoice Items Table -->
-    <div class="mb-6">
+    <div class="items-section">
         <table class="invoice-table">
             <thead>
-                <tr class="bg-gray-800 text-white">
-                    <th class="text-left py-4 px-4 font-bold">{{t "invoices.description"}}</th>
-                    <th class="text-center py-4 px-4 font-bold">{{t "invoices.quantity"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.total_net"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.vat"}}</th>
-                    <th class="text-right py-4 px-4 font-bold">{{t "invoices.total_gross"}}</th>
+                <tr>
+                    <th class="text-left">{{t "invoices.description"}}</th>
+                    <th class="text-center">{{t "invoices.quantity"}}</th>
+                    <th class="text-right">{{t "invoices.unit_price"}}</th>
+                    <th class="text-right">{{t "invoices.total_net"}}</th>
+                    <th class="text-right">{{t "invoices.vat"}}</th>
+                    <th class="text-right">{{t "invoices.total_gross"}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each invoice.lines}}
-                    <tr class="border-b border-gray-300">
-                        <td class="py-4 px-4 bg-gray-50">
+                    <tr>
+                        <td class="item-description">
                             {{#if description}}
-                                <div class="font-bold mb-1 text-gray-900">{{description}}</div>
+                                <div class="item-name">{{description}}</div>
                             {{/if}}
-                            <div class="text-xs text-gray-700">{{vatRateName}} ({{vatRateValue}}%)</div>
+                            <div class="item-vat">{{vatRateName}} ({{vatRateValue}}%)</div>
                         </td>
-                        <td class="text-center py-4 px-4">{{formattedQuantity}}</td>
-                        <td class="text-right py-4 px-4">{{formattedUnitPrice}}</td>
-                        <td class="text-right py-4 px-4">{{formattedTotalNet}}</td>
-                        <td class="text-right py-4 px-4">{{formattedTotalVat}}</td>
-                        <td class="text-right py-4 px-4 font-bold text-gray-900">{{formattedTotalGross}}</td>
+                        <td class="text-center item-cell">{{formattedQuantity}}</td>
+                        <td class="text-right item-cell">{{formattedUnitPrice}}</td>
+                        <td class="text-right item-cell">{{formattedTotalNet}}</td>
+                        <td class="text-right item-cell">{{formattedTotalVat}}</td>
+                        <td class="item-total">{{formattedTotalGross}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -135,24 +126,24 @@
 
     <!-- VAT Summary -->
     {{#if invoice.vatSummary}}
-        <div class="mb-6">
-            <h3 class="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">{{t "invoices.vat_summary"}}</h3>
-            <table class="w-full border-2 border-gray-800">
+        <div class="vat-summary-section">
+            <h3 class="section-title">{{t "invoices.vat_summary"}}</h3>
+            <table class="vat-summary-table">
                 <thead>
-                    <tr class="bg-gray-800 text-white">
-                        <th class="text-left py-3 px-4 font-bold">{{t "invoices.vat_rate"}}</th>
-                        <th class="text-right py-3 px-4 font-bold">{{t "invoices.net_amount"}}</th>
-                        <th class="text-right py-3 px-4 font-bold">{{t "invoices.vat_amount"}}</th>
-                        <th class="text-right py-3 px-4 font-bold">{{t "invoices.gross_amount"}}</th>
+                    <tr>
+                        <th class="text-left">{{t "invoices.vat_rate"}}</th>
+                        <th class="text-right">{{t "invoices.net_amount"}}</th>
+                        <th class="text-right">{{t "invoices.vat_amount"}}</th>
+                        <th class="text-right">{{t "invoices.gross_amount"}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each invoice.vatSummary}}
-                        <tr class="border-b border-gray-300">
-                            <td class="py-3 px-4 bg-gray-50">{{vatRateName}} ({{vatRateValue}}%)</td>
-                            <td class="text-right py-3 px-4">{{formattedNet}}</td>
-                            <td class="text-right py-3 px-4">{{formattedVat}}</td>
-                            <td class="text-right py-3 px-4 font-bold text-gray-900">{{formattedGross}}</td>
+                        <tr>
+                            <td class="vat-cell">{{vatRateName}} ({{vatRateValue}}%)</td>
+                            <td class="text-right vat-cell">{{formattedNet}}</td>
+                            <td class="text-right vat-cell">{{formattedVat}}</td>
+                            <td class="text-right vat-cell font-bold">{{formattedGross}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
@@ -161,20 +152,20 @@
     {{/if}}
 
     <!-- Corporate Total Summary -->
-    <div class="mb-6">
-        <div class="w-1/2 ml-auto border-2 border-gray-800">
-            <div class="bg-gray-800 text-white p-4">
-                <div class="flex justify-between py-2 text-sm border-b border-gray-600">
-                    <span>{{t "invoices.subtotal"}}:</span>
-                    <span class="font-bold">{{invoice.formattedTotalNet}}</span>
+    <div class="total-summary-section">
+        <div class="corporate-total-card">
+            <div class="corporate-total-header">
+                <div class="total-row">
+                    <span class="total-label">{{t "invoices.subtotal"}}</span>
+                    <span class="total-value">{{invoice.formattedTotalNet}}</span>
                 </div>
-                <div class="flex justify-between py-2 text-sm border-b border-gray-600">
-                    <span>{{t "invoices.vat"}}:</span>
-                    <span class="font-bold">{{invoice.formattedTotalTax}}</span>
+                <div class="total-row">
+                    <span class="total-label">{{t "invoices.vat"}}</span>
+                    <span class="total-value">{{invoice.formattedTotalTax}}</span>
                 </div>
-                <div class="flex justify-between py-3 text-xl font-bold">
-                    <span>{{t "invoices.total"}}:</span>
-                    <span>{{invoice.formattedTotalGross}}</span>
+                <div class="total-row">
+                    <span class="total-label">{{t "invoices.total"}}</span>
+                    <span class="total-value">{{invoice.formattedTotalGross}}</span>
                 </div>
             </div>
         </div>
@@ -182,11 +173,11 @@
 
     <!-- Exchange Rate Information -->
     {{#if invoice.exchange}}
-        <div class="mb-6 border-2 border-gray-800 p-4">
-            <h3 class="text-base font-bold text-gray-900 mb-2">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
-            <div class="text-sm text-gray-700">
+        <div class="payment-section">
+            <h3 class="payment-title">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
+            <div class="payment-info">
                 {{#if invoice.exchange.formattedExchangeRate}}
-                    <p class="mb-1"><strong>{{t "invoices.exchange_rate"}}:</strong> {{invoice.exchange.formattedExchangeRate}}</p>
+                    <p><strong>{{t "invoices.exchange_rate"}}:</strong> {{invoice.exchange.formattedExchangeRate}}</p>
                 {{/if}}
                 {{#if invoice.exchange.date}}
                     <p><strong>{{t "invoices.date"}}:</strong> {{invoice.exchange.date}}</p>
@@ -197,111 +188,110 @@
 
     <!-- Payment Information -->
     {{#if invoice.payment}}
-        <div class="mb-6">
-            <h3 class="text-base font-bold text-gray-900 mb-2 border-b border-gray-300 pb-1">{{t "invoices.payment_details"}}</h3>
-            <div class="bg-gray-50 border border-gray-200 p-4">
-                <div class="flex justify-between text-sm">
-                    <div class="w-1/2 pr-4">
-                        <p class="mb-1"><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
-                        <p class="mb-1"><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
-                        {{#if invoice.payment.reference}}
-                            <p class="mb-1"><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
-                        {{/if}}
-                    </div>
-                    <div class="w-1/2 pl-4">
-                        {{#if invoice.payment.formattedPaidAmount}}
-                            <p class="mb-1"><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
-                        {{/if}}
-                        {{#if invoice.payment.paidDate}}
-                            <p class="mb-1"><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
-                        {{/if}}
-                    </div>
+        <div class="payment-section">
+            <h3 class="payment-title">{{t "invoices.payment_details"}}</h3>
+            <div class="grid-cols-2">
+                <div class="payment-info">
+                    <p><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
+                    <p><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
+                    {{#if invoice.payment.reference}}
+                        <p><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
+                    {{/if}}
                 </div>
-
-                {{#if invoice.payment.bankAccount}}
-                    <div class="mt-4 p-3 bg-gray-800 text-white">
-                        <h4 class="font-bold mb-2 text-sm">{{t "invoices.bank_account"}}</h4>
-                        <div class="text-sm">
-                            {{#if invoice.payment.bankAccount.bankName}}
-                                <p class="mb-1"><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
-                            {{/if}}
-                            {{#if invoice.payment.bankAccount.iban}}
-                                <p class="mb-1"><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
-                            {{/if}}
-                            {{#if invoice.payment.bankAccount.swift}}
-                                <p class="mb-1"><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
-                            {{/if}}
-                        </div>
-                    </div>
-                {{/if}}
-
-                {{#if invoice.payment.terms}}
-                    <div class="mt-4">
-                        <h4 class="font-bold mb-1 text-sm">{{t "invoices.payment_terms"}}</h4>
-                        <p class="text-sm text-gray-700">{{invoice.payment.terms}}</p>
-                    </div>
-                {{/if}}
+                <div class="payment-info">
+                    {{#if invoice.payment.formattedPaidAmount}}
+                        <p><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
+                    {{/if}}
+                    {{#if invoice.payment.paidDate}}
+                        <p><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
+                    {{/if}}
+                </div>
             </div>
-        </div>
-    {{/if}}
 
-    <!-- Professional Signatures Section -->
-    {{#if options.includeSignatures}}
-        <div class="mt-6 clearfix">
-            {{#if options.issuerSignature}}
-                <div class="w-1/2 float-left pr-4">
-                    <div class="border-2 border-gray-800 p-4 text-center">
-                        <h4 class="font-bold mb-2 text-sm text-gray-900">{{t "invoices.authorized_by"}}</h4>
-                        <div class="border-b-2 border-gray-800 mb-2" style="height: 40px; position: relative;">
-                            {{#if options.issuerSignature.imageUrl}}
-                                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
-                                    {{{signatureUrl options.issuerSignature.imageUrl}}}
-                                </div>
-                            {{/if}}
-                        </div>
-                        <div class="text-sm font-bold text-gray-900">{{options.issuerSignature.name}}</div>
-                        {{#if options.issuerSignature.title}}
-                            <div class="text-xs text-gray-700">{{options.issuerSignature.title}}</div>
+            {{#if invoice.payment.bankAccount}}
+                <div class="bank-account-section">
+                    <h4 class="bank-account-title">{{t "invoices.bank_account"}}</h4>
+                    <div class="bank-account-info">
+                        {{#if invoice.payment.bankAccount.bankName}}
+                            <p><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
                         {{/if}}
-                        {{#if options.issuerSignature.date}}
-                            <div class="text-xs text-gray-600">{{options.issuerSignature.date}}</div>
+                        {{#if invoice.payment.bankAccount.iban}}
+                            <p><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
+                        {{/if}}
+                        {{#if invoice.payment.bankAccount.swift}}
+                            <p><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
                         {{/if}}
                     </div>
                 </div>
             {{/if}}
 
-            {{#if options.receiverSignature}}
-                <div class="w-1/2 float-right pl-4">
-                    <div class="border-2 border-gray-800 p-4 text-center">
-                        <h4 class="font-bold mb-2 text-sm text-gray-900">{{t "invoices.received_by"}}</h4>
-                        <div class="border-b-2 border-gray-800 mb-2" style="height: 40px; position: relative;">
-                            {{#if options.receiverSignature.imageUrl}}
-                                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
-                                    {{{signatureUrl options.receiverSignature.imageUrl}}}
-                                </div>
-                            {{/if}}
-                        </div>
-                        <div class="text-sm font-bold text-gray-900">{{options.receiverSignature.name}}</div>
-                        {{#if options.receiverSignature.title}}
-                            <div class="text-xs text-gray-700">{{options.receiverSignature.title}}</div>
-                        {{/if}}
-                        {{#if options.receiverSignature.date}}
-                            <div class="text-xs text-gray-600">{{options.receiverSignature.date}}</div>
+            {{#if invoice.payment.terms}}
+                <div class="payment-info" style="margin-top: 16px;">
+                    <h4 class="payment-title">{{t "invoices.payment_terms"}}</h4>
+                    <p>{{invoice.payment.terms}}</p>
+                </div>
+            {{/if}}
+
+            {{#if invoice.payment.notes}}
+                <div class="payment-info" style="margin-top: 16px;">
+                    <h4 class="payment-title">{{t "invoices.notes"}}</h4>
+                    <p>{{invoice.payment.notes}}</p>
+                </div>
+            {{/if}}
+        </div>
+    {{/if}}
+
+    <!-- Professional Signatures Section -->
+    {{#if options.includeSignatures}}
+        <div class="signatures-section">
+            {{#if options.issuerSignature}}
+                <div class="signature-box">
+                    <h4 class="signature-title">{{t "invoices.authorized_by"}}</h4>
+                    <div class="signature-line">
+                        {{#if options.issuerSignature.imageUrl}}
+                            <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
+                                {{{signatureUrl options.issuerSignature.imageUrl}}}
+                            </div>
                         {{/if}}
                     </div>
+                    <div class="signature-name">{{options.issuerSignature.name}}</div>
+                    {{#if options.issuerSignature.title}}
+                        <div class="signature-details">{{options.issuerSignature.title}}</div>
+                    {{/if}}
+                    {{#if options.issuerSignature.date}}
+                        <div class="signature-details">{{options.issuerSignature.date}}</div>
+                    {{/if}}
+                </div>
+            {{/if}}
+
+            {{#if options.receiverSignature}}
+                <div class="signature-box">
+                    <h4 class="signature-title">{{t "invoices.received_by"}}</h4>
+                    <div class="signature-line">
+                        {{#if options.receiverSignature.imageUrl}}
+                            <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
+                                {{{signatureUrl options.receiverSignature.imageUrl}}}
+                            </div>
+                        {{/if}}
+                    </div>
+                    <div class="signature-name">{{options.receiverSignature.name}}</div>
+                    {{#if options.receiverSignature.title}}
+                        <div class="signature-details">{{options.receiverSignature.title}}</div>
+                    {{/if}}
+                    {{#if options.receiverSignature.date}}
+                        <div class="signature-details">{{options.receiverSignature.date}}</div>
+                    {{/if}}
                 </div>
             {{/if}}
         </div>
     {{/if}}
 
     <!-- Corporate Footer -->
-    <div class="text-center mt-6 pt-4 border-t-2 border-gray-800">
+    <div class="footer-section">
         {{#if invoice.seller.logoUrl}}
-            <div class="mb-2">
-                {{{logoUrl invoice.seller.logoUrl width="120px"}}}
-            </div>
+            {{{logoUrl invoice.seller.logoUrl width="120px"}}}
         {{/if}}
-        <div class="text-xs text-gray-700">
+        <div class="footer-text">
             <p class="font-bold">{{t "invoices.invoice"}} {{invoice.number}}</p>
             <p>{{t "invoices.issue_date"}}: {{invoice.issueDate}} | {{t "invoices.due_date"}}: {{invoice.dueDate}}</p>
         </div>
