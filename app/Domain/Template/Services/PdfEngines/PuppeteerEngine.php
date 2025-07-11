@@ -186,47 +186,90 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        headless: 'new',
-        executablePath: '{$chromeExecutable}',
-        args: ['{$chromeFlags}']
-    });
+    let browser;
+    let page;
     
-    const page = await browser.newPage();
-    
-    await page.setViewport({
-        width: {$viewport['width']},
-        height: {$viewport['height']}
-    });
-    
-    const html = fs.readFileSync('{$htmlFile}', 'utf8');
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-    
-    " . ($settings['wait_for_selector'] ? "await page.waitForSelector('{$settings['wait_for_selector']}');" : '') . '
-    ' . ($settings['wait_for_timeout'] ? "await page.waitForTimeout({$settings['wait_for_timeout']});" : '') . "
-    
-    const pdf = await page.pdf({
-        format: '{$settings['format']}',
-        orientation: '{$settings['orientation']}',
-        margin: {
-            top: '{$margins['top']}',
-            right: '{$margins['right']}',
-            bottom: '{$margins['bottom']}',
-            left: '{$margins['left']}'
-        },
-        printBackground: " . ($settings['print_background'] ? 'true' : 'false') . ',
-        preferCSSPageSize: ' . ($settings['prefer_css_page_size'] ? 'true' : 'false') . ',
-        displayHeaderFooter: ' . ($settings['display_header_footer'] ? 'true' : 'false') . ",
-        headerTemplate: '{$settings['header_template']}',
-        footerTemplate: '{$footerTemplate}',
-        timeout: {$settings['timeout']}
-    });
-    
-    fs.writeFileSync('{$pdfFile}', pdf);
-    
-    await browser.close();
+    try {
+        console.log('Launching browser...');
+        browser = await puppeteer.launch({
+            headless: 'new',
+            executablePath: '{$chromeExecutable}',
+            args: ['{$chromeFlags}'],
+            timeout: 30000,
+            dumpio: false
+        });
+        
+        console.log('Creating new page...');
+        page = await browser.newPage();
+        
+        // Set a reasonable timeout for page operations
+        page.setDefaultTimeout(30000);
+        page.setDefaultNavigationTimeout(30000);
+        
+        console.log('Setting viewport...');
+        await page.setViewport({
+            width: {$viewport['width']},
+            height: {$viewport['height']}
+        });
+        
+        console.log('Reading HTML file...');
+        const html = fs.readFileSync('{$htmlFile}', 'utf8');
+        
+        console.log('Setting page content...');
+        await page.setContent(html, { 
+            waitUntil: 'domcontentloaded',
+            timeout: 30000
+        });
+        
+        " . ($settings['wait_for_selector'] ? "console.log('Waiting for selector...'); await page.waitForSelector('{$settings['wait_for_selector']}', { timeout: 10000 });" : '') . '
+        ' . ($settings['wait_for_timeout'] ? "console.log('Waiting for timeout...'); await page.waitForTimeout({$settings['wait_for_timeout']});" : '') . "
+        
+        console.log('Generating PDF...');
+        const pdf = await page.pdf({
+            format: '{$settings['format']}',
+            landscape: " . ('landscape' === $settings['orientation'] ? 'true' : 'false') . ",
+            margin: {
+                top: '{$margins['top']}',
+                right: '{$margins['right']}',
+                bottom: '{$margins['bottom']}',
+                left: '{$margins['left']}'
+            },
+            printBackground: " . ($settings['print_background'] ? 'true' : 'false') . ',
+            preferCSSPageSize: ' . ($settings['prefer_css_page_size'] ? 'true' : 'false') . ',
+            displayHeaderFooter: ' . ($settings['display_header_footer'] ? 'true' : 'false') . ",
+            headerTemplate: '{$settings['header_template']}',
+            footerTemplate: '{$footerTemplate}',
+            timeout: {$settings['timeout']}
+        });
+        
+        console.log('Writing PDF to file...');
+        fs.writeFileSync('{$pdfFile}', pdf);
+        
+        console.log('PDF generated successfully');
+        
+    } catch (error) {
+        console.error('Puppeteer error:', error);
+        throw error;
+    } finally {
+        if (page) {
+            try {
+                console.log('Closing page...');
+                await page.close();
+            } catch (e) {
+                console.warn('Error closing page:', e.message);
+            }
+        }
+        if (browser) {
+            try {
+                console.log('Closing browser...');
+                await browser.close();
+            } catch (e) {
+                console.warn('Error closing browser:', e.message);
+            }
+        }
+    }
 })().catch(error => {
-    console.error('Puppeteer error:', error);
+    console.error('Fatal Puppeteer error:', error);
     process.exit(1);
 });
         ";
