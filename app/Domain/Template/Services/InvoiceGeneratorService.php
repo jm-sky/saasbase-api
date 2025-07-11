@@ -4,13 +4,12 @@ namespace App\Domain\Template\Services;
 
 use App\Domain\Common\Models\Media;
 use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Template\Contracts\PdfEngineInterface;
 use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Response;
-use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
-use Mccarlosen\LaravelMpdf\LaravelMpdf;
 
 class InvoiceGeneratorService
 {
@@ -18,11 +17,15 @@ class InvoiceGeneratorService
 
     public ?InvoiceTemplate $lastUsedInvoiceTemplate = null;
 
+    private PdfEngineInterface $pdfEngine;
+
     public function __construct(
         private InvoiceTemplateService $templateService,
         private InvoiceToTemplateTransformer $transformer,
-        private TemplatingService $templatingService
+        private TemplatingService $templatingService,
+        ?PdfEngineInterface $pdfEngine = null
     ) {
+        $this->pdfEngine = $pdfEngine ?? PdfEngineFactory::create();
     }
 
     /**
@@ -32,9 +35,11 @@ class InvoiceGeneratorService
     {
         $styledHtml = $this->generateStyledHtml($invoice, $templateId, $language);
         $this->saveHtmlToFile($styledHtml, $invoice->id);
-        $pdf = $this->createPdfFromHtml($styledHtml, $invoice, $templateId);
 
-        return $pdf->output();
+        $template = $this->getTemplate($invoice, $templateId);
+        $this->pdfEngine->applyTemplateSettings($template);
+
+        return $this->pdfEngine->generatePdf($styledHtml);
     }
 
     /**
@@ -97,16 +102,12 @@ class InvoiceGeneratorService
     public function downloadPdf(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): Response
     {
         $styledHtml = $this->generateStyledHtml($invoice, $templateId, $language);
-        $pdf        = $this->createPdfFromHtml($styledHtml, $invoice, $templateId);
+        $template   = $this->getTemplate($invoice, $templateId);
         $filename   = $this->generateFilename($invoice);
 
-        $symfonyResponse = $pdf->download($filename);
+        $this->pdfEngine->applyTemplateSettings($template);
 
-        return response(
-            $symfonyResponse->getContent(),
-            $symfonyResponse->getStatusCode(),
-            $symfonyResponse->headers->all()
-        );
+        return $this->pdfEngine->downloadPdf($styledHtml, $filename);
     }
 
     /**
@@ -115,10 +116,12 @@ class InvoiceGeneratorService
     public function streamPdf(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): \Symfony\Component\HttpFoundation\Response
     {
         $styledHtml = $this->generateStyledHtml($invoice, $templateId, $language);
-        $pdf        = $this->createPdfFromHtml($styledHtml, $invoice, $templateId);
+        $template   = $this->getTemplate($invoice, $templateId);
         $filename   = $this->generateFilename($invoice);
 
-        return $pdf->stream($filename);
+        $this->pdfEngine->applyTemplateSettings($template);
+
+        return $this->pdfEngine->streamPdf($styledHtml, $filename);
     }
 
     /**
@@ -159,15 +162,21 @@ class InvoiceGeneratorService
     }
 
     /**
-     * Create PDF from HTML content.
+     * Set PDF engine for this service instance.
      */
-    private function createPdfFromHtml(string $styledHtml, Invoice $invoice, ?string $templateId = null): LaravelMpdf
+    public function setPdfEngine(PdfEngineInterface $pdfEngine): self
     {
-        $template = $this->getTemplate($invoice, $templateId);
-        $pdf      = PDF::loadHTML($styledHtml);
-        $this->applyPdfSettings($pdf, $template->settings ?? []);
+        $this->pdfEngine = $pdfEngine;
 
-        return $pdf;
+        return $this;
+    }
+
+    /**
+     * Get the current PDF engine.
+     */
+    public function getPdfEngine(): PdfEngineInterface
+    {
+        return $this->pdfEngine;
     }
 
     /**
@@ -202,54 +211,6 @@ class InvoiceGeneratorService
     }
 
     /**
-     * Apply PDF settings from template.
-     */
-    private function applyPdfSettings(LaravelMpdf $pdf, array $settings): void
-    {
-        // mPDF configuration - format and orientation
-        $format      = 'A4';
-        $orientation = $settings['orientation'] ?? 'P'; // P for portrait, L for landscape
-
-        // mPDF uses different format: [width, height] for custom sizes or standard format strings
-        // @phpstan-ignore-next-line
-        $pdf->getMpdf()->_setPageSize($format, $orientation);
-
-        if (isset($settings['margins'])) {
-            $margins = $settings['margins'];
-            // @phpstan-ignore-next-line
-            $pdf->getMpdf()->SetMargins(
-                $margins['left'] ?? 10,
-                $margins['right'] ?? 10,
-                $margins['top'] ?? 10
-            );
-            // @phpstan-ignore-next-line
-            $pdf->getMpdf()->SetAutoPageBreak(true, $margins['bottom'] ?? 15);
-        } else {
-            // Default margins with space for footer
-            // @phpstan-ignore-next-line
-            $pdf->getMpdf()->SetMargins(10, 10, 10);
-            // @phpstan-ignore-next-line
-            $pdf->getMpdf()->SetAutoPageBreak(true, 15);
-        }
-
-        // Add footer with generation time, app name, and page numbers
-        $appName     = config('app.name', 'SaasBase');
-        $generatedAt = now()->format('Y-m-d H:i:s');
-        $footerHtml  = "<div style='text-align: center; font-size: 8px; color: #666; border-top: 1px solid #E5E7EB; padding-top: 5px;'>";
-        $footerHtml .= "Generated at {$generatedAt} | {$appName} | Page {PAGENO} of {nbpg}";
-        $footerHtml .= '</div>';
-
-        // @phpstan-ignore-next-line
-        $pdf->getMpdf()->SetHTMLFooter($footerHtml);
-
-        // mPDF specific configurations for better rendering
-        // @phpstan-ignore-next-line
-        $pdf->getMpdf()->useSubstitutions = false;
-        // @phpstan-ignore-next-line
-        $pdf->getMpdf()->simpleTables     = false;
-    }
-
-    /**
      * Generate filename for PDF.
      */
     private function generateFilename(Invoice $invoice): string
@@ -261,12 +222,17 @@ class InvoiceGeneratorService
 
     private function saveHtmlToFile(string $html, string $invoiceId): void
     {
-        if (!app()->environment('local')) {
+        if (!config('pdf.global.save_html_debug', false)) {
             return;
         }
 
         $filename = "invoice-{$invoiceId}.html";
         $path     = storage_path("app/temp/{$filename}");
+
+        // Ensure temp directory exists
+        if (!file_exists(dirname($path))) {
+            mkdir(dirname($path), 0755, true);
+        }
 
         file_put_contents($path, $html);
     }

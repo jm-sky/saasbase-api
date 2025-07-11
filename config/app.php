@@ -150,4 +150,5 @@ return [
     App\Providers\AuthServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
     App\Domain\EDoreczenia\Providers\EDoreczeniaServiceProvider::class,
+    App\Domain\Template\Providers\PdfEngineServiceProvider::class,
 ];

@@ -44,6 +44,34 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Install Node.js and Puppeteer for PDF generation
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g puppeteer \
+    && apt-get install -y \
+       fonts-liberation \
+       libappindicator3-1 \
+       libasound2t64 \
+       libatk-bridge2.0-0 \
+       libdrm2 \
+       libgtk-3-0 \
+       libnspr4 \
+       libnss3 \
+       libx11-xcb1 \
+       libxcomposite1 \
+       libxdamage1 \
+       libxrandr2 \
+       xdg-utils \
+       libxss1 \
+       libxtst6 \
+       libpangocairo-1.0-0 \
+       libatk1.0-0 \
+       libcairo-gobject2 \
+       libgtk-3-0 \
+       libgdk-pixbuf2.0-0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 
 RUN userdel -r ubuntu
