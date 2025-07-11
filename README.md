@@ -2,6 +2,8 @@
 
 A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a modular architecture. Includes GitHub Actions for CI, static analysis (Larastan), and tests (PHPUnit).
 
+![dashboard](https://raw.githubusercontent.com/jm-sky/saasbase-api/refs/heads/develop/public/images/dashboard.png)
+
 ## Features
 
 ### 1. Autoryzacja
@@ -50,63 +52,140 @@ A modern Laravel-based multi-tenant SaaS backend with PostgreSQL, Redis, and a m
 ### 5. Common / Shared Functionalities  
 - [x] 5.1 Wspólny mechanizm przeszukiwania i paginacji dla list (wsparcie operatorów porównania, filtrów, sortowania)  
 - [ ] 5.2 Universal "Link with..." funkcjonalność z polimorficznym modelem (np. `Linkable`)  
-- [ ] 5.3 Universal reminders system (polimorficzny model, np. `Reminder`)  
-- [x] 5.4 Powiadomienia w systemie (w tym na żywo, WebSockets)  
+## 📦 Features
 
-### 6. Faktury / Koszty  
-- [ ] 6.1 Przeglądanie listy faktur z wyszukiwarką
-- [ ] 6.3 Akcje na fakturach/kosztach:  
-  - [ ] 6.3.1 Zmiana statusu  
-  - [ ] 6.3.2 Kopiowanie / klonowanie  
-  - [ ] 6.3.3 Wysyłka e-mail  
-  - [ ] 6.3.4 Wysyłka do KSeF  
-  - [x] 6.3.5 Generowanie PDF i PDF duplikatu (własne szablony wydruków)
-  - [ ] 6.3.6 Dołączanie / generowanie płatności  
-  - [ ] 6.3.7 Ustawianie i zarządzanie przypomnieniami  
-  - [ ] 6.3.8 Powiązania z innymi encjami:  
-    - Projekt  
-    - Użytkownik  
-    - Kontrahent  
-  - [ ] 6.3.9 Faktury cykliczne / okresowe z konfiguracją szablonu  
-  - [ ] 6.3.10 Udostępnianie linku publicznego  
-  - [ ] 6.3.11 Eksport do paczki przelewów bankowych (np. Elixir, Videotel)  
-  - [ ] 6.3.12 Grupowe / masowe akcje
-- [x] 6.4 Mechanizm tagów/etykiet
-- [x] Załączniki 
-- [ ] 6.5 Eksport do Excela (lista faktur/kosztów)
-- [ ] 6.6 Wymiary kontrolingowe (allocation dimensions) (backend ready) 
-- [ ] 6.7 Approvals with configurable paths (backend ready) 
+### 1. Authentication
 
-### 7. Produkty  
-- [ ] 7.1 Przeglądanie listy produktów z wyszukiwarką
-- [ ] 7.2 Etykiety
-- [ ] 7.3 Komentarze
-- [ ] 7.4 Obrazek logo produktu
-- [ ] 7.5 Załączniki 
-- [ ] 7.4 Log aktywności 
+- [x] 1.1 User registration  
+- [x] 1.2 Login (email & password)  
+- [x] 1.3 Password reset  
+- [x] 1.4 OAuth login (Google, GitHub)  
+- [x] 1.5 User-to-user invitations *(outside tenant scope)*
 
-## 8. Globalne Kontakty (In progress)  
-- [ ] 8.1 Zarządzanie globalnymi kontaktami (tworzenie, edycja, usuwanie)  
-- [ ] 8.2 Powiązanie globalnych kontaktów z kontrahentami  
-- [ ] 8.3 Integracja z systemem adresów i osób kontaktowych  
-- [ ] 8.4 Przeszukiwanie i paginacja globalnych kontaktów  
+---
 
-## 9. Komunikacja i Chat  
-- [ ] 9.1 System chatu pomiędzy użytkownikami  
-- [x] 9.2 Chat AI (integracja z OpenRouter)  
+### 2. Tenant Management
 
-## 10. Projekty  
-- [ ] 10.1 Zarządzanie projektami (tworzenie, edycja, usuwanie)  
-- [ ] 10.2 Zarządzanie zadaniami w projektach  
-- [ ] 10.3 Rejestracja czasu pracy (timesheet)  
+- [x] 2.1 Tenant registration  
+- [x] 2.2 Tenant addresses  
+- [x] 2.3 Tenant bank accounts  
+- [x] 2.4 Tenant organization: roles, positions, permissions  
+- [x] 2.5 Internal tenant invitations  
+- [ ] 2.6 Tenant public profile ⏳  
+- [ ] 2.7 Tenant branding ⏳  
+- [x] 2.8 Configurable third-party integrations (per-tenant credentials):  
+  - [x] 2.8.1 Azure Document Intelligence  
+  - [ ] 2.8.2 KSeF (Polish national e-invoicing system) ⏳  
+  - [ ] 2.8.3 E-Delivery integration (Polish eDO Post) 🧪  
+  - [ ] 2.8.4 Email account integration
+  - [ ] 2.8.5 Google Calendar integration
 
-## 11. Subscription  
-- [x] 11.1 Różne plany subskrypcyjne (np. Free, Basic, Pro, Enterprise)  
-- [ ] 11.2 Zarządzanie subskrypcją w panelu użytkownika  
-- [x] 11.3 Płatności online przez Stripe (karty kredytowe, faktury)  
-- [ ] 11.4 Automatyczne odnawianie subskrypcji  
-- [ ] 11.5 Blokady funkcji po wygaśnięciu płatności
+---
 
+### 3. Integrations
+
+- [x] 3.1 REGON – Polish national business registry (official ID system for all economic entities)  
+- [x] 3.2 VIES – EU-wide VAT registry for validating VAT numbers across member states  
+- [x] 3.3 Ministry of Finance – Polish VAT white list registry  
+- [x] 3.4 IBAN API – validates IBANs and enriches them with bank name, country, institution type  
+- [x] 3.5 Azure Document Intelligence (OCR for invoices and documents)  
+- [x] 3.6 Stripe – online payments & invoicing  
+
+---
+
+### 4. Contractors
+
+- [x] 4.1 Full-text search & list view  
+- [x] 4.2 Contractor addresses  
+- [x] 4.3 Contractor bank accounts  
+- [x] 4.4 Contact persons (global contacts in progress ⏳)
+- [x] 4.5 Contractor logo/image  
+- [x] 4.6 Registry confirmations (REGON, VIES, MF)  
+- [x] 4.7 Tags
+- [x] 4.8 Comments
+- [x] 4.9 Export to Excel  
+- [x] 4.10 Attachments  
+- [x] 4.11 Activity log  
+
+---
+
+### 5. Shared Features (Common)
+
+- [x] 5.1 Unified pagination, filtering, sorting  
+- [ ] 5.2 Universal "Link with..." (polymorphic `Linkable` model)
+- [ ] 5.3 Universal reminders (`Reminder`, polymorphic)
+- [x] 5.4 Notifications system (including WebSocket support)  
+
+---
+
+### 6. Invoices & Expenses
+
+- [x] 6.1 List & search invoices
+- [x] 6.2 Attachments  
+- [x] 6.3 Tags  
+- [ ] 6.4 Export to Excel
+- [ ] 6.5 Invoice actions:  
+  - [ ] 6.3.1 Status changes
+  - [ ] 6.3.2 Clone / copy
+  - [ ] 6.3.3 Send by email
+  - [ ] 6.3.4 Send to KSeF
+  - [x] 6.3.5 Generate PDF / duplicate (custom templates)  
+  - [ ] 6.3.6 Generate / attach payment
+  - [ ] 6.3.7 Reminders
+  - [ ] 6.3.8 Link to project, user, contractor
+  - [ ] 6.3.9 Recurring invoices / templates
+  - [ ] 6.3.10 Public shareable link
+  - [ ] 6.3.11 Export to Elixir/Videotel batch transfers
+  - [ ] 6.3.12 Bulk actions
+- [ ] 6.6 Controlling dimensions (cost allocation)
+- [ ] 6.7 Approval workflows with routing (backend-ready)
+
+---
+
+### 7. Products
+
+- [x] 7.1 Product list & search
+- [x] 7.2 Tagging
+- [x] 7.3 Comments
+- [x] 7.4 Product image/logo
+- [x] 7.5 Attachments
+- [x] 7.6 Activity log
+
+---
+
+### 8. Global Contacts *(in progress)*
+
+- [ ] 8.1 Global contact management
+- [ ] 8.2 Contractor linkage
+- [ ] 8.3 Integration with address & contact systems
+- [ ] 8.4 Search & pagination
+
+---
+
+### 9. Communication & Chat
+
+- [ ] 9.1 Internal messaging/chat
+- [x] 9.2 AI Chat (OpenRouter API)  
+
+---
+
+### 10. Projects
+
+- [ ] 10.1 Projects (CRUD)
+- [ ] 10.2 Project tasks
+- [ ] 10.3 Timesheet tracking
+
+---
+
+### 11. Subscription
+
+- [x] 11.1 Plans: Free, Basic, Pro, Enterprise  
+- [ ] 11.2 Plan management in UI
+- [x] 11.3 Stripe billing  
+- [ ] 11.4 Auto-renewal
+- [ ] 11.5 Account lockout after expiration
+
+---
 
 ### Tech
 
