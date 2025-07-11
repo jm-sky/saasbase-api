@@ -1,293 +1,152 @@
 <div class="invoice-container creative-template">
-    <!-- Header with Gradient Background -->
-    <div class="creative-header">
-        <div class="header-content">
-            <div class="header-left">
+    <!-- Modern Gradient Header -->
+    <div class="creative-gradient-header">
+        <div class="creative-header-content">
+            <div class="creative-branding">
                 {{#if invoice.seller.logoUrl}}
-                    <div class="logo-section">
-                        {{{logoUrl invoice.seller.logoUrl width="160px"}}}
+                    <div class="creative-logo">
+                        {{{logoUrl invoice.seller.logoUrl width="120px"}}}
                     </div>
                 {{/if}}
-                <h1 class="creative-title">{{t "invoices.invoice"}}</h1>
-                <p class="creative-number">{{invoice.number}}</p>
+                <div class="creative-brand-text">
+                    <h2 class="creative-brand-name">CREATIVE</h2>
+                    <p class="creative-brand-tagline">YOUR INVOICE NAME</p>
+                </div>
             </div>
-            <div class="creative-info-card">
-                {{#if invoice.issueDate}}
-                    <div class="creative-info-row">
-                        <span class="creative-info-label">{{t "invoices.issue_date"}}</span>
-                        <span class="creative-info-value">{{invoice.issueDate}}</span>
-                    </div>
-                {{/if}}
-                {{#if invoice.dueDate}}
-                    <div class="creative-info-row">
-                        <span class="creative-info-label">{{t "invoices.due_date"}}</span>
-                        <span class="creative-info-value">{{invoice.dueDate}}</span>
-                    </div>
-                {{/if}}
-                {{#if invoice.status}}
-                    <div class="creative-info-row">
-                        <span class="creative-info-label">{{t "invoices.status"}}</span>
-                        <span class="creative-info-value status-badge">{{invoice.status}}</span>
-                    </div>
-                {{/if}}
+            <div class="creative-invoice-title">
+                <h1 class="creative-main-title">Invoice</h1>
+                <p class="creative-invoice-number">Invoice No. {{invoice.number}}</p>
             </div>
         </div>
     </div>
 
-    <!-- Business Information -->
-    <div class="grid-cols-2">
-        <div class="creative-party-card">
-            <div class="creative-card-header">
-                <h3 class="creative-card-title">{{t "invoices.from"}}</h3>
+    <!-- Main Content Area -->
+    <div class="creative-content">
+        <!-- Bill To and Payment Method Row -->
+        <div class="creative-top-section">
+            <div class="creative-bill-to">
+                <h3 class="creative-section-title">Bill To</h3>
+                <div class="creative-client-info">
+                    {{#if invoice.buyer.name}}
+                        <p class="creative-client-name">{{invoice.buyer.name}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.address}}
+                        <p class="creative-client-address">{{invoice.buyer.address}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.country}}
+                        <p class="creative-client-address">{{invoice.buyer.country}}</p>
+                    {{/if}}
+                    {{#if invoice.buyer.email}}
+                        <p class="creative-client-contact">E. {{invoice.buyer.email}}</p>
+                    {{/if}}
+                </div>
             </div>
-            <div class="creative-card-content">
-                {{#if invoice.seller.name}}
-                    <p class="company-name">{{invoice.seller.name}}</p>
-                {{/if}}
-                {{#if invoice.seller.address}}
-                    <p class="address-line">{{invoice.seller.address}}</p>
-                {{/if}}
-                {{#if invoice.seller.country}}
-                    <p class="address-line">{{invoice.seller.country}}</p>
-                {{/if}}
-                {{#if invoice.seller.taxId}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.seller.taxId}}</p>
-                {{/if}}
-                {{#if invoice.seller.email}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.seller.email}}</p>
-                {{/if}}
+            
+            <div class="creative-payment-method">
+                <h3 class="creative-section-title">Payment Method:</h3>
+                <p class="creative-payment-text">{{invoice.payment.method}}</p>
+                <p class="creative-payment-text">Card Payment Will Accept. Visa, Mastercard Payment</p>
+            </div>
+        </div>
+
+        <!-- Account Due and Date Section -->
+        <div class="creative-account-section">
+            <div class="creative-account-due">
+                <p class="creative-account-label">Account Due</p>
+                <p class="creative-account-amount">{{invoice.formattedTotalGross}}</p>
+            </div>
+            <div class="creative-dates">
+                <p class="creative-date-item">Date: {{invoice.issueDate}}</p>
             </div>
         </div>
 
-        <div class="creative-party-card">
-            <div class="creative-card-header-light">
-                <h3 class="creative-card-title-dark">{{t "invoices.to"}}</h3>
-            </div>
-            <div class="creative-card-content">
-                {{#if invoice.buyer.name}}
-                    <p class="company-name">{{invoice.buyer.name}}</p>
-                {{/if}}
-                {{#if invoice.buyer.address}}
-                    <p class="address-line">{{invoice.buyer.address}}</p>
-                {{/if}}
-                {{#if invoice.buyer.country}}
-                    <p class="address-line">{{invoice.buyer.country}}</p>
-                {{/if}}
-                {{#if invoice.buyer.taxId}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.buyer.taxId}}</p>
-                {{/if}}
-                {{#if invoice.buyer.email}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.buyer.email}}</p>
-                {{/if}}
-            </div>
-        </div>
-    </div>
-
-    <!-- Description -->
-    {{#if invoice.description}}
-        <div class="description-section">
-            <h3 class="section-title creative-accent">{{t "invoices.description"}}</h3>
-            <div class="creative-description-card">
-                {{invoice.description}}
-            </div>
-        </div>
-    {{/if}}
-
-    <!-- Items Table -->
-    <div class="items-section">
-        <table class="creative-items-table">
-            <thead>
-                <tr>
-                    <th class="text-left">{{t "invoices.description"}}</th>
-                    <th class="text-center">{{t "invoices.quantity"}}</th>
-                    <th class="text-right">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right">{{t "invoices.total_net"}}</th>
-                    <th class="text-right">{{t "invoices.vat"}}</th>
-                    <th class="text-right">{{t "invoices.total_gross"}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each invoice.lines}}
-                    <tr>
-                        <td class="creative-item-description">
-                            {{#if description}}
-                                <div class="item-name">{{description}}</div>
-                            {{/if}}
-                            <div class="item-vat creative-accent">{{vatRateName}} ({{vatRateValue}}%)</div>
-                        </td>
-                        <td class="text-center item-cell">{{formattedQuantity}}</td>
-                        <td class="text-right item-cell">{{formattedUnitPrice}}</td>
-                        <td class="text-right item-cell">{{formattedTotalNet}}</td>
-                        <td class="text-right item-cell">{{formattedTotalVat}}</td>
-                        <td class="creative-item-total">{{formattedTotalGross}}</td>
-                    </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- VAT Summary -->
-    {{#if invoice.vatSummary}}
-        <div class="vat-summary-section">
-            <h3 class="section-title creative-accent">{{t "invoices.vat_summary"}}</h3>
-            <table class="creative-vat-table">
+        <!-- Items Table with Modern Styling -->
+        <div class="creative-items-section">
+            <table class="creative-modern-table">
                 <thead>
                     <tr>
-                        <th class="text-left">{{t "invoices.vat_rate"}}</th>
-                        <th class="text-right">{{t "invoices.net_amount"}}</th>
-                        <th class="text-right">{{t "invoices.vat_amount"}}</th>
-                        <th class="text-right">{{t "invoices.gross_amount"}}</th>
+                        <th class="creative-th-description">ITEM DESCRIPTIONS</th>
+                        <th class="creative-th-rate">RATE</th>
+                        <th class="creative-th-qty">QUANTITY</th>
+                        <th class="creative-th-price">PRICE</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each invoice.vatSummary}}
-                        <tr>
-                            <td class="vat-cell">{{vatRateName}} ({{vatRateValue}}%)</td>
-                            <td class="text-right vat-cell">{{formattedNet}}</td>
-                            <td class="text-right vat-cell">{{formattedVat}}</td>
-                            <td class="text-right vat-cell font-semibold creative-accent">{{formattedGross}}</td>
+                    {{#each invoice.lines}}
+                        <tr class="creative-item-row">
+                            <td class="creative-item-desc">
+                                <div class="creative-item-name">{{description}}</div>
+                                <div class="creative-item-details">{{vatRateName}} ({{vatRateValue}}%)</div>
+                            </td>
+                            <td class="creative-item-rate">{{formattedUnitPrice}}</td>
+                            <td class="creative-item-quantity">{{formattedQuantity}}</td>
+                            <td class="creative-item-price">{{formattedTotalGross}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
-    {{/if}}
 
-    <!-- Creative Total Summary -->
-    <div class="total-summary-section">
-        <div class="creative-total-card">
-            <div class="creative-total-header">
-                <div class="total-row">
-                    <span class="total-label">{{t "invoices.subtotal"}}</span>
-                    <span class="total-value">{{invoice.formattedTotalNet}}</span>
+        <!-- Payment Information Section -->
+        <div class="creative-payment-info">
+            <h3 class="creative-payment-title">PAYMENT METHOD</h3>
+            <p class="creative-payment-detail">{{invoice.payment.method}}</p>
+            
+            <h3 class="creative-payment-title">CARD PAYMENT</h3>
+            <p class="creative-payment-detail">Visa, Mastercard, Payoneer</p>
+        </div>
+
+        <!-- Terms and Totals Section -->
+        <div class="creative-bottom-section">
+            <div class="creative-terms">
+                <h3 class="creative-terms-title">Terms & Conditions/Notes:</h3>
+                <p class="creative-terms-text">Your Privacy and Security are important to us. This is your second  
+                month using Paperwork software at our conditions that can be found here.</p>
+            </div>
+            
+            <div class="creative-totals">
+                <div class="creative-total-row">
+                    <span class="creative-total-label">Sub-Total</span>
+                    <span class="creative-total-value">{{invoice.formattedTotalNet}}</span>
                 </div>
-                <div class="total-row">
-                    <span class="total-label">{{t "invoices.vat"}}</span>
-                    <span class="total-value">{{invoice.formattedTotalTax}}</span>
+                <div class="creative-total-row">
+                    <span class="creative-total-label">Tax Vat({{invoice.vatSummary.0.vatRateValue}}%)</span>
+                    <span class="creative-total-value">{{invoice.formattedTotalTax}}</span>
                 </div>
-                <div class="total-row">
-                    <span class="total-label">{{t "invoices.total"}}</span>
-                    <span class="total-value">{{invoice.formattedTotalGross}}</span>
+                <div class="creative-total-row">
+                    <span class="creative-total-label">Discount (5%)</span>
+                    <span class="creative-total-value">{{invoice.formattedTotalTax}}</span>
+                </div>
+                <div class="creative-total-final">
+                    <span class="creative-total-final-label">Grand Total</span>
+                    <span class="creative-total-final-value">{{invoice.formattedTotalGross}}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Exchange Rate -->
-    {{#if invoice.exchange}}
-        <div class="creative-exchange">
-            <h3 class="creative-exchange-title">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
-            <div class="creative-exchange-info">
-                {{#if invoice.exchange.formattedExchangeRate}}
-                    <p>{{t "invoices.exchange_rate"}}: {{invoice.exchange.formattedExchangeRate}}</p>
-                {{/if}}
-                {{#if invoice.exchange.date}}
-                    <p>{{t "invoices.date"}}: {{invoice.exchange.date}}</p>
-                {{/if}}
+    <!-- Modern Footer with Contact Icons -->
+    <div class="creative-modern-footer">
+        <div class="creative-contact-icons">
+            <div class="creative-contact-item">
+                <div class="creative-contact-icon">📱</div>
+                <div class="creative-contact-text">{{invoice.seller.phone}}</div>
+            </div>
+            <div class="creative-contact-item">
+                <div class="creative-contact-icon">✉️</div>
+                <div class="creative-contact-text">{{invoice.seller.email}}</div>
+            </div>
+            <div class="creative-contact-item">
+                <div class="creative-contact-icon">📍</div>
+                <div class="creative-contact-text">{{invoice.seller.address}}</div>
             </div>
         </div>
-    {{/if}}
-
-    <!-- Payment Information -->
-    {{#if invoice.payment}}
-        <div class="creative-payment">
-            <h3 class="creative-payment-title">{{t "invoices.payment_details"}}</h3>
-            <div class="grid-cols-2">
-                <div class="payment-info">
-                    <p><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
-                    <p><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
-                    {{#if invoice.payment.reference}}
-                        <p><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
-                    {{/if}}
-                </div>
-                <div class="payment-info">
-                    {{#if invoice.payment.formattedPaidAmount}}
-                        <p><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
-                    {{/if}}
-                    {{#if invoice.payment.paidDate}}
-                        <p><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
-                    {{/if}}
-                </div>
-            </div>
-
-            {{#if invoice.payment.bankAccount}}
-                <div class="creative-bank-account">
-                    <h4 class="creative-bank-title">{{t "invoices.bank_account"}}</h4>
-                    <div class="bank-account-info">
-                        {{#if invoice.payment.bankAccount.bankName}}
-                            <p><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
-                        {{/if}}
-                        {{#if invoice.payment.bankAccount.iban}}
-                            <p><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
-                        {{/if}}
-                        {{#if invoice.payment.bankAccount.swift}}
-                            <p><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
-                        {{/if}}
-                    </div>
-                </div>
-            {{/if}}
-
-            {{#if invoice.payment.terms}}
-                <div class="creative-payment-terms">
-                    <h4 class="creative-bank-title">{{t "invoices.payment_terms"}}</h4>
-                    <p>{{invoice.payment.terms}}</p>
-                </div>
-            {{/if}}
-        </div>
-    {{/if}}
-
-    <!-- Signatures -->
-    {{#if options.includeSignatures}}
-        <div class="creative-signatures">
-            {{#if options.issuerSignature}}
-                <div class="creative-signature-box">
-                    <h4 class="creative-signature-title">{{t "invoices.authorized_by"}}</h4>
-                    <div class="creative-signature-line">
-                        {{#if options.issuerSignature.imageUrl}}
-                            <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
-                                {{{signatureUrl options.issuerSignature.imageUrl}}}
-                            </div>
-                        {{/if}}
-                    </div>
-                    <div class="signature-name">{{options.issuerSignature.name}}</div>
-                    {{#if options.issuerSignature.title}}
-                        <div class="signature-details">{{options.issuerSignature.title}}</div>
-                    {{/if}}
-                    {{#if options.issuerSignature.date}}
-                        <div class="signature-details">{{options.issuerSignature.date}}</div>
-                    {{/if}}
-                </div>
-            {{/if}}
-
-            {{#if options.receiverSignature}}
-                <div class="creative-signature-box">
-                    <h4 class="creative-signature-title">{{t "invoices.received_by"}}</h4>
-                    <div class="creative-signature-line">
-                        {{#if options.receiverSignature.imageUrl}}
-                            <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
-                                {{{signatureUrl options.receiverSignature.imageUrl}}}
-                            </div>
-                        {{/if}}
-                    </div>
-                    <div class="signature-name">{{options.receiverSignature.name}}</div>
-                    {{#if options.receiverSignature.title}}
-                        <div class="signature-details">{{options.receiverSignature.title}}</div>
-                    {{/if}}
-                    {{#if options.receiverSignature.date}}
-                        <div class="signature-details">{{options.receiverSignature.date}}</div>
-                    {{/if}}
-                </div>
-            {{/if}}
-        </div>
-    {{/if}}
-
-    <!-- Creative Footer -->
-    <div class="creative-footer">
-        {{#if invoice.seller.logoUrl}}
-            {{{logoUrl invoice.seller.logoUrl width="100px"}}}
-        {{/if}}
-        <div class="footer-text">
-            {{t "invoices.invoice"}} {{invoice.number}} | {{invoice.issueDate}}
+        
+        <div class="creative-signature">
+            <p class="creative-signature-text">Digital Signature</p>
+            <p class="creative-signature-name">James Doe</p>
+            <p class="creative-signature-title">Manager</p>
         </div>
     </div>
+
 </div>

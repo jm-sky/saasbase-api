@@ -1,36 +1,34 @@
-<div class="invoice-container">
-    <!-- Header Section with Gradient Background -->
-    <div class="header-section modern-accent-bg">
-        <div class="header-content">
-            <div class="header-left">
-                {{#if invoice.seller.logoUrl}}
-                    <div class="logo-section">
-                        {{{logoUrl invoice.seller.logoUrl width="160px"}}}
-                    </div>
-                {{/if}}
-                <h1 class="invoice-title">{{t "invoices.invoice"}}</h1>
-                <p class="invoice-number">#{{invoice.number}}</p>
+<div class="invoice-container modern-template">
+    <!-- Modern Header Section -->
+    <div class="modern-header">
+        {{#if invoice.seller.logoUrl}}
+            <div class="modern-logo">
+                {{{logoUrl invoice.seller.logoUrl width="140px"}}}
             </div>
-            <div class="modern-info-card">
-                {{#if invoice.issueDate}}
-                    <div class="modern-info-row">
-                        <span class="modern-info-label">{{t "invoices.issue_date"}}</span>
-                        <span class="modern-info-value">{{invoice.issueDate}}</span>
-                    </div>
-                {{/if}}
-                {{#if invoice.dueDate}}
-                    <div class="modern-info-row">
-                        <span class="modern-info-label">{{t "invoices.due_date"}}</span>
-                        <span class="modern-info-value">{{invoice.dueDate}}</span>
-                    </div>
-                {{/if}}
-                {{#if invoice.status}}
-                    <div class="modern-info-row">
-                        <span class="modern-info-label">{{t "invoices.status"}}</span>
-                        <span class="modern-info-value status-badge">{{invoice.status}}</span>
-                    </div>
-                {{/if}}
-            </div>
+        {{/if}}
+        <div class="modern-title-section">
+            <h1 class="modern-title">{{t "invoices.invoice"}}</h1>
+            <p class="modern-number">#{{invoice.number}}</p>
+        </div>
+        <div class="modern-info-card">
+            {{#if invoice.issueDate}}
+                <div class="modern-info-row">
+                    <span class="modern-info-label">{{t "invoices.issue_date"}}:</span>
+                    <span class="modern-info-value">{{invoice.issueDate}}</span>
+                </div>
+            {{/if}}
+            {{#if invoice.dueDate}}
+                <div class="modern-info-row">
+                    <span class="modern-info-label">{{t "invoices.due_date"}}:</span>
+                    <span class="modern-info-value">{{invoice.dueDate}}</span>
+                </div>
+            {{/if}}
+            {{#if invoice.status}}
+                <div class="modern-info-row">
+                    <span class="modern-info-label">{{t "invoices.status"}}:</span>
+                    <span class="modern-info-value status-badge">{{invoice.status}}</span>
+                </div>
+            {{/if}}
         </div>
     </div>
 

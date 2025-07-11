@@ -45,10 +45,10 @@ return [
                 'format'      => 'A4',
                 'orientation' => 'portrait', // portrait or landscape
                 'margins'     => [
-                    'top'    => '10mm',
-                    'right'  => '10mm',
-                    'bottom' => '15mm',
-                    'left'   => '10mm',
+                    'top'    => '5mm',
+                    'right'  => '5mm',
+                    'bottom' => '10mm',
+                    'left'   => '5mm',
                 ],
                 'print_background'      => true,
                 'prefer_css_page_size'  => false,

@@ -1,21 +1,24 @@
 <div class="invoice-container clean-template">
-    <!-- Header -->
+    <!-- Clean Header with Polish Title -->
     <div class="clean-header">
-        {{#if invoice.seller.logoUrl}}
-            <div class="clean-logo">
-                {{{logoUrl invoice.seller.logoUrl width="140px"}}}
+        <h1 class="clean-main-title">Faktura podstawowa</h1>
+        <div class="clean-invoice-info">
+            <div class="clean-invoice-number">
+                <span class="clean-label">{{invoice.number}}</span>
+                <span class="clean-date-right">{{invoice.issueDate}}</span>
             </div>
-        {{/if}}
-        <h1 class="clean-title">{{t "invoices.invoice"}}</h1>
-        <p class="clean-number">{{invoice.number}}</p>
-        
-        <div class="clean-dates">
-            {{#if invoice.issueDate}}
-                <span class="clean-date">{{t "invoices.issue_date"}}: {{invoice.issueDate}}</span>
-            {{/if}}
-            {{#if invoice.dueDate}}
-                <span class="clean-date">{{t "invoices.due_date"}}: {{invoice.dueDate}}</span>
-            {{/if}}
+        </div>
+    </div>
+
+    <!-- Date Information Row -->
+    <div class="clean-date-section">
+        <div class="clean-date-item">
+            <span class="clean-date-label">Data wystawienia</span>
+            <span class="clean-date-value">{{invoice.issueDate}}</span>
+        </div>
+        <div class="clean-date-item">
+            <span class="clean-date-label">Termin płatności</span>
+            <span class="clean-date-value">{{invoice.dueDate}}</span>
         </div>
     </div>
 

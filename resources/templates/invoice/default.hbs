@@ -1,32 +1,26 @@
-<div class="invoice-container">
-    <!-- Header Section -->
-    <div class="header-section">
-        <div class="header-left">
-            {{#if invoice.seller.logoUrl}}
-                <div class="logo-section">
-                    {{{logoUrl invoice.seller.logoUrl width="160px"}}}
-                </div>
-            {{/if}}
-            <h1 class="invoice-title">{{t "invoices.invoice"}}</h1>
-            <p class="invoice-number">#{{invoice.number}}</p>
+<div class="invoice-container default-template">
+    <!-- Compact Header Section -->
+    <div class="default-header">
+        {{#if invoice.seller.logoUrl}}
+            <div class="default-logo">
+                {{{logoUrl invoice.seller.logoUrl width="140px"}}}
+            </div>
+        {{/if}}
+        <div class="default-title-section">
+            <h1 class="default-main-title">{{t "invoices.invoice"}}</h1>
+            <p class="default-invoice-number">#{{invoice.number}}</p>
         </div>
-        <div class="invoice-info-card">
+        <div class="default-info-card">
             {{#if invoice.issueDate}}
-                <div class="invoice-info-row">
-                    <span class="invoice-info-label">{{t "invoices.issue_date"}}</span>
-                    <span class="invoice-info-value">{{invoice.issueDate}}</span>
+                <div class="default-info-row">
+                    <span class="default-info-label">{{t "invoices.issue_date"}}:</span>
+                    <span class="default-info-value">{{invoice.issueDate}}</span>
                 </div>
             {{/if}}
             {{#if invoice.dueDate}}
-                <div class="invoice-info-row">
-                    <span class="invoice-info-label">{{t "invoices.due_date"}}</span>
-                    <span class="invoice-info-value">{{invoice.dueDate}}</span>
-                </div>
-            {{/if}}
-            {{#if invoice.status}}
-                <div class="invoice-info-row">
-                    <span class="invoice-info-label">{{t "invoices.status"}}</span>
-                    <span class="invoice-info-value status-badge">{{invoice.status}}</span>
+                <div class="default-info-row">
+                    <span class="default-info-label">{{t "invoices.due_date"}}:</span>
+                    <span class="default-info-value">{{invoice.dueDate}}</span>
                 </div>
             {{/if}}
         </div>
@@ -34,11 +28,11 @@
 
     <!-- Business Information Section -->
     <div class="grid-cols-2">
-        <div class="business-card">
-            <div class="business-card-header">
-                <h3 class="business-card-title">{{t "invoices.from"}}</h3>
+        <div class="default-business-card">
+            <div class="default-card-header">
+                <h3 class="default-card-title">{{t "invoices.from"}}</h3>
             </div>
-            <div class="business-card-content">
+            <div class="default-card-content">
                 {{#if invoice.seller.name}}
                     <p class="company-name">{{invoice.seller.name}}</p>
                 {{/if}}
@@ -49,19 +43,19 @@
                     <p class="address-line">{{invoice.seller.country}}</p>
                 {{/if}}
                 {{#if invoice.seller.taxId}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.seller.taxId}}</p>
+                    <p class="detail-line">{{t "invoices.tax_id"}}: {{invoice.seller.taxId}}</p>
                 {{/if}}
                 {{#if invoice.seller.email}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.seller.email}}</p>
+                    <p class="detail-line">{{t "invoices.email"}}: {{invoice.seller.email}}</p>
                 {{/if}}
             </div>
         </div>
 
-        <div class="business-card">
-            <div class="business-card-header">
-                <h3 class="business-card-title">{{t "invoices.to"}}</h3>
+        <div class="default-business-card">
+            <div class="default-card-header">
+                <h3 class="default-card-title">{{t "invoices.to"}}</h3>
             </div>
-            <div class="business-card-content">
+            <div class="default-card-content">
                 {{#if invoice.buyer.name}}
                     <p class="company-name">{{invoice.buyer.name}}</p>
                 {{/if}}
@@ -72,10 +66,10 @@
                     <p class="address-line">{{invoice.buyer.country}}</p>
                 {{/if}}
                 {{#if invoice.buyer.taxId}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.buyer.taxId}}</p>
+                    <p class="detail-line">{{t "invoices.tax_id"}}: {{invoice.buyer.taxId}}</p>
                 {{/if}}
                 {{#if invoice.buyer.email}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.buyer.email}}</p>
+                    <p class="detail-line">{{t "invoices.email"}}: {{invoice.buyer.email}}</p>
                 {{/if}}
             </div>
         </div>
@@ -92,8 +86,8 @@
     {{/if}}
 
     <!-- Invoice Items Table -->
-    <div class="items-section">
-        <table class="items-table">
+    <div class="default-items-section">
+        <table class="default-items-table">
             <thead>
                 <tr>
                     <th class="text-left">{{t "invoices.description"}}</th>
@@ -107,7 +101,7 @@
             <tbody>
                 {{#each invoice.lines}}
                     <tr>
-                        <td class="item-description">
+                        <td class="default-item-description">
                             {{#if description}}
                                 <div class="item-name">{{description}}</div>
                             {{/if}}
@@ -117,7 +111,7 @@
                         <td class="text-right item-cell">{{formattedUnitPrice}}</td>
                         <td class="text-right item-cell">{{formattedTotalNet}}</td>
                         <td class="text-right item-cell">{{formattedTotalVat}}</td>
-                        <td class="item-total">{{formattedTotalGross}}</td>
+                        <td class="default-item-total">{{formattedTotalGross}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -126,9 +120,9 @@
 
     <!-- VAT Summary -->
     {{#if invoice.vatSummary}}
-        <div class="vat-summary-section">
+        <div class="default-vat-summary">
             <h3 class="section-title">{{t "invoices.vat_summary"}}</h3>
-            <table class="vat-summary-table">
+            <table class="default-vat-table">
                 <thead>
                     <tr>
                         <th class="text-left">{{t "invoices.vat_rate"}}</th>
@@ -152,8 +146,8 @@
     {{/if}}
 
     <!-- Total Summary -->
-    <div class="total-summary-section">
-        <div class="total-summary-card">
+    <div class="default-totals">
+        <div class="default-totals-card">
             <div class="total-row">
                 <span class="total-label">{{t "invoices.subtotal"}}</span>
                 <span class="total-value">{{invoice.formattedTotalNet}}</span>
@@ -162,7 +156,7 @@
                 <span class="total-label">{{t "invoices.vat"}}</span>
                 <span class="total-value">{{invoice.formattedTotalTax}}</span>
             </div>
-            <div class="total-final-row">
+            <div class="default-total-final">
                 <span class="total-final-label">{{t "invoices.total"}}</span>
                 <span class="total-final-value">{{invoice.formattedTotalGross}}</span>
             </div>

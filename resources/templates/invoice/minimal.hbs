@@ -1,23 +1,23 @@
 <div class="invoice-container minimal-template">
-    <!-- Clean Header -->
+    <!-- Minimal Clean Header -->
     <div class="minimal-header">
         {{#if invoice.seller.logoUrl}}
             <div class="minimal-logo">
-                {{{logoUrl invoice.seller.logoUrl width="120px"}}}
+                {{{logoUrl invoice.seller.logoUrl width="100px"}}}
             </div>
         {{/if}}
-        <h1 class="minimal-title">{{t "invoices.invoice"}}</h1>
-        <p class="minimal-number">{{invoice.number}}</p>
-    </div>
-
-    <!-- Invoice Dates -->
-    <div class="minimal-dates">
-        {{#if invoice.issueDate}}
-            <span class="minimal-date-item">{{t "invoices.issue_date"}}: {{invoice.issueDate}}</span>
-        {{/if}}
-        {{#if invoice.dueDate}}
-            <span class="minimal-date-item">{{t "invoices.due_date"}}: {{invoice.dueDate}}</span>
-        {{/if}}
+        <div class="minimal-title-section">
+            <h1 class="minimal-title">{{t "invoices.invoice"}}</h1>
+            <p class="minimal-number">{{invoice.number}}</p>
+        </div>
+        <div class="minimal-dates">
+            {{#if invoice.issueDate}}
+                <div class="minimal-date-item">{{t "invoices.issue_date"}}: {{invoice.issueDate}}</div>
+            {{/if}}
+            {{#if invoice.dueDate}}
+                <div class="minimal-date-item">{{t "invoices.due_date"}}: {{invoice.dueDate}}</div>
+            {{/if}}
+        </div>
     </div>
 
     <!-- Business Information -->

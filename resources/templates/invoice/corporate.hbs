@@ -1,31 +1,31 @@
 <div class="invoice-container corporate-template">
-    <!-- Corporate Header -->
+    <!-- Professional Corporate Header -->
     <div class="corporate-header">
-        <div class="header-left">
-            {{#if invoice.seller.logoUrl}}
-                <div class="corporate-logo">
-                    {{{logoUrl invoice.seller.logoUrl width="180px"}}}
-                </div>
-            {{/if}}
+        {{#if invoice.seller.logoUrl}}
+            <div class="corporate-logo">
+                {{{logoUrl invoice.seller.logoUrl width="160px"}}}
+            </div>
+        {{/if}}
+        <div class="corporate-title-section">
             <h1 class="corporate-title">{{t "invoices.invoice"}}</h1>
             <p class="corporate-number">#{{invoice.number}}</p>
         </div>
         <div class="corporate-info-card">
             {{#if invoice.issueDate}}
                 <div class="corporate-info-row">
-                    <span class="corporate-info-label">{{t "invoices.issue_date"}}</span>
+                    <span class="corporate-info-label">{{t "invoices.issue_date"}}:</span>
                     <span class="corporate-info-value">{{invoice.issueDate}}</span>
                 </div>
             {{/if}}
             {{#if invoice.dueDate}}
                 <div class="corporate-info-row">
-                    <span class="corporate-info-label">{{t "invoices.due_date"}}</span>
+                    <span class="corporate-info-label">{{t "invoices.due_date"}}:</span>
                     <span class="corporate-info-value">{{invoice.dueDate}}</span>
                 </div>
             {{/if}}
             {{#if invoice.status}}
                 <div class="corporate-info-row">
-                    <span class="corporate-info-label">{{t "invoices.status"}}</span>
+                    <span class="corporate-info-label">{{t "invoices.status"}}:</span>
                     <span class="corporate-info-value status-badge">{{invoice.status}}</span>
                 </div>
             {{/if}}
@@ -92,8 +92,8 @@
     {{/if}}
 
     <!-- Professional Invoice Items Table -->
-    <div class="items-section">
-        <table class="invoice-table">
+    <div class="corporate-items-section">
+        <table class="corporate-items-table">
             <thead>
                 <tr>
                     <th class="text-left">{{t "invoices.description"}}</th>
@@ -107,7 +107,7 @@
             <tbody>
                 {{#each invoice.lines}}
                     <tr>
-                        <td class="item-description">
+                        <td class="corporate-item-description">
                             {{#if description}}
                                 <div class="item-name">{{description}}</div>
                             {{/if}}
@@ -117,7 +117,7 @@
                         <td class="text-right item-cell">{{formattedUnitPrice}}</td>
                         <td class="text-right item-cell">{{formattedTotalNet}}</td>
                         <td class="text-right item-cell">{{formattedTotalVat}}</td>
-                        <td class="item-total">{{formattedTotalGross}}</td>
+                        <td class="corporate-item-total">{{formattedTotalGross}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -152,21 +152,19 @@
     {{/if}}
 
     <!-- Corporate Total Summary -->
-    <div class="total-summary-section">
-        <div class="corporate-total-card">
-            <div class="corporate-total-header">
-                <div class="total-row">
-                    <span class="total-label">{{t "invoices.subtotal"}}</span>
-                    <span class="total-value">{{invoice.formattedTotalNet}}</span>
-                </div>
-                <div class="total-row">
-                    <span class="total-label">{{t "invoices.vat"}}</span>
-                    <span class="total-value">{{invoice.formattedTotalTax}}</span>
-                </div>
-                <div class="total-row">
-                    <span class="total-label">{{t "invoices.total"}}</span>
-                    <span class="total-value">{{invoice.formattedTotalGross}}</span>
-                </div>
+    <div class="corporate-totals">
+        <div class="corporate-totals-card">
+            <div class="total-row">
+                <span class="total-label">{{t "invoices.subtotal"}}</span>
+                <span class="total-value">{{invoice.formattedTotalNet}}</span>
+            </div>
+            <div class="total-row">
+                <span class="total-label">{{t "invoices.vat"}}</span>
+                <span class="total-value">{{invoice.formattedTotalTax}}</span>
+            </div>
+            <div class="corporate-total-final">
+                <span class="total-final-label">{{t "invoices.total"}}</span>
+                <span class="total-final-value">{{invoice.formattedTotalGross}}</span>
             </div>
         </div>
     </div>

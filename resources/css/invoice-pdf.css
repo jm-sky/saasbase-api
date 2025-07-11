@@ -56,11 +56,11 @@
 /* Base styles */
 body {
     font-family: "DejaVu Sans", "Noto Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
-    font-size: 11px;
-    line-height: 1.4;
+    font-size: 10px;
+    line-height: 1.5;
     color: var(--text-primary);
     margin: 0;
-    padding: 0;
+    padding: 8px;
 }
 
 /* Page break handling */
@@ -740,6 +740,372 @@ body {
     margin-bottom: 0 !important;
 }
 
+/* Creative Template - Modern Design */
+.creative-template {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Gradient Header */
+.creative-gradient-header {
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    color: white;
+    padding: 20px;
+    margin: -8px -8px 20px -8px;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+.creative-gradient-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+}
+
+.creative-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+}
+
+.creative-branding {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.creative-logo img {
+    max-height: 60px;
+    filter: brightness(0) invert(1);
+}
+
+.creative-brand-name {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.creative-brand-tagline {
+    font-size: 10px;
+    margin: 0;
+    opacity: 0.8;
+    font-weight: 300;
+}
+
+.creative-invoice-title {
+    text-align: right;
+}
+
+.creative-main-title {
+    font-size: 36px;
+    font-weight: 300;
+    margin: 0;
+    letter-spacing: 3px;
+}
+
+.creative-invoice-number {
+    font-size: 12px;
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+}
+
+/* Content Area */
+.creative-content {
+    padding: 0 8px;
+}
+
+.creative-top-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 40px;
+}
+
+.creative-bill-to {
+    flex: 1;
+}
+
+.creative-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+}
+
+.creative-client-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 4px 0;
+}
+
+.creative-client-address, .creative-client-contact {
+    font-size: 11px;
+    color: #666;
+    margin: 2px 0;
+}
+
+.creative-payment-method {
+    flex: 1;
+    text-align: right;
+}
+
+.creative-payment-text {
+    font-size: 11px;
+    color: #666;
+    margin: 2px 0;
+}
+
+/* Account Section */
+.creative-account-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.creative-account-label {
+    font-size: 11px;
+    color: #666;
+    margin: 0;
+}
+
+.creative-account-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.creative-date-item {
+    font-size: 11px;
+    color: #666;
+    margin: 0;
+}
+
+/* Modern Items Table */
+.creative-modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.creative-modern-table thead {
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+}
+
+.creative-modern-table th {
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 12px 8px;
+    text-align: left;
+}
+
+.creative-th-rate, .creative-th-qty, .creative-th-price {
+    text-align: center;
+    width: 80px;
+}
+
+.creative-item-row {
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.creative-item-row:nth-child(even) {
+    background-color: #FAFAFA;
+}
+
+.creative-item-desc {
+    padding: 15px 8px;
+}
+
+.creative-item-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.creative-item-details {
+    font-size: 10px;
+    color: #666;
+}
+
+.creative-item-rate, .creative-item-quantity, .creative-item-price {
+    padding: 15px 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Payment Info Section */
+.creative-payment-info {
+    margin: 20px 0;
+    padding: 15px 0;
+    border-top: 1px solid #E5E7EB;
+}
+
+.creative-payment-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    margin: 10px 0 5px 0;
+    text-transform: uppercase;
+}
+
+.creative-payment-detail {
+    font-size: 11px;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+/* Bottom Section */
+.creative-bottom-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.creative-terms {
+    flex: 1;
+}
+
+.creative-terms-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+}
+
+.creative-terms-text {
+    font-size: 10px;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Totals */
+.creative-totals {
+    flex: 0 0 250px;
+    background: #F8FAFC;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.creative-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.creative-total-label {
+    font-size: 11px;
+    color: #666;
+}
+
+.creative-total-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+}
+
+.creative-total-final {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    margin-top: 8px;
+    border-top: 2px solid #4A90E2;
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    margin: 8px -20px -20px -20px;
+    padding: 12px 20px;
+}
+
+.creative-total-final-label, .creative-total-final-value {
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Modern Footer */
+.creative-modern-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    color: white;
+    border-radius: 8px;
+}
+
+.creative-contact-icons {
+    display: flex;
+    gap: 20px;
+}
+
+.creative-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.creative-contact-icon {
+    width: 24px;
+    height: 24px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.creative-contact-text {
+    font-size: 10px;
+    color: white;
+}
+
+.creative-signature {
+    text-align: right;
+}
+
+.creative-signature-text {
+    font-size: 10px;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.creative-signature-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 4px 0 2px 0;
+}
+
+.creative-signature-title {
+    font-size: 10px;
+    margin: 0;
+    opacity: 0.8;
+}
+
 /* Modern template specific styles */
 .modern-accent-bg {
     background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-dark) 100%);
@@ -1149,4 +1515,1518 @@ body {
     .invoice-footer {
         display: none;
     }
+}
+
+/* ===================================
+   DEFAULT TEMPLATE STYLES - IMPROVED
+   =================================== */
+
+/* Default template container */
+.default-template {
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* Header styling - matches reference design */
+.default-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.default-logo {
+    display: table-cell;
+    width: 140px;
+    vertical-align: top;
+}
+
+.default-title-section {
+    display: table-cell;
+    vertical-align: top;
+    padding-left: 20px;
+}
+
+.default-main-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.default-invoice-number {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+}
+
+.default-info-card {
+    display: table-cell;
+    vertical-align: top;
+    text-align: right;
+    background-color: var(--bg-muted);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    padding: 12px;
+    width: 180px;
+}
+
+.default-info-row {
+    margin-bottom: 6px;
+}
+
+.default-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.default-info-label {
+    color: var(--text-secondary);
+    font-size: 9px;
+    font-weight: 500;
+}
+
+.default-info-value {
+    color: var(--text-primary);
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* Business cards styling */
+.default-business-card {
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.default-card-header {
+    background-color: var(--primary-600);
+    color: white;
+    padding: 8px 12px;
+}
+
+.default-card-title {
+    font-size: 10px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.default-card-content {
+    padding: 12px;
+}
+
+/* Items table styling */
+.default-items-section {
+    margin-bottom: 16px;
+}
+
+.default-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.default-items-table thead {
+    background-color: var(--bg-muted);
+}
+
+.default-items-table th {
+    padding: 8px 6px;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.default-items-table td {
+    padding: 8px 6px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.default-item-description {
+    width: 40%;
+}
+
+.default-item-total {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* VAT Summary styling */
+.default-vat-summary {
+    margin-bottom: 16px;
+}
+
+.default-vat-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.default-vat-table thead {
+    background-color: var(--bg-muted);
+}
+
+.default-vat-table th,
+.default-vat-table td {
+    padding: 6px 8px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.default-vat-table th {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Totals styling */
+.default-totals {
+    margin-bottom: 16px;
+}
+
+.default-totals-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 12px;
+    width: 280px;
+    margin-left: auto;
+}
+
+.default-total-final {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 2px solid var(--primary-600);
+    font-weight: bold;
+}
+
+.default-total-final .total-final-label {
+    font-size: 11px;
+    color: var(--text-primary);
+}
+
+.default-total-final .total-final-value {
+    font-size: 12px;
+    color: var(--primary-600);
+    font-weight: bold;
+}
+
+/* ===================================
+   MINIMAL TEMPLATE STYLES - IMPROVED
+   =================================== */
+
+/* Minimal template container */
+.minimal-template {
+    font-size: 8.5px;
+    line-height: 1.3;
+}
+
+/* Ultra-minimal header */
+.minimal-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: 8px;
+}
+
+.minimal-logo {
+    display: table-cell;
+    width: 100px;
+    vertical-align: top;
+}
+
+.minimal-title-section {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 16px;
+}
+
+.minimal-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.minimal-number {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin: 2px 0 0 0;
+}
+
+.minimal-dates {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+    width: 140px;
+}
+
+.minimal-date-item {
+    font-size: 8px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+/* Minimal party information */
+.minimal-party {
+    margin-bottom: 10px;
+}
+
+.minimal-party-title {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-primary);
+    padding-bottom: 2px;
+}
+
+.minimal-party-content {
+    padding-top: 4px;
+}
+
+/* Minimal items table */
+.minimal-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    border: none;
+}
+
+.minimal-items-table thead {
+    border-bottom: 2px solid var(--border-primary);
+}
+
+.minimal-items-table th {
+    padding: 4px 3px;
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+    border: none;
+}
+
+.minimal-items-table td {
+    padding: 4px 3px;
+    font-size: 8px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.minimal-item-description {
+    width: 45%;
+}
+
+.minimal-item-total {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Minimal VAT table */
+.minimal-vat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.minimal-vat-table thead {
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.minimal-vat-table th,
+.minimal-vat-table td {
+    padding: 3px 4px;
+    font-size: 8px;
+}
+
+.minimal-vat-table th {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Minimal totals */
+.minimal-totals {
+    margin-bottom: 12px;
+}
+
+.minimal-totals-card {
+    width: 200px;
+    margin-left: auto;
+    border-top: 1px solid var(--border-primary);
+    padding-top: 6px;
+}
+
+.minimal-total-final {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--text-primary);
+    font-weight: bold;
+}
+
+.minimal-total-final .total-label {
+    font-size: 9px;
+    color: var(--text-primary);
+}
+
+.minimal-total-final .total-value {
+    font-size: 10px;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+/* Minimal description */
+.minimal-description {
+    margin-bottom: 10px;
+    padding: 6px;
+    background-color: var(--bg-secondary);
+    border-left: 2px solid var(--border-accent);
+}
+
+.minimal-description-text {
+    font-size: 8px;
+    color: var(--text-secondary);
+    margin: 0;
+    font-style: italic;
+}
+
+/* ===================================
+   CORPORATE TEMPLATE STYLES - IMPROVED
+   =================================== */
+
+/* Corporate template container */
+.corporate-template {
+    font-size: 9.5px;
+    line-height: 1.4;
+}
+
+/* Professional corporate header */
+.corporate-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 18px;
+    border-bottom: 2px solid var(--primary-600);
+    padding-bottom: 12px;
+}
+
+.corporate-logo {
+    display: table-cell;
+    width: 160px;
+    vertical-align: top;
+}
+
+.corporate-title-section {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 24px;
+}
+
+.corporate-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--primary-600);
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.corporate-number {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 6px 0 0 0;
+    font-weight: 500;
+}
+
+.corporate-info-card {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: white;
+    border-radius: 8px;
+    padding: 16px;
+    width: 200px;
+}
+
+.corporate-info-row {
+    margin-bottom: 8px;
+}
+
+.corporate-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.corporate-info-label {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.corporate-info-value {
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* Corporate business cards */
+.corporate-card {
+    border: 2px solid var(--border-primary);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.corporate-card-header {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: white;
+    padding: 12px 16px;
+}
+
+.corporate-card-header-light {
+    background-color: var(--bg-muted);
+    border-bottom: 2px solid var(--primary-600);
+    padding: 12px 16px;
+}
+
+.corporate-card-title {
+    font-size: 11px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.corporate-card-title-dark {
+    font-size: 11px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary-600);
+}
+
+.corporate-card-content {
+    padding: 16px;
+}
+
+/* Corporate items table */
+.corporate-items-section {
+    margin-bottom: 18px;
+}
+
+.corporate-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid var(--primary-600);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.corporate-items-table thead {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: white;
+}
+
+.corporate-items-table th {
+    padding: 12px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.corporate-items-table td {
+    padding: 10px 8px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.corporate-items-table tbody tr:hover {
+    background-color: var(--bg-secondary);
+}
+
+.corporate-item-description {
+    width: 40%;
+}
+
+.corporate-item-total {
+    font-weight: 600;
+    color: var(--primary-600);
+    background-color: var(--bg-secondary);
+}
+
+/* Corporate totals */
+.corporate-totals {
+    margin-bottom: 18px;
+}
+
+.corporate-totals-card {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-muted));
+    border: 2px solid var(--primary-600);
+    border-radius: 8px;
+    padding: 16px;
+    width: 320px;
+    margin-left: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.corporate-total-final {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 2px solid var(--primary-600);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: white;
+    padding: 12px;
+    border-radius: 6px;
+    margin-left: -16px;
+    margin-right: -16px;
+    margin-bottom: -16px;
+}
+
+.corporate-total-final .total-final-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.corporate-total-final .total-final-value {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ===================================
+   MODERN TEMPLATE STYLES - IMPROVED
+   =================================== */
+
+/* Modern template container */
+.modern-template {
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* Modern header with gradient accent */
+.modern-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid var(--primary-600);
+}
+
+.modern-logo {
+    display: table-cell;
+    width: 140px;
+    vertical-align: middle;
+}
+
+.modern-title-section {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 20px;
+}
+
+.modern-title {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--primary-600);
+    margin: 0;
+    letter-spacing: 1.5px;
+}
+
+.modern-number {
+    font-size: 12px;
+    color: var(--primary-500);
+    margin: 4px 0 0 0;
+    font-weight: 500;
+}
+
+.modern-info-card {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+    background-color: white;
+    border: 1px solid var(--primary-200);
+    border-radius: 6px;
+    padding: 12px;
+    width: 180px;
+}
+
+.modern-info-row {
+    margin-bottom: 6px;
+}
+
+.modern-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.modern-info-label {
+    color: var(--text-secondary);
+    font-size: 8.5px;
+    font-weight: 500;
+}
+
+.modern-info-value {
+    color: var(--primary-600);
+    font-size: 9.5px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+/* Modern business cards */
+.modern-card {
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-card-header {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    color: white;
+    padding: 10px 14px;
+}
+
+.modern-card-header-light {
+    background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+    border-bottom: 2px solid var(--primary-600);
+    padding: 10px 14px;
+}
+
+.modern-card-title {
+    font-size: 10px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.modern-card-title-dark {
+    font-size: 10px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--primary-600);
+}
+
+.modern-card-content {
+    padding: 14px;
+}
+
+/* Modern items table */
+.modern-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--primary-200);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.modern-items-table thead {
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+}
+
+.modern-items-table th {
+    padding: 10px 8px;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--primary-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-items-table td {
+    padding: 8px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--primary-100);
+}
+
+.modern-items-table tbody tr:nth-child(even) {
+    background-color: var(--primary-50);
+}
+
+.modern-item-description {
+    width: 40%;
+}
+
+.modern-item-total {
+    font-weight: 600;
+    color: var(--primary-600);
+}
+
+/* Modern VAT table */
+.modern-vat-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--primary-200);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.modern-vat-table thead {
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+}
+
+.modern-vat-table th,
+.modern-vat-table td {
+    padding: 8px;
+    font-size: 9px;
+}
+
+.modern-vat-table th {
+    font-weight: 600;
+    color: var(--primary-700);
+}
+
+/* Modern totals */
+.modern-total-card {
+    background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+    border: 2px solid var(--primary-200);
+    border-radius: 8px;
+    padding: 14px;
+    width: 280px;
+    margin-left: auto;
+    margin-bottom: 16px;
+}
+
+.modern-total-final-row {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid var(--primary-600);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    margin-left: -14px;
+    margin-right: -14px;
+    margin-bottom: -14px;
+}
+
+.modern-total-final-row .total-final-label {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.modern-total-final-row .total-final-value {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* ===================================
+   CREATIVE TEMPLATE STYLES - IMPROVED
+   =================================== */
+
+/* Creative template container */
+.creative-template {
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* Creative gradient header */
+.creative-gradient-header {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-400));
+    color: white;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 0 0 20px 20px;
+}
+
+.creative-header-content {
+    display: table;
+    width: 100%;
+}
+
+.creative-branding {
+    display: table-cell;
+    vertical-align: middle;
+    width: 50%;
+}
+
+.creative-logo {
+    margin-bottom: 10px;
+}
+
+.creative-brand-text {
+    margin-top: 8px;
+}
+
+.creative-brand-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.creative-brand-tagline {
+    font-size: 9px;
+    margin: 2px 0 0 0;
+    opacity: 0.8;
+    font-weight: 300;
+}
+
+.creative-invoice-title {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.creative-main-title {
+    font-size: 36px;
+    font-weight: 300;
+    margin: 0;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.creative-invoice-number {
+    font-size: 12px;
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+}
+
+/* Creative content area */
+.creative-content {
+    padding: 0 6px;
+}
+
+.creative-top-section {
+    display: table;
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.creative-bill-to {
+    display: table-cell;
+    width: 50%;
+    vertical-align: top;
+    padding-right: 20px;
+}
+
+.creative-payment-method {
+    display: table-cell;
+    width: 50%;
+    vertical-align: top;
+    padding-left: 20px;
+}
+
+.creative-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--primary-600);
+    padding-bottom: 4px;
+}
+
+.creative-client-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.creative-client-address,
+.creative-client-contact,
+.creative-payment-text {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin: 0 0 2px 0;
+}
+
+/* Creative account section */
+.creative-account-section {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.creative-account-due {
+    display: table-cell;
+    width: 50%;
+    vertical-align: middle;
+}
+
+.creative-dates {
+    display: table-cell;
+    width: 50%;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.creative-account-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+}
+
+.creative-account-amount {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-600);
+    margin: 0;
+}
+
+.creative-date-item {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin: 0 0 2px 0;
+}
+
+/* Creative modern table */
+.creative-items-section {
+    margin-bottom: 16px;
+}
+
+.creative-modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.creative-modern-table thead {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    color: white;
+}
+
+.creative-th-description,
+.creative-th-rate,
+.creative-th-qty,
+.creative-th-price {
+    padding: 12px 8px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.creative-item-row td {
+    padding: 10px 8px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.creative-item-desc {
+    width: 40%;
+}
+
+.creative-item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.creative-item-details {
+    font-size: 8px;
+    color: var(--text-secondary);
+}
+
+.creative-item-rate,
+.creative-item-quantity,
+.creative-item-price {
+    text-align: center;
+    font-weight: 500;
+}
+
+.creative-item-price {
+    font-weight: 600;
+    color: var(--primary-600);
+}
+
+/* Creative payment info */
+.creative-payment-info {
+    margin-bottom: 16px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.creative-payment-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.creative-payment-detail {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin: 0 0 8px 0;
+}
+
+/* Creative bottom section */
+.creative-bottom-section {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.creative-terms {
+    display: table-cell;
+    width: 60%;
+    vertical-align: top;
+    padding-right: 20px;
+}
+
+.creative-totals {
+    display: table-cell;
+    width: 40%;
+    vertical-align: top;
+}
+
+.creative-terms-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+}
+
+.creative-terms-text {
+    font-size: 8px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.creative-total-row {
+    display: table;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.creative-total-label {
+    display: table-cell;
+    font-size: 9px;
+    color: var(--text-secondary);
+}
+
+.creative-total-value {
+    display: table-cell;
+    text-align: right;
+    font-size: 9px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.creative-total-final {
+    border-top: 2px solid var(--primary-600);
+    padding-top: 6px;
+    margin-top: 6px;
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.creative-total-final-label,
+.creative-total-final-value {
+    display: table-cell;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.creative-total-final-value {
+    text-align: right;
+}
+
+/* Creative modern footer */
+.creative-modern-footer {
+    display: table;
+    width: 100%;
+    border-top: 2px solid var(--primary-600);
+    padding-top: 12px;
+    margin-top: 16px;
+}
+
+.creative-contact-icons {
+    display: table-cell;
+    width: 70%;
+    vertical-align: middle;
+}
+
+.creative-contact-item {
+    display: inline-block;
+    margin-right: 16px;
+    vertical-align: middle;
+}
+
+.creative-contact-icon {
+    display: inline-block;
+    margin-right: 4px;
+    font-size: 10px;
+}
+
+.creative-contact-text {
+    display: inline-block;
+    font-size: 8px;
+    color: var(--text-secondary);
+}
+
+.creative-signature {
+    display: table-cell;
+    width: 30%;
+    vertical-align: middle;
+    text-align: right;
+}
+
+.creative-signature-text {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin: 0 0 2px 0;
+    text-transform: uppercase;
+}
+
+.creative-signature-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 2px 0;
+}
+
+.creative-signature-title {
+    font-size: 8px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ===================================
+   CLEAN TEMPLATE STYLES - IMPROVED
+   =================================== */
+
+/* Clean template container */
+.clean-template {
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* Clean header with Polish styling */
+.clean-header {
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border-primary);
+    padding-bottom: 12px;
+}
+
+.clean-main-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.clean-invoice-info {
+    text-align: center;
+}
+
+.clean-invoice-number {
+    display: table;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.clean-label {
+    display: table-cell;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.clean-date-right {
+    display: table-cell;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-primary);
+}
+
+/* Clean date section */
+.clean-date-section {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.clean-date-item {
+    display: table-cell;
+    width: 50%;
+    text-align: center;
+}
+
+.clean-date-label {
+    display: block;
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+    font-weight: 500;
+}
+
+.clean-date-value {
+    display: block;
+    font-size: 10px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Clean party cards */
+.clean-party-card {
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.clean-party-title {
+    background-color: var(--bg-muted);
+    color: var(--text-primary);
+    font-size: 10px;
+    font-weight: 600;
+    margin: 0;
+    padding: 8px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.clean-party-content {
+    padding: 12px;
+}
+
+/* Clean description */
+.clean-description {
+    margin-bottom: 16px;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 10px;
+    border-left: 3px solid var(--primary-600);
+}
+
+.clean-description-text {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Clean items table */
+.clean-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.clean-items-table thead {
+    background-color: var(--bg-muted);
+}
+
+.clean-items-table th {
+    padding: 8px 6px;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.clean-items-table td {
+    padding: 8px 6px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.clean-item-description {
+    width: 40%;
+}
+
+.clean-item-total {
+    font-weight: 600;
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+}
+
+/* Clean VAT table */
+.clean-vat-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.clean-vat-table thead {
+    background-color: var(--bg-muted);
+}
+
+.clean-vat-table th,
+.clean-vat-table td {
+    padding: 6px 8px;
+    font-size: 9px;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.clean-vat-table th {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Clean totals */
+.clean-totals {
+    margin-bottom: 16px;
+}
+
+.clean-totals-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 12px;
+    width: 280px;
+    margin-left: auto;
+}
+
+.clean-total-final {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 2px solid var(--text-primary);
+    background-color: var(--bg-primary);
+    padding: 8px;
+    border-radius: 4px;
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-bottom: -12px;
+}
+
+.clean-total-final .total-label {
+    font-size: 10px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.clean-total-final .total-value {
+    font-size: 11px;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+/* Clean exchange rate */
+.clean-exchange {
+    margin-bottom: 16px;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.clean-exchange-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+}
+
+/* Clean payment */
+.clean-payment {
+    margin-bottom: 16px;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.clean-payment-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-primary);
+    padding-bottom: 4px;
+}
+
+.clean-bank-account {
+    margin-top: 12px;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.clean-bank-title {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.clean-payment-terms {
+    margin-top: 12px;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+/* Clean signatures */
+.clean-signatures {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.clean-signature-box {
+    display: table-cell;
+    width: 50%;
+    vertical-align: top;
+    padding: 0 10px;
+}
+
+.clean-signature-title {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    text-align: center;
+}
+
+.clean-signature-line {
+    border-bottom: 1px solid var(--border-primary);
+    height: 40px;
+    position: relative;
+    margin-bottom: 4px;
+}
+
+/* Clean footer */
+.clean-footer {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-primary);
 }
