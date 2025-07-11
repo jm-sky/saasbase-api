@@ -1,7 +1,7 @@
 services:
     saasbase:
         build:
-            context: './docker/prod/php'
+            context: './docker/prod/'
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
