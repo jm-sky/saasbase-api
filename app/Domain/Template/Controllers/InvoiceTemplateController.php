@@ -7,9 +7,11 @@ use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Template\Requests\CreateInvoiceTemplateRequest;
+use App\Domain\Template\Requests\PreviewInvoiceTemplateRequest;
 use App\Domain\Template\Requests\UpdateInvoiceTemplateRequest;
 use App\Domain\Template\Resources\InvoiceTemplatePreviewResource;
 use App\Domain\Template\Resources\InvoiceTemplateResource;
+use App\Domain\Template\Services\InvoiceGeneratorService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -162,6 +164,26 @@ class InvoiceTemplateController extends Controller
         return response()->json([
             'message' => 'Invoice template set as default successfully.',
             'data'    => new InvoiceTemplateResource($invoiceTemplate->fresh()),
+        ]);
+    }
+
+    public function preview(PreviewInvoiceTemplateRequest $request, InvoiceGeneratorService $invoiceGeneratorService): JsonResponse
+    {
+        $this->authorize('preview', InvoiceTemplate::class);
+
+        $templateContent = $request->getTemplateContent();
+        $previewData     = $request->getPreviewData();
+        $language        = $request->getLanguage();
+
+        // Generate styled HTML using the service
+        $styledHtml = $invoiceGeneratorService->generatePreviewHtml(
+            $templateContent,
+            $previewData,
+            $language
+        );
+
+        return response()->json([
+            'html' => $styledHtml,
         ]);
     }
 }

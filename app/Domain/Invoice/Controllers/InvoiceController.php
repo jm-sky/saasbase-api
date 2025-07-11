@@ -6,6 +6,7 @@ use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Sorts\JsonbPathSort;
+use App\Domain\Common\Support\RelativeRouteUrl;
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Export\DTOs\ExportConfigDTO;
@@ -208,11 +209,11 @@ class InvoiceController extends Controller
         return response()->json([
             'message' => 'PDF generated and attached successfully.',
             'data'    => [
-                'media_id'        => $media->id,
-                'file_name'       => $media->file_name,
+                'mediaId'         => $media->id,
+                'fileName'        => $media->file_name,
                 'size'            => $media->size,
-                'collection_name' => $media->collection_name,
-                'url'             => $media->getUrl(),
+                'collectionName'  => $media->collection_name,
+                'url'             => RelativeRouteUrl::generate('invoices.attachments.download', [$invoice, $media]),
             ],
         ], Response::HTTP_CREATED);
     }

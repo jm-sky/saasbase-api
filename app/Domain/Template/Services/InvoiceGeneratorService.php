@@ -129,7 +129,7 @@ class InvoiceGeneratorService
     /**
      * Generate styled HTML for invoice.
      */
-    private function generateStyledHtml(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): string
+    public function generateStyledHtml(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): string
     {
         $template     = $this->getTemplate($invoice, $templateId);
         $templateData = $this->transformer->transform($invoice);
@@ -137,6 +137,19 @@ class InvoiceGeneratorService
         $htmlContent = $this->templatingService->render(
             $template->content,
             ['invoice' => $templateData->toArray()]
+        );
+
+        return $this->addCssToHtml($htmlContent, $language);
+    }
+
+    /**
+     * Generate styled HTML from template content and preview data.
+     */
+    public function generatePreviewHtml(string $templateContent, array $previewData, ?string $language = 'en'): string
+    {
+        $htmlContent = $this->templatingService->render(
+            $templateContent,
+            $previewData
         );
 
         return $this->addCssToHtml($htmlContent, $language);
@@ -205,14 +218,24 @@ class InvoiceGeneratorService
                 $margins['top'] ?? 10
             );
             // @phpstan-ignore-next-line
-            $pdf->getMpdf()->SetAutoPageBreak(true, $margins['bottom'] ?? 10);
+            $pdf->getMpdf()->SetAutoPageBreak(true, $margins['bottom'] ?? 15);
         } else {
-            // Default margins
+            // Default margins with space for footer
             // @phpstan-ignore-next-line
             $pdf->getMpdf()->SetMargins(10, 10, 10);
             // @phpstan-ignore-next-line
-            $pdf->getMpdf()->SetAutoPageBreak(true, 10);
+            $pdf->getMpdf()->SetAutoPageBreak(true, 15);
         }
+
+        // Add footer with generation time, app name, and page numbers
+        $appName     = config('app.name', 'SaasBase');
+        $generatedAt = now()->format('Y-m-d H:i:s');
+        $footerHtml  = "<div style='text-align: center; font-size: 8px; color: #666; border-top: 1px solid #E5E7EB; padding-top: 5px;'>";
+        $footerHtml .= "Generated at {$generatedAt} | {$appName} | Page {PAGENO} of {nbpg}";
+        $footerHtml .= '</div>';
+
+        // @phpstan-ignore-next-line
+        $pdf->getMpdf()->SetHTMLFooter($footerHtml);
 
         // mPDF specific configurations for better rendering
         // @phpstan-ignore-next-line

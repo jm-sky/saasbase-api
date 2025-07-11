@@ -29,6 +29,7 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
 
     Route::apiResource('payment-methods', PaymentMethodController::class)->only(['index', 'store', 'destroy']);
 
+    Route::post('invoice-templates/preview', [InvoiceTemplateController::class, 'preview'])->name('invoice-templates.preview');
     Route::apiResource('invoice-templates', InvoiceTemplateController::class);
     Route::apiResource('position-categories', PositionCategoryController::class)
         ->only(['index', 'store', 'update', 'destroy'])

@@ -2,10 +2,20 @@
 body {
     font-family: "DejaVu Sans", "Noto Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
     font-size: 11px;
-    line-height: 1.3;
+    line-height: 1.4;
     color: #333;
     margin: 0;
     padding: 0;
+}
+
+/* Page break handling */
+@page {
+    margin: 20mm;
+    @bottom-center {
+        content: "Generated at " date("Y-m-d H:i:s") " | SaasBase | Page " counter(page) " of " counter(pages);
+        font-size: 8px;
+        color: #666;
+    }
 }
 
 /* Layout utilities */
@@ -20,14 +30,14 @@ body {
 .pr-4 { padding-right: 16px; }
 .pl-4 { padding-left: 16px; }
 
-/* Flexbox layout (mPDF supports flexbox) */
-.flex { display: flex; }
-.flex-table { display: flex; width: 100%; }
-.flex-row { display: flex; width: 100%; }
-.flex-cell { flex: 1; }
-.flex-cell-center { flex: 1; align-items: center; }
-.justify-between { justify-content: space-between; }
-.items-center { align-items: center; }
+/* Table-based layout for better mPDF compatibility */
+.flex { display: table; width: 100%; }
+.flex-table { display: table; width: 100%; }
+.flex-row { display: table-row; width: 100%; }
+.flex-cell { display: table-cell; width: 50%; vertical-align: top; padding-right: 12px; }
+.flex-cell:last-child { padding-right: 0; }
+.justify-between { text-align: justify; }
+.items-center { vertical-align: middle; }
 
 /* Typography */
 .font-bold { font-weight: bold; }
@@ -71,16 +81,33 @@ body {
 .secondary-text { color: #6B7280; }
 .text-white { color: white; }
 .text-gray-600 { color: #4B5563; }
+.text-gray-700 { color: #374151; }
 .text-gray-900 { color: #111827; }
 .bg-gray-50 { background-color: #F9FAFB; }
 .bg-gray-800 { background-color: #1F2937; }
+.bg-white { background-color: white; }
+
+/* Modern color scheme alternatives */
+.modern-blue { color: #2563EB; }
+.modern-blue-bg { background-color: #2563EB; }
+.modern-blue-border { border-color: #2563EB; }
+.dark-gray { color: #1F2937; }
+.dark-gray-bg { background-color: #1F2937; }
 
 /* Borders */
 .border { border: 1px solid #D1D5DB; }
+.border-2 { border: 2px solid #D1D5DB; }
 .border-b { border-bottom: 1px solid #D1D5DB; }
+.border-b-2 { border-bottom: 2px solid #D1D5DB; }
 .border-t { border-top: 1px solid #D1D5DB; }
+.border-t-2 { border-top: 2px solid #D1D5DB; }
+.border-l-4 { border-left: 4px solid #D1D5DB; }
 .border-gray-300 { border-color: #D1D5DB; }
 .border-gray-200 { border-color: #E5E7EB; }
+.border-gray-400 { border-color: #9CA3AF; }
+.border-gray-600 { border-color: #4B5563; }
+.border-white { border-color: white; }
+.border-opacity-30 { border-color: rgba(255, 255, 255, 0.3); }
 
 /* Tables */
 .invoice-table {
@@ -122,3 +149,44 @@ body {
 
 /* Negative margins fix */
 .-mx-6 { margin-left: -20px; margin-right: -20px; }
+
+/* Background opacity */
+.bg-opacity-20 { background-color: rgba(255, 255, 255, 0.2); }
+
+/* Leading */
+.leading-relaxed { line-height: 1.6; }
+
+/* Additional spacing */
+.pr-6 { padding-right: 24px; }
+.pl-6 { padding-left: 24px; }
+.pt-6 { padding-top: 24px; }
+.pb-2 { padding-bottom: 6px; }
+
+/* Position utilities */
+.relative { position: relative; }
+.absolute { position: absolute; }
+
+/* Transform utilities - limited support in mPDF */
+.transform { transform: none; }
+.translate-x-1\/2 { margin-left: 50%; }
+
+/* Footer specific styles */
+.invoice-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 8px;
+    color: #666;
+    text-align: center;
+    padding: 5px;
+    border-top: 1px solid #E5E7EB;
+    background-color: white;
+}
+
+/* Print-specific styles */
+@media print {
+    .invoice-footer {
+        display: none;
+    }
+}

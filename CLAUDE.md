@@ -183,3 +183,20 @@ Start with: `docker-compose up -d` or rather `./scripts/up.sh -d` for developmen
 - **Template System**: Multi-language invoice templates with PDF generation
 - **Allocation Engine**: Expense allocation across multiple dimensions
 - **Activity Logging**: Comprehensive audit trail across all domains
+
+### Invoice Template Development
+
+**Important**: When working with invoice templates, always refer to `/resources/templates/invoice/README.md` which contains comprehensive documentation about:
+- mPDF HTML/CSS support and limitations
+- Best practices for PDF template development
+- Common issues and solutions
+- Supported vs unsupported CSS features
+- Layout recommendations (use tables, avoid flexbox)
+
+Key points for invoice template development:
+- Use table-based layouts instead of flexbox/grid
+- Stick to basic CSS properties
+- Test in PDF output, not browser preview
+- Footer with datetime, app name, and page numbers is automatically added via mPDF
+- Templates are located in `resources/templates/invoice/`
+- CSS is in `resources/css/invoice-pdf.css`
