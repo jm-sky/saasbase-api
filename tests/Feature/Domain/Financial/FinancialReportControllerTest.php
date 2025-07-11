@@ -36,7 +36,7 @@ class FinancialReportControllerTest extends TestCase
         $this->user   = User::factory()->create();
     }
 
-    public function canGetBalanceWidgetData()
+    public function testGetBalanceWidgetData()
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             $numberingTemplate = NumberingTemplate::factory()->create([
@@ -82,7 +82,7 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    public function canGetRevenueWidgetData()
+    public function testGetRevenueWidgetData()
     {
         $this->authenticateUser($this->tenant, $this->user);
 
@@ -104,7 +104,7 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    public function canGetExpensesWidgetData()
+    public function testGetExpensesWidgetData()
     {
         $this->authenticateUser($this->tenant, $this->user);
 
@@ -128,7 +128,7 @@ class FinancialReportControllerTest extends TestCase
         ;
     }
 
-    public function canGetOverviewWidgetData()
+    public function testGetOverviewWidgetData()
     {
         $this->authenticateUser($this->tenant, $this->user);
 

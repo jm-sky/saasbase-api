@@ -10,9 +10,9 @@ use App\Domain\Subscription\Exceptions\StripeException;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\SubscriptionInvoice;
 use App\Domain\Tenant\Models\Tenant;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 
 /**
  * Service for managing Stripe invoices and local SubscriptionInvoice records.
@@ -82,7 +82,7 @@ class StripeInvoiceService extends StripeService
             $billingInfo = $billable->billingInfo;
 
             // Generate PDF using Laravel PDF package
-            $pdf = Pdf::loadView('subscription.invoices.pdf', [
+            $pdf = PDF::loadView('subscription.invoices.pdf', [
                 'invoice'      => $invoice,
                 'customer'     => $customer,
                 'billingInfo'  => $billingInfo,
