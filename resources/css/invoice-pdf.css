@@ -11,7 +11,7 @@
     --primary-700: #0369a1;
     --primary-800: #075985;
     --primary-900: #0c4a6e;
-    
+
     /* Gray Scale - Based on Slate (Tailwind) */
     --gray-50: #f8fafc;
     --gray-100: #f1f5f9;
@@ -23,30 +23,30 @@
     --gray-700: #334155;
     --gray-800: #1e293b;
     --gray-900: #0f172a;
-    
+
     /* Semantic Colors */
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
     --white: #ffffff;
-    
+
     /* Template-specific color mappings */
     --accent-primary: var(--primary-600);
     --accent-primary-light: var(--primary-500);
     --accent-primary-dark: var(--primary-700);
     --accent-secondary: var(--gray-500);
-    
+
     /* Text colors */
     --text-primary: var(--gray-900);
     --text-secondary: var(--gray-600);
     --text-muted: var(--gray-500);
     --text-light: var(--gray-400);
-    
+
     /* Background colors */
     --bg-primary: var(--white);
     --bg-secondary: var(--gray-50);
     --bg-muted: var(--gray-100);
-    
+
     /* Border colors */
     --border-primary: var(--gray-200);
     --border-secondary: var(--gray-300);
@@ -2359,7 +2359,6 @@ body {
     color: white;
     padding: 15px 10px;
     margin-bottom: 10px;
-    clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
     min-height: 60px;
     display: table;
     width: 100%;

@@ -4,12 +4,12 @@
         <div class="creative-ref-blue-section">
             <div class="creative-ref-brand">
                 <h2 class="creative-ref-brand-name">SaasBase</h2>
-                <p class="creative-ref-brand-tagline">YOUR INVOICE NAME</p>
+                <p class="creative-ref-brand-tagline">{{t "invoice.your_invoice_name"}}</p>
             </div>
         </div>
         <div class="creative-ref-invoice-section">
-            <h1 class="creative-ref-invoice-title">Invoice</h1>
-            <p class="creative-ref-invoice-number">Invoice No. {{invoice.number}}</p>
+            <h1 class="creative-ref-invoice-title">{{t "invoice.invoice"}}</h1>
+            <p class="creative-ref-invoice-number">{{t "invoice.invoice_number"}} {{invoice.number}}</p>
         </div>
     </div>
 
@@ -18,7 +18,7 @@
         <!-- Bill To and Payment Info Row -->
         <div class="creative-ref-top-row">
             <div class="creative-ref-bill-to">
-                <h3 class="creative-ref-section-title">Bill To</h3>
+                <h3 class="creative-ref-section-title">{{t "invoice.bill_to"}}</h3>
                 <div class="creative-ref-client-info">
                     {{#if invoice.buyer.name}}
                         <p class="creative-ref-client-name">{{invoice.buyer.name}}</p>
@@ -37,7 +37,7 @@
             
             <div class="creative-ref-payment-info">
                 <div class="creative-ref-payment-method">
-                    <h4 class="creative-ref-payment-title">Payment Method:</h4>
+                    <h4 class="creative-ref-payment-title">{{t "invoice.payment_method"}}:</h4>
                     <p class="creative-ref-payment-detail">{{invoice.payment.method}}</p>
                     <p class="creative-ref-payment-detail">Card Payment Will Accept. Visa, Mastercard, Payoneer</p>
                 </div>
@@ -47,10 +47,10 @@
         <!-- Date and Account Due Section -->
         <div class="creative-ref-date-row">
             <div class="creative-ref-date-info">
-                <p class="creative-ref-date-label">Date: {{invoice.issueDate}}</p>
+                <p class="creative-ref-date-label">{{t "invoice.date"}}: {{invoice.issueDate}}</p>
             </div>
             <div class="creative-ref-account-due">
-                <p class="creative-ref-due-label">Account Due</p>
+                <p class="creative-ref-due-label">{{t "invoice.account_due"}}</p>
                 <p class="creative-ref-due-amount">{{invoice.formattedTotalGross}}</p>
             </div>
         </div>
@@ -60,10 +60,10 @@
             <table class="creative-ref-table">
                 <thead>
                     <tr>
-                        <th class="creative-ref-th-description">ITEM DESCRIPTIONS</th>
-                        <th class="creative-ref-th-rate">RATE</th>
-                        <th class="creative-ref-th-qty">QUANTITY</th>
-                        <th class="creative-ref-th-price">PRICE</th>
+                        <th class="creative-ref-th-description">{{t "invoice.item_descriptions"}}</th>
+                        <th class="creative-ref-th-rate">{{t "invoice.rate"}}</th>
+                        <th class="creative-ref-th-qty">{{t "invoice.quantity"}}</th>
+                        <th class="creative-ref-th-price">{{t "invoice.price"}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,11 +87,11 @@
             <!-- Payment Methods Section -->
             <div class="creative-ref-payment-methods">
                 <div class="creative-ref-payment-method-item">
-                    <h4 class="creative-ref-method-title">PAYMENT METHOD</h4>
+                    <h4 class="creative-ref-method-title">{{t "invoice.payment_method"}}</h4>
                     <p class="creative-ref-method-text">{{invoice.payment.method}}</p>
                 </div>
                 <div class="creative-ref-payment-method-item">
-                    <h4 class="creative-ref-method-title">CARD PAYMENT</h4>
+                    <h4 class="creative-ref-method-title">{{t "invoice.card_payment"}}</h4>
                     <p class="creative-ref-method-text">Visa, Mastercard, Payoneer</p>
                 </div>
             </div>
@@ -99,25 +99,25 @@
             <!-- Terms and Totals -->
             <div class="creative-ref-terms-totals">
                 <div class="creative-ref-terms">
-                    <h4 class="creative-ref-terms-title">Terms & Conditions/Notes:</h4>
+                    <h4 class="creative-ref-terms-title">{{t "invoice.terms_conditions_notes"}}:</h4>
                     <p class="creative-ref-terms-text">Your Privacy and Security are important to us. This is your second month using our software under our conditions that can be found here.</p>
                 </div>
                 
                 <div class="creative-ref-totals">
                     <div class="creative-ref-total-line">
-                        <span class="creative-ref-total-label">Sub-Total</span>
+                        <span class="creative-ref-total-label">{{t "invoice.sub_total"}}</span>
                         <span class="creative-ref-total-value">{{invoice.formattedTotalNet}}</span>
                     </div>
                     <div class="creative-ref-total-line">
-                        <span class="creative-ref-total-label">Tax Vat({{invoice.vatSummary.0.vatRateValue}}%)</span>
+                        <span class="creative-ref-total-label">{{t "invoice.tax_vat"}}({{invoice.vatSummary.0.vatRateValue}}%)</span>
                         <span class="creative-ref-total-value">{{invoice.formattedTotalTax}}</span>
                     </div>
                     <div class="creative-ref-total-line">
-                        <span class="creative-ref-total-label">Discount (5%)</span>
+                        <span class="creative-ref-total-label">{{t "invoice.discount"}} (5%)</span>
                         <span class="creative-ref-total-value">-</span>
                     </div>
                     <div class="creative-ref-grand-total">
-                        <span class="creative-ref-grand-label">Grand Total</span>
+                        <span class="creative-ref-grand-label">{{t "invoice.grand_total"}}</span>
                         <span class="creative-ref-grand-value">{{invoice.formattedTotalGross}}</span>
                     </div>
                 </div>
@@ -143,9 +143,9 @@
         </div>
         
         <div class="creative-ref-signature">
-            <p class="creative-ref-signature-text">Signature</p>
+            <p class="creative-ref-signature-text">{{t "invoice.signature"}}</p>
             <p class="creative-ref-signature-name">{{invoice.seller.name}}</p>
-            <p class="creative-ref-signature-title">Manager</p>
+            <p class="creative-ref-signature-title">{{t "invoice.manager"}}</p>
         </div>
     </div>
 

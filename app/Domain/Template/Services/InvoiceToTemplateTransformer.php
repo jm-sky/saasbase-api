@@ -21,6 +21,9 @@ class InvoiceToTemplateTransformer
      */
     public function transform(Invoice $invoice): InvoiceDataTemplateDTO
     {
+        $options              = $invoice->options->toArray();
+        $options['tenant_id'] = $invoice->tenant_id; // Add tenant_id to options for color injection
+
         return new InvoiceDataTemplateDTO(
             id: $invoice->id,
             number: $invoice->number,
@@ -35,7 +38,7 @@ class InvoiceToTemplateTransformer
             formattedTotalGross: $this->currencyFormatter->format($invoice->total_gross, $invoice->currency),
             currency: $invoice->currency,
             payment: $this->transformPayment($invoice->payment),
-            options: $invoice->options->toArray(),
+            options: $options,
             description: $invoice->body->description ?? null,
             logoUrl: $this->getLogoUrl($invoice),
         );

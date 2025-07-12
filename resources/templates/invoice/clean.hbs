@@ -25,7 +25,7 @@
     <!-- Business Information -->
     <div class="grid-cols-2">
         <div class="clean-party-card">
-            <h3 class="clean-party-title">{{t "invoices.from"}}</h3>
+            <h3 class="clean-party-title">{{t "invoice.from"}}</h3>
             <div class="clean-party-content">
                 {{#if invoice.seller.name}}
                     <p class="company-name">{{invoice.seller.name}}</p>
@@ -37,7 +37,7 @@
                     <p class="address-line">{{invoice.seller.country}}</p>
                 {{/if}}
                 {{#if invoice.seller.taxId}}
-                    <p class="detail-line">{{t "invoices.tax_id"}}: {{invoice.seller.taxId}}</p>
+                    <p class="detail-line">{{t "invoice.tax_id"}}: {{invoice.seller.taxId}}</p>
                 {{/if}}
                 {{#if invoice.seller.email}}
                     <p class="detail-line">{{invoice.seller.email}}</p>
@@ -46,7 +46,7 @@
         </div>
 
         <div class="clean-party-card">
-            <h3 class="clean-party-title">{{t "invoices.to"}}</h3>
+            <h3 class="clean-party-title">{{t "invoice.to"}}</h3>
             <div class="clean-party-content">
                 {{#if invoice.buyer.name}}
                     <p class="company-name">{{invoice.buyer.name}}</p>
@@ -58,7 +58,7 @@
                     <p class="address-line">{{invoice.buyer.country}}</p>
                 {{/if}}
                 {{#if invoice.buyer.taxId}}
-                    <p class="detail-line">{{t "invoices.tax_id"}}: {{invoice.buyer.taxId}}</p>
+                    <p class="detail-line">{{t "invoice.tax_id"}}: {{invoice.buyer.taxId}}</p>
                 {{/if}}
                 {{#if invoice.buyer.email}}
                     <p class="detail-line">{{invoice.buyer.email}}</p>
@@ -79,12 +79,12 @@
         <table class="clean-items-table">
             <thead>
                 <tr>
-                    <th class="text-left">{{t "invoices.description"}}</th>
-                    <th class="text-center">{{t "invoices.quantity"}}</th>
-                    <th class="text-right">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right">{{t "invoices.total_net"}}</th>
-                    <th class="text-right">{{t "invoices.vat"}}</th>
-                    <th class="text-right">{{t "invoices.total_gross"}}</th>
+                    <th class="text-left">{{t "invoice.description"}}</th>
+                    <th class="text-center">{{t "invoice.quantity"}}</th>
+                    <th class="text-right">{{t "invoice.unit_price"}}</th>
+                    <th class="text-right">{{t "invoice.total_net"}}</th>
+                    <th class="text-right">{{t "invoice.vat"}}</th>
+                    <th class="text-right">{{t "invoice.total_gross"}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -110,14 +110,14 @@
     <!-- VAT Summary -->
     {{#if invoice.vatSummary}}
         <div class="vat-summary-section">
-            <h3 class="section-title">{{t "invoices.vat_summary"}}</h3>
+            <h3 class="section-title">{{t "invoice.vat_summary"}}</h3>
             <table class="clean-vat-table">
                 <thead>
                     <tr>
-                        <th class="text-left">{{t "invoices.vat_rate"}}</th>
-                        <th class="text-right">{{t "invoices.net_amount"}}</th>
-                        <th class="text-right">{{t "invoices.vat_amount"}}</th>
-                        <th class="text-right">{{t "invoices.gross_amount"}}</th>
+                        <th class="text-left">{{t "invoice.vat_rate"}}</th>
+                        <th class="text-right">{{t "invoice.net_amount"}}</th>
+                        <th class="text-right">{{t "invoice.vat_amount"}}</th>
+                        <th class="text-right">{{t "invoice.gross_amount"}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -138,15 +138,15 @@
     <div class="clean-totals">
         <div class="clean-totals-card">
             <div class="total-row">
-                <span class="total-label">{{t "invoices.subtotal"}}</span>
+                <span class="total-label">{{t "invoice.subtotal"}}</span>
                 <span class="total-value">{{invoice.formattedTotalNet}}</span>
             </div>
             <div class="total-row">
-                <span class="total-label">{{t "invoices.vat"}}</span>
+                <span class="total-label">{{t "invoice.vat"}}</span>
                 <span class="total-value">{{invoice.formattedTotalTax}}</span>
             </div>
             <div class="clean-total-final">
-                <span class="total-label">{{t "invoices.total"}}</span>
+                <span class="total-label">{{t "invoice.total"}}</span>
                 <span class="total-value">{{invoice.formattedTotalGross}}</span>
             </div>
         </div>
@@ -155,12 +155,12 @@
     <!-- Exchange Rate -->
     {{#if invoice.exchange}}
         <div class="clean-exchange">
-            <h3 class="clean-exchange-title">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
+            <h3 class="clean-exchange-title">{{t "invoice.currency"}} {{invoice.exchange.currency}}</h3>
             {{#if invoice.exchange.formattedExchangeRate}}
-                <p>{{t "invoices.exchange_rate"}}: {{invoice.exchange.formattedExchangeRate}}</p>
+                <p>{{t "invoice.exchange_rate"}}: {{invoice.exchange.formattedExchangeRate}}</p>
             {{/if}}
             {{#if invoice.exchange.date}}
-                <p>{{t "invoices.date"}}: {{invoice.exchange.date}}</p>
+                <p>{{t "invoice.date"}}: {{invoice.exchange.date}}</p>
             {{/if}}
         </div>
     {{/if}}
@@ -168,37 +168,37 @@
     <!-- Payment Information -->
     {{#if invoice.payment}}
         <div class="clean-payment">
-            <h3 class="clean-payment-title">{{t "invoices.payment_details"}}</h3>
+            <h3 class="clean-payment-title">{{t "invoice.payment_details"}}</h3>
             <div class="grid-cols-2">
                 <div class="payment-info">
-                    <p><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
-                    <p><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
+                    <p><strong>{{t "invoice.payment_method"}}:</strong> {{invoice.payment.method}}</p>
+                    <p><strong>{{t "invoice.payment_status"}}:</strong> {{invoice.payment.status}}</p>
                     {{#if invoice.payment.reference}}
-                        <p><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
+                        <p><strong>{{t "invoice.reference"}}:</strong> {{invoice.payment.reference}}</p>
                     {{/if}}
                 </div>
                 <div class="payment-info">
                     {{#if invoice.payment.formattedPaidAmount}}
-                        <p><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
+                        <p><strong>{{t "invoice.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
                     {{/if}}
                     {{#if invoice.payment.paidDate}}
-                        <p><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
+                        <p><strong>{{t "invoice.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
                     {{/if}}
                 </div>
             </div>
 
             {{#if invoice.payment.bankAccount}}
                 <div class="clean-bank-account">
-                    <h4 class="clean-bank-title">{{t "invoices.bank_account"}}</h4>
+                    <h4 class="clean-bank-title">{{t "invoice.bank_account"}}</h4>
                     <div class="bank-account-info">
                         {{#if invoice.payment.bankAccount.bankName}}
-                            <p><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
+                            <p><strong>{{t "invoice.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
                         {{/if}}
                         {{#if invoice.payment.bankAccount.iban}}
-                            <p><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
+                            <p><strong>{{t "invoice.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
                         {{/if}}
                         {{#if invoice.payment.bankAccount.swift}}
-                            <p><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
+                            <p><strong>{{t "invoice.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
                         {{/if}}
                     </div>
                 </div>
@@ -206,7 +206,7 @@
 
             {{#if invoice.payment.terms}}
                 <div class="clean-payment-terms">
-                    <h4 class="clean-bank-title">{{t "invoices.payment_terms"}}</h4>
+                    <h4 class="clean-bank-title">{{t "invoice.payment_terms"}}</h4>
                     <p>{{invoice.payment.terms}}</p>
                 </div>
             {{/if}}
@@ -218,7 +218,7 @@
         <div class="clean-signatures">
             {{#if options.issuerSignature}}
                 <div class="clean-signature-box">
-                    <h4 class="clean-signature-title">{{t "invoices.authorized_by"}}</h4>
+                    <h4 class="clean-signature-title">{{t "invoice.authorized_by"}}</h4>
                     <div class="clean-signature-line">
                         {{#if options.issuerSignature.imageUrl}}
                             <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
@@ -238,7 +238,7 @@
 
             {{#if options.receiverSignature}}
                 <div class="clean-signature-box">
-                    <h4 class="clean-signature-title">{{t "invoices.received_by"}}</h4>
+                    <h4 class="clean-signature-title">{{t "invoice.received_by"}}</h4>
                     <div class="clean-signature-line">
                         {{#if options.receiverSignature.imageUrl}}
                             <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">

@@ -7,25 +7,25 @@
             </div>
         {{/if}}
         <div class="corporate-title-section">
-            <h1 class="corporate-title">{{t "invoices.invoice"}}</h1>
+            <h1 class="corporate-title">{{t "invoice.invoice"}}</h1>
             <p class="corporate-number">#{{invoice.number}}</p>
         </div>
         <div class="corporate-info-card">
             {{#if invoice.issueDate}}
                 <div class="corporate-info-row">
-                    <span class="corporate-info-label">{{t "invoices.issue_date"}}:</span>
+                    <span class="corporate-info-label">{{t "invoice.issue_date"}}:</span>
                     <span class="corporate-info-value">{{invoice.issueDate}}</span>
                 </div>
             {{/if}}
             {{#if invoice.dueDate}}
                 <div class="corporate-info-row">
-                    <span class="corporate-info-label">{{t "invoices.due_date"}}:</span>
+                    <span class="corporate-info-label">{{t "invoice.due_date"}}:</span>
                     <span class="corporate-info-value">{{invoice.dueDate}}</span>
                 </div>
             {{/if}}
             {{#if invoice.status}}
                 <div class="corporate-info-row">
-                    <span class="corporate-info-label">{{t "invoices.status"}}:</span>
+                    <span class="corporate-info-label">{{t "invoice.status"}}:</span>
                     <span class="corporate-info-value status-badge">{{invoice.status}}</span>
                 </div>
             {{/if}}
@@ -36,7 +36,7 @@
     <div class="grid-cols-2">
         <div class="corporate-card seller-card">
             <div class="corporate-card-header">
-                <h3 class="corporate-card-title">{{t "invoices.from"}}</h3>
+                <h3 class="corporate-card-title">{{t "invoice.from"}}</h3>
             </div>
             <div class="corporate-card-content">
                 {{#if invoice.seller.name}}
@@ -49,17 +49,17 @@
                     <p class="address-line">{{invoice.seller.country}}</p>
                 {{/if}}
                 {{#if invoice.seller.taxId}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.seller.taxId}}</p>
+                    <p class="detail-line"><span class="detail-label">{{t "invoice.tax_id"}}</span>{{invoice.seller.taxId}}</p>
                 {{/if}}
                 {{#if invoice.seller.email}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.seller.email}}</p>
+                    <p class="detail-line"><span class="detail-label">{{t "invoice.email"}}</span>{{invoice.seller.email}}</p>
                 {{/if}}
             </div>
         </div>
 
         <div class="corporate-card buyer-card">
             <div class="corporate-card-header-light">
-                <h3 class="corporate-card-title-dark">{{t "invoices.to"}}</h3>
+                <h3 class="corporate-card-title-dark">{{t "invoice.to"}}</h3>
             </div>
             <div class="corporate-card-content">
                 {{#if invoice.buyer.name}}
@@ -72,10 +72,10 @@
                     <p class="address-line">{{invoice.buyer.country}}</p>
                 {{/if}}
                 {{#if invoice.buyer.taxId}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.tax_id"}}</span>{{invoice.buyer.taxId}}</p>
+                    <p class="detail-line"><span class="detail-label">{{t "invoice.tax_id"}}</span>{{invoice.buyer.taxId}}</p>
                 {{/if}}
                 {{#if invoice.buyer.email}}
-                    <p class="detail-line"><span class="detail-label">{{t "invoices.email"}}</span>{{invoice.buyer.email}}</p>
+                    <p class="detail-line"><span class="detail-label">{{t "invoice.email"}}</span>{{invoice.buyer.email}}</p>
                 {{/if}}
             </div>
         </div>
@@ -84,7 +84,7 @@
     <!-- Description Section -->
     {{#if invoice.description}}
         <div class="description-section">
-            <h3 class="section-title">{{t "invoices.description"}}</h3>
+            <h3 class="section-title">{{t "invoice.description"}}</h3>
             <div class="description-card">
                 {{invoice.description}}
             </div>
@@ -96,12 +96,12 @@
         <table class="corporate-items-table">
             <thead>
                 <tr>
-                    <th class="text-left">{{t "invoices.description"}}</th>
-                    <th class="text-center">{{t "invoices.quantity"}}</th>
-                    <th class="text-right">{{t "invoices.unit_price"}}</th>
-                    <th class="text-right">{{t "invoices.total_net"}}</th>
-                    <th class="text-right">{{t "invoices.vat"}}</th>
-                    <th class="text-right">{{t "invoices.total_gross"}}</th>
+                    <th class="text-left">{{t "invoice.description"}}</th>
+                    <th class="text-center">{{t "invoice.quantity"}}</th>
+                    <th class="text-right">{{t "invoice.unit_price"}}</th>
+                    <th class="text-right">{{t "invoice.total_net"}}</th>
+                    <th class="text-right">{{t "invoice.vat"}}</th>
+                    <th class="text-right">{{t "invoice.total_gross"}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -127,14 +127,14 @@
     <!-- VAT Summary -->
     {{#if invoice.vatSummary}}
         <div class="vat-summary-section">
-            <h3 class="section-title">{{t "invoices.vat_summary"}}</h3>
+            <h3 class="section-title">{{t "invoice.vat_summary"}}</h3>
             <table class="vat-summary-table">
                 <thead>
                     <tr>
-                        <th class="text-left">{{t "invoices.vat_rate"}}</th>
-                        <th class="text-right">{{t "invoices.net_amount"}}</th>
-                        <th class="text-right">{{t "invoices.vat_amount"}}</th>
-                        <th class="text-right">{{t "invoices.gross_amount"}}</th>
+                        <th class="text-left">{{t "invoice.vat_rate"}}</th>
+                        <th class="text-right">{{t "invoice.net_amount"}}</th>
+                        <th class="text-right">{{t "invoice.vat_amount"}}</th>
+                        <th class="text-right">{{t "invoice.gross_amount"}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -155,15 +155,15 @@
     <div class="corporate-totals">
         <div class="corporate-totals-card">
             <div class="total-row">
-                <span class="total-label">{{t "invoices.subtotal"}}</span>
+                <span class="total-label">{{t "invoice.subtotal"}}</span>
                 <span class="total-value">{{invoice.formattedTotalNet}}</span>
             </div>
             <div class="total-row">
-                <span class="total-label">{{t "invoices.vat"}}</span>
+                <span class="total-label">{{t "invoice.vat"}}</span>
                 <span class="total-value">{{invoice.formattedTotalTax}}</span>
             </div>
             <div class="corporate-total-final">
-                <span class="total-final-label">{{t "invoices.total"}}</span>
+                <span class="total-final-label">{{t "invoice.total"}}</span>
                 <span class="total-final-value">{{invoice.formattedTotalGross}}</span>
             </div>
         </div>
@@ -172,13 +172,13 @@
     <!-- Exchange Rate Information -->
     {{#if invoice.exchange}}
         <div class="payment-section">
-            <h3 class="payment-title">{{t "invoices.currency"}} {{invoice.exchange.currency}}</h3>
+            <h3 class="payment-title">{{t "invoice.currency"}} {{invoice.exchange.currency}}</h3>
             <div class="payment-info">
                 {{#if invoice.exchange.formattedExchangeRate}}
-                    <p><strong>{{t "invoices.exchange_rate"}}:</strong> {{invoice.exchange.formattedExchangeRate}}</p>
+                    <p><strong>{{t "invoice.exchange_rate"}}:</strong> {{invoice.exchange.formattedExchangeRate}}</p>
                 {{/if}}
                 {{#if invoice.exchange.date}}
-                    <p><strong>{{t "invoices.date"}}:</strong> {{invoice.exchange.date}}</p>
+                    <p><strong>{{t "invoice.date"}}:</strong> {{invoice.exchange.date}}</p>
                 {{/if}}
             </div>
         </div>
@@ -187,37 +187,37 @@
     <!-- Payment Information -->
     {{#if invoice.payment}}
         <div class="payment-section">
-            <h3 class="payment-title">{{t "invoices.payment_details"}}</h3>
+            <h3 class="payment-title">{{t "invoice.payment_details"}}</h3>
             <div class="grid-cols-2">
                 <div class="payment-info">
-                    <p><strong>{{t "invoices.payment_method"}}:</strong> {{invoice.payment.method}}</p>
-                    <p><strong>{{t "invoices.payment_status"}}:</strong> {{invoice.payment.status}}</p>
+                    <p><strong>{{t "invoice.payment_method"}}:</strong> {{invoice.payment.method}}</p>
+                    <p><strong>{{t "invoice.payment_status"}}:</strong> {{invoice.payment.status}}</p>
                     {{#if invoice.payment.reference}}
-                        <p><strong>{{t "invoices.reference"}}:</strong> {{invoice.payment.reference}}</p>
+                        <p><strong>{{t "invoice.reference"}}:</strong> {{invoice.payment.reference}}</p>
                     {{/if}}
                 </div>
                 <div class="payment-info">
                     {{#if invoice.payment.formattedPaidAmount}}
-                        <p><strong>{{t "invoices.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
+                        <p><strong>{{t "invoice.paid_amount"}}:</strong> {{invoice.payment.formattedPaidAmount}}</p>
                     {{/if}}
                     {{#if invoice.payment.paidDate}}
-                        <p><strong>{{t "invoices.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
+                        <p><strong>{{t "invoice.paid_date"}}:</strong> {{invoice.payment.paidDate}}</p>
                     {{/if}}
                 </div>
             </div>
 
             {{#if invoice.payment.bankAccount}}
                 <div class="bank-account-section">
-                    <h4 class="bank-account-title">{{t "invoices.bank_account"}}</h4>
+                    <h4 class="bank-account-title">{{t "invoice.bank_account"}}</h4>
                     <div class="bank-account-info">
                         {{#if invoice.payment.bankAccount.bankName}}
-                            <p><strong>{{t "invoices.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
+                            <p><strong>{{t "invoice.bank_name"}}:</strong> {{invoice.payment.bankAccount.bankName}}</p>
                         {{/if}}
                         {{#if invoice.payment.bankAccount.iban}}
-                            <p><strong>{{t "invoices.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
+                            <p><strong>{{t "invoice.iban"}}:</strong> {{invoice.payment.bankAccount.iban}}</p>
                         {{/if}}
                         {{#if invoice.payment.bankAccount.swift}}
-                            <p><strong>{{t "invoices.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
+                            <p><strong>{{t "invoice.swift"}}:</strong> {{invoice.payment.bankAccount.swift}}</p>
                         {{/if}}
                     </div>
                 </div>
@@ -225,14 +225,14 @@
 
             {{#if invoice.payment.terms}}
                 <div class="payment-info" style="margin-top: 16px;">
-                    <h4 class="payment-title">{{t "invoices.payment_terms"}}</h4>
+                    <h4 class="payment-title">{{t "invoice.payment_terms"}}</h4>
                     <p>{{invoice.payment.terms}}</p>
                 </div>
             {{/if}}
 
             {{#if invoice.payment.notes}}
                 <div class="payment-info" style="margin-top: 16px;">
-                    <h4 class="payment-title">{{t "invoices.notes"}}</h4>
+                    <h4 class="payment-title">{{t "invoice.notes"}}</h4>
                     <p>{{invoice.payment.notes}}</p>
                 </div>
             {{/if}}
@@ -244,7 +244,7 @@
         <div class="signatures-section">
             {{#if options.issuerSignature}}
                 <div class="signature-box">
-                    <h4 class="signature-title">{{t "invoices.authorized_by"}}</h4>
+                    <h4 class="signature-title">{{t "invoice.authorized_by"}}</h4>
                     <div class="signature-line">
                         {{#if options.issuerSignature.imageUrl}}
                             <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
@@ -264,7 +264,7 @@
 
             {{#if options.receiverSignature}}
                 <div class="signature-box">
-                    <h4 class="signature-title">{{t "invoices.received_by"}}</h4>
+                    <h4 class="signature-title">{{t "invoice.received_by"}}</h4>
                     <div class="signature-line">
                         {{#if options.receiverSignature.imageUrl}}
                             <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);">
@@ -290,8 +290,8 @@
             {{{logoUrl invoice.seller.logoUrl width="120px"}}}
         {{/if}}
         <div class="footer-text">
-            <p class="font-bold">{{t "invoices.invoice"}} {{invoice.number}}</p>
-            <p>{{t "invoices.issue_date"}}: {{invoice.issueDate}} | {{t "invoices.due_date"}}: {{invoice.dueDate}}</p>
+            <p class="font-bold">{{t "invoice.invoice"}} {{invoice.number}}</p>
+            <p>{{t "invoice.issue_date"}}: {{invoice.issueDate}} | {{t "invoice.due_date"}}: {{invoice.dueDate}}</p>
         </div>
     </div>
 </div>

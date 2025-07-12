@@ -174,12 +174,14 @@ class InvoiceTemplateController extends Controller
         $templateContent = $request->getTemplateContent();
         $previewData     = $request->getPreviewData();
         $language        = $request->getLanguage();
+        $options         = $request->getOptions();
 
         // Generate styled HTML using the service
         $styledHtml = $invoiceGeneratorService->generatePreviewHtml(
             $templateContent,
             $previewData,
-            $language
+            $language,
+            $options
         );
 
         return response()->json([

@@ -10,6 +10,7 @@ use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceGeneratorService
 {
@@ -145,20 +146,20 @@ class InvoiceGeneratorService
             ['invoice' => $templateData->toArray()]
         );
 
-        return $this->addCssToHtml($htmlContent, $language);
+        return $this->addCssToHtml($htmlContent, $language, $templateData->options);
     }
 
     /**
      * Generate styled HTML from template content and preview data.
      */
-    public function generatePreviewHtml(string $templateContent, array $previewData, ?string $language = 'en'): string
+    public function generatePreviewHtml(string $templateContent, array $previewData, ?string $language = 'en', array $options = []): string
     {
         $htmlContent = $this->templatingService->render(
             $templateContent,
             $previewData
         );
 
-        return $this->addCssToHtml($htmlContent, $language);
+        return $this->addCssToHtml($htmlContent, $language, $options);
     }
 
     /**
@@ -240,16 +241,17 @@ class InvoiceGeneratorService
     /**
      * Add CSS styling to HTML for PDF generation.
      */
-    private function addCssToHtml(string $html, ?string $language = 'pl'): string
+    private function addCssToHtml(string $html, ?string $language = 'pl', array $options = []): string
     {
-        $css = $this->loadCss();
+        $css       = $this->loadCss();
+        $customCss = $this->generateCustomCss($options);
 
         return "<!DOCTYPE html>
 <html lang=\"{$language}\">
 <head>
     <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
     <meta charset=\"utf-8\">
-    <style>{$css}</style>
+    <style>{$css}{$customCss}</style>
 </head>
 <body>
     {$html}
@@ -288,5 +290,177 @@ class InvoiceGeneratorService
 
         // Last resort: basic CSS
         return 'body { font-family: Arial, sans-serif; font-size: 12px; }';
+    }
+
+    /**
+     * Generate custom CSS with color overrides based on options and tenant branding.
+     */
+    private function generateCustomCss(array $options = []): string
+    {
+        $customCss = '';
+
+        // Get colors from options (preview) or tenant branding
+        $accentColor    = $this->resolveAccentColor($options);
+        $secondaryColor = $this->resolveSecondaryColor($options);
+
+        if (!$accentColor && !$secondaryColor) {
+            return $customCss;
+        }
+
+        // Only add custom CSS if we have colors to override
+        $customCss .= "\n\n/* Dynamic Color Overrides */\n:root {\n";
+
+        if ($accentColor) {
+            $customCss .= "    --accent-primary: {$accentColor};\n";
+            $customCss .= "    --primary-600: {$accentColor};\n";
+            $customCss .= "    --primary-500: {$this->lightenColor($accentColor, 10)};\n";
+            $customCss .= "    --primary-700: {$this->darkenColor($accentColor, 10)};\n";
+        }
+
+        if ($secondaryColor) {
+            $customCss .= "    --accent-secondary: {$secondaryColor};\n";
+        }
+
+        $customCss .= "}\n";
+
+        return $customCss;
+    }
+
+    /**
+     * Resolve accent color from options or tenant branding.
+     */
+    private function resolveAccentColor(array $options): ?string
+    {
+        // First check options (for preview)
+        if (!empty($options['accentColor'])) {
+            return $this->validateColor($options['accentColor']);
+        }
+
+        // Then check tenant branding
+        if (!empty($options['tenant_id'])) {
+            $tenantColors = $this->getTenantBrandingColors($options['tenant_id']);
+
+            return $tenantColors['accent'] ?? null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve secondary color from options or tenant branding.
+     */
+    private function resolveSecondaryColor(array $options): ?string
+    {
+        // First check options (for preview)
+        if (!empty($options['secondaryColor'])) {
+            return $this->validateColor($options['secondaryColor']);
+        }
+
+        // Then check tenant branding
+        if (!empty($options['tenant_id'])) {
+            $tenantColors = $this->getTenantBrandingColors($options['tenant_id']);
+
+            return $tenantColors['secondary'] ?? null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get tenant branding colors from database.
+     */
+    private function getTenantBrandingColors(string $tenantId): array
+    {
+        try {
+            $branding = \App\Domain\Tenant\Models\TenantBranding::where('tenant_id', $tenantId)->first();
+
+            if (!$branding) {
+                return [];
+            }
+
+            return [
+                'accent'    => $this->validateColor($branding->pdf_accent_color ?? $branding->color_primary),
+                'secondary' => $this->validateColor($branding->color_secondary),
+            ];
+        } catch (\Exception $e) {
+            // Log error but don't fail the entire generation
+            Log::warning('Failed to load tenant branding colors', [
+                'tenant_id' => $tenantId,
+                'error'     => $e->getMessage(),
+            ]);
+
+            return [];
+        }
+    }
+
+    /**
+     * Validate and normalize color value.
+     */
+    private function validateColor(?string $color): ?string
+    {
+        if (!$color) {
+            return null;
+        }
+
+        $color = trim($color);
+
+        // Ensure color has # prefix for hex colors
+        if (preg_match('/^[0-9a-fA-F]{6}$/', $color)) {
+            return "#{$color}";
+        }
+
+        // Validate hex color with #
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            return $color;
+        }
+
+        // Accept rgb() format
+        if (preg_match('/^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/', $color)) {
+            return $color;
+        }
+
+        return null;
+    }
+
+    /**
+     * Lighten a hex color by a percentage.
+     */
+    private function lightenColor(string $color, int $percent): string
+    {
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            return $color; // Return original if not valid hex
+        }
+
+        $hex = ltrim($color, '#');
+        $r   = hexdec(substr($hex, 0, 2));
+        $g   = hexdec(substr($hex, 2, 2));
+        $b   = hexdec(substr($hex, 4, 2));
+
+        $r = min(255, $r + ($percent * 255 / 100));
+        $g = min(255, $g + ($percent * 255 / 100));
+        $b = min(255, $b + ($percent * 255 / 100));
+
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
+    }
+
+    /**
+     * Darken a hex color by a percentage.
+     */
+    private function darkenColor(string $color, int $percent): string
+    {
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            return $color; // Return original if not valid hex
+        }
+
+        $hex = ltrim($color, '#');
+        $r   = hexdec(substr($hex, 0, 2));
+        $g   = hexdec(substr($hex, 2, 2));
+        $b   = hexdec(substr($hex, 4, 2));
+
+        $r = max(0, $r - ($percent * 255 / 100));
+        $g = max(0, $g - ($percent * 255 / 100));
+        $b = max(0, $b - ($percent * 255 / 100));
+
+        return sprintf('#%02x%02x%02x', $r, $g, $b);
     }
 }

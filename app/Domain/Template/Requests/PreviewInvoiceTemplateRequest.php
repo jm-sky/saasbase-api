@@ -16,7 +16,7 @@ class PreviewInvoiceTemplateRequest extends BaseFormRequest
         return [
             'content'                   => ['required', 'string'],
             'options'                   => ['sometimes', 'array'],
-            'options.language'          => ['sometimes', 'string', 'in:en,pl'],
+            'options.language'          => ['sometimes', 'string', 'in:' . implode(',', config('app.supported_locales'))],
             'options.currency'          => ['sometimes', 'string'],
             'options.accentColor'       => ['sometimes', 'string'],
             'options.secondaryColor'    => ['sometimes', 'string'],
