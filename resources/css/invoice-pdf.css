@@ -60,12 +60,12 @@ body {
     line-height: 1.5;
     color: var(--text-primary);
     margin: 0;
-    padding: 8px;
+    padding: 2px;
 }
 
 /* Page break handling */
 @page {
-    margin: 20mm;
+    margin: 2mm;
     @bottom-center {
         content: "Generated at " date("Y-m-d H:i:s") " | SaasBase | Page " counter(page) " of " counter(pages);
         font-size: 8px;
@@ -2342,15 +2342,25 @@ body {
     margin: 0;
 }
 
+/* Override any default margins for creative template */
+.creative-template * {
+    box-sizing: border-box;
+}
+
+.creative-template .invoice-container {
+    margin: 0;
+    padding: 0;
+}
+
 /* Creative reference header - matches the blue angled design */
 .creative-ref-header {
     position: relative;
     background: linear-gradient(135deg, #1e6091 0%, #2196f3 100%);
     color: white;
-    padding: 20px 30px;
-    margin-bottom: 20px;
-    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
-    min-height: 80px;
+    padding: 15px 10px;
+    margin-bottom: 10px;
+    clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+    min-height: 60px;
     display: table;
     width: 100%;
 }
@@ -2358,7 +2368,7 @@ body {
 .creative-ref-blue-section {
     display: table-cell;
     vertical-align: middle;
-    width: 60%;
+    width: 55%;
 }
 
 .creative-ref-brand {
@@ -2366,7 +2376,7 @@ body {
 }
 
 .creative-ref-brand-name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     margin: 0;
     letter-spacing: 2px;
@@ -2374,7 +2384,7 @@ body {
 }
 
 .creative-ref-brand-tagline {
-    font-size: 10px;
+    font-size: 9px;
     margin: 4px 0 0 0;
     opacity: 0.9;
     font-weight: 300;
@@ -2384,36 +2394,34 @@ body {
 .creative-ref-invoice-section {
     display: table-cell;
     vertical-align: middle;
-    text-align: right;
-    width: 40%;
+    text-align: center;
+    width: 45%;
     background-color: white;
     color: #1e6091;
-    padding: 20px;
-    margin-right: -30px;
-    border-radius: 8px;
+    padding: 15px 10px;
+    border-radius: 6px;
+    margin-right: 10px;
 }
 
 .creative-ref-invoice-title {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bold;
     margin: 0;
     color: #1e6091;
 }
 
 .creative-ref-invoice-number {
-    font-size: 11px;
+    font-size: 9px;
     margin: 4px 0 0 0;
     color: #666;
 }
 
 /* Content area */
 .creative-ref-content {
-    padding: 0 20px;
+    padding: 10px;
     background-color: white;
-    margin: 0 20px;
+    margin: 0 5px;
     border-radius: 8px;
-    padding-top: 20px;
-    padding-bottom: 20px;
 }
 
 /* Top row with Bill To and Payment */

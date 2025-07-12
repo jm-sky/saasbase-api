@@ -29,10 +29,10 @@ return [
                 'format'      => 'A4',
                 'orientation' => 'P', // P for portrait, L for landscape
                 'margins'     => [
-                    'left'   => 10,
-                    'right'  => 10,
-                    'top'    => 10,
-                    'bottom' => 15,
+                    'left'   => 2,
+                    'right'  => 2,
+                    'top'    => 2,
+                    'bottom' => 5,
                 ],
                 'use_substitutions' => false,
                 'simple_tables'     => false,
@@ -45,10 +45,10 @@ return [
                 'format'      => 'A4',
                 'orientation' => 'portrait', // portrait or landscape
                 'margins'     => [
-                    'top'    => '5mm',
-                    'right'  => '5mm',
-                    'bottom' => '10mm',
-                    'left'   => '5mm',
+                    'top'    => '2mm',
+                    'right'  => '2mm',
+                    'bottom' => '5mm',
+                    'left'   => '2mm',
                 ],
                 'print_background'      => true,
                 'prefer_css_page_size'  => false,
