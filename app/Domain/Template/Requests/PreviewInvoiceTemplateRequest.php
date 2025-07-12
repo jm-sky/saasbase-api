@@ -3,6 +3,7 @@
 namespace App\Domain\Template\Requests;
 
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Support\Facades\App;
 
 class PreviewInvoiceTemplateRequest extends BaseFormRequest
 {
@@ -47,6 +48,6 @@ class PreviewInvoiceTemplateRequest extends BaseFormRequest
 
     public function getLanguage(): string
     {
-        return $this->validated('options.language') ?? 'en';
+        return $this->validated('options.language') ?? App::getLocale();
     }
 }

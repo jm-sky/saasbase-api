@@ -10,6 +10,7 @@ use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class InvoiceGeneratorService
@@ -136,30 +137,36 @@ class InvoiceGeneratorService
     /**
      * Generate styled HTML for invoice.
      */
-    public function generateStyledHtml(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): string
+    public function generateStyledHtml(Invoice $invoice, ?string $templateId = null, ?string $language = null): string
     {
         $template     = $this->getTemplate($invoice, $templateId);
         $templateData = $this->transformer->transform($invoice);
 
+        $resolvedLanguage = $this->resolveLanguage($language, $templateData->options);
+
         $htmlContent = $this->templatingService->render(
             $template->content,
-            ['invoice' => $templateData->toArray()]
+            ['invoice' => $templateData->toArray()],
+            $resolvedLanguage
         );
 
-        return $this->addCssToHtml($htmlContent, $language, $templateData->options);
+        return $this->addCssToHtml($htmlContent, $resolvedLanguage, $templateData->options);
     }
 
     /**
      * Generate styled HTML from template content and preview data.
      */
-    public function generatePreviewHtml(string $templateContent, array $previewData, ?string $language = 'en', array $options = []): string
+    public function generatePreviewHtml(string $templateContent, array $previewData, ?string $language = null, array $options = []): string
     {
+        $resolvedLanguage = $this->resolveLanguage($language, $options);
+
         $htmlContent = $this->templatingService->render(
             $templateContent,
-            $previewData
+            $previewData,
+            $resolvedLanguage
         );
 
-        return $this->addCssToHtml($htmlContent, $language, $options);
+        return $this->addCssToHtml($htmlContent, $resolvedLanguage, $options);
     }
 
     /**
@@ -297,25 +304,18 @@ class InvoiceGeneratorService
      */
     private function generateCustomCss(array $options = []): string
     {
-        $customCss = '';
-
-        // Get colors from options (preview) or tenant branding
+        // Always get accent color (with fallback chain)
         $accentColor    = $this->resolveAccentColor($options);
         $secondaryColor = $this->resolveSecondaryColor($options);
 
-        if (!$accentColor && !$secondaryColor) {
-            return $customCss;
-        }
+        // Always generate custom CSS to override defaults if needed
+        $customCss = "\n\n/* Dynamic Color Overrides */\n:root {\n";
 
-        // Only add custom CSS if we have colors to override
-        $customCss .= "\n\n/* Dynamic Color Overrides */\n:root {\n";
-
-        if ($accentColor) {
-            $customCss .= "    --accent-primary: {$accentColor};\n";
-            $customCss .= "    --primary-600: {$accentColor};\n";
-            $customCss .= "    --primary-500: {$this->lightenColor($accentColor, 10)};\n";
-            $customCss .= "    --primary-700: {$this->darkenColor($accentColor, 10)};\n";
-        }
+        // Accent color is always set (either custom or default)
+        $customCss .= "    --accent-primary: {$accentColor};\n";
+        $customCss .= "    --primary-600: {$accentColor};\n";
+        $customCss .= "    --primary-500: {$this->lightenColor($accentColor, 10)};\n";
+        $customCss .= "    --primary-700: {$this->darkenColor($accentColor, 10)};\n";
 
         if ($secondaryColor) {
             $customCss .= "    --accent-secondary: {$secondaryColor};\n";
@@ -327,23 +327,30 @@ class InvoiceGeneratorService
     }
 
     /**
-     * Resolve accent color from options or tenant branding.
+     * Resolve accent color with priority: request > TenantBranding.color_primary > sky-600 default.
      */
-    private function resolveAccentColor(array $options): ?string
+    private function resolveAccentColor(array $options): string
     {
-        // First check options (for preview)
+        // 1. First check request options (for preview)
         if (!empty($options['accentColor'])) {
-            return $this->validateColor($options['accentColor']);
+            $color = $this->validateColor($options['accentColor']);
+
+            if ($color) {
+                return $color;
+            }
         }
 
-        // Then check tenant branding
+        // 2. Then check tenant branding color_primary
         if (!empty($options['tenant_id'])) {
             $tenantColors = $this->getTenantBrandingColors($options['tenant_id']);
 
-            return $tenantColors['accent'] ?? null;
+            if (!empty($tenantColors['primary'])) {
+                return $tenantColors['primary'];
+            }
         }
 
-        return null;
+        // 3. Default to app's primary color (sky-600)
+        return '#0284c7';
     }
 
     /**
@@ -379,7 +386,8 @@ class InvoiceGeneratorService
             }
 
             return [
-                'accent'    => $this->validateColor($branding->pdf_accent_color ?? $branding->color_primary),
+                'primary'   => $this->validateColor($branding->color_primary),
+                'accent'    => $this->validateColor($branding->pdf_accent_color),
                 'secondary' => $this->validateColor($branding->color_secondary),
             ];
         } catch (\Exception $e) {
@@ -462,5 +470,24 @@ class InvoiceGeneratorService
         $b = max(0, $b - ($percent * 255 / 100));
 
         return sprintf('#%02x%02x%02x', $r, $g, $b);
+    }
+
+    /**
+     * Resolve language with priority: explicit param > options.language > current app locale.
+     */
+    private function resolveLanguage(?string $language, array $options): string
+    {
+        // 1. First check explicit parameter
+        if ($language) {
+            return $language;
+        }
+
+        // 2. Then check options (from request)
+        if (!empty($options['language'])) {
+            return $options['language'];
+        }
+
+        // 3. Default to current app locale (set by middleware)
+        return App::getLocale();
     }
 }

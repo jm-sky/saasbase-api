@@ -170,9 +170,9 @@ class InvoiceTemplateService
     /**
      * Preview template with sample data.
      */
-    public function preview(string $content, array $data): string
+    public function preview(string $content, array $data, ?string $language = null): string
     {
-        return $this->templatingService->render($content, $data);
+        return $this->templatingService->render($content, $data, $language);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Domain\Template\Services;
 
 use App\Domain\Template\Exceptions\TemplateRenderingException;
+use Illuminate\Support\Facades\App;
 use LightnCandy\LightnCandy;
 use LightnCandy\SafeString;
 
@@ -43,6 +44,12 @@ class TemplatingService
                 'ifNotEmpty' => function ($value, $options) {
                     return !empty($value) ? $options['fn']() : $options['inverse']();
                 },
+                'logoUrl' => function ($url, $options = null) {
+                    return new SafeString($this->generateLogoHtml($url, $options));
+                },
+                'signatureUrl' => function ($url, $options = null) {
+                    return new SafeString($this->generateSignatureHtml($url, $options));
+                },
             ],
         ];
     }
@@ -50,13 +57,29 @@ class TemplatingService
     /**
      * Render a template with given data.
      */
-    public function render(string $template, array $data): string
+    public function render(string $template, array $data, ?string $language = null): string
     {
         try {
-            $compiled = LightnCandy::compile($template, $this->handlebarsOptions);
-            $renderer = LightnCandy::prepare($compiled);
+            if ($language) {
+                // Temporarily set locale for this render
+                $currentLocale = App::getLocale();
+                App::setLocale($language);
 
-            return $renderer($data);
+                try {
+                    $compiled = LightnCandy::compile($template, $this->handlebarsOptions);
+                    $renderer = LightnCandy::prepare($compiled);
+
+                    return $renderer($data);
+                } finally {
+                    // Restore original locale
+                    App::setLocale($currentLocale);
+                }
+            } else {
+                $compiled = LightnCandy::compile($template, $this->handlebarsOptions);
+                $renderer = LightnCandy::prepare($compiled);
+
+                return $renderer($data);
+            }
         } catch (\Exception $e) {
             throw new TemplateRenderingException("Failed to render template: {$e->getMessage()}", $e);
         }
@@ -112,5 +135,62 @@ class TemplatingService
         } catch (\Exception $e) {
             return $date; // Return original if parsing fails
         }
+    }
+
+    /**
+     * Generate logo HTML with width attribute.
+     *
+     * @param mixed|null $options
+     */
+    private function generateLogoHtml(?string $url, $options = null): string
+    {
+        if (!$url) {
+            return '';
+        }
+
+        // Extract width from options if it's passed as hash parameter
+        $width = null;
+
+        if (is_array($options) && isset($options['hash']['width'])) {
+            $width = $options['hash']['width'];
+        }
+
+        $attributes = '';
+
+        if ($width) {
+            $attributes .= " style=\"max-width: {$width}; height: auto;\"";
+        }
+
+        return "<img src=\"{$url}\"{$attributes} alt=\"Logo\" />";
+    }
+
+    /**
+     * Generate signature HTML with width attribute.
+     *
+     * @param mixed|null $options
+     */
+    private function generateSignatureHtml(?string $url, $options = null): string
+    {
+        if (!$url) {
+            return '';
+        }
+
+        // Extract width from options if it's passed as hash parameter
+        $width = null;
+
+        if (is_array($options) && isset($options['hash']['width'])) {
+            $width = $options['hash']['width'];
+        }
+
+        $attributes = '';
+
+        if ($width) {
+            $attributes .= " style=\"max-width: {$width}; height: auto;\"";
+        } else {
+            // Default styling for signatures
+            $attributes .= ' style="max-width: 150px; height: auto;"';
+        }
+
+        return "<img src=\"{$url}\"{$attributes} alt=\"Signature\" />";
     }
 }
