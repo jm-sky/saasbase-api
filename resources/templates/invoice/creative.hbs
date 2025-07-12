@@ -1,151 +1,151 @@
 <div class="invoice-container creative-template">
-    <!-- Modern Gradient Header -->
-    <div class="creative-gradient-header">
-        <div class="creative-header-content">
-            <div class="creative-branding">
-                {{#if invoice.seller.logoUrl}}
-                    <div class="creative-logo">
-                        {{{logoUrl invoice.seller.logoUrl width="120px"}}}
-                    </div>
-                {{/if}}
-                <div class="creative-brand-text">
-                    <h2 class="creative-brand-name">CREATIVE</h2>
-                    <p class="creative-brand-tagline">YOUR INVOICE NAME</p>
-                </div>
+    <!-- Creative Reference Header -->
+    <div class="creative-ref-header">
+        <div class="creative-ref-blue-section">
+            <div class="creative-ref-brand">
+                <h2 class="creative-ref-brand-name">{{config('app.name', 'SaasBase')}}</h2>
+                <p class="creative-ref-brand-tagline">YOUR INVOICE NAME</p>
             </div>
-            <div class="creative-invoice-title">
-                <h1 class="creative-main-title">Invoice</h1>
-                <p class="creative-invoice-number">Invoice No. {{invoice.number}}</p>
-            </div>
+        </div>
+        <div class="creative-ref-invoice-section">
+            <h1 class="creative-ref-invoice-title">Invoice</h1>
+            <p class="creative-ref-invoice-number">Invoice No. {{invoice.number}}</p>
         </div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="creative-content">
-        <!-- Bill To and Payment Method Row -->
-        <div class="creative-top-section">
-            <div class="creative-bill-to">
-                <h3 class="creative-section-title">Bill To</h3>
-                <div class="creative-client-info">
+    <div class="creative-ref-content">
+        <!-- Bill To and Payment Info Row -->
+        <div class="creative-ref-top-row">
+            <div class="creative-ref-bill-to">
+                <h3 class="creative-ref-section-title">Bill To</h3>
+                <div class="creative-ref-client-info">
                     {{#if invoice.buyer.name}}
-                        <p class="creative-client-name">{{invoice.buyer.name}}</p>
+                        <p class="creative-ref-client-name">{{invoice.buyer.name}}</p>
                     {{/if}}
                     {{#if invoice.buyer.address}}
-                        <p class="creative-client-address">{{invoice.buyer.address}}</p>
+                        <p class="creative-ref-client-detail">{{invoice.buyer.address}}</p>
                     {{/if}}
                     {{#if invoice.buyer.country}}
-                        <p class="creative-client-address">{{invoice.buyer.country}}</p>
+                        <p class="creative-ref-client-detail">{{invoice.buyer.country}}</p>
                     {{/if}}
                     {{#if invoice.buyer.email}}
-                        <p class="creative-client-contact">E. {{invoice.buyer.email}}</p>
+                        <p class="creative-ref-client-detail">E. {{invoice.buyer.email}}</p>
                     {{/if}}
                 </div>
             </div>
             
-            <div class="creative-payment-method">
-                <h3 class="creative-section-title">Payment Method:</h3>
-                <p class="creative-payment-text">{{invoice.payment.method}}</p>
-                <p class="creative-payment-text">Card Payment Will Accept. Visa, Mastercard Payment</p>
+            <div class="creative-ref-payment-info">
+                <div class="creative-ref-payment-method">
+                    <h4 class="creative-ref-payment-title">Payment Method:</h4>
+                    <p class="creative-ref-payment-detail">{{invoice.payment.method}}</p>
+                    <p class="creative-ref-payment-detail">Card Payment Will Accept. Visa, Mastercard, Payoneer</p>
+                </div>
             </div>
         </div>
 
-        <!-- Account Due and Date Section -->
-        <div class="creative-account-section">
-            <div class="creative-account-due">
-                <p class="creative-account-label">Account Due</p>
-                <p class="creative-account-amount">{{invoice.formattedTotalGross}}</p>
+        <!-- Date and Account Due Section -->
+        <div class="creative-ref-date-row">
+            <div class="creative-ref-date-info">
+                <p class="creative-ref-date-label">Date: {{invoice.issueDate}}</p>
             </div>
-            <div class="creative-dates">
-                <p class="creative-date-item">Date: {{invoice.issueDate}}</p>
+            <div class="creative-ref-account-due">
+                <p class="creative-ref-due-label">Account Due</p>
+                <p class="creative-ref-due-amount">{{invoice.formattedTotalGross}}</p>
             </div>
         </div>
 
-        <!-- Items Table with Modern Styling -->
-        <div class="creative-items-section">
-            <table class="creative-modern-table">
+        <!-- Items Table -->
+        <div class="creative-ref-table-section">
+            <table class="creative-ref-table">
                 <thead>
                     <tr>
-                        <th class="creative-th-description">ITEM DESCRIPTIONS</th>
-                        <th class="creative-th-rate">RATE</th>
-                        <th class="creative-th-qty">QUANTITY</th>
-                        <th class="creative-th-price">PRICE</th>
+                        <th class="creative-ref-th-description">ITEM DESCRIPTIONS</th>
+                        <th class="creative-ref-th-rate">RATE</th>
+                        <th class="creative-ref-th-qty">QUANTITY</th>
+                        <th class="creative-ref-th-price">PRICE</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each invoice.lines}}
-                        <tr class="creative-item-row">
-                            <td class="creative-item-desc">
-                                <div class="creative-item-name">{{description}}</div>
-                                <div class="creative-item-details">{{vatRateName}} ({{vatRateValue}}%)</div>
+                        <tr>
+                            <td class="creative-ref-item-desc">
+                                <div class="creative-ref-item-name">{{description}}</div>
+                                <div class="creative-ref-item-details">{{vatRateName}} ({{vatRateValue}}%)</div>
                             </td>
-                            <td class="creative-item-rate">{{formattedUnitPrice}}</td>
-                            <td class="creative-item-quantity">{{formattedQuantity}}</td>
-                            <td class="creative-item-price">{{formattedTotalGross}}</td>
+                            <td class="creative-ref-item-rate">{{formattedUnitPrice}}</td>
+                            <td class="creative-ref-item-qty">{{formattedQuantity}}</td>
+                            <td class="creative-ref-item-price">{{formattedTotalGross}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
 
-        <!-- Payment Information Section -->
-        <div class="creative-payment-info">
-            <h3 class="creative-payment-title">PAYMENT METHOD</h3>
-            <p class="creative-payment-detail">{{invoice.payment.method}}</p>
-            
-            <h3 class="creative-payment-title">CARD PAYMENT</h3>
-            <p class="creative-payment-detail">Visa, Mastercard, Payoneer</p>
-        </div>
-
-        <!-- Terms and Totals Section -->
-        <div class="creative-bottom-section">
-            <div class="creative-terms">
-                <h3 class="creative-terms-title">Terms & Conditions/Notes:</h3>
-                <p class="creative-terms-text">Your Privacy and Security are important to us. This is your second  
-                month using Paperwork software at our conditions that can be found here.</p>
+        <!-- Bottom Section -->
+        <div class="creative-ref-bottom">
+            <!-- Payment Methods Section -->
+            <div class="creative-ref-payment-methods">
+                <div class="creative-ref-payment-method-item">
+                    <h4 class="creative-ref-method-title">PAYMENT METHOD</h4>
+                    <p class="creative-ref-method-text">{{invoice.payment.method}}</p>
+                </div>
+                <div class="creative-ref-payment-method-item">
+                    <h4 class="creative-ref-method-title">CARD PAYMENT</h4>
+                    <p class="creative-ref-method-text">Visa, Mastercard, Payoneer</p>
+                </div>
             </div>
-            
-            <div class="creative-totals">
-                <div class="creative-total-row">
-                    <span class="creative-total-label">Sub-Total</span>
-                    <span class="creative-total-value">{{invoice.formattedTotalNet}}</span>
+
+            <!-- Terms and Totals -->
+            <div class="creative-ref-terms-totals">
+                <div class="creative-ref-terms">
+                    <h4 class="creative-ref-terms-title">Terms & Conditions/Notes:</h4>
+                    <p class="creative-ref-terms-text">Your Privacy and Security are important to us. This is your second month using our software under our conditions that can be found here.</p>
                 </div>
-                <div class="creative-total-row">
-                    <span class="creative-total-label">Tax Vat({{invoice.vatSummary.0.vatRateValue}}%)</span>
-                    <span class="creative-total-value">{{invoice.formattedTotalTax}}</span>
-                </div>
-                <div class="creative-total-row">
-                    <span class="creative-total-label">Discount (5%)</span>
-                    <span class="creative-total-value">{{invoice.formattedTotalTax}}</span>
-                </div>
-                <div class="creative-total-final">
-                    <span class="creative-total-final-label">Grand Total</span>
-                    <span class="creative-total-final-value">{{invoice.formattedTotalGross}}</span>
+                
+                <div class="creative-ref-totals">
+                    <div class="creative-ref-total-line">
+                        <span class="creative-ref-total-label">Sub-Total</span>
+                        <span class="creative-ref-total-value">{{invoice.formattedTotalNet}}</span>
+                    </div>
+                    <div class="creative-ref-total-line">
+                        <span class="creative-ref-total-label">Tax Vat({{invoice.vatSummary.0.vatRateValue}}%)</span>
+                        <span class="creative-ref-total-value">{{invoice.formattedTotalTax}}</span>
+                    </div>
+                    <div class="creative-ref-total-line">
+                        <span class="creative-ref-total-label">Discount (5%)</span>
+                        <span class="creative-ref-total-value">-</span>
+                    </div>
+                    <div class="creative-ref-grand-total">
+                        <span class="creative-ref-grand-label">Grand Total</span>
+                        <span class="creative-ref-grand-value">{{invoice.formattedTotalGross}}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modern Footer with Contact Icons -->
-    <div class="creative-modern-footer">
-        <div class="creative-contact-icons">
-            <div class="creative-contact-item">
-                <div class="creative-contact-icon">📱</div>
-                <div class="creative-contact-text">{{invoice.seller.phone}}</div>
+    <!-- Reference Footer -->
+    <div class="creative-ref-footer">
+        <div class="creative-ref-contact-section">
+            <div class="creative-ref-contact-item">
+                <div class="creative-ref-contact-icon">📱</div>
+                <div class="creative-ref-contact-text">{{invoice.seller.phone}}</div>
             </div>
-            <div class="creative-contact-item">
-                <div class="creative-contact-icon">✉️</div>
-                <div class="creative-contact-text">{{invoice.seller.email}}</div>
+            <div class="creative-ref-contact-item">
+                <div class="creative-ref-contact-icon">✉️</div>
+                <div class="creative-ref-contact-text">{{invoice.seller.email}}</div>
             </div>
-            <div class="creative-contact-item">
-                <div class="creative-contact-icon">📍</div>
-                <div class="creative-contact-text">{{invoice.seller.address}}</div>
+            <div class="creative-ref-contact-item">
+                <div class="creative-ref-contact-icon">📍</div>
+                <div class="creative-ref-contact-text">{{invoice.seller.address}}</div>
             </div>
         </div>
         
-        <div class="creative-signature">
-            <p class="creative-signature-text">Digital Signature</p>
-            <p class="creative-signature-name">James Doe</p>
-            <p class="creative-signature-title">Manager</p>
+        <div class="creative-ref-signature">
+            <p class="creative-ref-signature-text">Digital Signature</p>
+            <p class="creative-ref-signature-name">{{invoice.seller.name}}</p>
+            <p class="creative-ref-signature-title">Manager</p>
         </div>
     </div>
 
