@@ -1,0 +1,263 @@
+openapi: 3.0.3
+info:
+  title: IbanApi.com REST API
+  description: IBAN validation and bank information retrieval service
+  version: "1.0"
+  contact:
+    url: https://ibanapi.com
+servers:
+  - url: https://api.ibanapi.com/v1
+    description: Production server
+
+paths:
+  /validate/{iban}:
+    get:
+      summary: Validate IBAN and retrieve bank information
+      description: Full IBAN validation with comprehensive bank details
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}[0-9]{2}[A-Z0-9]+$'
+          example: "GB82WEST12345698765432"
+        - name: api_key
+          in: query
+          required: true
+          schema:
+            type: string
+          description: API authentication key
+        - name: account_checksum
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["Yes", "No"]
+            default: "Yes"
+          description: Enable/disable national checksum validation
+      responses:
+        '200':
+          description: Successful validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IbanValidationResponse'
+        '400':
+          description: Invalid IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /validate-basic/{iban}:
+    get:
+      summary: Basic IBAN validation without bank details
+      description: Lightweight IBAN validation without comprehensive bank information
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}[0-9]{2}[A-Z0-9]+$'
+        - name: api_key
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicValidationResponse'
+
+  /bulk-validate:
+    post:
+      summary: Validate multiple IBANs simultaneously
+      description: Bulk IBAN validation with full bank details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                api_key:
+                  type: string
+                iban_list:
+                  type: array
+                  items:
+                    type: string
+              example:
+                api_key: "YOUR_API_KEY"
+                iban_list:
+                  - "GB82WEST12345698765432"
+                  - "DE89370400440532013000"
+      responses:
+        '200':
+          description: Bulk validation results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IbanValidationResponse'
+
+  /balance:
+    get:
+      summary: Check API balance and plan status
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Balance information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+
+  /heartbeat:
+    get:
+      summary: Service health check
+      responses:
+        '200':
+          description: Service is operational
+
+components:
+  schemas:
+    IbanValidationResponse:
+      type: object
+      properties:
+        result:
+          type: integer
+          description: HTTP status code
+          example: 200
+        message:
+          type: string
+          description: Validation status message
+          example: "IBAN is valid"
+        validations:
+          type: object
+          properties:
+            checksum:
+              type: boolean
+              description: Mathematical IBAN checksum validation
+            format:
+              type: boolean
+              description: IBAN format validation
+            country:
+              type: boolean
+              description: Country code validation
+            structure:
+              type: boolean
+              description: Country-specific structure validation
+        experimental:
+          type: integer
+          description: Experimental features flag
+        data:
+          type: object
+          properties:
+            country:
+              type: object
+              properties:
+                country_code:
+                  type: string
+                  example: "GB"
+                country_name:
+                  type: string
+                  example: "United Kingdom"
+            bank:
+              type: object
+              properties:
+                bank_code:
+                  type: string
+                  example: "WEST"
+                bank_name:
+                  type: string
+                  example: "Western Bank"
+                bic:
+                  type: string
+                  example: "WESTGB2L"
+                address:
+                  type: string
+                  example: "London, UK"
+            sepa:
+              type: object
+              properties:
+                member:
+                  type: boolean
+                  description: SEPA membership status
+                  example: true
+
+    BasicValidationResponse:
+      type: object
+      properties:
+        result:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "IBAN is valid"
+        validations:
+          type: object
+          properties:
+            checksum:
+              type: boolean
+            format:
+              type: boolean
+
+    BalanceResponse:
+      type: object
+      properties:
+        result:
+          type: integer
+          example: 200
+        balance:
+          type: integer
+          description: Remaining API calls
+        plan:
+          type: string
+          description: Current subscription plan
+        expiry:
+          type: string
+          format: date
+          description: Plan expiry date
+
+    ErrorResponse:
+      type: object
+      properties:
+        result:
+          type: integer
+          description: HTTP error code
+        message:
+          type: string
+          description: Error description
+        error:
+          type: string
+          description: Detailed error information
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: api_key
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []

@@ -1,0 +1,276 @@
+openapi: 3.0.3
+info:
+  title: VIES VAT Validation Service
+  description: European Commission VAT Information Exchange System (VIES) for EU VAT number validation
+  version: "1.0"
+  contact:
+    url: https://ec.europa.eu/taxation_customs/vies/
+  license:
+    name: Public Domain
+    url: https://ec.europa.eu/taxation_customs/vies/
+    
+servers:
+  - url: http://ec.europa.eu/taxation_customs/vies/services
+    description: VIES SOAP Service Endpoint
+
+paths:
+  /checkVatService:
+    post:
+      summary: Validate EU VAT number
+      description: SOAP endpoint for VAT number validation across EU member states
+      requestBody:
+        required: true
+        content:
+          text/xml:
+            schema:
+              type: string
+              example: |
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+                  <soapenv:Header/>
+                  <soapenv:Body>
+                    <urn:checkVat>
+                      <urn:countryCode>DE</urn:countryCode>
+                      <urn:vatNumber>123456789</urn:vatNumber>
+                    </urn:checkVat>
+                  </soapenv:Body>
+                </soapenv:Envelope>
+            examples:
+              simple_validation:
+                summary: Simple VAT validation
+                value: |
+                  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                      <urn:checkVat>
+                        <urn:countryCode>DE</urn:countryCode>
+                        <urn:vatNumber>123456789</urn:vatNumber>
+                      </urn:checkVat>
+                    </soapenv:Body>
+                  </soapenv:Envelope>
+              approximate_validation:
+                summary: Approximate VAT validation with requester info
+                value: |
+                  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                      <urn:checkVatApprox>
+                        <urn:countryCode>DE</urn:countryCode>
+                        <urn:vatNumber>123456789</urn:vatNumber>
+                        <urn:requesterCountryCode>PL</urn:requesterCountryCode>
+                        <urn:requesterVatNumber>1234567890</urn:requesterVatNumber>
+                      </urn:checkVatApprox>
+                    </soapenv:Body>
+                  </soapenv:Envelope>
+      responses:
+        '200':
+          description: Successful SOAP response
+          content:
+            text/xml:
+              schema:
+                type: string
+              examples:
+                valid_vat:
+                  summary: Valid VAT number response
+                  value: |
+                    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                      <soap:Body>
+                        <checkVatResponse xmlns="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+                          <countryCode>DE</countryCode>
+                          <vatNumber>123456789</vatNumber>
+                          <requestDate>2024-01-15+01:00</requestDate>
+                          <valid>true</valid>
+                          <name>Example Company GmbH</name>
+                          <address>Beispielstrasse 123, 10115 Berlin</address>
+                        </checkVatResponse>
+                      </soap:Body>
+                    </soap:Envelope>
+                invalid_vat:
+                  summary: Invalid VAT number response
+                  value: |
+                    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                      <soap:Body>
+                        <checkVatResponse xmlns="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+                          <countryCode>DE</countryCode>
+                          <vatNumber>000000000</vatNumber>
+                          <requestDate>2024-01-15+01:00</requestDate>
+                          <valid>false</valid>
+                          <name>---</name>
+                          <address>---</address>
+                        </checkVatResponse>
+                      </soap:Body>
+                    </soap:Envelope>
+        '500':
+          description: SOAP Fault
+          content:
+            text/xml:
+              schema:
+                type: string
+              example: |
+                <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                  <soap:Body>
+                    <soap:Fault>
+                      <faultcode>soap:Server</faultcode>
+                      <faultstring>INVALID_INPUT</faultstring>
+                      <detail>
+                        <n1:checkVatFault xmlns:n1="urn:ec.europa.eu:taxud:vies:services:checkVat:types">
+                          <n1:faultCode>INVALID_INPUT</n1:faultCode>
+                          <n1:faultString>The provided CountryCode is invalid or the VAT number is empty</n1:faultString>
+                        </n1:checkVatFault>
+                      </detail>
+                    </soap:Fault>
+                  </soap:Body>
+                </soap:Envelope>
+
+components:
+  schemas:
+    CheckVatRequest:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          description: EU country code (2 letters)
+          pattern: '^[A-Z]{2}$'
+          example: "DE"
+          enum: ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"]
+        vatNumber:
+          type: string
+          description: VAT number without country code
+          pattern: '^[0-9A-Za-z\+\*\.]+$'
+          example: "123456789"
+      required:
+        - countryCode
+        - vatNumber
+
+    CheckVatApproxRequest:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          description: EU country code (2 letters)
+          pattern: '^[A-Z]{2}$'
+          example: "DE"
+        vatNumber:
+          type: string
+          description: VAT number without country code
+          example: "123456789"
+        requesterCountryCode:
+          type: string
+          description: Requester's EU country code
+          pattern: '^[A-Z]{2}$'
+          example: "PL"
+        requesterVatNumber:
+          type: string
+          description: Requester's VAT number
+          example: "1234567890"
+      required:
+        - countryCode
+        - vatNumber
+        - requesterCountryCode
+        - requesterVatNumber
+
+    CheckVatResponse:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          description: Country code of the validated VAT number
+          example: "DE"
+        vatNumber:
+          type: string
+          description: VAT number that was validated
+          example: "123456789"
+        requestDate:
+          type: string
+          format: date-time
+          description: Date and time when the request was processed
+          example: "2024-01-15+01:00"
+        valid:
+          type: boolean
+          description: Whether the VAT number is valid
+          example: true
+        name:
+          type: string
+          description: Company name (if available and valid)
+          example: "Example Company GmbH"
+        address:
+          type: string
+          description: Company address (if available and valid)
+          example: "Beispielstrasse 123, 10115 Berlin"
+
+    CheckVatApproxResponse:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          example: "DE"
+        vatNumber:
+          type: string
+          example: "123456789"
+        requestDate:
+          type: string
+          format: date-time
+          example: "2024-01-15+01:00"
+        valid:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: "Example Company GmbH"
+        address:
+          type: string
+          example: "Beispielstrasse 123, 10115 Berlin"
+        requestIdentifier:
+          type: string
+          description: Unique consultation number for audit purposes
+          example: "WAPIaaaakkk3333"
+        traderName:
+          type: string
+          description: Enhanced trader name information
+          example: "Example Company GmbH"
+        traderCompanyType:
+          type: string
+          description: Type of company/organization
+          example: "GESELLSCHAFT MIT BESCHRAENKTER HAFTUNG"
+        traderAddress:
+          type: string
+          description: Detailed trader address
+          example: "Beispielstrasse 123, 10115 Berlin, DEUTSCHLAND"
+
+    ViesFault:
+      type: object
+      properties:
+        faultCode:
+          type: string
+          description: VIES fault code
+          enum: ["INVALID_INPUT", "INVALID_REQUESTER_INFO", "SERVICE_UNAVAILABLE", "MS_UNAVAILABLE", "TIMEOUT", "VAT_BLOCKED", "IP_BLOCKED", "GLOBAL_MAX_CONCURRENT_REQ", "GLOBAL_MAX_CONCURRENT_REQ_TIME", "MS_MAX_CONCURRENT_REQ", "MS_MAX_CONCURRENT_REQ_TIME"]
+        faultString:
+          type: string
+          description: Human-readable error description
+
+  # SOAP-specific responses (for documentation purposes)
+  examples:
+    TestVATNumbers:
+      summary: Test VAT numbers for different response scenarios
+      description: |
+        Special test VAT numbers that return specific responses:
+        - 100: Valid request with Valid VAT Number
+        - 200: Valid request with Invalid VAT Number  
+        - 201: Error INVALID_INPUT
+        - 202: Error INVALID_REQUESTER_INFO
+        - 300: Error SERVICE_UNAVAILABLE
+      value:
+        testNumbers:
+          - countryCode: "DE"
+            vatNumber: "100"
+            expectedResult: "Valid VAT"
+          - countryCode: "DE" 
+            vatNumber: "200"
+            expectedResult: "Invalid VAT"
+          - countryCode: "DE"
+            vatNumber: "201" 
+            expectedResult: "INVALID_INPUT Error"
+
+# Additional metadata for SOAP service
+x-soap-wsdl: "http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl"
+x-soap-namespace: "urn:ec.europa.eu:taxud:vies:services:checkVat"
+x-soap-types-namespace: "urn:ec.europa.eu:taxud:vies:services:checkVat:types"
