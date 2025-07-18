@@ -82,12 +82,12 @@ RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
 # Copy and install Node.js dependencies for Puppeteer
-COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-COPY start-container /usr/local/bin/start-container
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY php.ini /etc/php/8.3/cli/conf.d/99-sail.ini
+COPY docker/prod/start-container /usr/local/bin/start-container
+COPY docker/prod/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/prod/php.ini /etc/php/8.3/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 80/tcp

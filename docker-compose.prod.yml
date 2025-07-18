@@ -1,8 +1,8 @@
 services:
     saasbase:
         build:
-            context: './docker/prod/'
-            dockerfile: Dockerfile
+            context: '.'
+            dockerfile: './docker/prod/Dockerfile'
             args:
                 WWWGROUP: '${WWWGROUP}'
                 NODE_VERSION: '20'
