@@ -163,7 +163,7 @@ Domains communicate via events:
 The application uses Docker Compose with:
 - PostgreSQL 17 (primary database)
 - Redis (cache and queues)
-- MinIO (S3-compatible storage)
+- RustFS (S3-compatible storage)
 - Mailpit (development SMTP)
 - Soketi (WebSocket server)
 

@@ -24,13 +24,13 @@ services:
             - sail
         depends_on:
             - pgsql
-            - minio
+            - rustfs
             - mailpit
             - soketi
             - redis
 
     pgsql:
-        image: 'postgres:17'
+        image: 'postgres:17-alpine'
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:
@@ -55,25 +55,39 @@ services:
             retries: 3
             timeout: 5s
 
-    minio:
-        image: 'minio/minio:RELEASE.2024-10-13T13-34-11Z'
-        ports:
-            - '${FORWARD_MINIO_PORT:-9000}:9000'
-            - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
-        environment:
-            MINIO_ROOT_USER: sail
-            MINIO_ROOT_PASSWORD: password
+    rustfs_perms:
+        image: 'alpine:latest'
+        user: root
         volumes:
-            - 'sail-minio:/data'
+            - 'sail-rustfs:/data'
         networks:
             - sail
-        command: 'minio server /data --console-address ":8900"'
+        command: chown -R 10001:10001 /data
+
+    rustfs:
+        image: 'rustfs/rustfs:latest'
+        ports:
+            - '${FORWARD_MINIO_PORT:-9000}:9000'
+            - '${FORWARD_MINIO_CONSOLE_PORT:-9001}:9001'
+        environment:
+            RUSTFS_ACCESS_KEY: sail
+            RUSTFS_SECRET_KEY: password
+            RUSTFS_CONSOLE_ENABLE: 'true'
+        volumes:
+            - 'sail-rustfs:/data'
+        networks:
+            - sail
+        depends_on:
+            rustfs_perms:
+                condition: service_completed_successfully
+        command: ['/data', '--console-enable', '--access-key', 'sail', '--secret-key', 'password']
         healthcheck:
             test:
                 - CMD
-                - mc
-                - ready
-                - local
+                - wget
+                - '-q'
+                - '--spider'
+                - 'http://localhost:9000/'
             retries: 3
             timeout: 5s
 
@@ -136,7 +150,7 @@ networks:
 volumes:
     sail-pgsql:
         driver: local
-    sail-minio:
+    sail-rustfs:
         driver: local
     sail-redis:
         driver: local

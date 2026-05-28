@@ -16,7 +16,7 @@ class HealthController extends Controller
 
         $results['redis']      = $this->getRedis();
         $results['s3']         = $this->getS3();
-        $results['minio']      = $this->getMinio();
+        $results['rustfs']     = $this->getRustfs();
         $results['soketi']     = $this->getSoketi();
         $results['openrouter'] = $this->getOpenRouter();
 
@@ -45,8 +45,8 @@ class HealthController extends Controller
         return $status;
     }
 
-    // S3 (Minio)
-    protected function getMinio(): array
+    // S3 (RustFS - local dev)
+    protected function getRustfs(): array
     {
         $status = [];
 
