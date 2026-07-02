@@ -124,7 +124,7 @@ Wszystko z listy domenowej +
 | Faza | Status | Data | Notatki |
 |------|--------|------|---------|
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
-| 1 — Integracje | W trakcie | 2026-07-02 | Płatności/finanse ukończone: 4 critical (w tym karta płatnicza w plaintext w logach + brak izolacji tenantów w Subscription). Rejestry/tożsamość + KSeF/OCR/AI w toku |
+| 1 — Integracje | **Ukończona** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. Wzorzec: infrastruktura ochronna zbudowana ale niepodpięta; wyniki weryfikacji nie zawsze odzwierciedlają rzeczywistość; e-Doręczenia całkowicie martwe |
 | 2 — Core biznesowy | Nierozpoczęta | — | — |
 | 3 — Wspierające | Nierozpoczęta | — | — |
 | 4 — Frontend | Nierozpoczęta | — | — |
@@ -188,6 +188,32 @@ Wszystkie 7 unikalnych critical findings z Fazy 0 naprawione bezpośrednio (nie 
 - **[MEDIUM]** `KSeFService::getSessionInfo()` zawsze rzuca `BadMethodCallException` (gwarantowanie zepsute); `OcrRequest::processable()` ma jawny TODO o brakującym filtrze tenant_id (nieaktywne dziś, bo processable_id nie pochodzi z inputu).
 - **OK:** izolacja tenantów w Chat/AI działa poprawnie (`ChatRoom` ma `BelongsToTenant`, kontekst auth dostępny synchronicznie); brak XSS w renderowaniu odpowiedzi AI po stronie frontendu.
 - **Zero testów** dla KSeF, OCR/Expense, Ai/OpenRouter.
+
+### Faza 1 — REGON/VIES/Biała Lista (IdentityCheck), IbanInfo, EDoreczenia
+
+- **[CRITICAL]** `RegistryConfirmationJob` (`ProcessContractorRegistryConfirmationJob.php:57-61`) — status potwierdzenia zgodności z rejestrem ustawiany bezwarunkowo na `Success` (jedyny warunek to brak wyjątku), niezależnie od faktycznego wyniku porównania (`nameMatch`/`vatIdMatch`). Wynik porównania zapisywany jest zresztą pod kluczem `'success'`, którego nie ma w `$fillable`/schemacie tabeli — Eloquent go cicho odrzuca. **Kontrahent z danymi niezgodnymi z REGON/VIES/Białą Listą dostaje w UI status "zweryfikowano"** — bezpośrednio podważa wartość dowodową dla należytej staranności VAT.
+- **[CRITICAL]** `IdentityConfirmationController::submitSigned()` — jedyny działający przepływ potwierdzania tożsamości (XAdES) nigdy nie zapisuje wyniku do modelu audytowego `IdentityCheck`. Poprawna implementacja (`SignatureBasedIdentityCheckService`) istnieje, ale jest martwym kodem — nigdzie niewywoływana.
+- **[CRITICAL]** Podwójny, wzajemnie nadpisujący się zapis do tego samego rekordu `RegistryConfirmation` w przepływie kolejkowym (dwie niezależnie napisane warstwy zapisu, nigdy nieuzgodnione).
+- **[CRITICAL]** EDoreczenia: **zero tras HTTP zarejestrowanych** — `CertificateController`/`MessageController` całkowicie nieosiągalne z zewnątrz.
+- **[CRITICAL]** EDoreczenia: schemat bazy niezgodny z modelami/kontrolerami (brakujące kolumny `content`, `recipient`, `is_valid`, `serial_number` itd.) — **gwarantowany `QueryException` przy pierwszym użyciu**, gdyby ktoś podłączył trasy.
+- **[CRITICAL]** EDoreczenia: brak zarejestrowanej Policy — `authorizeResource()` odmówi każdemu zawsze.
+- **[CRITICAL]** EDoreczenia: dwie sprzeczne implementacje providera (różne auth, różne endpointy) — ta realnie wstrzykiwana do kontrolerów nie jest tą podłączoną w kontenerze DI.
+- **[CRITICAL]** EDoreczenia: `verifyCertificate()` w realnie używanej implementacji to zaślepka `return true` — każdy certyfikat, także fałszywy/wygasły, zostałby uznany za ważny.
+- **[HIGH]** Prawdziwy zapis IBAN-u kontrahenta/tenanta (`StoreContractorBankAccountRequest` i analogiczne) nie jest w ogóle walidowany checksumą — tylko `max:50`. Walidacja regex+mod-97 istnieje wyłącznie w oderwanym, opcjonalnym endpointcie `/utils/iban-info`, którego zapis konta nie używa. Błędny IBAN trafia prosto na fakturę/przelew SEPA.
+- **[HIGH]** VIES: legalna odpowiedź "VAT nieważny" (`&lt;valid&gt;false&lt;/valid&gt;`) traktowana jako błąd API i rzuca wyjątkiem zamiast zwrócić poprawny wynik negatywny — bardzo częsty przypadek (firmy zwolnione z VAT-UE) generuje szum w logach i brakujące rekordy zamiast "niepotwierdzone".
+- **[HIGH]** Brak throttlingu na kosztownych endpointach lookupu rejestrów; klucz REGON jest globalny (nie per-tenant) z twardym limitem 6000/h — dowolny user dowolnego tenanta może wyczerpać limit dla całej platformy.
+- **[HIGH]** EDoreczenia: zero wykonywalnych testów — wszystkie 12 testów ma `markTestSkipped()`, deweloper sam udokumentował świadomość, że moduł nie działa.
+- **[HIGH]** EDoreczenia: brak deklarowanego szyfrowania certyfikatów at rest — realne ryzyko RODO dla kwalifikowanych certyfikatów.
+- **[HIGH]** EDoreczenia: rozjazd nazwy pola walidacji vs. odczytu w kontrolerze certyfikatów — upload pliku certyfikatu nigdy się nie wykona.
+- **[HIGH]** EDoreczenia: brak retry/timeout na wywołaniach zewnętrznych, brak transakcyjności/idempotencji przy tworzeniu wiadomości+załączników+wysyłce — dla korespondencji z realnym skutkiem prawnym to istotne ryzyko.
+- **[MEDIUM]** Synchroniczny `ContractorRegistryConfirmationService::confirm()` wstrzykiwany, ale nigdy wołany — sprawdzenie rejestru triggeruje się wyłącznie przy tworzeniu kontrahenta, nie po edycji NIP/nazwy.
+- **[MEDIUM]** `config/services.php:105-118` — komentarz z halucynacją AI: "Money Forward — Japanese Business Verification" opisujący integrację z polskim Ministerstwem Finansów (Biała Lista). Nieszkodliwe, ale dowód że ten blok nigdy nie był czytany przez człowieka.
+- **[MEDIUM]** Cache Białej Listy nie uwzględnia parametru `date` w kluczu (API MF zwraca "stan na dzień"), TTL 12h — wynik z wczoraj może być zaprezentowany jako "sprawdzone dzisiaj".
+- **[MEDIUM]** `CompanyDataFetcherService` blokuje wątek HTTP (`sleep()`-polling do 10s) czekając na joby REGON/VIES/MF, cicho gubi spóźnione wyniki bez informowania usera o niepełnym sprawdzeniu.
+- **[MEDIUM]** Pełny IBAN logowany w plaintext przy każdym błędzie zewnętrznego API.
+- **[MEDIUM]** Błędy zewnętrznego IBAN API (429/5xx/timeout) nie do odróżnienia od "IBAN nieprawidłowy" — user dostaje ten sam komunikat.
+- **[MEDIUM]** EDoreczenia: credentiale/skrzynka globalne dla całej platformy, mimo architektury sugerującej per-tenant certyfikaty (`getTenantProvider()`).
+- **OK/pozytyw:** architektura cache IbanInfo (Redis → DB 30 dni → API) sensowna; `BankCode` poprawnie bez tenant scope (słusznie globalne dane referencyjne).
 
 **Nie uruchomiono testów/PHPStan** — brak `vendor/` w tym środowisku (nie zainstalowano zależności). Zweryfikowano tylko składnię (`php -l`, czysto). **Zalecenie: przed merge uruchomić pełny `composer install && artisan test && phpstan analyse` lokalnie/w CI.**
 
