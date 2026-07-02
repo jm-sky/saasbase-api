@@ -141,6 +141,24 @@ Wszystko z listy domenowej +
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
 
+### Faza 2 — Contractors i Products
+
+**Wzorzec:** ten sam brak roli-opartej autoryzacji co wszędzie wcześniej + dwa świeże, samodzielne bugi funkcjonalne (kolizja tras, literówka w nazwie trasy) psujące featury oznaczone w README jako gotowe.
+
+- **[CRITICAL]** Brak jakiejkolwiek autoryzacji opartej o rolę w `ContractorController::destroy/export` — dowolny member może usunąć kontrahenta lub wyeksportować całą bazę (razem z IBAN przez `include=bankAccounts`).
+- **[CRITICAL]** `routes/api/contractors.php:24-27` — dwie trasy `DELETE /contractors/{contractor}/logo` zarejestrowane pod rząd; Laravel dopasowuje pierwszą, więc **usuwanie logo nigdy się nie wykonuje** — trafia w `show()` (zwraca 200 ze streamowanym obrazem). Metoda `delete()` jest nieosiągalna. README oznacza to jako gotowe.
+- **[HIGH]** Adresy i konta bankowe kontrahentów zawsze zapisywane z `tenant_id = NULL` — `HaveAddresses`/`HaveBankAccounts` instancjonują bazowe `Address`/`BankAccount` przez `morphMany`, nigdy dedykowanych podklas `ContractorAddress`/`ContractorBankAccount` (które mają `BelongsToTenant`, ale martwy). Dziś niewykorzystywalne bezpośrednio (dostęp zawsze przez już-scoped `$contractor`), ale globalne `AddressPolicy`/`BankAccountPolicy` sprawdzające `tenant_id` zawsze zwrócą `false` dla tych rekordów — gdy ktoś je podepnie pod kontroler, autoryzacja przestanie działać dla wszystkich adresów/kont kontrahentów.
+- **[HIGH]** Brak unikalności NIP/REGON w obrębie tenanta — zwykły indeks zamiast unikalnego, walidacja bez `unique`. Można stworzyć dwóch kontrahentów z identycznym NIP.
+- **[HIGH]** `ProductAttachmentsController` — literówka w nazwie trasy (`product.attachments.show` vs zarejestrowane `products.attachments.show`) i złym parametrze (`attachment` vs `{media}`). **`index`/`store`/`update` rzucają 500 przy każdym wywołaniu.** Cała funkcja załączników produktów (README 7.5, oznaczone `[x]`) jest w praktyce zepsuta. Brak testów na ten kontroler.
+- **[HIGH]** Brak roli-opartej autoryzacji w `ProductController::destroy/export` — analogicznie do C1, w tym eksport cen netto całego katalogu.
+- **[MEDIUM]** Załączniki (Contractors i Products) bez whitelisty MIME, serwowane `inline` — możliwy stored XSS przy uploadzie SVG/HTML z JS i późniejszym "preview".
+- **[MEDIUM]** Niespójna walidacja `country` między store/update kontrahenta (store: ISO-2 + exists, update: dowolny string) — może wstawić niepoprawny kod psujący integracje VIES/REGON/Białą Listę.
+- **[MEDIUM]** `SearchContractorRequest` waliduje filtry (`address`/`city`/`state`/`zipCode`/`notes`), których kontroler w ogóle nie obsługuje — żądanie z takim filtrem przechodzi walidację, potem Spatie QueryBuilder rzuca wyjątek.
+- **[MEDIUM]** Brak walidacji unikalności `symbol` produktu w FormRequest mimo wymuszenia w DB — duplikat kończy się surowym 500 zamiast 422.
+- **[MEDIUM]** `MeasurementUnitController` bez obsługi `ON DELETE RESTRICT` — usunięcie jednostki używanej przez produkt = surowy wyjątek SQL. Brak realnej logiki konwersji jednostek (tylko wolny tekst `code`/`name`/`category`).
+- **[LOW]** `ContractorDTO`/`ProductDTO` nieużywane przez główne kontrolery (tylko przez Admin) — martwa warstwa DTO wbrew wzorcowi z CLAUDE.md.
+- **Pozytyw:** `Contractor`/`Product` poprawnie tenant-scoped na poziomie głównego modelu; istniejące testy (tam gdzie są) poprawnie sprawdzają IDOR/izolację między tenantami — problem to całkowity brak testów na duże połacie funkcjonalności (konta bankowe, kontakty, komentarze, tagi, załączniki, logo, activity log, eksport), co pozwoliło błędom (P1, C2) przejść niezauważonym.
+
 ### Faza 2 — Invoice i Expense
 
 **Wzorzec:** w Invoice autoryzacja w ogóle nie istnieje (każdy może wszystko); w Expense autoryzacja "istnieje" ale bez zarejestrowanej Policy zawsze zwraca 403 — allocation engine i approval workflow są martwe funkcjonalnie dla wszystkich, nie tylko dla atakujących.
