@@ -14,6 +14,8 @@ class TenantPublicProfileController extends Controller
 {
     public function show(Tenant $tenant): TenantPublicProfileResource
     {
+        $this->authorize('view', $tenant);
+
         /** @var ?TenantPublicProfile $profile */
         $profile = $tenant->publicProfile;
 
@@ -26,6 +28,8 @@ class TenantPublicProfileController extends Controller
 
     public function update(TenantPublicProfileRequest $request, Tenant $tenant): TenantPublicProfileResource
     {
+        $this->authorize('update', $tenant);
+
         /** @var TenantPublicProfile $profile */
         $profile = $tenant->publicProfile ?? new TenantPublicProfile(['tenant_id' => $tenant->id]);
         $profile->fill($request->validated());
@@ -44,6 +48,8 @@ class TenantPublicProfileController extends Controller
 
     public function deleteMedia(Tenant $tenant, string $collection): JsonResponse
     {
+        $this->authorize('update', $tenant);
+
         /** @var ?TenantPublicProfile $profile */
         $profile = $tenant->publicProfile;
 

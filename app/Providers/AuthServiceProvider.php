@@ -7,6 +7,8 @@ use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Policies\AddressPolicy;
 use App\Domain\Common\Policies\BankAccountPolicy;
 use App\Domain\Common\Policies\MediaPolicy;
+use App\Domain\Invoice\Models\Invoice;
+use App\Domain\Invoice\Policies\InvoicePolicy;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Policies\ProjectPolicy;
 use App\Domain\Tenant\Models\Tenant;
@@ -32,6 +34,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Tenant::class            => TenantPolicy::class,
         TenantIntegration::class => TenantIntegrationPolicy::class,
+        Invoice::class           => InvoicePolicy::class,
         UserTableSetting::class  => UserTableSettingPolicy::class,
         TrustedDevice::class     => TrustedDevicePolicy::class,
         SecurityEvent::class     => SecurityEventPolicy::class,

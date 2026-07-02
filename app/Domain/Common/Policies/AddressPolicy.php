@@ -4,6 +4,8 @@ namespace App\Domain\Common\Policies;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Address;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -28,11 +30,13 @@ class AddressPolicy
     }
 
     /**
-     * Determine whether the user can create addresses.
+     * Determine whether the user can create addresses. The tenant's own
+     * official address is used on invoices/legal documents, so — unlike
+     * viewing — this is restricted to Owner/Admin, not any member.
      */
     public function create(User $user, Tenant $tenant): bool
     {
-        return $user->isCurrentTenant($tenant);
+        return $this->isOwnerOrAdmin($user, $tenant);
     }
 
     /**
@@ -40,7 +44,7 @@ class AddressPolicy
      */
     public function update(User $user, Address $address, Tenant $tenant): bool
     {
-        return $user->isCurrentTenant($tenant) && $address->tenant_id === $tenant->id;
+        return $address->tenant_id === $tenant->id && $this->isOwnerOrAdmin($user, $tenant);
     }
 
     /**
@@ -48,6 +52,15 @@ class AddressPolicy
      */
     public function delete(User $user, Address $address, Tenant $tenant): bool
     {
-        return $user->isCurrentTenant($tenant) && $address->tenant_id === $tenant->id;
+        return $address->tenant_id === $tenant->id && $this->isOwnerOrAdmin($user, $tenant);
+    }
+
+    private function isOwnerOrAdmin(User $user, Tenant $tenant): bool
+    {
+        if (!$user->isCurrentTenant($tenant)) {
+            return false;
+        }
+
+        return TenantScopedRoles::userHasAnyRole($user, $tenant->id, [RoleName::Owner->value, RoleName::Admin->value]);
     }
 }

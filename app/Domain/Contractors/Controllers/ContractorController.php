@@ -17,12 +17,15 @@ use App\Domain\Contractors\Services\ContractorRegistryConfirmationService;
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ContractorsExport;
 use App\Domain\Export\Services\ExportService;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use App\Services\LogoFetcher\LogoFetcherService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class ContractorController extends Controller
@@ -137,6 +140,8 @@ class ContractorController extends Controller
 
     public function destroy(Contractor $contractor): JsonResponse
     {
+        $this->authorizeManage();
+
         $contractor->delete();
 
         return response()->json(['message' => 'Contractor deleted successfully.'], Response::HTTP_NO_CONTENT);
@@ -185,6 +190,8 @@ class ContractorController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -195,6 +202,23 @@ class ContractorController extends Controller
             ContractorsExport::class,
             $config,
             'contractors.xlsx'
+        );
+    }
+
+    /**
+     * Deleting a contractor or exporting the whole book (including bank
+     * accounts) is destructive/broad enough to require Owner/Admin, unlike
+     * everyday CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var \App\Domain\Auth\Models\User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 }

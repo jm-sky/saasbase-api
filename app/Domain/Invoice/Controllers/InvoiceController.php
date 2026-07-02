@@ -86,6 +86,8 @@ class InvoiceController extends Controller
 
     public function store(StoreInvoiceRequest $request): JsonResponse
     {
+        $this->authorize('create', Invoice::class);
+
         $invoice = Invoice::create($request->validated());
 
         return response()->json([
@@ -102,6 +104,8 @@ class InvoiceController extends Controller
 
     public function update(UpdateInvoiceRequest $request, Invoice $invoice): JsonResponse
     {
+        $this->authorize('update', $invoice);
+
         $invoice->update($request->validated());
 
         return response()->json(new InvoiceResource($invoice));
@@ -109,6 +113,8 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice): JsonResponse
     {
+        $this->authorize('delete', $invoice);
+
         $invoice->delete();
 
         return response()->json(['message' => 'Invoice deleted successfully.'], Response::HTTP_NO_CONTENT);

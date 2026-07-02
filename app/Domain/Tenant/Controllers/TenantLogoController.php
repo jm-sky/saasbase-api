@@ -18,6 +18,8 @@ class TenantLogoController extends Controller
 
     public function upload(TenantLogoUploadRequest $request, Tenant $tenant)
     {
+        $this->authorize('update', $tenant);
+
         $tenant->clearMediaCollection('logo');
 
         $media = $tenant->addMediaFromRequest('image')
@@ -38,6 +40,8 @@ class TenantLogoController extends Controller
 
     public function show(Tenant $tenant, Request $request)
     {
+        $this->authorize('view', $tenant);
+
         $thumb = $request->query('thumb', false);
         $media = $thumb ? $tenant->getFirstMedia('logo', 'thumb') : $tenant->getFirstMedia('logo');
 
@@ -62,6 +66,8 @@ class TenantLogoController extends Controller
 
     public function delete(Tenant $tenant)
     {
+        $this->authorize('update', $tenant);
+
         $media = $tenant->getFirstMedia('logo');
         $tenant->clearMediaCollection('logo');
 

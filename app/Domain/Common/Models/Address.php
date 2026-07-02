@@ -4,6 +4,7 @@ namespace App\Domain\Common\Models;
 
 use App\Domain\Common\DTOs\AddressMeta;
 use App\Domain\Common\Enums\AddressType;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Database\Factories\AddressFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Address extends BaseModel
 {
+    /**
+     * Every addressable owner (Tenant, Contractor, User) is itself
+     * tenant-scoped, so the address inherits tenant_id from the
+     * authenticated request rather than relying on callers to pass it —
+     * previously it was silently left NULL, breaking tenant isolation on
+     * this model and making the AddressPolicy's tenant match always fail.
+     */
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'country',
