@@ -141,6 +141,27 @@ Wszystko z listy domenowej +
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
 
+### Faza 2 — Invoice i Expense
+
+**Wzorzec:** w Invoice autoryzacja w ogóle nie istnieje (każdy może wszystko); w Expense autoryzacja "istnieje" ale bez zarejestrowanej Policy zawsze zwraca 403 — allocation engine i approval workflow są martwe funkcjonalnie dla wszystkich, nie tylko dla atakujących.
+
+- **[CRITICAL]** `InvoiceController` — brak jakiejkolwiek autoryzacji opartej o rolę. Wszystkie `authorize()` w FormRequests zwracają `true`, kontroler nigdy nie woła `$this->authorize()`, `InvoicePolicy` nie istnieje, brak wpisu w `AuthServiceProvider`. Dowolny member tenanta może store/update/destroy dowolną fakturę.
+- **[CRITICAL]** Numeracja faktur — kolumna `number` bez `unique()` (globalnie ani per tenant+szablon), `StoreInvoiceRequest` bez reguły `unique`. `NumberingTemplate::generateNextNumber()` wołane wyłącznie z seedera, nigdy z kontrolera/akcji produkcyjnej — klient sam konstruuje numer faktury. Można utworzyć dwie faktury o identycznym numerze w tym samym tenancie — złamanie wymogu prawnego unikalnej numeracji.
+- **[CRITICAL]** State machine statusu faktury (`InvoiceStatus::canTransitionTo()`) zdefiniowana, ale nigdzie nie wywoływana. `UpdateInvoiceRequest` waliduje `status` jako zwykły string. Fakturę ze statusem COMPLETED (opłaconą) można cofnąć do DRAFT i zmienić kwoty/numer/walutę — złamanie integralności dokumentu księgowego.
+- **[CRITICAL]** Brak przeliczania/weryfikacji sum finansowych po stronie backendu — `totalNet+totalTax=totalGross` nigdzie nie jest wymuszane, klient wysyła gotowe sumy.
+- **[CRITICAL]** `ExpenseAllocationController`/`ExpenseApprovalController::start` wołają `$this->authorize('update'/'view', $expense)`, ale `Expense::class` nie ma zarejestrowanej Policy w `AuthServiceProvider` — Laravel domyślnie odmawia gdy brak Policy. **Cały allocation engine i start workflow zatwierdzania zwracają 403 dla każdego użytkownika, zawsze.** Brak testów sprawił, że nikt tego nie wykrył — funkcje "gotowe" (DTO/Action/Controller/walidacja) są w praktyce bezużyteczne.
+- **[CRITICAL]** Eksport wydatków (`ExpensesExport`) nie sprawdza `approval_status` — w połączeniu z powyższym, niezatwierdzone wydatki (i tak wszystkie, bo approval nie działa) są swobodnie eksportowane.
+- **[HIGH]** `InvoiceShareTokenController::destroy()` — **kasuje całą fakturę** zamiast unieważnić token udostępniania (kopiuj-wklej z `InvoiceController::destroy()`, drugi parametr trasy `{share_token}` jest po prostu ignorowany przez sygnaturę metody).
+- **[HIGH]** `HasShareTokens::shareTokens()` — zwykła `HasMany` po `shareable_id`, ignoruje `shareable_type` mimo polimorficznej tabeli. Powinno być `morphMany`.
+- **[HIGH]** Brak roli-opartej autoryzacji dla CRUD wydatków (analogicznie do faktur) — każdy member może edytować/usuwać cudze wydatki.
+- **[HIGH]** `ExpenseAllocationStatus` na `ExpenseAllocation` nigdy nie aktualizowane po utworzeniu (zawsze `PENDING`), `canTransitionTo()` martwy kod.
+- **[HIGH]** Zero testów dla całej domeny Expense poza OCR — stąd finding o allocation/approval (403 dla wszystkich) nigdy nie został wykryty. Invoice ma tylko 3 testy (show/delete/404) — brak testów store/update, izolacji tenantów, przejść statusów, numeracji, sum finansowych.
+- **[MEDIUM]** `InvoiceGeneratorService`/`TemplatingService` — helpery Handlebars dla `logoUrl`/`signatureUrl` budują nieescapowany `<img src="...">`. Dziś nieszkodliwe (URL z bezpiecznego `MediaUrlService`), ale niebezpieczny wzorzec przy istniejącym opcjonalnym `PuppeteerEngine` (pełna przeglądarka z JS przy renderowaniu PDF).
+- **[MEDIUM]** Brak autoryzacji na generowanie/pobieranie PDF faktury.
+- **[MEDIUM]** `AllocateExpenseAction::execute()` ustawia status wydatku zawsze na `PROCESSING`, nie rozróżnia pełnej/częściowej alokacji mimo gotowych helperów na modelu.
+- **[LOW]** README niezgodny z kodem w obie strony: eksport faktur do Excela istnieje i działa (README mówi "niezrobione"), allocation/approval w Expense "backend-ready" ale w runtime martwe (403).
+- **[LOW]** Duplikacja kodu między `InvoiceAttachmentsController` i `ExpenseAttachmentsController` (niemal identyczne).
+
 ### Naprawione critical findings z Fazy 1, Grupa A (2026-07-02)
 
 1. **Stripe — surowe dane karty.** Backend już nie przyjmuje `cardNumber`/`expiry`/`cvc`. `PaymentDetailsDTO` przyjmuje teraz `paymentMethodId` (token `pm_...`); `StripePaymentService::createPaymentMethod()` → `attachPaymentMethod()`, tylko podpina istniejący token zamiast tworzyć PaymentMethod z surowej karty. **WYMAGA ZMIANY W FRONTENDZIE** (saasbase-web): formularz płatności musi używać Stripe.js/Elements do tokenizacji karty po stronie klienta i wysyłać `paymentDetails.paymentMethodId` zamiast pól karty. To złamanie kontraktu API — bez zmiany frontendu formularz subskrypcji przestanie działać.
