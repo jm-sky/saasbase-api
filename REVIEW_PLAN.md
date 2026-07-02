@@ -88,7 +88,7 @@ Wszystko z listy domenowej +
 
 ### Faza 3 — Systemy wspierające
 
-- [ ] Approval (workflow engine)
+- [x] Approval (workflow engine)
 - [ ] Template (szablony faktur, PDF)
 - [x] ShareToken
 - [x] Feeds
@@ -97,7 +97,7 @@ Wszystko z listy domenowej +
 - [x] Skills
 - [ ] Export
 - [x] Admin
-- [ ] Users
+- [x] Users
 
 ### Faza 4 — Frontend (lustro backendu + spójność kontraktu)
 
@@ -140,6 +140,34 @@ Wszystko z listy domenowej +
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 3 — Approval, Users
+
+**Wzorzec:** silnik workflow (Approval) ma poprawny szkielet stanów, ale kluczowa logika rozwiązywania zatwierdzających odwołuje się do nieistniejących relacji (cicho połykane przez `method_exists()`) i nie stosuje tenant-scopingu do uprawnień systemowych — część typów zatwierdzających jest martwa, część dziurawa międzytenantowo. W Users trzy dobrze zaimplementowane Policy kontrastują z całkowicie nieautoryzowanym `PublicUserController`, którego jedyny "wentyl bezpieczeństwa" (widoczność pól per-tenant) jest złamany logicznie i dodatkowo nieosiągalny przez API (kontroler ustawień prywatności nie ma zarejestrowanej trasy) — czyli wyciek danych osobowych bez żadnej możliwości wyłączenia.
+
+**Approval:**
+
+- **[CRITICAL]** `ApprovalResolutionService::resolveUnitRoleApprover()`/`getUserPrimaryUnit()`/`getUsersWithRoleInUnit()` wołają `$user->organizationUnitMemberships()`/`$unit->memberships()` — te metody **nie istnieją** (rzeczywiste relacje to `User::orgUnitUsers()`/`OrganizationUnit::orgUnitUsers()` przez model `OrgUnitUser`). Osłony `method_exists()` cicho połykają błąd i zwracają pustą kolekcję. **Typ zatwierdzającego `UNIT_ROLE` nigdy nie rozwiąże żadnego zatwierdzającego — każdy krok workflow z tym typem zawiesza się w `pending` na zawsze.**
+- **[CRITICAL]** `ApprovalResolutionService::resolveSystemPermissionApprover()` — zapytanie `User::whereHas('permissions', ...)` **bez filtrowania po tenant/team_id**, nie przechodzi przez `TenantScopedRoles`-owy odpowiednik (którego dla permissions w ogóle nie ma). Zwraca **wszystkich userów w całej bazie** z danym uprawnieniem, niezależnie od tenanta — typ `SYSTEM_PERMISSION` może uczynić zatwierdzającym usera z zupełnie innej firmy.
+- **[CRITICAL]** `ExpenseApprovalController::pendingApprovals()`/`approvalHistory()` — `ApprovalExpenseExecution`/`ApprovalStepApprover` **nie mają `tenant_id`/`BelongsToTenant`**, filtr wyłącznie po `approver_value === $user->id`. User należący do wielu tenantów (via `belongsToMany`), zalogowany w kontekście Tenanta B jako zatwierdzający z Tenanta A, zobaczy w `GET /expenses/pending-approvals`/`/approval-history` pełne dane (kwoty, historia decyzji, uzasadnienia) **z cudzego tenanta**.
+- **[HIGH]** Race condition w `ProcessApprovalDecisionAction::execute()` — `validateExecution()` sprawdza `isPending()` na obiekcie wczytanym PRZED transakcją, bez `lockForUpdate()`. Dwie równoległe decyzje (approve + reject) na tym samym kroku mogą obie przejść walidację — "last write wins" może nadpisać już zatwierdzone wykonanie na `REJECTED` mimo że stan miał być terminalny. `ApprovalExecutionStatus::canTransitionTo()` istnieje właśnie po to, ale nigdzie nie jest wywoływane w tym Action — martwy kod.
+- **[HIGH]** Brak jakiegokolwiek CRUD do zarządzania `ApprovalWorkflow`/`ApprovalWorkflowStep`/`ApprovalStepApprover` — brak Controllers/Requests/Resources w domenie, jedyny sposób ich powstania to `factory()` w testach. "Flexible workflow engine" jest w praktyce nieużywalny przez żadnego tenanta (README już to oznacza jako nieukończone — zgodne z rzeczywistością).
+- **[MEDIUM]** `ExpenseApprovalController::show/processDecision/canApprove` nie wołają `$this->authorize()` na `$expense` (w przeciwieństwie do `startApproval()`) — każdy user danego tenanta widzi pełną historię decyzji dowolnego wydatku, niezależnie czy ma z nim związek.
+- **[MEDIUM]** Testy iluzoryczne: unit test na `ApprovalResolutionService` sprawdza tylko `assertInstanceOf`/`method_exists`, zero asercji na rzeczywiste zachowanie — dokładnie tam, gdzie siedzą oba CRITICAL. Żaden test nie uderza w trasy HTTP `ExpenseApprovalController`, więc cross-tenant leak nigdy nie zostanie wyłapany przez CI.
+- **[LOW]** Unique constraint na `approval_step_approvers` nie chroni przed duplikatami gdy `organization_unit_id IS NULL` (Postgres `NULL != NULL`).
+
+**Users:**
+
+- **[CRITICAL]** `PublicUserController::show(User $user)` (`GET v1/users/{user}`) — **zero autoryzacji**. `User` nie ma tenant-scope, więc implicit route binding rozwiązuje dowolny user ID w systemie; `is_in_tenant` sprawdza tylko że wołający MA jakiś `tid`, nie że `{user}` należy do tego tenanta. **Dowolny zalogowany user dowolnej firmy pobiera profil dowolnego innego usera w całym systemie.**
+- **[CRITICAL]** `UserPreference::isFieldVisibleInTenant()` **nie sprawdza, czy pytający jest w tym samym tenancie co właściciel profilu** — sprawdza tylko `'public'|'tenant'|'hidden'`, traktując `'tenant'` jako zawsze-widoczne. Domyślna widoczność email/telefonu/daty urodzenia to `'tenant'`. W połączeniu z findingiem powyżej: **email, telefon i data urodzenia każdego usera w systemie są domyślnie widoczne dla kogokolwiek** trafiającego na `PublicUserController::show`.
+- **[CRITICAL]** Jedyny sposób ograniczenia powyższego (`UserPreferenceController::update/reset`) **nie jest zarejestrowany w żadnym pliku routes** — całkowicie nieosiągalny przez API. Użytkownicy nie mają żadnej możliwości wyłączenia wycieku z dwóch findingów powyżej.
+- **[HIGH]** `Route::get('users/search', [PublicUserController::class, 'search'])` wskazuje na metodę, której **nie ma** w kontrolerze (`BadMethodCallException`/500) — martwa/zepsuta trasa.
+- **[MEDIUM]** Martwy/zduplikowany kod: `Users\Requests\UpdateProfileRequest`/`UpdateProfilePrivacyRequest` nieużywane przez żaden kontroler (realny endpoint korzysta z `Auth\Requests\UpdateUserProfileRequest`). Dwa równoległe, nakładające się systemy ustawień (`Users\Models\UserPreference` vs `Auth\Models\UserSettings`) — tylko jeden realnie podłączony pod trasy.
+- **[MEDIUM]** Zerowe pokrycie testami: `UserTableSettingController`/`TrustedDeviceController`/`SecurityEventController`/`NotificationSettingController`/`PublicUserController` — brak jakichkolwiek testów, stąd CRITICAL wyciek nigdy niewykryty.
+- **[LOW]** `user/profile-image/{user}` w pełni publiczna (bez `auth:api`), bez tenant-checku, strumieniuje surowe media — odstaje od wzorca `HasMediaSignedUrls` z CLAUDE.md.
+- **[LOW]** `visibilityPerTenant.*` (ID tenanta) niewalidowane względem faktycznych członkostw usera.
+- **[LOW]** `NotificationSettingController` pozwala na dowolne stringi `channel`/`settingKey` zamiast `Enum` rule — literówka w kluczu cicho tworzy nic-nie-robiący rekord.
+- Pozytyw: `UserTableSettingPolicy`/`TrustedDevicePolicy`/`SecurityEventPolicy` poprawnie zaimplementowane i zarejestrowane.
 
 ### Faza 3 — Chat, Skills, Admin
 
