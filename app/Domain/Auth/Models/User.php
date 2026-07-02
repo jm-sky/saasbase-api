@@ -482,7 +482,7 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
 
         // Assign role if position has one
         if ($position && $position->role_name) {
-            $this->assignRole($position->role_name);
+            \App\Domain\Rights\Support\TenantScopedRoles::assign($this, $position->role_name, $unit->tenant_id);
         }
 
         return $orgUnitUser;

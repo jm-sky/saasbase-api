@@ -4,6 +4,7 @@ namespace App\Domain\Tenant\Models;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -43,12 +44,12 @@ class UserTenant extends Pivot
     {
         parent::boot();
 
-        static::created(function ($model) {
-            $model->user->assignRole($model->role);
+        static::created(function (self $model) {
+            TenantScopedRoles::assign($model->user, $model->role, $model->tenant_id);
         });
 
-        static::deleted(function ($model) {
-            $model->user->removeRole($model->role);
+        static::deleted(function (self $model) {
+            TenantScopedRoles::remove($model->user, $model->role, $model->tenant_id);
         });
     }
 

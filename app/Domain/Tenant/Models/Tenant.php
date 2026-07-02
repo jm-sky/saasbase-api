@@ -297,10 +297,10 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
         $previousTenantId         = self::$BYPASSED_TENANT_ID;
         self::$BYPASSED_TENANT_ID = $tenantId;
 
-        $result = $callback();
-
-        self::$BYPASSED_TENANT_ID = $previousTenantId;
-
-        return $result;
+        try {
+            return $callback();
+        } finally {
+            self::$BYPASSED_TENANT_ID = $previousTenantId;
+        }
     }
 }

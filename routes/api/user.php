@@ -23,7 +23,7 @@ Route::withoutMiddleware(['auth:api', 'is_active'])
 Route::middleware('auth:api')->get('me', MeController::class);
 Route::middleware('auth:api')->get('me/logs', MeActivityLogsController::class);
 
-Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () {
+Route::middleware(['auth:api', 'is_active', 'mfa'])->prefix('user')->group(function () {
     Route::get('profile', [UserProfileController::class, 'show']);
     Route::put('profile', [UserProfileController::class, 'update']);
     Route::get('settings', [UserSettingsController::class, 'show']);
@@ -35,7 +35,7 @@ Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () 
     Route::apiResource('skills', UserSkillController::class);
 });
 
-Route::middleware(['auth:api', 'is_active'])->group(function () {
+Route::middleware(['auth:api', 'is_active', 'mfa'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/archive', [NotificationController::class, 'archive']);

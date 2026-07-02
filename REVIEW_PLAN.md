@@ -134,6 +134,24 @@ Wszystko z listy domenowej +
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
 
+### Naprawione critical findings z Fazy 0 (2026-07-02)
+
+Wszystkie 7 unikalnych critical findings z Fazy 0 naprawione bezpośrednio (nie przez agenty — ręcznie, z weryfikacją składni `php -l`):
+
+1. **`Tenant::bypassTenant()`** — dodano `try/finally`, stan już nie "zatrzaskuje się" przy wyjątku.
+2. **`TenantPolicy::update/delete`** — teraz wymaga roli Owner/Admin, nie tylko członkostwa.
+3. **`RoleController`** — dodano autoryzację (Owner/Admin) w `store`/`update`/`destroy`; `index()` dodatkowo jawnie scope'owany tenantem (choć `Role` i tak ma `IsGlobalOrBelongsToTenant`, więc to była redundancja, nie luka).
+4. **`TenantInvitationController::send`** — dodano autoryzację (Owner/Admin), `role` w `SendInvitationRequest` waliduje teraz przeciw `RoleName` enum zamiast dowolnego stringa.
+5. **`ActivityLogController::index`** — `$query` z filtrem `tenant_id` jest teraz faktycznie przekazywany do `getIndexPaginator()`.
+6. **2FA nieegzekwowane** — nowy middleware `mfa` (`EnsureTwoFactorVerified`) odrzuca żądania z tokenem `mfa=1` (2FA włączone, niezaliczone). Podpięty w głównych grupach tras (`routes/api.php`, `routes/api/user.php`, `routes/api/invitations.php`).
+7. **OAuth account takeover** — `OAuthController::callback` linkuje tożsamość przez `OAuthAccount` (provider + provider_user_id) zamiast logować po samym e-mailu; jeśli e-mail już istnieje w systemie bez linku, użytkownik jest odsyłany z błędem zamiast być zalogowanym do cudzego konta.
+
+**Efekt uboczny odkryty przy naprawie:** Spatie Permission ma włączone `teams` (`team_foreign_key = tenant_id`), ale `setPermissionsTeamId()` był wołany tylko w seederze, nigdy w runtime — więc `assignRole()`/`hasRole()` operowały na pustym/nieprawidłowym kontekście tenanta w całej aplikacji. Dodano `App\Domain\Rights\Support\TenantScopedRoles` — pomocnik do poprawnego (jawnie tenant-scoped) przypisywania i sprawdzania ról, użyty we wszystkich powyższych fixach oraz podpięty w `UserTenant::boot()` i `User::assignToPosition()` (miejsca zapisu ról). **To punktowa naprawa tylko w dotkniętych miejscach — reszta aplikacji nadal nie ma globalnego mechanizmu ustawiającego team ID per-request; jeśli w przyszłości pojawią się inne miejsca wołające `assignRole()`/`hasRole()` bezpośrednio, będą miały ten sam problem.** Warto rozważyć osobny follow-up: albo globalny middleware ustawiający team ID (wymaga starannego zbadania kolejności middleware), albo konsekwentne użycie `TenantScopedRoles` wszędzie.
+
+**Nienaprawione (świadomie odłożone, HIGH/MEDIUM z Fazy 0):** rate limiting na auth endpoints, enumeracja userów przez reset hasła, bug `birthDate` w rejestracji, IDOR w `ApplicationInvitationController`, plaintext API keys, `UserSession.revoked_at` niesprawdzane, `SignedImageUrlGenerator` gubiący TTL, `RoleName::fromCaseInsensitive` zepsute, martwy kod w `ChatMessage`/`ChatParticipant`, brak walidacji tenanta w `DirectMessageController::createRoom`, endpointy admina z niedziałającym bypassem — wracamy do nich po Fazie 1, albo wcześniej jeśli priorytet się zmieni.
+
+**Nie uruchomiono testów/PHPStan** — brak `vendor/` w tym środowisku (nie zainstalowano zależności). Zweryfikowano tylko składnię (`php -l`, czysto). **Zalecenie: przed merge uruchomić pełny `composer install && artisan test && phpstan analyse` lokalnie/w CI.**
+
 ### Faza 0 — Multi-tenancy i klasy bazowe
 
 **Ocena ogólna:** rdzeń mechanizmu (proste `WHERE tenant_id`, fail-closed sentinel `'none'`, spójny `BaseModel`) jest solidny. Jeden krytyczny bug punktowy + kilka niedokończonych fragmentów.
