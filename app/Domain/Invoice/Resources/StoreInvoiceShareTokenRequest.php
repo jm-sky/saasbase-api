@@ -12,7 +12,7 @@ class StoreInvoiceShareTokenRequest extends BaseFormRequest
             'invoiceId'            => ['required', 'ulid', 'exists:invoices,id'],
             'expiresAt'            => ['required', 'date'],
             'onlyForAuthenticated' => ['required', 'boolean'],
-            'maxUsage'             => ['required', 'integer'],
+            'maxUsage'             => ['required', 'integer', 'min:1'],
         ];
     }
 }
