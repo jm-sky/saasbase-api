@@ -17,6 +17,8 @@ use App\Domain\Invoice\Requests\InvoicePdfRequest;
 use App\Domain\Invoice\Requests\StoreInvoiceRequest;
 use App\Domain\Invoice\Requests\UpdateInvoiceRequest;
 use App\Domain\Invoice\Resources\InvoiceResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Template\Services\InvoiceGeneratorService;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -24,6 +26,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 
@@ -146,6 +149,8 @@ class InvoiceController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -156,6 +161,24 @@ class InvoiceController extends Controller
             InvoicesExport::class,
             $config,
             'invoices.xlsx'
+        );
+    }
+
+    /**
+     * Bulk-exporting every invoice (amounts, buyer/seller data) is
+     * destructive/broad enough to require Owner/Admin, unlike everyday
+     * CRUD which any tenant member needs — same pattern as
+     * ContractorController/ProductController::export().
+     */
+    private function authorizeManage(): void
+    {
+        /** @var \App\Domain\Auth\Models\User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 

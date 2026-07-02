@@ -13,6 +13,8 @@ use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Requests\CreateTaskRequest;
 use App\Domain\Projects\Requests\UpdateTaskRequest;
 use App\Domain\Projects\Resources\TaskResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -120,6 +122,8 @@ class TaskController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -130,6 +134,23 @@ class TaskController extends Controller
             TasksExport::class,
             $config,
             'tasks.xlsx'
+        );
+    }
+
+    /**
+     * Bulk-exporting every task (across all projects/assignees) is
+     * destructive/broad enough to require Owner/Admin, unlike everyday
+     * CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var \App\Domain\Auth\Models\User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 }

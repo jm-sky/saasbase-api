@@ -16,6 +16,18 @@ class TasksExport extends BaseExport
 
     protected array $amountColumns = ['estimated_hours'];
 
+    protected array $columns = [
+        'id',
+        'title',
+        'description',
+        'priority',
+        'due_date',
+        'project.name',
+        'assignee.first_name',
+        'assignee.last_name',
+        'created_at',
+    ];
+
     public function baseQuery(): Builder
     {
         return Task::query()->with(['assignee', 'project']);
