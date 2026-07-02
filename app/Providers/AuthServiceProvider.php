@@ -15,6 +15,8 @@ use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantIntegration;
 use App\Domain\Tenant\Policies\TenantIntegrationPolicy;
 use App\Domain\Tenant\Policies\TenantPolicy;
+use App\Domain\Template\Models\InvoiceTemplate;
+use App\Domain\Template\Policies\InvoiceTemplatePolicy;
 use App\Domain\Users\Models\SecurityEvent;
 use App\Domain\Users\Models\TrustedDevice;
 use App\Domain\Users\Models\UserTableSetting;
@@ -42,6 +44,7 @@ class AuthServiceProvider extends ServiceProvider
         BankAccount::class       => BankAccountPolicy::class,
         Media::class             => MediaPolicy::class,
         Project::class           => ProjectPolicy::class,
+        InvoiceTemplate::class   => InvoiceTemplatePolicy::class,
     ];
 
     /**

@@ -69,7 +69,10 @@ return [
                     '--disable-gpu',
                     '--disable-extensions',
                     '--disable-plugins',
-                    '--disable-web-security',
+                    // Invoice template HTML is tenant-authored content rendered by this
+                    // headless browser — JS execution + disabled CORS turns a <script>
+                    // in a template into SSRF against internal services. Keep both off.
+                    '--disable-javascript',
                     '--disable-features=VizDisplayCompositor',
                     '--disable-background-timer-throttling',
                     '--disable-backgrounding-occluded-windows',

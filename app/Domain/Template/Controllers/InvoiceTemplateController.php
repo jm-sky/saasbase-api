@@ -12,12 +12,14 @@ use App\Domain\Template\Requests\UpdateInvoiceTemplateRequest;
 use App\Domain\Template\Resources\InvoiceTemplatePreviewResource;
 use App\Domain\Template\Resources\InvoiceTemplateResource;
 use App\Domain\Template\Services\InvoiceGeneratorService;
+use App\Domain\Template\Services\TemplatingService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class InvoiceTemplateController extends Controller
@@ -26,7 +28,7 @@ class InvoiceTemplateController extends Controller
 
     protected int $defaultPerPage = 15;
 
-    public function __construct()
+    public function __construct(private readonly TemplatingService $templatingService)
     {
         $this->modelClass  = InvoiceTemplate::class;
         $this->defaultWith = ['user'];
@@ -71,8 +73,10 @@ class InvoiceTemplateController extends Controller
     {
         $this->authorize('create', InvoiceTemplate::class);
 
-        $template = DB::transaction(function () use ($request) {
-            $data = $request->validated();
+        $data = $request->validated();
+        $this->validateHandlebarsContent($data['content'] ?? '');
+
+        $template = DB::transaction(function () use ($data) {
 
             // If this template is set as default, unset other defaults in the same category
             if ($data['isDefault'] ?? false) {
@@ -109,9 +113,13 @@ class InvoiceTemplateController extends Controller
     {
         $this->authorize('update', $invoiceTemplate);
 
-        DB::transaction(function () use ($request, $invoiceTemplate) {
-            $data = $request->validated();
+        $data = $request->validated();
 
+        if (\array_key_exists('content', $data)) {
+            $this->validateHandlebarsContent($data['content']);
+        }
+
+        DB::transaction(function () use ($data, $invoiceTemplate) {
             // If this template is set as default, unset other defaults in the same category
             if (($data['isDefault'] ?? false) && (!$invoiceTemplate->is_default || $invoiceTemplate->category !== $data['category'])) {
                 InvoiceTemplate::query()
@@ -186,6 +194,24 @@ class InvoiceTemplateController extends Controller
 
         return response()->json([
             'html' => $styledHtml,
+        ]);
+    }
+
+    /**
+     * InvoiceTemplateService::create/update() already run this check, but
+     * store()/update() bypass the service and write to the model directly —
+     * without this, a broken Handlebars template saves fine and only blows
+     * up later at PDF-generation time (TemplateRenderingException) instead
+     * of at save time (422).
+     */
+    private function validateHandlebarsContent(string $content): void
+    {
+        if ($this->templatingService->validate($content)) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'content' => [$this->templatingService->getValidationErrors($content) ?? 'Invalid Handlebars template syntax.'],
         ]);
     }
 }
