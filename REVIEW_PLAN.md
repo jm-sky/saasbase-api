@@ -124,7 +124,7 @@ Wszystko z listy domenowej +
 | Faza | Status | Data | Notatki |
 |------|--------|------|---------|
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
-| 1 — Integracje | Nierozpoczęta | — | — |
+| 1 — Integracje | W trakcie | 2026-07-02 | Płatności/finanse ukończone: 4 critical (w tym karta płatnicza w plaintext w logach + brak izolacji tenantów w Subscription). Rejestry/tożsamość + KSeF/OCR/AI w toku |
 | 2 — Core biznesowy | Nierozpoczęta | — | — |
 | 3 — Wspierające | Nierozpoczęta | — | — |
 | 4 — Frontend | Nierozpoczęta | — | — |
@@ -149,6 +149,24 @@ Wszystkie 7 unikalnych critical findings z Fazy 0 naprawione bezpośrednio (nie 
 **Efekt uboczny odkryty przy naprawie:** Spatie Permission ma włączone `teams` (`team_foreign_key = tenant_id`), ale `setPermissionsTeamId()` był wołany tylko w seederze, nigdy w runtime — więc `assignRole()`/`hasRole()` operowały na pustym/nieprawidłowym kontekście tenanta w całej aplikacji. Dodano `App\Domain\Rights\Support\TenantScopedRoles` — pomocnik do poprawnego (jawnie tenant-scoped) przypisywania i sprawdzania ról, użyty we wszystkich powyższych fixach oraz podpięty w `UserTenant::boot()` i `User::assignToPosition()` (miejsca zapisu ról). **To punktowa naprawa tylko w dotkniętych miejscach — reszta aplikacji nadal nie ma globalnego mechanizmu ustawiającego team ID per-request; jeśli w przyszłości pojawią się inne miejsca wołające `assignRole()`/`hasRole()` bezpośrednio, będą miały ten sam problem.** Warto rozważyć osobny follow-up: albo globalny middleware ustawiający team ID (wymaga starannego zbadania kolejności middleware), albo konsekwentne użycie `TenantScopedRoles` wszędzie.
 
 **Nienaprawione (świadomie odłożone, HIGH/MEDIUM z Fazy 0):** rate limiting na auth endpoints, enumeracja userów przez reset hasła, bug `birthDate` w rejestracji, IDOR w `ApplicationInvitationController`, plaintext API keys, `UserSession.revoked_at` niesprawdzane, `SignedImageUrlGenerator` gubiący TTL, `RoleName::fromCaseInsensitive` zepsute, martwy kod w `ChatMessage`/`ChatParticipant`, brak walidacji tenanta w `DirectMessageController::createRoom`, endpointy admina z niedziałającym bypassem — wracamy do nich po Fazie 1, albo wcześniej jeśli priorytet się zmieni.
+
+### Faza 1 — Płatności/finanse (Stripe/Subscription, Financial, Exchanges/NBP)
+
+**Ocena ogólna: najpoważniejsza sekcja audytu jak dotąd.** Realne pieniądze + dane kart płatniczych + ten sam wzorzec braku RBAC/tenant-scopingu co w Fazie 0, tym razem bez żadnego pokrycia testami.
+
+- **[CRITICAL]** `app/Domain/Subscription/DTOs/PaymentDetailsDTO.php`, `StoreSubscriptionRequest.php:24-26`, `StripePaymentService.php:16-47` — backend przyjmuje surowy numer karty + CVC od klienta i przekazuje do Stripe zamiast tokenizacji po stronie klienta (Stripe.js/Elements). To zakres zgodności PCI-DSS SAQ D (audytowany, kosztowny) zamiast SAQ A. Każdy request z kartą przechodzi przez serwery aplikacji, jej logi, load balancery.
+- **[CRITICAL]** `app/Domain/Subscription/Actions/CreateSubscriptionAction.php:59-66` — przy wyjątku podczas tworzenia subskrypcji cały DTO (włącznie z numerem karty i CVC) jest serializowany do `Log::error()`. Karta odrzucona przez Stripe (częsty, normalny przypadek) = pełny PAN+CVC w logach w plaintext.
+- **[CRITICAL]** `SubscriptionController`, `AddonPurchaseController`, `SubscriptionInvoiceController` — modele `Subscription`/`BillingCustomer`/`SubscriptionInvoice`/`AddonPurchase` bez `tenant_id`/tenant-scope. `index()` zwraca dane wszystkich tenantów bez filtra; `show/update/destroy` bez sprawdzenia właściciela. Dowolny user dowolnej firmy widzi/anuluje/zmienia subskrypcje wszystkich innych tenantów w systemie.
+- **[CRITICAL]** `StoreSubscriptionRequest.php:20` — walidacja `billingCustomerId` to tylko `exists:billing_customers,id`, bez sprawdzenia właściciela — można doczepić nową subskrypcję do cudzego `BillingCustomer`.
+- **[HIGH]** `StripeWebhookController.php:46-124` — podpis webhooka weryfikowany poprawnie, ale brak dedup po `event.id`. Stripe gwarantuje at-least-once delivery; przy pierwszym podpiętym listenerze (patrz niżej) retry zdubluje efekty (np. wysyłkę maila).
+- **[HIGH]** Brak RBAC w całej domenie Subscription — każdy member (nie tylko Owner/Admin) może anulować subskrypcję, zmienić plan, kupić addon.
+- **[HIGH]** Zdarzenia domenowe (`InvoicePaid`, `InvoicePaymentFailed`, `SubscriptionCreated/Cancelled/Updated`) są dispatchowane, ale nie mają ani jednego listenera — brak powiadomień o nieudanej płatności/anulowaniu. "Stripe billing" oznaczone w README jako zrobione jest funkcjonalnie niedokończone.
+- **[HIGH]** Zero testów automatycznych dla całej domeny Stripe/Subscription — najbardziej krytycznej finansowo integracji w systemie.
+- **[HIGH]** `app/Domain/Financial/Controllers/VatRateController.php:59-78` — stawki VAT (globalne, współdzielone przez wszystkich tenantów) może tworzyć/usuwać dowolny zalogowany user — brak policy/roli.
+- **[MEDIUM]** Błąd zaokrąglania float→cents w `StripeService::formatAmount` (dziś dead code, ale gotowa mina).
+- **[MEDIUM]** `PaymentMethodController` bez policy — dowolny member tenanta zarządza metodami płatności.
+- **[MEDIUM]** Import kursów NBP (`ImportExchangeRatesJob`) nie waliduje wartości kursu przed zapisem, brak retry/backoff przy awarii NBP, niespójny klucz dedup vs. brak unique constraint w DB (ryzyko duplikatów przy równoległym uruchomieniu).
+- **Weryfikacja README:** 11.1 (plany) potwierdzone; 11.3 (Stripe billing) mylące — działa podstawowy flow, ale podważone przez CRITICAL findings i brak listenerów; 11.4 (auto-renewal) i 11.5 (account lockout) faktycznie brak — potwierdzone jako nieoznaczone `[x]`, zgodne z README. W efekcie plany/limity subskrypcji dziś **niczego nie ograniczają**.
 
 **Nie uruchomiono testów/PHPStan** — brak `vendor/` w tym środowisku (nie zainstalowano zależności). Zweryfikowano tylko składnię (`php -l`, czysto). **Zalecenie: przed merge uruchomić pełny `composer install && artisan test && phpstan analyse` lokalnie/w CI.**
 
