@@ -58,11 +58,11 @@ Wszystko z listy domenowej +
 ### Faza 0 — Fundamenty
 *Priorytet najwyższy: błąd tu unieważnia poprawność wszystkiego innego.*
 
-- [ ] Multi-tenancy: `TenantScope`, `GlobalOrCurrentTenantScope`, `BelongsToTenant`, `Tenant::$BYPASSED_TENANT_ID`
-- [ ] Bazowe klasy: `BaseModel`, `BaseDataDTO`, `BaseFormRequest`
-- [ ] Auth (JWT, rejestracja, reset hasła, OAuth Google/GitHub)
-- [ ] Rights (uprawnienia, role, stanowiska)
-- [ ] Common (`HasIndexQuery`, `HasActivityLogging`, `HasMediaSignedUrls`)
+- [x] Multi-tenancy: `TenantScope`, `GlobalOrCurrentTenantScope`, `BelongsToTenant`, `Tenant::$BYPASSED_TENANT_ID`
+- [x] Bazowe klasy: `BaseModel`, `BaseDataDTO`, `BaseFormRequest`
+- [x] Auth (JWT, rejestracja, reset hasła, OAuth Google/GitHub)
+- [x] Rights (uprawnienia, role, stanowiska)
+- [x] Common (`HasIndexQuery`, `HasActivityLogging`, `HasMediaSignedUrls`)
 
 ### Faza 1 — Integracje zewnętrzne
 *Najwyższe ryzyko: pieniądze, prawo, bezpieczeństwo.*
@@ -123,7 +123,7 @@ Wszystko z listy domenowej +
 
 | Faza | Status | Data | Notatki |
 |------|--------|------|---------|
-| 0 — Fundamenty | Nierozpoczęta | — | — |
+| 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
 | 1 — Integracje | Nierozpoczęta | — | — |
 | 2 — Core biznesowy | Nierozpoczęta | — | — |
 | 3 — Wspierające | Nierozpoczęta | — | — |
@@ -133,3 +133,55 @@ Wszystko z listy domenowej +
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 0 — Multi-tenancy i klasy bazowe
+
+**Ocena ogólna:** rdzeń mechanizmu (proste `WHERE tenant_id`, fail-closed sentinel `'none'`, spójny `BaseModel`) jest solidny. Jeden krytyczny bug punktowy + kilka niedokończonych fragmentów.
+
+- **[CRITICAL]** `app/Domain/Tenant/Models/Tenant.php:295-305` — `Tenant::bypassTenant()` bez `try/finally`. Wyjątek wewnątrz callbacka trwale "zatrzaskuje" `Tenant::$BYPASSED_TENANT_ID` na ID tenanta do restartu procesu. Ponieważ kolejki idą przez Horizon (długożyjące procesy), kolejne joby bez zalogowanego usera (np. `FinishOcrJob`, `ImportExchangeRatesJob`) mogą czytać/zapisywać dane losowego, przeciekniętego tenanta. Trigger: wyjątek w dowolnym z 6 kroków `InitializeTenantDefaults::execute()` (rejestracja tenanta). Naprawa: trywialna (`try/finally`), priorytet: natychmiastowy, przed dalszą pracą.
+- **[HIGH]** `app/Domain/Admin/Products/Controllers/AdminProductController.php` i `AdminContractorController.php` (`show/update/destroy`) — próbują `withoutGlobalScope(TenantScope::class)` w ciele metody, ale route-model-binding rozwiązuje się wcześniej (ze scope'em aktywnym) — więc admin nie może zarządzać zasobami innego tenanta mimo takiego zamiaru w kodzie. Brak testów na `routes/api/admin.php`.
+- **[HIGH]** `app/Domain/Common/Models/OcrRequest.php` — ma `tenant_id`, ale brak `BelongsToTenant`/`IsGlobalOrBelongsToTenant`. Nieaktywne dziś (brak bezpośredniego route-bindingu), ale otwarta furtka na przyszłość; autor zostawił `// TODO: Add where tenant_id`.
+- **[MEDIUM]** `app/Domain/Chat/Models/ChatMessage.php`, `ChatParticipant.php` — `BelongsToTenant` zaimportowany, ale użycie zakomentowane. Bezpieczeństwo dziś opiera się wyłącznie na ręcznych sprawdzeniach w kontrolerze.
+- **[MEDIUM]** `app/Domain/Chat/Controllers/DirectMessageController.php:32` (`createRoom`) — brak walidacji, że drugi user należy do tego samego tenanta.
+- **[LOW]** `app/Domain/Approval/Models/ApprovalExpenseExecution.php:55`, `ApprovalWorkflowStep.php:48` — relacje z `withoutGlobalScopes()`, same modele bez własnego scope'u (ryzyko architektoniczne, nie aktywny wyciek).
+- **[LOW]** `tests/Unit/Domain/Tenant/BelongsToTenantTest.php:44` — ustawia `Tenant::$BYPASSED_TENANT_ID` bez resetu w `tearDown()`.
+
+### Faza 0 — Rights (uprawnienia, role)
+
+**Wzorzec:** system RBAC istnieje jako "rusztowanie" (Role/Permission/seeder), ale w praktyce jest podłączony tylko punktowo — większość endpointów sprawdza wyłącznie członkostwo w tenancie, nie rolę/uprawnienie.
+
+- **[CRITICAL]** `app/Domain/Tenant/Policies/TenantPolicy.php:19-22` — `update`/`delete` sprawdzają tylko członkostwo, nie rolę. Dowolny user (nawet bez uprawnień) może `DELETE /v1/tenants/{tenant}` — skasować całą firmę — albo edytować jej dane.
+- **[CRITICAL]** `app/Domain/Rights/Controllers/RoleController.php` — zero autoryzacji (brak policy/gate, `authorize()` zawsze `true`). Każdy user może tworzyć/edytować/usuwać dowolne role w tenancie, w tym nadawać sobie permissions.
+- **[CRITICAL]** `app/Domain/Tenant/Controllers/TenantInvitationController.php:53-59` — jawny `// TODO: Add authorization check`, `role` z requestu niewalidowany przeciw liście ról. Dowolny user może zaprosić samego siebie (drugi e-mail) z `role: "Admin"` i po `accept()` stać się globalnym Adminem tenanta — pełna eskalacja uprawnień.
+- **[HIGH]** `app/Domain/Tenant/Models/Tenant.php:295-305` — ten sam `bypassTenant()` bez `try/finally` co w sekcji multi-tenancy (potwierdzone niezależnie przez drugi agent).
+- **[MEDIUM]** `app/Domain/Tenant/Controllers/OrganizationUnitController.php:91-103` (`assignUserToUnit`) — brak autoryzacji, IDOR: dowolny user może przypisać dowolnego innego użytkownika tenanta do stanowiska. Dziś częściowo nieszkodliwe (brak API tworzącego `role_name` na stanowisku), ale gotowa ścieżka eskalacji na przyszłość.
+- **[MEDIUM]** `app/Domain/Rights/Enums/RoleName.php:15-18` — `fromCaseInsensitive()` zepsute (lowercase vs case-sensitive `tryFrom`), zawsze zwraca fallback `User`. Martwy kod, nieużywany.
+- **[LOW]** Walidacja `permissions.*` w `StoreRoleRequest`/`UpdateRoleRequest` pomija tenant-scoping modelu `Permission`.
+- **[LOW]** Brak testów dla `RoleController`, `TenantPolicy`, `TenantInvitationController::send` — krytyczne ścieżki niepokryte.
+
+### Faza 0 — Common (`HasIndexQuery`, `HasActivityLogging`, `HasMediaSignedUrls`)
+
+- **[CRITICAL]** `app/Domain/Common/Controllers/ActivityLogController.php:44-53` — filtr `where('tenant_id', ...)` buduje `$query`, ale wywołanie `getIndexPaginator($request)` nie przekazuje go dalej (buduje nowy Builder od zera) — filtr jest martwym kodem. `GET /v1/logs` zwraca activity log **wszystkich tenantów** dla dowolnego zalogowanego usera. Porównanie z poprawnym wzorcem obok (`TenantActivityLogController::index`, przekazuje `query:`) potwierdza, że to przeoczenie/regres, nie decyzja projektowa.
+- **[HIGH]** `app/Domain/Common/Traits/HasActivityLog.php:14-21` — `logOnly(['*'])` na modelach z danymi wrażliwymi (numery IBAN kontrahentów, dane kontaktowe, kwoty faktur) — w połączeniu z powyższym CRITICAL, te dane są czytelne dla obcych tenantów.
+- **[MEDIUM]** `app/Domain/Common/Support/SignedImageUrlGenerator.php:9-26` — gubi parametr `expiration` przy wywołaniu `RelativeUrlSigner::generate()`; deklarowane 60s ważności linku do pliku, realnie 15 min (domyślna wartość).
+- **[LOW]** `HasIndexQuery`/filtry (`AdvancedFilter`, `ComboSearchFilter`) — bez zastrzeżeń, nazwy kolumn z allow-list w kontrolerach, nie z requestu; brak potwierdzonej SQL injection.
+- **[LOW]** Brak testów dla `HasIndexQuery`, `ActivityLogController` (test feature na `/v1/logs` wyłapałby powyższy CRITICAL), `HasMediaSignedUrls`.
+
+### Faza 0 — Auth
+
+**Wzorzec:** dużo "rusztowania" pod właściwe zabezpieczenia (modele, DTO, enumy), ale kluczowe spięcia łączące je z faktyczną egzekucją nie są dokończone.
+
+- **[CRITICAL]** `AuthController.php:36-62` + `JwtHelper.php:54-66` — 2FA jest kosmetyczne. Login wydaje pełnoprawny token niezależnie od tego, czy user ma włączone 2FA; claim `mfa` w JWT nigdzie nie jest egzekwowany (brak middleware). Znajomość samego hasła wystarcza mimo włączonego 2FA.
+- **[CRITICAL]** `app/Domain/Auth/Controllers/OAuthController.php:23-45` — logowanie po samym e-mailu (`firstOrCreate(['email' => ...])`), model `OAuthAccount` istnieje ale nigdy nie jest używany do linkowania tożsamości. Ryzyko przejęcia konta lokalnego przez OAuth z tym samym e-mailem. Dodatkowo: `stateless()` (brak ochrony CSRF w handshake), JWT w query string URL przekierowania (trafia do historii/logów).
+- **[HIGH]** Brak rate limitingu na `login`, `register`, `forgot-password`, `reset-password`, `oauth/*`, `2fa/verify` — brute-force bez żadnej blokady poza reCAPTCHA v3.
+- **[HIGH]** `PasswordResetController.php:35-48` — enumeracja userów przez różne kody/treści odpowiedzi (400 vs 200) w zależności od istnienia e-maila.
+- **[HIGH]** `AuthController.php:83-91` (`register()`) — bug typu: `isset($validated['birth_date'])` ale odczyt `$validated['birthDate']` (camelCase/snake_case mismatch) → `new \DateTime(null)` → `TypeError` przy zapisie do DTO. **Rejestracja z polem `birthDate` zwraca 500** — feature oznaczony w README jako zrobiony faktycznie nie działa.
+- **[HIGH]** `app/Domain/Auth/Controllers/ApplicationInvitationController.php` — IDOR/BOLA: `index()` zwraca wszystkie zaproszenia w systemie; `cancel()`/`resend()` bez weryfikacji właściciela; `accept()`/`reject()` bez sprawdzenia `email === user.email` przed zmianą stanu. Trasy poza grupą `is_active` — działa nawet dla niezatwierdzonych kont.
+- **[HIGH]** `app/Domain/Auth/Controllers/ApiKeyController.php` + `ApiKeyResource.php:24` — klucze API przechowywane i zwracane jawnym tekstem przy każdym odczycie (nie tylko raz przy tworzeniu).
+- **[MEDIUM]** `logout()` odwołuje tylko access token, nie refresh token; `UserSession.revoked_at` nigdzie nie jest sprawdzane przy autoryzacji (kosmetyczne); `UserSession::isCurrent()` ma zepsute porównanie (zawsze `false`).
+- **[MEDIUM]** Słaba polityka haseł (`min:8`, brak `Password::uncompromised()`), niespójna między rejestracją a resetem.
+- **[MEDIUM]** Zmiana e-maila konta bez ponownej weryfikacji (`// TODO: Email/Phone confirmation` w kodzie).
+- **[MEDIUM]** Wyłączenie 2FA bez ponownego uwierzytelnienia (samo `auth:api` wystarcza).
+- **[MEDIUM]** Brak throttlingu na panelu admina (`AdminAuthController`).
+- **[LOW]** Kilka mniejszych: token weryfikacji e-mail bez `expires_at` i bez `hash_equals()`, `remember` ignorowany przy refresh, status zaproszeń jako string zamiast enum, martwy import `RespondsWithToken` w `OAuthController`.
+- **Testy:** praktycznie zerowe pokrycie krytycznych ścieżek (`login`, `register`, `refresh`, `logout`, `OAuth`, `2FA`, `forgot/reset-password`) — stąd żaden z powyższych bugów nie został wyłapany.
