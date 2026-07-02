@@ -90,10 +90,10 @@ Wszystko z listy domenowej +
 
 - [ ] Approval (workflow engine)
 - [ ] Template (szablony faktur, PDF)
-- [ ] ShareToken
-- [ ] Feeds
+- [x] ShareToken
+- [x] Feeds
 - [ ] Chat
-- [ ] Calendar
+- [x] Calendar
 - [ ] Skills
 - [ ] Export
 - [ ] Admin
@@ -140,6 +140,41 @@ Wszystko z listy domenowej +
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 3 — ShareToken, Feeds, Calendar
+
+**Wzorzec:** funkcjonalność publicznego udostępniania (ShareToken) jest architektonicznie błędna i w praktyce niedziałająca (crash przy tworzeniu, brak jakiegokolwiek publicznego endpointu odbioru); w Feeds i Calendar brakuje autoryzacji obiektowej (brak Policy w ogóle), a oba mają dodatkowo świeże, samodzielne bugi funkcjonalne w stylu już znanego wzorca "walidacja na camelCase, kontroler czyta surowy request" (crash przy tworzeniu uczestnika eventu, trwale zepsute usuwanie komentarza feedu przez brakujący segment trasy).
+
+**ShareToken:**
+
+- **[CRITICAL]** `InvoiceShareTokenController::store()` (`app/Domain/Invoice/Controllers/InvoiceShareTokenController.php:24-31`) woła `$invoice->shareTokens()->create($request->validated())`, ale `StoreInvoiceShareTokenRequest::rules()` w ogóle nie zawiera pól `token`/`shareableType`, a kolumny `token` (unique) i `shareable_type` w `share_tokens` są NOT NULL. `HasMany::create()` wstrzykuje tylko `shareable_id`. **Każde `POST /invoices/{invoice}/share-tokens` kończy się wyjątkiem DB (NOT NULL violation) — endpoint jest kompletnie niedziałający.** `ShareTokenService::createToken()` (generujący krypto-bezpieczny token przez `Str::random(40)`) jest martwym kodem, nigdzie niewywoływanym.
+- **[HIGH]** `HasShareTokens::shareTokens()` (`app/Domain/ShareToken/Traits/HasShareTokens.php:10-13`) nadal `HasMany('shareable_id','id')` zamiast `morphMany` — bug NIE naprawiony wcześniej (naprawiono tylko `destroy()`, nie samą relację). Ponieważ `shareable_id` to ULID (efektywnie globalnie unikalny), praktyczne ryzyko kolizji między modelami jest znikome, ale i tak żaden token nigdy nie ma poprawnie ustawionego `shareable_type` (patrz wyżej), więc relacja i tak nie filtruje poprawnie.
+- **[HIGH]** Brak jakiegokolwiek publicznego, nieuwierzytelnionego endpointu do odbioru/podglądu zasobu przez `share_token` — wszystkie trasy ShareToken są za `auth:api`/`is_active`/`mfa`/`is_in_tenant`. `ShareTokenService::validateToken()`/`incrementUsage()` (limit użyć, wygaśnięcie) nigdzie niewywoływane, brak wzmianek we frontendzie. **Funkcja "publiczny link do faktury" nie istnieje end-to-end — jest tylko (zepsuty) CRUD tokenów, nic faktycznie nie udostępnia.**
+- **[MEDIUM]** `Expense` dołącza `HasShareTokens`, ale nie istnieje `ExpenseShareTokenController` ani trasa — martwy kod skopiowany z Invoice, niedokończony.
+- **[MEDIUM]** `StoreInvoiceShareTokenRequest.maxUsage` to `required|integer` bez `min:1` — `0`/liczby ujemne przechodzą walidację. Zbędne pole `invoiceId` w regułach mimo route-model-bindingu.
+- **[LOW]** Zero testów dla domeny ShareToken — stąd critical #1 nigdy niewykryty.
+- Pozytyw: `InvoiceShareTokenController::destroy()` poprawnie autoryzuje przez `InvoicePolicy` i ręcznie weryfikuje `shareable_type`/`shareable_id` — defensywne obejście braku `morphMany`, wcześniej znaleziony bug "kasuje całą fakturę" faktycznie naprawiony.
+
+**Feeds:**
+
+- **[HIGH]** `FeedController::destroy()` — brak `$this->authorize()`, brak sprawdzenia `user_id === Auth::id()`; `Feed` nie ma zarejestrowanej Policy w `AuthServiceProvider`. **Dowolny user tego samego tenanta może skasować dowolny wpis feedu innego użytkownika.** Test istnieje tylko dla właściciela, luka niepokryta.
+- **[HIGH]** `FeedCommentController::destroy()` ma jawne `// TODO: Add authorization` — autoryzacja zakomentowana. Poważniejsze: trasa `DELETE /feed-comments/{comment}` ma tylko jeden parametr `{comment}`, a metoda ma sygnaturę `destroy(Feed $feed, Comment $comment)` — brak `{feed}` w URI oznacza brak route-model-bindingu, `$feed` to pusty `new Feed()` z `id === null`. Warunek `$comment->commentable_id !== $feed->id` jest więc zawsze prawdziwy → **`abort(404)` przy KAŻDYM wywołaniu — usuwanie komentarzy jest kompletnie niefunkcjonalne**, niezależnie od właściciela. Brak testów na ten kontroler.
+- **[MEDIUM]** `FeedCommentController::store()` waliduje `content` bez `NoProfanity` (w przeciwieństwie do `StoreFeedRequest`) — niespójna reguła między wpisem a komentarzem.
+- **[LOW]** `CommentResource` martwy kod — `index()` zwraca `CommentDTO::collect()`, nie ten resource.
+- **[LOW]** Zbędna duplikacja `auth:api` middleware w `routes/api/feeds.php` (już nałożone globalnie w `routes/api.php`).
+- Pozytyw: `Feed` poprawnie tenant-scoped, test potwierdza izolację między tenantami.
+
+**Calendar:**
+
+- **[HIGH]** `EventController` nie wywołuje `$this->authorize()` w ogóle w `show/update/destroy` — brak sprawdzenia właściciela ani `visibility`. `EventPolicy` nie istnieje. **`EventVisibility::PRIVATE` nigdzie nie jest egzekwowany** — dowolny user tenanta widzi/edytuje/kasuje "prywatny" event kogoś innego.
+- **[HIGH]** `StoreEventRequest`/`UpdateEventRequest`: `'endAt' => ['required','date','after:start_at']` odwołuje się do `start_at`, ale realne pole to `startAt` (camelCase, konwersja na snake_case dopiero w `validated()` PO walidacji). Laravel nie znajduje `start_at` w danych wejściowych — **walidacja chronologii dat jest no-opem, `endAt` przed `startAt` przechodzi bez błędu.**
+- **[HIGH]** `EventController::store()` woła `$event->attendees()->createMany($request->attendees)` — surowy `$request->attendees` (camelCase) zamiast `$request->validated()` (snake_case). `EventAttendee::$fillable`/kolumny NOT NULL oczekują `attendee_type`/`attendee_id`/`response_status` — żaden klucz się nie zgadza. **Przekazanie `attendees` przy tworzeniu eventu zawsze kończy się wyjątkiem DB (500).** Ten sam wzorzec błędu co w ShareToken (walidacja na innej warstwie niż odczyt).
+- **[MEDIUM]** `attendees.*.attendeeId` walidowane tylko jako `ulid`, bez `exists:` i bez sprawdzenia przynależności do tenanta — można dopisać dowolny/obcy ULID jako uczestnika.
+- **[MEDIUM]** `UpdateEventRequest` w ogóle nie obsługuje `attendees` — nie da się edytować uczestników po utworzeniu eventu.
+- **[MEDIUM]** `recurrence_rule` przyjmowane/zwracane jako wolny string, ale brak JAKIEJKOLWIEK logiki interpretującej RRULE (generowanie wystąpień, przypomnienia, eksport iCal) — "cykliczne eventy" to niezaimplementowane pole.
+- **[LOW]** `EventAttendeeResource` zwraca surowy `whenLoaded('attendee')` bez resource/DTO — dziś nieszkodliwe (relacja nigdy nie jest eager-loadowana), ale ryzykowne przy przyszłym `->load()`.
+- **[LOW]** Zero testów dla Calendar — żaden z powyższych bugów niewykryty automatycznie.
+- Pozytyw: `EventAttendee`/`EventReminder` mają poprawny `cascadeOnDelete()` na `event_id`.
 
 ### Faza 2 — Projects i reszta Tenant
 
