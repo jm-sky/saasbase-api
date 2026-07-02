@@ -1,0 +1,28 @@
+The repository at "/var/www/html" does not have the correct ownership and git refuses to use it:
+
+fatal: detected dubious ownership in repository at '/var/www/html'
+To add an exception for this directory, call:
+
+git config --global --add safe.directory /var/www/html
+
+Note: Using configuration file /var/www/html/phpstan.neon.
+    0/1150 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%[1G[2K  772/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░]  67%[1G[2K  792/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░]  68%[1G[2K  812/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░]  70%[1G[2K  852/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░]  74%[1G[2K  872/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░]  75%[1G[2K  892/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░]  77%[1G[2K  912/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░]  79%[1G[2K  932/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░]  81%[1G[2K  952/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░]  82%[1G[2K  972/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░]  84%[1G[2K  992/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░]  86%[1G[2K 1012/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░]  88%[1G[2K 1052/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░]  91%[1G[2K 1072/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░]  93%[1G[2K 1112/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░]  96%[1G[2K 1132/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░]  98%[1G[2K 1150/1150 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+ ------ ------------------------------------------------------------ 
+  Line   app/Domain/Approval/Services/ApprovalResolutionService.php  
+ ------ ------------------------------------------------------------ 
+  142    Call to an undefined method                                 
+         Illuminate\Database\Eloquent\Relations\HasMany::active().   
+         🪪 method.notFound                                          
+  148    Call to an undefined method                                 
+         Illuminate\Database\Eloquent\Relations\HasMany::active().   
+         🪪 method.notFound                                          
+  198    Call to an undefined method                                 
+         Illuminate\Database\Eloquent\Relations\HasMany::active().   
+         🪪 method.notFound                                          
+ ------ ------------------------------------------------------------ 
+
+
+ [ERROR] Found 3 errors                                                         
+
+Script ./vendor/bin/phpstan analyse --memory-limit=2G handling the larastan event returned with error code 1

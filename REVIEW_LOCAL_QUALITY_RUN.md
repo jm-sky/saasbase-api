@@ -1,57 +1,89 @@
-# Lokalna weryfikacja jakości (CS Fixer + PHPStan)
+# Lokalna weryfikacja jakości (PHPStan + PHPUnit)
 
-**Data:** 2026-07-02  
+**Data:** 2026-07-02 (wieczór, po `git pull`)  
 **Branch:** `claude/saasbase-project-review-0p5z11`  
-**Kontener:** `docker compose exec laravel.test` (serwis `laravel.test`)  
-**Wykonawca:** lokalny Docker (dev)
+**Commit (HEAD po pull):** `d8057bc`  
+**Kontener:** `./vendor/bin/sail exec -T laravel.test` (serwis `laravel.test`)  
+**Baza testowa:** PostgreSQL `testing` (Sail)
 
-## Środowisko Docker
+## Podsumowanie
 
-| Krok | Wynik |
-|------|--------|
-| `./scripts/up.sh -d` | **Częściowy błąd** — `saasbase-api-rustfs-1` nie wystartował: port `127.0.0.1:9000` zajęty przez istniejący kontener `rustfs-server` (zewnętrzny RustFS na sieci `rustfs-network`). |
-| Obejście | `docker network create rustfs-network` (jeśli brak), potem `docker compose up -d --no-deps laravel.test`. Pozostałe serwisy (pgsql, redis, mailpit, soketi, meilisearch) wystartowały. |
-| Uwaga | Orphan: `saasbase-api-app-1` (stara nazwa serwisu). Opcjonalnie: `docker compose up -d --remove-orphans` po weryfikacji. |
-| Ostrzeżenia | `WWWUSER` / `WWWGROUP` nie ustawione w shellu hosta; w kontenerze composer działał poprawnie. Git w kontenerze: `dubious ownership` na `/var/www/html` (kosmetyka, nie blokuje CS/PHPStan). |
+| Komenda | Skrypt Composer | Exit code | Wynik |
+|---------|-----------------|-----------|--------|
+| PHPStan | `composer larastan` (`composer analyse` nie istnieje w `composer.json`) | **1** | **3 błędy** |
+| PHPUnit | `php artisan test` | **2** | **251 failed, 55 passed** (634.54 s) |
 
-## PHP CS Fixer — `composer csf`
+Pełne logi surowe:
 
-**Exit code:** 0  
-**Skan:** 1262 pliki  
-**Naprawione automatycznie:** 4 pliki (wyrównanie kolumn / drobne style)
+- [`REVIEW_LOCAL_QUALITY_RUN/phpstan.txt`](REVIEW_LOCAL_QUALITY_RUN/phpstan.txt)
+- [`REVIEW_LOCAL_QUALITY_RUN/artisan-test.txt`](REVIEW_LOCAL_QUALITY_RUN/artisan-test.txt)
 
-| Plik | Zmiana |
-|------|--------|
-| `app/Providers/AuthServiceProvider.php` | Wyrównanie mapy `$policies` (w tym `TenantIntegrationPolicy`). |
-| `app/Domain/Subscription/Requests/StoreSubscriptionRequest.php` | Wyrównanie kluczy reguł i komunikatów walidacji. |
-| `app/Domain/Subscription/Actions/CreateSubscriptionAction.php` | Wyrównanie kluczy tablicy w `Log::error()`. |
-| `database/migrations/2025_07_10_000010_fix_tenant_integrations_credentials_encryption.php` | Docblock `/**` → `/*`; `catch (\Throwable)` → `catch (Throwable)` (globalna klasa PHP). |
+## PHPStan (Larastan)
 
-**Dla agenta:** te 4 pliki powinny trafić do commita razem z tym dokumentem (brak dalszej ręcznej poprawki poza review diffu CS Fixera).
+**Konfiguracja:** `phpstan.neon`  
+**Pliki:** 1150 przeanalizowanych
 
-## PHPStan (Larastan) — `composer larastan`
+**Błędy (3):** `app/Domain/Approval/Services/ApprovalResolutionService.php`
 
-**Exit code:** 0  
-**Konfiguracja:** `phpstan.neon` (poziom zgodny z projektem)  
-**Wynik:** `[OK] No errors` (1149 plików przeanalizowanych)
+| Linia | Opis |
+|-------|------|
+| 142 | Call to an undefined method `Illuminate\Database\Eloquent\Relations\HasMany::active()` |
+| 148 | j.w. |
+| 198 | j.w. |
 
-**Dla agenta:** zaktualizować w `REVIEW_PLAN.md` zdanie *„Nie uruchomiono testów/PHPStan”* (ok. linia 297) — PHPStan wykonany lokalnie w kontenerze z pełnym `vendor/`. Testy PHPUnit (`./vendor/bin/sail artisan test`) **nadal nie uruchomione** w tej sesji.
+Prawdopodobna przyczyna: refaktor w ramach review brancha — relacja zwraca `HasMany`, a kod woła scope `active()` zdefiniowany na innym typie relacji / modelu.
 
-## Zalecane kolejne kroki (agent)
+## PHPUnit (`artisan test`)
 
-1. ~~Commit poprawek CSF + ten plik~~ (wykonane w ramach tego zadania użytkownika, jeśli push poszedł).
-2. Uruchomić pełny zestaw testów w Sail/Docker: `./vendor/bin/sail artisan test` (lub `docker compose exec laravel.test php artisan test`).
-3. Rozstrzygnąć konflikt portu RustFS: albo nie startować `rustfs` z compose gdy działa `rustfs-server`, albo zmienić `FORWARD_MINIO_PORT` w `.env`.
-4. Opcjonalnie: ustawić `WWWUSER`/`WWWGROUP` w `.env` i `safe.directory` w obrazie dev, żeby uciszyć ostrzeżenia.
+**251 failed, 55 passed, 57 assertions, Duration: 634.54s**
+
+### Dominująca przyczyna awarii
+
+Migracja **`2025_07_10_000030_backfill_addresses_and_bank_accounts_tenant_id.php`** (dodana w ostatnich commitach review) odwołuje się do tabeli `contacts`, która **nie istnieje** w świeżej bazie testowej po migracjach:
+
+```
+SQLSTATE[42P01]: Undefined table: relation "contacts" does not exist
+LINE 3:     FROM contacts AS owner
+```
+
+Wywołanie: `backfillFromOwner(..., Contact::class, 'contacts')` w `up()` — linie 39, 53.
+
+Efekt: `RefreshDatabase` w `tests/TestCase.php` nie kończy migracji → **~251 testów pada już w `setUp()`** z `QueryException`, zanim dojdzie do asercji biznesowych.
+
+### Testy, które przeszły (55)
+
+Głównie testy **bez** pełnego cyklu DB przez `RefreshDatabase` albo czysto jednostkowe bez migracji, m.in.:
+
+- `ApprovalResolutionServiceSimpleTest` (tylko `assertInstanceOf` / `method_exists`)
+- `ValidAdvancedFilterRuleTest`
+- `DataComparatorServiceTest` (mocki, bez DB)
+- część innych testów jednostkowych bez pełnego seeda
+
+### Uwagi środowiskowe
+
+- Ostrzeżenia PostgreSQL: `database "testing" has no actual collation version` — kosmetyka, nie blokuje testów.
+- W kontenerze: `git dubious ownership` przy `composer` — nie blokuje analizy.
+- Lokalnie `.env.testing` musi mieć `DB_PASSWORD` zgodne z `.env` (TCP z `laravel.test` → `pgsql`); domyślne `secret` z repo nie pasuje do instancji Postgres z niestandardowym hasłem dev.
+
+## Wnioski dla merge / review
+
+1. **PHPStan:** naprawić 3 błędy w `ApprovalResolutionService` przed merge (scope `active()` na relacji).
+2. **Migracja backfill:** warunkować backfill `Contact` / sprawdzić `Schema::hasTable('contacts')` albo poprawić kolejność/nazwę tabeli — **inaczej CI i lokalne testy pozostaną czerwone**.
+3. **Pełny `artisan test` uruchomiony po raz pierwszy na tym branchu** — wcześniejszy run (2026-07-02 rano) obejmował tylko CS Fixer + PHPStan bez PHPUnit.
 
 ## Komendy odtwarzające
 
 ```bash
-docker network inspect rustfs-network >/dev/null 2>&1 || docker network create rustfs-network
-./scripts/up.sh -d
-# jeśli rustfs nie wstanie z powodu portu 9000:
-docker compose up -d --no-deps laravel.test
+./vendor/bin/sail exec -T laravel.test composer larastan \
+  2>&1 | tee REVIEW_LOCAL_QUALITY_RUN/phpstan.txt
 
-docker compose exec -T laravel.test composer csf
-docker compose exec -T laravel.test composer larastan
+./vendor/bin/sail artisan test \
+  2>&1 | tee REVIEW_LOCAL_QUALITY_RUN/artisan-test.txt
 ```
+
+## Historia
+
+| Data | Zakres | Wynik |
+|------|--------|--------|
+| 2026-07-02 (rano) | `composer csf` + `composer larastan` | CSF: 4 pliki auto-fix; PHPStan OK (1149 plików) — **przed** ostatnimi commitami z Fazy 2 |
+| 2026-07-02 (wieczór) | `composer larastan` + `artisan test` po `git pull` | PHPStan: 3 błędy; PHPUnit: 251 failed / 55 passed |
