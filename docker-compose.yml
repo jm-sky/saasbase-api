@@ -22,6 +22,7 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
+            - rustfs-network
         depends_on:
             - pgsql
             - rustfs
@@ -146,6 +147,9 @@ networks:
         driver: bridge
     app-network:
         driver: bridge
+    # Sieć współdzielona z RustFS dla storage S3
+    rustfs-network:
+        external: true
 
 volumes:
     sail-pgsql:

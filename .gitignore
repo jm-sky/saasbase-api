@@ -57,3 +57,4 @@ node_modules/
 .scribe/*
 public/vendor/scribe/*
 database/data/_custom.json
+.env.ovh
