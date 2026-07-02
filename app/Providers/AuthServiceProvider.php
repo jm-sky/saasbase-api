@@ -10,6 +10,8 @@ use App\Domain\Common\Policies\MediaPolicy;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Policies\ProjectPolicy;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\TenantIntegration;
+use App\Domain\Tenant\Policies\TenantIntegrationPolicy;
 use App\Domain\Tenant\Policies\TenantPolicy;
 use App\Domain\Users\Models\SecurityEvent;
 use App\Domain\Users\Models\TrustedDevice;
@@ -29,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Tenant::class           => TenantPolicy::class,
+        TenantIntegration::class => TenantIntegrationPolicy::class,
         UserTableSetting::class => UserTableSettingPolicy::class,
         TrustedDevice::class    => TrustedDevicePolicy::class,
         SecurityEvent::class    => SecurityEventPolicy::class,

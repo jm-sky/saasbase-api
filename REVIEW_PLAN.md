@@ -124,7 +124,7 @@ Wszystko z listy domenowej +
 | Faza | Status | Data | Notatki |
 |------|--------|------|---------|
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
-| 1 — Integracje | **Ukończona** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. Wzorzec: infrastruktura ochronna zbudowana ale niepodpięta; wyniki weryfikacji nie zawsze odzwierciedlają rzeczywistość; e-Doręczenia całkowicie martwe |
+| 1 — Integracje | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. 6/14 critical naprawionych (aktywnie eksploatowalne: Stripe, tenant isolation, plaintext credentials, SSRF, fałszywy status weryfikacji). KSeF/e-Doręczenia (Grupa B, martwy kod) odłożone świadomie. Reszta HIGH/MEDIUM/LOW nienaprawiona |
 | 2 — Core biznesowy | Nierozpoczęta | — | — |
 | 3 — Wspierające | Nierozpoczęta | — | — |
 | 4 — Frontend | Nierozpoczęta | — | — |
@@ -133,6 +133,17 @@ Wszystko z listy domenowej +
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Naprawione critical findings z Fazy 1, Grupa A (2026-07-02)
+
+1. **Stripe — surowe dane karty.** Backend już nie przyjmuje `cardNumber`/`expiry`/`cvc`. `PaymentDetailsDTO` przyjmuje teraz `paymentMethodId` (token `pm_...`); `StripePaymentService::createPaymentMethod()` → `attachPaymentMethod()`, tylko podpina istniejący token zamiast tworzyć PaymentMethod z surowej karty. **WYMAGA ZMIANY W FRONTENDZIE** (saasbase-web): formularz płatności musi używać Stripe.js/Elements do tokenizacji karty po stronie klienta i wysyłać `paymentDetails.paymentMethodId` zamiast pól karty. To złamanie kontraktu API — bez zmiany frontendu formularz subskrypcji przestanie działać.
+2. **Karta w logach.** `CreateSubscriptionAction` już nie loguje pełnego DTO przy błędzie — tylko `billing_customer_id`/`plan_id`.
+3. **Brak izolacji tenantów w Subscription.** Dodano `App\Domain\Subscription\Traits\BelongsToTenantOrUser` (dla `BillingCustomer`, którego `billable` wskazuje bezpośrednio na Tenant/User) i `BelongsToBillingCustomerOfUser` (dla `Subscription`/`SubscriptionInvoice`/`AddonPurchase`, których `billable` wskazuje na `BillingCustomer`). Wszystkie 4 modele mają teraz `scopeForUser()`; `SubscriptionController`/`AddonPurchaseController`/`SubscriptionInvoiceController` używają go w `index/show/update/destroy`. `StoreSubscriptionRequest.billingCustomerId` waliduje teraz przynależność do bieżącego usera/tenanta (`Rule::exists()->where()`).
+4. **`TenantIntegration.credentials` nigdy nie szyfrowane.** Usunięto konfliktowy accessor `Attribute::make()`, który nadpisywał cast `encrypted:json`. Dodano migrację `2025_07_10_000010_fix_tenant_integrations_credentials_encryption.php`: zmienia kolumnę z `jsonb` na `text` (zaszyfrowany blob nie jest poprawnym JSON) i re-szyfruje istniejące plaintextowe wiersze w miejscu. **Migracja nieprzetestowana na realnej bazie** (brak `vendor/`/DB w tym środowisku) — koniecznie przetestować na kopii danych przed produkcją.
+5. **`TenantIntegrationController::store()` bez autoryzacji + SSRF.** Dodano `TenantIntegrationPolicy` (Owner/Admin), zarejestrowano w `AuthServiceProvider`, dodano `$this->authorize('create', ...)`. Dodano `IntegrationAllowedHosts` — dla trybu `custom` endpoint musi kończyć się na `.cognitiveservices.azure.com`/`.services.ai.azure.com` (dla typu `azureAi`; inne typy nie mają dziś zdefiniowanej allowlisty, więc `custom` endpoint jest dla nich odrzucany).
+6. **`registry_confirmations.status` zawsze "Success".** Naprawiono 4 miejsca w `Regon`/`Vies`/`Mf` ContractorRegistryConfirmationService — zapisywały nieistniejące pole `success` (cicho odrzucane przez Eloquent) zamiast `status`. Teraz zapisują `RegistryConfirmationStatus::Success`/`Failed` na podstawie faktycznego wyniku porównania. `ProcessContractorRegistryConfirmationJob` już nie ustawia zewnętrznego statusu bezwarunkowo na `Success` — sprawdza status wszystkich cząstkowych potwierdzeń (`resolveOverallStatus()`) i zwraca `Failed`, jeśli którekolwiek nie pasuje lub brak danych do porównania. **Nie naprawiono** oddzielnie zdiagnozowanego "podwójnego zapisu" (finding 1.3) w pełni — job teraz zapisuje podsumowanie (`type`+`status` per check) zamiast surowych obiektów Eloquent do kolumny `result`, co ogranicza szkodę, ale nie zmienia architektury dwuwarstwowego zapisu.
+
+**Nie naprawiono w tej sesji (Grupa B + reszta Grupy A/high):** KSeF i e-Doręczenia (świadomie odłożone jako known-issue), rate limiting Stripe/OCR/AI, brak listenerów na eventy Stripe, walidacja checksumy IBAN przy zapisie konta, plaintext logging pełnego IBAN, wszystkie findings MEDIUM/LOW z Fazy 1.
 
 ### Naprawione critical findings z Fazy 0 (2026-07-02)
 

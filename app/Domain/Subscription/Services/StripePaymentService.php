@@ -9,40 +9,30 @@ use App\Domain\Subscription\Models\BillingCustomer;
 class StripePaymentService extends StripeService
 {
     /**
-     * Create a payment method for a customer.
+     * Attach a client-side-tokenized payment method (created via Stripe.js/Elements)
+     * to a customer and set it as the default. Raw card data is never accepted or
+     * handled here — only the resulting Stripe `pm_...` id.
      *
      * @throws StripeException
      */
-    public function createPaymentMethod(BillingCustomer $billingCustomer, PaymentDetailsDTO $paymentDetails): string
+    public function attachPaymentMethod(BillingCustomer $billingCustomer, PaymentDetailsDTO $paymentDetails): string
     {
         return $this->handleStripeException(function () use ($billingCustomer, $paymentDetails) {
-            // Create payment method in Stripe
-            $paymentMethod = $this->stripe->paymentMethods->create([
-                'type' => 'card',
-                'card' => [
-                    'number'    => $paymentDetails->cardNumber,
-                    'exp_month' => (int) explode('/', $paymentDetails->expiry)[0],
-                    'exp_year'  => (int) '20' . explode('/', $paymentDetails->expiry)[1],
-                    'cvc'       => $paymentDetails->cvc,
-                ],
-                'billing_details' => [
-                    'name' => $paymentDetails->name,
-                ],
-            ]);
+            $paymentMethodId = $paymentDetails->paymentMethodId;
 
             // Attach payment method to customer
-            $this->stripe->paymentMethods->attach($paymentMethod->id, [
+            $this->stripe->paymentMethods->attach($paymentMethodId, [
                 'customer' => $billingCustomer->stripe_customer_id,
             ]);
 
             // Set as default payment method
             $this->stripe->customers->update($billingCustomer->stripe_customer_id, [
                 'invoice_settings' => [
-                    'default_payment_method' => $paymentMethod->id,
+                    'default_payment_method' => $paymentMethodId,
                 ],
             ]);
 
-            return $paymentMethod->id;
+            return $paymentMethodId;
         });
     }
 }

@@ -39,9 +39,9 @@ class CreateSubscriptionAction
                 /** @var SubscriptionPlan $plan */
                 $plan            = SubscriptionPlan::findOrFail($data->planId);
 
-                // Create payment method if provided
+                // Attach payment method if provided
                 if (isset($data->paymentDetails)) {
-                    $this->stripePaymentService->createPaymentMethod($billingCustomer, $data->paymentDetails);
+                    $this->stripePaymentService->attachPaymentMethod($billingCustomer, $data->paymentDetails);
                 }
 
                 // Create subscription in Stripe and locally
@@ -57,9 +57,13 @@ class CreateSubscriptionAction
                 return $subscription->stripe_subscription_id;
             });
         } catch (\Exception $e) {
+            // Never log the full DTO: even without raw card data, it carries a
+            // Stripe payment method id and customer/plan references that don't
+            // belong in application logs.
             Log::error('Failed to create subscription', [
-                'error' => $e->getMessage(),
-                'data'  => $data,
+                'error'              => $e->getMessage(),
+                'billing_customer_id' => $data->billingCustomerId,
+                'plan_id'             => $data->planId,
             ]);
 
             throw new StripeException(message: 'Failed to create subscription: ' . $e->getMessage(), previous: $e);

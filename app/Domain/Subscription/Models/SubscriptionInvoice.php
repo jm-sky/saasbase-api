@@ -5,6 +5,7 @@ namespace App\Domain\Subscription\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Subscription\Enums\SubscriptionInvoiceStatus;
+use App\Domain\Subscription\Traits\BelongsToBillingCustomerOfUser;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 
@@ -30,6 +31,8 @@ use Carbon\Carbon;
  */
 class SubscriptionInvoice extends BaseModel
 {
+    use BelongsToBillingCustomerOfUser;
+
     protected $fillable = [
         'billable_type',
         'billable_id',

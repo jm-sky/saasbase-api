@@ -55,6 +55,8 @@ class TenantIntegrationController extends Controller
      */
     public function store(StoreTenantIntegrationRequest $request): TenantIntegrationResource
     {
+        $this->authorize('create', TenantIntegration::class);
+
         /** @var User $user */
         $user        = Auth::user();
         $integration = DB::transaction(function () use ($request, $user) {
