@@ -92,11 +92,11 @@ Wszystko z listy domenowej +
 - [ ] Template (szablony faktur, PDF)
 - [x] ShareToken
 - [x] Feeds
-- [ ] Chat
+- [x] Chat
 - [x] Calendar
-- [ ] Skills
+- [x] Skills
 - [ ] Export
-- [ ] Admin
+- [x] Admin
 - [ ] Users
 
 ### Faza 4 — Frontend (lustro backendu + spójność kontraktu)
@@ -140,6 +140,38 @@ Wszystko z listy domenowej +
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 3 — Chat, Skills, Admin
+
+**Wzorzec:** trzy różne warianty tego samego rdzenia problemu — brak spójnej bramki autoryzacji tam, gdzie jest potrzebna (Chat: brak weryfikacji tenanta drugiej strony DM; Skills: globalny słownik bez żadnej autoryzacji, kaskadowe FK dają cross-tenant DoS), oraz w Admin — bramka `is_admin` jest poprawnie zaprojektowana (brak kolizji z tenant-scoped `RoleName::Admin`, wbrew wstępnej hipotezie), ale panel admina cicho gubi dane przez ten sam wzorzec camelCase/snake_case co w innych domenach.
+
+**Chat:**
+
+- **[CRITICAL]** `CreateDirectMessageRoomRequest`/`DirectMessageController::createRoom` — `userId` walidowany tylko jako `exists:users,id`, **bez ograniczenia do bieżącego tenanta**. `DirectMessageService::findOrCreateRoom()` nie weryfikuje `$otherUser->getTenantId() === $currentUser->getTenantId()`. **Dowolny zalogowany user może podać `userId` DOWOLNEGO tenanta w systemie i wymusić utworzenie pokoju DM + dopisanie go jako uczestnik** — przełamanie izolacji tenantów, cross-tenant messaging bez zgody drugiej strony.
+- **[HIGH]** `ChatMessage`/`ChatParticipant` mają **zakomentowany** `use BelongsToTenant;`, mimo że obie tabele mają kolumnę `tenant_id`. Pole nie jest w `$fillable` żadnego modelu, więc zawsze `NULL` — martwa kolumna zaprojektowana pod tenant scoping, którego nikt nie egzekwuje na poziomie zapytań. `MessageController::sendMessage` próbuje przekazać `tenant_id`, ale mass assignment cicho to odrzuca.
+- **[MEDIUM]** Autoryzacja czatu robiona ręcznym `if (!$room->isUserParticipant(...))` zamiast Policy — brak `ChatRoomPolicy`/wpisu w `AuthServiceProvider`, niespójne z resztą architektury.
+- **[MEDIUM]** AI chat (`AiChatController`/`AiConversationService::buildMessages()`) buduje historię wyłącznie z `history` przysłanej przez klienta, bez odtwarzania z własnej bazy i bez sanityzacji — otwiera drogę do prompt injection (klient wstrzykuje spreparowane wiadomości `role: assistant` do historii), ograniczone tylko miękko przez sam system prompt.
+- **[LOW]** `AiChatRequest` bez `max:` na `message`/limitu `history` — brak ochrony przed nadużyciem kosztowym płatnego API OpenRouter.
+- **[LOW]** `MessageController` zawiera zaszyty kod demo/dev (`sendDummyMessage()`, hardcoded bot user ID, cytaty z `Illuminate\Foundation\Inspiring`) bezpośrednio w kontrolerze produkcyjnym (warunkowo dla `local`, ale architektonicznie nie powinno tam być).
+- **[LOW]** Zero testów dla całej domeny Chat — krytyczny bug cross-tenant messaging niewykryty.
+- Kanały WebSocket (`routes/channels.php`) poprawnie weryfikują członkostwo — ale poprawność zależy w 100% od tego, że `ChatParticipant` nigdy nie powstanie dla złego usera, co jest właśnie złamane przez CRITICAL powyżej.
+
+**Skills:**
+
+- **[CRITICAL]** `SkillController`/`SkillCategoryController` — zero autoryzacji poza `auth:api`/`is_active` (`authorize()` zwraca `true` bezwarunkowo). `Skill`/`SkillCategory` to modele **globalne, współdzielone między wszystkimi tenantami** (brak `tenant_id`). W połączeniu z `ON DELETE CASCADE` (`skills→skill_categories`, `project_required_skills→skills`, `user_skill→skills`): **dowolny zwykły użytkownik dowolnego tenanta może skasować kategorię i kaskadowo wszystkie powiązane umiejętności oraz WSZYSTKIE powiązania innych tenantów korzystających z tych umiejętności** — realny cross-tenant DoS/niszczenie danych bez żadnego uprawnienia. Istniejący test wręcz potwierdza to jako "działające zgodnie z oczekiwaniami" — brak testu granicy autoryzacji.
+- **[MEDIUM]** Ten sam brak autoryzacji dotyczy `store`/`update` — każdy user może zmieniać globalny słownik widoczny u innych tenantów.
+- **[LOW]** `UserSkillController` poprawnie ograniczony do właściciela — kontrastujący dobry wzorzec w tej samej domenie.
+
+**Admin:**
+
+- **[GOOD/INFO]** Bramka `is_admin` (kolumna boolean na `User`, middleware `IsAdmin`) jest **poprawnie niezależna** od tenant-scoped `RoleName::Admin` — brak kolizji nazewniczej/eskalacji uprawnień sugerowanej jako hipoteza ryzyka. Weryfikacja przez `AdminAuthController` (dostęp do Telescope) też spójna.
+- **[HIGH]** `AdminContractorController::store/update` — `(array) $dto` na `ContractorDTO` daje klucze camelCase (`vatId`, `taxId`, `isActive`...), a `Contractor::$fillable` jest snake_case. Mass assignment cicho pomija te pola — **edycja kontrahenta przez panel admina jest w dużej części no-opem** (API zwraca 200/201 sugerujące sukces, dane realnie się nie zapisują). Ten sam wzorzec bugu co już naprawiany gdzie indziej w tej sesji (camelCase DTO → snake_case fillable).
+- **[HIGH]** `StoreContractorRequest`/`UpdateContractorRequest::prepareForValidation()` bezwarunkowo nadpisują `tenantId` na tenant **aktualnie zalogowanego admina**, mimo że `BaseFormRequest::checkTenantId()` ma explicit bypass dla adminów. Deweloper dodał obejście dla admina w jednym miejscu, zapomniał w drugim — **panel Admin nie jest w stanie utworzyć/przenieść kontrahenta dla innego tenanta**, mimo że to najbardziej oczywisty use-case takiego panelu. Niespójne z `ProductRequest`, który tego nie robi.
+- **[MEDIUM]** Odwrotna strona powyższego dla Produktów: `ProductRequest` (w przeciwieństwie do Contractor) poprawnie honoruje `tenantId` z requesta (klucze snake_case się zgadzają) — ale to oznacza, że błąd w warstwie frontendowej (np. formularz "create" reużyty do edycji z niewypełnionym/błędnym `tenantId`) może **realnie przypisać istniejący produkt do innego tenanta**. Do zweryfikowania po stronie `saasbase-web`.
+- **[MEDIUM]** Oba kontrolery Admin używają ad-hoc `Model::withoutGlobalScope(TenantScope::class)` w każdej metodzie zamiast udokumentowanego `Tenant::bypassTenant()`. Odejście od wzorca z CLAUDE.md — praktyczna konsekwencja: `withoutGlobalScope` na query top-level nie propaguje się na później ładowane relacje (`->load(['unit','vatRate'])`), więc dociąganie ich dla rekordu z cudzego tenanta może po cichu zwrócić puste wyniki, jeśli te relacje same są tenant-scoped (niepotwierdzone empirycznie, ale architektonicznie kruche).
+- **[MEDIUM]** `is_admin` jest w `$fillable` modelu `User` — dziś brak znalezionej bezpośredniej ścieżki eskalacji (żaden sprawdzony endpoint nie robi `$user->update($request->validated())` wprost na `User`), ale to latentne ryzyko samo-nadania uprawnień admina przy przyszłym endpoincie bez `except('is_admin')`.
+- **[LOW]** Domena Admin nie ma własnych Models/DTOs/Requests/Resources/Services/Policies — w 100% reużywa klas z Contractors/Products, więc każda przyszła zmiana walidacji w domenie źródłowej cicho wpływa na panel admina bez dedykowanych testów.
+- **[HIGH]** Zero testów dla całej domeny Admin — najbardziej wrażliwa na privilege-escalation/cross-tenant leaki domena w całym systemie nie ma ani jednego testu potwierdzającego `is_admin=false` → 403, ani że dane nie są cicho gubione (bug `vatId`/`taxId` powyżej — test by go wyłapał).
 
 ### Faza 3 — ShareToken, Feeds, Calendar
 
