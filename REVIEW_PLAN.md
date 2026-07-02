@@ -119,13 +119,20 @@ Wszystko z listy domenowej +
 
 ---
 
+## Follow-upy (poza kolejnością faz — do zrobienia, ale nie teraz)
+
+- [ ] **Code review zmian wprowadzonych przez Claude** (Faza 0 fix + Faza 1 Grupa A fix) — druga para oczu przed mergem, szczególnie: migracja re-szyfrowania `TenantIntegration.credentials` (nieprzetestowana na realnej bazie), poprawność scope'ów `TenantScopedRoles`/`BelongsToBillingCustomerOfUser`, czy nie ma regresji w istniejących testach (jeśli jakieś istnieją dla dotkniętych plików).
+- [ ] **Poprawki we froncie (saasbase-web)** wymagane przez fixy backendu:
+  - Formularz płatności Stripe musi przejść na Stripe.js/Elements (tokenizacja karty po stronie klienta) i wysyłać `paymentDetails.paymentMethodId` zamiast `cardNumber`/`expiry`/`cvc` — inaczej formularz subskrypcji jest złamany od commitu z Fazy 1 Grupa A.
+  - Sprawdzić czy frontend gdzieś zakłada stary kontrakt `RoleController`/`TenantInvitationController` (np. brak obsługi 403 przy braku uprawnień Owner/Admin).
+
 ## Status wykonania
 
 | Faza | Status | Data | Notatki |
 |------|--------|------|---------|
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
 | 1 — Integracje | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. 6/14 critical naprawionych (aktywnie eksploatowalne: Stripe, tenant isolation, plaintext credentials, SSRF, fałszywy status weryfikacji). KSeF/e-Doręczenia (Grupa B, martwy kod) odłożone świadomie. Reszta HIGH/MEDIUM/LOW nienaprawiona |
-| 2 — Core biznesowy | Nierozpoczęta | — | — |
+| 2 — Core biznesowy | W trakcie | 2026-07-02 | — |
 | 3 — Wspierające | Nierozpoczęta | — | — |
 | 4 — Frontend | Nierozpoczęta | — | — |
 | 5 — Synteza | Nierozpoczęta | — | — |
