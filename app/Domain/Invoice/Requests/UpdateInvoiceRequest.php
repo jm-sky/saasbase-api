@@ -16,8 +16,14 @@ class UpdateInvoiceRequest extends BaseFormRequest
     /**
      * Fields that change the financial substance of the document. Locked
      * once the invoice has reached a final state (completed/cancelled).
+     *
+     * These must be camelCase: rules() and $this->has()/input() operate on
+     * the raw request as sent by the client (BaseFormRequest::validated()
+     * only snake_cases the OUTPUT afterwards) — using snake_case here, as
+     * an earlier version of this file did, silently never matches the
+     * request body and makes every check in this class a no-op.
      */
-    private const FINANCIAL_FIELDS = ['number', 'total_net', 'total_tax', 'total_gross', 'currency', 'exchange_rate', 'body'];
+    private const FINANCIAL_FIELDS = ['number', 'totalNet', 'totalTax', 'totalGross', 'currency', 'exchangeRate', 'body'];
 
     public function authorize(): bool
     {
@@ -33,10 +39,10 @@ class UpdateInvoiceRequest extends BaseFormRequest
         $invoice = $this->route('invoice');
 
         return [
-            'type'       => ['sometimes', new Enum(InvoiceType::class)],
-            'issue_date' => ['sometimes', 'date'],
-            'status'     => ['sometimes', 'string', new Enum(InvoiceStatus::class)],
-            'number'     => [
+            'type'      => ['sometimes', new Enum(InvoiceType::class)],
+            'issueDate' => ['sometimes', 'date'],
+            'status'    => ['sometimes', 'string', new Enum(InvoiceStatus::class)],
+            'number'    => [
                 'sometimes',
                 'string',
                 Rule::unique('invoices', 'number')
@@ -44,17 +50,17 @@ class UpdateInvoiceRequest extends BaseFormRequest
                     ->ignore($invoice?->id)
                 ,
             ],
-            'numbering_template_id' => ['sometimes', 'string', 'exists:numbering_templates,id'],
-            'total_net'             => ['sometimes', 'numeric'],
-            'total_tax'             => ['sometimes', 'numeric'],
-            'total_gross'           => ['sometimes', 'numeric'],
-            'currency'              => ['sometimes', 'string', 'size:3'],
-            'exchange_rate'         => ['sometimes', 'numeric'],
-            'seller'                => ['sometimes', 'array'],
-            'buyer'                 => ['sometimes', 'array'],
-            'body'                  => ['sometimes', 'array'],
-            'payment'               => ['sometimes', 'array'],
-            'options'               => ['sometimes', 'array'],
+            'numberingTemplateId' => ['sometimes', 'string', 'exists:numbering_templates,id'],
+            'totalNet'            => ['sometimes', 'numeric'],
+            'totalTax'            => ['sometimes', 'numeric'],
+            'totalGross'          => ['sometimes', 'numeric'],
+            'currency'            => ['sometimes', 'string', 'size:3'],
+            'exchangeRate'        => ['sometimes', 'numeric'],
+            'seller'              => ['sometimes', 'array'],
+            'buyer'               => ['sometimes', 'array'],
+            'body'                => ['sometimes', 'array'],
+            'payment'             => ['sometimes', 'array'],
+            'options'             => ['sometimes', 'array'],
         ];
     }
 
@@ -106,16 +112,16 @@ class UpdateInvoiceRequest extends BaseFormRequest
 
     private function validateFinancialSum(Validator $validator): void
     {
-        $net   = $this->input('total_net');
-        $tax   = $this->input('total_tax');
-        $gross = $this->input('total_gross');
+        $net   = $this->input('totalNet');
+        $tax   = $this->input('totalTax');
+        $gross = $this->input('totalGross');
 
         if (null === $net || null === $tax || null === $gross) {
             return;
         }
 
         if (round(($net + $tax) * 100) !== round($gross * 100)) {
-            $validator->errors()->add('total_gross', 'total_net + total_tax must equal total_gross.');
+            $validator->errors()->add('totalGross', 'totalNet + totalTax must equal totalGross.');
         }
     }
 }
