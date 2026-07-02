@@ -44,6 +44,13 @@ class ExpenseApprovalController extends Controller
             'decisions.approver',
         ])
             ->pending()
+            // ApprovalExpenseExecution has no tenant_id of its own — a user
+            // belonging to multiple tenants would otherwise see pending
+            // approvals from every tenant they're an approver in, not just
+            // the one they're currently acting as. Expense's own
+            // BelongsToTenant global scope makes this whereHas() apply the
+            // tenant filter implicitly.
+            ->whereHas('expense')
             ->whereHas('currentStep', function ($query) use ($user) {
                 $query->whereHas('approvers', function ($approverQuery) use ($user) {
                     // This is a simplified check - the actual logic should use ApprovalResolutionService
@@ -77,6 +84,8 @@ class ExpenseApprovalController extends Controller
             },
             'decisions.step',
         ])
+            // Same cross-tenant leak as pendingApprovals() above.
+            ->whereHas('expense')
             ->whereHas('decisions', function ($query) use ($user) {
                 $query->where('approver_id', $user->id);
             })
