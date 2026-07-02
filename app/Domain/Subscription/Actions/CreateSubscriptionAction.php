@@ -61,7 +61,7 @@ class CreateSubscriptionAction
             // Stripe payment method id and customer/plan references that don't
             // belong in application logs.
             Log::error('Failed to create subscription', [
-                'error'              => $e->getMessage(),
+                'error'               => $e->getMessage(),
                 'billing_customer_id' => $data->billingCustomerId,
                 'plan_id'             => $data->planId,
             ]);

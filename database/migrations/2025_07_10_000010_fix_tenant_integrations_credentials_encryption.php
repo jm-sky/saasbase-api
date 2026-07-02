@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
-/**
+/*
  * TenantIntegration::$casts declared 'credentials' => 'encrypted:json', but a
  * conflicting Attribute accessor on the model silently overrode it, so
  * credentials (Azure keys, KSeF tokens, etc.) were stored as plain JSON, not
@@ -48,7 +48,7 @@ return new class() extends Migration {
 
             try {
                 $plain = Crypt::decryptString($row->credentials);
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 continue;
             }
 

@@ -294,7 +294,7 @@ Wszystkie 7 unikalnych critical findings z Fazy 0 naprawione bezpośrednio (nie 
 - **[MEDIUM]** EDoreczenia: credentiale/skrzynka globalne dla całej platformy, mimo architektury sugerującej per-tenant certyfikaty (`getTenantProvider()`).
 - **OK/pozytyw:** architektura cache IbanInfo (Redis → DB 30 dni → API) sensowna; `BankCode` poprawnie bez tenant scope (słusznie globalne dane referencyjne).
 
-**Nie uruchomiono testów/PHPStan** — brak `vendor/` w tym środowisku (nie zainstalowano zależności). Zweryfikowano tylko składnię (`php -l`, czysto). **Zalecenie: przed merge uruchomić pełny `composer install && artisan test && phpstan analyse` lokalnie/w CI.**
+**Testy/PHPStan:** wcześniej brak `vendor/` w środowisku review — tylko `php -l`. **2026-07-02:** lokalnie w Dockerze uruchomiono `composer csf` (4 pliki auto-fix) i `composer larastan` — **PHPStan OK, bez błędów**. Szczegóły: [`REVIEW_LOCAL_QUALITY_RUN.md`](REVIEW_LOCAL_QUALITY_RUN.md). **Przed merge nadal uruchomić pełny `artisan test` w CI/lokalnie.**
 
 ### Faza 0 — Multi-tenancy i klasy bazowe
 
