@@ -132,7 +132,7 @@ Wszystko z listy domenowej +
 |------|--------|------|---------|
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
 | 1 — Integracje | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. 6/14 critical naprawionych (aktywnie eksploatowalne: Stripe, tenant isolation, plaintext credentials, SSRF, fałszywy status weryfikacji). KSeF/e-Doręczenia (Grupa B, martwy kod) odłożone świadomie. Reszta HIGH/MEDIUM/LOW nienaprawiona |
-| 2 — Core biznesowy | W trakcie | 2026-07-02 | — |
+| 2 — Core biznesowy | **Ukończona** | 2026-07-02 | 14 critical, ~15 high w 6 domenach. Najgorsze: cross-tenant IDOR na branding/logo tenanta, zero autoryzacji w Invoice, Expense allocation/approval martwe (403 dla wszystkich), Projects funkcjonalnie martwe |
 | 3 — Wspierające | Nierozpoczęta | — | — |
 | 4 — Frontend | Nierozpoczęta | — | — |
 | 5 — Synteza | Nierozpoczęta | — | — |
@@ -140,6 +140,28 @@ Wszystko z listy domenowej +
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 2 — Projects i reszta Tenant
+
+**Wzorzec:** dwa różne typy problemów naraz — (a) prawdziwy, łatwy do wykorzystania cross-tenant IDOR na branding/profil/logo tenanta, (b) cała domena Projects funkcjonalnie martwa (nie exploit, ale nic nie działa).
+
+- **[CRITICAL]** `TenantBrandingController`/`TenantPublicProfileController` (show/update/deleteMedia) — **zero autoryzacji**. `is_in_tenant` sprawdza tylko, że JWT ma jakiś `tid`, nie że zgadza się z `{tenant}` w URL. `Tenant` nie jest sam sobie tenant-scoped, więc route-model-binding nie chroni. **Dowolny zalogowany user dowolnej firmy może odczytać/nadpisać/usunąć branding (logo, favicon, font, logo PDF, nagłówek e-mail) i publiczny profil KAŻDEJ INNEJ firmy**, zmieniając tylko ID w URL. Branding trafia na faktury PDF i e-maile do klientów — wysoki wpływ biznesowy/reputacyjny.
+- **[CRITICAL]** `TenantLogoController` (upload/show/delete) — ten sam brak autoryzacji, dowolny user może podmienić/skasować logo dowolnej innej firmy.
+- **[CRITICAL]** `POST /projects` zawsze rzuca `TypeError` (500) — `ProjectDTO::from()` woła `fromArray()` wymagający `tenantId`/`ownerId`, których `CreateProjectRequest` w ogóle nie dostarcza.
+- **[CRITICAL]** Nawet po naprawie powyższego: `(array) $dto` w kontrolerze daje klucze camelCase, a `Project::$fillable` jest snake_case — `Project::create()` cicho zignoruje atrybuty, naruszając NOT NULL/FK.
+- **[CRITICAL]** `POST /tasks` zawsze zepsute — kontroler czyta `$request->input('project_id'/'status_id'/...)` (snake_case) z surowego requestu, podczas gdy `CreateTaskRequest` waliduje camelCase — zawsze `null` na NOT NULL FK → `QueryException`.
+- **[CRITICAL]** `TaskPolicy` nie istnieje, ale `TaskController` ją wywołuje (`view`/`update`/`delete`) — Laravel domyślnie odmawia gdy brak Policy, więc **te akcje zwracają 403 dla każdego, łącznie z twórcą i przypisaną osobą**.
+- **[HIGH]** Domyślne statusy projektów/tasków nigdy się nie tworzą — `InitializeTenantDefaults` nie woła `seedDefaultProjectStatuses()`/`seedDefaultTaskStatuses()` (zdefiniowane, ale martwe). Żaden tenant nie ma statusu do wyboru — potwierdza, że cała funkcja jest niemożliwa do użycia end-to-end, zgodnie z README (choć z innego powodu niż "nic nie zrobiono" — szkielet istnieje, ale nie działa).
+- **[HIGH]** Brak autoryzacji w `ProjectStatusController`/`TaskStatusController` — każdy member może zmieniać statusy używane globalnie we wszystkich projektach firmy.
+- **[HIGH]** Załączniki projektów/tasków omijają model własności (`ProjectPolicy::view` wymaga bycia właścicielem/przypisanym, ale `*AttachmentsController` tego nie sprawdza) — dowolny member widzi/wgrywa/kasuje załączniki dowolnego projektu/taska w tenancie.
+- **[HIGH]** `TenantController::store()` (dodanie kolejnej firmy) nie woła `InitializeTenantDefaults` — ręcznie utworzony tenant nie ma root organization unit, kategorii stanowisk, subskrypcji, szablonów numeracji — prawdopodobnie psuje przypisywanie do jednostek i numerację faktur dla tego tenanta.
+- **[HIGH]** `AddressPolicy`/`BankAccountPolicy` sprawdzają tylko członkostwo, nie rolę — każdy member może zmienić oficjalny adres firmy i **konto bankowe do przyjmowania płatności od klientów**. Ten sam wzorzec co `TenantPolicy`/`RoleController` naprawiane wcześniej.
+- **[HIGH]** Brak autoryzacji w `OrganizationUnitController::store()`/`PositionCategoryController` — każdy member może tworzyć jednostki organizacyjne/kategorie stanowisk.
+- **[MEDIUM]** Walidacja `exists:` w Projects/Tasks omija tenant-scope (surowe zapytanie do DB) — można podać ID statusu/projektu/usera z innego tenanta, jeśli ULID jest znany/odgadnięty.
+- **[MEDIUM]** `cascadeOnDelete()` na `owner_id`/`assignee_id`/`created_by_id` w Projects/Tasks — usunięcie użytkownika kasuje kaskadowo wszystkie jego projekty/taski zamiast `nullOnDelete`.
+- **[MEDIUM]** `PositionCategoryController::update/destroy` rzuca surowy `\Exception` zamiast 403 — 500 zamiast czytelnego błędu, logika polityki zduplikowana inline zamiast w klasie Policy.
+- **[LOW]** `project_roles` jedynym modelem w domenie Projects bez tenant-scope (dziś nieeksponowany przez żaden kontroler).
+- **Pokrycie testami:** pozorne/zerowe w obu obszarach — jedyny test Projects (`ProjectDTOTest`) ręcznie buduje DTO z kompletem pól, maskując bug #1/#2. Zero testów Feature dla `TenantBrandingController`/`TenantPublicProfileController`/`TenantLogoController`/`OrganizationUnitController`.
 
 ### Faza 2 — Contractors i Products
 
