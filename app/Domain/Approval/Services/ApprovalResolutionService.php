@@ -139,12 +139,14 @@ class ApprovalResolutionService
      */
     private function getUserPrimaryUnit(User $user): ?OrganizationUnit
     {
+        // @phpstan-ignore-next-line active()/primary() come from OrgUnitUserBuilder (OrgUnitUser::newEloquentBuilder()), not visible to PHPStan on the HasMany return type
         $primaryMembership = $user->orgUnitUsers()
             ->active()
             ->primary()
             ->first()
         ;
 
+        // @phpstan-ignore-next-line same as above
         $primaryMembership ??= $user->orgUnitUsers()
             ->active()
             ->first()
@@ -195,6 +197,7 @@ class ApprovalResolutionService
             return new Collection();
         }
 
+        // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder (OrgUnitUser::newEloquentBuilder()), not visible to PHPStan on the HasMany return type
         return $unit->orgUnitUsers()
             ->active()
             ->where('role', $orgUnitRole)

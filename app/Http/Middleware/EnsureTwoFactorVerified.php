@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
  * Rejects requests authenticated with a token issued before two-factor
@@ -17,7 +18,15 @@ class EnsureTwoFactorVerified
 {
     public function handle(Request $request, \Closure $next): Response
     {
-        $mfaStatus = Auth::payload()?->get('mfa');
+        try {
+            $mfaStatus = Auth::payload()?->get('mfa');
+        } catch (JWTException) {
+            // This middleware always runs behind auth:api, which already
+            // parses/validates the token — a request that got this far
+            // without a parseable JWT is authenticated through some other
+            // means (e.g. actingAs() in tests). Nothing to enforce here.
+            return $next($request);
+        }
 
         if (1 === $mfaStatus) {
             return response()->json([

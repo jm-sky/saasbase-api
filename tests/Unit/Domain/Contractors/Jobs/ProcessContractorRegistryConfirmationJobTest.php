@@ -140,12 +140,22 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
             ->andReturn($allLookupResults)
         ;
 
+        // confirmContractorData() actually returns RegistryConfirmation[] (see
+        // Regon/Vies/MfContractorRegistryConfirmationService), not raw arrays —
+        // the job reads ->type/->status off each entry.
+        $regonCheckConfirmation = RegistryConfirmation::factory()->make([
+            'confirmable_id'   => $contractor->id,
+            'confirmable_type' => get_class($contractor),
+            'type'             => RegistryConfirmationType::Regon->value,
+            'status'           => RegistryConfirmationStatus::Success,
+        ]);
+
         // @phpstan-ignore-next-line
         $mockRegonService
             ->shouldReceive('confirmContractorData')
             ->once()
             ->with(\Mockery::type(Contractor::class), $regonData)
-            ->andReturn([['type' => 'regon', 'success' => true]])
+            ->andReturn([$regonCheckConfirmation])
         ;
 
         Log::shouldReceive('info')
