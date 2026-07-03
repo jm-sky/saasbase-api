@@ -141,6 +141,17 @@ Wszystko z listy domenowej +
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
 
+### Naprawa błędów z pierwszego realnego runu Docker/PHPStan/PHPUnit (2026-07-02)
+
+Pierwszy raz w tej sesji zweryfikowano fixy przez faktyczne `composer larastan` + `artisan test` (nie tylko `php -l`) — zobacz `REVIEW_LOCAL_QUALITY_RUN.md`. Wynik: 3 błędy PHPStan, 6 failed / 269 passed / 31 skipped PHPUnit. Wszystkie naprawione:
+
+1. **PHPStan (3× `ApprovalResolutionService.php`)** — `active()`/`primary()` pochodzą z `OrgUnitUserBuilder` (przez `OrgUnitUser::newEloquentBuilder()`), niewidoczne dla PHPStan na typie zwracanym `HasMany`. Dodano `@phpstan-ignore-next-line`, zgodnie z istniejącym już w kodzie wzorcem dla identycznego ograniczenia (`OrganizationUnit::activeOrgUnitUsers()`).
+2. **`ApplicationInvitationControllerTest` ×2** — `Auth::payload()` rzuca `JWTException` zamiast zwracać `null`, gdy nie ma parsowalnego tokenu — operator `?->` w `EnsureTwoFactorVerified` nie chronił przed wyjątkiem, tylko przed `null`. W produkcji middleware siedzi za `auth:api` (token już sparsowany), ale to realne ryzyko crasha dla innych ścieżek auth. Owinięto w try/catch, przepuszczając request dalej — zgodnie z własną deklarowaną intencją middleware'u ("users without an applicable mfa claim are unaffected").
+3. **`ProcessContractorRegistryConfirmationJobTest` (1 test)** — `confirmContractorData()` faktycznie zwraca `RegistryConfirmation[]`, a mock w teście zwracał surowe tablice z kluczem `success` — nieaktualny kształt sprzed fixu z Fazy 1. Poprawiono mock, by budował prawdziwą (nieprezystowaną) instancję `RegistryConfirmation`.
+4. **`SkillCategoryApiTest` ×3** — `create/update/destroy` wymagają teraz Owner/Admin (Faza 3), ale `setUp()` autentykował usera bez żadnego tenanta (`getTenantId()` = null, `authorizeManage()` zawsze odrzucał). Naprawiono na `authenticateUser($tenant)` — ten sam, już działający wzorzec co `SkillApiTest` (hook `UserTenant::boot()` automatycznie synchronizuje rolę z pivota do `TenantScopedRoles`).
+
+**Nadal nienaprawione (świadomie, poza zakresem tego batcha):** backfill migracji na realnej kopii danych, `EDoreczenia`/PKWiU/Contact-search (Scout) — 31 skipped testów, świadomie pominięte w suite.
+
 ### Naprawione critical findings z Fazy 3, Grupa A (2026-07-02)
 
 Wszystkie ~12 aktywnie eksploatowalne critical findings z Fazy 3 naprawione bezpośrednio (weryfikacja tylko `php -l`, patrz zastrzeżenie na końcu):
