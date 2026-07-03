@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Calendar\Models\Event;
+use App\Domain\Calendar\Policies\EventPolicy;
 use App\Domain\Common\Models\Address;
 use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Policies\AddressPolicy;
@@ -10,13 +12,15 @@ use App\Domain\Common\Policies\MediaPolicy;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Policies\InvoicePolicy;
 use App\Domain\Projects\Models\Project;
+use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Policies\ProjectPolicy;
+use App\Domain\Projects\Policies\TaskPolicy;
+use App\Domain\Template\Models\InvoiceTemplate;
+use App\Domain\Template\Policies\InvoiceTemplatePolicy;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantIntegration;
 use App\Domain\Tenant\Policies\TenantIntegrationPolicy;
 use App\Domain\Tenant\Policies\TenantPolicy;
-use App\Domain\Template\Models\InvoiceTemplate;
-use App\Domain\Template\Policies\InvoiceTemplatePolicy;
 use App\Domain\Users\Models\SecurityEvent;
 use App\Domain\Users\Models\TrustedDevice;
 use App\Domain\Users\Models\UserTableSetting;
@@ -44,7 +48,9 @@ class AuthServiceProvider extends ServiceProvider
         BankAccount::class       => BankAccountPolicy::class,
         Media::class             => MediaPolicy::class,
         Project::class           => ProjectPolicy::class,
+        Task::class              => TaskPolicy::class,
         InvoiceTemplate::class   => InvoiceTemplatePolicy::class,
+        Event::class             => EventPolicy::class,
     ];
 
     /**

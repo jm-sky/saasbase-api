@@ -45,6 +45,8 @@ class InitializeTenantDefaults
             $this->createDefaultPositionCategories($tenant);
             $this->createOrganizationUnits($tenant, $owner);
             $this->seedDefaultMeasurementUnits($tenant);
+            $this->seedDefaultProjectStatuses($tenant);
+            $this->seedDefaultTaskStatuses($tenant);
             $this->seedDefaultTags($tenant);
             $this->createSubscription($tenant);
             $this->createNumberingTemplates($tenant);

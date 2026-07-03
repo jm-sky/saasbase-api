@@ -65,7 +65,7 @@ class AdminContractorController extends Controller
     public function store(StoreContractorRequest $request): JsonResponse
     {
         $dto        = ContractorDTO::from($request->validated());
-        $contractor = Contractor::withoutGlobalScope(TenantScope::class)->create((array) $dto);
+        $contractor = Contractor::withoutGlobalScope(TenantScope::class)->create($dto->toDbArray());
 
         return response()->json(
             ContractorDTO::from($contractor),
@@ -87,7 +87,7 @@ class AdminContractorController extends Controller
         $contractor = Contractor::withoutGlobalScope(TenantScope::class)->findOrFail($contractor->getKey());
 
         $dto = ContractorDTO::from($request->validated());
-        $contractor->update((array) $dto);
+        $contractor->update($dto->toDbArray());
 
         return response()->json(
             ContractorDTO::from($contractor)

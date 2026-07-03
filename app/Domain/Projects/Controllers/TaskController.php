@@ -75,16 +75,12 @@ class TaskController extends Controller
 
     public function store(CreateTaskRequest $request): TaskResource
     {
+        $this->authorize('create', Task::class);
+
         $task = Task::create([
-            'tenant_id'      => Auth::user()->tenant_id,
-            'project_id'     => $request->input('project_id'),
-            'title'          => $request->input('title'),
-            'description'    => $request->input('description'),
-            'status_id'      => $request->input('status_id'),
-            'priority'       => $request->input('priority'),
-            'assigned_to_id' => $request->input('assigned_to_id'),
-            'created_by_id'  => Auth::id(),
-            'due_date'       => $request->input('due_date'),
+            ...$request->validated(),
+            'tenant_id'     => Auth::user()->getTenantId(),
+            'created_by_id' => Auth::id(),
         ]);
 
         return new TaskResource($task);

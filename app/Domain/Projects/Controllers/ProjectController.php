@@ -64,8 +64,10 @@ class ProjectController extends Controller
 
     public function store(CreateProjectRequest $request): ProjectResource
     {
+        $this->authorize('create', Project::class);
+
         $dto     = ProjectDTO::from($request->validated());
-        $project = Project::create((array) $dto);
+        $project = Project::create($dto->toDbArray());
 
         return new ProjectResource($project);
     }
