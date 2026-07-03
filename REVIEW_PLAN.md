@@ -5,7 +5,18 @@
 **Repozytoria:** `jm-sky/saasbase-api` (Laravel/DDD), `jm-sky/saasbase-web` (Vue 3/TS)
 **Branch:** `claude/saasbase-project-review-0p5z11`
 
-> New file - Larastan results (2026-07-03 10:07): `./REVIEW_LARASTAN_20260703_1007.md`
+> Larastan results (2026-07-03 10:07): `./REVIEW_LARASTAN_20260703_1007.md` — all 69 reported issues fixed (2026-07-03, see below).
+
+## Naprawione: Larastan run 2026-07-03 10:07 (69/69 błędów)
+
+Weryfikacja: `php -l` na każdym zmienionym pliku (0 błędów składni) — brak `vendor/`/Dockera w tej sesji, więc nie da się odpalić samego `phpstan`; poprawki zweryfikowane ręcznie przeciw raportowi błąd-po-błędzie (linia raportu ↔ linia w pliku).
+
+- **Wzorzec dominujący (58/69 błędów):** `@phpstan-ignore-next-line` ignoruje tylko *bezpośrednio następną* linię, a w wielolinijkowych łańcuchach metod (`->foo()\n->bar()`) błąd jest zgłaszany na linii z konkretnym wywołaniem (`->bar()`), nie na linii startowej łańcucha — komentarz stał 1-2 linie za wysoko i przestawał działać przy każdej zmianie pliku powyżej (przesunięcie numerów linii). Naprawione przez przesunięcie komentarza bezpośrednio nad właściwą linię w: `ApprovalResolutionService` (3×), `WorkflowMatchingService` (3×), `OrganizationUnit` (3×), `HasIndexQuery.php:59` (`getEloquentBuilder()` — jedna naprawa w traicie usunęła 30 zgłoszeń, po jednym na każdy kontroler który go używa), `ContractorRegistryConfirmationServiceTest` (11× `->with()`), `ProcessContractorRegistryConfirmationJobTest` (3× `->once()`), `FeedControllerTest` (1× `->once()`).
+- **`Auth::payload()` (4×, `User.php`, `EnsureTwoFactorVerified.php`, `IsInTenant.php`)** — metoda z guarda JWTAuth, niewidoczna dla PHPStan na bazowej fasadzie `Auth`. Otagowana `@phpstan-ignore-next-line`, zgodnie z istniejącą konwencją w kodzie.
+- **Realny (drobny) bug: `HealthController::getSoketi()/getOpenRouter()`** — `$url` przypisywany wewnątrz `try`; jeśli wyjątek poleci przed/podczas przypisania, `$url` byłby niezdefiniowany w bloku `showDetails()` poza try/catch. Naprawione przez `$url = null;` przed blokiem.
+- **Realny bug typowania: `HaveAddresses::addresses()/defaultAddress()`** — metody relacji nie miały generycznych adnotacji PHPDoc (`@return MorphMany<Address, $this>` itd.), więc PHPStan nie umiał wywnioskować typu elementu przy `->first()->full_address` w `ExpenseFactory`/`InvoiceFactory` (4+5 błędów). Dodatkowo `Tenant.php` nie miał adnotacji `@property ?Address $defaultAddress`, którą `Contractor.php` już miał — dodana dla spójności.
+
+**Uwaga:** ten fix batch dotyczy wyłącznie PHPStan (statyczna analiza) — nie uruchamiano `php artisan test` w tej sesji (brak Dockera/DB w sandboxie). Wcześniejszy prawdziwy przebieg testów (`REVIEW_LOCAL_QUALITY_RUN/artisan-test.txt`, `phpstan.txt`, 2026-07-03 05:12) był już przejrzany i naprawiony we wcześniejszej części tej sesji (commity `8ed0abd`/`47a0b3c`).
 
 ## Kontekst / diagnoza wyjściowa
 
