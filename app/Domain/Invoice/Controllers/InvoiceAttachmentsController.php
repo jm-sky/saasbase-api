@@ -10,11 +10,13 @@ use App\Domain\Invoice\Enums\InvoiceActivityType;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Requests\InvoiceAttachmentRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceAttachmentsController extends Controller
 {
+    use AuthorizesRequests;
     use HasActivityLogging;
 
     /**
@@ -22,6 +24,8 @@ class InvoiceAttachmentsController extends Controller
      */
     public function index(Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
+
         $media = $invoice->getMedia('attachments');
 
         $ocrMediaId = $invoice->ocrRequest?->media_id;
@@ -44,6 +48,8 @@ class InvoiceAttachmentsController extends Controller
      */
     public function store(InvoiceAttachmentRequest $request, Invoice $invoice)
     {
+        $this->authorize('update', $invoice);
+
         $file  = $request->file('file');
         $media = $invoice->addMedia($file)->toMediaCollection('attachments');
         $invoice->logModelActivity(InvoiceActivityType::AttachmentCreated->value, $media);
@@ -59,6 +65,7 @@ class InvoiceAttachmentsController extends Controller
      */
     public function show(Invoice $invoice, Media $media)
     {
+        $this->authorize('view', $invoice);
         $this->authorizeMedia($invoice, $media);
 
         return response()->json([
@@ -71,6 +78,7 @@ class InvoiceAttachmentsController extends Controller
      */
     public function download(Invoice $invoice, Media $media)
     {
+        $this->authorize('view', $invoice);
         $this->authorizeMedia($invoice, $media);
 
         $disk = Storage::disk($media->disk);
@@ -95,6 +103,7 @@ class InvoiceAttachmentsController extends Controller
      */
     public function preview(Invoice $invoice, Media $media)
     {
+        $this->authorize('view', $invoice);
         $this->authorizeMedia($invoice, $media);
 
         $disk = Storage::disk($media->disk);
@@ -119,6 +128,8 @@ class InvoiceAttachmentsController extends Controller
      */
     public function destroy(Invoice $invoice, $mediaId)
     {
+        $this->authorize('update', $invoice);
+
         $media = Media::findOrFail($mediaId);
         $this->authorizeMedia($invoice, $media);
         $invoice->logModelActivity(InvoiceActivityType::AttachmentDeleted->value, $media);

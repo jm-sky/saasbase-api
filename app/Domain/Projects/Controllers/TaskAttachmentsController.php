@@ -6,13 +6,18 @@ use App\Domain\Common\DTOs\MediaDTO;
 use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Requests\TaskAttachmentRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TaskAttachmentsController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(Task $task)
     {
+        $this->authorize('view', $task);
+
         $media = $task->getMedia('attachments');
 
         return response()->json([
@@ -22,6 +27,8 @@ class TaskAttachmentsController extends Controller
 
     public function store(TaskAttachmentRequest $request, Task $task)
     {
+        $this->authorize('update', $task);
+
         $file  = $request->file('file');
         $media = $task->addMedia($file)->toMediaCollection('attachments');
 
@@ -32,6 +39,7 @@ class TaskAttachmentsController extends Controller
 
     public function show(Task $task, Media $media)
     {
+        $this->authorize('view', $task);
         $this->authorizeMedia($task, $media);
 
         return response()->json([
@@ -41,6 +49,7 @@ class TaskAttachmentsController extends Controller
 
     public function download(Task $task, Media $media)
     {
+        $this->authorize('view', $task);
         $this->authorizeMedia($task, $media);
         $path    = $media->getPath();
         $headers = [
@@ -53,6 +62,7 @@ class TaskAttachmentsController extends Controller
 
     public function preview(Task $task, Media $media)
     {
+        $this->authorize('view', $task);
         $this->authorizeMedia($task, $media);
         $path    = $media->getPath();
         $headers = [
@@ -65,6 +75,7 @@ class TaskAttachmentsController extends Controller
 
     public function destroy(Task $task, Media $media)
     {
+        $this->authorize('update', $task);
         $this->authorizeMedia($task, $media);
         $media->delete();
 
