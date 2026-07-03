@@ -25,7 +25,7 @@ class StoreExpenseRequest extends BaseFormRequest
             'type'                     => ['required', new Enum(InvoiceType::class)],
             'issueDate'                => ['required', 'date'],
             // Backward compatibility
-            'status'                   => ['sometimes', 'string'],
+            'status'                   => ['sometimes', 'string', new Enum(InvoiceStatus::class)],
             // New status structure
             'statusInfo'               => ['sometimes', 'array'],
             'statusInfo.general'       => ['sometimes', new Enum(InvoiceStatus::class)],

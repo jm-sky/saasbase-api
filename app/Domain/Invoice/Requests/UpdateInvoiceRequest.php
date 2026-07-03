@@ -5,6 +5,7 @@ namespace App\Domain\Invoice\Requests;
 use App\Domain\Auth\Models\User;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Enums\InvoiceType;
+use App\Domain\Financial\Enums\PaymentStatus;
 use App\Domain\Invoice\Models\Invoice;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
@@ -56,11 +57,37 @@ class UpdateInvoiceRequest extends BaseFormRequest
             'totalGross'          => ['sometimes', 'numeric'],
             'currency'            => ['sometimes', 'string', 'size:3'],
             'exchangeRate'        => ['sometimes', 'numeric'],
-            'seller'              => ['sometimes', 'array'],
-            'buyer'               => ['sometimes', 'array'],
-            'body'                => ['sometimes', 'array'],
-            'payment'             => ['sometimes', 'array'],
-            'options'             => ['sometimes', 'array'],
+            'seller'      => ['sometimes', 'array'],
+            'buyer'       => ['sometimes', 'array'],
+            'body'        => ['sometimes', 'array'],
+            'options'     => ['sometimes', 'array'],
+
+            // InvoicePaymentDTO::fromArray() does PaymentStatus::from() (not
+            // tryFrom) and PaymentMethodDTO::fromArray($data['method']) with
+            // no null guard — an unvalidated 'payment' shape here doesn't
+            // fail this request, it fails on every SUBSEQUENT read of the
+            // invoice (ValueError/TypeError from the cast), making it
+            // permanently unreadable via the API until the row is fixed by
+            // hand. Mirrors StoreInvoiceRequest's payment.* rules, but
+            // required_with instead of required since payment as a whole is
+            // still optional on update.
+            'payment'                     => ['sometimes', 'array'],
+            'payment.status'              => ['required_with:payment', new Enum(PaymentStatus::class)],
+            'payment.dueDate'             => ['nullable', 'date'],
+            'payment.paidDate'            => ['nullable', 'date'],
+            'payment.paidAmount'          => ['nullable', 'numeric', 'min:0'],
+            'payment.method'              => ['required_with:payment', 'array'],
+            'payment.method.id'           => ['required_with:payment.method', 'string', 'exists:payment_methods,id'],
+            'payment.method.name'         => ['required_with:payment.method', 'string', 'max:255'],
+            'payment.method.paymentDays'  => ['nullable', 'integer', 'min:0'],
+            'payment.reference'           => ['nullable', 'string', 'max:255'],
+            'payment.terms'               => ['nullable', 'string', 'max:500'],
+            'payment.notes'               => ['nullable', 'string', 'max:1000'],
+            'payment.bankAccount'         => ['nullable', 'array'],
+            'payment.bankAccount.name'    => ['nullable', 'string', 'max:255'],
+            'payment.bankAccount.iban'    => ['nullable', 'string', 'max:34'],
+            'payment.bankAccount.swift'   => ['nullable', 'string', 'max:11'],
+            'payment.bankAccount.address' => ['nullable', 'string', 'max:500'],
         ];
     }
 
