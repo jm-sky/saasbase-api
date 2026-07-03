@@ -58,6 +58,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property ?TenantPublicProfile          $publicProfile
  * @property Collection<Tag>               $tags
  * @property Collection<Address>           $addresses
+ * @property ?Address                      $defaultAddress
  * @property Collection<BankAccount>       $bankAccounts
  * @property Collection<Media>             $media
  * @property Collection<TenantInvitation>  $invitations

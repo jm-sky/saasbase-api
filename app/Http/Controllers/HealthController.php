@@ -87,6 +87,7 @@ class HealthController extends Controller
     protected function getSoketi(): array
     {
         $status = [];
+        $url    = null;
 
         try {
             $url              = Str::of(config('broadcasting.connections.pusher.options.host'))->replace('wss://', 'https://');
@@ -107,6 +108,7 @@ class HealthController extends Controller
     protected function getOpenRouter(): array
     {
         $status = [];
+        $url    = null;
 
         try {
             $url              = OpenRouterService::getOpenRouterUrl();

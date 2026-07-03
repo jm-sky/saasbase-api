@@ -133,9 +133,9 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
         $mockViesService  = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
         $mockMfService    = \Mockery::mock(MfContractorRegistryConfirmationService::class);
 
-        // @phpstan-ignore-next-line
         $mockDataFetcher
             ->shouldReceive('fetch')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->andReturn($allLookupResults)
         ;
@@ -150,9 +150,9 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
             'status'           => RegistryConfirmationStatus::Success,
         ]);
 
-        // @phpstan-ignore-next-line
         $mockRegonService
             ->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->with(\Mockery::type(Contractor::class), $regonData)
             ->andReturn([$regonCheckConfirmation])
@@ -204,9 +204,9 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
         $mockViesService  = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
         $mockMfService    = \Mockery::mock(MfContractorRegistryConfirmationService::class);
 
-        // @phpstan-ignore-next-line
         $mockDataFetcher
             ->shouldReceive('fetch')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->andReturn(null)
         ;

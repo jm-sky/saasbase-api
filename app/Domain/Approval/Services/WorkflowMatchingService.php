@@ -22,9 +22,9 @@ class WorkflowMatchingService
         ]);
 
         // Get all active workflows for the tenant, ordered by priority (highest first)
-        // @phpstan-ignore-next-line
         $workflows = ApprovalWorkflow::withoutTenant()
             ->where('tenant_id', $expense->tenant_id)
+            // @phpstan-ignore-next-line active()/byPriority() are local scopes, not visible to PHPStan on the Builder return type
             ->active()
             ->byPriority()
             ->get()
@@ -234,9 +234,9 @@ class WorkflowMatchingService
      */
     public function getPotentialWorkflows(Expense $expense): \Illuminate\Support\Collection
     {
-        // @phpstan-ignore-next-line
         $workflows = ApprovalWorkflow::withoutTenant()
             ->where('tenant_id', $expense->tenant_id)
+            // @phpstan-ignore-next-line active()/byPriority() are local scopes, not visible to PHPStan on the Builder return type
             ->active()
             ->byPriority()
             ->get()
@@ -257,9 +257,9 @@ class WorkflowMatchingService
      */
     public function hasWorkflowsForTenant(string $tenantId): bool
     {
-        // @phpstan-ignore-next-line
         return ApprovalWorkflow::withoutTenant()
             ->where('tenant_id', $tenantId)
+            // @phpstan-ignore-next-line active() is a local scope, not visible to PHPStan on the Builder return type
             ->active()
             ->exists()
         ;

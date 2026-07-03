@@ -243,8 +243,8 @@ class FeedControllerTest extends TestCase
     {
         // Override the default mock for this specific test
         $profanityService = \Mockery::mock(ProfanityFilterService::class);
-        // @phpstan-ignore-next-line
         $profanityService->shouldReceive('hasProfanity')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->andReturn(true)
         ;

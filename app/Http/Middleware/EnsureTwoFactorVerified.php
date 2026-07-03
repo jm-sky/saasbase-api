@@ -19,6 +19,7 @@ class EnsureTwoFactorVerified
     public function handle(Request $request, \Closure $next): Response
     {
         try {
+            // @phpstan-ignore-next-line payload() is provided by the JWTAuth guard, not declared on the base Auth facade
             $mfaStatus = Auth::payload()?->get('mfa');
         } catch (JWTException) {
             // This middleware always runs behind auth:api, which already

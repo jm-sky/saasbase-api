@@ -133,9 +133,9 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
     public function getOwnersAttribute(): SupportCollection
     {
-        // @phpstan-ignore-next-line
         return $this->workflowMemberships()
             ->where('workflow_role_level', UnitRoleLevel::UNIT_OWNER)
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder, not visible to PHPStan on the HasMany return type
             ->active()
             ->with('user')
             ->get()
@@ -201,8 +201,8 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
     public function getUsersWithPositions()
     {
-        // @phpstan-ignore-next-line
         return $this->orgUnitUsers()
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder, not visible to PHPStan on the HasMany return type
             ->active()
             ->with(['user', 'position.category'])
             ->get()
@@ -221,8 +221,8 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
     public function getDirectors()
     {
-        // @phpstan-ignore-next-line
         return $this->orgUnitUsers()
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder, not visible to PHPStan on the HasMany return type
             ->active()
             ->whereHas('position', function ($query) {
                 $query->where('is_director', true);

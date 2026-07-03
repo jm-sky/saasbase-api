@@ -183,26 +183,26 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $viesConfirmation  = new RegistryConfirmation(['id' => 2, 'type' => 'vies']);
         $mfConfirmation    = new RegistryConfirmation(['id' => 3, 'type' => 'mf']);
 
-        // @phpstan-ignore-next-line
         $this->dataFetcherService->shouldReceive('fetch')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with(\Mockery::type(CompanyContext::class))
             ->andReturn($allLookupResults)
         ;
 
-        // @phpstan-ignore-next-line
         $this->regonService->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $regonData)
             ->andReturn([$regonConfirmation])
         ;
 
-        // @phpstan-ignore-next-line
         $this->viesService->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $viesData)
             ->andReturn([$viesConfirmation])
         ;
 
-        // @phpstan-ignore-next-line
         $this->mfService->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $mfData)
             ->andReturn([$mfConfirmation])
         ;
@@ -227,8 +227,8 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
             ]);
         });
 
-        // @phpstan-ignore-next-line
         $this->dataFetcherService->shouldReceive('fetch')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with(\Mockery::type(CompanyContext::class))
             ->andReturn(null)
         ;
@@ -318,14 +318,14 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
 
         $regonConfirmation = new RegistryConfirmation(['id' => 1, 'type' => 'regon']);
 
-        // @phpstan-ignore-next-line
         $this->dataFetcherService->shouldReceive('fetch')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with(\Mockery::type(CompanyContext::class))
             ->andReturn($allLookupResults)
         ;
 
-        // @phpstan-ignore-next-line
         $this->regonService->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $regonData)
             ->andReturn([$regonConfirmation])
         ;
@@ -427,20 +427,20 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
 
         $viesConfirmation = new RegistryConfirmation(['id' => 2, 'type' => 'vies']);
 
-        // @phpstan-ignore-next-line
         $this->dataFetcherService->shouldReceive('fetch')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with(\Mockery::type(CompanyContext::class))
             ->andReturn($allLookupResults)
         ;
 
-        // @phpstan-ignore-next-line
         $this->regonService->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $regonData)
             ->andThrow(new \Exception('Registry service error'))
         ;
 
-        // @phpstan-ignore-next-line
         $this->viesService->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $viesData)
             ->andReturn([$viesConfirmation])
         ;
@@ -473,8 +473,8 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
             ]);
         });
 
-        // @phpstan-ignore-next-line
         $this->dataFetcherService->shouldReceive('fetch')
+            // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with(\Mockery::type(CompanyContext::class))
             ->andThrow(new \Exception('Data fetcher error'))
         ;
