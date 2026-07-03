@@ -77,7 +77,6 @@ class InvoiceTemplateController extends Controller
         $this->validateHandlebarsContent($data['content'] ?? '');
 
         $template = DB::transaction(function () use ($data) {
-
             // If this template is set as default, unset other defaults in the same category
             if ($data['isDefault'] ?? false) {
                 InvoiceTemplate::query()
@@ -210,8 +209,6 @@ class InvoiceTemplateController extends Controller
             return;
         }
 
-        throw ValidationException::withMessages([
-            'content' => [$this->templatingService->getValidationErrors($content) ?? 'Invalid Handlebars template syntax.'],
-        ]);
+        throw ValidationException::withMessages(['content' => [$this->templatingService->getValidationErrors($content) ?? 'Invalid Handlebars template syntax.']]);
     }
 }

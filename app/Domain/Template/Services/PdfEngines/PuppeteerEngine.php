@@ -222,14 +222,14 @@ class PuppeteerEngine implements PdfEngineInterface
                 'bottom' => $this->resolveMargin($margins['bottom'] ?? null, '10mm'),
                 'left'   => $this->resolveMargin($margins['left'] ?? null, '5mm'),
             ],
-            'printBackground'    => (bool) ($settings['print_background'] ?? true),
-            'preferCssPageSize'  => (bool) ($settings['prefer_css_page_size'] ?? false),
+            'printBackground'     => (bool) ($settings['print_background'] ?? true),
+            'preferCssPageSize'   => (bool) ($settings['prefer_css_page_size'] ?? false),
             'displayHeaderFooter' => (bool) ($settings['display_header_footer'] ?? true),
-            'headerTemplate'     => (string) ($settings['header_template'] ?? '<div></div>'),
-            'footerTemplate'     => $footerTemplate,
-            'timeout'            => $this->clampInt($settings['timeout'] ?? 30000, 1000, 120000),
-            'waitForSelector'    => \is_string($settings['wait_for_selector'] ?? null) ? $settings['wait_for_selector'] : null,
-            'waitForTimeout'     => $this->clampInt($settings['wait_for_timeout'] ?? 0, 0, 30000),
+            'headerTemplate'      => (string) ($settings['header_template'] ?? '<div></div>'),
+            'footerTemplate'      => $footerTemplate,
+            'timeout'             => $this->clampInt($settings['timeout'] ?? 30000, 1000, 120000),
+            'waitForSelector'     => \is_string($settings['wait_for_selector'] ?? null) ? $settings['wait_for_selector'] : null,
+            'waitForTimeout'      => $this->clampInt($settings['wait_for_timeout'] ?? 0, 0, 30000),
         ];
     }
 

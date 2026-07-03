@@ -37,7 +37,7 @@ enum AllocationStatus: string
     public function requiresAction(): bool
     {
         return match ($this) {
-            self::PENDING, self::PARTIALLY_ALLOCATED => true,
+            self::PENDING, self::PARTIALLY_ALLOCATED  => true,
             self::NOT_REQUIRED, self::FULLY_ALLOCATED => false,
         };
     }

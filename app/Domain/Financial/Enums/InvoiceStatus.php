@@ -36,7 +36,7 @@ enum InvoiceStatus: string
     {
         return match ($this) {
             self::COMPLETED, self::CANCELLED => true,
-            default => false,
+            default                          => false,
         };
     }
 

@@ -36,7 +36,7 @@ enum ApprovalStatus: string
     {
         return match ($this) {
             self::APPROVED, self::REJECTED, self::CANCELLED => true,
-            self::NOT_REQUIRED, self::PENDING => false,
+            self::NOT_REQUIRED, self::PENDING               => false,
         };
     }
 

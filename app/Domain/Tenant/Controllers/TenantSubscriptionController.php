@@ -69,7 +69,7 @@ class TenantSubscriptionController extends Controller
     {
         return match (strtolower($value)) {
             'unlimited', '-1' => 'unlimited',
-            default => (int) $value,
+            default           => (int) $value,
         };
     }
 }

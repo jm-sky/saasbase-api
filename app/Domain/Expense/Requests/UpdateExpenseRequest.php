@@ -36,10 +36,10 @@ class UpdateExpenseRequest extends BaseFormRequest
             'totalGross'   => ['sometimes', 'numeric'],
             'currency'     => ['sometimes', 'string', 'size:3'],
             'exchangeRate' => ['sometimes', 'numeric'],
-            'seller'      => ['sometimes', 'array'],
-            'buyer'       => ['sometimes', 'array'],
-            'body'        => ['sometimes', 'array'],
-            'options'     => ['sometimes', 'array'],
+            'seller'       => ['sometimes', 'array'],
+            'buyer'        => ['sometimes', 'array'],
+            'body'         => ['sometimes', 'array'],
+            'options'      => ['sometimes', 'array'],
 
             // Expense.payment uses the same InvoicePaymentCast/DTO as
             // Invoice — an unvalidated shape here doesn't fail this

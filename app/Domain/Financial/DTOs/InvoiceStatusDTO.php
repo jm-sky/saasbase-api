@@ -138,9 +138,9 @@ final class InvoiceStatusDTO extends BaseDataDTO
     public function isReadyForNextStage(): bool
     {
         return match ($this->general) {
-            InvoiceStatus::DRAFT      => OcrRequestStatus::Completed === $this->ocr,
-            InvoiceStatus::PROCESSING => $this->isProcessingComplete(),
-            InvoiceStatus::ISSUED     => true,
+            InvoiceStatus::DRAFT                               => OcrRequestStatus::Completed === $this->ocr,
+            InvoiceStatus::PROCESSING                          => $this->isProcessingComplete(),
+            InvoiceStatus::ISSUED                              => true,
             InvoiceStatus::COMPLETED, InvoiceStatus::CANCELLED => false,
         };
     }

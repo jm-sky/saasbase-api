@@ -33,7 +33,7 @@ enum ApprovalExecutionStatus: string
     {
         return match ($this) {
             self::APPROVED, self::REJECTED, self::CANCELLED => true,
-            self::PENDING => false,
+            self::PENDING                                   => false,
         };
     }
 

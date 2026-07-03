@@ -26,10 +26,10 @@ class ColumnTypeCache
                 $type = DB::getSchemaBuilder()->getColumnType($table, $column);
 
                 $types[$column] = match ($type) {
-                    'string', 'text' => 'string',
+                    'string', 'text'                                  => 'string',
                     'integer', 'bigint', 'decimal', 'float', 'double' => 'number',
-                    'date', 'datetime', 'timestamp' => 'date',
-                    default => 'string',
+                    'date', 'datetime', 'timestamp'                   => 'date',
+                    default                                           => 'string',
                 };
             }
 

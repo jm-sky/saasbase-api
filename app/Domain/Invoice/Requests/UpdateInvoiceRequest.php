@@ -48,8 +48,7 @@ class UpdateInvoiceRequest extends BaseFormRequest
                 'string',
                 Rule::unique('invoices', 'number')
                     ->where('tenant_id', $user->getTenantId())
-                    ->ignore($invoice?->id)
-                ,
+                    ->ignore($invoice?->id),
             ],
             'numberingTemplateId' => ['sometimes', 'string', 'exists:numbering_templates,id'],
             'totalNet'            => ['sometimes', 'numeric'],
@@ -57,10 +56,10 @@ class UpdateInvoiceRequest extends BaseFormRequest
             'totalGross'          => ['sometimes', 'numeric'],
             'currency'            => ['sometimes', 'string', 'size:3'],
             'exchangeRate'        => ['sometimes', 'numeric'],
-            'seller'      => ['sometimes', 'array'],
-            'buyer'       => ['sometimes', 'array'],
-            'body'        => ['sometimes', 'array'],
-            'options'     => ['sometimes', 'array'],
+            'seller'              => ['sometimes', 'array'],
+            'buyer'               => ['sometimes', 'array'],
+            'body'                => ['sometimes', 'array'],
+            'options'             => ['sometimes', 'array'],
 
             // InvoicePaymentDTO::fromArray() does PaymentStatus::from() (not
             // tryFrom) and PaymentMethodDTO::fromArray($data['method']) with

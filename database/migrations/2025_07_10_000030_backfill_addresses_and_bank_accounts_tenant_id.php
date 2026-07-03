@@ -1,12 +1,12 @@
 <?php
 
-use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Common\Models\Contact;
+use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-/**
+/*
  * Address/BankAccount never had anything populating tenant_id on create
  * (the morphMany relations on HaveAddresses/HaveBankAccounts always
  * instantiate the base Address/BankAccount model, not the tenant-scoped
@@ -74,6 +74,6 @@ return new class() extends Migration {
             WHERE {$table}.tenant_id IS NULL
               AND {$table}.{$morphName}_type = ?
               AND {$table}.{$morphName}_id = membership.user_id
-        SQL, [\App\Domain\Auth\Models\User::class]);
+        SQL, [App\Domain\Auth\Models\User::class]);
     }
 };

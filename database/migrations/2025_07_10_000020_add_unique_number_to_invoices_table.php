@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
+/*
  * `number` had no uniqueness constraint at all (not even per-tenant), and
  * the client supplies the number directly — nothing on the backend
  * generates or deduplicates it. This doesn't fix the missing server-side

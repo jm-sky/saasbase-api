@@ -59,7 +59,7 @@ class InvoiceShareTokenController extends Controller
         $this->authorize('update', $invoice);
 
         abort_if(
-            $shareToken->shareable_type !== Invoice::class || $shareToken->shareable_id !== $invoice->id,
+            Invoice::class !== $shareToken->shareable_type || $shareToken->shareable_id !== $invoice->id,
             HttpResponse::HTTP_NOT_FOUND
         );
 
