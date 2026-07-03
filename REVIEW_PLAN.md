@@ -100,22 +100,23 @@ Wszystko z listy domenowej +
 - [x] Users
 
 ### Faza 4 — Frontend (lustro backendu + spójność kontraktu)
+*Audyt w `saasbase-web/REVIEW_PLAN.md` — patrz tam po szczegóły.*
 
-- [ ] auth, account, tenant
-- [ ] invoice, expense, product, project, contractor
-- [ ] financial, identityConfirmation, subscription
-- [ ] chat, feed, task, tags, skill, comment, invitations
-- [ ] rights, shared, utils
+- [x] auth, account, tenant
+- [x] invoice, expense, product, project, contractor
+- [x] financial, identityConfirmation, subscription
+- [x] chat, feed, task, tags, skill, comment, invitations
+- [x] rights, shared, utils
 
 ### Faza 5 — Synteza całości
 *Osobny przebieg — wymaga trzymania całego obrazu naraz, nie da się per-domena.*
 
-- [ ] Spójność wzorców między domenami — które odstają od konwencji generatora `make:domain-model`
-- [ ] Przepływy end-to-end: faktura (utworzenie → szablon → PDF → KSeF → płatność)
-- [ ] Przepływy end-to-end: wydatek (OCR → alokacja → approval → płatność)
-- [ ] Mapa zależności między domenami (cykliczne/nieoczekiwane sprzężenia)
-- [ ] Realna mapa pokrycia testami — gdzie są dziury
-- [ ] Duplikacja logiki między domenami
+- [x] Spójność wzorców między domenami — które odstają od konwencji generatora `make:domain-model`
+- [x] Przepływy end-to-end: faktura (utworzenie → szablon → PDF → KSeF → płatność)
+- [x] Przepływy end-to-end: wydatek (OCR → alokacja → approval → płatność)
+- [x] Mapa zależności między domenami (cykliczne/nieoczekiwane sprzężenia)
+- [x] Realna mapa pokrycia testami — gdzie są dziury
+- [x] Duplikacja logiki między domenami
 
 ---
 
@@ -135,11 +136,73 @@ Wszystko z listy domenowej +
 | 2 — Core biznesowy | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~15 high w 6 domenach. 13/14 critical naprawionych (aktywnie eksploatowalne: IDOR branding/profil/logo tenanta, brak autoryzacji Invoice/Contractors/Products/OrganizationUnit/PositionCategory, brak unikalności numeru faktury, brak walidacji sum finansowych, kasowanie faktury zamiast tokenu, `tenant_id = NULL` na adresach/kontach bankowych). Projects (funkcjonalnie martwe) i Expense allocation/approval (403 dla wszystkich) odłożone jako known-issue Grupa B |
 | 3 — Wspierające | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 10 domen, ~12 critical + ~20 high. 12/12 aktywnie eksploatowalnych critical naprawionych: RCE w silniku PDF Puppeteer, publiczny endpoint usera bez autoryzacji (wyciek email/telefonu/daty urodzenia), eksport omijający `$hidden`/relacje + formula injection + brak autoryzacji, cross-tenant leak w Approval (UNIT_ROLE/SYSTEM_PERMISSION/pending-approvals), cross-tenant DM w Chat, Skills bez autoryzacji (cascade DoS), zepsuty CRUD share-tokenów faktur. Reszta HIGH/MEDIUM/LOW (m.in. Projects, Calendar camelCase-crash, brak publicznego endpointu share-tokenu) odłożona jako known-issue |
 | 4 — Frontend | **Ukończona (audyt)**, w `saasbase-web/REVIEW_PLAN.md` | 2026-07-02 | 5 grup domen, ~10 critical + ~15 high. Najgorsze: 2FA całkowicie zepsute end-to-end (3 niezależne, kumulujące się bugi), cały dropdown akcji faktury to atrapy UI, brak ogólnego handlera 403 + Accept-Language statyczny (komunikaty backendu zawsze po angielsku), formularz tworzenia projektu strukturalnie niekompletny, zero client-side role-gatingu w całej aplikacji. Audyt odkrył też realny bug backendowy — camelCase/snake_case mismatch w `UpdateInvoiceRequest` z Fazy 2, naprawiony od razu — oraz bug store'u we frontendzie (`DeleteInvoiceAction` czyści całą listę faktur). Fixy frontendowe jeszcze nie zrobione |
-| 5 — Synteza | Nierozpoczęta | — | — |
+| 5 — Synteza | **Ukończona (audyt)** | 2026-07-02 | 4 tory równoległe. Najważniejsze: 9/11 wymiarów alokacji wydatków ma niedziałającą implementację interfejsu (Error przy użyciu), cała architektura reconciliation statusów (Invoice+Expense) to martwy kod, 4 endpointy `GtuCodeController` zawsze zepsute, zero testów dla jakiejkolwiek Policy dodanej w tej sesji, systemowy brak autoryzacji w 6/7 kontrolerów załączników. Kilka nowo znalezionych CRITICAL (camelCase bug w Expense, payment-shape crash) naprawionych od razu w trakcie audytu |
 
 ## Findings
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
+
+### Faza 5 — Synteza: spójność wzorców + duplikacja logiki
+
+**Wzorzec:** generator `make:domain-model` sam w sobie jest bezpieczny (nie używa DTO w store/update — woła `$request->validated()` wprost). Bug `(array) $dto → Model::create()` to wzorzec, który deweloperzy dopisywali RĘCZNIE, odchodząc od bezpiecznej konwencji generatora, "żeby użyć DTO tak jak wypada" — im bliżej pozornie "ładniejszego", w pełni DTO-drivenego kodu, tym bliżej bugu. Drugi powtarzający się motyw: 6 z 7 kontrolerów załączników ma identyczny brak autoryzacji obiektowej — to co Faza 2 zgłosiła jako specyfikę Projects/Task okazuje się systemowym wzorcem powtórzonym 6 razy.
+
+- **[CRITICAL — nowy, naprawiony]** `GtuCodeController` — **4 endpointy zawsze zepsute** mimo poprawnej walidacji: `assignToInvoiceLine()`/`assignToProduct()` czytają `$request->input('gtu_code')` zamiast `validated('gtuCode')` (zawsze `null`, kod GTU nigdy się nie przypisuje), `autoAssign()`/`validateAssignment()` czytają `input('invoice_id')` zamiast `validated('invoiceId')` (zawsze `null` → `findOrFail(null)` → zawsze 404, niezależnie od podanej faktury). Odwrotny wariant znanego już wzorca (tu `rules()` jest poprawne, ale kontroler czyta zły klucz przez `input()` zamiast `validated()`).
+- **[CRITICAL — potwierdzone, naprawione]** `UpdateExpenseRequest` — dokładnie ten sam bug camelCase/snake_case co `UpdateInvoiceRequest` (już naprawiony), tu wciąż aktywny w momencie audytu. Niezależnie potwierdzone przez ten tor i przez tor przepływu wydatku end-to-end.
+- **[HIGH — nowy]** `(array) $dto → ::create()/->update()` — pełny grep dał 9 wystąpień w 5 plikach: **`AdminContractorController`** (znane z Fazy 3, traci `tenant_id`/`vat_id`/`tax_id`/`is_active`/`is_buyer`/`is_supplier`), **`ProjectController`** (znane z Fazy 2), **`ProjectStatusController`/`TaskStatusController`** (NOWE — analogicznie tracą `tenant_id`/`sort_order`/`is_default`). `SkillController` okazuje się bezpieczny mimo hipotezy w briefie — jego DTO ma tylko pola jednowyrazowe. Istnieje bezpieczna alternatywa (`BaseDTO::toDbArray()`, snake'uje klucze), używana poprawnie w 4 miejscach (`InvoiceTemplateService`, `CreateContractorBankAccount`, `CreateContractorAddress`) — żaden z 5 zepsutych plików jej nie używa.
+- **[HIGH — nowy]** Systemowy brak autoryzacji obiektowej w **6 z 7** `*AttachmentsController` (Contractor/Expense/Invoice/Product/Project/Task) — każdy sprawdza tylko integralność (`media.model_id` należy do rekordu), nie czy user ma prawo zarządzać załącznikami TEGO rekordu. Jedyny wyjątek: `TenantAttachmentsController` (poprawnie woła Policy). Faza 2 zgłosiła to tylko dla Projects/Task — ten grep pokazuje że to wzorzec systemowy, nie specyfika jednej domeny. Dwa klastry "niemal identycznych" kontrolerów: Invoice/Expense (znane) i nowo znaleziona para Project/Task (14 linii różnicy na 80).
+- **[MEDIUM]** `HasComments`/`HasTags` traity podłączone do 6 modeli (Project/Product/Invoice/Expense/Contractor/Contact), ale trasy/kontrolery istnieją tylko dla 2 (Contractors/Products) — komentowanie/tagowanie faktur/wydatków/projektów architektonicznie przygotowane, całkowicie nieosiągalne przez API. Ten sam wzorzec "szkielet jest, endpoint nie" co Approval CRUD i ShareToken public endpoint (Faza 3).
+- **[MEDIUM]** `ContractorTagsController` nie dziedziczy z `Controller` (jedyny taki przypadek w repo) i nie loguje aktywności (w przeciwieństwie do `ProductTagsController`, który to robi poprawnie) — audit trail dla tagów kontrahentów nie istnieje mimo deklaracji w CLAUDE.md.
+- **[LOW]** Wzorzec Action używany tylko w 7 z 25+ domen (Tenant/Subscription/Auth/Expense/Contractors/Approval/IdentityCheck) — Invoice/Products/Projects/Skills/Template i większość pozostałych nie mają ani jednej klasy Action, mimo że CLAUDE.md deklaruje to jako kluczowy wzorzec.
+- **[LOW]** `HasIndexQuery` używane tylko w 30 z 105 kontrolerów (~29%), `HasActivityLogging` w 31 plikach skoncentrowanych w 5 domenach — reszta implementuje listing/audit ad-hoc.
+
+### Faza 5 — Synteza: dependency map + test coverage map
+
+**Wzorzec:** Financial jest de facto nieformalnym hubem z dwukierunkowym sprzężeniem wobec 4 domen biznesowych naraz; "bazowe" domeny (Common/Auth/Tenant) same importują z 6-9 domen biznesowych, odwracając zamierzony kierunek zależności. Najważniejszy finding: system alokacji wydatków deklaruje 11 wymiarów przez `AllocationDimensionInterface`, ale **tylko 2 z 11 klas docelowych faktycznie implementują interfejs** — dla pozostałych 9 (w tym `User`, `Project`) każde żądanie API z tym wymiarem kończy się `Error: Call to undefined method`, bez żadnego `method_exists()`-owego zabezpieczenia jak w analogicznym buggu z `ApprovalResolutionService` (Faza 3). Ten finding wymagał trzymania w głowie jednocześnie enuma z Expense, README z Expense/Contracts i zawartości 6 różnych domen modelowych — dokładnie dlatego jest to Faza 5, nie per-domena.
+
+**Mapa zależności:**
+
+- **[HIGH]** Prawdziwe cykle między parami domen biznesowych: Financial↔Contractors, Financial↔Expense, Financial↔Invoice (Invoice ma 14 importów z Financial), Financial↔Products, Approval↔Expense, Skills↔Projects, Export↔{Contractors,Expense,Invoice,Products,Projects}.
+- **[MEDIUM]** Odwrócony kierunek zależności: Common importuje z 6 domen biznesowych (Contractors/Expense/Invoice/Products/Skills/Users), Auth (`User` model) ma bezpośrednie relacje do Projects/Skills/Subscription/Users, Tenant ma 9+ cross-domain importów (w tym `OrganizationUnit implements Expense\Contracts\AllocationDimensionInterface`).
+- **[MEDIUM]** Zaskakujące sprzężenia: `AiChatService` czyta wprost modele `Chat\Models\{ChatMessage,ChatRoom}` zamiast przez interfejs/DTO.
+- **[CRITICAL — nowy]** `AllocationDimensionType::getMorphClass()` mapuje 11 typów wymiaru na klasy w 6 domenach (Financial/Tenant/Auth/Projects/Common/Products), ale tylko `AllocationTransactionType` (Financial) i `OrganizationUnit` (Tenant) implementują `AllocationDimensionInterface`. `Expense\Contracts\README.md` **dokumentuje z gotowym przykładem kodu**, że `User`/`Project` powinny implementować ten interfejs — nie implementują. `DimensionItemResource::toArray()` bezwarunkowo woła `getId()/getCode()/getName()/getDescription()/isGlobal()/getDisplayName()/getIsActive()` na załadowanej relacji polimorficznej — dla 9 z 11 wymiarów te metody nie istnieją, `JsonResource::__call` przechodzi wprost do `$this->resource->{$method}()` bez żadnej osłony, więc każda alokacja z wymiarem innym niż TRANSACTION_TYPE/STRUCTURE kończy się `Error`.
+
+**Mapa pokrycia testami:**
+
+- **[CRITICAL]** 49 plików testów na 976 plików PHP w `app/`. **14 z 28 domen ma dosłownie zero efektywnego pokrycia** (Admin, Ai, Billing, Calendar, Chat, EDoreczenia*, Expense-core, Export, IbanInfo, Rights, ShareToken, Subscription, Template, Users) — dokładnie połowa. Kolejne ~11 domen ma pliki testów, ale testują wyłącznie happy-path (Approval, Auth, Common, Contractors, Financial, Invoice, Products, Projects, Skills, Tenant, Feeds).
+- **[CRITICAL]** Dominujący wzorzec to nie "brak testów", tylko "złe testy" — trzy potwierdzone przykłady: `ApprovalResolutionServiceSimpleTest` asertuje wyłącznie `method_exists()` (zero asercji behawioralnych, dokładnie tam gdzie siedziały oba CRITICAL z Fazy 3); `ApprovalWorkflowExecutionTest` (11 metod) nigdy nie woła `postJson`/`getJson` — cross-tenant leak żył w warstwie HTTP, poza zasięgiem testu; `Skill{,Category}ApiTest` (14 metod) nie ma ani jednego testu sprawdzającego że user bez roli dostaje 403. Stosunek zero-coverage do ma-testy-złego-typu wśród CRITICAL bugów: ~60/40.
+- **[CRITICAL — najważniejszy wniosek syntezy]** `grep -rl "InvoicePolicy\|TenantIntegrationPolicy\|InvoiceTemplatePolicy\|AddressPolicy\|BankAccountPolicy" tests/` → **zero wyników**. Żadna z Policy dodanych/zaostrzonych w tej sesji (Fazy 0-3, ~45-50 fixów CRITICAL/HIGH) nie ma ani jednego testu granicy autoryzacji — nie na poziomie "przechodzi", tylko "istnieje". Jedyna weryfikacja to `php -l` plus jeden przypadkowy pełny run Docker/PHPUnit, który złapał 3 błędy PHPStan + 6 failing testów, ale żaden z tych 6 nie dotyczył nowych Policy. **Największym ryzykiem nie jest już "stary, nienaprawiony bug" — jest nim "świeżo naprawiony bug bez regression-testu": wystarczy jeden nieuważny refaktor/rewert, żeby cicho odtworzyć dokładnie te same dziury, a nic tego nie wyłapie.**
+
+### Faza 5 — Synteza: przepływ end-to-end faktury i wydatku
+
+**Wzorzec wspólny dla obu przepływów:** infrastruktura reconciliation/automatyzacji istnieje na papierze (DTO, Service, Enum ze stanami przejść, cast) ale nigdy nie jest spięta z żadnym realnym punktem wejścia — ten sam motyw co KSeF (Faza 1) i `ApprovalResolutionService` przed fixem (Faza 3), tylko odkryty tu na poziomie całej architektury stanu faktur/wydatków. Drugi powtarzający się wzorzec: rozjazd walidacji między `Store*Request` a `Update*Request` dla tych samych zagnieżdżonych pól (`payment`, `status`) — Store ma silną walidację, Update miał słabą/żadną dla tych samych kluczy, co pozwalało „zbrickować" już istniejący rekord przy pierwszej edycji (naprawione — patrz sekcja fixów niżej).
+
+**Faktura (utworzenie → szablon → PDF → KSeF → płatność):**
+
+- **[HIGH]** Potwierdzone z Fazy 2: `NumberingTemplate::generateNextNumber()` nadal wołane wyłącznie z seedera. `NumberingTemplateController::preview()` to osobna, zduplikowana reimplementacja formatowania numeru, **niespójna** z `generateNextNumber()` (nie obsługuje placeholderów `NNNN`/`YY`) — podgląd numeru w UI może różnić się od tego, co realnie by wygenerował model, gdyby był kiedykolwiek użyty.
+- **[HIGH]** `InitializeTenantDefaults` (realnie wołane przy rejestracji) **nigdy nie seeduje `InvoiceTemplate`** dla nowego tenanta — jedyny globalny domyślny szablon powstaje przez jednorazowy `InvoiceTemplatesSeeder`, odspojony od cyklu życia tenanta. Jeśli środowisko powstało przez `migrate` bez pełnego `db:seed`, **każde pobranie PDF faktury dla każdego tenanta rzuca `TemplateNotFoundException`** — fix z Fazy 3 chroni tylko przed mutacją globalnego szablonu, nie przed jego brakiem.
+- **[HIGH]** `PuppeteerEngine::applyTemplateSettings()` zawsze zakłada, że `InvoiceTemplate.settings` jest w kształcie mPDF (`orientation: 'P'/'L'`, marginesy jako liczby) i konwertuje przez `convertMpdfToPuppeteerSettings()` — ale Puppeteer (domyślny silnik) ma WŁASNY natywny kształt (`'portrait'/'landscape'`, marginesy jako stringi `'2mm'`). Pole `settings` nie ma żadnego schematu poza `['nullable','array']`. Niedopasowanie kształtu **cicho psuje layout PDF** (orientacja landscape renderuje się jako portret, niestandardowe marginesy są ignorowane) — bez wyjątku, bez logu.
+- **[CRITICAL — potwierdzone/poszerzone]** KSeF: zero punktów styku między domeną Invoice a `app/Services/KSeF/*` — brak routes/Controllera/Action/Joba. `TenantIntegrationType::Ksef` istnieje jako opcja w UI integracji tenanta — **tenant może podpiąć credentiale KSeF, walidacja przejdzie, ale nic ich nigdy nie odczyta**. Gorsze niż martwy kod: wygląda jak działająca integracja.
+- **[CRITICAL — nowy, naprawiony]** Zero automatyzacji łączącej wpłatę z fakturą (brak webhooka/reconciliation) — `payment.status` w 100% ręczne pole. Do tego: asymetria walidacji `payment` między Store/Update pozwalała zapisać przez PATCH niepełny/niepoprawny obiekt `payment` (np. bez `method`, z dowolnym stringiem w `status`), co **nie failowało samego requestu, tylko każdy KOLEJNY odczyt faktury** (`PaymentStatus::from()` bez `tryFrom`, `PaymentMethodDTO::fromArray()` bez guard na `null`) — faktura stawała się trwale nieodczytywalna przez API. **Naprawione w tej sesji** (patrz niżej).
+- **[CRITICAL — nowy]** `InvoiceStatusService::calculateGeneralStatus()` — cały silnik uzgadniania 5 pod-statusów (ocr/allocation/approval/delivery/payment) w jeden ogólny `status` — ma dokładnie jedno miejsce użycia w całym repo: plik demonstracyjny `Examples/StatusArchitectureExample.php`. `Invoice::updateStatusFromDTO()` — zero wywołań. Kolumna `payment_status` nigdy nie jest ustawiana przez normalny endpoint, ale `InvoiceResource` mimo to buduje `statusInfo.payment` z tej martwej kolumny — zawsze zwraca `null`, podczas gdy realny status płatności leży w zupełnie innym, ręcznie zarządzanym polu (`payment.status` w JSON). Brak reguły cross-field: `PATCH {status: "completed"}` przechodzi niezależnie od tego, czy `payment.status` faktycznie mówi "paid".
+- **[HIGH]** `StoreInvoiceRequest.statusInfo.*` (poprawnie zwalidowane przez Enum) jest całkowicie odrzucane przy zapisie — `BaseFormRequest::validated()` konwertuje na `status_info`, którego nie ma w `$fillable`. Jedyne realnie zapisywane pole to top-level `status`, które (przed tą sesją) w ogóle nie miało `Enum()` — dowolny string przechodził walidację, crashując dopiero przy odczycie (cast na enum).
+
+**Wydatek (OCR → alokacja → approval → płatność) — mapa dostępności:**
+
+| Krok | Status |
+|---|---|
+| 1. Upload + start OCR | działa |
+| 2. Zapis wyniku OCR do Expense | działa, ale bez walidacji (zewnętrzne, nieufne źródło) + znany crash dla nietypowej stawki VAT |
+| 3. Ręczna korekta po OCR (PATCH) | **było: cichy no-op** — naprawione w tej sesji (camelCase bug, patrz niżej) |
+| 4. Alokacja kosztów | broken, reachable — 403 dla każdego (znany brak `ExpensePolicy`) |
+| 5. Start approval | broken, reachable — 403 z tego samego powodu, ale **architektonicznie niezależny od alokacji** |
+| 6. Decyzja zatwierdzająca | unreachable w praktyce — nigdy nie powstanie `pending` egzekucja, bo krok 5 zawsze 403 |
+| 7. Rejestracja płatności | unreachable — **nie istnieje żaden endpoint/kontroler/akcja** mimo kompletnego pola `payment_status`/`payment` na modelu |
+| 8. Uzgodnienie statusu | martwy kod (ten sam `InvoiceStatusService` co dla faktur) |
+
+- **[CRITICAL — nowy, naprawiony]** `UpdateExpenseRequest` miała **dokładnie ten sam bug camelCase/snake_case** co `UpdateInvoiceRequest` przed fixem — `issueDate`/`totalNet`/`totalTax`/`totalGross`/`exchangeRate` nigdy nie trafiały do `validated()`, PATCH zwracał 200 OK, nic się nie zmieniało. W połączeniu z krokiem 2 (błąd OCR): **użytkownik nie miał żadnego działającego sposobu, by poprawić źle odczytaną przez OCR kwotę** — musiałby skasować i wgrać dokument od nowa. **Naprawione w tej sesji.**
+- **[HIGH]** `StartApprovalWorkflowAction::canStartApproval()` sprawdza wyłącznie ogólny `status === PROCESSING`, nie `allocation_status` — approval NIE zależy architektonicznie od alokacji. Naprawienie samego brakującego `ExpensePolicy` (odłożone jako known-issue z Fazy 2) odblokowałoby jednocześnie oba kroki, bo obie ścieżki używają tej samej bramki `authorize('update', $expense)`. Oznacza to też, że fixy z Fazy 3 do `ApprovalResolutionService` są dziś **nieosiągalne end-to-end** — zablokowane przez osobno odłożony finding z Fazy 2, co nie było widoczne przy przeglądzie per-domena.
+- **[CRITICAL]** Zero endpointu/kontrolera/akcji do rejestrowania płatności wydatku — sytuacja gorsza niż w Invoice (tam przynajmniej pole jest ręcznie ustawialne przez update).
+- **[HIGH]** `AllocateExpenseAction` nigdy nie ustawia `allocation_status` (potwierdzenie/rozszerzenie Fazy 2). `status` ogólny wydatku nigdy nie przesuwa się poza `PROCESSING` — raz przetworzony przez OCR wydatek utyka tam na zawsze, niezależnie od losu alokacji/zatwierdzenia.
 
 ### Naprawa błędów z pierwszego realnego runu Docker/PHPStan/PHPUnit (2026-07-02)
 
