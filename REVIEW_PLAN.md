@@ -133,7 +133,7 @@ Wszystko z listy domenowej +
 |------|--------|------|---------|
 | 0 — Fundamenty | **Ukończona — WYMAGA PILNEJ NAPRAWY** | 2026-07-02 | 6 critical, 6 high, ~10 medium/low. Wzorzec: autoryzacja nieegzekwowana w kilku miejscach; jeden przeciek tenant-log; multi-tenancy rdzeń OK poza bypassTenant |
 | 1 — Integracje | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~20 high w 9 integracjach. 6/14 critical naprawionych (aktywnie eksploatowalne: Stripe, tenant isolation, plaintext credentials, SSRF, fałszywy status weryfikacji). KSeF/e-Doręczenia (Grupa B, martwy kod) odłożone świadomie. Reszta HIGH/MEDIUM/LOW nienaprawiona |
-| 2 — Core biznesowy | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 14 critical, ~15 high w 6 domenach. 13/14 critical naprawionych (aktywnie eksploatowalne: IDOR branding/profil/logo tenanta, brak autoryzacji Invoice/Contractors/Products/OrganizationUnit/PositionCategory, brak unikalności numeru faktury, brak walidacji sum finansowych, kasowanie faktury zamiast tokenu, `tenant_id = NULL` na adresach/kontach bankowych). Projects (funkcjonalnie martwe) i Expense allocation/approval (403 dla wszystkich) odłożone jako known-issue Grupa B |
+| 2 — Core biznesowy | **Ukończona + naprawiona Grupa A** + częściowa Grupa B (Projects) 2026-07-03 | 2026-07-02 | 14 critical, ~15 high w 6 domenach. 13/14 critical naprawionych (aktywnie eksploatowalne: IDOR branding/profil/logo tenanta, brak autoryzacji Invoice/Contractors/Products/OrganizationUnit/PositionCategory, brak unikalności numeru faktury, brak walidacji sum finansowych, kasowanie faktury zamiast tokenu, `tenant_id = NULL` na adresach/kontach bankowych). Projects (funkcjonalnie martwe) i Expense allocation/approval (403 dla wszystkich) odłożone jako known-issue Grupa B. **2026-07-03:** Projects/Tasks create + statusy + TaskPolicy naprawione (patrz sekcja findings "sesja 2026-07-03") — Expense allocation/approval nadal 403 dla wszystkich, nienaprawione |
 | 3 — Wspierające | **Ukończona + naprawiona Grupa A** | 2026-07-02 | 10 domen, ~12 critical + ~20 high. 12/12 aktywnie eksploatowalnych critical naprawionych: RCE w silniku PDF Puppeteer, publiczny endpoint usera bez autoryzacji (wyciek email/telefonu/daty urodzenia), eksport omijający `$hidden`/relacje + formula injection + brak autoryzacji, cross-tenant leak w Approval (UNIT_ROLE/SYSTEM_PERMISSION/pending-approvals), cross-tenant DM w Chat, Skills bez autoryzacji (cascade DoS), zepsuty CRUD share-tokenów faktur. Reszta HIGH/MEDIUM/LOW (m.in. Projects, Calendar camelCase-crash, brak publicznego endpointu share-tokenu) odłożona jako known-issue |
 | 4 — Frontend | **Ukończona (audyt)**, w `saasbase-web/REVIEW_PLAN.md` | 2026-07-02 | 5 grup domen, ~10 critical + ~15 high. Najgorsze: 2FA całkowicie zepsute end-to-end (3 niezależne, kumulujące się bugi), cały dropdown akcji faktury to atrapy UI, brak ogólnego handlera 403 + Accept-Language statyczny (komunikaty backendu zawsze po angielsku), formularz tworzenia projektu strukturalnie niekompletny, zero client-side role-gatingu w całej aplikacji. Audyt odkrył też realny bug backendowy — camelCase/snake_case mismatch w `UpdateInvoiceRequest` z Fazy 2, naprawiony od razu — oraz bug store'u we frontendzie (`DeleteInvoiceAction` czyści całą listę faktur). Fixy frontendowe jeszcze nie zrobione |
 | 5 — Synteza | **Ukończona (audyt)** | 2026-07-02 | 4 tory równoległe. Najważniejsze: 9/11 wymiarów alokacji wydatków ma niedziałającą implementację interfejsu (Error przy użyciu), cała architektura reconciliation statusów (Invoice+Expense) to martwy kod, 4 endpointy `GtuCodeController` zawsze zepsute, zero testów dla jakiejkolwiek Policy dodanej w tej sesji, systemowy brak autoryzacji w 6/7 kontrolerów załączników. Kilka nowo znalezionych CRITICAL (camelCase bug w Expense, payment-shape crash) naprawionych od razu w trakcie audytu |
@@ -142,13 +142,91 @@ Wszystko z listy domenowej +
 
 *(uzupełniane w trakcie — każda faza dopisuje sekcję z listą problemów, posortowaną wg wagi)*
 
+### Naprawa błędów — sesja 2026-07-03 (Grupa B, batch 1: Projects + routing)
+
+Pierwsza sesja, w której kontener startowany był świadomie minimalnie (`pgsql` + `laravel.test`
+z `--no-deps`, bez `rustfs`/`mailpit`/`soketi` — niepotrzebne do `composer larastan`/`artisan test`,
+`.env.testing` i tak używa `CACHE_STORE=array`/`QUEUE_CONNECTION=sync`). Każdy batch zweryfikowany
+przed commitem: `composer larastan` (bez nowych błędów w dotkniętych plikach — patrz zastrzeżenie
+środowiskowe niżej) + `php artisan test` (275 passed / 31 skipped / **0 failed**, w górę z
+269 passed / 6 failed z poprzedniego runu udokumentowanego w `REVIEW_LOCAL_QUALITY_RUN.md`).
+
+**Batch 1 — Projects end-to-end + camelCase DTO bug (commit `7a642be`):**
+
+- Naprawiono `POST /projects` (zawsze `TypeError`) — `CreateProjectRequest` nie miał `tenantId`/`ownerId`
+  wymaganych przez `ProjectDTO::fromArray()`. Dodano oba pola (`tenantId` przez `mergeTenantId()`,
+  `ownerId` domyślnie na zalogowanego usera) + `$this->authorize('create', Project::class)`.
+- Naprawiono `POST /tasks` (zawsze `QueryException`) — `TaskController::store()` czytał
+  `$request->input('project_id'/'status_id'/'assigned_to_id')` (snake_case, częściowo złe nazwy pól —
+  kolumna to `assignee_id`, nie `assigned_to_id`) z surowego requestu zamiast `validated()`. Przepisano
+  na `$request->validated()` + `$this->authorize('create', Task::class)`.
+- Dodano **`TaskPolicy`** (view/create/update/delete) — `TaskController` wołał `$this->authorize()` na
+  nieistniejącej polisie, więc `show/update/destroy` zwracały 403 dla każdego, łącznie z twórcą i
+  przypisaną osobą. Zarejestrowano jawnie w `AuthServiceProvider` (razem z już istniejącą, ale też
+  jawnie niezarejestrowaną `ProjectPolicy`).
+- Naprawiono wzorzec `(array) $dto → Model::create()/update()` (camelCase→snake_case cicho gubione przy
+  mass assignment) w **4 plikach**: `AdminContractorController`, `ProjectController`,
+  `ProjectStatusController`, `TaskStatusController` — przełączono na `BaseDTO::toDbArray()`, bezpieczny
+  wzorzec już używany w `InvoiceTemplateService`/`CreateContractorBankAccount`/`CreateContractorAddress`.
+  Bez tego `ProjectStatusController::store()` i `TaskStatusController::store()` traciły `sort_order`
+  (NOT NULL, brak defaultu) — rzucały wyjątek DB przy każdym wywołaniu.
+- Dodano autoryzację Owner/Admin do `ProjectStatusController`/`TaskStatusController`
+  store/update/destroy — wcześniej dowolny member mógł zmieniać statusy współdzielone przez wszystkie
+  projekty/taski tenanta.
+- `InitializeTenantDefaults::seedDefaultProjectStatuses()`/`seedDefaultTaskStatuses()` były zdefiniowane,
+  ale nigdy nie wołane z `execute()` — żaden tenant nie miał statusu do wyboru, więc `POST /projects`
+  i `POST /tasks` (nawet po fixie powyżej) nie miały czego wstawić do `statusId`. Dopięto do `execute()`.
+- `TenantController::store()` (ręczne dodanie kolejnej firmy) nie wołał w ogóle `InitializeTenantDefaults`
+  — dopięto. To ujawniło **kolejny, wcześniej nieobserwowalny bug**: `StoreTenantRequest` nigdy nie
+  ustawiał `owner_id` na tworzonym `Tenant`, więc `CreateRootOrganizationUnit::createOwner()`
+  (używające `$tenant->owner_id`, nie parametru `$owner`) próbowało wstawić `user_id = NULL` do
+  `org_unit_user` (NOT NULL) → 500 na `POST /tenants` w każdym przypadku, gdzie ta ścieżka faktycznie by
+  się wykonała. Złapane przez `TenantApiTest` dopiero PO wpięciu `InitializeTenantDefaults` (wcześniej
+  test przechodził tylko dlatego, że cała inicjalizacja była martwym kodem). Naprawiono ustawieniem
+  `tenantData['owner_id'] = $request->user()->id` przed `Tenant::create()`.
+
+**Batch 2 — routing/kontrolery Feed/Calendar/Product/Contractor (commit `b663762`):**
+
+- `FeedCommentController::destroy()` — trasa `DELETE /feed-comments/{comment}` nie miała segmentu
+  `{feed}`, więc route-model-binding tworzył pusty `Feed` (`id === null`) i warunek 404 był zawsze
+  prawdziwy — usuwanie komentarzy feedu było **trwale nieosiągalne**, niezależnie od właściciela. Trasa
+  zmieniona na `feeds/{feed}/comments/{comment}`; zakomentowany `// TODO: Add authorization` zastąpiony
+  realnym sprawdzeniem `Auth::id() === $comment->user_id`.
+- `EventController` — dodano `EventPolicy` (view/update/delete) i wpięto `$this->authorize()` do
+  show/update/destroy (wcześniej brak jakiejkolwiek autoryzacji, `EventVisibility::PRIVATE` nigdy
+  nieegzekwowane). `StoreEventRequest.endAt` miało `after:start_at` (pole nie istnieje przed
+  konwersją camelCase→snake_case w `validated()`, więc reguła była no-opem) — poprawiono na
+  `after:startAt`. `EventController::store()` przekazywał surowy `$request->attendees` (camelCase)
+  do `attendees()->createMany()` wbrew snake_case `$fillable` na `EventAttendee` — **tworzenie eventu
+  z uczestnikami zawsze rzucało wyjątek DB**; naprawiono ręcznym mapowaniem kluczy. Dodano
+  `exists:users,id` do `attendees.*.attendeeId`.
+- `ProductAttachmentsController` — `route()` w index/store/update wołało nieistniejącą nazwę trasy
+  (`product.attachments.show` zamiast zarejestrowanej `products.attachments.show`) z błędnym kluczem
+  parametru (`attachment` zamiast `{media}`) — **500 przy każdym wywołaniu**. Przepisano na
+  `Media $media` route-model-binding (zgodnie z definicją trasy i wzorcem
+  `ContractorAttachmentsController`), dodano brakujące `download()`/`preview()` (trasy już na nie
+  wskazywały, metod nie było — kolejne dwa zawsze-500 endpointy) i wpięto istniejące, ale nigdzie
+  niewywoływane `authorizeMedia()` do show/download/preview/update/destroy.
+- `routes/api/contractors.php` — trasy logo miały **DELETE zarejestrowane dwa razy** (`show` i
+  `delete`) i żadnego GET; Laravel dopasowywał pierwszą pasującą (`show`), więc `DELETE .../logo`
+  faktycznie wołał `show()` (zwracał 200 ze streamowanym obrazem zamiast usuwać) — `delete()` był
+  nieosiągalny, a metadanych logo w ogóle nie dało się pobrać przez GET. Poprawiono `show` na GET.
+
+**Zastrzeżenie środowiskowe:** `composer larastan` w tym środowisku zwrócił **93 błędy** (głównie
+`ignore.unmatchedLine (non-ignorable)` na `@phpstan-ignore-next-line` w plikach niedotkniętych tą sesją,
+plus `Mockery\ExpectationInterface::once()/with()` nierozpoznane w kilku testach) — wyraźny wzrost
+względem 3 błędów udokumentowanych w `REVIEW_LOCAL_QUALITY_RUN.md` z 2026-07-02. Żaden z tych błędów
+nie dotyczy pliku zmienionego w tej sesji (zweryfikowane grepem po ścieżkach) — wygląda na dryf
+wersji Larastan/Mockery-PHPStan-extension w obrazie Docker między sesjami, nie na regresję wprowadzoną
+tymi fixami. Nienaprawione świadomie — osobny problem infrastrukturalny, poza zakresem tego batcha.
+
 ### Faza 5 — Synteza: spójność wzorców + duplikacja logiki
 
 **Wzorzec:** generator `make:domain-model` sam w sobie jest bezpieczny (nie używa DTO w store/update — woła `$request->validated()` wprost). Bug `(array) $dto → Model::create()` to wzorzec, który deweloperzy dopisywali RĘCZNIE, odchodząc od bezpiecznej konwencji generatora, "żeby użyć DTO tak jak wypada" — im bliżej pozornie "ładniejszego", w pełni DTO-drivenego kodu, tym bliżej bugu. Drugi powtarzający się motyw: 6 z 7 kontrolerów załączników ma identyczny brak autoryzacji obiektowej — to co Faza 2 zgłosiła jako specyfikę Projects/Task okazuje się systemowym wzorcem powtórzonym 6 razy.
 
 - **[CRITICAL — nowy, naprawiony]** `GtuCodeController` — **4 endpointy zawsze zepsute** mimo poprawnej walidacji: `assignToInvoiceLine()`/`assignToProduct()` czytają `$request->input('gtu_code')` zamiast `validated('gtuCode')` (zawsze `null`, kod GTU nigdy się nie przypisuje), `autoAssign()`/`validateAssignment()` czytają `input('invoice_id')` zamiast `validated('invoiceId')` (zawsze `null` → `findOrFail(null)` → zawsze 404, niezależnie od podanej faktury). Odwrotny wariant znanego już wzorca (tu `rules()` jest poprawne, ale kontroler czyta zły klucz przez `input()` zamiast `validated()`).
 - **[CRITICAL — potwierdzone, naprawione]** `UpdateExpenseRequest` — dokładnie ten sam bug camelCase/snake_case co `UpdateInvoiceRequest` (już naprawiony), tu wciąż aktywny w momencie audytu. Niezależnie potwierdzone przez ten tor i przez tor przepływu wydatku end-to-end.
-- **[HIGH — nowy]** `(array) $dto → ::create()/->update()` — pełny grep dał 9 wystąpień w 5 plikach: **`AdminContractorController`** (znane z Fazy 3, traci `tenant_id`/`vat_id`/`tax_id`/`is_active`/`is_buyer`/`is_supplier`), **`ProjectController`** (znane z Fazy 2), **`ProjectStatusController`/`TaskStatusController`** (NOWE — analogicznie tracą `tenant_id`/`sort_order`/`is_default`). `SkillController` okazuje się bezpieczny mimo hipotezy w briefie — jego DTO ma tylko pola jednowyrazowe. Istnieje bezpieczna alternatywa (`BaseDTO::toDbArray()`, snake'uje klucze), używana poprawnie w 4 miejscach (`InvoiceTemplateService`, `CreateContractorBankAccount`, `CreateContractorAddress`) — żaden z 5 zepsutych plików jej nie używa.
+- **[HIGH — naprawione 2026-07-03]** `(array) $dto → ::create()/->update()` — pełny grep dał 9 wystąpień w 5 plikach: **`AdminContractorController`** (znane z Fazy 3, traci `tenant_id`/`vat_id`/`tax_id`/`is_active`/`is_buyer`/`is_supplier`), **`ProjectController`** (znane z Fazy 2), **`ProjectStatusController`/`TaskStatusController`** (NOWE — analogicznie tracą `tenant_id`/`sort_order`/`is_default`). `SkillController` okazuje się bezpieczny mimo hipotezy w briefie — jego DTO ma tylko pola jednowyrazowe. Istnieje bezpieczna alternatywa (`BaseDTO::toDbArray()`, snake'uje klucze), używana poprawnie w 4 miejscach (`InvoiceTemplateService`, `CreateContractorBankAccount`, `CreateContractorAddress`) — wszystkie 4 zepsute pliki przełączone na nią.
 - **[HIGH — nowy]** Systemowy brak autoryzacji obiektowej w **6 z 7** `*AttachmentsController` (Contractor/Expense/Invoice/Product/Project/Task) — każdy sprawdza tylko integralność (`media.model_id` należy do rekordu), nie czy user ma prawo zarządzać załącznikami TEGO rekordu. Jedyny wyjątek: `TenantAttachmentsController` (poprawnie woła Policy). Faza 2 zgłosiła to tylko dla Projects/Task — ten grep pokazuje że to wzorzec systemowy, nie specyfika jednej domeny. Dwa klastry "niemal identycznych" kontrolerów: Invoice/Expense (znane) i nowo znaleziona para Project/Task (14 linii różnicy na 80).
 - **[MEDIUM]** `HasComments`/`HasTags` traity podłączone do 6 modeli (Project/Product/Invoice/Expense/Contractor/Contact), ale trasy/kontrolery istnieją tylko dla 2 (Contractors/Products) — komentowanie/tagowanie faktur/wydatków/projektów architektonicznie przygotowane, całkowicie nieosiągalne przez API. Ten sam wzorzec "szkielet jest, endpoint nie" co Approval CRUD i ShareToken public endpoint (Faza 3).
 - **[MEDIUM]** `ContractorTagsController` nie dziedziczy z `Controller` (jedyny taki przypadek w repo) i nie loguje aktywności (w przeciwieństwie do `ProductTagsController`, który to robi poprawnie) — audit trail dla tagów kontrahentów nie istnieje mimo deklaracji w CLAUDE.md.
@@ -340,7 +418,7 @@ Wszystkie ~12 aktywnie eksploatowalne critical findings z Fazy 3 naprawione bezp
 **Feeds:**
 
 - **[HIGH]** `FeedController::destroy()` — brak `$this->authorize()`, brak sprawdzenia `user_id === Auth::id()`; `Feed` nie ma zarejestrowanej Policy w `AuthServiceProvider`. **Dowolny user tego samego tenanta może skasować dowolny wpis feedu innego użytkownika.** Test istnieje tylko dla właściciela, luka niepokryta.
-- **[HIGH]** `FeedCommentController::destroy()` ma jawne `// TODO: Add authorization` — autoryzacja zakomentowana. Poważniejsze: trasa `DELETE /feed-comments/{comment}` ma tylko jeden parametr `{comment}`, a metoda ma sygnaturę `destroy(Feed $feed, Comment $comment)` — brak `{feed}` w URI oznacza brak route-model-bindingu, `$feed` to pusty `new Feed()` z `id === null`. Warunek `$comment->commentable_id !== $feed->id` jest więc zawsze prawdziwy → **`abort(404)` przy KAŻDYM wywołaniu — usuwanie komentarzy jest kompletnie niefunkcjonalne**, niezależnie od właściciela. Brak testów na ten kontroler.
+- **[HIGH — naprawione 2026-07-03]** `FeedCommentController::destroy()` ma jawne `// TODO: Add authorization` — autoryzacja zakomentowana. Poważniejsze: trasa `DELETE /feed-comments/{comment}` ma tylko jeden parametr `{comment}`, a metoda ma sygnaturę `destroy(Feed $feed, Comment $comment)` — brak `{feed}` w URI oznacza brak route-model-bindingu, `$feed` to pusty `new Feed()` z `id === null`. Warunek `$comment->commentable_id !== $feed->id` jest więc zawsze prawdziwy → **`abort(404)` przy KAŻDYM wywołaniu — usuwanie komentarzy jest kompletnie niefunkcjonalne**, niezależnie od właściciela. Brak testów na ten kontroler.
 - **[MEDIUM]** `FeedCommentController::store()` waliduje `content` bez `NoProfanity` (w przeciwieństwie do `StoreFeedRequest`) — niespójna reguła między wpisem a komentarzem.
 - **[LOW]** `CommentResource` martwy kod — `index()` zwraca `CommentDTO::collect()`, nie ten resource.
 - **[LOW]** Zbędna duplikacja `auth:api` middleware w `routes/api/feeds.php` (już nałożone globalnie w `routes/api.php`).
@@ -348,10 +426,10 @@ Wszystkie ~12 aktywnie eksploatowalne critical findings z Fazy 3 naprawione bezp
 
 **Calendar:**
 
-- **[HIGH]** `EventController` nie wywołuje `$this->authorize()` w ogóle w `show/update/destroy` — brak sprawdzenia właściciela ani `visibility`. `EventPolicy` nie istnieje. **`EventVisibility::PRIVATE` nigdzie nie jest egzekwowany** — dowolny user tenanta widzi/edytuje/kasuje "prywatny" event kogoś innego.
-- **[HIGH]** `StoreEventRequest`/`UpdateEventRequest`: `'endAt' => ['required','date','after:start_at']` odwołuje się do `start_at`, ale realne pole to `startAt` (camelCase, konwersja na snake_case dopiero w `validated()` PO walidacji). Laravel nie znajduje `start_at` w danych wejściowych — **walidacja chronologii dat jest no-opem, `endAt` przed `startAt` przechodzi bez błędu.**
-- **[HIGH]** `EventController::store()` woła `$event->attendees()->createMany($request->attendees)` — surowy `$request->attendees` (camelCase) zamiast `$request->validated()` (snake_case). `EventAttendee::$fillable`/kolumny NOT NULL oczekują `attendee_type`/`attendee_id`/`response_status` — żaden klucz się nie zgadza. **Przekazanie `attendees` przy tworzeniu eventu zawsze kończy się wyjątkiem DB (500).** Ten sam wzorzec błędu co w ShareToken (walidacja na innej warstwie niż odczyt).
-- **[MEDIUM]** `attendees.*.attendeeId` walidowane tylko jako `ulid`, bez `exists:` i bez sprawdzenia przynależności do tenanta — można dopisać dowolny/obcy ULID jako uczestnika.
+- **[HIGH — naprawione 2026-07-03]** `EventController` nie wywołuje `$this->authorize()` w ogóle w `show/update/destroy` — brak sprawdzenia właściciela ani `visibility`. `EventPolicy` nie istnieje. **`EventVisibility::PRIVATE` nigdzie nie jest egzekwowany** — dowolny user tenanta widzi/edytuje/kasuje "prywatny" event kogoś innego.
+- **[HIGH — naprawione 2026-07-03]** `StoreEventRequest`/`UpdateEventRequest`: `'endAt' => ['required','date','after:start_at']` odwołuje się do `start_at`, ale realne pole to `startAt` (camelCase, konwersja na snake_case dopiero w `validated()` PO walidacji). Laravel nie znajduje `start_at` w danych wejściowych — **walidacja chronologii dat jest no-opem, `endAt` przed `startAt` przechodzi bez błędu.**
+- **[HIGH — naprawione 2026-07-03]** `EventController::store()` woła `$event->attendees()->createMany($request->attendees)` — surowy `$request->attendees` (camelCase) zamiast `$request->validated()` (snake_case). `EventAttendee::$fillable`/kolumny NOT NULL oczekują `attendee_type`/`attendee_id`/`response_status` — żaden klucz się nie zgadza. **Przekazanie `attendees` przy tworzeniu eventu zawsze kończy się wyjątkiem DB (500).** Ten sam wzorzec błędu co w ShareToken (walidacja na innej warstwie niż odczyt).
+- **[MEDIUM — naprawione 2026-07-03]** `attendees.*.attendeeId` walidowane tylko jako `ulid`, bez `exists:` i bez sprawdzenia przynależności do tenanta — można dopisać dowolny/obcy ULID jako uczestnika. *(dodano `exists:users,id`; sprawdzenie przynależności do tenanta nadal nienaprawione)*
 - **[MEDIUM]** `UpdateEventRequest` w ogóle nie obsługuje `attendees` — nie da się edytować uczestników po utworzeniu eventu.
 - **[MEDIUM]** `recurrence_rule` przyjmowane/zwracane jako wolny string, ale brak JAKIEJKOLWIEK logiki interpretującej RRULE (generowanie wystąpień, przypomnienia, eksport iCal) — "cykliczne eventy" to niezaimplementowane pole.
 - **[LOW]** `EventAttendeeResource` zwraca surowy `whenLoaded('attendee')` bez resource/DTO — dziś nieszkodliwe (relacja nigdy nie jest eager-loadowana), ale ryzykowne przy przyszłym `->load()`.
@@ -364,14 +442,14 @@ Wszystkie ~12 aktywnie eksploatowalne critical findings z Fazy 3 naprawione bezp
 
 - **[CRITICAL]** `TenantBrandingController`/`TenantPublicProfileController` (show/update/deleteMedia) — **zero autoryzacji**. `is_in_tenant` sprawdza tylko, że JWT ma jakiś `tid`, nie że zgadza się z `{tenant}` w URL. `Tenant` nie jest sam sobie tenant-scoped, więc route-model-binding nie chroni. **Dowolny zalogowany user dowolnej firmy może odczytać/nadpisać/usunąć branding (logo, favicon, font, logo PDF, nagłówek e-mail) i publiczny profil KAŻDEJ INNEJ firmy**, zmieniając tylko ID w URL. Branding trafia na faktury PDF i e-maile do klientów — wysoki wpływ biznesowy/reputacyjny.
 - **[CRITICAL]** `TenantLogoController` (upload/show/delete) — ten sam brak autoryzacji, dowolny user może podmienić/skasować logo dowolnej innej firmy.
-- **[CRITICAL]** `POST /projects` zawsze rzuca `TypeError` (500) — `ProjectDTO::from()` woła `fromArray()` wymagający `tenantId`/`ownerId`, których `CreateProjectRequest` w ogóle nie dostarcza.
-- **[CRITICAL]** Nawet po naprawie powyższego: `(array) $dto` w kontrolerze daje klucze camelCase, a `Project::$fillable` jest snake_case — `Project::create()` cicho zignoruje atrybuty, naruszając NOT NULL/FK.
-- **[CRITICAL]** `POST /tasks` zawsze zepsute — kontroler czyta `$request->input('project_id'/'status_id'/...)` (snake_case) z surowego requestu, podczas gdy `CreateTaskRequest` waliduje camelCase — zawsze `null` na NOT NULL FK → `QueryException`.
-- **[CRITICAL]** `TaskPolicy` nie istnieje, ale `TaskController` ją wywołuje (`view`/`update`/`delete`) — Laravel domyślnie odmawia gdy brak Policy, więc **te akcje zwracają 403 dla każdego, łącznie z twórcą i przypisaną osobą**.
-- **[HIGH]** Domyślne statusy projektów/tasków nigdy się nie tworzą — `InitializeTenantDefaults` nie woła `seedDefaultProjectStatuses()`/`seedDefaultTaskStatuses()` (zdefiniowane, ale martwe). Żaden tenant nie ma statusu do wyboru — potwierdza, że cała funkcja jest niemożliwa do użycia end-to-end, zgodnie z README (choć z innego powodu niż "nic nie zrobiono" — szkielet istnieje, ale nie działa).
-- **[HIGH]** Brak autoryzacji w `ProjectStatusController`/`TaskStatusController` — każdy member może zmieniać statusy używane globalnie we wszystkich projektach firmy.
-- **[HIGH]** Załączniki projektów/tasków omijają model własności (`ProjectPolicy::view` wymaga bycia właścicielem/przypisanym, ale `*AttachmentsController` tego nie sprawdza) — dowolny member widzi/wgrywa/kasuje załączniki dowolnego projektu/taska w tenancie.
-- **[HIGH]** `TenantController::store()` (dodanie kolejnej firmy) nie woła `InitializeTenantDefaults` — ręcznie utworzony tenant nie ma root organization unit, kategorii stanowisk, subskrypcji, szablonów numeracji — prawdopodobnie psuje przypisywanie do jednostek i numerację faktur dla tego tenanta.
+- **[CRITICAL — naprawione 2026-07-03]** `POST /projects` zawsze rzuca `TypeError` (500) — `ProjectDTO::from()` woła `fromArray()` wymagający `tenantId`/`ownerId`, których `CreateProjectRequest` w ogóle nie dostarcza.
+- **[CRITICAL — naprawione 2026-07-03]** Nawet po naprawie powyższego: `(array) $dto` w kontrolerze daje klucze camelCase, a `Project::$fillable` jest snake_case — `Project::create()` cicho zignoruje atrybuty, naruszając NOT NULL/FK.
+- **[CRITICAL — naprawione 2026-07-03]** `POST /tasks` zawsze zepsute — kontroler czyta `$request->input('project_id'/'status_id'/...)` (snake_case) z surowego requestu, podczas gdy `CreateTaskRequest` waliduje camelCase — zawsze `null` na NOT NULL FK → `QueryException`.
+- **[CRITICAL — naprawione 2026-07-03]** `TaskPolicy` nie istnieje, ale `TaskController` ją wywołuje (`view`/`update`/`delete`) — Laravel domyślnie odmawia gdy brak Policy, więc **te akcje zwracają 403 dla każdego, łącznie z twórcą i przypisaną osobą**.
+- **[HIGH — naprawione 2026-07-03]** Domyślne statusy projektów/tasków nigdy się nie tworzą — `InitializeTenantDefaults` nie woła `seedDefaultProjectStatuses()`/`seedDefaultTaskStatuses()` (zdefiniowane, ale martwe). Żaden tenant nie ma statusu do wyboru — potwierdza, że cała funkcja jest niemożliwa do użycia end-to-end, zgodnie z README (choć z innego powodu niż "nic nie zrobiono" — szkielet istnieje, ale nie działa).
+- **[HIGH — naprawione 2026-07-03]** Brak autoryzacji w `ProjectStatusController`/`TaskStatusController` — każdy member może zmieniać statusy używane globalnie we wszystkich projektach firmy.
+- **[HIGH]** Załączniki projektów/tasków omijają model własności (`ProjectPolicy::view` wymaga bycia właścicielem/przypisanym, ale `*AttachmentsController` tego nie sprawdza) — dowolny member widzi/wgrywa/kasuje załączniki dowolnego projektu/taska w tenancie. *(nienaprawione — część systemowego wzorca 6/7 attachment-kontrolerów z Fazy 5, poza zakresem tego batcha)*
+- **[HIGH — naprawione 2026-07-03]** `TenantController::store()` (dodanie kolejnej firmy) nie woła `InitializeTenantDefaults` — ręcznie utworzony tenant nie ma root organization unit, kategorii stanowisk, subskrypcji, szablonów numeracji — prawdopodobnie psuje przypisywanie do jednostek i numerację faktur dla tego tenanta. Naprawa ujawniła dodatkowy, wcześniej nieobserwowalny bug: `StoreTenantRequest` nigdy nie ustawiał `owner_id`, co po wpięciu inicjalizacji powodowało `NOT NULL` violation na `org_unit_user.user_id` — naprawione razem.
 - **[HIGH]** `AddressPolicy`/`BankAccountPolicy` sprawdzają tylko członkostwo, nie rolę — każdy member może zmienić oficjalny adres firmy i **konto bankowe do przyjmowania płatności od klientów**. Ten sam wzorzec co `TenantPolicy`/`RoleController` naprawiane wcześniej.
 - **[HIGH]** Brak autoryzacji w `OrganizationUnitController::store()`/`PositionCategoryController` — każdy member może tworzyć jednostki organizacyjne/kategorie stanowisk.
 - **[MEDIUM]** Walidacja `exists:` w Projects/Tasks omija tenant-scope (surowe zapytanie do DB) — można podać ID statusu/projektu/usera z innego tenanta, jeśli ULID jest znany/odgadnięty.
@@ -385,10 +463,10 @@ Wszystkie ~12 aktywnie eksploatowalne critical findings z Fazy 3 naprawione bezp
 **Wzorzec:** ten sam brak roli-opartej autoryzacji co wszędzie wcześniej + dwa świeże, samodzielne bugi funkcjonalne (kolizja tras, literówka w nazwie trasy) psujące featury oznaczone w README jako gotowe.
 
 - **[CRITICAL]** Brak jakiejkolwiek autoryzacji opartej o rolę w `ContractorController::destroy/export` — dowolny member może usunąć kontrahenta lub wyeksportować całą bazę (razem z IBAN przez `include=bankAccounts`).
-- **[CRITICAL]** `routes/api/contractors.php:24-27` — dwie trasy `DELETE /contractors/{contractor}/logo` zarejestrowane pod rząd; Laravel dopasowuje pierwszą, więc **usuwanie logo nigdy się nie wykonuje** — trafia w `show()` (zwraca 200 ze streamowanym obrazem). Metoda `delete()` jest nieosiągalna. README oznacza to jako gotowe.
+- **[CRITICAL — naprawione 2026-07-03]** `routes/api/contractors.php:24-27` — dwie trasy `DELETE /contractors/{contractor}/logo` zarejestrowane pod rząd; Laravel dopasowuje pierwszą, więc **usuwanie logo nigdy się nie wykonuje** — trafia w `show()` (zwraca 200 ze streamowanym obrazem). Metoda `delete()` jest nieosiągalna. README oznacza to jako gotowe.
 - **[HIGH]** Adresy i konta bankowe kontrahentów zawsze zapisywane z `tenant_id = NULL` — `HaveAddresses`/`HaveBankAccounts` instancjonują bazowe `Address`/`BankAccount` przez `morphMany`, nigdy dedykowanych podklas `ContractorAddress`/`ContractorBankAccount` (które mają `BelongsToTenant`, ale martwy). Dziś niewykorzystywalne bezpośrednio (dostęp zawsze przez już-scoped `$contractor`), ale globalne `AddressPolicy`/`BankAccountPolicy` sprawdzające `tenant_id` zawsze zwrócą `false` dla tych rekordów — gdy ktoś je podepnie pod kontroler, autoryzacja przestanie działać dla wszystkich adresów/kont kontrahentów.
 - **[HIGH]** Brak unikalności NIP/REGON w obrębie tenanta — zwykły indeks zamiast unikalnego, walidacja bez `unique`. Można stworzyć dwóch kontrahentów z identycznym NIP.
-- **[HIGH]** `ProductAttachmentsController` — literówka w nazwie trasy (`product.attachments.show` vs zarejestrowane `products.attachments.show`) i złym parametrze (`attachment` vs `{media}`). **`index`/`store`/`update` rzucają 500 przy każdym wywołaniu.** Cała funkcja załączników produktów (README 7.5, oznaczone `[x]`) jest w praktyce zepsuta. Brak testów na ten kontroler.
+- **[HIGH — naprawione 2026-07-03]** `ProductAttachmentsController` — literówka w nazwie trasy (`product.attachments.show` vs zarejestrowane `products.attachments.show`) i złym parametrze (`attachment` vs `{media}`). **`index`/`store`/`update` rzucają 500 przy każdym wywołaniu.** Cała funkcja załączników produktów (README 7.5, oznaczone `[x]`) jest w praktyce zepsuta. Brak testów na ten kontroler. *(przy okazji dodano też brakujące `download()`/`preview()`, na które trasy już wskazywały, i wpięto istniejące, ale nigdy niewywoływane `authorizeMedia()`)*
 - **[HIGH]** Brak roli-opartej autoryzacji w `ProductController::destroy/export` — analogicznie do C1, w tym eksport cen netto całego katalogu.
 - **[MEDIUM]** Załączniki (Contractors i Products) bez whitelisty MIME, serwowane `inline` — możliwy stored XSS przy uploadzie SVG/HTML z JS i późniejszym "preview".
 - **[MEDIUM]** Niespójna walidacja `country` między store/update kontrahenta (store: ISO-2 + exists, update: dowolny string) — może wstawić niepoprawny kod psujący integracje VIES/REGON/Białą Listę.
