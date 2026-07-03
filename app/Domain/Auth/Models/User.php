@@ -14,6 +14,8 @@ use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HaveAddresses;
 use App\Domain\Common\Traits\HaveBankAccounts;
 use App\Domain\Common\Traits\IsSearchable;
+use App\Domain\Expense\Contracts\AllocationDimensionInterface;
+use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
@@ -105,7 +107,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Collection<int, SecurityEvent>       $securityEvents
  * @property Collection<int, ApiKey>              $apiKeys
  */
-class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl, MustVerifyEmail
+class User extends Authenticatable implements AllocationDimensionInterface, JWTSubject, HasMedia, HasMediaUrl, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -122,6 +124,12 @@ class User extends Authenticatable implements JWTSubject, HasMedia, HasMediaUrl,
     use IsSearchable;
     use HasUsersTenantScopedFields;
     use HasUsersPublicScopedFields;
+    // getTenantId() is already defined below (JWT-derived, current-request tenant context);
+    // the trait's version is silently shadowed by it, which is what we want here — a User
+    // row has no single "owning tenant" column of its own (membership is via the
+    // user_tenants pivot), so this dimension's tenant scoping piggybacks on whichever
+    // tenant the request is already running in rather than claiming a more precise answer.
+    use HasAllocationDimensionInterface;
 
     protected $with = ['preferences'];
 
