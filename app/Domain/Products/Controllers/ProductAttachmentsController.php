@@ -7,7 +7,6 @@ use App\Domain\Products\Enums\ProductActivityType;
 use App\Domain\Products\Models\Product;
 use App\Domain\Products\Requests\ProductAttachmentRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -31,7 +30,7 @@ class ProductAttachmentsController extends Controller
                 'file_name' => $media->file_name,
                 'mime_type' => $media->mime_type,
                 'size'      => $media->size,
-                'url'       => route('product.attachments.show', ['product' => $product->id, 'attachment' => $media->id], absolute: false),
+                'url'       => route('products.attachments.show', ['product' => $product->id, 'media' => $media->id], absolute: false),
             ]),
         ]);
     }
@@ -55,7 +54,7 @@ class ProductAttachmentsController extends Controller
                 'file_name' => $media->file_name,
                 'mime_type' => $media->mime_type,
                 'size'      => $media->size,
-                'url'       => route('product.attachments.show', ['product' => $product->id, 'attachment' => $media->id], absolute: false),
+                'url'       => route('products.attachments.show', ['product' => $product->id, 'media' => $media->id], absolute: false),
             ],
         ], HttpResponse::HTTP_CREATED);
     }
@@ -63,13 +62,45 @@ class ProductAttachmentsController extends Controller
     /**
      * Show metadata for a single attachment.
      */
-    public function show(Product $product, Request $request, $attachmentId)
+    public function show(Product $product, Media $media)
     {
-        $media = $product->getMedia('attachments')->firstWhere('id', $attachmentId);
+        $this->authorizeMedia($product, $media);
 
-        if (!$media) {
-            return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
-        }
+        $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+        return Response::stream(function () use ($stream) {
+            fpassthru($stream);
+        }, HttpResponse::HTTP_OK, [
+            'Content-Type'        => $media->mime_type,
+            'Content-Length'      => $media->size,
+            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+        ]);
+    }
+
+    /**
+     * Download an attachment.
+     */
+    public function download(Product $product, Media $media)
+    {
+        $this->authorizeMedia($product, $media);
+
+        $stream = Storage::disk($media->disk)->readStream($media->getPath());
+
+        return Response::stream(function () use ($stream) {
+            fpassthru($stream);
+        }, HttpResponse::HTTP_OK, [
+            'Content-Type'        => $media->mime_type,
+            'Content-Length'      => $media->size,
+            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+        ]);
+    }
+
+    /**
+     * Preview an attachment (inline).
+     */
+    public function preview(Product $product, Media $media)
+    {
+        $this->authorizeMedia($product, $media);
 
         $stream = Storage::disk($media->disk)->readStream($media->getPath());
 
@@ -85,13 +116,9 @@ class ProductAttachmentsController extends Controller
     /**
      * Update an attachment.
      */
-    public function update(ProductAttachmentRequest $request, Product $product, $attachmentId)
+    public function update(ProductAttachmentRequest $request, Product $product, Media $media)
     {
-        $media = $product->getMedia('attachments')->firstWhere('id', $attachmentId);
-
-        if (!$media) {
-            return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
-        }
+        $this->authorizeMedia($product, $media);
 
         $media->delete();
         $newMedia = $product->addMediaFromRequest('file')
@@ -108,7 +135,7 @@ class ProductAttachmentsController extends Controller
                 'file_name' => $newMedia->file_name,
                 'mime_type' => $newMedia->mime_type,
                 'size'      => $newMedia->size,
-                'url'       => route('product.attachments.show', ['product' => $product->id, 'attachment' => $newMedia->id], absolute: false),
+                'url'       => route('products.attachments.show', ['product' => $product->id, 'media' => $newMedia->id], absolute: false),
             ],
         ]);
     }
@@ -116,13 +143,9 @@ class ProductAttachmentsController extends Controller
     /**
      * Delete an attachment.
      */
-    public function destroy(Product $product, $attachmentId)
+    public function destroy(Product $product, Media $media)
     {
-        $media = $product->getMedia('attachments')->firstWhere('id', $attachmentId);
-
-        if (!$media) {
-            return response()->json(['message' => 'Attachment not found.'], HttpResponse::HTTP_NOT_FOUND);
-        }
+        $this->authorizeMedia($product, $media);
 
         $product->logModelActivity(ProductActivityType::AttachmentDeleted->value, $media);
         $media->delete();

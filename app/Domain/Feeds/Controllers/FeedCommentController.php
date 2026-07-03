@@ -46,12 +46,11 @@ class FeedCommentController extends Controller
 
     public function destroy(Feed $feed, Comment $comment): Response
     {
-        // TODO: Add authorization
-        // $this->authorize('delete', $comment);
-
         if ($comment->commentable_id !== $feed->id || Feed::class !== $comment->commentable_type) {
             abort(404); // Nie pozwalamy usuwać cudzych komentarzy lub innych modeli
         }
+
+        abort_unless(Auth::id() === $comment->user_id, Response::HTTP_FORBIDDEN);
 
         $comment->delete();
 
