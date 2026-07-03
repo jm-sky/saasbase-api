@@ -5,6 +5,8 @@
 **Repozytoria:** `jm-sky/saasbase-api` (Laravel/DDD), `jm-sky/saasbase-web` (Vue 3/TS)
 **Branch:** `claude/saasbase-project-review-0p5z11`
 
+> New file - Larastan results (2026-07-03 10:07): `./REVIEW_LARASTAN_20260703_1007.md`
+
 ## Kontekst / diagnoza wyjściowa
 
 Projekt pisany w dużej mierze z pomocą AI przez ok. rok, solo, pod presją czasu. Modele sprzed roku
