@@ -28,6 +28,9 @@ Broadcast::routes([
 ]);
 
 Route::get('/health', [HealthController::class, 'health']);
+Route::get('/health/details', [HealthController::class, 'details'])
+    ->middleware('health.details')
+;
 
 Route::prefix('v1')->group(function () {
     Route::post('auth/token/refresh', [AuthController::class, 'refresh']);

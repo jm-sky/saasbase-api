@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'stripe.webhook' => \App\Http\Middleware\StripeWebhook::class,
+            'health.details' => \App\Http\Middleware\VerifyHealthDetailsToken::class,
             'is_active' => \App\Http\Middleware\IsActive::class,
             'is_in_tenant' => \App\Http\Middleware\IsInTenant::class,
             'is_admin' => \App\Http\Middleware\IsAdmin::class,

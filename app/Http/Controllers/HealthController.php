@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Ai\Services\OpenRouterService;
+use App\Services\Health\HealthDetailsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +12,11 @@ use Illuminate\Support\Str;
 
 class HealthController extends Controller
 {
+    public function details(HealthDetailsService $healthDetailsService): JsonResponse
+    {
+        return response()->json($healthDetailsService->build());
+    }
+
     public function health()
     {
         $results = [];
