@@ -46,7 +46,7 @@ class ActivityLogController extends Controller
         $query = $this->getIndexQuery($request);
         $query->where('tenant_id', $request->user()->tenant_id);
 
-        $result         = $this->getIndexPaginator($request);
+        $result         = $this->getIndexPaginator($request, query: $query);
         $result['data'] = ActivityLogDTO::collect($result['data']);
 
         return response()->json($result);

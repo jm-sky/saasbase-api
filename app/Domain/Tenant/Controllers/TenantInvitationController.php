@@ -3,6 +3,8 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Tenant\DTOs\TenantInvitationDTO;
 use App\Domain\Tenant\Enums\InvitationStatus;
 use App\Domain\Tenant\Enums\TenantActivityType;
@@ -55,7 +57,12 @@ class TenantInvitationController extends Controller
         /** @var User $user */
         $user     = $request->user();
         $tenantId = $user->getTenantId();
-        // TODO: Add authorization check (policy)
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN,
+            'Only tenant owners or admins can send invitations.'
+        );
 
         $token     = Str::ulid()->toString();
         $expiresAt = now()->addDays(self::TOKEN_EXPIRATION_DAYS);

@@ -5,6 +5,7 @@ namespace Tests\Feature\Domain\Skills;
 use App\Domain\Auth\Models\User;
 use App\Domain\Skills\Controllers\SkillCategoryController;
 use App\Domain\Skills\Models\SkillCategory;
+use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,8 +30,16 @@ class SkillCategoryApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
-        $this->authenticateUser(user: $this->user);
+
+        // Skill/SkillCategory store/update/destroy now require Owner/Admin
+        // (Faza 3, Grupa A) — needs a real tenant context, since
+        // authorizeManage() bails out as soon as getTenantId() is null.
+        // authenticateUser($tenant) attaches the pivot with role=Admin,
+        // which UserTenant::boot()'s created hook syncs into
+        // TenantScopedRoles automatically (see SkillApiTest for the same,
+        // already-working pattern).
+        $tenant     = Tenant::factory()->create();
+        $this->user = $this->authenticateUser($tenant);
     }
 
     public function testCanListCategories(): void

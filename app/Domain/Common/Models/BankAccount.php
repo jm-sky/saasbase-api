@@ -5,6 +5,7 @@ namespace App\Domain\Common\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -28,6 +29,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class BankAccount extends BaseModel
 {
+    /**
+     * Every bankable owner (Tenant, Contractor, User) is itself
+     * tenant-scoped, so the bank account inherits tenant_id from the
+     * authenticated request rather than relying on callers to pass it —
+     * previously it was silently left NULL, breaking tenant isolation on
+     * this model and making the BankAccountPolicy's tenant match always fail.
+     */
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'bankable_id',

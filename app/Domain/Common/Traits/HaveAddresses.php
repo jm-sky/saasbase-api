@@ -12,11 +12,17 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  */
 trait HaveAddresses
 {
+    /**
+     * @return MorphMany<Address, $this>
+     */
     public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');
     }
 
+    /**
+     * @return MorphOne<Address, $this>
+     */
     public function defaultAddress(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable')

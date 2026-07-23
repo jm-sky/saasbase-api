@@ -35,7 +35,7 @@ enum DeliveryStatus: string
     public function isCompleted(): bool
     {
         return match ($this) {
-            self::SENT, self::DELIVERED => true,
+            self::SENT, self::DELIVERED                 => true,
             self::NOT_SENT, self::PENDING, self::FAILED => false,
         };
     }

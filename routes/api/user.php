@@ -12,6 +12,7 @@ use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
 use App\Domain\Users\Controllers\TrustedDeviceController;
+use App\Domain\Users\Controllers\UserPreferenceController;
 use App\Domain\Users\Controllers\UserTableSettingController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ Route::withoutMiddleware(['auth:api', 'is_active'])
 Route::middleware('auth:api')->get('me', MeController::class);
 Route::middleware('auth:api')->get('me/logs', MeActivityLogsController::class);
 
-Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () {
+Route::middleware(['auth:api', 'is_active', 'mfa'])->prefix('user')->group(function () {
     Route::get('profile', [UserProfileController::class, 'show']);
     Route::put('profile', [UserProfileController::class, 'update']);
     Route::get('settings', [UserSettingsController::class, 'show']);
@@ -35,7 +36,7 @@ Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () 
     Route::apiResource('skills', UserSkillController::class);
 });
 
-Route::middleware(['auth:api', 'is_active'])->group(function () {
+Route::middleware(['auth:api', 'is_active', 'mfa'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/archive', [NotificationController::class, 'archive']);
@@ -63,6 +64,14 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
         Route::get('/', [NotificationSettingController::class, 'index']);
         Route::put('/', [NotificationSettingController::class, 'update']);
         Route::put('/bulk', [NotificationSettingController::class, 'updateBulk']);
+    });
+
+    // Preferences routes (incl. profile field visibility — the only way a
+    // user can limit what PublicUserController::show() exposes about them)
+    Route::prefix('preferences')->group(function () {
+        Route::get('/', [UserPreferenceController::class, 'show']);
+        Route::put('/', [UserPreferenceController::class, 'update']);
+        Route::post('/reset', [UserPreferenceController::class, 'reset']);
     });
 
     // Trusted devices routes

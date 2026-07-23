@@ -35,6 +35,14 @@ class DirectMessageController extends Controller
             return response()->json(['message' => 'Cannot create a direct message room with yourself.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // CreateDirectMessageRoomRequest only validates that userId exists
+        // anywhere in `users` — without this, any authenticated user could
+        // pull a user from a completely different tenant into a DM room.
+        abort_unless(
+            $otherUser->id === $currentUser->id || $otherUser->tenants()->whereKey($tenantId)->exists(),
+            Response::HTTP_FORBIDDEN
+        );
+
         $room = $this->dmService->findOrCreateRoom($tenantId, $currentUser, $otherUser);
         $dto  = ChatRoomDTO::fromModel($room);
 

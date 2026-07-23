@@ -58,6 +58,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property ?TenantPublicProfile          $publicProfile
  * @property Collection<Tag>               $tags
  * @property Collection<Address>           $addresses
+ * @property ?Address                      $defaultAddress
  * @property Collection<BankAccount>       $bankAccounts
  * @property Collection<Media>             $media
  * @property Collection<TenantInvitation>  $invitations
@@ -297,10 +298,10 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
         $previousTenantId         = self::$BYPASSED_TENANT_ID;
         self::$BYPASSED_TENANT_ID = $tenantId;
 
-        $result = $callback();
-
-        self::$BYPASSED_TENANT_ID = $previousTenantId;
-
-        return $result;
+        try {
+            return $callback();
+        } finally {
+            self::$BYPASSED_TENANT_ID = $previousTenantId;
+        }
     }
 }

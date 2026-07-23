@@ -40,8 +40,8 @@ enum ExpenseAllocationStatus: string
     public function canTransitionTo(ExpenseAllocationStatus $newStatus): bool
     {
         return match ($this) {
-            self::PENDING   => in_array($newStatus, [self::ALLOCATED, self::REJECTED], true),
-            self::ALLOCATED => in_array($newStatus, [self::APPROVED, self::REJECTED], true),
+            self::PENDING                  => in_array($newStatus, [self::ALLOCATED, self::REJECTED], true),
+            self::ALLOCATED                => in_array($newStatus, [self::APPROVED, self::REJECTED], true),
             self::APPROVED, self::REJECTED => false, // Final states
         };
     }

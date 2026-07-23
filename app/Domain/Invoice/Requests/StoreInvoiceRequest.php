@@ -2,6 +2,7 @@
 
 namespace App\Domain\Invoice\Requests;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Enums\OcrRequestStatus;
 use App\Domain\Financial\Enums\AllocationStatus;
 use App\Domain\Financial\Enums\ApprovalStatus;
@@ -11,7 +12,9 @@ use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Financial\Enums\PaymentStatus;
 use App\Domain\Financial\Enums\VatRateType;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Validator;
 
 class StoreInvoiceRequest extends BaseFormRequest
 {
@@ -22,6 +25,9 @@ class StoreInvoiceRequest extends BaseFormRequest
 
     public function rules(): array
     {
+        /** @var User $user */
+        $user = $this->user();
+
         return [
             'type'                     => ['required', new Enum(InvoiceType::class)],
             'issueDate'                => ['required', 'date'],
@@ -36,7 +42,12 @@ class StoreInvoiceRequest extends BaseFormRequest
             'statusInfo.delivery'      => ['sometimes', 'nullable', new Enum(DeliveryStatus::class)],
             'statusInfo.payment'       => ['sometimes', 'nullable', new Enum(PaymentStatus::class)],
             // Other fields
-            'number'                   => ['required', 'string', 'max:255'],
+            'number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('invoices', 'number')->where('tenant_id', $user->getTenantId()),
+            ],
             'numberingTemplateId'      => ['required', 'string', 'exists:numbering_templates,id'],
             'totalNet'                 => ['required', 'numeric', 'min:0'],
             'totalTax'                 => ['required', 'numeric', 'min:0'],
@@ -124,5 +135,23 @@ class StoreInvoiceRequest extends BaseFormRequest
             'options.emailTo'          => ['nullable', 'sometimes', 'array'],
             'options.emailTo.*'        => ['email', 'max:255'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $net   = $this->input('totalNet');
+            $tax   = $this->input('totalTax');
+            $gross = $this->input('totalGross');
+
+            if (null === $net || null === $tax || null === $gross) {
+                return;
+            }
+
+            // Compare in cents to sidestep float rounding noise.
+            if (round(($net + $tax) * 100) !== round($gross * 100)) {
+                $validator->errors()->add('totalGross', 'totalNet + totalTax must equal totalGross.');
+            }
+        });
     }
 }

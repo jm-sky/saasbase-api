@@ -11,5 +11,5 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/feeds/{feed}', [FeedController::class, 'destroy']);
 
     Route::post('/feeds/{feed}/comments', [FeedCommentController::class, 'store']);
-    Route::delete('/feed-comments/{comment}', [FeedCommentController::class, 'destroy']);
+    Route::delete('/feeds/{feed}/comments/{comment}', [FeedCommentController::class, 'destroy']);
 });

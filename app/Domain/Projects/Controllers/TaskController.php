@@ -13,6 +13,8 @@ use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Requests\CreateTaskRequest;
 use App\Domain\Projects\Requests\UpdateTaskRequest;
 use App\Domain\Projects\Resources\TaskResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -73,16 +75,12 @@ class TaskController extends Controller
 
     public function store(CreateTaskRequest $request): TaskResource
     {
+        $this->authorize('create', Task::class);
+
         $task = Task::create([
-            'tenant_id'      => Auth::user()->tenant_id,
-            'project_id'     => $request->input('project_id'),
-            'title'          => $request->input('title'),
-            'description'    => $request->input('description'),
-            'status_id'      => $request->input('status_id'),
-            'priority'       => $request->input('priority'),
-            'assigned_to_id' => $request->input('assigned_to_id'),
-            'created_by_id'  => Auth::id(),
-            'due_date'       => $request->input('due_date'),
+            ...$request->validated(),
+            'tenant_id'     => Auth::user()->getTenantId(),
+            'created_by_id' => Auth::id(),
         ]);
 
         return new TaskResource($task);
@@ -120,6 +118,8 @@ class TaskController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -130,6 +130,23 @@ class TaskController extends Controller
             TasksExport::class,
             $config,
             'tasks.xlsx'
+        );
+    }
+
+    /**
+     * Bulk-exporting every task (across all projects/assignees) is
+     * destructive/broad enough to require Owner/Admin, unlike everyday
+     * CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var \App\Domain\Auth\Models\User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 }

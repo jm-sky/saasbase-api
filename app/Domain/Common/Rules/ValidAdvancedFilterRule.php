@@ -120,12 +120,12 @@ class ValidAdvancedFilterRule implements ValidationRule
     protected function validateSingleType($value, string $type, \Closure $fail): bool
     {
         return match ($type) {
-            'string' => is_string($value),
-            'int', 'integer' => false !== filter_var($value, FILTER_VALIDATE_INT),
+            'string'          => is_string($value),
+            'int', 'integer'  => false !== filter_var($value, FILTER_VALIDATE_INT),
             'float', 'double' => false !== filter_var($value, FILTER_VALIDATE_FLOAT),
             'bool', 'boolean' => is_bool($value) || 0 === $value || 1 === $value || '0' === $value || '1' === $value || true === $value || false === $value,
-            'date'  => $this->validateDate($value),
-            default => true,
+            'date'            => $this->validateDate($value),
+            default           => true,
         };
     }
 

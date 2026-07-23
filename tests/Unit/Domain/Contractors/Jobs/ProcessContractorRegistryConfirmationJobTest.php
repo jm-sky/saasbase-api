@@ -133,19 +133,29 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
         $mockViesService  = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
         $mockMfService    = \Mockery::mock(MfContractorRegistryConfirmationService::class);
 
-        // @phpstan-ignore-next-line
         $mockDataFetcher
             ->shouldReceive('fetch')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->andReturn($allLookupResults)
         ;
 
-        // @phpstan-ignore-next-line
+        // confirmContractorData() actually returns RegistryConfirmation[] (see
+        // Regon/Vies/MfContractorRegistryConfirmationService), not raw arrays —
+        // the job reads ->type/->status off each entry.
+        $regonCheckConfirmation = RegistryConfirmation::factory()->make([
+            'confirmable_id'   => $contractor->id,
+            'confirmable_type' => get_class($contractor),
+            'type'             => RegistryConfirmationType::Regon->value,
+            'status'           => RegistryConfirmationStatus::Success,
+        ]);
+
         $mockRegonService
             ->shouldReceive('confirmContractorData')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->with(\Mockery::type(Contractor::class), $regonData)
-            ->andReturn([['type' => 'regon', 'success' => true]])
+            ->andReturn([$regonCheckConfirmation])
         ;
 
         Log::shouldReceive('info')
@@ -194,9 +204,9 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
         $mockViesService  = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
         $mockMfService    = \Mockery::mock(MfContractorRegistryConfirmationService::class);
 
-        // @phpstan-ignore-next-line
         $mockDataFetcher
             ->shouldReceive('fetch')
+            // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->andReturn(null)
         ;

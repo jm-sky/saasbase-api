@@ -4,8 +4,10 @@ namespace App\Domain\Tenant\Requests;
 
 use App\Domain\Tenant\Enums\TenantIntegrationMode;
 use App\Domain\Tenant\Enums\TenantIntegrationType;
+use App\Domain\Tenant\Support\IntegrationAllowedHosts;
 use App\Http\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Validator;
 
 class StoreTenantIntegrationRequest extends BaseFormRequest
 {
@@ -23,6 +25,21 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
             'credentials' => ['nullable', 'array', 'required_if:mode,custom'],
             'meta'        => ['nullable', 'array'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $endpoint = $this->input('credentials.endpoint');
+
+            if (!$endpoint) {
+                return;
+            }
+
+            if (!IntegrationAllowedHosts::isAllowed((string) $this->input('type'), (string) $endpoint)) {
+                $validator->errors()->add('credentials.endpoint', 'This endpoint is not allowed for this integration type.');
+            }
+        });
     }
 
     public function attributes(): array

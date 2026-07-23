@@ -3,6 +3,7 @@
 namespace App\Domain\Subscription\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Subscription\Traits\BelongsToBillingCustomerOfUser;
 use Carbon\Carbon;
 
 /**
@@ -22,6 +23,8 @@ use Carbon\Carbon;
  */
 class AddonPurchase extends BaseModel
 {
+    use BelongsToBillingCustomerOfUser;
+
     protected $fillable = [
         'billable_type',
         'billable_id',

@@ -2,6 +2,8 @@
 
 namespace App\Domain\Common\Models;
 
+use App\Domain\Expense\Contracts\AllocationDimensionInterface;
+use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Carbon\Carbon;
 
@@ -15,9 +17,10 @@ use Carbon\Carbon;
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
  */
-class AllocationContractType extends BaseModel
+class AllocationContractType extends BaseModel implements AllocationDimensionInterface
 {
     use IsGlobalOrBelongsToTenant;
+    use HasAllocationDimensionInterface;
 
     protected $table = 'allocation_contract_types';
 

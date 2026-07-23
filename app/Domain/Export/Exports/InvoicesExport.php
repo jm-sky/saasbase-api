@@ -14,6 +14,20 @@ class InvoicesExport extends BaseExport
 
     protected array $amountColumns = [];
 
+    protected array $columns = [
+        'id',
+        'number',
+        'type',
+        'status',
+        'issue_date',
+        'total_net',
+        'total_tax',
+        'total_gross',
+        'currency',
+        'created_at',
+        'updated_at',
+    ];
+
     public function baseQuery(): Builder
     {
         return Invoice::query();

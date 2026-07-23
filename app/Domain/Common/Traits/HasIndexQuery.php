@@ -49,13 +49,13 @@ trait HasIndexQuery
      */
     public function getIndexQuery(Request $request): Builder
     {
-        // @phpstan-ignore-next-line
         return QueryBuilder::for($this->modelClass)
             ->allowedFilters($this->filters)
             ->allowedSorts($this->sorts)
             ->defaultSort($this->defaultSort)
             ->with($this->defaultWith)
             ->withoutGlobalScopes($this->withoutGlobalScopes)
+            // @phpstan-ignore-next-line getEloquentBuilder() is declared on Spatie's QueryBuilder, not visible to PHPStan once the chain returns the base Eloquent Builder type
             ->getEloquentBuilder()
         ;
     }

@@ -12,6 +12,8 @@ use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Common\Traits\HasMediaSignedUrls;
 use App\Domain\Common\Traits\HasTags;
 use App\Domain\Common\Traits\HaveComments;
+use App\Domain\Expense\Contracts\AllocationDimensionInterface;
+use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -47,7 +49,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
  * @property Collection<int, Media>                $media
  * @property Collection<int, Tag>                  $tags
  */
-class Project extends BaseModel implements HasMedia, HasMediaUrl
+class Project extends BaseModel implements AllocationDimensionInterface, HasMedia, HasMediaUrl
 {
     use BelongsToTenant;
     use SoftDeletes;
@@ -57,6 +59,7 @@ class Project extends BaseModel implements HasMedia, HasMediaUrl
     use HasActivityLog;
     use HasActivityLogging;
     use HasMediaSignedUrls;
+    use HasAllocationDimensionInterface;
 
     protected $fillable = [
         'tenant_id',
@@ -73,6 +76,14 @@ class Project extends BaseModel implements HasMedia, HasMediaUrl
         'end_date'   => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    /**
+     * Project has no is_active column; use soft-delete state instead.
+     */
+    public function getIsActive(): bool
+    {
+        return null === $this->deleted_at;
+    }
 
     public function owner(): BelongsTo
     {

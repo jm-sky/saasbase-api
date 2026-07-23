@@ -84,7 +84,7 @@ class GtuCodeController extends Controller
 
         foreach ($body->lines as $line) {
             if ($line->id === $lineId) {
-                $line = $gtuAssignmentService->assignGTUCode($line, $request->input('gtu_code'));
+                $line = $gtuAssignmentService->assignGTUCode($line, $request->validated('gtuCode'));
             }
             $updatedLines[] = $line;
         }
@@ -102,7 +102,7 @@ class GtuCodeController extends Controller
 
         return response()->json([
             'message' => 'GTU code assigned successfully.',
-            'data'    => ['invoice_id' => $invoiceId, 'line_id' => $lineId, 'gtu_code' => $request->input('gtu_code')],
+            'data'    => ['invoice_id' => $invoiceId, 'line_id' => $lineId, 'gtu_code' => $request->validated('gtuCode')],
         ]);
     }
 
@@ -169,7 +169,7 @@ class GtuCodeController extends Controller
         $product              = Product::findOrFail($productId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
-        $updatedProduct = $gtuAssignmentService->assignGTUToProduct($product, $request->input('gtu_code'), $request->user());
+        $updatedProduct = $gtuAssignmentService->assignGTUToProduct($product, $request->validated('gtuCode'), $request->user());
 
         return response()->json([
             'message' => 'GTU code assigned to product successfully.',
@@ -182,7 +182,7 @@ class GtuCodeController extends Controller
 
     public function autoAssign(GtuForInvoiceRequest $request): JsonResponse
     {
-        $invoice              = Invoice::findOrFail($request->input('invoice_id'));
+        $invoice              = Invoice::findOrFail($request->validated('invoiceId'));
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
         $updatedInvoice = $gtuAssignmentService->processInvoiceGTUAssignments($invoice);
@@ -198,7 +198,7 @@ class GtuCodeController extends Controller
 
     public function validateAssignment(GtuForInvoiceRequest $request): JsonResponse
     {
-        $invoice              = Invoice::findOrFail($request->input('invoice_id'));
+        $invoice              = Invoice::findOrFail($request->validated('invoiceId'));
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
         $isValid = $gtuAssignmentService->validateInvoiceGTUCompliance($invoice);

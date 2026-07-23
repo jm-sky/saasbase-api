@@ -6,13 +6,18 @@ use App\Domain\Common\DTOs\MediaDTO;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Requests\ProjectAttachmentRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProjectAttachmentsController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(Project $project)
     {
+        $this->authorize('view', $project);
+
         $media = $project->getMedia('attachments');
 
         return response()->json([
@@ -22,6 +27,8 @@ class ProjectAttachmentsController extends Controller
 
     public function store(ProjectAttachmentRequest $request, Project $project)
     {
+        $this->authorize('update', $project);
+
         $file  = $request->file('file');
         $media = $project->addMedia($file)->toMediaCollection('attachments');
 
@@ -32,6 +39,7 @@ class ProjectAttachmentsController extends Controller
 
     public function show(Project $project, Media $media)
     {
+        $this->authorize('view', $project);
         $this->authorizeMedia($project, $media);
 
         return response()->json([
@@ -41,6 +49,7 @@ class ProjectAttachmentsController extends Controller
 
     public function download(Project $project, Media $media)
     {
+        $this->authorize('view', $project);
         $this->authorizeMedia($project, $media);
         $path    = $media->getPath();
         $headers = [
@@ -53,6 +62,7 @@ class ProjectAttachmentsController extends Controller
 
     public function preview(Project $project, Media $media)
     {
+        $this->authorize('view', $project);
         $this->authorizeMedia($project, $media);
         $path    = $media->getPath();
         $headers = [
@@ -65,6 +75,7 @@ class ProjectAttachmentsController extends Controller
 
     public function destroy(Project $project, Media $media)
     {
+        $this->authorize('update', $project);
         $this->authorizeMedia($project, $media);
         $media->delete();
 

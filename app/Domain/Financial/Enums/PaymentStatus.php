@@ -35,7 +35,7 @@ enum PaymentStatus: string
     public function isCompleted(): bool
     {
         return match ($this) {
-            self::PAID, self::CANCELLED => true,
+            self::PAID, self::CANCELLED                        => true,
             self::PENDING, self::PARTIALLY_PAID, self::OVERDUE => false,
         };
     }
@@ -44,7 +44,7 @@ enum PaymentStatus: string
     {
         return match ($this) {
             self::PENDING, self::PARTIALLY_PAID, self::OVERDUE => true,
-            self::PAID, self::CANCELLED => false,
+            self::PAID, self::CANCELLED                        => false,
         };
     }
 

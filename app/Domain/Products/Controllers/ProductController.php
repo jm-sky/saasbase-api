@@ -15,11 +15,14 @@ use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
 use App\Domain\Products\Resources\ProductLookupResource;
 use App\Domain\Products\Resources\ProductResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class ProductController extends Controller
@@ -107,6 +110,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product): JsonResponse
     {
+        $this->authorizeManage();
+
         $product->logModelActivity(ProductActivityType::Deleted->value, $product);
         $product->delete();
 
@@ -139,6 +144,8 @@ class ProductController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -149,6 +156,23 @@ class ProductController extends Controller
             ProductsExport::class,
             $config,
             'products.xlsx'
+        );
+    }
+
+    /**
+     * Deleting a product or exporting the whole catalog (including net
+     * prices) is broad/destructive enough to require Owner/Admin, unlike
+     * everyday CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var \App\Domain\Auth\Models\User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 }

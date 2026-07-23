@@ -4,6 +4,7 @@ namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Common\Traits\HasActivityLogging;
 use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Tenant\Actions\InitializeTenantDefaults;
 use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Requests\StoreTenantRequest;
 use App\Domain\Tenant\Requests\UpdateTenantRequest;
@@ -37,8 +38,9 @@ class TenantController extends Controller
 
     public function store(StoreTenantRequest $request): TenantResource
     {
-        $tenantData = $request->validated('tenant');
-        $tenant     = Tenant::create($tenantData);
+        $tenantData              = $request->validated('tenant');
+        $tenantData['owner_id']  = $request->user()->id;
+        $tenant                  = Tenant::create($tenantData);
 
         if ($request->has('bankAccount') && $request->validated('bankAccount') && $request->validated('bankAccount')['iban']) {
             $tenant->bankAccounts()->create($request->validated('bankAccount'));
@@ -49,6 +51,8 @@ class TenantController extends Controller
         }
 
         $request->user()->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
+
+        (new InitializeTenantDefaults())->execute($tenant, $request->user());
 
         return new TenantResource($tenant);
     }

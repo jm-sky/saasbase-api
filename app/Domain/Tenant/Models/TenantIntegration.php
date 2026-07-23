@@ -6,7 +6,6 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Enums\TenantIntegrationMode;
 use App\Domain\Tenant\Enums\TenantIntegrationType;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -49,16 +48,5 @@ class TenantIntegration extends BaseModel
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
-    }
-
-    /**
-     * Interact with the credentials attribute.
-     */
-    protected function credentials(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => json_decode($value, true),
-            set: fn ($value) => json_encode($value),
-        );
     }
 }

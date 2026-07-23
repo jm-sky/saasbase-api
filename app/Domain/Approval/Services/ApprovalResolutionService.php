@@ -6,6 +6,9 @@ use App\Domain\Approval\Enums\ApproverType;
 use App\Domain\Approval\Models\ApprovalStepApprover;
 use App\Domain\Auth\Models\User;
 use App\Domain\Expense\Models\Expense;
+use App\Domain\Rights\Support\TenantScopedRoles;
+use App\Domain\Tenant\Enums\OrgUnitRole;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +22,7 @@ class ApprovalResolutionService
         return match ($stepApprover->approver_type) {
             ApproverType::USER              => $this->resolveUserApprover($stepApprover),
             ApproverType::UNIT_ROLE         => $this->resolveUnitRoleApprover($stepApprover, $expense),
-            ApproverType::SYSTEM_PERMISSION => $this->resolveSystemPermissionApprover($stepApprover),
+            ApproverType::SYSTEM_PERMISSION => $this->resolveSystemPermissionApprover($stepApprover, $expense),
             default                         => new Collection(),
         };
     }
@@ -109,8 +112,14 @@ class ApprovalResolutionService
 
     /**
      * Resolve system permission approvers.
+     *
+     * Must be scoped to the expense's own tenant: Spatie's teams feature
+     * gives model_has_permissions/model_has_roles a tenant_id column, but
+     * nothing in the request lifecycle calls setPermissionsTeamId(), so a
+     * plain whereHas('permissions', ...) here would match users across
+     * every tenant in the system holding that permission name anywhere.
      */
-    private function resolveSystemPermissionApprover(ApprovalStepApprover $stepApprover): Collection
+    private function resolveSystemPermissionApprover(ApprovalStepApprover $stepApprover, Expense $expense): Collection
     {
         if (!$stepApprover->approver_value) {
             Log::warning('System permission approver configuration missing permission', [
@@ -120,40 +129,28 @@ class ApprovalResolutionService
             return new Collection();
         }
 
-        // Find all users with the specified system permission
-        // This assumes a permission system exists - adjust based on actual implementation
-        return User::whereHas('permissions', function ($query) use ($stepApprover) {
-            $query->where('name', $stepApprover->approver_value);
-        })->get();
+        $userIds = TenantScopedRoles::userIdsWithPermission($stepApprover->approver_value, $expense->tenant_id);
+
+        return User::whereIn('id', $userIds)->get();
     }
 
     /**
      * Get user's primary organizational unit.
      */
-    private function getUserPrimaryUnit($user)
+    private function getUserPrimaryUnit(User $user): ?OrganizationUnit
     {
-        // This method should return the user's primary organizational unit
-        // Implementation depends on the actual organizational structure
-
-        // Check if user has organizational unit memberships
-        if (!method_exists($user, 'organizationUnitMemberships')) {
-            return null;
-        }
-
-        // Get the primary membership (assuming there's a way to identify primary)
-        $primaryMembership = $user->organizationUnitMemberships()
-            ->where('is_primary', true)
+        $primaryMembership = $user->orgUnitUsers()
+            // @phpstan-ignore-next-line active()/primary() come from OrgUnitUserBuilder (OrgUnitUser::newEloquentBuilder()), not visible to PHPStan on the HasMany return type
+            ->active()
+            ->primary()
             ->first()
         ;
 
-        if (!$primaryMembership) {
-            // Fallback: get the first active membership
-            $primaryMembership = $user->organizationUnitMemberships()
-                ->whereNull('valid_until')
-                ->orWhere('valid_until', '>', now())
-                ->first()
-            ;
-        }
+        $primaryMembership ??= $user->orgUnitUsers()
+            // @phpstan-ignore-next-line same as above
+            ->active()
+            ->first()
+        ;
 
         return $primaryMembership?->organizationUnit;
     }
@@ -187,10 +184,12 @@ class ApprovalResolutionService
     /**
      * Get users with specific role in organizational unit.
      */
-    private function getUsersWithRoleInUnit($unit, string $role): Collection
+    private function getUsersWithRoleInUnit(OrganizationUnit $unit, string $role): Collection
     {
-        if (!method_exists($unit, 'memberships')) {
-            Log::warning('Organizational unit does not have memberships relationship', [
+        $orgUnitRole = OrgUnitRole::tryFrom($role);
+
+        if (!$orgUnitRole) {
+            Log::warning('Unknown organization unit role for approver resolution', [
                 'unit_id' => $unit->id,
                 'role'    => $role,
             ]);
@@ -198,21 +197,16 @@ class ApprovalResolutionService
             return new Collection();
         }
 
-        // Get active memberships with the specified role
-        $memberships = $unit->memberships()
-            ->where('role', $role)
-            ->where(function ($query) {
-                $query->whereNull('valid_until')
-                    ->orWhere('valid_until', '>', now())
-                ;
-            })
+        return $unit->orgUnitUsers()
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder (OrgUnitUser::newEloquentBuilder()), not visible to PHPStan on the HasMany return type
+            ->active()
+            ->where('role', $orgUnitRole)
             ->with('user')
             ->get()
+            ->pluck('user')
+            ->filter()
+            ->values()
         ;
-
-        return $memberships->map(function ($membership) {
-            return $membership->user;
-        })->filter();
     }
 
     /**

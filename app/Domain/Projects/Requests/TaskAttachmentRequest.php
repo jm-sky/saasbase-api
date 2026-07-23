@@ -2,10 +2,13 @@
 
 namespace App\Domain\Projects\Requests;
 
+use App\Domain\Common\Traits\HasAttachmentMimeWhitelist;
 use App\Http\Requests\BaseFormRequest;
 
 class TaskAttachmentRequest extends BaseFormRequest
 {
+    use HasAttachmentMimeWhitelist;
+
     public function authorize(): bool
     {
         return true; // Add authorization logic if needed
@@ -16,7 +19,7 @@ class TaskAttachmentRequest extends BaseFormRequest
         $maxSize = config('domains.tasks.attachments.max_size', 10240); // in kilobytes
 
         return [
-            'file' => ['required', 'file', 'max:' . $maxSize],
+            'file' => ['required', 'file', 'max:' . $maxSize, 'mimetypes:' . implode(',', $this->allowedAttachmentMimes())],
         ];
     }
 }

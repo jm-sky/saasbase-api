@@ -20,7 +20,7 @@ class StoreEventRequest extends BaseFormRequest
             'title'                         => ['required', 'string', 'max:255'],
             'description'                   => ['nullable', 'string'],
             'startAt'                       => ['required', 'date'],
-            'endAt'                         => ['required', 'date', 'after:start_at'],
+            'endAt'                         => ['required', 'date', 'after:startAt'],
             'isAllDay'                      => ['boolean'],
             'location'                      => ['nullable', 'string', 'max:255'],
             'color'                         => ['nullable', 'string', 'max:50'],
@@ -36,7 +36,7 @@ class StoreEventRequest extends BaseFormRequest
             'relatedId'                     => ['nullable', 'ulid'],
             'attendees'                     => ['array'],
             'attendees.*.attendeeType'      => ['required', 'string'],
-            'attendees.*.attendeeId'        => ['required', 'ulid'],
+            'attendees.*.attendeeId'        => ['required', 'ulid', 'exists:users,id'],
             'attendees.*.responseStatus'    => ['required', 'string'],
             'attendees.*.customNote'        => ['nullable', 'string'],
         ];

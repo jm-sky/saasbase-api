@@ -19,12 +19,15 @@ use App\Domain\Expense\Resources\ExpenseResource;
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use App\Domain\Export\Exports\ExpensesExport;
 use App\Domain\Export\Services\ExportService;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 
@@ -135,6 +138,8 @@ class ExpenseController extends Controller
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -145,6 +150,23 @@ class ExpenseController extends Controller
             ExpensesExport::class,
             $config,
             'expenses.xlsx'
+        );
+    }
+
+    /**
+     * Bulk-exporting every expense (amounts, approval history) is
+     * destructive/broad enough to require Owner/Admin, unlike everyday
+     * CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var \App\Domain\Auth\Models\User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 

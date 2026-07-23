@@ -38,7 +38,7 @@ class InvoiceTemplatePolicy
     public function update(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
         return $user->hasPermissionTo('invoice_templates.manage')
-               && $this->belongsToUserTenant($user, $invoiceTemplate);
+               && $this->ownedByUserTenant($user, $invoiceTemplate);
     }
 
     /**
@@ -47,7 +47,7 @@ class InvoiceTemplatePolicy
     public function delete(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
         return $user->hasPermissionTo('invoice_templates.manage')
-               && $this->belongsToUserTenant($user, $invoiceTemplate);
+               && $this->ownedByUserTenant($user, $invoiceTemplate);
     }
 
     /**
@@ -56,7 +56,7 @@ class InvoiceTemplatePolicy
     public function restore(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
         return $user->hasPermissionTo('invoice_templates.manage')
-               && $this->belongsToUserTenant($user, $invoiceTemplate);
+               && $this->ownedByUserTenant($user, $invoiceTemplate);
     }
 
     /**
@@ -65,7 +65,7 @@ class InvoiceTemplatePolicy
     public function forceDelete(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
         return $user->hasPermissionTo('invoice_templates.manage')
-               && $this->belongsToUserTenant($user, $invoiceTemplate);
+               && $this->ownedByUserTenant($user, $invoiceTemplate);
     }
 
     /**
@@ -74,7 +74,7 @@ class InvoiceTemplatePolicy
     public function setDefault(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
         return $user->hasPermissionTo('invoice_templates.manage')
-               && $this->belongsToUserTenant($user, $invoiceTemplate);
+               && $this->ownedByUserTenant($user, $invoiceTemplate);
     }
 
     /**
@@ -94,10 +94,24 @@ class InvoiceTemplatePolicy
     }
 
     /**
-     * Check if template belongs to user's tenant.
+     * Check if template belongs to user's tenant, or is a global/system
+     * template (read/use-only — see ownedByUserTenant() for mutations).
      */
     private function belongsToUserTenant(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
         return null === $invoiceTemplate->tenant_id || $user->tenant_id === $invoiceTemplate->tenant_id;
+    }
+
+    /**
+     * Global templates (tenant_id === null) are shared system defaults used
+     * as a fallback by every tenant that doesn't have its own. They must
+     * never be mutated (edited/deleted/set-default) by a regular tenant
+     * user just because they hold invoice_templates.manage in their own
+     * tenant — that would let one tenant's Manager break PDF generation
+     * for every other tenant relying on the fallback.
+     */
+    private function ownedByUserTenant(User $user, InvoiceTemplate $invoiceTemplate): bool
+    {
+        return null !== $invoiceTemplate->tenant_id && $user->tenant_id === $invoiceTemplate->tenant_id;
     }
 }

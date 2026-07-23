@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Controllers;
 
 use App\Domain\Auth\JwtHelper;
+use App\Domain\Auth\Models\OAuthAccount;
 use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Traits\RespondsWithToken;
 use App\Http\Controllers\Controller;
@@ -25,17 +26,46 @@ class OAuthController extends Controller
         // @phpstan-ignore-next-line
         $socialUser = Socialite::driver($provider)->stateless()->user();
 
-        /** @var User $user */
-        $user = User::firstOrCreate(
-            ['email' => $socialUser->getEmail()],
-            [
-                'first_name'        => $this->extractFirstName($socialUser->getName(), $socialUser->getEmail()),
+        $providerUserId = $socialUser->getId();
+        $email          = $socialUser->getEmail();
+
+        $oauthAccount = OAuthAccount::where('provider', $provider)
+            ->where('provider_user_id', $providerUserId)
+            ->first()
+        ;
+
+        if ($oauthAccount) {
+            /** @var User $user */
+            $user = $oauthAccount->user;
+        } else {
+            // An account with this email may already exist from local
+            // registration or another OAuth provider. Logging in as it here
+            // without any proof of ownership beyond "the OAuth provider says
+            // so" would let anyone who controls that address on this
+            // provider take over a pre-existing account. Require a fresh
+            // identity to link instead of silently attaching to one.
+            if ($email && User::where('email', $email)->exists()) {
+                $url = config('app.frontend_url') . '/oauth/callback?error=account_exists';
+
+                return response()->redirectTo($url);
+            }
+
+            /** @var User $user */
+            $user = User::create([
+                'first_name'        => $this->extractFirstName($socialUser->getName(), $email),
                 'last_name'         => $this->extractLastName($socialUser->getName()),
-                'email'             => $socialUser->getEmail(),
+                'email'             => $email,
                 'email_verified_at' => now(),
                 'password'          => bcrypt(Str::random(40)),
-            ]
-        );
+            ]);
+
+            OAuthAccount::create([
+                'user_id'          => $user->id,
+                'provider'         => $provider,
+                'provider_user_id' => $providerUserId,
+                'email'            => $email,
+            ]);
+        }
 
         $token = JwtHelper::createTokenWithoutTenant($user);
 

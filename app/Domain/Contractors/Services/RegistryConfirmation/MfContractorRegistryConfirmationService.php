@@ -6,6 +6,7 @@ use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\DTOs\CommonCompanyLookupData;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Services\RegistryConfirmation\Contracts\RegistryConfirmationServiceInterface;
+use App\Domain\Utils\Enums\RegistryConfirmationStatus;
 use App\Domain\Utils\Enums\RegistryConfirmationType;
 use App\Domain\Utils\Models\RegistryConfirmation;
 use App\Services\MfLookup\DTOs\MfLookupResultDTO;
@@ -109,7 +110,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
             [
                 'payload'    => $payload,
                 'result'     => $result,
-                'success'    => $isConfirmed,
+                'status'     => $isConfirmed ? RegistryConfirmationStatus::Success : RegistryConfirmationStatus::Failed,
                 'checked_at' => now(),
             ]
         );
@@ -167,7 +168,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
             [
                 'payload'    => $payload,
                 'result'     => $result,
-                'success'    => $isConfirmed,
+                'status'     => $isConfirmed ? RegistryConfirmationStatus::Success : RegistryConfirmationStatus::Failed,
                 'checked_at' => now(),
             ]
         );
