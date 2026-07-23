@@ -11,7 +11,7 @@ use App\Domain\Contractors\Controllers\ContractorLogoController;
 use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->group(function () {
     Route::get('contractors/search', [ContractorController::class, 'search'])->name('contractors.search');
     Route::get('contractors/lookup', [ContractorController::class, 'lookup'])->name('contractors.lookup');
     Route::get('contractors/export', [ContractorController::class, 'export']);

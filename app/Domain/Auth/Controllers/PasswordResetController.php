@@ -75,6 +75,10 @@ class PasswordResetController extends Controller
         $user = User::where('email', $request->email)->first();
         $user?->notify(new PasswordChangedNotification($user));
 
+        if ($user) {
+            activity('security')->causedBy($user)->withProperties(['ip' => $request->ip()])->event('password_change')->log('Password changed');
+        }
+
         return response()->json([
             'message' => __($status),
         ]);

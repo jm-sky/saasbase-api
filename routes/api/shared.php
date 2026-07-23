@@ -10,7 +10,7 @@ use App\Domain\Template\Controllers\InvoiceTemplateController;
 use App\Domain\Tenant\Controllers\PositionCategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api', 'is_active'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active'])->group(function () {
     Route::apiResource('vat-rates', VatRateController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('measurement-units', MeasurementUnitController::class)->only(['index', 'store', 'destroy']);
 

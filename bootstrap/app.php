@@ -36,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'is_in_tenant' => \App\Http\Middleware\IsInTenant::class,
             'is_admin' => \App\Http\Middleware\IsAdmin::class,
             'mfa' => \App\Http\Middleware\EnsureTwoFactorVerified::class,
+            'session.active' => \App\Http\Middleware\EnsureSessionNotRevoked::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {

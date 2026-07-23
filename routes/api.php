@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Broadcast::routes([
-    'middleware' => ['auth:api'],
+    'middleware' => ['auth:api', 'session.active'],
     'prefix'     => 'v1',
     'as'         => 'broadcast.',
 ]);
@@ -41,7 +41,7 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/user.php';
     require __DIR__ . '/api/utils.php';
 
-    Route::middleware(['auth:api', 'is_active', 'mfa'])->group(function () {
+    Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->group(function () {
         require __DIR__ . '/api/tenants.php';
         require __DIR__ . '/api/feeds.php';
         require __DIR__ . '/api/chat.php';

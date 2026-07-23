@@ -8,7 +8,7 @@ use App\Domain\Projects\Controllers\TaskController;
 use App\Domain\Projects\Controllers\TaskStatusController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->group(function () {
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('project-statuses', ProjectStatusController::class);
 

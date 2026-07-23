@@ -7,6 +7,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Auth\Models\UserSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -33,8 +34,13 @@ class UserSessionService
 
     public function getCurrentSession(): ?UserSession
     {
-        $user    = request()->user();
-        $tokenId = JWTAuth::getPayload()->get('jti');
+        $user = request()->user();
+
+        // Auth::payload() reads from the already-authenticated guard for this
+        // request; the raw JWTAuth facade instead requires something to have
+        // called parseToken()/getToken() on it first in the same request, or
+        // it throws "A token is required" — a distinct, easy-to-miss state.
+        $tokenId = Auth::payload()?->get('jti');
 
         if (!$tokenId) {
             return null;
@@ -65,6 +71,41 @@ class UserSessionService
         }
 
         $session->delete();
+    }
+
+    /**
+     * Revoke a specific session belonging to the given user. Enforcement
+     * happens in EnsureSessionNotRevoked, which rejects any request bearing
+     * the revoked session's token.
+     */
+    public function revokeById(User $user, string $sessionId): bool
+    {
+        /** @var UserSession|null $session */
+        $session = $user->sessions()->whereNull('revoked_at')->find($sessionId);
+
+        if (!$session) {
+            return false;
+        }
+
+        $session->revoked_at = now();
+        $session->save();
+
+        return true;
+    }
+
+    /**
+     * Revoke every active session for the user except the one currently
+     * making the request.
+     */
+    public function revokeAllExcept(User $user): int
+    {
+        $currentSession = $this->getCurrentSession();
+
+        return $user->sessions()
+            ->whereNull('revoked_at')
+            ->when($currentSession, fn ($query) => $query->where('id', '!=', $currentSession->id))
+            ->update(['revoked_at' => now()])
+        ;
     }
 
     private function extractDeviceName(?string $userAgent): string

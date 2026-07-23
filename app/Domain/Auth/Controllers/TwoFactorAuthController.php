@@ -46,6 +46,8 @@ class TwoFactorAuthController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        activity('security')->causedBy($user)->event('2fa_enabled')->log('Two factor authentication enabled');
+
         return response()->json([
             'message' => 'Two factor authentication has been enabled.',
         ]);
@@ -57,6 +59,8 @@ class TwoFactorAuthController extends Controller
         $user = $request->user();
 
         $this->twoFactorAuthService->disableTwoFactor($user);
+
+        activity('security')->causedBy($user)->event('2fa_disabled')->log('Two factor authentication disabled');
 
         return response()->json([
             'message' => 'Two factor authentication has been disabled.',

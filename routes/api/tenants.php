@@ -14,13 +14,13 @@ use App\Domain\Tenant\Controllers\TenantPublicProfileController;
 use App\Domain\Tenant\Controllers\TenantSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:api', 'session.active')->group(function () {
     Route::get('tenants/preview', [TenantController::class, 'indexPreview'])->name('tenants.preview');
     Route::apiResource('tenants', TenantController::class);
     Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
 });
 
-Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->group(function () {
     Route::controller(TenantLogoController::class)
         ->prefix('tenants/{tenant}/logo')
         ->name('tenants.logo.')

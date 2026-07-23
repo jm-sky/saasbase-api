@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ReCaptcha\Enums\ReCaptchaAction;
 use App\Services\ReCaptcha\ReCaptchaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,14 +59,22 @@ class AuthController extends Controller
 
         $userSessionService->createSession($user, $request, $token);
 
+        activity('security')->causedBy($user)->withProperties(['ip' => $request->ip()])->event('login')->log('User logged in');
+
         return $this->respondWithToken($token, $user, remember: $request->boolean('remember'));
     }
 
-    public function logout(UserSessionService $userSessionService): JsonResponse
+    public function logout(Request $request, UserSessionService $userSessionService): JsonResponse
     {
+        $user = Auth::user();
+
         JWTAuth::invalidate(JWTAuth::getToken());
 
         $userSessionService->revokeCurrentSession();
+
+        if ($user) {
+            activity('security')->causedBy($user)->withProperties(['ip' => $request->ip()])->event('logout')->log('User logged out');
+        }
 
         return response()->json(['message' => 'Logged out'])->withCookie(
             cookie()->forget('refresh_token')

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('tenant/invitations/{token}', [TenantInvitationController::class, 'show']);
 Route::get('application/invitations/{token}', [ApplicationInvitationController::class, 'show']);
 
-Route::middleware(['auth:api', 'mfa'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'mfa'])->group(function () {
     // Tenant invitations
     Route::post('tenants/invitations/{token}/accept', [TenantInvitationController::class, 'accept']);
     Route::post('tenants/invitations/{token}/reject', [TenantInvitationController::class, 'reject']);

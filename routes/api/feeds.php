@@ -4,7 +4,7 @@ use App\Domain\Feeds\Controllers\FeedCommentController;
 use App\Domain\Feeds\Controllers\FeedController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'session.active'])->group(function () {
     Route::get('/feeds', [FeedController::class, 'index']);
     Route::post('/feeds', [FeedController::class, 'store']);
     Route::get('/feeds/{feed}', [FeedController::class, 'show']);
