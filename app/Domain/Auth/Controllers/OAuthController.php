@@ -23,8 +23,19 @@ class OAuthController extends Controller
 
     public function callback(string $provider): RedirectResponse
     {
-        // @phpstan-ignore-next-line
-        $socialUser = Socialite::driver($provider)->stateless()->user();
+        try {
+            // @phpstan-ignore-next-line
+            $socialUser = Socialite::driver($provider)->stateless()->user();
+        } catch (\Throwable $e) {
+            // The provider-side token exchange can fail for reasons outside our
+            // control (code already used, expired, user denied consent, etc).
+            // Surface it to the frontend instead of a raw 500.
+            report($e);
+
+            $url = config('app.frontend_url') . '/oauth/callback?error=oauth_failed';
+
+            return response()->redirectTo($url);
+        }
 
         $providerUserId = $socialUser->getId();
         $email          = $socialUser->getEmail();
