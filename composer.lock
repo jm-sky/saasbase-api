@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42d2bf594c16edfeb826901e5d1f887b",
+    "content-hash": "4a145a6bb2f2ae27ac5a3d818dacfaf0",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2414,16 +2414,16 @@
         },
         {
             "name": "laravel/scout",
-            "version": "v10.25.0",
+            "version": "v11.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/scout.git",
-                "reference": "f28630dca44a63d80c15e596bedc5af42c8985d5"
+                "reference": "1f091e5352d3bbb9d33c0c26a604287e2a7d1f62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/scout/zipball/f28630dca44a63d80c15e596bedc5af42c8985d5",
-                "reference": "f28630dca44a63d80c15e596bedc5af42c8985d5",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/1f091e5352d3bbb9d33c0c26a604287e2a7d1f62",
+                "reference": "1f091e5352d3bbb9d33c0c26a604287e2a7d1f62",
                 "shasum": ""
             },
             "require": {
@@ -2462,7 +2462,7 @@
                     ]
                 },
                 "branch-alias": {
-                    "dev-master": "10.x-dev"
+                    "dev-master": "11.x-dev"
                 }
             },
             "autoload": {
@@ -2490,7 +2490,7 @@
                 "issues": "https://github.com/laravel/scout/issues",
                 "source": "https://github.com/laravel/scout"
             },
-            "time": "2026-03-10T16:16:46+00:00"
+            "time": "2026-07-21T14:35:45+00:00"
         },
         {
             "name": "laravel/sentinel",
