@@ -40,7 +40,7 @@
         "sentry/sentry-laravel": "^4.14",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.0",
-        "spatie/laravel-permission": "^6.18",
+        "spatie/laravel-permission": "^8.0",
         "spatie/laravel-query-builder": "^7.0",
         "stripe/stripe-php": "^17.3",
         "symfony/uid": "^7.3",
