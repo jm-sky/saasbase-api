@@ -22,7 +22,7 @@
         "laravel/scout": "^10.15",
         "laravel/socialite": "^5.20",
         "laravel/telescope": "^5.9",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0",
         "league/commonmark": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.0",
         "lorisleiva/laravel-actions": "^2.9",
@@ -33,7 +33,7 @@
         "opcodesio/log-viewer": "^3.17",
         "pragmarx/google2fa": "^8.0",
         "pusher/pusher-php-server": "^7.2",
-        "rap2hpoutre/laravel-log-viewer": "^2.5",
+        "rap2hpoutre/laravel-log-viewer": "^3.1",
         "saloonphp/laravel-plugin": "^4.0",
         "saloonphp/rate-limit-plugin": "^2.0",
         "saloonphp/saloon": "^4.0",
@@ -57,7 +57,7 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^12.0"
     },
     "autoload": {
         "psr-4": {
