@@ -13,9 +13,9 @@ class PdfEngineFactory
         $engine = $engine ?? config('pdf.default', 'mpdf');
 
         return match ($engine) {
-            'mpdf'      => new MpdfEngine(),
-            'puppeteer' => new PuppeteerEngine(),
-            default     => throw new \InvalidArgumentException("Unknown PDF engine: {$engine}"),
+            'mpdf' => new MpdfEngine,
+            'puppeteer' => new PuppeteerEngine,
+            default => throw new \InvalidArgumentException("Unknown PDF engine: {$engine}"),
         };
     }
 
@@ -23,7 +23,7 @@ class PdfEngineFactory
     {
         $pdfEngine = self::create($engine);
 
-        if (!empty($config)) {
+        if (! empty($config)) {
             $pdfEngine->setConfig($config);
         }
 

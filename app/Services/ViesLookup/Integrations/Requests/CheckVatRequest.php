@@ -11,8 +11,7 @@ class CheckVatRequest extends BaseViesRequest
     public function __construct(
         protected string $countryCode,
         protected string $vatNumber,
-    ) {
-    }
+    ) {}
 
     protected function defaultBody(): ?string
     {
@@ -32,15 +31,15 @@ class CheckVatRequest extends BaseViesRequest
     {
         $xml = $response->xml();
 
-        if (false === $xml) {
+        if ($xml === false) {
             throw new ViesLookupException('Invalid VIES XML response.');
         }
 
-        $isValid     = (string) ($xml->xpath('//urn:valid')[0] ?? 'false');
+        $isValid = (string) ($xml->xpath('//urn:valid')[0] ?? 'false');
         $faultString = (string) ($xml->xpath('//env:Fault/faultstring')[0] ?? 'Unknown error');
 
-        if ('true' !== $isValid) {
-            throw new ViesLookupException('VIES API error: ' . $faultString);
+        if ($isValid !== 'true') {
+            throw new ViesLookupException('VIES API error: '.$faultString);
         }
 
         return ViesLookupResultDTO::fromXml($xml);

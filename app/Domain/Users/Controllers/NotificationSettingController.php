@@ -34,14 +34,13 @@ class NotificationSettingController extends Controller
         $setting = $user->notificationSettings()
             ->updateOrCreate(
                 [
-                    'channel'     => $request->channel,
+                    'channel' => $request->channel,
                     'setting_key' => $request->settingKey,
                 ],
                 [
                     'enabled' => $request->enabled,
                 ]
-            )
-        ;
+            );
 
         return response()->json(new NotificationSettingResource($setting));
     }
@@ -55,14 +54,13 @@ class NotificationSettingController extends Controller
             return $user->notificationSettings()
                 ->updateOrCreate(
                     [
-                        'channel'     => $setting['channel'],
+                        'channel' => $setting['channel'],
                         'setting_key' => $setting['settingKey'],
                     ],
                     [
                         'enabled' => $setting['enabled'],
                     ]
-                )
-            ;
+                );
         });
 
         return response()->json(NotificationSettingResource::collection($settings));

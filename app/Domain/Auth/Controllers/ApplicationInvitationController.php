@@ -21,8 +21,7 @@ class ApplicationInvitationController extends Controller
     {
         $invitations = ApplicationInvitation::query()
             ->orderBy('created_at', 'desc')
-            ->get()
-        ;
+            ->get();
 
         return response()->json([
             'data' => $invitations,
@@ -46,14 +45,14 @@ class ApplicationInvitationController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $token     = Str::ulid()->toString();
+        $token = Str::ulid()->toString();
         $expiresAt = now()->addDays(self::TOKEN_EXPIRATION_DAYS);
 
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
-            'email'      => $request->input('email'),
-            'token'      => $token,
-            'status'     => 'pending',
+            'email' => $request->input('email'),
+            'token' => $token,
+            'status' => 'pending',
             'expires_at' => $expiresAt,
         ]);
 
@@ -61,7 +60,7 @@ class ApplicationInvitationController extends Controller
         $invitation->notify(new ApplicationInvitationNotification($invitation));
 
         return response()->json([
-            'data'    => $invitation,
+            'data' => $invitation,
             'message' => 'Invitation sent.',
         ], Response::HTTP_CREATED);
     }
@@ -71,7 +70,7 @@ class ApplicationInvitationController extends Controller
      */
     public function cancel(Request $request, ApplicationInvitation $invitation): JsonResponse
     {
-        abort_if('pending' !== $invitation->status, Response::HTTP_BAD_REQUEST, 'Only pending invitations can be canceled.');
+        abort_if($invitation->status !== 'pending', Response::HTTP_BAD_REQUEST, 'Only pending invitations can be canceled.');
 
         $invitation->update([
             'status' => 'canceled',
@@ -79,7 +78,7 @@ class ApplicationInvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation canceled.',
-            'data'    => $invitation,
+            'data' => $invitation,
         ]);
     }
 
@@ -88,7 +87,7 @@ class ApplicationInvitationController extends Controller
      */
     public function resend(Request $request, ApplicationInvitation $invitation): JsonResponse
     {
-        abort_if('pending' !== $invitation->status, Response::HTTP_BAD_REQUEST, 'Only pending invitations can be resent.');
+        abort_if($invitation->status !== 'pending', Response::HTTP_BAD_REQUEST, 'Only pending invitations can be resent.');
 
         // Update expiration date
         $invitation->update([
@@ -100,7 +99,7 @@ class ApplicationInvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation resent.',
-            'data'    => $invitation,
+            'data' => $invitation,
         ]);
     }
 
@@ -109,18 +108,18 @@ class ApplicationInvitationController extends Controller
      */
     public function accept(Request $request, string $token): JsonResponse
     {
-        abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
+        abort_if(! $request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 
-        $user       = $request->user();
+        $user = $request->user();
         $invitation = $this->getPendingInvitation($token);
 
         $invitation->update([
-            'status'          => 'accepted',
-            'accepted_at'     => now(),
+            'status' => 'accepted',
+            'accepted_at' => now(),
             'invited_user_id' => $user->id,
         ]);
 
-        if ($invitation->email === $user->email && !$user->email_verified_at) {
+        if ($invitation->email === $user->email && ! $user->email_verified_at) {
             $user->update([
                 'email_verified_at' => now(),
             ]);
@@ -128,7 +127,7 @@ class ApplicationInvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation accepted.',
-            'data'    => $invitation,
+            'data' => $invitation,
         ]);
     }
 
@@ -137,13 +136,13 @@ class ApplicationInvitationController extends Controller
      */
     public function reject(Request $request, string $token): JsonResponse
     {
-        abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
+        abort_if(! $request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 
-        $user       = $request->user();
+        $user = $request->user();
         $invitation = $this->getPendingInvitation($token);
 
         $invitation->update([
-            'status'      => 'rejected',
+            'status' => 'rejected',
             'accepted_at' => now(),
         ]);
 
@@ -157,7 +156,6 @@ class ApplicationInvitationController extends Controller
         return ApplicationInvitation::where('token', $token)
             ->where('status', 'pending')
             ->where('expires_at', '>', now())
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
     }
 }

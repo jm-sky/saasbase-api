@@ -13,8 +13,7 @@ class SendInvoiceRequest extends BaseKSeFRequest
 
     public function __construct(
         protected SendInvoiceRequestDTO $invoiceData
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -27,20 +26,20 @@ class SendInvoiceRequest extends BaseKSeFRequest
             'invoiceHash' => [
                 'hashSHA' => [
                     'algorithm' => $this->invoiceData->invoiceHash->hashSHA->algorithm,
-                    'encoding'  => $this->invoiceData->invoiceHash->hashSHA->encoding,
-                    'value'     => $this->invoiceData->invoiceHash->hashSHA->value,
+                    'encoding' => $this->invoiceData->invoiceHash->hashSHA->encoding,
+                    'value' => $this->invoiceData->invoiceHash->hashSHA->value,
                 ],
                 'fileSize' => $this->invoiceData->invoiceHash->fileSize,
             ],
             'invoicePayload' => [
-                'type'                     => $this->invoiceData->invoicePayload->type,
-                'invoiceBody'              => $this->invoiceData->invoicePayload->invoiceBody,
-                'encryptedInvoiceBody'     => $this->invoiceData->invoicePayload->encryptedInvoiceBody,
-                'encryptedInvoiceHash'     => $this->invoiceData->invoicePayload->encryptedInvoiceHash ? [
+                'type' => $this->invoiceData->invoicePayload->type,
+                'invoiceBody' => $this->invoiceData->invoicePayload->invoiceBody,
+                'encryptedInvoiceBody' => $this->invoiceData->invoicePayload->encryptedInvoiceBody,
+                'encryptedInvoiceHash' => $this->invoiceData->invoicePayload->encryptedInvoiceHash ? [
                     'hashSHA' => [
                         'algorithm' => $this->invoiceData->invoicePayload->encryptedInvoiceHash->hashSHA->algorithm,
-                        'encoding'  => $this->invoiceData->invoicePayload->encryptedInvoiceHash->hashSHA->encoding,
-                        'value'     => $this->invoiceData->invoicePayload->encryptedInvoiceHash->hashSHA->value,
+                        'encoding' => $this->invoiceData->invoicePayload->encryptedInvoiceHash->hashSHA->encoding,
+                        'value' => $this->invoiceData->invoicePayload->encryptedInvoiceHash->hashSHA->value,
                     ],
                     'fileSize' => $this->invoiceData->invoicePayload->encryptedInvoiceHash->fileSize,
                 ] : null,

@@ -9,10 +9,10 @@ class StoreInvoiceShareTokenRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'invoiceId'            => ['required', 'ulid', 'exists:invoices,id'],
-            'expiresAt'            => ['required', 'date'],
+            'invoiceId' => ['required', 'ulid', 'exists:invoices,id'],
+            'expiresAt' => ['required', 'date'],
             'onlyForAuthenticated' => ['required', 'boolean'],
-            'maxUsage'             => ['required', 'integer', 'min:1'],
+            'maxUsage' => ['required', 'integer', 'min:1'],
         ];
     }
 }

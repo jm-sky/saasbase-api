@@ -13,7 +13,7 @@ class CreateContractorAddress
     {
         $haveAddresses = $contractor->addresses()->exists();
 
-        if (!$haveAddresses) {
+        if (! $haveAddresses) {
             $data->isDefault = true;
         }
 

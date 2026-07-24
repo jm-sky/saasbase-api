@@ -4,43 +4,43 @@ namespace App\Domain\Subscription\Enums;
 
 enum SubscriptionInvoiceStatus: string
 {
-    case DRAFT         = 'draft';
-    case OPEN          = 'open';
-    case PAID          = 'paid';
-    case VOID          = 'void';
+    case DRAFT = 'draft';
+    case OPEN = 'open';
+    case PAID = 'paid';
+    case VOID = 'void';
     case UNCOLLECTIBLE = 'uncollectible';
-    case FAILED        = 'failed';
+    case FAILED = 'failed';
 
     public function label(): string
     {
         return match ($this) {
-            self::DRAFT         => 'Draft',
-            self::OPEN          => 'Open',
-            self::PAID          => 'Paid',
-            self::VOID          => 'Void',
+            self::DRAFT => 'Draft',
+            self::OPEN => 'Open',
+            self::PAID => 'Paid',
+            self::VOID => 'Void',
             self::UNCOLLECTIBLE => 'Uncollectible',
-            self::FAILED        => 'Failed',
+            self::FAILED => 'Failed',
         };
     }
 
     public function isPaid(): bool
     {
-        return self::PAID === $this;
+        return $this === self::PAID;
     }
 
     public function isOpen(): bool
     {
-        return self::OPEN === $this;
+        return $this === self::OPEN;
     }
 
     public function isVoid(): bool
     {
-        return self::VOID === $this;
+        return $this === self::VOID;
     }
 
     public function isFailed(): bool
     {
-        return self::FAILED === $this;
+        return $this === self::FAILED;
     }
 
     public function needsAttention(): bool

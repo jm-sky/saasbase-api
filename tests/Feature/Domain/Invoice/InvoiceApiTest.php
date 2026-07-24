@@ -34,7 +34,7 @@ class InvoiceApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->user = $this->authenticateUser($this->tenant);
 
         Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () {
             $this->numberingTemplate = NumberingTemplate::factory()->create([
@@ -43,43 +43,42 @@ class InvoiceApiTest extends TestCase
         });
     }
 
-    public function testCanShowInvoice(): void
+    public function test_can_show_invoice(): void
     {
         $invoice = Tenant::bypassTenant($this->tenant->id, function () {
             return Invoice::factory()->create([
-                'tenant_id'             => $this->tenant->id,
+                'tenant_id' => $this->tenant->id,
                 'numbering_template_id' => $this->numberingTemplate->id,
             ]);
         });
-        $response = $this->getJson($this->baseUrl . '/' . $invoice->id);
+        $response = $this->getJson($this->baseUrl.'/'.$invoice->id);
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    'id'       => $invoice->id,
+                    'id' => $invoice->id,
                     'tenantId' => $this->tenant->id,
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanDeleteInvoice(): void
+    public function test_can_delete_invoice(): void
     {
         $invoice = Tenant::bypassTenant($this->tenant->id, function () {
             return Invoice::factory()->create([
-                'tenant_id'             => $this->tenant->id,
+                'tenant_id' => $this->tenant->id,
                 'numbering_template_id' => $this->numberingTemplate->id,
             ]);
         });
-        $response = $this->deleteJson($this->baseUrl . '/' . $invoice->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$invoice->id);
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertSoftDeleted('invoices', ['id' => $invoice->id]);
     }
 
-    public function testReturns404ForNonexistentInvoice(): void
+    public function test_returns404_for_nonexistent_invoice(): void
     {
-        $response = $this->getJson($this->baseUrl . '/nonexistent-id');
+        $response = $this->getJson($this->baseUrl.'/nonexistent-id');
         $response->assertStatus(Response::HTTP_NOT_FOUND);
-        $response = $this->deleteJson($this->baseUrl . '/nonexistent-id');
+        $response = $this->deleteJson($this->baseUrl.'/nonexistent-id');
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

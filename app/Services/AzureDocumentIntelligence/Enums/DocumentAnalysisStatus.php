@@ -8,9 +8,9 @@ namespace App\Services\AzureDocumentIntelligence\Enums;
 enum DocumentAnalysisStatus: string implements \JsonSerializable
 {
     case NOT_STARTED = 'notStarted';
-    case RUNNING     = 'running';
-    case SUCCEEDED   = 'succeeded';
-    case FAILED      = 'failed';
+    case RUNNING = 'running';
+    case SUCCEEDED = 'succeeded';
+    case FAILED = 'failed';
 
     public function toArray(): array
     {

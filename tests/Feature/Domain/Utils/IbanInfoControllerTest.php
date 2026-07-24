@@ -31,20 +31,20 @@ class IbanInfoControllerTest extends TestCase
         Cache::flush();
     }
 
-    public function testSuccessfulLookupReturnsEnrichedData(): void
+    public function test_successful_lookup_returns_enriched_data(): void
     {
-        $iban        = 'DE89370400440532013000';
+        $iban = 'DE89370400440532013000';
         $apiResponse = [
-            'result'      => 200,
-            'message'     => 'OK',
+            'result' => 200,
+            'message' => 'OK',
             'validations' => [],
             'expremental' => 0,
-            'data'        => [
-                'country_code'  => 'DE',
+            'data' => [
+                'country_code' => 'DE',
                 'currency_code' => 'EUR',
-                'bank'          => [
+                'bank' => [
                     'bank_name' => 'Deutsche Bundesbank',
-                    'bic'       => 'MARKDEFF',
+                    'bic' => 'MARKDEFF',
                 ],
             ],
         ];
@@ -58,18 +58,17 @@ class IbanInfoControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    'iban'             => 'DE89370400440532013000',
-                    'bankName'         => 'Deutsche Bundesbank',
-                    'swift'            => 'MARKDEFF',
-                    'currency'         => 'EUR',
+                    'iban' => 'DE89370400440532013000',
+                    'bankName' => 'Deutsche Bundesbank',
+                    'swift' => 'MARKDEFF',
+                    'currency' => 'EUR',
                     'validationStatus' => 'UNKNOWN',
-                    'cacheStatus'      => 'UNKNOWN',
+                    'cacheStatus' => 'UNKNOWN',
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testLookupForUnknownIbanReturnsNotFound(): void
+    public function test_lookup_for_unknown_iban_returns_not_found(): void
     {
         $iban = 'XX123456789';
 
@@ -82,18 +81,16 @@ class IbanInfoControllerTest extends TestCase
         $response->assertOk()
             ->assertJson([
                 'error' => 'Bank not found for the provided IBAN',
-            ])
-        ;
+            ]);
     }
 
-    public function testLookupWithInvalidIbanFormatReturnsValidationError(): void
+    public function test_lookup_with_invalid_iban_format_returns_validation_error(): void
     {
         $iban = 'INVALID_IBAN';
 
         $response = $this->getJson("{$this->baseUrl}?iban={$iban}");
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('iban')
-        ;
+            ->assertJsonValidationErrors('iban');
     }
 }

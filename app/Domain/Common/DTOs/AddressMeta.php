@@ -10,12 +10,12 @@ class AddressMeta implements Castable
     public function __construct(
         public bool $isVerified = false,
         public ?string $verificationDate = null,
-    ) {
-    }
+    ) {}
 
     public static function castUsing(array $arguments): CastsAttributes
     {
-        return new class() implements CastsAttributes {
+        return new class implements CastsAttributes
+        {
             public function get($model, string $key, $value, array $attributes): ?AddressMeta
             {
                 if (is_null($value)) {
@@ -36,12 +36,12 @@ class AddressMeta implements Castable
                     return null;
                 }
 
-                if (!$value instanceof AddressMeta) {
+                if (! $value instanceof AddressMeta) {
                     throw new \InvalidArgumentException('The given value is not an AddressMeta instance.');
                 }
 
                 return json_encode([
-                    'isVerified'       => $value->isVerified,
+                    'isVerified' => $value->isVerified,
                     'verificationDate' => $value->verificationDate,
                 ]);
             }

@@ -53,7 +53,7 @@ class KSeFUsageExample
     public function searchInvoicesByDateExample(): void
     {
         $dateFrom = Carbon::now()->subDays(30);
-        $dateTo   = Carbon::now();
+        $dateTo = Carbon::now();
 
         $response = $this->ksefService->searchInvoicesByDateRange(
             dateFrom: $dateFrom,

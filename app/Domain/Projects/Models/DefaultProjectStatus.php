@@ -8,9 +8,9 @@ use App\Domain\Common\Models\BaseModel;
  * @property string $id
  * @property string $name
  * @property string $color
- * @property int    $sort_order
+ * @property int $sort_order
  * @property string $category
- * @property bool   $is_default
+ * @property bool $is_default
  */
 class DefaultProjectStatus extends BaseModel
 {

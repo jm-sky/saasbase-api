@@ -32,18 +32,17 @@ class OAuthController extends Controller
             // Surface it to the frontend instead of a raw 500.
             report($e);
 
-            $url = config('app.frontend_url') . '/oauth/callback?error=oauth_failed';
+            $url = config('app.frontend_url').'/oauth/callback?error=oauth_failed';
 
             return response()->redirectTo($url);
         }
 
         $providerUserId = $socialUser->getId();
-        $email          = $socialUser->getEmail();
+        $email = $socialUser->getEmail();
 
         $oauthAccount = OAuthAccount::where('provider', $provider)
             ->where('provider_user_id', $providerUserId)
-            ->first()
-        ;
+            ->first();
 
         if ($oauthAccount) {
             /** @var User $user */
@@ -56,31 +55,31 @@ class OAuthController extends Controller
             // provider take over a pre-existing account. Require a fresh
             // identity to link instead of silently attaching to one.
             if ($email && User::where('email', $email)->exists()) {
-                $url = config('app.frontend_url') . '/oauth/callback?error=account_exists';
+                $url = config('app.frontend_url').'/oauth/callback?error=account_exists';
 
                 return response()->redirectTo($url);
             }
 
             /** @var User $user */
             $user = User::create([
-                'first_name'        => $this->extractFirstName($socialUser->getName(), $email),
-                'last_name'         => $this->extractLastName($socialUser->getName()),
-                'email'             => $email,
+                'first_name' => $this->extractFirstName($socialUser->getName(), $email),
+                'last_name' => $this->extractLastName($socialUser->getName()),
+                'email' => $email,
                 'email_verified_at' => now(),
-                'password'          => bcrypt(Str::random(40)),
+                'password' => bcrypt(Str::random(40)),
             ]);
 
             OAuthAccount::create([
-                'user_id'          => $user->id,
-                'provider'         => $provider,
+                'user_id' => $user->id,
+                'provider' => $provider,
                 'provider_user_id' => $providerUserId,
-                'email'            => $email,
+                'email' => $email,
             ]);
         }
 
         $token = JwtHelper::createTokenWithoutTenant($user);
 
-        $url = config('app.frontend_url') . '/oauth/callback?jwtToken=' . $token;
+        $url = config('app.frontend_url').'/oauth/callback?jwtToken='.$token;
 
         return response()->redirectTo($url);
     }

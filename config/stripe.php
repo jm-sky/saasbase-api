@@ -11,7 +11,7 @@ return [
     | Stripe.js while the "secret" key accesses private API endpoints.
     |
     */
-    'key'    => env('STRIPE_KEY'),
+    'key' => env('STRIPE_KEY'),
     'secret' => env('STRIPE_SECRET'),
 
     /*

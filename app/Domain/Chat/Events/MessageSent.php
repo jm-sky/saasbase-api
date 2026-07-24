@@ -14,13 +14,11 @@ class MessageSent implements ShouldBroadcastNow
     use InteractsWithSockets;
     use SerializesModels;
 
-    public function __construct(public ChatMessage $message)
-    {
-    }
+    public function __construct(public ChatMessage $message) {}
 
     public function broadcastOn(): array
     {
-        return [new PrivateChannel('chat.room.' . $this->message->chat_room_id)];
+        return [new PrivateChannel('chat.room.'.$this->message->chat_room_id)];
     }
 
     public function broadcastWith(): array

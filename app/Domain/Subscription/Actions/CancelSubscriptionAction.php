@@ -16,13 +16,12 @@ class CancelSubscriptionAction
 {
     public function __construct(
         protected StripeSubscriptionService $stripeSubscriptionService
-    ) {
-    }
+    ) {}
 
     /**
      * Cancel a subscription (immediate or at period end).
      *
-     * @param bool $atPeriodEnd Whether to cancel at the end of the current period
+     * @param  bool  $atPeriodEnd  Whether to cancel at the end of the current period
      *
      * @throws StripeException
      */
@@ -32,8 +31,7 @@ class CancelSubscriptionAction
             DB::transaction(function () use ($stripeSubscriptionId, $atPeriodEnd) {
                 // Find subscription
                 $subscription = Subscription::where('stripe_subscription_id', $stripeSubscriptionId)
-                    ->firstOrFail()
-                ;
+                    ->firstOrFail();
 
                 // Cancel subscription in Stripe and locally
                 $cancelledSubscription = $this->stripeSubscriptionService->cancelSubscription(
@@ -46,12 +44,12 @@ class CancelSubscriptionAction
             });
         } catch (\Exception $e) {
             Log::error('Failed to cancel subscription', [
-                'error'           => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'subscription_id' => $stripeSubscriptionId,
-                'at_period_end'   => $atPeriodEnd,
+                'at_period_end' => $atPeriodEnd,
             ]);
 
-            throw new StripeException(message: 'Failed to cancel subscription: ' . $e->getMessage(), previous: $e);
+            throw new StripeException(message: 'Failed to cancel subscription: '.$e->getMessage(), previous: $e);
         }
     }
 }

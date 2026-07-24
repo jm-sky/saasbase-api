@@ -31,28 +31,27 @@ class AuthController extends Controller
     public function __construct(
         private readonly RegisterUserAction $registerUserAction,
         private readonly ReCaptchaService $recaptchaService,
-    ) {
-    }
+    ) {}
 
     public function login(LoginRequest $request, UserSessionService $userSessionService): JsonResponse
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::LOGIN->value, 0.5)) {
+        if (! $this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::LOGIN->value, 0.5)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
         /** @var User $user */
-        $user  = Auth::user();
+        $user = Auth::user();
 
         if ($this->shouldChooseFirstTenant($user)) {
             /** @var Tenant $tenant */
             $tenant = $user->tenants()->first();
-            $token  = JwtHelper::createTokenWithTenant($user, $tenant->id);
+            $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
         } else {
             $token = JwtHelper::createTokenWithoutTenant($user);
         }
@@ -85,7 +84,7 @@ class AuthController extends Controller
     {
         $validated = $request->validated();
 
-        if (!$this->recaptchaService->verify($validated['recaptchaToken'], ReCaptchaAction::REGISTER->value, 0.6)) {
+        if (! $this->recaptchaService->verify($validated['recaptchaToken'], ReCaptchaAction::REGISTER->value, 0.6)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 
@@ -114,7 +113,7 @@ class AuthController extends Controller
         try {
             $refreshToken = request()->cookie('refresh_token');
 
-            if (!$refreshToken) {
+            if (! $refreshToken) {
                 throw new JWTException('Token not provided');
             }
 
@@ -124,12 +123,12 @@ class AuthController extends Controller
             // Authenticate the user using the refresh token
             $user = JWTAuth::authenticate();
 
-            if (!$user) {
+            if (! $user) {
                 throw new TokenInvalidException('User not found');
             }
 
             // Check if current token has tenant context
-            $payload  = JWTAuth::payload();
+            $payload = JWTAuth::payload();
             $tenantId = $payload->get('tid');
 
             // Generate new token with or without tenant context
@@ -156,6 +155,6 @@ class AuthController extends Controller
 
     protected function shouldChooseFirstTenant(User $user): bool
     {
-        return 1 === $user->tenants()->count();
+        return $user->tenants()->count() === 1;
     }
 }

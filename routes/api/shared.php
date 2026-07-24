@@ -24,14 +24,12 @@ Route::middleware(['auth:api', 'session.active', 'is_active'])->group(function (
     Route::post('numbering-templates/preview', [NumberingTemplateController::class, 'preview'])->name('numbering-templates.preview');
     Route::post('numbering-templates/{numbering_template}/set-default', [NumberingTemplateController::class, 'setDefault']);
     Route::apiResource('numbering-templates', NumberingTemplateController::class)
-        ->only(['index', 'store', 'update', 'destroy'])
-    ;
+        ->only(['index', 'store', 'update', 'destroy']);
 
     Route::apiResource('payment-methods', PaymentMethodController::class)->only(['index', 'store', 'destroy']);
 
     Route::post('invoice-templates/preview', [InvoiceTemplateController::class, 'preview'])->name('invoice-templates.preview');
     Route::apiResource('invoice-templates', InvoiceTemplateController::class);
     Route::apiResource('position-categories', PositionCategoryController::class)
-        ->only(['index', 'store', 'update', 'destroy'])
-    ;
+        ->only(['index', 'store', 'update', 'destroy']);
 });

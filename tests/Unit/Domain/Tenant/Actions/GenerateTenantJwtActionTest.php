@@ -29,18 +29,18 @@ class GenerateTenantJwtActionTest extends TestCase
         $this->app['config']->set('jwt.ttl', 60);
     }
 
-    public function testGeneratesJwtWithTenantContext(): void
+    public function test_generates_jwt_with_tenant_context(): void
     {
         // Arrange
-        $user   = User::factory()->create();
+        $user = User::factory()->create();
         $tenant = Tenant::factory()->create();
-        $role   = RoleName::Admin->value;
+        $role = RoleName::Admin->value;
 
         // Associate user with tenant
         $user->tenants()->attach($tenant, ['role' => $role]);
 
         // Act
-        $token   = GenerateTenantJwtAction::run($user, $tenant);
+        $token = GenerateTenantJwtAction::run($user, $tenant);
         $payload = JWTAuth::setToken($token)->getPayload();
 
         // Assert

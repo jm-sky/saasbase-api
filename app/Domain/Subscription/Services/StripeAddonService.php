@@ -7,6 +7,7 @@ use App\Domain\Subscription\Models\AddonPackage;
 use App\Domain\Subscription\Models\AddonPurchase;
 use App\Domain\Subscription\Models\BillingCustomer;
 use Carbon\Carbon;
+use Stripe\InvoiceItem;
 
 /**
  * Service for managing Stripe addon purchases and local AddonPurchase records.
@@ -16,7 +17,7 @@ class StripeAddonService extends StripeService
     /**
      * Purchase an addon for a customer.
      *
-     * @param array $options Additional purchase options
+     * @param  array  $options  Additional purchase options
      *
      * @throws StripeException
      */
@@ -28,11 +29,11 @@ class StripeAddonService extends StripeService
         return $this->handleStripeException(function () use ($billingCustomer, $addon, $options) {
             // Create invoice item in Stripe
             $invoiceItem = $this->stripe->invoiceItems->create([
-                'customer'     => $billingCustomer->stripe_customer_id,
-                'price'        => $addon->stripe_price_id,
-                'quantity'     => $options['quantity'] ?? 1,
-                'description'  => $addon->name,
-                'metadata'     => [
+                'customer' => $billingCustomer->stripe_customer_id,
+                'price' => $addon->stripe_price_id,
+                'quantity' => $options['quantity'] ?? 1,
+                'description' => $addon->name,
+                'metadata' => [
                     'addon_id' => $addon->id,
                 ],
             ]);
@@ -40,9 +41,9 @@ class StripeAddonService extends StripeService
             // Create local addon purchase record
             $purchase = new AddonPurchase([
                 'stripe_invoice_item_id' => $invoiceItem->id,
-                'quantity'               => $options['quantity'] ?? 1,
-                'purchased_at'           => Carbon::now(),
-                'expires_at'             => $this->calculateExpiryDate($addon, $options),
+                'quantity' => $options['quantity'] ?? 1,
+                'purchased_at' => Carbon::now(),
+                'expires_at' => $this->calculateExpiryDate($addon, $options),
             ]);
 
             $purchase->addonPackage()->associate($addon);
@@ -60,7 +61,7 @@ class StripeAddonService extends StripeService
     /**
      * Update an existing addon purchase.
      *
-     * @param array $options Update options
+     * @param  array  $options  Update options
      *
      * @throws StripeException
      */
@@ -74,7 +75,7 @@ class StripeAddonService extends StripeService
 
             // Update local purchase record
             $purchase->update([
-                'quantity'   => $options['quantity'] ?? $purchase->quantity,
+                'quantity' => $options['quantity'] ?? $purchase->quantity,
                 'expires_at' => $this->calculateExpiryDate($purchase->addonPackage, $options),
             ]);
 
@@ -109,7 +110,7 @@ class StripeAddonService extends StripeService
     {
         return $this->handleStripeException(function () use ($stripeInvoiceItemId) {
             // Fetch invoice item from Stripe
-            /** @var \Stripe\InvoiceItem $invoiceItem */
+            /** @var InvoiceItem $invoiceItem */
             $invoiceItem = $this->stripe->invoiceItems->retrieve($stripeInvoiceItemId);
 
             // Find or create local purchase record
@@ -117,17 +118,17 @@ class StripeAddonService extends StripeService
                 'stripe_invoice_item_id' => $invoiceItem->id,
             ]);
 
-            if (!$purchase->exists) {
+            if (! $purchase->exists) {
                 // If this is a new purchase, we need the customer and addon
                 $billingCustomer = BillingCustomer::where('stripe_customer_id', $invoiceItem->customer)->first();
 
-                if (!$billingCustomer) {
+                if (! $billingCustomer) {
                     throw new StripeException('Cannot sync addon purchase: customer not found');
                 }
 
                 $addon = AddonPackage::where('stripe_price_id', $invoiceItem['price']['id'])->first();
 
-                if (!$addon) {
+                if (! $addon) {
                     throw new StripeException('Cannot sync addon purchase: addon package not found');
                 }
 
@@ -137,9 +138,9 @@ class StripeAddonService extends StripeService
 
             // Update purchase data
             $purchase->fill([
-                'quantity'     => $invoiceItem->quantity,
+                'quantity' => $invoiceItem->quantity,
                 'purchased_at' => Carbon::createFromTimestamp($invoiceItem->date),
-                'expires_at'   => $this->calculateExpiryDate($purchase->addonPackage, [
+                'expires_at' => $this->calculateExpiryDate($purchase->addonPackage, [
                     'purchased_at' => $invoiceItem->date,
                 ]),
             ]);
@@ -159,7 +160,7 @@ class StripeAddonService extends StripeService
     {
         $this->handleStripeException(function () use ($billingCustomer) {
             $this->stripe->invoices->create([
-                'customer'     => $billingCustomer->stripe_customer_id,
+                'customer' => $billingCustomer->stripe_customer_id,
                 'auto_advance' => true,
             ]);
         });
@@ -170,7 +171,7 @@ class StripeAddonService extends StripeService
      */
     protected function calculateExpiryDate(AddonPackage $addon, array $options): ?Carbon
     {
-        if ('one-time' === $addon->type) {
+        if ($addon->type === 'one-time') {
             return null;
         }
 

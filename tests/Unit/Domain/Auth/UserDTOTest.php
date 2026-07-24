@@ -17,14 +17,14 @@ class UserDTOTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCanCreateUserDtoFromModel(): void
+    public function test_can_create_user_dto_from_model(): void
     {
         $user = User::factory()->create([
-            'first_name'  => 'John',
-            'last_name'   => 'Doe',
-            'email'       => 'test@example.com',
-            'phone'       => '+1234567890',
-            'is_admin'    => true,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'test@example.com',
+            'phone' => '+1234567890',
+            'is_admin' => true,
         ]);
 
         $dto = UserDTO::fromModel($user);
@@ -40,9 +40,9 @@ class UserDTOTest extends TestCase
         $this->assertEquals($user->deleted_at?->toIso8601String(), $dto->deletedAt?->toIso8601String());
     }
 
-    public function testCanConvertUserDtoToArray(): void
+    public function test_can_convert_user_dto_to_array(): void
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
         $isoNow = $now->toIso8601String();
 
         $dto = new UserDTO(

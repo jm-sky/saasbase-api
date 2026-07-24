@@ -2,6 +2,4 @@
 
 namespace App\Domain\Common\Exceptions;
 
-class UnsupportedProcessableTypeException extends \Exception
-{
-}
+class UnsupportedProcessableTypeException extends \Exception {}

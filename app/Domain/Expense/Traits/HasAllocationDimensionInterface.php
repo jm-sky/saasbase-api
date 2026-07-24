@@ -76,7 +76,7 @@ trait HasAllocationDimensionInterface
 
         // Fall back to code + name format or just name
         if ($this->getCode() && $this->getName()) {
-            return $this->getCode() . ' - ' . $this->getName();
+            return $this->getCode().' - '.$this->getName();
         }
 
         return $this->getName() ?? $this->getId();
@@ -87,6 +87,6 @@ trait HasAllocationDimensionInterface
      */
     public function isGlobal(): bool
     {
-        return null === $this->getTenantId();
+        return $this->getTenantId() === null;
     }
 }

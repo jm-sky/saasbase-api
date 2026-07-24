@@ -17,7 +17,7 @@ abstract class BaseViesRequest extends Request implements HasBody
     {
         return [
             'Content-Type' => 'text/xml; charset=utf-8',
-            'SOAPAction'   => '',
+            'SOAPAction' => '',
         ];
     }
 

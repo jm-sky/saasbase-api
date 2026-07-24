@@ -8,6 +8,7 @@ use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Financial\Models\VatRate;
 use App\Domain\Products\Resources\VatRateResource;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -22,10 +23,10 @@ class VatRateController extends Controller
     public function __construct()
     {
         $this->modelClass = VatRate::class;
-        $this->filters    = [
+        $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('rate', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('rate', new AdvancedFilter),
         ];
         $this->sorts = [
             'name',
@@ -49,8 +50,7 @@ class VatRateController extends Controller
         $rates = $this->getIndexPaginator($request, query: $query);
 
         return VatRateResource::collection($rates['data'])
-            ->additional(['meta' => $rates['meta']])
-        ;
+            ->additional(['meta' => $rates['meta']]);
     }
 
     /**
@@ -70,7 +70,7 @@ class VatRateController extends Controller
     /**
      * Remove the specified VAT rate.
      */
-    public function destroy(VatRate $vatRate): \Illuminate\Http\JsonResponse
+    public function destroy(VatRate $vatRate): JsonResponse
     {
         $vatRate->delete();
 

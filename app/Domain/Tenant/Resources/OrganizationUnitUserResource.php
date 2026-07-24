@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin User
  *
- * @property string      $fullName
+ * @property string $fullName
  * @property OrgUnitUser $pivot
  */
 class OrganizationUnitUserResource extends JsonResource
@@ -23,12 +23,12 @@ class OrganizationUnitUserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'        => $this->id,
-            'name'      => $this->full_name,
-            'email'     => $this->email,
+            'id' => $this->id,
+            'name' => $this->full_name,
+            'email' => $this->email,
             'avatarUrl' => $this->getMediaSignedUrl('profile'),
-            'role'      => $this->pivot->role,
-            'position'  => $this->pivot->position?->name,
+            'role' => $this->pivot->role,
+            'position' => $this->pivot->position?->name,
         ];
     }
 }

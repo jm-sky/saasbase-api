@@ -25,12 +25,12 @@ class ProductAttachmentsController extends Controller
 
         return response()->json([
             'data' => $attachments->map(fn ($media) => [
-                'id'        => $media->id,
-                'name'      => $media->name,
+                'id' => $media->id,
+                'name' => $media->name,
                 'file_name' => $media->file_name,
                 'mime_type' => $media->mime_type,
-                'size'      => $media->size,
-                'url'       => route('products.attachments.show', ['product' => $product->id, 'media' => $media->id], absolute: false),
+                'size' => $media->size,
+                'url' => route('products.attachments.show', ['product' => $product->id, 'media' => $media->id], absolute: false),
             ]),
         ]);
     }
@@ -41,20 +41,19 @@ class ProductAttachmentsController extends Controller
     public function store(ProductAttachmentRequest $request, Product $product)
     {
         $media = $product->addMediaFromRequest('file')
-            ->toMediaCollection('attachments')
-        ;
+            ->toMediaCollection('attachments');
 
         $product->logModelActivity(ProductActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
-            'data'    => [
-                'id'        => $media->id,
-                'name'      => $media->name,
+            'data' => [
+                'id' => $media->id,
+                'name' => $media->name,
                 'file_name' => $media->file_name,
                 'mime_type' => $media->mime_type,
-                'size'      => $media->size,
-                'url'       => route('products.attachments.show', ['product' => $product->id, 'media' => $media->id], absolute: false),
+                'size' => $media->size,
+                'url' => route('products.attachments.show', ['product' => $product->id, 'media' => $media->id], absolute: false),
             ],
         ], HttpResponse::HTTP_CREATED);
     }
@@ -71,9 +70,9 @@ class ProductAttachmentsController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 
@@ -89,9 +88,9 @@ class ProductAttachmentsController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ]);
     }
 
@@ -107,9 +106,9 @@ class ProductAttachmentsController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 
@@ -122,20 +121,19 @@ class ProductAttachmentsController extends Controller
 
         $media->delete();
         $newMedia = $product->addMediaFromRequest('file')
-            ->toMediaCollection('attachments')
-        ;
+            ->toMediaCollection('attachments');
 
         $product->logModelActivity(ProductActivityType::AttachmentUpdated->value, $newMedia);
 
         return response()->json([
             'message' => 'Attachment updated successfully.',
-            'data'    => [
-                'id'        => $newMedia->id,
-                'name'      => $newMedia->name,
+            'data' => [
+                'id' => $newMedia->id,
+                'name' => $newMedia->name,
                 'file_name' => $newMedia->file_name,
                 'mime_type' => $newMedia->mime_type,
-                'size'      => $newMedia->size,
-                'url'       => route('products.attachments.show', ['product' => $product->id, 'media' => $newMedia->id], absolute: false),
+                'size' => $newMedia->size,
+                'url' => route('products.attachments.show', ['product' => $product->id, 'media' => $newMedia->id], absolute: false),
             ],
         ]);
     }
@@ -158,7 +156,7 @@ class ProductAttachmentsController extends Controller
      */
     protected function authorizeMedia(Product $product, Media $media): void
     {
-        if (Product::class !== $media->model_type || $media->model_id !== $product->id) {
+        if ($media->model_type !== Product::class || $media->model_id !== $product->id) {
             abort(HttpResponse::HTTP_NOT_FOUND, 'Attachment not found for this product.');
         }
     }

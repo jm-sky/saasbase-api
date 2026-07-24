@@ -13,7 +13,7 @@ class MakeDomainModel extends Command
 
     public function handle()
     {
-        $name   = Str::studly($this->argument('name'));
+        $name = Str::studly($this->argument('name'));
         $domain = Str::studly($this->argument('domain'));
 
         $this->generateModel($name, $domain);
@@ -268,7 +268,7 @@ PHP;
     protected function generateStoreRequest($name, $domain)
     {
         $class = "Store{$name}Request";
-        $path  = app_path("Domain/{$domain}/Requests/{$class}.php");
+        $path = app_path("Domain/{$domain}/Requests/{$class}.php");
 
         if (file_exists($path)) {
             $this->warn("⚠️  Request already exists: {$path}");
@@ -306,7 +306,7 @@ PHP;
     protected function generateUpdateRequest($name, $domain)
     {
         $class = "Update{$name}Request";
-        $path  = app_path("Domain/{$domain}/Requests/{$class}.php");
+        $path = app_path("Domain/{$domain}/Requests/{$class}.php");
 
         if (file_exists($path)) {
             $this->warn("⚠️  Request already exists: {$path}");
@@ -343,7 +343,7 @@ PHP;
     protected function generateSearchRequest($name, $domain)
     {
         $class = "Search{$name}Request";
-        $path  = app_path("Domain/{$domain}/Requests/{$class}.php");
+        $path = app_path("Domain/{$domain}/Requests/{$class}.php");
 
         if (file_exists($path)) {
             $this->warn("⚠️  Request already exists: {$path}");
@@ -405,7 +405,7 @@ PHP;
 
     protected function writeFile($path, $content)
     {
-        if (!is_dir(dirname($path))) {
+        if (! is_dir(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 

@@ -20,7 +20,7 @@ class ProductActivityLogController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Activity::class;
+        $this->modelClass = Activity::class;
         $this->defaultWith = ['causer', 'subject'];
 
         $this->filters = [
@@ -44,10 +44,9 @@ class ProductActivityLogController extends Controller
         $query = $this->getIndexQuery($request);
         $query->where('subject_type', Product::class)
             ->where('subject_id', $product->id)
-            ->where('tenant_id', $request->user()->tenant_id)
-        ;
+            ->where('tenant_id', $request->user()->tenant_id);
 
-        $result         = $this->getIndexPaginator($request, query: $query);
+        $result = $this->getIndexPaginator($request, query: $query);
         $result['data'] = ActivityLogDTO::collect($result['data']);
 
         return response()->json($result);

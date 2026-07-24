@@ -2,6 +2,4 @@
 
 namespace App\Services\Signatures\Exceptions;
 
-class UnsupportedSignatureTypeException extends \RuntimeException
-{
-}
+class UnsupportedSignatureTypeException extends \RuntimeException {}

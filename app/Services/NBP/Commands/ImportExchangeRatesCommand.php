@@ -38,7 +38,7 @@ class ImportExchangeRatesCommand extends Command
 
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('Import failed: ' . $e->getMessage());
+            $this->error('Import failed: '.$e->getMessage());
 
             return self::FAILURE;
         }
@@ -57,7 +57,7 @@ class ImportExchangeRatesCommand extends Command
         }
 
         $imported = 0;
-        $skipped  = 0;
+        $skipped = 0;
 
         CreateExchangeRatesFromImport::handle($rates, $force, $imported, $skipped);
 
@@ -66,7 +66,7 @@ class ImportExchangeRatesCommand extends Command
 
     protected function importRecentDays(NBPService $nbpService, int $days, NBPTableEnum $table, bool $force): void
     {
-        for ($i = 0; $i < $days; ++$i) {
+        for ($i = 0; $i < $days; $i++) {
             $date = Carbon::now()->subDays($i);
 
             // Skip weekends for NBP data
@@ -77,7 +77,7 @@ class ImportExchangeRatesCommand extends Command
             try {
                 $this->importForDate($nbpService, $date, $table, $force);
             } catch (\Exception $e) {
-                $this->warn("Failed to import for {$date->format('Y-m-d')}: " . $e->getMessage());
+                $this->warn("Failed to import for {$date->format('Y-m-d')}: ".$e->getMessage());
             }
         }
     }

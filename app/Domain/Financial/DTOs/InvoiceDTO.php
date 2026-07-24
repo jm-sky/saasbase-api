@@ -8,26 +8,26 @@ use App\Domain\Financial\Enums\InvoiceType;
 use App\Domain\Invoice\Models\Invoice;
 
 /**
- * @property string        $id
- * @property string        $tenantId
- * @property InvoiceType   $type
+ * @property string $id
+ * @property string $tenantId
+ * @property InvoiceType $type
  * @property InvoiceStatus $status
- * @property string        $number
- * @property string        $numberingTemplateId
- * @property float         $totalNet
- * @property float         $totalTax
- * @property float         $totalGross
- * @property string        $currency
- * @property float         $exchangeRate
- * @property array         $seller
- * @property array         $buyer
- * @property array         $body
- * @property array         $payment
- * @property array         $options
- * @property string        $issueDate
- * @property string        $createdAt
- * @property string        $updatedAt
- * @property array         $numberingTemplate
+ * @property string $number
+ * @property string $numberingTemplateId
+ * @property float $totalNet
+ * @property float $totalTax
+ * @property float $totalGross
+ * @property string $currency
+ * @property float $exchangeRate
+ * @property array $seller
+ * @property array $buyer
+ * @property array $body
+ * @property array $payment
+ * @property array $options
+ * @property string $issueDate
+ * @property string $createdAt
+ * @property string $updatedAt
+ * @property array $numberingTemplate
  */
 final class InvoiceDTO extends BaseDataDTO
 {
@@ -52,8 +52,7 @@ final class InvoiceDTO extends BaseDataDTO
         public readonly ?string $createdAt = null,
         public readonly ?string $updatedAt = null,
         public readonly ?array $numberingTemplate = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -110,25 +109,25 @@ final class InvoiceDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'id'                    => $this->id,
-            'tenant_id'             => $this->tenantId,
-            'type'                  => $this->type->value,
-            'status'                => $this->status->value,
-            'number'                => $this->number,
+            'id' => $this->id,
+            'tenant_id' => $this->tenantId,
+            'type' => $this->type->value,
+            'status' => $this->status->value,
+            'number' => $this->number,
             'numbering_template_id' => $this->numberingTemplateId,
-            'total_net'             => $this->totalNet,
-            'total_tax'             => $this->totalTax,
-            'total_gross'           => $this->totalGross,
-            'currency'              => $this->currency,
-            'exchange_rate'         => $this->exchangeRate,
-            'seller'                => $this->seller,
-            'buyer'                 => $this->buyer,
-            'body'                  => $this->body,
-            'payment'               => $this->payment,
-            'options'               => $this->options,
-            'issue_date'            => $this->issueDate,
-            'created_at'            => $this->createdAt,
-            'updated_at'            => $this->updatedAt,
+            'total_net' => $this->totalNet,
+            'total_tax' => $this->totalTax,
+            'total_gross' => $this->totalGross,
+            'currency' => $this->currency,
+            'exchange_rate' => $this->exchangeRate,
+            'seller' => $this->seller,
+            'buyer' => $this->buyer,
+            'body' => $this->body,
+            'payment' => $this->payment,
+            'options' => $this->options,
+            'issue_date' => $this->issueDate,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

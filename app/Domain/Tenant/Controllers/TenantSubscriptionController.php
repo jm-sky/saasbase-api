@@ -18,9 +18,9 @@ class TenantSubscriptionController extends Controller
     public function quota(): TenantQuotaResource
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
-        $tenant   = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
+        $tenant = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
 
         return new TenantQuotaResource($this->calculateQuota($tenant));
     }
@@ -28,9 +28,9 @@ class TenantSubscriptionController extends Controller
     public function currentPlan(): SubscriptionPlanResource
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
-        $tenant   = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
+        $tenant = Tenant::with('subscription.plan.features')->findOrFail($tenantId);
 
         return new SubscriptionPlanResource($tenant->subscription->plan);
     }
@@ -41,11 +41,11 @@ class TenantSubscriptionController extends Controller
     private function calculateQuota(Tenant $tenant): TenantQuotaDTO
     {
         $usedStorageBytes = Media::where('tenant_id', $tenant->id)->sum('size');
-        $usedStorageMB    = round($usedStorageBytes / 1024 / 1024, 2);
-        $usedUsers        = $tenant->users()->count();
+        $usedStorageMB = round($usedStorageBytes / 1024 / 1024, 2);
+        $usedUsers = $tenant->users()->count();
 
-        $features   = $tenant->subscription?->plan?->features->pluck('value', 'feature.name');
-        $maxUsers   = $this->parseLimit($features[FeatureName::MAX_USERS->value] ?? '0');
+        $features = $tenant->subscription?->plan?->features->pluck('value', 'feature.name');
+        $maxUsers = $this->parseLimit($features[FeatureName::MAX_USERS->value] ?? '0');
         $maxStorage = (float) ($features[FeatureName::STORAGE_MB->value] ?? 0);
 
         return new TenantQuotaDTO(
@@ -69,7 +69,7 @@ class TenantSubscriptionController extends Controller
     {
         return match (strtolower($value)) {
             'unlimited', '-1' => 'unlimited',
-            default           => (int) $value,
+            default => (int) $value,
         };
     }
 }

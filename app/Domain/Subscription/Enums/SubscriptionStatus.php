@@ -4,26 +4,26 @@ namespace App\Domain\Subscription\Enums;
 
 enum SubscriptionStatus: string
 {
-    case ACTIVE             = 'active';
-    case TRIALING           = 'trialing';
-    case PAST_DUE           = 'past_due';
-    case CANCELED           = 'canceled';
-    case UNPAID             = 'unpaid';
-    case INCOMPLETE         = 'incomplete';
+    case ACTIVE = 'active';
+    case TRIALING = 'trialing';
+    case PAST_DUE = 'past_due';
+    case CANCELED = 'canceled';
+    case UNPAID = 'unpaid';
+    case INCOMPLETE = 'incomplete';
     case INCOMPLETE_EXPIRED = 'incomplete_expired';
-    case PAUSED             = 'paused';
+    case PAUSED = 'paused';
 
     public function label(): string
     {
         return match ($this) {
-            self::ACTIVE             => 'Active',
-            self::TRIALING           => 'Trial',
-            self::PAST_DUE           => 'Past Due',
-            self::CANCELED           => 'Canceled',
-            self::UNPAID             => 'Unpaid',
-            self::INCOMPLETE         => 'Incomplete',
+            self::ACTIVE => 'Active',
+            self::TRIALING => 'Trial',
+            self::PAST_DUE => 'Past Due',
+            self::CANCELED => 'Canceled',
+            self::UNPAID => 'Unpaid',
+            self::INCOMPLETE => 'Incomplete',
             self::INCOMPLETE_EXPIRED => 'Incomplete Expired',
-            self::PAUSED             => 'Paused',
+            self::PAUSED => 'Paused',
         };
     }
 

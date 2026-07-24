@@ -11,15 +11,14 @@ class SignatureVerifierDispatcher
     public function __construct(
         protected XmlSignatureVerifierService $xmlVerifier,
         protected PdfSignatureVerifierService $pdfVerifier,
-    ) {
-    }
+    ) {}
 
     public function verify(string $content, SignatureType $type): GenericSignaturesVerificationResultDTO
     {
         return match ($type) {
             SignatureType::XAdES => $this->verifyXml($content),
             SignatureType::PAdES => $this->verifyPdfContent($content),
-            default              => throw new UnsupportedSignatureTypeException("Unsupported signature type: {$type->value}"),
+            default => throw new UnsupportedSignatureTypeException("Unsupported signature type: {$type->value}"),
         };
     }
 

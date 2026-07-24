@@ -34,49 +34,49 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @property string                  $id
- * @property string                  $tenant_id
- * @property string                  $name
- * @property ?string                 $country
- * @property ContractorType          $type
- * @property ?string                 $vat_id
- * @property ?string                 $tax_id
- * @property ?string                 $regon
- * @property ?string                 $description
- * @property ?string                 $email
- * @property ?string                 $phone
- * @property ?string                 $website
- * @property bool                    $is_active
- * @property bool                    $is_buyer
- * @property bool                    $is_supplier
- * @property ?string                 $edelivery_address
- * @property ?string                 $external_id
- * @property ?string                 $source_system
- * @property Carbon                  $created_at
- * @property Carbon                  $updated_at
- * @property ?Carbon                 $deleted_at
- * @property Collection<Address>     $addresses
- * @property ?Address                $defaultAddress
- * @property Collection<BankAccount> $bankAccounts
- * @property ?BankAccount            $defaultBankAccount
- * @property Collection<Comment>     $comments
- * @property Collection<Media>       $media
- * @property Collection<Tag>         $tags
- * @property ContractorPreferences   $preferences
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property ?string $country
+ * @property ContractorType $type
+ * @property ?string $vat_id
+ * @property ?string $tax_id
+ * @property ?string $regon
+ * @property ?string $description
+ * @property ?string $email
+ * @property ?string $phone
+ * @property ?string $website
+ * @property bool $is_active
+ * @property bool $is_buyer
+ * @property bool $is_supplier
+ * @property ?string $edelivery_address
+ * @property ?string $external_id
+ * @property ?string $source_system
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property Collection<int, Address> $addresses
+ * @property ?Address $defaultAddress
+ * @property Collection<int, BankAccount> $bankAccounts
+ * @property ?BankAccount $defaultBankAccount
+ * @property Collection<int, Comment> $comments
+ * @property Collection<int, Media> $media
+ * @property Collection<int, Tag> $tags
+ * @property ContractorPreferences $preferences
  */
 class Contractor extends BaseModel implements HasMedia, HasMediaUrl
 {
-    use SoftDeletes;
     use BelongsToTenant;
-    use InteractsWithMedia;
+    use HasActivityLog;
+    use HasActivityLogging;
     use HasMediaSignedUrls;
+    use HasTags;
     use HaveAddresses;
     use HaveBankAccounts;
     use HaveComments;
-    use HasTags;
-    use HasActivityLog;
-    use HasActivityLogging;
+    use InteractsWithMedia;
     use IsSearchable;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -99,9 +99,9 @@ class Contractor extends BaseModel implements HasMedia, HasMediaUrl
     ];
 
     protected $casts = [
-        'type'        => ContractorType::class,
-        'is_active'   => 'boolean',
-        'is_buyer'    => 'boolean',
+        'type' => ContractorType::class,
+        'is_active' => 'boolean',
+        'is_buyer' => 'boolean',
         'is_supplier' => 'boolean',
     ];
 
@@ -119,8 +119,7 @@ class Contractor extends BaseModel implements HasMedia, HasMediaUrl
     {
         $this->addMediaCollection('logo')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('attachments');
     }
@@ -129,13 +128,12 @@ class Contractor extends BaseModel implements HasMedia, HasMediaUrl
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.contractors.logo.size', 256))
-            ->height(config('domains.contractors.logo.size', 256))
-        ;
+            ->height(config('domains.contractors.logo.size', 256));
     }
 
     public function getMediaUrl(string $collectionName, string $conversionName): string
     {
-        if ('logo' === $collectionName) {
+        if ($collectionName === 'logo') {
             return $this->getMediaSignedUrl($collectionName, $conversionName);
         }
 

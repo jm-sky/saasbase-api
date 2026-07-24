@@ -14,7 +14,7 @@ class SendMessageRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'content'  => ['required', 'string'],
+            'content' => ['required', 'string'],
             'parentId' => ['nullable', 'ulid', 'exists:chat_messages,id'],
         ];
     }

@@ -22,8 +22,7 @@ class MfLookupJob implements ShouldQueue
 
     public function __construct(
         public CompanyContext $context,
-    ) {
-    }
+    ) {}
 
     /**
      * Executes the job.
@@ -33,7 +32,7 @@ class MfLookupJob implements ShouldQueue
      */
     public function handle(MfLookupService $mfLookupService): void
     {
-        if ($this->batch()->cancelled() || !$this->context->nip) {
+        if ($this->batch()->cancelled() || ! $this->context->nip) {
             return;
         }
 

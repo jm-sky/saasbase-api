@@ -27,9 +27,9 @@ class OpenRouterService
         ?string $openRouterUrl = null
     ) {
         $this->openRouterUrl = $openRouterUrl ?? self::getOpenRouterUrl();
-        $this->model         = $model ?? config('services.openrouter.model', self::DEFAULT_MODEL);
-        $this->apiKey        = config('services.openrouter.key');
-        $this->guzzleClient  = new Client();
+        $this->model = $model ?? config('services.openrouter.model', self::DEFAULT_MODEL);
+        $this->apiKey = config('services.openrouter.key');
+        $this->guzzleClient = new Client;
     }
 
     public static function getOpenRouterUrl(): string
@@ -41,13 +41,13 @@ class OpenRouterService
     {
         return $this->guzzleClient->post($this->openRouterUrl, [
             'headers' => $this->getOpenRouterHeaders(),
-            'json'    => [
-                'model'    => $this->model,
+            'json' => [
+                'model' => $this->model,
                 'messages' => $messages,
-                'stream'   => true,
+                'stream' => true,
             ],
-            'stream'          => true,
-            'timeout'         => 60,
+            'stream' => true,
+            'timeout' => 60,
             'connect_timeout' => 10,
         ]);
     }
@@ -56,12 +56,12 @@ class OpenRouterService
     {
         return $this->guzzleClient->post($this->openRouterUrl, [
             'headers' => $this->getOpenRouterHeaders(),
-            'json'    => [
-                'model'    => $this->model,
+            'json' => [
+                'model' => $this->model,
                 'messages' => $messages,
-                'stream'   => false,
+                'stream' => false,
             ],
-            'timeout'         => 60,
+            'timeout' => 60,
             'connect_timeout' => 10,
         ]);
     }
@@ -70,7 +70,7 @@ class OpenRouterService
     {
         return [
             'Authorization' => "Bearer {$this->apiKey}",
-            'Accept'        => 'text/event-stream',
+            'Accept' => 'text/event-stream',
         ];
     }
 }

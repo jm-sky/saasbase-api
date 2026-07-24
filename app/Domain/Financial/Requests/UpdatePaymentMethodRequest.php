@@ -16,8 +16,8 @@ class UpdatePaymentMethodRequest extends FormRequest
         $id = $this->route('id') ?? $this->route('payment_method');
 
         return [
-            'code'        => ['sometimes', 'required', 'string', 'max:64', 'unique:payment_methods,code,' . $id . ',id,tenant_id,' . $this->tenant_id],
-            'name'        => ['sometimes', 'required', 'string', 'max:255'],
+            'code' => ['sometimes', 'required', 'string', 'max:64', 'unique:payment_methods,code,'.$id.',id,tenant_id,'.$this->tenant_id],
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
             'paymentDays' => ['nullable', 'integer'],
         ];
     }

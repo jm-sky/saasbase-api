@@ -12,13 +12,13 @@ class InvoiceLineDTOFactory extends DTOFactory
 {
     public function make(?array $attributes = []): InvoiceLineDTO
     {
-        if (!VatRate::exists()) {
+        if (! VatRate::exists()) {
             VatRate::factory()->count(3)->create();
         }
 
-        $quantity  = $attributes['quantity'] ?? BigDecimal::of(fake()->randomFloat(2, 1, 10));
+        $quantity = $attributes['quantity'] ?? BigDecimal::of(fake()->randomFloat(2, 1, 10));
         $unitPrice = $attributes['unitPrice'] ?? BigDecimal::of(fake()->randomFloat(2, 10, 100));
-        $vatRate   = $attributes['vatRate'] ?? VatRateDTO::fromModel(VatRate::inRandomOrder()->first());
+        $vatRate = $attributes['vatRate'] ?? VatRateDTO::fromModel(VatRate::inRandomOrder()->first());
 
         // Allow override of calculated values, but calculate them if not provided
         if (isset($attributes['totalNet'])) {

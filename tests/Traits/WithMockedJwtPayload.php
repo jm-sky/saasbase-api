@@ -14,37 +14,29 @@ trait WithMockedJwtPayload
         $payloadMock->shouldReceive('get')
             ->andReturnUsing(function (string $key) use ($claims) {
                 return $claims[$key] ?? null;
-            })
-        ;
+            });
 
         JWTAuth::shouldReceive('getToken')
-            ->andReturn('mocked-jwt-token')
-        ;
+            ->andReturn('mocked-jwt-token');
 
         JWTAuth::shouldReceive('setToken')
             ->with('mocked-jwt-token')
-            ->andReturnSelf()
-        ;
+            ->andReturnSelf();
 
         JWTAuth::shouldReceive('setRequest')
-            ->andReturnSelf()
-        ;
+            ->andReturnSelf();
 
         JWTAuth::shouldReceive('parser')
-            ->andReturnSelf()
-        ;
+            ->andReturnSelf();
 
         JWTAuth::shouldReceive('parseToken')
-            ->andReturnSelf()
-        ;
+            ->andReturnSelf();
 
         JWTAuth::shouldReceive('authenticate')
-            ->andReturn(true)
-        ;
+            ->andReturn(true);
 
         JWTAuth::shouldReceive('payload')
-            ->andReturn($payloadMock)
-        ;
+            ->andReturn($payloadMock);
     }
 
     protected function mockTenantId(string $tenantId): void

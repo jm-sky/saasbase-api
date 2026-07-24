@@ -9,8 +9,8 @@ use App\Services\AzureDocumentIntelligence\Enums\DocumentAnalysisStatus;
  * DTO for Azure Document Analysis result.
  *
  * @property DocumentAnalysisStatus $status
- * @property ?AnalyzeResult         $analyzeResult
- * @property ?string                $error
+ * @property ?AnalyzeResult $analyzeResult
+ * @property ?string $error
  *
  * @see https://github.com/Azure-Samples/document-intelligence-code-samples/blob/main/schema/2024-07-31-preview/invoice.md
  */
@@ -20,15 +20,14 @@ final class DocumentAnalysisResult extends BaseDataDTO
         public readonly DocumentAnalysisStatus $status,
         public readonly ?AnalyzeResult $analyzeResult = null,
         public readonly ?string $error = null
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'status'        => $this->status->value,
+            'status' => $this->status->value,
             'analyzeResult' => $this->analyzeResult?->toArray(),
-            'error'         => $this->error,
+            'error' => $this->error,
         ];
     }
 

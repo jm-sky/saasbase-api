@@ -63,8 +63,7 @@ class UserTableSettingController extends Controller
         $user->tableSettings()
             ->where('entity', $setting->entity)
             ->where('is_default', true)
-            ->update(['is_default' => false])
-        ;
+            ->update(['is_default' => false]);
 
         $setting->is_default = true;
         $setting->save();

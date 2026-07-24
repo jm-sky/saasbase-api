@@ -8,6 +8,5 @@ final class CredentialsRoleDTO
         public readonly string $type,
         public readonly string $roleType,
         public readonly string $roleDescription
-    ) {
-    }
+    ) {}
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Auth\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -17,15 +17,15 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name'         => fake()->firstName(),
-            'last_name'          => fake()->lastName(),
-            'email'              => fake()->unique()->safeEmail(),
-            'email_verified_at'  => now(),
-            'password'           => Hash::make('password'),
-            'remember_token'     => Str::random(10),
-            'phone'              => fake()->phoneNumber(),
-            'is_admin'           => false,
-            'is_active'          => true,
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'phone' => fake()->phoneNumber(),
+            'is_admin' => false,
+            'is_active' => true,
         ];
     }
 

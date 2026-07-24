@@ -2,6 +2,7 @@
 
 namespace App\Domain\Expense\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
@@ -30,12 +31,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExpenseController extends Controller
 {
-    use HasIndexQuery;
-    use HasActivityLogging;
     use AuthorizesRequests;
+    use HasActivityLogging;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -43,15 +45,15 @@ class ExpenseController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Expense::class;
+        $this->modelClass = Expense::class;
         $this->defaultWith = [];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['number', 'type', 'status'])),
-            AllowedFilter::custom('type', new AdvancedFilter()),
-            AllowedFilter::custom('status', new AdvancedFilter()),
-            AllowedFilter::custom('number', new AdvancedFilter()),
-            AllowedFilter::custom('currency', new AdvancedFilter()),
+            AllowedFilter::custom('type', new AdvancedFilter),
+            AllowedFilter::custom('status', new AdvancedFilter),
+            AllowedFilter::custom('number', new AdvancedFilter),
+            AllowedFilter::custom('currency', new AdvancedFilter),
             AllowedFilter::custom('issueDate', new DateRangeFilter('issue_date')),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
@@ -71,7 +73,7 @@ class ExpenseController extends Controller
             AllowedSort::field('updatedAt', 'updated_at'),
         ];
 
-        $this->defaultSort   = '-created_at';
+        $this->defaultSort = '-created_at';
         $this->exportService = app(ExportService::class);
     }
 
@@ -80,8 +82,7 @@ class ExpenseController extends Controller
         $expenses = $this->getIndexPaginator($request);
 
         return ExpenseResource::collection($expenses['data'])
-            ->additional(['meta' => $expenses['meta']])
-        ;
+            ->additional(['meta' => $expenses['meta']]);
     }
 
     public function store(StoreExpenseRequest $request): JsonResponse
@@ -114,10 +115,10 @@ class ExpenseController extends Controller
 
     public function search(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $query   = $request->input('q');
+        $query = $request->input('q');
         $perPage = $request->input('perPage', $this->defaultPerPage);
 
-        if (!$query) {
+        if (! $query) {
             return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -125,8 +126,7 @@ class ExpenseController extends Controller
             ->query(function ($builder) use ($request) {
                 return $this->getIndexQuery($request);
             })
-            ->paginate($perPage)
-        ;
+            ->paginate($perPage);
 
         return ExpenseResource::collection($results);
     }
@@ -134,7 +134,7 @@ class ExpenseController extends Controller
     /**
      * Export products as Excel file.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function export(Request $request)
     {
@@ -160,8 +160,8 @@ class ExpenseController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(
@@ -198,7 +198,7 @@ class ExpenseController extends Controller
             CreateExpenseForOcr::createOcrRequest($expense, $media);
         }
 
-        if (!$expense->ocrRequest) {
+        if (! $expense->ocrRequest) {
             return response()->json(['message' => 'OCR is not pending.'], Response::HTTP_BAD_REQUEST);
         }
 

@@ -11,7 +11,7 @@ trait FromModelOrArray
      *
      * @template T of Model
      *
-     * @param T|array<string,mixed> $data
+     * @param  T|array<string,mixed>  $data
      *
      * @throws \InvalidArgumentException
      */

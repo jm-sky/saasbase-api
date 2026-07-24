@@ -8,7 +8,7 @@ use App\Domain\Expense\Models\ExpenseAllocation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Expense\Models\AllocationDimension>
+ * @extends Factory<AllocationDimension>
  */
 class AllocationDimensionFactory extends Factory
 {
@@ -25,9 +25,9 @@ class AllocationDimensionFactory extends Factory
     public function definition(): array
     {
         return [
-            'allocation_id'  => ExpenseAllocation::factory(),
+            'allocation_id' => ExpenseAllocation::factory(),
             'dimension_type' => $this->faker->randomElement(AllocationDimensionType::cases()),
-            'dimension_id'   => $this->faker->uuid(),
+            'dimension_id' => $this->faker->uuid(),
         ];
     }
 

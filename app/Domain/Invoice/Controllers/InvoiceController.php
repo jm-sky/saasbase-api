@@ -2,6 +2,7 @@
 
 namespace App\Domain\Invoice\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
@@ -29,12 +30,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InvoiceController extends Controller
 {
-    use HasIndexQuery;
-    use HasActivityLogging;
     use AuthorizesRequests;
+    use HasActivityLogging;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -44,16 +46,16 @@ class InvoiceController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Invoice::class;
+        $this->modelClass = Invoice::class;
         $this->defaultWith = ['numberingTemplate'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['number', 'type', 'status'])),
-            AllowedFilter::custom('type', new AdvancedFilter()),
-            AllowedFilter::custom('status', new AdvancedFilter()),
-            AllowedFilter::custom('number', new AdvancedFilter()),
-            AllowedFilter::custom('numberingTemplateId', new AdvancedFilter(), 'numbering_template_id'),
-            AllowedFilter::custom('currency', new AdvancedFilter()),
+            AllowedFilter::custom('type', new AdvancedFilter),
+            AllowedFilter::custom('status', new AdvancedFilter),
+            AllowedFilter::custom('number', new AdvancedFilter),
+            AllowedFilter::custom('numberingTemplateId', new AdvancedFilter, 'numbering_template_id'),
+            AllowedFilter::custom('currency', new AdvancedFilter),
             AllowedFilter::custom('issueDate', new DateRangeFilter('issue_date')),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
@@ -64,17 +66,17 @@ class InvoiceController extends Controller
             'number',
             'type',
             'status',
-            'issueDate'  => 'issue_date',
-            'totalNet'   => 'total_net',
-            'totalTax'   => 'total_tax',
+            'issueDate' => 'issue_date',
+            'totalNet' => 'total_net',
+            'totalTax' => 'total_tax',
             'totalGross' => 'total_gross',
             'currency',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort      = '-issue_date';
-        $this->exportService    = app(ExportService::class);
+        $this->defaultSort = '-issue_date';
+        $this->exportService = app(ExportService::class);
         $this->invoiceGenerator = app(InvoiceGeneratorService::class);
     }
 
@@ -83,8 +85,7 @@ class InvoiceController extends Controller
         $invoices = $this->getIndexPaginator($request);
 
         return InvoiceResource::collection($invoices['data'])
-            ->additional(['meta' => $invoices['meta']])
-        ;
+            ->additional(['meta' => $invoices['meta']]);
     }
 
     public function store(StoreInvoiceRequest $request): JsonResponse
@@ -125,10 +126,10 @@ class InvoiceController extends Controller
 
     public function search(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $query   = $request->input('q');
+        $query = $request->input('q');
         $perPage = $request->input('perPage', $this->defaultPerPage);
 
-        if (!$query) {
+        if (! $query) {
             return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -136,8 +137,7 @@ class InvoiceController extends Controller
             ->query(function ($builder) use ($request) {
                 return $this->getIndexQuery($request);
             })
-            ->paginate($perPage)
-        ;
+            ->paginate($perPage);
 
         return InvoiceResource::collection($results);
     }
@@ -145,7 +145,7 @@ class InvoiceController extends Controller
     /**
      * Export products as Excel file.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function export(Request $request)
     {
@@ -172,8 +172,8 @@ class InvoiceController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(
@@ -191,11 +191,11 @@ class InvoiceController extends Controller
         $action = $request->getAction();
 
         return match ($action) {
-            'attach'   => $this->attachPdf($request, $invoice),
+            'attach' => $this->attachPdf($request, $invoice),
             'download' => $this->downloadPdf($request, $invoice),
-            'stream'   => $this->streamPdf($request, $invoice),
-            'preview'  => $this->previewPdf($request, $invoice),
-            default    => $this->downloadPdf($request, $invoice),
+            'stream' => $this->streamPdf($request, $invoice),
+            'preview' => $this->previewPdf($request, $invoice),
+            default => $this->downloadPdf($request, $invoice),
         };
     }
 
@@ -226,7 +226,7 @@ class InvoiceController extends Controller
     {
         $templateId = $request->getTemplateId();
         $collection = $request->getCollection();
-        $language   = $request->getLanguage();
+        $language = $request->getLanguage();
 
         $media = $this->invoiceGenerator->generateAndAttachPdf(
             $invoice,
@@ -237,13 +237,13 @@ class InvoiceController extends Controller
 
         return response()->json([
             'message' => 'PDF generated and attached successfully.',
-            'data'    => [
-                'mediaId'         => $media->id,
-                'fileName'        => $media->file_name,
-                'size'            => $media->size,
-                'collectionName'  => $media->collection_name,
-                'url'             => RelativeRouteUrl::generate('invoices.attachments.download', [$invoice, $media]),
-                'templateName'    => $this->invoiceGenerator->lastUsedInvoiceTemplate?->name,
+            'data' => [
+                'mediaId' => $media->id,
+                'fileName' => $media->file_name,
+                'size' => $media->size,
+                'collectionName' => $media->collection_name,
+                'url' => RelativeRouteUrl::generate('invoices.attachments.download', [$invoice, $media]),
+                'templateName' => $this->invoiceGenerator->lastUsedInvoiceTemplate?->name,
             ],
         ], Response::HTTP_CREATED);
     }

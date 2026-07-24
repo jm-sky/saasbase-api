@@ -15,7 +15,7 @@ class DefaultMeasurementUnitSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testMeasurementUnitSeederCreatesExpectedRecords(): void
+    public function test_measurement_unit_seeder_creates_expected_records(): void
     {
         $this->seed(DefaultMeasurementUnitSeeder::class);
 

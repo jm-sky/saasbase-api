@@ -34,7 +34,7 @@ class PKWiUClassificationTest extends TestCase
         $this->authenticateUser($this->tenant, $this->user);
     }
 
-    public function testCanListPkwiuClassifications(): void
+    public function test_can_list_pkwiu_classifications(): void
     {
         PKWiUClassification::factory()->count(5)->create();
 
@@ -50,11 +50,10 @@ class PKWiUClassificationTest extends TestCase
                         'hierarchyPath',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanSearchPkwiuByName(): void
+    public function test_can_search_pkwiu_by_name(): void
     {
         PKWiUClassification::factory()->create([
             'name' => 'Usługi programowania',
@@ -64,11 +63,10 @@ class PKWiUClassificationTest extends TestCase
         $response = $this->getJson('/api/v1/pkwiu/search?query=programowania');
 
         $response->assertOk()
-            ->assertJsonFragment(['code' => '62.01.11.0'])
-        ;
+            ->assertJsonFragment(['code' => '62.01.11.0']);
     }
 
-    public function testCanValidatePkwiuCode(): void
+    public function test_can_validate_pkwiu_code(): void
     {
         PKWiUClassification::factory()->create(['code' => '62.01.11.0']);
 
@@ -77,22 +75,21 @@ class PKWiUClassificationTest extends TestCase
         ]);
 
         $response->assertOk()
-            ->assertJson(['valid' => true])
-        ;
+            ->assertJson(['valid' => true]);
     }
 
-    public function testCanGetHierarchyTree(): void
+    public function test_can_get_hierarchy_tree(): void
     {
         $parent = PKWiUClassification::factory()->create([
-            'code'        => '62.00.00.0',
-            'level'       => 1,
+            'code' => '62.00.00.0',
+            'level' => 1,
             'parent_code' => null,
         ]);
 
         PKWiUClassification::factory()->create([
-            'code'        => '62.01.00.0',
+            'code' => '62.01.00.0',
             'parent_code' => '62.00.00.0',
-            'level'       => 2,
+            'level' => 2,
         ]);
 
         $response = $this->getJson('/api/v1/pkwiu/tree');
@@ -105,19 +102,18 @@ class PKWiUClassificationTest extends TestCase
                         'children',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanValidateInvoiceBodyPkwiu(): void
+    public function test_can_validate_invoice_body_pkwiu(): void
     {
         PKWiUClassification::factory()->create(['code' => '62.01.11.0']);
 
         $invoiceBody = [
             [
-                'name'       => 'Software Development',
+                'name' => 'Software Development',
                 'pkwiu_code' => '62.01.11.0',
-                'quantity'   => 1,
+                'quantity' => 1,
                 'unit_price' => 1000,
             ],
         ];
@@ -127,11 +123,10 @@ class PKWiUClassificationTest extends TestCase
         ]);
 
         $response->assertOk()
-            ->assertJson(['valid' => true])
-        ;
+            ->assertJson(['valid' => true]);
     }
 
-    public function testCanGetSinglePkwiuClassification(): void
+    public function test_can_get_single_pkwiu_classification(): void
     {
         $classification = PKWiUClassification::factory()->create([
             'code' => '62.01.11.0',
@@ -144,11 +139,10 @@ class PKWiUClassificationTest extends TestCase
             ->assertJsonFragment([
                 'code' => '62.01.11.0',
                 'name' => 'Usługi programowania aplikacji internetowych',
-            ])
-        ;
+            ]);
     }
 
-    public function testCanGetCodeSuggestions(): void
+    public function test_can_get_code_suggestions(): void
     {
         PKWiUClassification::factory()->create([
             'code' => '62.01.11.0',
@@ -165,11 +159,10 @@ class PKWiUClassificationTest extends TestCase
                         'name',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testProductCanHavePkwiuCode(): void
+    public function test_product_can_have_pkwiu_code(): void
     {
         $classification = PKWiUClassification::factory()->create([
             'code' => '62.01.11.0',
@@ -177,7 +170,7 @@ class PKWiUClassificationTest extends TestCase
 
         $product = Tenant::bypassTenant($this->tenant->id, function () {
             return Product::factory()->create([
-                'tenant_id'  => $this->user->tenant_id,
+                'tenant_id' => $this->user->tenant_id,
                 'pkwiu_code' => '62.01.11.0',
             ]);
         });

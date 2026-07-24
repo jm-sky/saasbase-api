@@ -57,7 +57,7 @@ class BankAccountPolicy
 
     private function isOwnerOrAdmin(User $user, Tenant $tenant): bool
     {
-        if (!$user->isCurrentTenant($tenant)) {
+        if (! $user->isCurrentTenant($tenant)) {
             return false;
         }
 

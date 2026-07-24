@@ -18,14 +18,13 @@ class DirectMessageService
         // Always order user IDs to ensure uniqueness
         $userIds = [$userA->id, $userB->id];
         sort($userIds);
-        $roomName = 'dm:' . implode('-', $userIds);
+        $roomName = 'dm:'.implode('-', $userIds);
 
         // Try to find existing room
         $room = ChatRoom::where('tenant_id', $tenantId)
             ->where('type', 'direct')
             ->where('name', $roomName)
-            ->first()
-        ;
+            ->first();
 
         if ($room) {
             return $room;
@@ -34,19 +33,19 @@ class DirectMessageService
         // Create new room and participants transactionally
         return DB::transaction(function () use ($tenantId, $userA, $userB, $roomName) {
             $room = ChatRoom::create([
-                'tenant_id'   => $tenantId,
-                'name'        => $roomName,
-                'type'        => 'direct',
+                'tenant_id' => $tenantId,
+                'name' => $roomName,
+                'type' => 'direct',
                 'description' => null,
             ]);
 
             foreach ([$userA, $userB] as $user) {
                 ChatParticipant::firstOrCreate([
                     'chat_room_id' => $room->id,
-                    'user_id'      => $user->id,
+                    'user_id' => $user->id,
                 ], [
-                    'role'         => 'member',
-                    'joined_at'    => Carbon::now(),
+                    'role' => 'member',
+                    'joined_at' => Carbon::now(),
                     'last_read_at' => null,
                 ]);
             }

@@ -8,7 +8,7 @@ use App\Services\AzureDocumentIntelligence\DTOs\DocumentFieldFactory;
 final class ObjectField extends ValueWrapper
 {
     /**
-     * @param array<string, DocumentFieldInterface> $fields
+     * @param  array<string, DocumentFieldInterface>  $fields
      */
     public function __construct(
         float $confidence,
@@ -47,12 +47,12 @@ final class ObjectField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!is_array($this->value)) {
+        if (! is_array($this->value)) {
             throw new \InvalidArgumentException('ObjectField value must be an array');
         }
 
         foreach ($this->value as $field) {
-            if (!$field instanceof DocumentFieldInterface) {
+            if (! $field instanceof DocumentFieldInterface) {
                 throw new \InvalidArgumentException('ObjectField fields must implement DocumentFieldInterface');
             }
             $field->validate();

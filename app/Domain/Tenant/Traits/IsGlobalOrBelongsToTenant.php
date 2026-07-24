@@ -18,16 +18,16 @@ trait IsGlobalOrBelongsToTenant
     {
         static::creating(function (Model $model): void {
             // @phpstan-ignore-next-line
-            if (!$model->tenant_id) {
+            if (! $model->tenant_id) {
                 $model->tenant_id = TenantIdResolver::resolve();
             }
 
-            if (Tenant::NONE_TENANT_ID === $model->tenant_id) {
-                throw new TenantNotFoundException();
+            if ($model->tenant_id === Tenant::NONE_TENANT_ID) {
+                throw new TenantNotFoundException;
             }
         });
 
-        static::addGlobalScope(new GlobalOrCurrentTenantScope());
+        static::addGlobalScope(new GlobalOrCurrentTenantScope);
     }
 
     /**

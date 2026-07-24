@@ -28,38 +28,38 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @property string                                $id
- * @property string                                $tenant_id
- * @property string                                $name
- * @property ?string                               $description
- * @property string                                $status_id
- * @property string                                $owner_id
- * @property Carbon                                $start_date
- * @property ?Carbon                               $end_date
- * @property Carbon                                $created_at
- * @property Carbon                                $updated_at
- * @property ?Carbon                               $deleted_at
- * @property ProjectStatus                         $status
- * @property User                                  $owner
- * @property Collection<int, User>                 $users
- * @property Collection<int, Task>                 $tasks
- * @property Collection<int, ProjectUser>          $projectUsers
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property ?string $description
+ * @property string $status_id
+ * @property string $owner_id
+ * @property Carbon $start_date
+ * @property ?Carbon $end_date
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property ProjectStatus $status
+ * @property User $owner
+ * @property Collection<int, User> $users
+ * @property Collection<int, Task> $tasks
+ * @property Collection<int, ProjectUser> $projectUsers
  * @property Collection<int, ProjectRequiredSkill> $requiredSkills
- * @property Collection<int, ProjectComment>       $comments
- * @property Collection<int, Media>                $media
- * @property Collection<int, Tag>                  $tags
+ * @property Collection<int, ProjectComment> $comments
+ * @property Collection<int, Media> $media
+ * @property Collection<int, Tag> $tags
  */
 class Project extends BaseModel implements AllocationDimensionInterface, HasMedia, HasMediaUrl
 {
     use BelongsToTenant;
-    use SoftDeletes;
-    use InteractsWithMedia;
-    use HaveComments;
-    use HasTags;
     use HasActivityLog;
     use HasActivityLogging;
-    use HasMediaSignedUrls;
     use HasAllocationDimensionInterface;
+    use HasMediaSignedUrls;
+    use HasTags;
+    use HaveComments;
+    use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -73,7 +73,7 @@ class Project extends BaseModel implements AllocationDimensionInterface, HasMedi
 
     protected $casts = [
         'start_date' => 'datetime',
-        'end_date'   => 'datetime',
+        'end_date' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
@@ -82,7 +82,7 @@ class Project extends BaseModel implements AllocationDimensionInterface, HasMedi
      */
     public function getIsActive(): bool
     {
-        return null === $this->deleted_at;
+        return $this->deleted_at === null;
     }
 
     public function owner(): BelongsTo
@@ -94,8 +94,7 @@ class Project extends BaseModel implements AllocationDimensionInterface, HasMedi
     {
         return $this->belongsToMany(User::class, 'project_users')
             ->withPivot(['project_role_id'])
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     public function tasks(): HasMany
@@ -127,8 +126,7 @@ class Project extends BaseModel implements AllocationDimensionInterface, HasMedi
     {
         $this->addMediaCollection('logo')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('attachments');
     }
@@ -137,13 +135,12 @@ class Project extends BaseModel implements AllocationDimensionInterface, HasMedi
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.projects.logo.size', 256))
-            ->height(config('domains.projects.logo.size', 256))
-        ;
+            ->height(config('domains.projects.logo.size', 256));
     }
 
     public function getMediaUrl(string $collectionName, string $conversionName): string
     {
-        if ('logo' === $collectionName) {
+        if ($collectionName === 'logo') {
             return $this->getMediaSignedUrl($collectionName, $conversionName);
         }
 

@@ -8,19 +8,19 @@ use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Carbon\Carbon;
 
 /**
- * @property string  $id
+ * @property string $id
  * @property ?string $tenant_id
- * @property string  $code
- * @property string  $name
+ * @property string $code
+ * @property string $name
  * @property ?string $description
- * @property bool    $is_active
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class AllocationEquipmentType extends BaseModel implements AllocationDimensionInterface
 {
-    use IsGlobalOrBelongsToTenant;
     use HasAllocationDimensionInterface;
+    use IsGlobalOrBelongsToTenant;
 
     protected $table = 'allocation_equipment_types';
 

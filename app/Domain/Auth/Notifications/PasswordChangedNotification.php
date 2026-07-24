@@ -17,7 +17,7 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
     use Queueable;
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public User $notifiable,
@@ -37,13 +37,12 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
     {
         $appName = Config::get('app.name');
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(__('notifications.password.changed.subject', ['app' => $appName]))
             ->greeting(__('notifications.password.changed.greeting', ['name' => $notifiable->full_name]))
             ->line(__('notifications.password.changed.message', ['app' => $appName]))
             ->line(__('notifications.password.changed.warning'))
-            ->line(__('notifications.password.changed.help'))
-        ;
+            ->line(__('notifications.password.changed.help'));
     }
 
     public function toDatabase($notifiable): array
@@ -51,10 +50,10 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
         $appName = Config::get('app.name');
 
         return [
-            'type'    => 'security.passwordChanged',
-            'title'   => __('notifications.password.changed.title'),
+            'type' => 'security.passwordChanged',
+            'title' => __('notifications.password.changed.title'),
             'message' => __('notifications.password.changed.message', ['app' => $appName]),
-            'source'  => 'System',
+            'source' => 'System',
         ];
     }
 
@@ -78,14 +77,14 @@ class PasswordChangedNotification extends Notification implements ShouldQueue
         $appName = Config::get('app.name');
 
         return [
-            'id'      => $this->id,
-            'data'    => [
-                'type'    => 'security.passwordChanged',
-                'title'   => __('notifications.password.changed.title'),
+            'id' => $this->id,
+            'data' => [
+                'type' => 'security.passwordChanged',
+                'title' => __('notifications.password.changed.title'),
                 'message' => __('notifications.password.changed.message', ['app' => $appName]),
-                'source'  => 'System',
+                'source' => 'System',
             ],
-            'readAt'    => null,
+            'readAt' => null,
             'createdAt' => now(),
         ];
     }

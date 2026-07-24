@@ -22,7 +22,7 @@ class ApplicationInvitationControllerTest extends TestCase
     use RefreshDatabase;
     use WithAuthenticatedUser;
 
-    public function testCanSendInvitation(): void
+    public function test_can_send_invitation(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -37,20 +37,20 @@ class ApplicationInvitationControllerTest extends TestCase
 
         $response->assertCreated();
         $this->assertDatabaseHas('application_invitations', [
-            'email'  => 'invitee@example.com',
+            'email' => 'invitee@example.com',
             'status' => 'pending',
         ]);
     }
 
-    public function testCanAcceptInvitation(): void
+    public function test_can_accept_invitation(): void
     {
-        $user       = User::factory()->create();
-        $token      = Str::ulid()->toString();
+        $user = User::factory()->create();
+        $token = Str::ulid()->toString();
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
-            'email'      => 'invitee@example.com',
-            'token'      => $token,
-            'status'     => 'pending',
+            'email' => 'invitee@example.com',
+            'token' => $token,
+            'status' => 'pending',
             'expires_at' => now()->addDays(7),
         ]);
 
@@ -61,20 +61,20 @@ class ApplicationInvitationControllerTest extends TestCase
         $response = $this->postJson("/api/v1/application/invitations/{$token}/accept");
         $response->assertOk();
         $this->assertDatabaseHas('application_invitations', [
-            'id'     => $invitation->id,
+            'id' => $invitation->id,
             'status' => 'accepted',
         ]);
     }
 
-    public function testCanRejectInvitation(): void
+    public function test_can_reject_invitation(): void
     {
-        $user       = User::factory()->create();
-        $token      = Str::ulid()->toString();
+        $user = User::factory()->create();
+        $token = Str::ulid()->toString();
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
-            'email'      => 'invitee@example.com',
-            'token'      => $token,
-            'status'     => 'pending',
+            'email' => 'invitee@example.com',
+            'token' => $token,
+            'status' => 'pending',
             'expires_at' => now()->addDays(7),
         ]);
 
@@ -85,12 +85,12 @@ class ApplicationInvitationControllerTest extends TestCase
         $response = $this->postJson("/api/v1/application/invitations/{$token}/reject");
         $response->assertOk();
         $this->assertDatabaseHas('application_invitations', [
-            'id'     => $invitation->id,
+            'id' => $invitation->id,
             'status' => 'rejected',
         ]);
     }
 
-    public function testCanCancelInvitation(): void
+    public function test_can_cancel_invitation(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -98,21 +98,21 @@ class ApplicationInvitationControllerTest extends TestCase
 
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
-            'email'      => 'invitee@example.com',
-            'token'      => Str::ulid()->toString(),
-            'status'     => 'pending',
+            'email' => 'invitee@example.com',
+            'token' => Str::ulid()->toString(),
+            'status' => 'pending',
             'expires_at' => now()->addDays(7),
         ]);
 
         $response = $this->deleteJson("/api/v1/application/invitations/{$invitation->id}");
         $response->assertOk();
         $this->assertDatabaseHas('application_invitations', [
-            'id'     => $invitation->id,
+            'id' => $invitation->id,
             'status' => 'canceled',
         ]);
     }
 
-    public function testCanResendInvitation(): void
+    public function test_can_resend_invitation(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -120,16 +120,16 @@ class ApplicationInvitationControllerTest extends TestCase
 
         $invitation = ApplicationInvitation::create([
             'inviter_id' => $user->id,
-            'email'      => 'invitee@example.com',
-            'token'      => Str::ulid()->toString(),
-            'status'     => 'pending',
+            'email' => 'invitee@example.com',
+            'token' => Str::ulid()->toString(),
+            'status' => 'pending',
             'expires_at' => now()->addDays(7),
         ]);
 
         $response = $this->postJson("/api/v1/application/invitations/{$invitation->id}/resend");
         $response->assertOk();
         $this->assertDatabaseHas('application_invitations', [
-            'id'     => $invitation->id,
+            'id' => $invitation->id,
             'status' => 'pending',
         ]);
     }

@@ -38,7 +38,7 @@ class StripeSubscriptionService extends StripeService
             // Prepare subscription data
             $subscriptionData = [
                 'customer' => $billingCustomer->stripe_customer_id,
-                'items'    => [
+                'items' => [
                     [
                         'price' => $price->stripe_price_id,
                     ],
@@ -65,11 +65,11 @@ class StripeSubscriptionService extends StripeService
             // Create local subscription record
             $subscription = new Subscription([
                 'stripe_subscription_id' => $stripeSubscription->id,
-                'status'                 => $stripeSubscription->status,
-                'current_period_start'   => Carbon::createFromTimestamp($stripeSubscription['current_period_start']),
-                'current_period_end'     => Carbon::createFromTimestamp($stripeSubscription['current_period_end']),
-                'trial_start'            => $stripeSubscription->trial_start ? Carbon::createFromTimestamp($stripeSubscription->trial_start) : null,
-                'trial_end'              => $stripeSubscription->trial_end ? Carbon::createFromTimestamp($stripeSubscription->trial_end) : null,
+                'status' => $stripeSubscription->status,
+                'current_period_start' => Carbon::createFromTimestamp($stripeSubscription['current_period_start']),
+                'current_period_end' => Carbon::createFromTimestamp($stripeSubscription['current_period_end']),
+                'trial_start' => $stripeSubscription->trial_start ? Carbon::createFromTimestamp($stripeSubscription->trial_start) : null,
+                'trial_end' => $stripeSubscription->trial_end ? Carbon::createFromTimestamp($stripeSubscription->trial_end) : null,
             ]);
 
             $subscription->plan()->associate($plan);
@@ -82,7 +82,7 @@ class StripeSubscriptionService extends StripeService
     /**
      * Update an existing subscription.
      *
-     * @param array $options Update options
+     * @param  array  $options  Update options
      *
      * @throws StripeException
      */
@@ -91,7 +91,7 @@ class StripeSubscriptionService extends StripeService
         return $this->handleStripeException(function () use ($subscription, $options) {
             // Prepare update data
             $updateData = [];
-            $newPlan    = null;
+            $newPlan = null;
 
             // Handle plan change
             if (isset($options['plan_id'])) {
@@ -100,18 +100,18 @@ class StripeSubscriptionService extends StripeService
 
                 /** @var \Stripe\Subscription $currentStripeSubscription */
                 $currentStripeSubscription = $this->stripe->subscriptions->retrieve($subscription->stripe_subscription_id);
-                $interval                  = $currentStripeSubscription->items->data[0]->price->recurring->interval;
+                $interval = $currentStripeSubscription->items->data[0]->price->recurring->interval;
 
                 $billingInterval = BillingInterval::from($interval);
-                $newPrice        = $newPlan->getPriceForInterval($billingInterval);
+                $newPrice = $newPlan->getPriceForInterval($billingInterval);
 
-                if (!$newPrice) {
+                if (! $newPrice) {
                     throw new StripeException("No price found for interval '{$interval}' on the new plan.");
                 }
 
                 $updateData['items'] = [
                     [
-                        'id'    => $currentStripeSubscription->items->data[0]->id,
+                        'id' => $currentStripeSubscription->items->data[0]->id,
                         'price' => $newPrice->stripe_price_id,
                     ],
                 ];
@@ -132,9 +132,9 @@ class StripeSubscriptionService extends StripeService
 
             // Update local subscription record
             $subscription->update([
-                'status'               => $stripeSubscription->status,
+                'status' => $stripeSubscription->status,
                 'current_period_start' => Carbon::createFromTimestamp($stripeSubscription['current_period_start']),
-                'current_period_end'   => Carbon::createFromTimestamp($stripeSubscription['current_period_end']),
+                'current_period_end' => Carbon::createFromTimestamp($stripeSubscription['current_period_end']),
             ]);
 
             if ($newPlan) {
@@ -149,7 +149,7 @@ class StripeSubscriptionService extends StripeService
     /**
      * Cancel a subscription.
      *
-     * @param bool $cancelAtPeriodEnd Whether to cancel at the end of the current period
+     * @param  bool  $cancelAtPeriodEnd  Whether to cancel at the end of the current period
      *
      * @throws StripeException
      */
@@ -165,9 +165,9 @@ class StripeSubscriptionService extends StripeService
 
             // Update local subscription record
             $subscription->update([
-                'status'               => $stripeSubscription->status,
+                'status' => $stripeSubscription->status,
                 'cancel_at_period_end' => $stripeSubscription->cancel_at_period_end,
-                'canceled_at'          => $stripeSubscription->canceled_at ? Carbon::createFromTimestamp($stripeSubscription->canceled_at) : null,
+                'canceled_at' => $stripeSubscription->canceled_at ? Carbon::createFromTimestamp($stripeSubscription->canceled_at) : null,
             ]);
 
             return $subscription;
@@ -191,9 +191,9 @@ class StripeSubscriptionService extends StripeService
 
             // Update local subscription record
             $subscription->update([
-                'status'               => $stripeSubscription->status,
+                'status' => $stripeSubscription->status,
                 'cancel_at_period_end' => false,
-                'canceled_at'          => null,
+                'canceled_at' => null,
             ]);
 
             return $subscription;
@@ -217,11 +217,11 @@ class StripeSubscriptionService extends StripeService
                 'stripe_subscription_id' => $stripeSubscription->id,
             ]);
 
-            if (!$subscription->exists) {
+            if (! $subscription->exists) {
                 // If this is a new subscription, we need the customer and plan
                 $billingCustomer = BillingCustomer::where('stripe_customer_id', $stripeSubscription->customer)->first();
 
-                if (!$billingCustomer) {
+                if (! $billingCustomer) {
                     throw new StripeException('Cannot sync subscription: customer not found');
                 }
 
@@ -230,8 +230,8 @@ class StripeSubscriptionService extends StripeService
                     $query->where('stripe_price_id', $stripeSubscription->items->data[0]->price->id);
                 })->first();
 
-                if (!$plan) {
-                    throw new StripeException('Cannot sync subscription: plan not found for price ' . $stripeSubscription->items->data[0]->price->id);
+                if (! $plan) {
+                    throw new StripeException('Cannot sync subscription: plan not found for price '.$stripeSubscription->items->data[0]->price->id);
                 }
 
                 $subscription->billable()->associate($billingCustomer);
@@ -240,13 +240,13 @@ class StripeSubscriptionService extends StripeService
 
             // Update subscription data
             $subscription->fill([
-                'status'               => $stripeSubscription->status,
+                'status' => $stripeSubscription->status,
                 'current_period_start' => $stripeSubscription['current_period_start'] ? Carbon::createFromTimestamp($stripeSubscription['current_period_start']) : null,
-                'current_period_end'   => $stripeSubscription['current_period_end'] ? Carbon::createFromTimestamp($stripeSubscription['current_period_end']) : null,
-                'trial_start'          => $stripeSubscription->trial_start ? Carbon::createFromTimestamp($stripeSubscription->trial_start) : null,
-                'trial_end'            => $stripeSubscription->trial_end ? Carbon::createFromTimestamp($stripeSubscription->trial_end) : null,
+                'current_period_end' => $stripeSubscription['current_period_end'] ? Carbon::createFromTimestamp($stripeSubscription['current_period_end']) : null,
+                'trial_start' => $stripeSubscription->trial_start ? Carbon::createFromTimestamp($stripeSubscription->trial_start) : null,
+                'trial_end' => $stripeSubscription->trial_end ? Carbon::createFromTimestamp($stripeSubscription->trial_end) : null,
                 'cancel_at_period_end' => $stripeSubscription->cancel_at_period_end,
-                'canceled_at'          => $stripeSubscription->canceled_at ? Carbon::createFromTimestamp($stripeSubscription->canceled_at) : null,
+                'canceled_at' => $stripeSubscription->canceled_at ? Carbon::createFromTimestamp($stripeSubscription->canceled_at) : null,
             ]);
 
             $subscription->save();
@@ -258,7 +258,7 @@ class StripeSubscriptionService extends StripeService
     /**
      * Create a Stripe Checkout session for subscription.
      *
-     * @param array $options Additional options for checkout session
+     * @param  array  $options  Additional options for checkout session
      *
      * @throws StripeException
      */
@@ -272,17 +272,17 @@ class StripeSubscriptionService extends StripeService
 
         return $this->handleStripeException(function () use ($billingCustomer, $plan, $price, $options) {
             $checkoutData = [
-                'customer'   => $billingCustomer->stripe_customer_id,
-                'mode'       => 'subscription',
+                'customer' => $billingCustomer->stripe_customer_id,
+                'mode' => 'subscription',
                 'line_items' => [
                     [
-                        'price'    => $price->stripe_price_id,
+                        'price' => $price->stripe_price_id,
                         'quantity' => 1,
                     ],
                 ],
-                'success_url' => $this->buildCallbackUrl($options['success_url'] ?? config('app.url') . '/subscription/success?session_id={CHECKOUT_SESSION_ID}'),
-                'cancel_url'  => $this->buildCallbackUrl($options['cancel_url'] ?? config('app.url') . '/subscription/cancel'),
-                'metadata'    => [
+                'success_url' => $this->buildCallbackUrl($options['success_url'] ?? config('app.url').'/subscription/success?session_id={CHECKOUT_SESSION_ID}'),
+                'cancel_url' => $this->buildCallbackUrl($options['cancel_url'] ?? config('app.url').'/subscription/cancel'),
+                'metadata' => [
                     'plan_id' => $plan->id,
                 ],
             ];
@@ -310,9 +310,9 @@ class StripeSubscriptionService extends StripeService
         $tenantId = $billable->getTenantId();
 
         if (str_contains($url, '?')) {
-            return $url . '&session_id={CHECKOUT_SESSION_ID}';
+            return $url.'&session_id={CHECKOUT_SESSION_ID}';
         }
 
-        return $url . '?session_id={CHECKOUT_SESSION_ID}&tenant_id=' . $tenantId;
+        return $url.'?session_id={CHECKOUT_SESSION_ID}&tenant_id='.$tenantId;
     }
 }

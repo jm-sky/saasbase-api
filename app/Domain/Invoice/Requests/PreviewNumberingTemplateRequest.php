@@ -16,11 +16,11 @@ class PreviewNumberingTemplateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'format'      => ['required', 'string'],
-            'nextNumber'  => ['required', 'integer'],
+            'format' => ['required', 'string'],
+            'nextNumber' => ['required', 'integer'],
             'resetPeriod' => ['required', 'string', Rule::in(ResetPeriod::values())],
-            'prefix'      => ['nullable', 'string'],
-            'suffix'      => ['nullable', 'string'],
+            'prefix' => ['nullable', 'string'],
+            'suffix' => ['nullable', 'string'],
         ];
     }
 }

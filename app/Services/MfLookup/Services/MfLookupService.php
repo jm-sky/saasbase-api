@@ -2,6 +2,7 @@
 
 namespace App\Services\MfLookup\Services;
 
+use App\Domain\Common\Support\NipValidator\Exceptions\InvalidNipException;
 use App\Domain\Common\Support\NipValidator\NipValidator;
 use App\Services\MfLookup\DTOs\MfLookupResultDTO;
 use App\Services\MfLookup\Exceptions\MfLookupException;
@@ -21,14 +22,14 @@ class MfLookupService
 
     public function __construct(MfApiConnector $connector)
     {
-        $this->connector    = $connector;
-        $this->cacheMode    = config('services.mf.cache_mode', 'hours');
-        $this->cacheHours   = (int) config('services.mf.cache_hours', 12);
+        $this->connector = $connector;
+        $this->cacheMode = config('services.mf.cache_mode', 'hours');
+        $this->cacheHours = (int) config('services.mf.cache_hours', 12);
     }
 
     public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null): ?MfLookupResultDTO
     {
-        $nip      = $this->sanitizeAndValidateNip($nip);
+        $nip = $this->sanitizeAndValidateNip($nip);
         $cacheKey = "mf_lookup:nip:{$nip}";
         $cacheTtl = $this->getCacheExpiration($now ?? now());
 
@@ -50,13 +51,13 @@ class MfLookupService
     protected function lookup(string $nip): ?MfLookupResultDTO
     {
         try {
-            $request  = new SearchByNipRequest($nip);
+            $request = new SearchByNipRequest($nip);
             $response = $this->connector->send($request);
 
             if ($response->successful()) {
                 $subject = $response->json('result.subject');
 
-                if (!empty($subject)) {
+                if (! empty($subject)) {
                     return MfLookupResultDTO::fromApiResponse($subject);
                 }
 
@@ -64,17 +65,17 @@ class MfLookupService
             }
 
             Log::warning('MfLookupService: Unsuccessful API response', [
-                'nip'      => $nip,
-                'status'   => $response->status(),
-                'body'     => $response->body(),
+                'nip' => $nip,
+                'status' => $response->status(),
+                'body' => $response->body(),
             ]);
 
             throw new MfLookupException('Unsuccessful API response.');
         } catch (\Throwable $e) {
-            Log::error('MfLookupService error: ' . $e->getMessage(), [
-                'nip'       => $nip,
+            Log::error('MfLookupService error: '.$e->getMessage(), [
+                'nip' => $nip,
                 'exception' => get_class($e),
-                'trace'     => $e->getTraceAsString(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             throw new MfLookupException('Failed to lookup company details.', 0, $e);
@@ -85,14 +86,14 @@ class MfLookupService
     {
         try {
             return NipValidator::sanitizeAndValidate($nip);
-        } catch (\App\Domain\Common\Support\NipValidator\Exceptions\InvalidNipException $e) {
+        } catch (InvalidNipException $e) {
             throw new MfLookupException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
     protected function getCacheExpiration(CarbonInterface $now): \DateTimeInterface|\DateInterval|int
     {
-        if ('week' === $this->cacheMode) {
+        if ($this->cacheMode === 'week') {
             return $now->copy()->next('Sunday')->startOfDay();
         }
 

@@ -44,7 +44,7 @@ class KSeFAuthenticator implements Authenticator
 
     protected function getSessionToken(PendingRequest $pendingRequest): string
     {
-        if (!$this->encryptedToken) {
+        if (! $this->encryptedToken) {
             throw new \InvalidArgumentException('Encrypted token is required to initialize KSeF session');
         }
 

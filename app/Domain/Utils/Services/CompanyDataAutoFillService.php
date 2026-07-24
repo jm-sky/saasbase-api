@@ -17,8 +17,7 @@ class CompanyDataAutoFillService
         private readonly MfLookupService $mfLookupService,
         private readonly ViesLookupService $viesLookupService,
         private readonly IbanInfoService $ibanInfoService,
-    ) {
-    }
+    ) {}
 
     /**
      * Auto-fill company data from available sources.
@@ -34,8 +33,8 @@ class CompanyDataAutoFillService
         // TODO: Use CompanyDataFetcherSevice
 
         $regonData = null;
-        $mfData    = null;
-        $viesData  = null;
+        $mfData = null;
+        $viesData = null;
 
         if ($nip && config('services.regon.user_key')) {
             $regonData = $this->regonLookupService->findByNip($nip, $force);
@@ -65,7 +64,7 @@ class CompanyDataAutoFillService
             }
         }
 
-        if (!$regonData && !$mfData && !$viesData) {
+        if (! $regonData && ! $mfData && ! $viesData) {
             return null;
         }
 
@@ -99,11 +98,11 @@ class CompanyDataAutoFillService
     {
         $ibanInfo = $this->ibanInfoService->getBankInfoFromIban($mfData->bankAccount->iban, $mfData->country);
 
-        if (!$ibanInfo) {
+        if (! $ibanInfo) {
             return $mfData->bankAccount;
         }
 
-        $mfData->bankAccount->swift    = $ibanInfo->swift;
+        $mfData->bankAccount->swift = $ibanInfo->swift;
         $mfData->bankAccount->bankName = $ibanInfo->bankName;
         $mfData->bankAccount->currency = $ibanInfo->currency;
 

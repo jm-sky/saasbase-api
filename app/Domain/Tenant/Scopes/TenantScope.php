@@ -14,7 +14,7 @@ class TenantScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         /** @var ?User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user?->getTenantId() ?? Tenant::$BYPASSED_TENANT_ID;
 
         $table = $model->getTable();

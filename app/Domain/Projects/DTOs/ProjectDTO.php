@@ -11,21 +11,21 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Project>
  *
- * @property ?string  $id             UUID
- * @property string   $tenantId       UUID
- * @property string   $name
- * @property ?string  $description
- * @property string   $statusId       UUID
- * @property string   $ownerId        UUID
- * @property ?Carbon  $startDate      Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon  $endDate        Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon  $createdAt      Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon  $updatedAt      Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon  $deletedAt      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id UUID
+ * @property string $tenantId UUID
+ * @property string $name
+ * @property ?string $description
+ * @property string $statusId UUID
+ * @property string $ownerId UUID
+ * @property ?Carbon $startDate Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $endDate Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $owner
- * @property ?array   $users
- * @property ?array   $tasks
- * @property ?array   $requiredSkills
+ * @property ?array $users
+ * @property ?array $tasks
+ * @property ?array $requiredSkills
  */
 final class ProjectDTO extends BaseDTO
 {
@@ -45,8 +45,7 @@ final class ProjectDTO extends BaseDTO
         public ?array $users = null,
         public ?array $tasks = null,
         public ?array $requiredSkills = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -94,20 +93,20 @@ final class ProjectDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'             => $this->id,
-            'tenantId'       => $this->tenantId,
-            'name'           => $this->name,
-            'description'    => $this->description,
-            'statusId'       => $this->statusId,
-            'ownerId'        => $this->ownerId,
-            'startDate'      => $this->startDate?->toDateString(),
-            'endDate'        => $this->endDate?->toDateString(),
-            'createdAt'      => $this->createdAt?->toIso8601String(),
-            'updatedAt'      => $this->updatedAt?->toIso8601String(),
-            'deletedAt'      => $this->deletedAt?->toIso8601String(),
-            'owner'          => $this->owner?->toArray(),
-            'users'          => $this->users,
-            'tasks'          => $this->tasks,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'name' => $this->name,
+            'description' => $this->description,
+            'statusId' => $this->statusId,
+            'ownerId' => $this->ownerId,
+            'startDate' => $this->startDate?->toDateString(),
+            'endDate' => $this->endDate?->toDateString(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'owner' => $this->owner?->toArray(),
+            'users' => $this->users,
+            'tasks' => $this->tasks,
             'requiredSkills' => $this->requiredSkills,
         ];
     }

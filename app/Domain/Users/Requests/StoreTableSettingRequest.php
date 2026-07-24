@@ -14,9 +14,9 @@ class StoreTableSettingRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'entity'    => ['required', 'string', 'max:255'],
-            'name'      => ['nullable', 'string', 'max:255'],
-            'config'    => ['required', 'array'],
+            'entity' => ['required', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'config' => ['required', 'array'],
             'isDefault' => ['boolean'],
         ];
     }

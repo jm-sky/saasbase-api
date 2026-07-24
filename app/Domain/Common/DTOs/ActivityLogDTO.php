@@ -25,8 +25,7 @@ final class ActivityLogDTO
         public readonly ?array $changes,
         public readonly ?UserPreviewDTO $causer,
         public readonly mixed $subject,
-    ) {
-    }
+    ) {}
 
     public static function from(Activity $activity): self
     {

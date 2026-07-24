@@ -21,7 +21,6 @@ trait HaveBankAccounts
     {
         return $this->morphOne(BankAccount::class, 'bankable')
             ->where('is_default', true)
-            ->limit(1)
-        ;
+            ->limit(1);
     }
 }

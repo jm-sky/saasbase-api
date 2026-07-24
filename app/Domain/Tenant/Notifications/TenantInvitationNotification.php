@@ -14,7 +14,7 @@ class TenantInvitationNotification extends Notification implements ShouldQueue
     use Queueable;
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public TenantInvitation $invitation,
@@ -33,9 +33,9 @@ class TenantInvitationNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         $frontendUrl = config('app.frontend_url');
-        $url         = $frontendUrl . '/login?tenantInvitationToken=' . $this->invitation->token;
+        $url = $frontendUrl.'/login?tenantInvitationToken='.$this->invitation->token;
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(__('notifications.tenant_invitation.subject'))
             ->greeting(__('notifications.tenant_invitation.greeting'))
             ->line(__('notifications.tenant_invitation.intro'))
@@ -44,7 +44,6 @@ class TenantInvitationNotification extends Notification implements ShouldQueue
             ->line('')
             ->line(__('notifications.tenant_invitation.accept_button'))
             ->action(__('notifications.tenant_invitation.accept_button'), $url)
-            ->line(__('notifications.tenant_invitation.ignore_info'))
-        ;
+            ->line(__('notifications.tenant_invitation.ignore_info'));
     }
 }

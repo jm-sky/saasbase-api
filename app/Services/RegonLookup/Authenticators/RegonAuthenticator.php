@@ -30,7 +30,7 @@ class RegonAuthenticator implements Authenticator
         $sessionKey = Cache::remember(
             $this->CACHE_KEY,
             self::CACHE_TTL,
-            fn (): string => $pendingRequest->getConnector()->send(new LoginRequest())->dto()->sessionKey,
+            fn (): string => $pendingRequest->getConnector()->send(new LoginRequest)->dto()->sessionKey,
         );
 
         $pendingRequest->headers()->add('sid', $sessionKey);

@@ -17,7 +17,7 @@ class ProcessApprovalDecisionRequest extends BaseFormRequest
     {
         return [
             'decision' => ['required', new Enum(ApprovalDecision::class)],
-            'reason'   => ['nullable', 'string', 'max:1000'],
+            'reason' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
@@ -25,8 +25,8 @@ class ProcessApprovalDecisionRequest extends BaseFormRequest
     {
         return [
             'decision.required' => 'Approval decision is required.',
-            'decision.enum'     => 'Invalid approval decision. Must be approved or rejected.',
-            'notes.max'         => 'Notes cannot exceed 1000 characters.',
+            'decision.enum' => 'Invalid approval decision. Must be approved or rejected.',
+            'notes.max' => 'Notes cannot exceed 1000 characters.',
         ];
     }
 }

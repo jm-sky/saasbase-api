@@ -21,8 +21,7 @@ class CreateSubscriptionAction
     public function __construct(
         protected StripeSubscriptionService $stripeSubscriptionService,
         protected StripePaymentService $stripePaymentService
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new subscription for a billable entity.
@@ -37,7 +36,7 @@ class CreateSubscriptionAction
                 /** @var BillingCustomer $billingCustomer */
                 $billingCustomer = BillingCustomer::findOrFail($data->billingCustomerId);
                 /** @var SubscriptionPlan $plan */
-                $plan            = SubscriptionPlan::findOrFail($data->planId);
+                $plan = SubscriptionPlan::findOrFail($data->planId);
 
                 // Attach payment method if provided
                 if (isset($data->paymentDetails)) {
@@ -61,12 +60,12 @@ class CreateSubscriptionAction
             // Stripe payment method id and customer/plan references that don't
             // belong in application logs.
             Log::error('Failed to create subscription', [
-                'error'               => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'billing_customer_id' => $data->billingCustomerId,
-                'plan_id'             => $data->planId,
+                'plan_id' => $data->planId,
             ]);
 
-            throw new StripeException(message: 'Failed to create subscription: ' . $e->getMessage(), previous: $e);
+            throw new StripeException(message: 'Failed to create subscription: '.$e->getMessage(), previous: $e);
         }
     }
 }

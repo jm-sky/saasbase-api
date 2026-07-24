@@ -32,24 +32,24 @@ class AdvancedFilterTest extends TestCase
 
         Tenant::bypassTenant($this->tenant->id, function () {
             Contractor::factory()->create([
-                'name'       => 'John Doe Company',
-                'email'      => null,
-                'website'    => null,
-                'is_buyer'   => true,
+                'name' => 'John Doe Company',
+                'email' => null,
+                'website' => null,
+                'is_buyer' => true,
                 'created_at' => '2000-01-01',
             ]);
 
             Contractor::factory()->create([
-                'name'       => 'Jane Smith Company',
-                'email'      => '',
-                'website'    => 'https://jane-smith-company.com',
-                'is_buyer'   => false,
+                'name' => 'Jane Smith Company',
+                'email' => '',
+                'website' => 'https://jane-smith-company.com',
+                'is_buyer' => false,
                 'created_at' => '2005-05-05',
             ]);
         });
     }
 
-    public function testNullOperatorFiltersCorrectly()
+    public function test_null_operator_filters_correctly()
     {
         $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
@@ -62,7 +62,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals('John Doe Company', $response->json('data')[0]['name']);
     }
 
-    public function testNullishOperatorFiltersCorrectly()
+    public function test_nullish_operator_filters_correctly()
     {
         $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
@@ -74,7 +74,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertCount(2, $response->json('data'));
     }
 
-    public function testStartsWithOperator()
+    public function test_starts_with_operator()
     {
         $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
@@ -87,7 +87,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals('Jane Smith Company', $response->json('data')[0]['name']);
     }
 
-    public function testBetweenOperator()
+    public function test_between_operator()
     {
         $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
@@ -99,7 +99,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertGreaterThanOrEqual(2, count($response->json('data')));
     }
 
-    public function testDefaultLikeOperatorForStrings()
+    public function test_default_like_operator_for_strings()
     {
         $response = $this->json('GET', $this->baseUrl, [
             'filter' => [
@@ -112,7 +112,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals('John Doe Company', $response->json('data')[0]['name']);
     }
 
-    public function testEqOperatorForNumbers()
+    public function test_eq_operator_for_numbers()
     {
         /** @var Contractor $contractor */
         $contractor = Contractor::forTenant($this->tenant->id)->first();

@@ -16,7 +16,7 @@ class PKWiUService
 
     public function isValidCodeFormat(string $code): bool
     {
-        return 1 === preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]$/', $code);
+        return preg_match('/^[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]$/', $code) === 1;
     }
 
     public function codeExists(string $code): bool
@@ -31,8 +31,7 @@ class PKWiUService
             ->where('name', 'LIKE', "%{$query}%")
             ->orWhere('description', 'LIKE', "%{$query}%")
             ->limit($limit)
-            ->get()
-        ;
+            ->get();
     }
 
     public function searchByCode(string $codePrefix): Collection
@@ -40,15 +39,13 @@ class PKWiUService
         return PKWiUClassification::active()
             ->where('code', 'LIKE', "{$codePrefix}%")
             ->orderBy('code')
-            ->get()
-        ;
+            ->get();
     }
 
     public function getHierarchyTree(?string $parentCode = null): Collection
     {
         $query = PKWiUClassification::active()
-            ->with('children')
-        ;
+            ->with('children');
 
         if ($parentCode) {
             $query->where('parent_code', $parentCode);
@@ -65,20 +62,19 @@ class PKWiUService
             ->where('code', 'LIKE', "{$partial}%")
             ->orWhere('name', 'LIKE', "%{$partial}%")
             ->limit(10)
-            ->get()
-        ;
+            ->get();
     }
 
     // Product integration
     public function assignPKWiUToProduct(string $productId, string $pkwiuCode): bool
     {
-        if (!$this->validateCode($pkwiuCode)) {
+        if (! $this->validateCode($pkwiuCode)) {
             return false;
         }
 
         $product = Product::find($productId);
 
-        if (!$product) {
+        if (! $product) {
             return false;
         }
 
@@ -93,7 +89,7 @@ class PKWiUService
 
         foreach ($assignments as $assignment) {
             if ($this->assignPKWiUToProduct($assignment['product_id'], $assignment['pkwiu_code'])) {
-                ++$successCount;
+                $successCount++;
             }
         }
 
@@ -106,12 +102,13 @@ class PKWiUService
         $errors = [];
 
         foreach ($invoiceBody as $index => $item) {
-            if (!isset($item['pkwiu_code'])) {
+            if (! isset($item['pkwiu_code'])) {
                 $errors[] = "Item {$index}: PKWiU code is required";
+
                 continue;
             }
 
-            if (!$this->validateCode($item['pkwiu_code'])) {
+            if (! $this->validateCode($item['pkwiu_code'])) {
                 $errors[] = "Item {$index}: Invalid PKWiU code '{$item['pkwiu_code']}'";
             }
         }
@@ -122,7 +119,7 @@ class PKWiUService
     public function enrichInvoiceItemsWithPKWiU(array $invoiceItems): array
     {
         foreach ($invoiceItems as &$item) {
-            if (!isset($item['pkwiu_code']) && isset($item['product_id'])) {
+            if (! isset($item['pkwiu_code']) && isset($item['product_id'])) {
                 $product = Product::find($item['product_id']);
 
                 if ($product && $product->pkwiu_code) {
@@ -141,8 +138,7 @@ class PKWiUService
             ->filter()
             ->unique()
             ->values()
-            ->toArray()
-        ;
+            ->toArray();
     }
 
     // Hierarchy navigation
@@ -157,14 +153,13 @@ class PKWiUService
     {
         $classification = PKWiUClassification::find($code);
 
-        return $classification ? $classification->getAncestors() : new Collection();
+        return $classification ? $classification->getAncestors() : new Collection;
     }
 
     public function getLeafNodes(?string $parentCode = null): Collection
     {
         $query = PKWiUClassification::active()
-            ->whereDoesntHave('children')
-        ;
+            ->whereDoesntHave('children');
 
         if ($parentCode) {
             $query->where('parent_code', $parentCode);

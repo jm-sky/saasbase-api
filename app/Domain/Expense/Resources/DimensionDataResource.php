@@ -20,12 +20,12 @@ class DimensionDataResource extends JsonResource
     {
         /* @var DimensionDataDTO $this->resource */
         return [
-            'dimensionType'   => $this->dimensionType->value,
-            'label'           => $this->label,
-            'labelEN'         => $this->labelEN,
+            'dimensionType' => $this->dimensionType->value,
+            'label' => $this->label,
+            'labelEN' => $this->labelEN,
             'isAlwaysVisible' => $this->isAlwaysVisible,
-            'isConfigurable'  => $this->isConfigurable,
-            'items'           => DimensionItemResource::collection($this->items),
+            'isConfigurable' => $this->isConfigurable,
+            'items' => DimensionItemResource::collection($this->items),
         ];
     }
 }

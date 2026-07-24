@@ -2,6 +2,8 @@
 
 namespace App\Services\AzureDocumentIntelligence;
 
+use App\Domain\Tenant\Services\IntegrationCredentialService;
+use App\Domain\Tenant\Services\IntegrationLimitService;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 
@@ -44,8 +46,8 @@ use Saloon\Traits\Plugins\AcceptsJson;
  * - Separate billing and quota management
  * - Enhanced security isolation
  *
- * @see \App\Domain\Tenant\Services\IntegrationCredentialService
- * @see \App\Domain\Tenant\Services\IntegrationLimitService
+ * @see IntegrationCredentialService
+ * @see IntegrationLimitService
  */
 class AzureConnector extends Connector
 {

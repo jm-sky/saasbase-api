@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Skill>
  *
- * @property ?string $id          UUID
- * @property string  $name
+ * @property ?string $id UUID
+ * @property string $name
  * @property ?string $category
  * @property ?string $description
- * @property ?Carbon $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class SkillDTO extends BaseDTO
 {
@@ -28,8 +28,7 @@ final class SkillDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -61,13 +60,13 @@ final class SkillDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'category'    => $this->category,
+            'id' => $this->id,
+            'name' => $this->name,
+            'category' => $this->category,
             'description' => $this->description,
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
-            'deletedAt'   => $this->deletedAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
         ];
     }
 }

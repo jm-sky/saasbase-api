@@ -13,13 +13,13 @@ class PositionCategoryResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'slug'        => $this->slug,
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
             'description' => $this->description,
-            'isActive'    => $this->is_active,
-            'sortOrder'   => $this->sort_order,
-            'createdAt'   => $this->created_at->toIso8601String(),
+            'isActive' => $this->is_active,
+            'sortOrder' => $this->sort_order,
+            'createdAt' => $this->created_at->toIso8601String(),
         ];
     }
 }

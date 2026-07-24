@@ -17,12 +17,12 @@ class ProjectStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid()->toString(),
-            'tenant_id'   => Tenant::factory(),
-            'name'        => fake()->words(2, true),
-            'color'       => fake()->hexColor(),
-            'sort_order'  => fake()->numberBetween(1, 100),
-            'is_default'  => false,
+            'id' => Str::ulid()->toString(),
+            'tenant_id' => Tenant::factory(),
+            'name' => fake()->words(2, true),
+            'color' => fake()->hexColor(),
+            'sort_order' => fake()->numberBetween(1, 100),
+            'is_default' => false,
         ];
     }
 

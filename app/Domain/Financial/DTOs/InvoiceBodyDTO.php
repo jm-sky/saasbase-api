@@ -5,10 +5,10 @@ namespace App\Domain\Financial\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
- * @property InvoiceLineDTO[]       $lines
+ * @property InvoiceLineDTO[] $lines
  * @property InvoiceVatSummaryDTO[] $vatSummary
- * @property InvoiceExchangeDTO     $exchange
- * @property ?string                $description
+ * @property InvoiceExchangeDTO $exchange
+ * @property ?string $description
  */
 final class InvoiceBodyDTO extends BaseDataDTO
 {
@@ -17,15 +17,14 @@ final class InvoiceBodyDTO extends BaseDataDTO
         public array $vatSummary,
         public InvoiceExchangeDTO $exchange,
         public ?string $description,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'lines'       => array_map(fn (InvoiceLineDTO $line) => $line->toArray(), $this->lines),
-            'vatSummary'  => array_map(fn (InvoiceVatSummaryDTO $summary) => $summary->toArray(), $this->vatSummary),
-            'exchange'    => $this->exchange->toArray(),
+            'lines' => array_map(fn (InvoiceLineDTO $line) => $line->toArray(), $this->lines),
+            'vatSummary' => array_map(fn (InvoiceVatSummaryDTO $summary) => $summary->toArray(), $this->vatSummary),
+            'exchange' => $this->exchange->toArray(),
             'description' => $this->description,
         ];
     }

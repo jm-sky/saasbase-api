@@ -18,37 +18,38 @@ class CreateExchangeRatesFromImport
             /** @var ExchangeRateDTO $rateDTO */
             foreach ($rates as $rateDTO) {
                 Currency::firstOrCreate([
-                    'code'   => $rateDTO->currencyCode,
+                    'code' => $rateDTO->currencyCode,
                 ], [
-                    'name'   => $rateDTO->currencyName,
+                    'name' => $rateDTO->currencyName,
                     'symbol' => $rateDTO->currencySymbol ?? null,
                 ]);
 
                 $exists = ExchangeRate::where([
-                    'base_currency'  => NBPService::BASE_CURRENCY,
-                    'currency'       => $rateDTO->currencyCode,
-                    'date'           => $rateDTO->effectiveDate->format('Y-m-d'),
-                    'table'          => $rateDTO->table,
+                    'base_currency' => NBPService::BASE_CURRENCY,
+                    'currency' => $rateDTO->currencyCode,
+                    'date' => $rateDTO->effectiveDate->format('Y-m-d'),
+                    'table' => $rateDTO->table,
                 ])->exists();
 
-                if ($exists && !$force) {
-                    ++$skipped;
+                if ($exists && ! $force) {
+                    $skipped++;
+
                     continue;
                 }
 
                 ExchangeRate::updateOrCreate(
                     [
-                        'base_currency'  => NBPService::BASE_CURRENCY,
-                        'currency'       => $rateDTO->currencyCode,
-                        'date'           => $rateDTO->effectiveDate->format('Y-m-d'),
-                        'table'          => $rateDTO->table,
-                        'source'         => ExchangeRateSource::NBP,
-                        'no'             => $rateDTO->no,
+                        'base_currency' => NBPService::BASE_CURRENCY,
+                        'currency' => $rateDTO->currencyCode,
+                        'date' => $rateDTO->effectiveDate->format('Y-m-d'),
+                        'table' => $rateDTO->table,
+                        'source' => ExchangeRateSource::NBP,
+                        'no' => $rateDTO->no,
                     ],
                     $rateDTO->toModel()
                 );
 
-                ++$imported;
+                $imported++;
             }
         });
 

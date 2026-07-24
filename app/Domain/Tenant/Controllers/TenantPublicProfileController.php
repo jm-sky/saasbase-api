@@ -19,7 +19,7 @@ class TenantPublicProfileController extends Controller
         /** @var ?TenantPublicProfile $profile */
         $profile = $tenant->publicProfile;
 
-        if (!$profile) {
+        if (! $profile) {
             $profile = $tenant->publicProfile()->create();
         }
 
@@ -53,7 +53,7 @@ class TenantPublicProfileController extends Controller
         /** @var ?TenantPublicProfile $profile */
         $profile = $tenant->publicProfile;
 
-        if (!$profile) {
+        if (! $profile) {
             throw new NotFoundHttpException('Public profile not found');
         }
 

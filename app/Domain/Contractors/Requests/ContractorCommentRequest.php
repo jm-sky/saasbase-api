@@ -15,7 +15,7 @@ class ContractorCommentRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'content' => ['required', 'string', new NoProfanity()],
+            'content' => ['required', 'string', new NoProfanity],
         ];
     }
 }

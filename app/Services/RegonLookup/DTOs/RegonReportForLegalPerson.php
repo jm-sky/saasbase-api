@@ -8,63 +8,63 @@ use App\Domain\Common\Enums\AddressType;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * @property string $regon                     | key: praw_regon9                                    | Example: 140672685
- * @property string $nip                       | key: praw_nip                                       | Example: 1251402446
- * @property string $nipStatus                 | key: praw_statusNip                                 | Example:
- * @property string $name                      | key: praw_nazwa                                     | Example: SKŁODOWSCY SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
- * @property string $shortName                 | key: praw_nazwaSkrocona                             | Example:
- * @property string $registrationNumber        | key: praw_numerWRejestrzeEwidencji                  | Example: 0000264193
- * @property string $registrationDate          | key: praw_dataWpisuDoRejestruEwidencji              | Example: 2006-09-25
- * @property string $establishmentDate         | key: praw_dataPowstania                             | Example: 2006-09-11
- * @property string $businessStartDate         | key: praw_dataRozpoczeciaDzialalnosci               | Example: 2006-09-11
- * @property string $regonRegistrationDate     | key: praw_dataWpisuDoRegon                          | Example:
- * @property string $businessSuspensionDate    | key: praw_dataZawieszeniaDzialalnosci               | Example:
- * @property string $businessResumptionDate    | key: praw_dataWznowieniaDzialalnosci                | Example:
- * @property string $lastChangeDate            | key: praw_dataZaistnieniaZmiany                     | Example: 2024-03-27
- * @property string $businessEndDate           | key: praw_dataZakonczeniaDzialalnosci               | Example:
- * @property string $regonDeletionDate         | key: praw_dataSkresleniaZRegon                      | Example:
+ * @property string $regon | key: praw_regon9                                    | Example: 140672685
+ * @property string $nip | key: praw_nip                                       | Example: 1251402446
+ * @property string $nipStatus | key: praw_statusNip                                 | Example:
+ * @property string $name | key: praw_nazwa                                     | Example: SKŁODOWSCY SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
+ * @property string $shortName | key: praw_nazwaSkrocona                             | Example:
+ * @property string $registrationNumber | key: praw_numerWRejestrzeEwidencji                  | Example: 0000264193
+ * @property string $registrationDate | key: praw_dataWpisuDoRejestruEwidencji              | Example: 2006-09-25
+ * @property string $establishmentDate | key: praw_dataPowstania                             | Example: 2006-09-11
+ * @property string $businessStartDate | key: praw_dataRozpoczeciaDzialalnosci               | Example: 2006-09-11
+ * @property string $regonRegistrationDate | key: praw_dataWpisuDoRegon                          | Example:
+ * @property string $businessSuspensionDate | key: praw_dataZawieszeniaDzialalnosci               | Example:
+ * @property string $businessResumptionDate | key: praw_dataWznowieniaDzialalnosci                | Example:
+ * @property string $lastChangeDate | key: praw_dataZaistnieniaZmiany                     | Example: 2024-03-27
+ * @property string $businessEndDate | key: praw_dataZakonczeniaDzialalnosci               | Example:
+ * @property string $regonDeletionDate | key: praw_dataSkresleniaZRegon                      | Example:
  * @property string $bankruptcyDeclarationDate | key: praw_dataOrzeczeniaOUpadlosci                  | Example:
- * @property string $bankruptcyEndDate         | key: praw_dataZakonczeniaPostepowaniaUpadlosciowego | Example:
- * @property string $countryCode               | key: praw_adSiedzKraj_Symbol                        | Example: PL
- * @property string $provinceCode              | key: praw_adSiedzWojewodztwo_Symbol                 | Example: 14
- * @property string $countyCode                | key: praw_adSiedzPowiat_Symbol                      | Example: 34
- * @property string $municipalityCode          | key: praw_adSiedzGmina_Symbol                       | Example: 021
- * @property string $postalCode                | key: praw_adSiedzKodPocztowy                        | Example: 05270
- * @property string $postalCityCode            | key: praw_adSiedzMiejscowoscPoczty_Symbol           | Example: 0920901
- * @property string $cityCode                  | key: praw_adSiedzMiejscowosc_Symbol                 | Example: 0920901
- * @property string $streetCode                | key: praw_adSiedzUlica_Symbol                       | Example: 09582
- * @property string $buildingNumber            | key: praw_adSiedzNumerNieruchomosci                 | Example: 43
- * @property string $apartmentNumber           | key: praw_adSiedzNumerLokalu                        | Example:
- * @property string $unusualLocation           | key: praw_adSiedzNietypoweMiejsceLokalizacji        | Example:
- * @property string $phoneNumber               | key: praw_numerTelefonu                             | Example: 0222426007
- * @property string $internalPhoneNumber       | key: praw_numerWewnetrznyTelefonu                   | Example:
- * @property string $faxNumber                 | key: praw_numerFaksu                                | Example:
- * @property string $email                     | key: praw_adresEmail                                | Example:
- * @property string $website                   | key: praw_adresStronyinternetowej                   | Example:
- * @property string $countryName               | key: praw_adSiedzKraj_Nazwa                         | Example: POLSKA
- * @property string $provinceName              | key: praw_adSiedzWojewodztwo_Nazwa                  | Example: MAZOWIECKIE
- * @property string $countyName                | key: praw_adSiedzPowiat_Nazwa                       | Example: wołomiński
- * @property string $municipalityName          | key: praw_adSiedzGmina_Nazwa                        | Example: Marki
- * @property string $cityName                  | key: praw_adSiedzMiejscowosc_Nazwa                  | Example: Marki
- * @property string $postalCityName            | key: praw_adSiedzMiejscowoscPoczty_Nazwa            | Example: Marki
- * @property string $streetName                | key: praw_adSiedzUlica_Nazwa                        | Example: ul. Tadeusza Kościuszki
- * @property string $legalFormCode             | key: praw_podstawowaFormaPrawna_Symbol              | Example: 1
- * @property string $detailedLegalFormCode     | key: praw_szczegolnaFormaPrawna_Symbol              | Example: 117
- * @property string $financingFormCode         | key: praw_formaFinansowania_Symbol                  | Example: 1
- * @property string $ownershipFormCode         | key: praw_formaWlasnosci_Symbol                     | Example: 214
- * @property string $foundingBodyCode          | key: praw_organZalozycielski_Symbol                 | Example:
+ * @property string $bankruptcyEndDate | key: praw_dataZakonczeniaPostepowaniaUpadlosciowego | Example:
+ * @property string $countryCode | key: praw_adSiedzKraj_Symbol                        | Example: PL
+ * @property string $provinceCode | key: praw_adSiedzWojewodztwo_Symbol                 | Example: 14
+ * @property string $countyCode | key: praw_adSiedzPowiat_Symbol                      | Example: 34
+ * @property string $municipalityCode | key: praw_adSiedzGmina_Symbol                       | Example: 021
+ * @property string $postalCode | key: praw_adSiedzKodPocztowy                        | Example: 05270
+ * @property string $postalCityCode | key: praw_adSiedzMiejscowoscPoczty_Symbol           | Example: 0920901
+ * @property string $cityCode | key: praw_adSiedzMiejscowosc_Symbol                 | Example: 0920901
+ * @property string $streetCode | key: praw_adSiedzUlica_Symbol                       | Example: 09582
+ * @property string $buildingNumber | key: praw_adSiedzNumerNieruchomosci                 | Example: 43
+ * @property string $apartmentNumber | key: praw_adSiedzNumerLokalu                        | Example:
+ * @property string $unusualLocation | key: praw_adSiedzNietypoweMiejsceLokalizacji        | Example:
+ * @property string $phoneNumber | key: praw_numerTelefonu                             | Example: 0222426007
+ * @property string $internalPhoneNumber | key: praw_numerWewnetrznyTelefonu                   | Example:
+ * @property string $faxNumber | key: praw_numerFaksu                                | Example:
+ * @property string $email | key: praw_adresEmail                                | Example:
+ * @property string $website | key: praw_adresStronyinternetowej                   | Example:
+ * @property string $countryName | key: praw_adSiedzKraj_Nazwa                         | Example: POLSKA
+ * @property string $provinceName | key: praw_adSiedzWojewodztwo_Nazwa                  | Example: MAZOWIECKIE
+ * @property string $countyName | key: praw_adSiedzPowiat_Nazwa                       | Example: wołomiński
+ * @property string $municipalityName | key: praw_adSiedzGmina_Nazwa                        | Example: Marki
+ * @property string $cityName | key: praw_adSiedzMiejscowosc_Nazwa                  | Example: Marki
+ * @property string $postalCityName | key: praw_adSiedzMiejscowoscPoczty_Nazwa            | Example: Marki
+ * @property string $streetName | key: praw_adSiedzUlica_Nazwa                        | Example: ul. Tadeusza Kościuszki
+ * @property string $legalFormCode | key: praw_podstawowaFormaPrawna_Symbol              | Example: 1
+ * @property string $detailedLegalFormCode | key: praw_szczegolnaFormaPrawna_Symbol              | Example: 117
+ * @property string $financingFormCode | key: praw_formaFinansowania_Symbol                  | Example: 1
+ * @property string $ownershipFormCode | key: praw_formaWlasnosci_Symbol                     | Example: 214
+ * @property string $foundingBodyCode | key: praw_organZalozycielski_Symbol                 | Example:
  * @property string $registrationAuthorityCode | key: praw_organRejestrowy_Symbol                    | Example: 071010060
- * @property string $registryTypeCode          | key: praw_rodzajRejestruEwidencji_Symbol            | Example: 138
- * @property string $legalFormName             | key: praw_podstawowaFormaPrawna_Nazwa               | Example: OSOBA PRAWNA
- * @property string $detailedLegalFormName     | key: praw_szczegolnaFormaPrawna_Nazwa               | Example: SPÓŁKI Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
- * @property string $financingFormName         | key: praw_formaFinansowania_Nazwa                   | Example: JEDNOSTKA SAMOFINANSUJĄCA NIE BĘDĄCA JEDNOSTKĄ BUDŻETOWĄ LUB SAMORZĄDOWYM ZAKŁADEM BUDŻETOWYM
- * @property string $ownershipFormName         | key: praw_formaWlasnosci_Nazwa                      | Example: WŁASNOŚĆ KRAJOWYCH OSÓB FIZYCZNYCH
- * @property string $foundingBodyName          | key: praw_organZalozycielski_Nazwa                  | Example:
+ * @property string $registryTypeCode | key: praw_rodzajRejestruEwidencji_Symbol            | Example: 138
+ * @property string $legalFormName | key: praw_podstawowaFormaPrawna_Nazwa               | Example: OSOBA PRAWNA
+ * @property string $detailedLegalFormName | key: praw_szczegolnaFormaPrawna_Nazwa               | Example: SPÓŁKI Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
+ * @property string $financingFormName | key: praw_formaFinansowania_Nazwa                   | Example: JEDNOSTKA SAMOFINANSUJĄCA NIE BĘDĄCA JEDNOSTKĄ BUDŻETOWĄ LUB SAMORZĄDOWYM ZAKŁADEM BUDŻETOWYM
+ * @property string $ownershipFormName | key: praw_formaWlasnosci_Nazwa                      | Example: WŁASNOŚĆ KRAJOWYCH OSÓB FIZYCZNYCH
+ * @property string $foundingBodyName | key: praw_organZalozycielski_Nazwa                  | Example:
  * @property string $registrationAuthorityName | key: praw_organRejestrowy_Nazwa                     | Example: SĄD REJONOWY DLA M.ST.WARSZAWY W WARSZAWIE,XIV WYDZIAŁ GOSPODARCZY KRAJOWEGO REJESTRU SĄDOWEGO
- * @property string $registryTypeName          | key: praw_rodzajRejestruEwidencji_Nazwa             | Example: REJESTR PRZEDSIĘBIORCÓW
- * @property string $localUnitsCount           | key: praw_liczbaJednLokalnych                       | Example: 0
+ * @property string $registryTypeName | key: praw_rodzajRejestruEwidencji_Nazwa             | Example: REJESTR PRZEDSIĘBIORCÓW
+ * @property string $localUnitsCount | key: praw_liczbaJednLokalnych                       | Example: 0
  */
-final class RegonReportForLegalPerson implements Arrayable, \JsonSerializable
+final class RegonReportForLegalPerson implements \JsonSerializable, Arrayable
 {
     public function __construct(
         public readonly string $regon,
@@ -122,8 +122,7 @@ final class RegonReportForLegalPerson implements Arrayable, \JsonSerializable
         public readonly string $registrationAuthorityName,
         public readonly string $registryTypeName,
         public readonly int $localUnitsCount,
-    ) {
-    }
+    ) {}
 
     public static function fromXml(\SimpleXMLElement $xml): static
     {
@@ -189,61 +188,61 @@ final class RegonReportForLegalPerson implements Arrayable, \JsonSerializable
     public function toArray(): array
     {
         return [
-            'regon'                     => $this->regon,
-            'nip'                       => $this->nip,
-            'nipStatus'                 => $this->nipStatus,
-            'name'                      => $this->name,
-            'shortName'                 => $this->shortName,
-            'registrationNumber'        => $this->registrationNumber,
-            'registrationDate'          => $this->registrationDate,
-            'establishmentDate'         => $this->establishmentDate,
-            'businessStartDate'         => $this->businessStartDate,
-            'regonRegistrationDate'     => $this->regonRegistrationDate,
-            'businessSuspensionDate'    => $this->businessSuspensionDate,
-            'businessResumptionDate'    => $this->businessResumptionDate,
-            'lastChangeDate'            => $this->lastChangeDate,
-            'businessEndDate'           => $this->businessEndDate,
-            'regonDeletionDate'         => $this->regonDeletionDate,
+            'regon' => $this->regon,
+            'nip' => $this->nip,
+            'nipStatus' => $this->nipStatus,
+            'name' => $this->name,
+            'shortName' => $this->shortName,
+            'registrationNumber' => $this->registrationNumber,
+            'registrationDate' => $this->registrationDate,
+            'establishmentDate' => $this->establishmentDate,
+            'businessStartDate' => $this->businessStartDate,
+            'regonRegistrationDate' => $this->regonRegistrationDate,
+            'businessSuspensionDate' => $this->businessSuspensionDate,
+            'businessResumptionDate' => $this->businessResumptionDate,
+            'lastChangeDate' => $this->lastChangeDate,
+            'businessEndDate' => $this->businessEndDate,
+            'regonDeletionDate' => $this->regonDeletionDate,
             'bankruptcyDeclarationDate' => $this->bankruptcyDeclarationDate,
-            'bankruptcyEndDate'         => $this->bankruptcyEndDate,
-            'countryCode'               => $this->countryCode,
-            'provinceCode'              => $this->provinceCode,
-            'countyCode'                => $this->countyCode,
-            'municipalityCode'          => $this->municipalityCode,
-            'postalCode'                => $this->postalCode,
-            'postalCityCode'            => $this->postalCityCode,
-            'cityCode'                  => $this->cityCode,
-            'streetCode'                => $this->streetCode,
-            'buildingNumber'            => $this->buildingNumber,
-            'apartmentNumber'           => $this->apartmentNumber,
-            'unusualLocation'           => $this->unusualLocation,
-            'phoneNumber'               => $this->phoneNumber,
-            'internalPhoneNumber'       => $this->internalPhoneNumber,
-            'faxNumber'                 => $this->faxNumber,
-            'email'                     => $this->email,
-            'website'                   => $this->website,
-            'countryName'               => $this->countryName,
-            'provinceName'              => $this->provinceName,
-            'countyName'                => $this->countyName,
-            'municipalityName'          => $this->municipalityName,
-            'cityName'                  => $this->cityName,
-            'postalCityName'            => $this->postalCityName,
-            'streetName'                => $this->streetName,
-            'legalFormCode'             => $this->legalFormCode,
-            'detailedLegalFormCode'     => $this->detailedLegalFormCode,
-            'financingFormCode'         => $this->financingFormCode,
-            'ownershipFormCode'         => $this->ownershipFormCode,
-            'foundingBodyCode'          => $this->foundingBodyCode,
+            'bankruptcyEndDate' => $this->bankruptcyEndDate,
+            'countryCode' => $this->countryCode,
+            'provinceCode' => $this->provinceCode,
+            'countyCode' => $this->countyCode,
+            'municipalityCode' => $this->municipalityCode,
+            'postalCode' => $this->postalCode,
+            'postalCityCode' => $this->postalCityCode,
+            'cityCode' => $this->cityCode,
+            'streetCode' => $this->streetCode,
+            'buildingNumber' => $this->buildingNumber,
+            'apartmentNumber' => $this->apartmentNumber,
+            'unusualLocation' => $this->unusualLocation,
+            'phoneNumber' => $this->phoneNumber,
+            'internalPhoneNumber' => $this->internalPhoneNumber,
+            'faxNumber' => $this->faxNumber,
+            'email' => $this->email,
+            'website' => $this->website,
+            'countryName' => $this->countryName,
+            'provinceName' => $this->provinceName,
+            'countyName' => $this->countyName,
+            'municipalityName' => $this->municipalityName,
+            'cityName' => $this->cityName,
+            'postalCityName' => $this->postalCityName,
+            'streetName' => $this->streetName,
+            'legalFormCode' => $this->legalFormCode,
+            'detailedLegalFormCode' => $this->detailedLegalFormCode,
+            'financingFormCode' => $this->financingFormCode,
+            'ownershipFormCode' => $this->ownershipFormCode,
+            'foundingBodyCode' => $this->foundingBodyCode,
             'registrationAuthorityCode' => $this->registrationAuthorityCode,
-            'registryTypeCode'          => $this->registryTypeCode,
-            'legalFormName'             => $this->legalFormName,
-            'detailedLegalFormName'     => $this->detailedLegalFormName,
-            'financingFormName'         => $this->financingFormName,
-            'ownershipFormName'         => $this->ownershipFormName,
-            'foundingBodyName'          => $this->foundingBodyName,
+            'registryTypeCode' => $this->registryTypeCode,
+            'legalFormName' => $this->legalFormName,
+            'detailedLegalFormName' => $this->detailedLegalFormName,
+            'financingFormName' => $this->financingFormName,
+            'ownershipFormName' => $this->ownershipFormName,
+            'foundingBodyName' => $this->foundingBodyName,
             'registrationAuthorityName' => $this->registrationAuthorityName,
-            'registryTypeName'          => $this->registryTypeName,
-            'localUnitsCount'           => $this->localUnitsCount,
+            'registryTypeName' => $this->registryTypeName,
+            'localUnitsCount' => $this->localUnitsCount,
         ];
     }
 

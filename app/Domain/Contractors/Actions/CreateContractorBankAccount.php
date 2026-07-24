@@ -13,7 +13,7 @@ class CreateContractorBankAccount
     {
         $haveBankAccounts = $contractor->bankAccounts()->exists();
 
-        if (!$haveBankAccounts) {
+        if (! $haveBankAccounts) {
             $data->isDefault = true;
         }
 

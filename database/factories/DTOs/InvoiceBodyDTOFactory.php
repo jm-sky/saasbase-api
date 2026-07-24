@@ -3,7 +3,9 @@
 namespace Database\Factories\DTOs;
 
 use App\Domain\Financial\DTOs\InvoiceBodyDTO;
+use App\Domain\Financial\DTOs\InvoiceVatSummaryDTO;
 use App\Domain\Financial\DTOs\VatRateDTO;
+use Brick\Math\BigDecimal;
 
 class InvoiceBodyDTOFactory extends DTOFactory
 {
@@ -16,8 +18,8 @@ class InvoiceBodyDTOFactory extends DTOFactory
             $lines = [];
             $count = fake()->numberBetween(1, 5);
 
-            for ($i = 0; $i < $count; ++$i) {
-                $lines[] = (new InvoiceLineDTOFactory())->make();
+            for ($i = 0; $i < $count; $i++) {
+                $lines[] = (new InvoiceLineDTOFactory)->make();
             }
         }
 
@@ -32,12 +34,12 @@ class InvoiceBodyDTOFactory extends DTOFactory
                 /** @var VatRateDTO $vatRate */
                 $vatRate = $line->vatRate;
 
-                if (!isset($vatSummary[$vatRate->name])) {
+                if (! isset($vatSummary[$vatRate->name])) {
                     $vatSummary[$vatRate->name] = [
                         'vatRate' => $vatRate,
-                        'net'     => 0,
-                        'vat'     => 0,
-                        'gross'   => 0,
+                        'net' => 0,
+                        'vat' => 0,
+                        'gross' => 0,
                     ];
                 }
                 $vatSummary[$vatRate->name]['net'] += $line->totalNet->toFloat();
@@ -48,11 +50,11 @@ class InvoiceBodyDTOFactory extends DTOFactory
             $vatSummaryDTOs = [];
 
             foreach ($vatSummary as $summary) {
-                $vatSummaryDTOs[] = new \App\Domain\Financial\DTOs\InvoiceVatSummaryDTO(
+                $vatSummaryDTOs[] = new InvoiceVatSummaryDTO(
                     $summary['vatRate'],
-                    \Brick\Math\BigDecimal::of($summary['net']),
-                    \Brick\Math\BigDecimal::of($summary['vat']),
-                    \Brick\Math\BigDecimal::of($summary['gross'])
+                    BigDecimal::of($summary['net']),
+                    BigDecimal::of($summary['vat']),
+                    BigDecimal::of($summary['gross'])
                 );
             }
         }
@@ -60,7 +62,7 @@ class InvoiceBodyDTOFactory extends DTOFactory
         return new InvoiceBodyDTO(
             lines: $lines,
             vatSummary: $vatSummaryDTOs,
-            exchange: $attributes['exchange'] ?? (new InvoiceExchangeDTOFactory())->make(),
+            exchange: $attributes['exchange'] ?? (new InvoiceExchangeDTOFactory)->make(),
             description: $attributes['description'] ?? fake()->sentence(),
         );
     }

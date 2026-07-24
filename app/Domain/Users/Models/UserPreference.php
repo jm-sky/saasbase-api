@@ -12,17 +12,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?string $date_format
  * @property ?string $dark_mode
  * @property ?string $timezone
- * @property bool    $is_sound_enabled
- * @property bool    $is_profile_public
- * @property array   $field_visibility
- * @property array   $visibility_per_tenant
- * @property User    $user
+ * @property bool $is_sound_enabled
+ * @property bool $is_profile_public
+ * @property array $field_visibility
+ * @property array $visibility_per_tenant
+ * @property User $user
  */
 class UserPreference extends BaseModel
 {
     public const DEFAULT_FIELD_VISIBILITY = [
-        'email'      => 'tenant',
-        'phone'      => 'tenant',
+        'email' => 'tenant',
+        'phone' => 'tenant',
         'birth_date' => 'tenant',
     ];
 
@@ -39,9 +39,9 @@ class UserPreference extends BaseModel
     ];
 
     protected $casts = [
-        'is_sound_enabled'      => 'boolean',
-        'is_profile_public'     => 'boolean',
-        'field_visibility'      => 'array',
+        'is_sound_enabled' => 'boolean',
+        'is_profile_public' => 'boolean',
+        'field_visibility' => 'array',
         'visibility_per_tenant' => 'array',
     ];
 
@@ -55,7 +55,7 @@ class UserPreference extends BaseModel
      */
     public function isFieldPublic(string $field): bool
     {
-        return 'public' === $this->getFieldVisibility($field);
+        return $this->getFieldVisibility($field) === 'public';
     }
 
     /**
@@ -65,7 +65,7 @@ class UserPreference extends BaseModel
     {
         $visibility = $this->getFieldVisibility($field);
 
-        return 'public' === $visibility || 'tenant' === $visibility;
+        return $visibility === 'public' || $visibility === 'tenant';
     }
 
     /**

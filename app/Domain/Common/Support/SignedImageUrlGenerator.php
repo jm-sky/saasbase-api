@@ -17,9 +17,9 @@ class SignedImageUrlGenerator
         $params = [
             ...$params,
             'modelName' => $modelName,
-            'modelId'   => $modelId,
-            'mediaId'   => $media->id,
-            'fileName'  => $fileName,
+            'modelId' => $modelId,
+            'mediaId' => $media->id,
+            'fileName' => $fileName,
         ];
 
         return RelativeUrlSigner::generate('images.show', parameters: $params);

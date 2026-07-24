@@ -9,15 +9,14 @@ class DateRangeFilter implements Filter
 {
     public function __construct(
         private readonly string $field
-    ) {
-    }
+    ) {}
 
-    public function __invoke(Builder $query, $value, string $property): Builder
+    public function __invoke(Builder $query, mixed $value, string $property): void
     {
-        if (!is_array($value) || !isset($value['from']) || !isset($value['to'])) {
-            return $query;
+        if (! is_array($value) || ! isset($value['from']) || ! isset($value['to'])) {
+            return;
         }
 
-        return $query->whereBetween($this->field, [$value['from'], $value['to']]);
+        $query->whereBetween($this->field, [$value['from'], $value['to']]);
     }
 }

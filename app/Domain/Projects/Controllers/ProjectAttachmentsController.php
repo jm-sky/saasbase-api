@@ -29,7 +29,7 @@ class ProjectAttachmentsController extends Controller
     {
         $this->authorize('update', $project);
 
-        $file  = $request->file('file');
+        $file = $request->file('file');
         $media = $project->addMedia($file)->toMediaCollection('attachments');
 
         return response()->json([
@@ -51,10 +51,10 @@ class ProjectAttachmentsController extends Controller
     {
         $this->authorize('view', $project);
         $this->authorizeMedia($project, $media);
-        $path    = $media->getPath();
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->download($path, $media->file_name, $headers);
@@ -64,10 +64,10 @@ class ProjectAttachmentsController extends Controller
     {
         $this->authorize('view', $project);
         $this->authorizeMedia($project, $media);
-        $path    = $media->getPath();
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->file($path, $headers);
@@ -84,7 +84,7 @@ class ProjectAttachmentsController extends Controller
 
     protected function authorizeMedia(Project $project, Media $media): void
     {
-        if (Project::class !== $media->model_type || $media->model_id !== $project->id) {
+        if ($media->model_type !== Project::class || $media->model_id !== $project->id) {
             abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this project.');
         }
     }

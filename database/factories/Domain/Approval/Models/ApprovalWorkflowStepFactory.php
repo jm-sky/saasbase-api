@@ -7,7 +7,7 @@ use App\Domain\Approval\Models\ApprovalWorkflowStep;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Approval\Models\ApprovalWorkflowStep>
+ * @extends Factory<ApprovalWorkflowStep>
  */
 class ApprovalWorkflowStepFactory extends Factory
 {
@@ -24,11 +24,11 @@ class ApprovalWorkflowStepFactory extends Factory
     public function definition(): array
     {
         return [
-            'workflow_id'           => ApprovalWorkflow::factory(),
-            'step_order'            => $this->faker->numberBetween(1, 5),
-            'name'                  => $this->faker->words(3, true),
+            'workflow_id' => ApprovalWorkflow::factory(),
+            'step_order' => $this->faker->numberBetween(1, 5),
+            'name' => $this->faker->words(3, true),
             'require_all_approvers' => false,
-            'min_approvers'         => 1,
+            'min_approvers' => 1,
         ];
     }
 

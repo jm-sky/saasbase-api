@@ -2,6 +2,7 @@
 
 namespace App\Domain\Contractors\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
@@ -27,11 +28,12 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ContractorController extends Controller
 {
-    use HasIndexQuery;
     use HasActivityLogging;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -39,27 +41,27 @@ class ContractorController extends Controller
         private ExportService $exportService,
         private ContractorRegistryConfirmationService $registryConfirmationService,
     ) {
-        $this->modelClass  = Contractor::class;
+        $this->modelClass = Contractor::class;
         $this->defaultWith = ['tags', 'registryConfirmations'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'vatId', 'taxId', 'regon', 'email', 'phone', 'description'])),
-            AllowedFilter::custom('id', new AdvancedFilter()),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('type', new AdvancedFilter(), 'type'),
-            AllowedFilter::custom('taxId', new AdvancedFilter(), 'tax_id'),
-            AllowedFilter::custom('vatId', new AdvancedFilter(), 'vat_id'),
-            AllowedFilter::custom('regon', new AdvancedFilter(), 'regon'),
-            AllowedFilter::custom('email', new AdvancedFilter()),
-            AllowedFilter::custom('phone', new AdvancedFilter()),
-            AllowedFilter::custom('website', new AdvancedFilter()),
-            AllowedFilter::custom('country', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('id', new AdvancedFilter),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('type', new AdvancedFilter, 'type'),
+            AllowedFilter::custom('taxId', new AdvancedFilter, 'tax_id'),
+            AllowedFilter::custom('vatId', new AdvancedFilter, 'vat_id'),
+            AllowedFilter::custom('regon', new AdvancedFilter, 'regon'),
+            AllowedFilter::custom('email', new AdvancedFilter),
+            AllowedFilter::custom('phone', new AdvancedFilter),
+            AllowedFilter::custom('website', new AdvancedFilter),
+            AllowedFilter::custom('country', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
             AllowedFilter::custom('isActive', new AdvancedFilter(['is_active' => 'boolean']), 'is_active'),
             AllowedFilter::custom('isBuyer', new AdvancedFilter(['is_buyer' => 'boolean']), 'is_buyer'),
             AllowedFilter::custom('isSupplier', new AdvancedFilter(['is_supplier' => 'boolean']), 'is_supplier'),
-            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
 
         $this->sorts = [
@@ -67,12 +69,12 @@ class ContractorController extends Controller
             'type',
             'email',
             'country',
-            'isActive'  => 'is_active',
+            'isActive' => 'is_active',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort   = '-created_at';
+        $this->defaultSort = '-created_at';
     }
 
     public function index(SearchContractorRequest $request): AnonymousResourceCollection
@@ -80,23 +82,21 @@ class ContractorController extends Controller
         $contractors = $this->getIndexPaginator($request);
 
         return ContractorResource::collection($contractors['data'])
-            ->additional(['meta' => $contractors['meta']])
-        ;
+            ->additional(['meta' => $contractors['meta']]);
     }
 
     public function lookup(SearchContractorRequest $request): AnonymousResourceCollection
     {
         $this->defaultWith = ['defaultAddress', 'preferences'];
-        $contractors       = $this->getIndexPaginator($request);
+        $contractors = $this->getIndexPaginator($request);
 
         return ContractorLookupResource::collection($contractors['data'])
-            ->additional(['meta' => $contractors['meta']])
-        ;
+            ->additional(['meta' => $contractors['meta']]);
     }
 
     public function store(StoreContractorRequest $request, LogoFetcherService $logoFetcherService): ContractorResource
     {
-        $validated  = $request->validated();
+        $validated = $request->validated();
 
         $contractor = Contractor::create($validated['contractor']);
 
@@ -149,10 +149,10 @@ class ContractorController extends Controller
 
     public function search(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $query   = $request->input('q');
+        $query = $request->input('q');
         $perPage = $request->input('perPage', $this->defaultPerPage);
 
-        if (!$query) {
+        if (! $query) {
             return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -160,8 +160,7 @@ class ContractorController extends Controller
             ->query(function ($builder) use ($request) {
                 return $this->getIndexQuery($request);
             })
-            ->paginate($perPage)
-        ;
+            ->paginate($perPage);
 
         return ContractorResource::collection($results);
     }
@@ -172,7 +171,7 @@ class ContractorController extends Controller
             return false;
         }
 
-        if (false === $request->boolean('options.fetchLogo', false)) {
+        if ($request->boolean('options.fetchLogo', false) === false) {
             return false;
         }
 
@@ -186,7 +185,7 @@ class ContractorController extends Controller
     /**
      * Export contractors as Excel file.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function export(Request $request)
     {
@@ -212,8 +211,8 @@ class ContractorController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

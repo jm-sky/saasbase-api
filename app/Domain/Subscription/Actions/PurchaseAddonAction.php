@@ -17,8 +17,7 @@ class PurchaseAddonAction
 {
     public function __construct(
         protected StripeAddonService $stripeAddonService
-    ) {
-    }
+    ) {}
 
     /**
      * Purchase an addon (one-time).
@@ -39,16 +38,16 @@ class PurchaseAddonAction
             return DB::transaction(function () use ($data) {
                 // Find required models
                 $billingCustomer = BillingCustomer::findOrFail($data['billing_customer_id']);
-                $addon           = AddonPackage::findOrFail($data['addon_id']);
+                $addon = AddonPackage::findOrFail($data['addon_id']);
 
                 // Purchase addon in Stripe and locally
                 $purchase = $this->stripeAddonService->purchaseAddon(
                     $billingCustomer,
                     $addon,
                     [
-                        'quantity'          => $data['quantity'] ?? 1,
+                        'quantity' => $data['quantity'] ?? 1,
                         'immediate_payment' => $data['immediate_payment'] ?? false,
-                        'metadata'          => $data['metadata'] ?? [],
+                        'metadata' => $data['metadata'] ?? [],
                     ]
                 );
 
@@ -60,10 +59,10 @@ class PurchaseAddonAction
         } catch (\Exception $e) {
             Log::error('Failed to purchase addon', [
                 'error' => $e->getMessage(),
-                'data'  => $data,
+                'data' => $data,
             ]);
 
-            throw new StripeException(message: 'Failed to purchase addon: ' . $e->getMessage(), previous: $e);
+            throw new StripeException(message: 'Failed to purchase addon: '.$e->getMessage(), previous: $e);
         }
     }
 }

@@ -26,8 +26,7 @@ class SignedFileController extends Controller
             ->where('model_type', $modelClass)
             ->where('model_id', $modelId)
             ->where('file_name', $fileName)
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         $stream = Storage::disk($media->disk)->readStream($media->getPath());
 
@@ -35,21 +34,21 @@ class SignedFileController extends Controller
             fpassthru($stream);
             fclose($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
-            'Cache-Control'       => 'private, max-age=' . self::MAX_AGE,
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
+            'Cache-Control' => 'private, max-age='.self::MAX_AGE,
         ]);
     }
 
     protected function resolveModelClass(string $modelName): string
     {
         return match ($modelName) {
-            'users'       => User::class,
+            'users' => User::class,
             'contractors' => Contractor::class,
-            'products'    => Product::class,
-            'tenants'     => Tenant::class,
-            default       => throw new NotFoundHttpException('Model not found'),
+            'products' => Product::class,
+            'tenants' => Tenant::class,
+            default => throw new NotFoundHttpException('Model not found'),
         };
     }
 }

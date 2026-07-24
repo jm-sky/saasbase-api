@@ -9,8 +9,7 @@ final class CheckoutDataDTO extends BaseDataDTO
     public function __construct(
         public readonly string $checkoutUrl,
         public readonly string $sessionId,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -24,7 +23,7 @@ final class CheckoutDataDTO extends BaseDataDTO
     {
         return [
             'checkoutUrl' => $this->checkoutUrl,
-            'sessionId'   => $this->sessionId,
+            'sessionId' => $this->sessionId,
         ];
     }
 }

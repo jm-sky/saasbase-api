@@ -15,13 +15,13 @@ class CommentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'        => $this->id,
-            'feedId'    => $this->commentable_id,
-            'userId'    => $this->user_id,
-            'content'   => $this->content,
+            'id' => $this->id,
+            'feedId' => $this->commentable_id,
+            'userId' => $this->user_id,
+            'content' => $this->content,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'user'      => new UserPreviewResource($this->whenLoaded('user')),
+            'user' => new UserPreviewResource($this->whenLoaded('user')),
         ];
     }
 }

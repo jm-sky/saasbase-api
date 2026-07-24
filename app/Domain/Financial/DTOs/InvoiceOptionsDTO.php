@@ -5,9 +5,9 @@ namespace App\Domain\Financial\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
- * @property ?string  $language
- * @property ?string  $template
- * @property bool     $sendEmail
+ * @property ?string $language
+ * @property ?string $template
+ * @property bool $sendEmail
  * @property string[] $emailTo
  */
 final class InvoiceOptionsDTO extends BaseDataDTO
@@ -17,16 +17,15 @@ final class InvoiceOptionsDTO extends BaseDataDTO
         public ?string $template = null,
         public bool $sendEmail = false,
         public array $emailTo = [],
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'language'  => $this->language,
-            'template'  => $this->template,
+            'language' => $this->language,
+            'template' => $this->template,
             'sendEmail' => $this->sendEmail,
-            'emailTo'   => $this->emailTo,
+            'emailTo' => $this->emailTo,
         ];
     }
 

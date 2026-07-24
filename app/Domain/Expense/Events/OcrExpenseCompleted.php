@@ -17,8 +17,7 @@ class OcrExpenseCompleted implements ShouldBroadcastNow
     public function __construct(
         public User $user,
         public Expense $expense
-    ) {
-    }
+    ) {}
 
     public function broadcastOn(): array
     {
@@ -29,7 +28,7 @@ class OcrExpenseCompleted implements ShouldBroadcastNow
     {
         return [
             'type' => 'ocrExpenseCompleted',
-            'id'   => $this->expense->id,
+            'id' => $this->expense->id,
         ];
     }
 

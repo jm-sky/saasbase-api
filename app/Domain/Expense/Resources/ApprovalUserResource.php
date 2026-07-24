@@ -20,9 +20,9 @@ class ApprovalUserResource extends JsonResource
     {
         /* @var User $this->resource */
         return [
-            'id'        => $this->id,
-            'name'      => $this->full_name,
-            'email'     => $this->email,
+            'id' => $this->id,
+            'name' => $this->full_name,
+            'email' => $this->email,
             'avatarUrl' => $this->getMediaSignedUrl('profile'),
         ];
     }

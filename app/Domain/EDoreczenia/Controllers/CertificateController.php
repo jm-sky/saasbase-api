@@ -24,7 +24,7 @@ class CertificateController extends Controller
         private readonly EDoreczeniaProviderManager $providerManager
     ) {
         $this->authorizeResource(EDoreczeniaCertificate::class, 'certificate');
-        $this->modelClass  = EDoreczeniaCertificate::class;
+        $this->modelClass = EDoreczeniaCertificate::class;
         $this->defaultWith = ['creator'];
 
         $this->filters = [
@@ -34,7 +34,7 @@ class CertificateController extends Controller
 
         $this->sorts = [
             'validFrom' => 'valid_from',
-            'validTo'   => 'valid_to',
+            'validTo' => 'valid_to',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
@@ -47,26 +47,24 @@ class CertificateController extends Controller
         $certificates = $this->getIndexPaginator($request);
 
         return EDoreczeniaCertificateResource::collection($certificates['data'])
-            ->additional(['meta' => $certificates['meta']])
-        ;
+            ->additional(['meta' => $certificates['meta']]);
     }
 
     public function store(StoreCertificateRequest $request): EDoreczeniaCertificateResource
     {
         $certificate = EDoreczeniaCertificate::create([
-            'tenant_id'     => $request->user()->tenant_id,
-            'user_id'       => $request->user()->id,
-            'provider'      => $request->input('provider'),
+            'tenant_id' => $request->user()->tenant_id,
+            'user_id' => $request->user()->id,
+            'provider' => $request->input('provider'),
             'serial_number' => $request->input('serialNumber'),
-            'valid_from'    => $request->input('validFrom'),
-            'valid_to'      => $request->input('validTo'),
-            'status'        => 'active',
+            'valid_from' => $request->input('validFrom'),
+            'valid_to' => $request->input('validTo'),
+            'status' => 'active',
         ]);
 
         if ($request->hasFile('certificate_file')) {
             $certificate->addMediaFromRequest('certificate_file')
-                ->toMediaCollection('certificates')
-            ;
+                ->toMediaCollection('certificates');
         }
 
         return new EDoreczeniaCertificateResource($certificate);
@@ -83,8 +81,7 @@ class CertificateController extends Controller
 
         if ($request->hasFile('certificate_file')) {
             $certificate->addMediaFromRequest('certificate_file')
-                ->toMediaCollection('certificates')
-            ;
+                ->toMediaCollection('certificates');
         }
 
         return new EDoreczeniaCertificateResource($certificate);

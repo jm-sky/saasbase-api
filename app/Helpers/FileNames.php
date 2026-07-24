@@ -8,7 +8,7 @@ class FileNames
 {
     public static function getExtensionFromMimeType(string $mimeType, string $fallback = 'pdf'): string
     {
-        $mimeTypes  = new MimeTypes();
+        $mimeTypes = new MimeTypes;
         $extensions = $mimeTypes->getExtensions($mimeType);
 
         return $extensions[0] ?? $fallback;

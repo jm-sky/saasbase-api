@@ -10,8 +10,7 @@ class QueryCredentialSyncRequest extends BaseKSeFRequest
 {
     public function __construct(
         protected QueryCredentialRequestDTO $queryData
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -27,7 +26,7 @@ class QueryCredentialSyncRequest extends BaseKSeFRequest
 
     protected function buildQueryCriteria(): array
     {
-        $criteria      = [];
+        $criteria = [];
         $queryCriteria = $this->queryData->queryCriteria;
 
         if ($queryCriteria->credentialsIdentifier) {

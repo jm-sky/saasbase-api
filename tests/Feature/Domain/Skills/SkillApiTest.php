@@ -34,19 +34,18 @@ class SkillApiTest extends TestCase
     {
         parent::setUp();
 
-        $this->tenant   = Tenant::factory()->create();
-        $this->user     = $this->authenticateUser($this->tenant);
+        $this->tenant = Tenant::factory()->create();
+        $this->user = $this->authenticateUser($this->tenant);
         $this->category = SkillCategory::factory()->create();
     }
 
-    public function testCanListSkills(): void
+    public function test_can_list_skills(): void
     {
         $skills = Skill::factory()
             ->count(3)
             ->create([
                 'category' => $this->category->name,
-            ])
-        ;
+            ]);
 
         $response = $this->getJson($this->baseUrl);
 
@@ -64,15 +63,14 @@ class SkillApiTest extends TestCase
                 ],
                 'meta',
             ])
-            ->assertJsonCount(3, 'data')
-        ;
+            ->assertJsonCount(3, 'data');
     }
 
-    public function testCanCreateSkill(): void
+    public function test_can_create_skill(): void
     {
         $skillData = [
-            'category'    => $this->category->name,
-            'name'        => 'Test Skill',
+            'category' => $this->category->name,
+            'name' => 'Test Skill',
             'description' => 'Test Description',
         ];
 
@@ -91,24 +89,23 @@ class SkillApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'name'        => $skillData['name'],
+                    'name' => $skillData['name'],
                     'description' => $skillData['description'],
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('skills', [
-            'category'    => $this->category->name,
-            'name'        => $skillData['name'],
+            'category' => $this->category->name,
+            'name' => $skillData['name'],
             'description' => $skillData['description'],
         ]);
     }
 
-    public function testCannotCreateSkillWithInvalidData(): void
+    public function test_cannot_create_skill_with_invalid_data(): void
     {
         $skillData = [
             'category' => 'invalid-uuid',
-            'name'     => '',
+            'name' => '',
         ];
 
         $response = $this->postJson($this->baseUrl, $skillData);
@@ -117,17 +114,16 @@ class SkillApiTest extends TestCase
             ->assertJsonValidationErrors([
                 'category',
                 'name',
-            ])
-        ;
+            ]);
     }
 
-    public function testCanShowSkill(): void
+    public function test_can_show_skill(): void
     {
         $skill = Skill::factory()->create([
             'category' => $this->category->name,
         ]);
 
-        $response = $this->getJson($this->baseUrl . '/' . $skill->id);
+        $response = $this->getJson($this->baseUrl.'/'.$skill->id);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -142,27 +138,26 @@ class SkillApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'id'          => $skill->id,
-                    'name'        => $skill->name,
+                    'id' => $skill->id,
+                    'name' => $skill->name,
                     'description' => $skill->description,
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanUpdateSkill(): void
+    public function test_can_update_skill(): void
     {
         $skill = Skill::factory()->create([
             'category' => $this->category->name,
         ]);
 
         $updateData = [
-            'category'    => $this->category->name,
-            'name'        => 'Updated Skill',
+            'category' => $this->category->name,
+            'name' => 'Updated Skill',
             'description' => 'Updated Description',
         ];
 
-        $response = $this->putJson($this->baseUrl . '/' . $skill->id, $updateData);
+        $response = $this->putJson($this->baseUrl.'/'.$skill->id, $updateData);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -177,34 +172,33 @@ class SkillApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'name'        => $updateData['name'],
+                    'name' => $updateData['name'],
                     'description' => $updateData['description'],
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('skills', [
-            'id'          => $skill->id,
-            'name'        => $updateData['name'],
+            'id' => $skill->id,
+            'name' => $updateData['name'],
             'description' => $updateData['description'],
         ]);
     }
 
-    public function testCanDeleteSkill(): void
+    public function test_can_delete_skill(): void
     {
         $skill = Skill::factory()->create([
             'category' => $this->category->name,
         ]);
 
-        $response = $this->deleteJson($this->baseUrl . '/' . $skill->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$skill->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseMissing('skills', ['id' => $skill->id]);
     }
 
-    public function testReturns404ForNonexistentSkill(): void
+    public function test_returns404_for_nonexistent_skill(): void
     {
-        $response = $this->getJson($this->baseUrl . '/nonexistent-id');
+        $response = $this->getJson($this->baseUrl.'/nonexistent-id');
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }

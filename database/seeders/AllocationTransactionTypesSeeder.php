@@ -12,43 +12,43 @@ class AllocationTransactionTypesSeeder extends Seeder
     {
         $defaultTypes = [
             [
-                'code'        => '10_zakup_materialow_produkcyjnych',
-                'name'        => 'Zakup materiałów produkcyjnych',
+                'code' => '10_zakup_materialow_produkcyjnych',
+                'name' => 'Zakup materiałów produkcyjnych',
                 'description' => 'Zakup materiałów używanych w procesie produkcyjnym',
             ],
             [
-                'code'        => '10_zakup_towarow',
-                'name'        => 'Zakup towarów',
+                'code' => '10_zakup_towarow',
+                'name' => 'Zakup towarów',
                 'description' => 'Standardowy zakup towarów handlowych',
             ],
             [
-                'code'        => '10_zakup_towarow_odwrotne_obciazenie',
-                'name'        => 'Zakup towarów - odwrotne obciążenie',
+                'code' => '10_zakup_towarow_odwrotne_obciazenie',
+                'name' => 'Zakup towarów - odwrotne obciążenie',
                 'description' => 'Zakup towarów z zastosowaniem mechanizmu odwrotnego obciążenia VAT',
             ],
             [
-                'code'        => '20_sprzedaz_towarow',
-                'name'        => 'Sprzedaż towarów',
+                'code' => '20_sprzedaz_towarow',
+                'name' => 'Sprzedaż towarów',
                 'description' => 'Standardowa sprzedaż towarów handlowych',
             ],
             [
-                'code'        => '30_uslugi_zewnetrzne',
-                'name'        => 'Usługi zewnętrzne',
+                'code' => '30_uslugi_zewnetrzne',
+                'name' => 'Usługi zewnętrzne',
                 'description' => 'Zakup usług od zewnętrznych dostawców',
             ],
             [
-                'code'        => '40_koszty_biurowe',
-                'name'        => 'Koszty biurowe',
+                'code' => '40_koszty_biurowe',
+                'name' => 'Koszty biurowe',
                 'description' => 'Wydatki związane z działalnością biurową',
             ],
             [
-                'code'        => '50_transport_logistyka',
-                'name'        => 'Transport i logistyka',
+                'code' => '50_transport_logistyka',
+                'name' => 'Transport i logistyka',
                 'description' => 'Koszty transportu i usług logistycznych',
             ],
             [
-                'code'        => '60_marketing_reklama',
-                'name'        => 'Marketing i reklama',
+                'code' => '60_marketing_reklama',
+                'name' => 'Marketing i reklama',
                 'description' => 'Wydatki na działalność marketingową i reklamową',
             ],
         ];

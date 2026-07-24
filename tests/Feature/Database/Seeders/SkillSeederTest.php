@@ -18,22 +18,22 @@ class SkillSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testSkillCategorySeederCreatesExpectedRecords(): void
+    public function test_skill_category_seeder_creates_expected_records(): void
     {
         $this->seed(SkillCategorySeeder::class);
 
         $this->assertDatabaseCount('skill_categories', 8);
         $this->assertDatabaseHas('skill_categories', [
-            'name'        => 'Programming Languages',
+            'name' => 'Programming Languages',
             'description' => 'Programming and scripting languages',
         ]);
         $this->assertDatabaseHas('skill_categories', [
-            'name'        => 'Web Development',
+            'name' => 'Web Development',
             'description' => 'Web development technologies and frameworks',
         ]);
     }
 
-    public function testSkillSeederCreatesExpectedRecords(): void
+    public function test_skill_seeder_creates_expected_records(): void
     {
         // First seed categories
         $this->seed(SkillCategorySeeder::class);
@@ -44,25 +44,25 @@ class SkillSeederTest extends TestCase
 
         // Test some skills from different categories
         $this->assertDatabaseHas('skills', [
-            'category'    => 'Programming Languages',
-            'name'        => 'PHP',
+            'category' => 'Programming Languages',
+            'name' => 'PHP',
             'description' => 'PHP programming language',
         ]);
 
         $this->assertDatabaseHas('skills', [
-            'category'    => 'Web Development',
-            'name'        => 'Laravel',
+            'category' => 'Web Development',
+            'name' => 'Laravel',
             'description' => 'PHP web application framework',
         ]);
 
         $this->assertDatabaseHas('skills', [
-            'category'    => 'Database',
-            'name'        => 'MySQL',
+            'category' => 'Database',
+            'name' => 'MySQL',
             'description' => 'Open-source relational database management system',
         ]);
     }
 
-    public function testSkillsAreProperlyRelatedToCategories(): void
+    public function test_skills_are_properly_related_to_categories(): void
     {
         $this->seed(SkillCategorySeeder::class);
         $this->seed(SkillSeeder::class);

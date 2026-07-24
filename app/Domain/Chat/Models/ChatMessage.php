@@ -2,6 +2,7 @@
 
 namespace App\Domain\Chat\Models;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
@@ -9,17 +10,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string  $id
- * @property string  $temp_id
- * @property string  $chat_room_id
- * @property string  $user_id
+ * @property string $id
+ * @property string $temp_id
+ * @property string $chat_room_id
+ * @property string $user_id
  * @property ?string $parent_id
- * @property string  $content
- * @property string  $role
- * @property bool    $is_ai
+ * @property string $content
+ * @property string $role
+ * @property bool $is_ai
  * @property ?Carbon $edited_at
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class ChatMessage extends BaseModel
 {
@@ -47,7 +48,7 @@ class ChatMessage extends BaseModel
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Domain\Auth\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function parent(): BelongsTo

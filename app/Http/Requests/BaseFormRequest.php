@@ -13,7 +13,7 @@ class BaseFormRequest extends FormRequest
     protected function mergeTenantId(): void
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $this->input('tenantId');
 
         $this->merge([
@@ -25,10 +25,10 @@ class BaseFormRequest extends FormRequest
     {
         $validator->after(function (Validator $validator) {
             /** @var User $user */
-            $user     = Auth::user();
+            $user = Auth::user();
             $tenantId = $this->input('tenantId');
 
-            if (!$user->isAdmin() && $tenantId !== $user->getTenantId()) {
+            if (! $user->isAdmin() && $tenantId !== $user->getTenantId()) {
                 $validator->errors()->add('tenantId', 'You are not allowed to use this tenant ID.');
             }
         });
@@ -48,7 +48,7 @@ class BaseFormRequest extends FormRequest
             return [Str::snake($key) => $value];
         })->toArray();
 
-        if (null === $key) {
+        if ($key === null) {
             return $snakeCaseFields;
         }
 

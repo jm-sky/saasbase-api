@@ -25,7 +25,7 @@ class RegonValidator
     {
         $checkedValue = self::sanitize($checkedValue);
 
-        if (!in_array(strlen($checkedValue), self::REGON_LENGTH)) {
+        if (! in_array(strlen($checkedValue), self::REGON_LENGTH)) {
             throw new InvalidRegonException('Invalid REGON format. REGON must be 9 or 14 digits.');
         }
 

@@ -11,26 +11,26 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Contractor>
  *
- * @property ?string       $id          UUID
- * @property string        $tenantId    UUID
- * @property string        $name
- * @property string        $email
- * @property ?string       $phone
- * @property ?string       $website
- * @property ?string       $country
- * @property ?string       $vatId
- * @property ?string       $taxId
- * @property ?string       $regon
- * @property ?string       $description
- * @property ?bool         $isActive
- * @property ?bool         $isBuyer
- * @property ?bool         $isSupplier
- * @property ?string       $logoUrl
- * @property ?Carbon       $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon       $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon       $deletedAt   Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id UUID
+ * @property string $tenantId UUID
+ * @property string $name
+ * @property string $email
+ * @property ?string $phone
+ * @property ?string $website
+ * @property ?string $country
+ * @property ?string $vatId
+ * @property ?string $taxId
+ * @property ?string $regon
+ * @property ?string $description
+ * @property ?bool $isActive
+ * @property ?bool $isBuyer
+ * @property ?bool $isSupplier
+ * @property ?string $logoUrl
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property string[]|null $tags
- * @property ?MediaDTO     $logo
+ * @property ?MediaDTO $logo
  */
 final class ContractorDTO extends BaseDTO
 {
@@ -55,8 +55,7 @@ final class ContractorDTO extends BaseDTO
         public ?Carbon $deletedAt = null,
         public readonly ?MediaDTO $logo = null,
         public readonly ?array $tags = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -85,7 +84,7 @@ final class ContractorDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof Contractor) {
+        if (! $model instanceof Contractor) {
             throw new \InvalidArgumentException('Model must be instance of Contractor');
         }
 
@@ -118,26 +117,26 @@ final class ContractorDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenantId,
-            'name'        => $this->name,
-            'email'       => $this->email,
-            'phone'       => $this->phone,
-            'website'     => $this->website,
-            'country'     => $this->country,
-            'vatId'       => $this->vatId,
-            'taxId'       => $this->taxId,
-            'regon'       => $this->regon,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'website' => $this->website,
+            'country' => $this->country,
+            'vatId' => $this->vatId,
+            'taxId' => $this->taxId,
+            'regon' => $this->regon,
             'description' => $this->description,
-            'isActive'    => $this->isActive,
-            'isBuyer'     => $this->isBuyer,
-            'isSupplier'  => $this->isSupplier,
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
-            'deletedAt'   => $this->deletedAt?->toIso8601String(),
-            'logoUrl'     => $this->logoUrl,
-            'logo'        => $this->logo?->toArray(),
-            'tags'        => $this->tags ?? [],
+            'isActive' => $this->isActive,
+            'isBuyer' => $this->isBuyer,
+            'isSupplier' => $this->isSupplier,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'logoUrl' => $this->logoUrl,
+            'logo' => $this->logo?->toArray(),
+            'tags' => $this->tags ?? [],
         ];
     }
 }

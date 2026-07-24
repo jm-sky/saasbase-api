@@ -2,6 +2,8 @@
 
 namespace App\Domain\Export\Exports;
 
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Products\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -35,13 +37,13 @@ class ProductsExport extends BaseExport
     protected function allowedFilters(): array
     {
         return [
-            AllowedFilter::custom('search', new \App\Domain\Common\Filters\ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('description', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('unitId', new \App\Domain\Common\Filters\AdvancedFilter(), 'unit_id'),
-            AllowedFilter::custom('vatRateId', new \App\Domain\Common\Filters\AdvancedFilter(), 'vat_rate_id'),
-            AllowedFilter::custom('createdAt', new \App\Domain\Common\Filters\AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new \App\Domain\Common\Filters\AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
+            AllowedFilter::custom('unitId', new AdvancedFilter, 'unit_id'),
+            AllowedFilter::custom('vatRateId', new AdvancedFilter, 'vat_rate_id'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
     }
 

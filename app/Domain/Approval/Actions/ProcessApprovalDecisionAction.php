@@ -16,8 +16,7 @@ class ProcessApprovalDecisionAction
 {
     public function __construct(
         private ApprovalResolutionService $approvalResolver
-    ) {
-    }
+    ) {}
 
     /**
      * Process an approval decision for an expense execution.
@@ -30,10 +29,10 @@ class ProcessApprovalDecisionAction
     ): ApprovalExpenseDecision {
         Log::info('Processing approval decision', [
             'execution_id' => $execution->id,
-            'expense_id'   => $execution->expense_id,
-            'approver_id'  => $approver->id,
-            'decision'     => $decision->value,
-            'step_id'      => $execution->current_step_id,
+            'expense_id' => $execution->expense_id,
+            'approver_id' => $approver->id,
+            'decision' => $decision->value,
+            'step_id' => $execution->current_step_id,
         ]);
 
         // Check if approver already made a decision for this step first
@@ -41,9 +40,9 @@ class ProcessApprovalDecisionAction
 
         if ($existingDecision) {
             Log::warning('Approver already made decision for this step', [
-                'execution_id'         => $execution->id,
-                'approver_id'          => $approver->id,
-                'step_id'              => $execution->current_step_id,
+                'execution_id' => $execution->id,
+                'approver_id' => $approver->id,
+                'step_id' => $execution->current_step_id,
                 'existing_decision_id' => $existingDecision->id,
             ]);
 
@@ -84,11 +83,11 @@ class ProcessApprovalDecisionAction
      */
     private function validateExecution(ApprovalExpenseExecution $execution): void
     {
-        if (!$execution->isPending()) {
+        if (! $execution->isPending()) {
             throw new \InvalidArgumentException("Execution is not pending (status: {$execution->status->value})");
         }
 
-        if (!$execution->current_step_id) {
+        if (! $execution->current_step_id) {
             throw new \InvalidArgumentException('Execution has no current step');
         }
     }
@@ -100,7 +99,7 @@ class ProcessApprovalDecisionAction
     {
         $currentStep = $execution->currentStep;
 
-        if (!$currentStep) {
+        if (! $currentStep) {
             throw new \InvalidArgumentException('Current step not found');
         }
 
@@ -119,7 +118,7 @@ class ProcessApprovalDecisionAction
             }
         }
 
-        if (!$isValidApprover) {
+        if (! $isValidApprover) {
             throw new \InvalidArgumentException('User is not authorized to approve this step');
         }
     }
@@ -133,8 +132,7 @@ class ProcessApprovalDecisionAction
         return $execution->decisions()
             ->where('step_id', $execution->current_step_id)
             ->where('approver_id', $approver->id)
-            ->first()
-        ;
+            ->first();
     }
 
     /**
@@ -148,11 +146,11 @@ class ProcessApprovalDecisionAction
     ): ApprovalExpenseDecision {
         return ApprovalExpenseDecision::create([
             'execution_id' => $execution->id,
-            'step_id'      => $execution->current_step_id,
-            'approver_id'  => $approver->id,
-            'decision'     => $decision,
-            'reason'       => $reason,
-            'decided_at'   => now(),
+            'step_id' => $execution->current_step_id,
+            'approver_id' => $approver->id,
+            'decision' => $decision,
+            'reason' => $reason,
+            'decided_at' => now(),
         ]);
     }
 
@@ -163,15 +161,14 @@ class ProcessApprovalDecisionAction
     {
         $currentStep = $execution->currentStep;
 
-        if (!$currentStep) {
+        if (! $currentStep) {
             return false;
         }
 
         // Get all decisions for current step
         $stepDecisions = $execution->decisions()
             ->where('step_id', $execution->current_step_id)
-            ->get()
-        ;
+            ->get();
 
         // Check for any rejections
         $rejections = $stepDecisions->where('decision', ApprovalDecision::REJECTED);
@@ -182,7 +179,7 @@ class ProcessApprovalDecisionAction
         }
 
         // Count approvals
-        $approvals     = $stepDecisions->where('decision', ApprovalDecision::APPROVED);
+        $approvals = $stepDecisions->where('decision', ApprovalDecision::APPROVED);
         $approvalCount = $approvals->count();
 
         // Check completion based on step requirements
@@ -223,8 +220,7 @@ class ProcessApprovalDecisionAction
         return $execution->decisions()
             ->where('step_id', $execution->current_step_id)
             ->where('decision', ApprovalDecision::REJECTED)
-            ->exists()
-        ;
+            ->exists();
     }
 
     /**
@@ -234,7 +230,7 @@ class ProcessApprovalDecisionAction
     {
         $currentStep = $execution->currentStep;
 
-        if (!$currentStep) {
+        if (! $currentStep) {
             return true;
         }
 
@@ -249,13 +245,13 @@ class ProcessApprovalDecisionAction
     {
         $currentStep = $execution->currentStep;
 
-        if (!$currentStep) {
+        if (! $currentStep) {
             return;
         }
 
         $nextStep = $currentStep->getNextStep();
 
-        if (!$nextStep) {
+        if (! $nextStep) {
             // No next step, complete workflow
             $this->approveWorkflow($execution);
 
@@ -267,10 +263,10 @@ class ProcessApprovalDecisionAction
         ]);
 
         Log::info('Progressed to next step', [
-            'execution_id'     => $execution->id,
-            'expense_id'       => $execution->expense_id,
+            'execution_id' => $execution->id,
+            'expense_id' => $execution->expense_id,
             'previous_step_id' => $currentStep->id,
-            'next_step_id'     => $nextStep->id,
+            'next_step_id' => $nextStep->id,
         ]);
     }
 
@@ -280,7 +276,7 @@ class ProcessApprovalDecisionAction
     private function approveWorkflow(ApprovalExpenseExecution $execution): void
     {
         $execution->update([
-            'status'       => ApprovalExecutionStatus::APPROVED,
+            'status' => ApprovalExecutionStatus::APPROVED,
             'completed_at' => now(),
         ]);
 
@@ -291,7 +287,7 @@ class ProcessApprovalDecisionAction
 
         Log::info('Workflow approved', [
             'execution_id' => $execution->id,
-            'expense_id'   => $execution->expense_id,
+            'expense_id' => $execution->expense_id,
         ]);
     }
 
@@ -301,7 +297,7 @@ class ProcessApprovalDecisionAction
     private function rejectWorkflow(ApprovalExpenseExecution $execution): void
     {
         $execution->update([
-            'status'       => ApprovalExecutionStatus::REJECTED,
+            'status' => ApprovalExecutionStatus::REJECTED,
             'completed_at' => now(),
         ]);
 
@@ -312,7 +308,7 @@ class ProcessApprovalDecisionAction
 
         Log::info('Workflow rejected', [
             'execution_id' => $execution->id,
-            'expense_id'   => $execution->expense_id,
+            'expense_id' => $execution->expense_id,
         ]);
     }
 
@@ -321,11 +317,11 @@ class ProcessApprovalDecisionAction
      */
     public function canUserMakeDecision(ApprovalExpenseExecution $execution, User $user): bool
     {
-        if (!$execution->isPending()) {
+        if (! $execution->isPending()) {
             return false;
         }
 
-        if (!$execution->current_step_id) {
+        if (! $execution->current_step_id) {
             return false;
         }
 
@@ -349,11 +345,11 @@ class ProcessApprovalDecisionAction
      */
     public function getCannotDecideReason(ApprovalExpenseExecution $execution, User $user): ?string
     {
-        if (!$execution->isPending()) {
+        if (! $execution->isPending()) {
             return "Execution is not pending (status: {$execution->status->value})";
         }
 
-        if (!$execution->current_step_id) {
+        if (! $execution->current_step_id) {
             return 'Execution has no current step';
         }
 

@@ -20,9 +20,9 @@ class RoleResource extends JsonResource
     {
         /* @var Role $this */
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'tenantId'    => $this->tenant_id,
+            'id' => $this->id,
+            'name' => $this->name,
+            'tenantId' => $this->tenant_id,
             'permissions' => $this->permissions->pluck('name'),
         ];
     }

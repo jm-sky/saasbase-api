@@ -7,17 +7,17 @@ use App\Domain\Expense\Contracts\AllocationDimensionInterface;
 use App\Domain\Expense\Enums\AllocationDimensionType;
 
 /**
- * @property AllocationDimensionType        $dimensionType
- * @property string                         $label
- * @property string                         $labelEN
- * @property bool                           $isAlwaysVisible
- * @property bool                           $isConfigurable
+ * @property AllocationDimensionType $dimensionType
+ * @property string $label
+ * @property string $labelEN
+ * @property bool $isAlwaysVisible
+ * @property bool $isConfigurable
  * @property AllocationDimensionInterface[] $items
  */
 final class DimensionDataDTO extends BaseDataDTO
 {
     /**
-     * @param AllocationDimensionInterface[] $items Array of dimension items (models implementing AllocationDimensionInterface)
+     * @param  AllocationDimensionInterface[]  $items  Array of dimension items (models implementing AllocationDimensionInterface)
      */
     public function __construct(
         public readonly AllocationDimensionType $dimensionType,
@@ -26,18 +26,17 @@ final class DimensionDataDTO extends BaseDataDTO
         public readonly bool $isAlwaysVisible,
         public readonly bool $isConfigurable,
         public readonly array $items,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'dimensionType'   => $this->dimensionType->value,
-            'label'           => $this->label,
-            'labelEN'         => $this->labelEN,
+            'dimensionType' => $this->dimensionType->value,
+            'label' => $this->label,
+            'labelEN' => $this->labelEN,
             'isAlwaysVisible' => $this->isAlwaysVisible,
-            'isConfigurable'  => $this->isConfigurable,
-            'items'           => $this->items, // Items will be transformed to array by resource
+            'isConfigurable' => $this->isConfigurable,
+            'items' => $this->items, // Items will be transformed to array by resource
         ];
     }
 
@@ -56,7 +55,7 @@ final class DimensionDataDTO extends BaseDataDTO
     /**
      * Create DTO from AllocationDimensionType with items.
      *
-     * @param AllocationDimensionInterface[] $items
+     * @param  AllocationDimensionInterface[]  $items
      */
     public static function fromDimensionTypeWithItems(
         AllocationDimensionType $dimensionType,

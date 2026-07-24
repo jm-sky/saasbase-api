@@ -13,10 +13,10 @@ class FeatureSeeder extends Seeder
     {
         foreach (FeatureName::cases() as $feature) {
             Feature::create([
-                'id'            => Ulid::deterministic(['feature', $feature->value]),
-                'name'          => $feature->value,
-                'description'   => $feature->description(),
-                'type'          => $feature->type(),
+                'id' => Ulid::deterministic(['feature', $feature->value]),
+                'name' => $feature->value,
+                'description' => $feature->description(),
+                'type' => $feature->type(),
                 'default_value' => $feature->defaultValue(),
             ]);
         }

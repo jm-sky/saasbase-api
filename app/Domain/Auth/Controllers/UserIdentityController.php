@@ -40,8 +40,7 @@ class UserIdentityController extends Controller
 
         if ($request->hasFile('document_image')) {
             $document->addMediaFromRequest('document_image')
-                ->toMediaCollection('document_images')
-            ;
+                ->toMediaCollection('document_images');
         }
 
         return response()->json(new UserIdentityDocumentResource($document), 201);

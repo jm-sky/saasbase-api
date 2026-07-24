@@ -29,9 +29,9 @@ class RegonLookupService
     public function __construct(
         private readonly RegonApiConnector $apiConnector
     ) {
-        $this->shouldLog    = app()->isLocal() || config('services.regon.should_log', false);
-        $this->cacheMode    = CacheMode::from(config('services.regon.cache_mode', 'hours'));
-        $this->cacheHours   = (int) config('services.regon.cache_hours', self::DEFAULT_CACHE_HOURS);
+        $this->shouldLog = app()->isLocal() || config('services.regon.should_log', false);
+        $this->cacheMode = CacheMode::from(config('services.regon.cache_mode', 'hours'));
+        $this->cacheHours = (int) config('services.regon.cache_hours', self::DEFAULT_CACHE_HOURS);
     }
 
     /**
@@ -39,7 +39,7 @@ class RegonLookupService
      */
     public function findByNip(string $nip, bool $force = false, ?CarbonInterface $now = null, bool $throw = false): ?RegonReportUnified
     {
-        $nip      = $this->sanitizeAndValidateNip($nip);
+        $nip = $this->sanitizeAndValidateNip($nip);
         $cacheKey = "regon_lookup:nip:{$nip}";
         $cacheTtl = $this->getCacheTtl($now);
 
@@ -52,7 +52,7 @@ class RegonLookupService
 
     public function findByRegon(string $regon, bool $force = false, ?CarbonInterface $now = null, bool $throw = false): ?RegonReportUnified
     {
-        $regon    = $this->sanitizeAndValidateRegon($regon);
+        $regon = $this->sanitizeAndValidateRegon($regon);
         $cacheKey = "regon_lookup:regon:{$regon}";
         $cacheTtl = $this->getCacheTtl($now);
 
@@ -66,8 +66,8 @@ class RegonLookupService
     protected function getCacheTtl(?CarbonInterface $now = null): \DateTimeInterface|\DateInterval|int
     {
         return match ($this->cacheMode) {
-            CacheMode::HOURS        => $this->cacheHours * 3600,
-            CacheMode::END_OF_DAY   => $this->getEndOfDay($now),
+            CacheMode::HOURS => $this->cacheHours * 3600,
+            CacheMode::END_OF_DAY => $this->getEndOfDay($now),
             CacheMode::END_OF_MONTH => $this->getEndOfMonth($now),
         };
     }
@@ -92,9 +92,9 @@ class RegonLookupService
     {
         try {
             $searchResponse = $this->apiConnector->send(new SearchRequest(nip: $nip, regon: ''));
-            $searchResult   = $searchResponse->dto();
+            $searchResult = $searchResponse->dto();
 
-            if (!$searchResult instanceof RegonLookupResultDTO) {
+            if (! $searchResult instanceof RegonLookupResultDTO) {
                 if ($throw) {
                     throw new RegonLookupException('Invalid NIP format. NIP must be 10 digits.');
                 }
@@ -102,9 +102,9 @@ class RegonLookupService
                 return null;
             }
 
-            $reportName    = RegonReportResolver::resolveReportName($searchResult->type);
+            $reportName = RegonReportResolver::resolveReportName($searchResult->type);
             $reportRequest = new GetFullReportRequest($searchResult->regon, $reportName, $searchResult->nip);
-            $response      = $this->apiConnector->send($reportRequest);
+            $response = $this->apiConnector->send($reportRequest);
 
             /** @var RegonReportForLegalPerson|RegonReportForNaturalPerson $dto */
             $dto = $response->dto();
@@ -116,8 +116,8 @@ class RegonLookupService
             }
 
             if ($this->shouldLog) {
-                Log::error('RegonLookupService error: ' . $e->getMessage(), [
-                    'nip'       => $nip,
+                Log::error('RegonLookupService error: '.$e->getMessage(), [
+                    'nip' => $nip,
                     'exception' => $e,
                 ]);
             }
@@ -143,8 +143,8 @@ class RegonLookupService
             }
 
             if ($this->shouldLog) {
-                Log::error('RegonLookupService error: ' . $e->getMessage(), [
-                    'regon'     => $regon,
+                Log::error('RegonLookupService error: '.$e->getMessage(), [
+                    'regon' => $regon,
                     'exception' => $e,
                 ]);
             }
@@ -157,7 +157,7 @@ class RegonLookupService
     {
         $nip = preg_replace('/[^0-9]/', '', $nip);
 
-        if (10 !== strlen($nip)) {
+        if (strlen($nip) !== 10) {
             throw new RegonLookupException('Invalid NIP format. NIP must be 10 digits.');
         }
 
@@ -168,7 +168,7 @@ class RegonLookupService
     {
         $regon = preg_replace('/[^0-9]/', '', $regon);
 
-        if (!in_array(strlen($regon), [9, 14])) {
+        if (! in_array(strlen($regon), [9, 14])) {
             throw new RegonLookupException('Invalid REGON format. REGON must be 9 or 14 digits.');
         }
 

@@ -20,13 +20,13 @@ class ProjectRoleResource extends JsonResource
     {
         /* @var ProjectRole $this->resource */
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'description' => $this->description,
             'permissions' => $this->permissions,
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
-            'deletedAt'   => $this->deleted_at?->toIso8601String(),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
+            'deletedAt' => $this->deleted_at?->toIso8601String(),
         ];
     }
 }

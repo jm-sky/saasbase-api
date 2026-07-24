@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<TaskStatus>
  *
- * @property ?string $id        UUID
- * @property string  $tenantId  UUID
- * @property string  $name
- * @property string  $color
- * @property int     $sortOrder
- * @property bool    $isDefault
+ * @property ?string $id UUID
+ * @property string $tenantId UUID
+ * @property string $name
+ * @property string $color
+ * @property int $sortOrder
+ * @property bool $isDefault
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
@@ -30,8 +30,7 @@ final class TaskStatusDTO extends BaseDTO
         public readonly ?string $tenantId = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -65,10 +64,10 @@ final class TaskStatusDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'tenantId'  => $this->tenantId,
-            'name'      => $this->name,
-            'color'     => $this->color,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'name' => $this->name,
+            'color' => $this->color,
             'sortOrder' => $this->sortOrder,
             'isDefault' => $this->isDefault,
             'createdAt' => $this->createdAt?->toIso8601String(),

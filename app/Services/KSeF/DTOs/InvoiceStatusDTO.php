@@ -10,6 +10,5 @@ final class InvoiceStatusDTO
         public readonly string $invoiceNumber,
         public readonly string $ksefReferenceNumber,
         public readonly Carbon $acquisitionTimestamp
-    ) {
-    }
+    ) {}
 }

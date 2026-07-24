@@ -22,14 +22,14 @@ class IntegrationAllowedHosts
         $suffixes = self::ALLOWED_HOST_SUFFIXES[$type] ?? null;
 
         // Types with no configured allowlist don't support a custom endpoint yet.
-        if (null === $suffixes) {
+        if ($suffixes === null) {
             return false;
         }
 
         $scheme = parse_url($endpoint, PHP_URL_SCHEME);
-        $host   = parse_url($endpoint, PHP_URL_HOST);
+        $host = parse_url($endpoint, PHP_URL_HOST);
 
-        if ('https' !== $scheme || !$host) {
+        if ($scheme !== 'https' || ! $host) {
             return false;
         }
 

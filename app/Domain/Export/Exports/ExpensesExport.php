@@ -2,6 +2,8 @@
 
 namespace App\Domain\Export\Exports;
 
+use App\Domain\Common\Filters\AdvancedFilter;
+use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Expense\Models\Expense;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -37,16 +39,16 @@ class ExpensesExport extends BaseExport
     protected function allowedFilters(): array
     {
         return [
-            AllowedFilter::custom('search', new \App\Domain\Common\Filters\ComboSearchFilter(['number', 'buyer', 'seller', 'total_net', 'total_tax', 'total_gross', 'currency'])),
-            AllowedFilter::custom('number', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('total_net', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('total_tax', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('total_gross', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('currency', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('buyer', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('seller', new \App\Domain\Common\Filters\AdvancedFilter()),
-            AllowedFilter::custom('createdAt', new \App\Domain\Common\Filters\AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new \App\Domain\Common\Filters\AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('search', new ComboSearchFilter(['number', 'buyer', 'seller', 'total_net', 'total_tax', 'total_gross', 'currency'])),
+            AllowedFilter::custom('number', new AdvancedFilter),
+            AllowedFilter::custom('total_net', new AdvancedFilter),
+            AllowedFilter::custom('total_tax', new AdvancedFilter),
+            AllowedFilter::custom('total_gross', new AdvancedFilter),
+            AllowedFilter::custom('currency', new AdvancedFilter),
+            AllowedFilter::custom('buyer', new AdvancedFilter),
+            AllowedFilter::custom('seller', new AdvancedFilter),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
     }
 

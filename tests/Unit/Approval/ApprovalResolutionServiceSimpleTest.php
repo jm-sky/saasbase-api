@@ -18,17 +18,17 @@ class ApprovalResolutionServiceSimpleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new ApprovalResolutionService();
+        $this->service = new ApprovalResolutionService;
     }
 
     #[Test]
-    public function itCanBeInstantiated()
+    public function it_can_be_instantiated()
     {
         $this->assertInstanceOf(ApprovalResolutionService::class, $this->service);
     }
 
     #[Test]
-    public function itHasRequiredPublicMethods()
+    public function it_has_required_public_methods()
     {
         $this->assertTrue(method_exists($this->service, 'resolveApprovers'));
         $this->assertTrue(method_exists($this->service, 'userHasSystemPermission'));

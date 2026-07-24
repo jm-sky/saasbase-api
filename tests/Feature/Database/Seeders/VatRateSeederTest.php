@@ -15,7 +15,7 @@ class VatRateSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testVatRateSeederCreatesExpectedRecords(): void
+    public function test_vat_rate_seeder_creates_expected_records(): void
     {
         $this->seed(VatRateSeeder::class);
 

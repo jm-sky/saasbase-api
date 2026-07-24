@@ -26,8 +26,7 @@ class RoleController extends Controller
             ->where(function ($query) use ($user) {
                 $query->whereNull('tenant_id')->orWhere('tenant_id', $user->getTenantId());
             })
-            ->get()
-        ;
+            ->get();
 
         return RoleResource::collection($roles);
     }
@@ -39,14 +38,14 @@ class RoleController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$this->canManageRoles($user)) {
+        if (! $this->canManageRoles($user)) {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
         }
 
         $role = Role::create([
-            'name'       => $validated['name'],
+            'name' => $validated['name'],
             'guard_name' => 'api',
-            'tenant_id'  => $user->getTenantId(),
+            'tenant_id' => $user->getTenantId(),
         ]);
 
         $role->syncPermissions($validated['permissions']);
@@ -57,7 +56,7 @@ class RoleController extends Controller
     public function update(UpdateRoleRequest $request, Role $role): JsonResponse
     {
         // Prevent modifying global roles
-        if (null === $role->tenant_id) {
+        if ($role->tenant_id === null) {
             return response()->json(['message' => 'Cannot modify global roles'], Response::HTTP_FORBIDDEN);
         }
 
@@ -69,7 +68,7 @@ class RoleController extends Controller
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
         }
 
-        if (!$this->canManageRoles($user)) {
+        if (! $this->canManageRoles($user)) {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
         }
 
@@ -87,7 +86,7 @@ class RoleController extends Controller
     public function destroy(Role $role): JsonResponse
     {
         // Prevent deleting global roles
-        if (null === $role->tenant_id) {
+        if ($role->tenant_id === null) {
             return response()->json(['message' => 'Cannot delete global roles'], Response::HTTP_FORBIDDEN);
         }
 
@@ -99,7 +98,7 @@ class RoleController extends Controller
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
         }
 
-        if (!$this->canManageRoles($user)) {
+        if (! $this->canManageRoles($user)) {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
         }
 
@@ -112,7 +111,7 @@ class RoleController extends Controller
     {
         $tenantId = $user->getTenantId();
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             return false;
         }
 

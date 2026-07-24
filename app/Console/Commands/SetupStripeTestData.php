@@ -18,56 +18,56 @@ class SetupStripeTestData extends Command
         try {
             // Create test product
             $product = $stripe->products->create([
-                'name'        => 'Test Product',
+                'name' => 'Test Product',
                 'description' => 'A test product for development',
             ]);
 
-            $this->info('✅ Created test product: ' . $product->id);
+            $this->info('✅ Created test product: '.$product->id);
 
             // Create monthly price
             $monthlyPrice = $stripe->prices->create([
-                'product'     => $product->id,
+                'product' => $product->id,
                 'unit_amount' => 1000, // $10.00
-                'currency'    => 'usd',
-                'recurring'   => [
+                'currency' => 'usd',
+                'recurring' => [
                     'interval' => 'month',
                 ],
             ]);
 
-            $this->info('✅ Created monthly price: ' . $monthlyPrice->id);
+            $this->info('✅ Created monthly price: '.$monthlyPrice->id);
 
             // Create yearly price
             $yearlyPrice = $stripe->prices->create([
-                'product'     => $product->id,
+                'product' => $product->id,
                 'unit_amount' => 10000, // $100.00
-                'currency'    => 'usd',
-                'recurring'   => [
+                'currency' => 'usd',
+                'recurring' => [
                     'interval' => 'year',
                 ],
             ]);
 
-            $this->info('✅ Created yearly price: ' . $yearlyPrice->id);
+            $this->info('✅ Created yearly price: '.$yearlyPrice->id);
 
             // Create test customer
             $customer = $stripe->customers->create([
                 'email' => 'test@example.com',
-                'name'  => 'Test Customer',
+                'name' => 'Test Customer',
             ]);
 
-            $this->info('✅ Created test customer: ' . $customer->id);
+            $this->info('✅ Created test customer: '.$customer->id);
 
             // Create test payment method
             $paymentMethod = $stripe->paymentMethods->create([
                 'type' => 'card',
                 'card' => [
-                    'number'    => '4242424242424242',
+                    'number' => '4242424242424242',
                     'exp_month' => 12,
-                    'exp_year'  => date('Y') + 1,
-                    'cvc'       => '123',
+                    'exp_year' => date('Y') + 1,
+                    'cvc' => '123',
                 ],
             ]);
 
-            $this->info('✅ Created test payment method: ' . $paymentMethod->id);
+            $this->info('✅ Created test payment method: '.$paymentMethod->id);
 
             // Attach payment method to customer
             $stripe->paymentMethods->attach($paymentMethod->id, [
@@ -77,11 +77,11 @@ class SetupStripeTestData extends Command
             $this->info('✅ Attached payment method to customer');
 
             $this->info("\nTest Data Summary:");
-            $this->info('Product ID: ' . $product->id);
-            $this->info('Monthly Price ID: ' . $monthlyPrice->id);
-            $this->info('Yearly Price ID: ' . $yearlyPrice->id);
-            $this->info('Customer ID: ' . $customer->id);
-            $this->info('Payment Method ID: ' . $paymentMethod->id);
+            $this->info('Product ID: '.$product->id);
+            $this->info('Monthly Price ID: '.$monthlyPrice->id);
+            $this->info('Yearly Price ID: '.$yearlyPrice->id);
+            $this->info('Customer ID: '.$customer->id);
+            $this->info('Payment Method ID: '.$paymentMethod->id);
 
             $this->info("\nYou can use these IDs in your tests and development.");
         } catch (\Exception $e) {

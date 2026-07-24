@@ -13,6 +13,7 @@ use App\Domain\Expense\Resources\AllocationSuggestionsResource;
 use App\Domain\Expense\Resources\ExpenseAllocationResource;
 use App\Domain\Expense\Resources\ExpenseAllocationSummaryResource;
 use App\Domain\Expense\Services\DimensionVisibilityService;
+use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -26,8 +27,7 @@ class ExpenseAllocationController extends Controller
     public function __construct(
         private AllocateExpenseAction $allocateAction,
         private DimensionVisibilityService $dimensionService
-    ) {
-    }
+    ) {}
 
     /**
      * Get all allocations for an expense.
@@ -37,8 +37,7 @@ class ExpenseAllocationController extends Controller
         $allocations = $expense->allocations()
             ->with(['dimensions.dimensionable'])
             ->orderBy('created_at')
-            ->get()
-        ;
+            ->get();
 
         return ExpenseAllocationResource::collection($allocations);
     }
@@ -50,9 +49,9 @@ class ExpenseAllocationController extends Controller
     {
         $this->authorize('update', $expense);
 
-        if (!$this->allocateAction->canAllocate($expense)) {
+        if (! $this->allocateAction->canAllocate($expense)) {
             return response()->json([
-                'message'       => 'This expense cannot be allocated in its current status',
+                'message' => 'This expense cannot be allocated in its current status',
                 'currentStatus' => $expense->status->value,
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -70,12 +69,12 @@ class ExpenseAllocationController extends Controller
 
             return response()->json([
                 'message' => 'Expense allocated successfully',
-                'data'    => new ExpenseAllocationSummaryResource($expense),
+                'data' => new ExpenseAllocationSummaryResource($expense),
             ], Response::HTTP_CREATED);
         } catch (\InvalidArgumentException $e) {
             return response()->json([
                 'message' => 'Allocation validation failed',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
@@ -87,9 +86,9 @@ class ExpenseAllocationController extends Controller
     {
         $this->authorize('update', $expense);
 
-        if (!$this->allocateAction->canAllocate($expense)) {
+        if (! $this->allocateAction->canAllocate($expense)) {
             return response()->json([
-                'message'       => 'This expense cannot be allocated in its current status',
+                'message' => 'This expense cannot be allocated in its current status',
                 'currentStatus' => $expense->status->value,
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -114,12 +113,12 @@ class ExpenseAllocationController extends Controller
 
             return response()->json([
                 'message' => 'Expense auto-allocated successfully',
-                'data'    => new ExpenseAllocationSummaryResource($expense),
+                'data' => new ExpenseAllocationSummaryResource($expense),
             ], Response::HTTP_CREATED);
         } catch (\InvalidArgumentException $e) {
             return response()->json([
                 'message' => 'Auto-allocation failed',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
@@ -131,7 +130,7 @@ class ExpenseAllocationController extends Controller
     {
         $this->authorize('view', $expense);
 
-        $suggestions       = collect($this->allocateAction->getSuggestedAllocations($expense));
+        $suggestions = collect($this->allocateAction->getSuggestedAllocations($expense));
         $enabledDimensions = $this->dimensionService->getEnabledDimensionsForTenant($expense->tenant_id);
 
         return response()->json([
@@ -170,7 +169,7 @@ class ExpenseAllocationController extends Controller
         $expense->allocations()->delete();
 
         // Update expense status back to processing
-        $expense->update(['status' => \App\Domain\Financial\Enums\InvoiceStatus::PROCESSING]);
+        $expense->update(['status' => InvoiceStatus::PROCESSING]);
 
         return response()->json([
             'message' => 'All allocations cleared successfully',

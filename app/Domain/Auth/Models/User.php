@@ -2,6 +2,7 @@
 
 namespace App\Domain\Auth\Models;
 
+use App\Domain\Auth\Events\UserCreated;
 use App\Domain\Auth\Notifications\ResetPasswordNotification;
 use App\Domain\Auth\Notifications\VerifyEmailNotification;
 use App\Domain\Auth\Traits\HasUsersPublicScopedFields;
@@ -19,11 +20,13 @@ use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Projects\Models\ProjectUser;
 use App\Domain\Projects\Models\Task;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Skills\Models\Skill;
 use App\Domain\Skills\Models\UserSkill;
 use App\Domain\Subscription\Models\BillingCustomer;
 use App\Domain\Subscription\Models\BillingInfo;
 use App\Domain\Subscription\Models\Subscription;
+use App\Domain\Tenant\Enums\OrgUnitRole;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\OrgUnitUser;
 use App\Domain\Tenant\Models\Position;
@@ -63,73 +66,75 @@ use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
- * @property string                               $id
- * @property string                               $first_name
- * @property string                               $last_name
- * @property string                               $email
- * @property string                               $password
- * @property ?string                              $phone
- * @property bool                                 $is_admin
- * @property bool                                 $is_active
- * @property Carbon                               $created_at
- * @property Carbon                               $updated_at
- * @property ?Carbon                              $deleted_at
- * @property ?Carbon                              $email_verified_at
- * @property ?string                              $tenant_id
- * @property ?UserSettings                        $settings
- * @property ?UserPreference                      $preferences
- * @property ?UserProfile                         $profile
- * @property ?UserPersonalData                    $personalData
- * @property ?string                              $name                     User's full name (first_name + last_name)
- * @property ?string                              $full_name                User's full name (first_name + last_name)
- * @property ?string                              $public_email
- * @property ?string                              $public_birth_date
- * @property ?string                              $public_phone
- * @property ?string                              $tenant_scoped_email
- * @property ?string                              $tenant_scoped_birth_date
- * @property ?string                              $tenant_scoped_phone
- * @property ?BillingCustomer                     $billingCustomer
- * @property ?BillingInfo                         $billingInfo
- * @property ?Subscription                        $subscription
- * @property Collection<int, Address>             $addresses
- * @property Collection<int, BankAccount>         $bankAccounts
- * @property Collection<int, Media>               $media
- * @property Collection<int, OAuthAccount>        $oauthAccounts
- * @property Collection<int, Project>             $projects
- * @property Collection<int, Skill>               $skills
- * @property Collection<int, Task>                $tasks
- * @property Collection<int, Tenant>              $tenants
- * @property Collection<int, UserSkill>           $userSkills
- * @property Collection<int, UserSession>         $sessions
- * @property Collection<int, UserTableSetting>    $tableSettings
+ * @property string $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $password
+ * @property ?string $phone
+ * @property bool $is_admin
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property ?Carbon $email_verified_at
+ * @property ?string $tenant_id
+ * @property ?UserSettings $settings
+ * @property ?UserPreference $preferences
+ * @property ?UserProfile $profile
+ * @property ?UserPersonalData $personalData
+ * @property ?string $name User's full name (first_name + last_name)
+ * @property ?string $full_name User's full name (first_name + last_name)
+ * @property ?string $public_email
+ * @property ?string $public_birth_date
+ * @property ?string $public_phone
+ * @property ?string $tenant_scoped_email
+ * @property ?string $tenant_scoped_birth_date
+ * @property ?string $tenant_scoped_phone
+ * @property ?BillingCustomer $billingCustomer
+ * @property ?BillingInfo $billingInfo
+ * @property ?Subscription $subscription
+ * @property Collection<int, Address> $addresses
+ * @property Collection<int, BankAccount> $bankAccounts
+ * @property Collection<int, Media> $media
+ * @property Collection<int, OAuthAccount> $oauthAccounts
+ * @property Collection<int, Project> $projects
+ * @property Collection<int, Skill> $skills
+ * @property Collection<int, Task> $tasks
+ * @property Collection<int, Tenant> $tenants
+ * @property Collection<int, UserSkill> $userSkills
+ * @property Collection<int, UserSession> $sessions
+ * @property Collection<int, UserTableSetting> $tableSettings
  * @property Collection<int, NotificationSetting> $notificationSettings
- * @property Collection<int, TrustedDevice>       $trustedDevices
- * @property Collection<int, SecurityEvent>       $securityEvents
- * @property Collection<int, ApiKey>              $apiKeys
+ * @property Collection<int, TrustedDevice> $trustedDevices
+ * @property Collection<int, SecurityEvent> $securityEvents
+ * @property Collection<int, ApiKey> $apiKeys
  */
-class User extends Authenticatable implements AllocationDimensionInterface, JWTSubject, HasMedia, HasMediaUrl, MustVerifyEmail
+class User extends Authenticatable implements AllocationDimensionInterface, HasMedia, HasMediaUrl, JWTSubject, MustVerifyEmail
 {
-    use HasApiTokens;
-    use HasFactory;
-    use HasUlids;
-    // use UlidNotifiable;
-    use Notifiable;
-    use SoftDeletes;
-    use InteractsWithMedia;
-    use HasMediaSignedUrls;
-    use MustVerifyEmailTrait;
-    use HaveBankAccounts;
-    use HaveAddresses;
-    use HasRoles;
-    use IsSearchable;
-    use HasUsersTenantScopedFields;
-    use HasUsersPublicScopedFields;
     // getTenantId() is already defined below (JWT-derived, current-request tenant context);
     // the trait's version is silently shadowed by it, which is what we want here — a User
     // row has no single "owning tenant" column of its own (membership is via the
     // user_tenants pivot), so this dimension's tenant scoping piggybacks on whichever
     // tenant the request is already running in rather than claiming a more precise answer.
     use HasAllocationDimensionInterface;
+    use HasApiTokens;
+    use HasFactory;
+
+    use HasMediaSignedUrls;
+    use HasRoles;
+    use HasUlids;
+    use HasUsersPublicScopedFields;
+    use HasUsersTenantScopedFields;
+    use HaveAddresses;
+    use HaveBankAccounts;
+    use InteractsWithMedia;
+    use IsSearchable;
+    use MustVerifyEmailTrait;
+    // use UlidNotifiable;
+    use Notifiable;
+
+    use SoftDeletes;
 
     protected $with = ['preferences'];
 
@@ -150,15 +155,15 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
-        'is_admin'          => 'boolean',
-        'is_active'         => 'boolean',
+        'password' => 'hashed',
+        'is_admin' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     protected static function booted(): void
     {
         static::created(function (User $user) {
-            event(new \App\Domain\Auth\Events\UserCreated($user));
+            event(new UserCreated($user));
         });
     }
 
@@ -195,7 +200,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
 
     public function isEmailVerified(): bool
     {
-        return null !== $this->email_verified_at;
+        return $this->email_verified_at !== null;
     }
 
     public function isTwoFactorEnabled(): bool
@@ -292,8 +297,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
         return $this->belongsToMany(Project::class, 'project_users')
             ->using(ProjectUser::class)
             ->withPivot(['project_role_id'])
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     public function tasks(): HasMany
@@ -311,8 +315,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
         return $this->belongsToMany(Skill::class, 'user_skill')
             ->using(UserSkill::class)
             ->withPivot(['level', 'acquired_at', 'id'])
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     public function tenants(): BelongsToMany
@@ -320,15 +323,14 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
         return $this->belongsToMany(Tenant::class, 'user_tenants')
             ->using(UserTenant::class)
             ->withPivot(['role'])
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     public function currentTenant(): ?Tenant
     {
         $tenantId = $this->getTenantId();
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             return null;
         }
 
@@ -340,8 +342,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
     {
         return $this->belongsToMany(OrganizationUnit::class, 'org_unit_user')
             ->withPivot('role')
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     public function orgUnitUsers(): HasMany
@@ -385,13 +386,11 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
     {
         $this->addMediaCollection('profile')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('identity_confirmation_template')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['application/xml', 'text/xml']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['application/xml', 'text/xml']));
     }
 
     public function registerMediaConversions(?SpatieMedia $media = null): void
@@ -401,8 +400,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
                 config('domains.users.avatar.size', 256),
                 config('domains.users.avatar.size', 256),
                 CropPosition::Center,
-            )
-        ;
+            );
     }
 
     // Optional accessor
@@ -421,7 +419,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyEmailNotification());
+        $this->notify(new VerifyEmailNotification);
     }
 
     public function sendPasswordResetNotification($token): void
@@ -431,7 +429,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
 
     public function getMediaUrl(string $collectionName, string $fileName): string
     {
-        if ('profile' === $collectionName) {
+        if ($collectionName === 'profile') {
             return route('user.profile-image.showForUser', ['user' => $this->id], absolute: false);
         }
 
@@ -456,8 +454,7 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
             ->whereHas('orgUnitUsers', function ($query) {
                 /* @phpstan-ignore-next-line */
                 $query->where('user_id', $this->id)->active();
-            })
-        ;
+            });
     }
 
     public function primaryPosition(): ?Position
@@ -474,25 +471,25 @@ class User extends Authenticatable implements AllocationDimensionInterface, JWTS
         $options = array_merge([
             'valid_from' => now(),
             'is_primary' => false,
-            'notes'      => null,
-            'role'       => \App\Domain\Tenant\Enums\OrgUnitRole::Employee,
+            'notes' => null,
+            'role' => OrgUnitRole::Employee,
         ], $options);
 
         // Create org unit user assignment
         /** @var OrgUnitUser $orgUnitUser */
         $orgUnitUser = $this->orgUnitUsers()->create([
-            'tenant_id'            => $unit->tenant_id,
+            'tenant_id' => $unit->tenant_id,
             'organization_unit_id' => $unit->id,
-            'position_id'          => $position?->id,
-            'role'                 => $options['role']->value,
-            'is_primary'           => $options['is_primary'],
-            'notes'                => $options['notes'],
-            'valid_from'           => $options['valid_from'],
+            'position_id' => $position?->id,
+            'role' => $options['role']->value,
+            'is_primary' => $options['is_primary'],
+            'notes' => $options['notes'],
+            'valid_from' => $options['valid_from'],
         ]);
 
         // Assign role if position has one
         if ($position && $position->role_name) {
-            \App\Domain\Rights\Support\TenantScopedRoles::assign($this, $position->role_name, $unit->tenant_id);
+            TenantScopedRoles::assign($this, $position->role_name, $unit->tenant_id);
         }
 
         return $orgUnitUser;

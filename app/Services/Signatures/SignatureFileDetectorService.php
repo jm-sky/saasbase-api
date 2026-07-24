@@ -13,27 +13,27 @@ class SignatureFileDetectorService
         $extension = $filename ? strtolower(pathinfo($filename, PATHINFO_EXTENSION)) : null;
 
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        $mime  = $finfo->buffer($rawContent);
+        $mime = $finfo->buffer($rawContent);
 
-        $type      = SignatureFileType::UNKNOWN;
+        $type = SignatureFileType::UNKNOWN;
         $signature = SignatureType::UNKNOWN;
 
         if (str_starts_with(trim($rawContent), '<?xml')) {
             if (str_contains($rawContent, '<ds:Signature') || str_contains($rawContent, '<Signature')) {
-                $type      = SignatureFileType::XML;
+                $type = SignatureFileType::XML;
                 $signature = SignatureType::XAdES;
             }
         } elseif (str_starts_with($rawContent, '%PDF')) {
-            $type      = SignatureFileType::PDF;
+            $type = SignatureFileType::PDF;
             $signature = SignatureType::PAdES;
-        } elseif ('PK' === substr($rawContent, 0, 2)) {
-            $type      = SignatureFileType::ZIP;
+        } elseif (substr($rawContent, 0, 2) === 'PK') {
+            $type = SignatureFileType::ZIP;
             $signature = SignatureType::ASIC_E;
         } elseif (
             str_contains($mime, 'pkcs7')
             || in_array($extension, ['p7m', 'p7s', 'p7c'])
         ) {
-            $type      = SignatureFileType::BINARY;
+            $type = SignatureFileType::BINARY;
             $signature = SignatureType::CAdES;
         }
 

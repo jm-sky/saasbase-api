@@ -17,13 +17,12 @@ class AllocateExpenseAction
 {
     public function __construct(
         private DimensionVisibilityService $dimensionVisibilityService
-    ) {
-    }
+    ) {}
 
     /**
      * Allocate an expense across multiple allocations with dimensions.
      *
-     * @param AllocationDataDTO[] $allocations Array of allocation DTOs
+     * @param  AllocationDataDTO[]  $allocations  Array of allocation DTOs
      *
      * @throws \InvalidArgumentException
      */
@@ -37,10 +36,10 @@ class AllocateExpenseAction
 
             foreach ($allocations as $allocationData) {
                 $allocation = ExpenseAllocation::create([
-                    'tenant_id'  => $expense->tenant_id,
+                    'tenant_id' => $expense->tenant_id,
                     'expense_id' => $expense->id,
-                    'amount'     => $allocationData->amount,
-                    'note'       => $allocationData->note,
+                    'amount' => $allocationData->amount,
+                    'note' => $allocationData->note,
                 ]);
 
                 // Create dimension associations
@@ -57,7 +56,7 @@ class AllocateExpenseAction
     /**
      * Validate allocation data before processing.
      *
-     * @param AllocationDataDTO[] $allocations
+     * @param  AllocationDataDTO[]  $allocations
      */
     private function validateAllocations(Expense $expense, array $allocations): void
     {
@@ -65,10 +64,9 @@ class AllocateExpenseAction
             throw new \InvalidArgumentException('At least one allocation is required');
         }
 
-        $totalAmount       = BigDecimal::zero();
+        $totalAmount = BigDecimal::zero();
         $enabledDimensions = $this->dimensionVisibilityService
-            ->getEnabledDimensionsForTenant($expense->tenant_id)
-        ;
+            ->getEnabledDimensionsForTenant($expense->tenant_id);
 
         foreach ($allocations as $index => $allocation) {
             // Validate amount
@@ -91,7 +89,7 @@ class AllocateExpenseAction
     /**
      * Validate dimension data.
      *
-     * @param AllocationDimensionDTO[] $dimensions
+     * @param  AllocationDimensionDTO[]  $dimensions
      */
     private function validateDimensions(array $dimensions, $enabledDimensions, int $allocationIndex): void
     {
@@ -99,7 +97,7 @@ class AllocateExpenseAction
             // Check if dimension is enabled for tenant
             $isDimensionEnabled = $enabledDimensions->contains($dimension->type);
 
-            if (!$isDimensionEnabled) {
+            if (! $isDimensionEnabled) {
                 throw new \InvalidArgumentException("Dimension type '{$dimension->type->value}' is not enabled for this tenant");
             }
 
@@ -115,13 +113,13 @@ class AllocateExpenseAction
     {
         $modelClass = $dimensionType->getMorphClass();
 
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             throw new \InvalidArgumentException("Dimension model class {$modelClass} does not exist for type {$dimensionType->value}");
         }
 
-        $exists = null !== $modelClass::find($dimensionId);
+        $exists = $modelClass::find($dimensionId) !== null;
 
-        if (!$exists) {
+        if (! $exists) {
             throw new \InvalidArgumentException("Dimension entity with ID '{$dimensionId}' does not exist for type '{$dimensionType->value}' at allocation {$allocationIndex}");
         }
     }
@@ -132,16 +130,16 @@ class AllocateExpenseAction
     private function createDimensionAssociation(ExpenseAllocation $allocation, AllocationDimensionDTO $dimension): void
     {
         AllocationDimension::create([
-            'allocation_id'  => $allocation->id,
+            'allocation_id' => $allocation->id,
             'dimension_type' => $dimension->type,
-            'dimension_id'   => $dimension->id,
+            'dimension_id' => $dimension->id,
         ]);
     }
 
     /**
      * Auto-allocate expense with basic allocation (useful for simple cases).
      *
-     * @param AllocationDimensionDTO[] $basicDimensions
+     * @param  AllocationDimensionDTO[]  $basicDimensions
      */
     public function autoAllocate(Expense $expense, array $basicDimensions = []): void
     {
@@ -159,8 +157,8 @@ class AllocateExpenseAction
      */
     public function canAllocate(Expense $expense): bool
     {
-        return InvoiceStatus::PROCESSING === $expense->status
-               || InvoiceStatus::DRAFT === $expense->status;
+        return $expense->status === InvoiceStatus::PROCESSING
+               || $expense->status === InvoiceStatus::DRAFT;
     }
 
     /**

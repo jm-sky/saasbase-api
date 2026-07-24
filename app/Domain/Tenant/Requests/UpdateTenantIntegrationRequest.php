@@ -19,10 +19,10 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'mode'        => ['sometimes', new Enum(TenantIntegrationMode::class)],
-            'enabled'     => ['boolean'],
+            'mode' => ['sometimes', new Enum(TenantIntegrationMode::class)],
+            'enabled' => ['boolean'],
             'credentials' => ['nullable', 'array', 'required_if:mode,custom'],
-            'meta'        => ['nullable', 'array'],
+            'meta' => ['nullable', 'array'],
         ];
     }
 
@@ -31,15 +31,15 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
         $validator->after(function (Validator $validator) {
             $endpoint = $this->input('credentials.endpoint');
 
-            if (!$endpoint) {
+            if (! $endpoint) {
                 return;
             }
 
             /** @var ?TenantIntegration $integration */
             $integration = $this->route('integration');
-            $type        = $integration?->type?->value;
+            $type = $integration?->type?->value;
 
-            if (!$type || !IntegrationAllowedHosts::isAllowed($type, (string) $endpoint)) {
+            if (! $type || ! IntegrationAllowedHosts::isAllowed($type, (string) $endpoint)) {
                 $validator->errors()->add('credentials.endpoint', 'This endpoint is not allowed for this integration type.');
             }
         });
@@ -48,9 +48,9 @@ class UpdateTenantIntegrationRequest extends BaseFormRequest
     public function attributes(): array
     {
         return [
-            'mode'        => 'integration mode',
+            'mode' => 'integration mode',
             'credentials' => 'integration credentials',
-            'meta'        => 'integration metadata',
+            'meta' => 'integration metadata',
         ];
     }
 }

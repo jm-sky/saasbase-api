@@ -13,12 +13,12 @@ class AiChatResponseResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'        => $this->id,
-            'tempId'    => $this->tempId,
-            'content'   => $this->content,
+            'id' => $this->id,
+            'tempId' => $this->tempId,
+            'content' => $this->content,
             'streaming' => $this->streaming,
-            'role'      => $this->role ?? 'assistant',
-            'isAi'      => $this->isAi ?? true,
+            'role' => $this->role ?? 'assistant',
+            'isAi' => $this->isAi ?? true,
             'createdAt' => $this->createdAt?->toIso8601String() ?? now()->toIso8601String(),
         ];
     }

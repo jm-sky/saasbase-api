@@ -7,7 +7,7 @@ use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Financial\Models\AllocationTransactionType>
+ * @extends Factory<AllocationTransactionType>
  */
 class AllocationTransactionTypeFactory extends Factory
 {
@@ -24,11 +24,11 @@ class AllocationTransactionTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id'   => $this->faker->optional()->randomElement([null, Tenant::factory()]),
-            'code'        => $this->faker->unique()->lexify('???_???'),
-            'name'        => $this->faker->words(3, true),
+            'tenant_id' => $this->faker->optional()->randomElement([null, Tenant::factory()]),
+            'code' => $this->faker->unique()->lexify('???_???'),
+            'name' => $this->faker->words(3, true),
             'description' => $this->faker->optional()->sentence(),
-            'is_active'   => true,
+            'is_active' => true,
         ];
     }
 

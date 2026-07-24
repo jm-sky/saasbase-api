@@ -13,22 +13,22 @@ use Illuminate\Support\Str;
 /**
  * Ministry of Finance Lookup Result Data Transfer Object.
  *
- * @property string               $name                  Example: "Example Company Sp. z o.o."
- * @property string               $nip                   Example: "1234567890"
- * @property ?string              $regon                 Example: "123456789"
- * @property ?string              $krs                   Example: "0000123456"
- * @property ?string              $residenceAddress      Example: "ul. Kwiatowa 15, 00-001 Warszawa"
- * @property ?string              $workingAddress        Example: "ul. Słoneczna 7, 00-002 Warszawa"
- * @property string[]             $accountNumbers        Example: ["PL10105000997603123456789123", "PL60102010260000160201111111"]
- * @property VatStatusEnum        $vatStatus             Example: VatStatusEnum::ACTIVE
- * @property bool                 $hasVirtualAccounts    Example: false
- * @property RepresentativeDTO[]  $representatives       Example: [{"name": "Jan Kowalski", "nip": null, "pesel": "85010112345"}]
- * @property AuthorizedClerkDTO[] $authorizedClerks      Example: [{"name": "Anna Nowak", "nip": null, "pesel": "90020256789"}]
- * @property PartnerDTO[]         $partners              Example: [{"name": "Michał Wiśniewski", "nip": "9876543210", "pesel": null}]
- * @property ?string              $registrationLegalDate Example: "2015-01-01"
- * @property ?bool                $cache
+ * @property string $name Example: "Example Company Sp. z o.o."
+ * @property string $nip Example: "1234567890"
+ * @property ?string $regon Example: "123456789"
+ * @property ?string $krs Example: "0000123456"
+ * @property ?string $residenceAddress Example: "ul. Kwiatowa 15, 00-001 Warszawa"
+ * @property ?string $workingAddress Example: "ul. Słoneczna 7, 00-002 Warszawa"
+ * @property string[] $accountNumbers Example: ["PL10105000997603123456789123", "PL60102010260000160201111111"]
+ * @property VatStatusEnum $vatStatus Example: VatStatusEnum::ACTIVE
+ * @property bool $hasVirtualAccounts Example: false
+ * @property RepresentativeDTO[] $representatives Example: [{"name": "Jan Kowalski", "nip": null, "pesel": "85010112345"}]
+ * @property AuthorizedClerkDTO[] $authorizedClerks Example: [{"name": "Anna Nowak", "nip": null, "pesel": "90020256789"}]
+ * @property PartnerDTO[] $partners Example: [{"name": "Michał Wiśniewski", "nip": "9876543210", "pesel": null}]
+ * @property ?string $registrationLegalDate Example: "2015-01-01"
+ * @property ?bool $cache
  */
-final class MfLookupResultDTO implements Arrayable, \JsonSerializable
+final class MfLookupResultDTO implements \JsonSerializable, Arrayable
 {
     public const COUNTRY = 'PL';
 
@@ -50,8 +50,7 @@ final class MfLookupResultDTO implements Arrayable, \JsonSerializable
         public readonly array $partners,
         public readonly ?string $registrationLegalDate,
         public readonly ?bool $cache = null,
-    ) {
-    }
+    ) {}
 
     public static function fromApiResponse(array $data): self
     {
@@ -76,20 +75,20 @@ final class MfLookupResultDTO implements Arrayable, \JsonSerializable
     public function toArray(): array
     {
         return [
-            'name'                  => $this->name,
-            'nip'                   => $this->nip,
-            'regon'                 => $this->regon,
-            'krs'                   => $this->krs,
-            'residenceAddress'      => $this->residenceAddress,
-            'workingAddress'        => $this->workingAddress,
-            'accountNumbers'        => $this->accountNumbers,
-            'vatStatus'             => $this->vatStatus,
-            'hasVirtualAccounts'    => $this->hasVirtualAccounts,
-            'representatives'       => $this->representatives,
-            'authorizedClerks'      => $this->authorizedClerks,
-            'partners'              => $this->partners,
+            'name' => $this->name,
+            'nip' => $this->nip,
+            'regon' => $this->regon,
+            'krs' => $this->krs,
+            'residenceAddress' => $this->residenceAddress,
+            'workingAddress' => $this->workingAddress,
+            'accountNumbers' => $this->accountNumbers,
+            'vatStatus' => $this->vatStatus,
+            'hasVirtualAccounts' => $this->hasVirtualAccounts,
+            'representatives' => $this->representatives,
+            'authorizedClerks' => $this->authorizedClerks,
+            'partners' => $this->partners,
             'registrationLegalDate' => $this->registrationLegalDate,
-            'cache'                 => $this->cache,
+            'cache' => $this->cache,
         ];
     }
 
@@ -111,13 +110,13 @@ final class MfLookupResultDTO implements Arrayable, \JsonSerializable
                     city: $mfAddress->city,
                     type: AddressType::REGISTERED_OFFICE,
                     isDefault: true,
-                    street: $mfAddress->street . ' ' . $mfAddress->buildingAndFlat,
+                    street: $mfAddress->street.' '.$mfAddress->buildingAndFlat,
                     postalCode: $mfAddress->postalCode
                 );
             }
         }
 
-        if (!$address && $this->residenceAddress) {
+        if (! $address && $this->residenceAddress) {
             $mfAddress = MfAddressDTO::fromString($this->residenceAddress);
 
             if ($mfAddress) {
@@ -126,7 +125,7 @@ final class MfLookupResultDTO implements Arrayable, \JsonSerializable
                     city: $mfAddress->city,
                     type: AddressType::RESIDENCE,
                     isDefault: true,
-                    street: $mfAddress->street . ' ' . $mfAddress->buildingAndFlat,
+                    street: $mfAddress->street.' '.$mfAddress->buildingAndFlat,
                     postalCode: $mfAddress->postalCode
                 );
             }
@@ -143,8 +142,8 @@ final class MfLookupResultDTO implements Arrayable, \JsonSerializable
 
         $iban = $this->accountNumbers[0];
 
-        if (!Str::startsWith($iban, 'PL')) {
-            $iban = self::COUNTRY . $iban;
+        if (! Str::startsWith($iban, 'PL')) {
+            $iban = self::COUNTRY.$iban;
         }
 
         return new BankAccountDTO(
@@ -156,7 +155,7 @@ final class MfLookupResultDTO implements Arrayable, \JsonSerializable
 
     public function toCommonLookupData(): CommonCompanyLookupData
     {
-        $address     = $this->getAddress();
+        $address = $this->getAddress();
         $bankAccount = $this->getBankAccount();
 
         return new CommonCompanyLookupData(

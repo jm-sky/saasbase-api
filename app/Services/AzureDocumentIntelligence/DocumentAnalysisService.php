@@ -2,6 +2,8 @@
 
 namespace App\Services\AzureDocumentIntelligence;
 
+use App\Domain\Tenant\Services\IntegrationCredentialService;
+use App\Domain\Tenant\Services\IntegrationLimitService;
 use App\Services\AzureDocumentIntelligence\DTOs\DocumentAnalysisResult;
 use App\Services\AzureDocumentIntelligence\Enums\DocumentAnalysisStatus;
 use App\Services\AzureDocumentIntelligence\Exceptions\AzureDocumentIntelligenceException;
@@ -68,8 +70,8 @@ use Illuminate\Support\Str;
  * }
  * ```
  *
- * @see \App\Domain\Tenant\Services\IntegrationCredentialService
- * @see \App\Domain\Tenant\Services\IntegrationLimitService
+ * @see IntegrationCredentialService
+ * @see IntegrationLimitService
  */
 class DocumentAnalysisService
 {
@@ -86,7 +88,7 @@ class DocumentAnalysisService
     public function __construct(?array $customCredentials = null)
     {
         $this->connector = new AzureConnector($customCredentials);
-        $this->useMock   = config('azure_doc_intel.use_mock', false);
+        $this->useMock = config('azure_doc_intel.use_mock', false);
     }
 
     public function analyze(string $filePath): DocumentAnalysisResult
@@ -111,7 +113,7 @@ class DocumentAnalysisService
     public function analyzeWithCache(string $filePath, ?int $ttl = null, bool $force = false): DocumentAnalysisResult
     {
         $cacheKey = $this->generateCacheKey($filePath);
-        $ttl      = $ttl ?? self::CACHE_TTL;
+        $ttl = $ttl ?? self::CACHE_TTL;
 
         if ($force) {
             Cache::forget($cacheKey);
@@ -132,9 +134,9 @@ class DocumentAnalysisService
     public function analyzeByContentInternal(string $filePath, ?string $modelId = null): array
     {
         $uploadRequest = new AnalyzeDocumentRequest($filePath);
-        $response      = $this->connector->send($uploadRequest);
+        $response = $this->connector->send($uploadRequest);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
         }
 
@@ -146,9 +148,9 @@ class DocumentAnalysisService
     public function analyzeByUrlInternal(string $url): array
     {
         $uploadRequest = new AnalyzeDocumentByUrlRequest($url);
-        $response      = $this->connector->send($uploadRequest);
+        $response = $this->connector->send($uploadRequest);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error('Failed to submit document to Azure.', ['response' => $response->json()]);
 
             throw new AzureDocumentIntelligenceException('Failed to submit document to Azure.', context: ['response' => $response->json()]);
@@ -165,7 +167,7 @@ class DocumentAnalysisService
     protected function generateCacheKey(string $filePath, ?string $modelId = null): string
     {
         $fileHash = hash_file('sha256', $filePath);
-        $modelId  = $modelId ?? config('azure_doc_intel.model_id');
+        $modelId = $modelId ?? config('azure_doc_intel.model_id');
 
         return "azure_doc_analysis:{$fileHash}:{$modelId}";
     }
@@ -175,16 +177,16 @@ class DocumentAnalysisService
         sleep(self::INITIAL_BACKOFF_TIME);
 
         while (true) {
-            $pollRequest  = new GetAnalysisResultRequest($operationLocation);
+            $pollRequest = new GetAnalysisResultRequest($operationLocation);
             $pollResponse = $this->connector->send($pollRequest);
-            $dto          = $pollResponse->dtoOrFail();
-            $status       = $dto->status;
+            $dto = $pollResponse->dtoOrFail();
+            $status = $dto->status;
 
-            if (DocumentAnalysisStatus::SUCCEEDED === $status) {
+            if ($status === DocumentAnalysisStatus::SUCCEEDED) {
                 break;
             }
 
-            if (DocumentAnalysisStatus::FAILED === $status) {
+            if ($status === DocumentAnalysisStatus::FAILED) {
                 throw new AzureDocumentIntelligenceException('Failed to analyze document.', context: ['response' => $pollResponse->json()]);
             }
 

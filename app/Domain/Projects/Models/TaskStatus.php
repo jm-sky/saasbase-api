@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $tenant_id
  * @property string $name
  * @property string $color
- * @property int    $sort_order
- * @property bool   $is_default
+ * @property int $sort_order
+ * @property bool $is_default
  * @property Task[] $tasks
  */
 class TaskStatus extends BaseModel

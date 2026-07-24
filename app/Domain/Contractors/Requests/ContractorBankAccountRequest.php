@@ -14,12 +14,12 @@ class ContractorBankAccountRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'iban'          => ['nullable', 'string', 'max:50'],
-            'swift'         => ['nullable', 'string', 'max:50'],
-            'currency'      => ['nullable', 'string', 'max:3'],
-            'bankName'      => ['nullable', 'string', 'max:255'],
-            'description'   => ['nullable', 'string', 'max:255'],
-            'isDefault'     => ['boolean'],
+            'iban' => ['nullable', 'string', 'max:50'],
+            'swift' => ['nullable', 'string', 'max:50'],
+            'currency' => ['nullable', 'string', 'max:3'],
+            'bankName' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:255'],
+            'isDefault' => ['boolean'],
         ];
     }
 

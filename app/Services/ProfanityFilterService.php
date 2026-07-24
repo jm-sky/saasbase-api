@@ -25,7 +25,7 @@ class ProfanityFilterService
 
     public function hasProfanity(string $text): bool
     {
-        return !Profanity::blocker($text, languages: $this->languages)->clean();
+        return ! Profanity::blocker($text, languages: $this->languages)->clean();
     }
 
     public function filterText(string $text, string $replacement = '***'): string

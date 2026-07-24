@@ -13,8 +13,7 @@ class GetExchangeRatesRequest extends Request
     public function __construct(
         protected NBPTableEnum $table = NBPTableEnum::A,
         protected ?string $date = null
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {

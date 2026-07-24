@@ -8,17 +8,16 @@ abstract class ValueWrapper
         public readonly string $type,
         public readonly float $confidence,
         public readonly mixed $value
-    ) {
-    }
+    ) {}
 
     abstract public function validate(): void;
 
     public function toArray(): array
     {
         return [
-            'type'       => $this->type,
+            'type' => $this->type,
             'confidence' => $this->confidence,
-            'value'      => $this->value,
+            'value' => $this->value,
         ];
     }
 }

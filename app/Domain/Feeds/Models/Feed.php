@@ -9,6 +9,7 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use App\Services\PurifierService;
 use App\Traits\HasProfanityCheck;
 use Database\Factories\FeedFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
@@ -19,23 +20,23 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * Class Feed.
  *
- * @property string                                             $id
- * @property string                                             $tenant_id
- * @property string                                             $user_id
- * @property string                                             $title
- * @property string                                             $content
- * @property ?string                                            $content_html
- * @property ?Carbon                                            $created_at
- * @property ?Carbon                                            $updated_at
- * @property User                                               $user
- * @property \Illuminate\Database\Eloquent\Collection|Comment[] $comments
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $user_id
+ * @property string $title
+ * @property string $content
+ * @property ?string $content_html
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property User $user
+ * @property Collection|Comment[] $comments
  */
 class Feed extends BaseModel implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
     use BelongsToTenant;
+    use HasFactory;
     use HasProfanityCheck;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -52,10 +53,10 @@ class Feed extends BaseModel implements HasMedia
         parent::boot();
 
         static::saving(function (Feed $model) {
-            $cleanContent   = PurifierService::clean($model->content);
+            $cleanContent = PurifierService::clean($model->content);
             $model->content = $cleanContent;
 
-            $converter           = new CommonMarkConverter();
+            $converter = new CommonMarkConverter;
             $model->content_html = $converter->convert($cleanContent)->getContent();
         });
     }

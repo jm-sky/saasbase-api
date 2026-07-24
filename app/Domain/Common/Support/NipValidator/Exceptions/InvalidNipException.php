@@ -2,6 +2,4 @@
 
 namespace App\Domain\Common\Support\NipValidator\Exceptions;
 
-class InvalidNipException extends \InvalidArgumentException
-{
-}
+class InvalidNipException extends \InvalidArgumentException {}

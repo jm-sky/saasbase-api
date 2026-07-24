@@ -13,20 +13,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string              $id
- * @property string              $tenant_id
- * @property string              $name
- * @property InvoiceType         $invoice_type
- * @property string              $format
- * @property int                 $next_number
- * @property ResetPeriod         $reset_period
- * @property string              $prefix
- * @property string              $suffix
- * @property bool                $is_default
- * @property Carbon              $created_at
- * @property Carbon              $updated_at
- * @property ?Carbon             $deleted_at
- * @property Collection<Invoice> $invoices
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property InvoiceType $invoice_type
+ * @property string $format
+ * @property int $next_number
+ * @property ResetPeriod $reset_period
+ * @property string $prefix
+ * @property string $suffix
+ * @property bool $is_default
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property Collection<int, Invoice> $invoices
  */
 class NumberingTemplate extends BaseModel
 {
@@ -46,10 +46,10 @@ class NumberingTemplate extends BaseModel
     ];
 
     protected $casts = [
-        'next_number'  => 'integer',
+        'next_number' => 'integer',
         'invoice_type' => InvoiceType::class,
         'reset_period' => ResetPeriod::class,
-        'is_default'   => 'boolean',
+        'is_default' => 'boolean',
     ];
 
     public function invoices(): HasMany
@@ -72,15 +72,15 @@ class NumberingTemplate extends BaseModel
         $format = str_replace('NNN', $number, $format);
 
         if ($this->prefix) {
-            $format = $this->prefix . $format;
+            $format = $this->prefix.$format;
         }
 
         if ($this->suffix) {
-            $format = $format . $this->suffix;
+            $format = $format.$this->suffix;
         }
 
         if ($increment) {
-            ++$this->next_number;
+            $this->next_number++;
             $this->save();
         }
 
@@ -94,8 +94,8 @@ class NumberingTemplate extends BaseModel
     {
         return match ($this->reset_period) {
             ResetPeriod::MONTHLY => true,
-            ResetPeriod::YEARLY  => '01' === date('m'),
-            ResetPeriod::NEVER   => false,
+            ResetPeriod::YEARLY => date('m') === '01',
+            ResetPeriod::NEVER => false,
         };
     }
 

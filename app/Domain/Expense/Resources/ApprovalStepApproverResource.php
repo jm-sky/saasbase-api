@@ -20,17 +20,17 @@ class ApprovalStepApproverResource extends JsonResource
     {
         /* @var ApprovalStepApprover $this->resource */
         return [
-            'id'                         => $this->id,
-            'stepId'                     => $this->step_id,
-            'approverType'               => $this->approver_type->value,
-            'approverTypeLabel'          => $this->approver_type->label(),
-            'approverValue'              => $this->approver_value,
-            'organizationUnitId'         => $this->organization_unit_id,
-            'canDelegate'                => $this->can_delegate,
-            'createdAt'                  => $this->created_at?->toIso8601String(),
-            'updatedAt'                  => $this->updated_at?->toIso8601String(),
-            'isUserApprover'             => $this->isUserApprover(),
-            'isUnitRoleApprover'         => $this->isUnitRoleApprover(),
+            'id' => $this->id,
+            'stepId' => $this->step_id,
+            'approverType' => $this->approver_type->value,
+            'approverTypeLabel' => $this->approver_type->label(),
+            'approverValue' => $this->approver_value,
+            'organizationUnitId' => $this->organization_unit_id,
+            'canDelegate' => $this->can_delegate,
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
+            'isUserApprover' => $this->isUserApprover(),
+            'isUnitRoleApprover' => $this->isUnitRoleApprover(),
             'isSystemPermissionApprover' => $this->isSystemPermissionApprover(),
         ];
     }

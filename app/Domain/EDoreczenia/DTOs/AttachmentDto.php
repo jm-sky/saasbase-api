@@ -13,8 +13,7 @@ final class AttachmentDto extends BaseDataDTO
         public readonly int $fileSize,
         public readonly string $mimeType,
         public readonly ?Carbon $createdAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -30,10 +29,10 @@ final class AttachmentDto extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'fileName'  => $this->fileName,
-            'filePath'  => $this->filePath,
-            'fileSize'  => $this->fileSize,
-            'mimeType'  => $this->mimeType,
+            'fileName' => $this->fileName,
+            'filePath' => $this->filePath,
+            'fileSize' => $this->fileSize,
+            'mimeType' => $this->mimeType,
             'createdAt' => $this->createdAt?->toIso8601String(),
         ];
     }

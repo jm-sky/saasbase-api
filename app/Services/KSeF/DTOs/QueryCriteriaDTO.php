@@ -19,6 +19,5 @@ final class QueryCriteriaDTO
         public readonly ?string $amountTo = null,
         public readonly ?string $currencyCode = null,
         public readonly ?bool $faP17Annotation = null
-    ) {
-    }
+    ) {}
 }

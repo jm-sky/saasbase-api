@@ -27,7 +27,6 @@ trait HaveAddresses
     {
         return $this->morphOne(Address::class, 'addressable')
             ->where('is_default', true)
-            ->limit(1)
-        ;
+            ->limit(1);
     }
 }

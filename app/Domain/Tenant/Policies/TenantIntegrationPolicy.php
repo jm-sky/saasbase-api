@@ -14,7 +14,7 @@ class TenantIntegrationPolicy
 
     public function viewAny(User $user): bool
     {
-        return null !== $user->getTenantId();
+        return $user->getTenantId() !== null;
     }
 
     public function view(User $user, TenantIntegration $integration): bool
@@ -26,7 +26,7 @@ class TenantIntegrationPolicy
     {
         $tenantId = $user->getTenantId();
 
-        return null !== $tenantId && $this->isOwnerOrAdmin($user, $tenantId);
+        return $tenantId !== null && $this->isOwnerOrAdmin($user, $tenantId);
     }
 
     public function update(User $user, TenantIntegration $integration): bool

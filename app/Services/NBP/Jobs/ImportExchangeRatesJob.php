@@ -23,8 +23,7 @@ class ImportExchangeRatesJob implements ShouldQueue
     public function __construct(
         protected ?Carbon $date = null,
         protected NBPTableEnum $table = NBPTableEnum::A
-    ) {
-    }
+    ) {}
 
     public function handle(NBPService $nbpService): void
     {
@@ -52,7 +51,7 @@ class ImportExchangeRatesJob implements ShouldQueue
 
             Log::info("NBP import completed. Imported {$imported} rates for {$date->format('Y-m-d')}");
         } catch (\Exception $e) {
-            Log::error("NBP import failed for {$date->format('Y-m-d')}: " . $e->getMessage());
+            Log::error("NBP import failed for {$date->format('Y-m-d')}: ".$e->getMessage());
 
             throw $e;
         }

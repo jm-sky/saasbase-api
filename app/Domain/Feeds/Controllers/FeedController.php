@@ -20,7 +20,7 @@ class FeedController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Feed::class;
+        $this->modelClass = Feed::class;
         $this->defaultWith = ['user'];
 
         $this->sorts = [
@@ -38,17 +38,16 @@ class FeedController extends Controller
         $feeds = $this->getIndexPaginator($request, query: $query);
 
         return FeedResource::collection($feeds['data'])
-            ->additional(['meta' => $feeds['meta']])
-        ;
+            ->additional(['meta' => $feeds['meta']]);
     }
 
     public function store(StoreFeedRequest $request): FeedResource
     {
         $feed = Feed::create([
             'tenant_id' => $request->user()->getTenantId(),
-            'user_id'   => $request->user()->id,
-            'title'     => $request->input('title'),
-            'content'   => $request->input('content'),
+            'user_id' => $request->user()->id,
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
         ]);
 
         if ($request->hasFile('attachments')) {
@@ -56,8 +55,7 @@ class FeedController extends Controller
 
             foreach ($attachments as $attachment) {
                 $feed->addMedia($attachment)
-                    ->toMediaCollection('attachments')
-                ;
+                    ->toMediaCollection('attachments');
             }
         }
 

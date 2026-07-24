@@ -11,18 +11,18 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string     $id
- * @property string     $tenant_id
- * @property string     $contractor_id
- * @property string     $name
- * @property ?string    $email
- * @property ?string    $phone
- * @property ?string    $position
- * @property ?string    $description
- * @property string     $created_at
- * @property string     $updated_at
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $contractor_id
+ * @property string $name
+ * @property ?string $email
+ * @property ?string $phone
+ * @property ?string $position
+ * @property ?string $description
+ * @property string $created_at
+ * @property string $updated_at
  * @property Contractor $contractor
- * @property Tenant     $tenant
+ * @property Tenant $tenant
  */
 class ContractorContactPerson extends BaseModel
 {

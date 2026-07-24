@@ -11,21 +11,21 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Tenant>
  *
- * @property string    $name
- * @property string    $slug
- * @property ?string   $id          UUID
- * @property ?string   $country
- * @property ?string   $taxId
- * @property ?string   $vatId
- * @property ?string   $regon
- * @property ?string   $email
- * @property ?string   $phone
- * @property ?string   $website
- * @property ?string   $description
- * @property ?Carbon   $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $deletedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?string   $logoUrl
+ * @property string $name
+ * @property string $slug
+ * @property ?string $id UUID
+ * @property ?string $country
+ * @property ?string $taxId
+ * @property ?string $vatId
+ * @property ?string $regon
+ * @property ?string $email
+ * @property ?string $phone
+ * @property ?string $website
+ * @property ?string $description
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $logoUrl
  * @property ?MediaDTO $logo
  */
 final class TenantDTO extends BaseDTO
@@ -47,8 +47,7 @@ final class TenantDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
         public readonly ?MediaDTO $logo = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -98,22 +97,22 @@ final class TenantDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'slug'        => $this->slug,
-            'taxId'       => $this->taxId,
-            'vatId'       => $this->vatId,
-            'regon'       => $this->regon,
-            'email'       => $this->email,
-            'phone'       => $this->phone,
-            'website'     => $this->website,
-            'country'     => $this->country,
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'taxId' => $this->taxId,
+            'vatId' => $this->vatId,
+            'regon' => $this->regon,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'website' => $this->website,
+            'country' => $this->country,
             'description' => $this->description,
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
-            'deletedAt'   => $this->deletedAt?->toIso8601String(),
-            'logoUrl'     => $this->logoUrl,
-            'logo'        => $this->logo?->toArray(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'logoUrl' => $this->logoUrl,
+            'logo' => $this->logo?->toArray(),
         ];
     }
 }

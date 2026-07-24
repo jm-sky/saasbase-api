@@ -29,7 +29,7 @@ class CountryControllerTest extends TestCase
         $this->authenticateUser($tenant);
     }
 
-    public function testCanListCountries(): void
+    public function test_can_list_countries(): void
     {
         Country::factory()->count(3)->create();
 
@@ -64,97 +64,88 @@ class CountryControllerTest extends TestCase
                     'perPage',
                     'total',
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanFilterCountriesByName(): void
+    public function test_can_filter_countries_by_name(): void
     {
         Country::factory()->create(['name' => 'Poland']);
         Country::factory()->create(['name' => 'Portugal']);
         Country::factory()->create(['name' => 'Germany']);
 
-        $response = $this->getJson($this->baseUrl . '?filter[name]=Pol');
+        $response = $this->getJson($this->baseUrl.'?filter[name]=Pol');
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Poland')
-        ;
+            ->assertJsonPath('data.0.name', 'Poland');
     }
 
-    public function testCanFilterCountriesByCode(): void
+    public function test_can_filter_countries_by_code(): void
     {
         Country::factory()->create(['code' => 'PL', 'name' => 'Poland']);
         Country::factory()->create(['code' => 'PT', 'name' => 'Portugal']);
         Country::factory()->create(['code' => 'DE', 'name' => 'Germany']);
 
-        $response = $this->getJson($this->baseUrl . '?filter[code]=PL');
+        $response = $this->getJson($this->baseUrl.'?filter[code]=PL');
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Poland')
-        ;
+            ->assertJsonPath('data.0.name', 'Poland');
     }
 
-    public function testCanFilterCountriesByRegion(): void
+    public function test_can_filter_countries_by_region(): void
     {
         Country::factory()->create(['region' => 'Europe', 'name' => 'Poland']);
         Country::factory()->create(['region' => 'Europe', 'name' => 'Germany']);
         Country::factory()->create(['region' => 'Asia', 'name' => 'Japan']);
 
-        $response = $this->getJson($this->baseUrl . '?filter[region]=Europe');
+        $response = $this->getJson($this->baseUrl.'?filter[region]=Europe');
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.name', 'Germany')
-            ->assertJsonPath('data.1.name', 'Poland')
-        ;
+            ->assertJsonPath('data.1.name', 'Poland');
     }
 
-    public function testCanSortCountries(): void
+    public function test_can_sort_countries(): void
     {
         Country::factory()->create(['name' => 'Poland']);
         Country::factory()->create(['name' => 'Germany']);
         Country::factory()->create(['name' => 'Austria']);
 
-        $response = $this->getJson($this->baseUrl . '?sort=name');
+        $response = $this->getJson($this->baseUrl.'?sort=name');
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.0.name', 'Austria')
             ->assertJsonPath('data.1.name', 'Germany')
-            ->assertJsonPath('data.2.name', 'Poland')
-        ;
+            ->assertJsonPath('data.2.name', 'Poland');
 
-        $response = $this->getJson($this->baseUrl . '?sort=-name');
+        $response = $this->getJson($this->baseUrl.'?sort=-name');
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.0.name', 'Poland')
             ->assertJsonPath('data.1.name', 'Germany')
-            ->assertJsonPath('data.2.name', 'Austria')
-        ;
+            ->assertJsonPath('data.2.name', 'Austria');
     }
 
-    public function testValidatesSortParameter(): void
+    public function test_validates_sort_parameter(): void
     {
-        $response = $this->getJson($this->baseUrl . '?sort=invalid');
+        $response = $this->getJson($this->baseUrl.'?sort=invalid');
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['sort'])
-        ;
+            ->assertJsonValidationErrors(['sort']);
     }
 
-    public function testValidatesDateRangeFilter(): void
+    public function test_validates_date_range_filter(): void
     {
-        $response = $this->getJson($this->baseUrl . '?filter[createdAt][from]=invalid');
+        $response = $this->getJson($this->baseUrl.'?filter[createdAt][from]=invalid');
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['filter.createdAt.from'])
-        ;
+            ->assertJsonValidationErrors(['filter.createdAt.from']);
 
-        $response = $this->getJson($this->baseUrl . '?filter[createdAt][to]=2023-01-01&filter[createdAt][from]=2023-01-02');
+        $response = $this->getJson($this->baseUrl.'?filter[createdAt][to]=2023-01-01&filter[createdAt][from]=2023-01-02');
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['filter.createdAt.to'])
-        ;
+            ->assertJsonValidationErrors(['filter.createdAt.to']);
     }
 }

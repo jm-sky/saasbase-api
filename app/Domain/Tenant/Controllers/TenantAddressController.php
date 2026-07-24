@@ -32,8 +32,7 @@ class TenantAddressController extends Controller
         $addresses = $tenant->addresses()
             ->orderBy('is_default', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate()
-        ;
+            ->paginate();
 
         return AddressResource::collection($addresses);
     }
@@ -46,7 +45,7 @@ class TenantAddressController extends Controller
 
         return response()->json([
             'message' => 'Address created successfully.',
-            'data'    => new AddressResource($address),
+            'data' => new AddressResource($address),
         ], Response::HTTP_CREATED);
     }
 
@@ -65,7 +64,7 @@ class TenantAddressController extends Controller
 
         return response()->json([
             'message' => 'Address updated successfully.',
-            'data'    => new AddressResource($address),
+            'data' => new AddressResource($address),
         ]);
     }
 

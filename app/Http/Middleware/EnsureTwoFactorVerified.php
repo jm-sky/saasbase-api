@@ -29,9 +29,9 @@ class EnsureTwoFactorVerified
             return $next($request);
         }
 
-        if (1 === $mfaStatus) {
+        if ($mfaStatus === 1) {
             return response()->json([
-                'message'        => 'Two-factor verification required.',
+                'message' => 'Two-factor verification required.',
                 'actionRequired' => 'verify-2fa',
             ], Response::HTTP_FORBIDDEN);
         }

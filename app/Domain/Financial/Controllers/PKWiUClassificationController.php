@@ -10,13 +10,13 @@ use App\Domain\Financial\Services\PKWiUService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PKWiUClassificationController extends Controller
 {
     public function __construct(
         private PKWiUService $pkwiuService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -38,9 +38,9 @@ class PKWiUClassificationController extends Controller
 
         return response()->json([
             'data' => PKWiUClassificationResource::collection($results),
-            'meta' => $results instanceof \Illuminate\Pagination\LengthAwarePaginator ? [
-                'total'        => $results->total(),
-                'per_page'     => $results->perPage(),
+            'meta' => $results instanceof LengthAwarePaginator ? [
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
                 'current_page' => $results->currentPage(),
             ] : null,
         ]);
@@ -50,7 +50,7 @@ class PKWiUClassificationController extends Controller
     {
         $classification = PKWiUClassification::with('children', 'parent')->find($code);
 
-        if (!$classification) {
+        if (! $classification) {
             return response()->json(['message' => 'Classification not found'], 404);
         }
 
@@ -85,8 +85,8 @@ class PKWiUClassificationController extends Controller
         $isValid = $this->pkwiuService->validateCode($request->code);
 
         return response()->json([
-            'valid'   => $isValid,
-            'code'    => $request->code,
+            'valid' => $isValid,
+            'code' => $request->code,
             'message' => $isValid ? 'Valid PKWiU code' : 'Invalid PKWiU code',
         ]);
     }
@@ -107,14 +107,14 @@ class PKWiUClassificationController extends Controller
     public function validateInvoiceBody(Request $request): JsonResponse
     {
         $request->validate([
-            'invoice_body'              => 'required|array',
+            'invoice_body' => 'required|array',
             'invoice_body.*.pkwiu_code' => 'required|string|regex:/^[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]$/',
         ]);
 
         $errors = $this->pkwiuService->validateInvoiceBodyPKWiU($request->invoice_body);
 
         return response()->json([
-            'valid'  => empty($errors),
+            'valid' => empty($errors),
             'errors' => $errors,
         ]);
     }

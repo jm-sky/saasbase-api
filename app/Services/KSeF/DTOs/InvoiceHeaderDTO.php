@@ -23,6 +23,5 @@ final class InvoiceHeaderDTO
         public readonly ?array $subjectsAuthorizedList = null,
         public readonly ?array $subjectsOtherList = null,
         public readonly ?string $schemaVersion = null
-    ) {
-    }
+    ) {}
 }

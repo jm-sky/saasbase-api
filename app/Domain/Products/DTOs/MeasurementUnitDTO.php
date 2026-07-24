@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<MeasurementUnit>
  *
- * @property string  $id
- * @property string  $code
- * @property string  $name
+ * @property string $id
+ * @property string $code
+ * @property string $name
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
@@ -24,8 +24,7 @@ final class MeasurementUnitDTO extends BaseDTO
         public readonly string $id,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -53,9 +52,9 @@ final class MeasurementUnitDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'code'      => $this->code,
-            'name'      => $this->name,
+            'id' => $this->id,
+            'code' => $this->code,
+            'name' => $this->name,
             'createdAt' => $this->createdAt?->toIso8601String(),
             'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];

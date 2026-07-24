@@ -12,24 +12,24 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\Permission\Models\Role;
 
 /**
- * @property string                      $id
- * @property string                      $tenant_id
- * @property string                      $organization_unit_id
- * @property string                      $position_category_id
- * @property string                      $role_name
- * @property string                      $name
- * @property string                      $description
- * @property bool                        $is_director
- * @property bool                        $is_learning
- * @property bool                        $is_temporary
- * @property float                       $hourly_rate
- * @property int                         $sort_order
- * @property bool                        $is_active
- * @property OrganizationUnit            $organizationUnit
- * @property PositionCategory            $category
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $organization_unit_id
+ * @property string $position_category_id
+ * @property string $role_name
+ * @property string $name
+ * @property string $description
+ * @property bool $is_director
+ * @property bool $is_learning
+ * @property bool $is_temporary
+ * @property float $hourly_rate
+ * @property int $sort_order
+ * @property bool $is_active
+ * @property OrganizationUnit $organizationUnit
+ * @property PositionCategory $category
  * @property Collection<int,OrgUnitUser> $orgUnitUsers
- * @property Collection<int,User>        $users
- * @property Collection<int,User>        $currentUsers
+ * @property Collection<int,User> $users
+ * @property Collection<int,User> $currentUsers
  */
 class Position extends BaseModel
 {
@@ -51,12 +51,12 @@ class Position extends BaseModel
     ];
 
     protected $casts = [
-        'is_director'  => 'boolean',
-        'is_learning'  => 'boolean',
+        'is_director' => 'boolean',
+        'is_learning' => 'boolean',
         'is_temporary' => 'boolean',
-        'is_active'    => 'boolean',
-        'hourly_rate'  => 'decimal:2',
-        'sort_order'   => 'integer',
+        'is_active' => 'boolean',
+        'hourly_rate' => 'decimal:2',
+        'sort_order' => 'integer',
     ];
 
     protected $attributes = [
@@ -98,14 +98,13 @@ class Position extends BaseModel
             ->whereHas('orgUnitUsers', function ($query) {
                 /* @phpstan-ignore-next-line */
                 $query->where('position_id', $this->id)->active();
-            })
-        ;
+            });
     }
 
     // Get the Spatie role
     public function getRole(): ?Role
     {
-        if (!$this->role_name) {
+        if (! $this->role_name) {
             return null;
         }
 
@@ -115,7 +114,7 @@ class Position extends BaseModel
     // Virtual attribute for full name
     public function getFullNameAttribute(): string
     {
-        return $this->name . ' - ' . $this->organizationUnit->name;
+        return $this->name.' - '.$this->organizationUnit->name;
     }
 
     // Scopes

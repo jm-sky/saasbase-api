@@ -11,8 +11,7 @@ class LogoCandidate
         public ?int $height = null,
         public ?string $mime = null,
         public ?int $score = null,
-    ) {
-    }
+    ) {}
 
     public function ratio(): ?float
     {

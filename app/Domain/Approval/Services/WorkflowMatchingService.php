@@ -17,8 +17,8 @@ class WorkflowMatchingService
     {
         Log::info('Finding workflow for expense', [
             'expense_id' => $expense->id,
-            'tenant_id'  => $expense->tenant_id,
-            'amount'     => $expense->total_gross->toFloat(),
+            'tenant_id' => $expense->tenant_id,
+            'amount' => $expense->total_gross->toFloat(),
         ]);
 
         // Get all active workflows for the tenant, ordered by priority (highest first)
@@ -27,12 +27,11 @@ class WorkflowMatchingService
             // @phpstan-ignore-next-line active()/byPriority() are local scopes, not visible to PHPStan on the Builder return type
             ->active()
             ->byPriority()
-            ->get()
-        ;
+            ->get();
 
         if ($workflows->isEmpty()) {
             Log::info('No workflows found for tenant', [
-                'tenant_id'  => $expense->tenant_id,
+                'tenant_id' => $expense->tenant_id,
                 'expense_id' => $expense->id,
             ]);
 
@@ -43,10 +42,10 @@ class WorkflowMatchingService
         foreach ($workflows as $workflow) {
             if ($this->workflowMatches($expense, $workflow)) {
                 Log::info('Workflow matched for expense', [
-                    'expense_id'    => $expense->id,
-                    'workflow_id'   => $workflow->id,
+                    'expense_id' => $expense->id,
+                    'workflow_id' => $workflow->id,
                     'workflow_name' => $workflow->name,
-                    'priority'      => $workflow->priority,
+                    'priority' => $workflow->priority,
                 ]);
 
                 return $workflow;
@@ -54,8 +53,8 @@ class WorkflowMatchingService
         }
 
         Log::info('No matching workflow found - expense will be auto-approved', [
-            'expense_id'        => $expense->id,
-            'tenant_id'         => $expense->tenant_id,
+            'expense_id' => $expense->id,
+            'tenant_id' => $expense->tenant_id,
             'workflows_checked' => $workflows->count(),
         ]);
 
@@ -68,27 +67,27 @@ class WorkflowMatchingService
     public function workflowMatches(Expense $expense, ApprovalWorkflow $workflow): bool
     {
         // Check if workflow is active
-        if (!$workflow->is_active) {
+        if (! $workflow->is_active) {
             return false;
         }
 
         // Check amount range criteria
-        if (!$this->matchesAmountCriteria($expense, $workflow)) {
+        if (! $this->matchesAmountCriteria($expense, $workflow)) {
             Log::debug('Workflow amount criteria not met', [
-                'workflow_id'    => $workflow->id,
+                'workflow_id' => $workflow->id,
                 'expense_amount' => $expense->total_gross->toFloat(),
-                'min_amount'     => $workflow->match_amount_min?->toFloat(),
-                'max_amount'     => $workflow->match_amount_max?->toFloat(),
+                'min_amount' => $workflow->match_amount_min?->toFloat(),
+                'max_amount' => $workflow->match_amount_max?->toFloat(),
             ]);
 
             return false;
         }
 
         // Check allocation dimension conditions
-        if (!$this->matchesAllocationConditions($expense, $workflow)) {
+        if (! $this->matchesAllocationConditions($expense, $workflow)) {
             Log::debug('Workflow allocation conditions not met', [
                 'workflow_id' => $workflow->id,
-                'expense_id'  => $expense->id,
+                'expense_id' => $expense->id,
             ]);
 
             return false;
@@ -123,7 +122,7 @@ class WorkflowMatchingService
     private function matchesAllocationConditions(Expense $expense, ApprovalWorkflow $workflow): bool
     {
         // If no match conditions are defined, workflow matches all allocations
-        if (!$workflow->match_conditions || empty($workflow->match_conditions)) {
+        if (! $workflow->match_conditions || empty($workflow->match_conditions)) {
             return true;
         }
 
@@ -139,7 +138,7 @@ class WorkflowMatchingService
     private function evaluateMatchConditions(Expense $expense, array $conditions): bool
     {
         foreach ($conditions as $condition) {
-            if (!$this->evaluateSingleCondition($expense, $condition)) {
+            if (! $this->evaluateSingleCondition($expense, $condition)) {
                 return false;
             }
         }
@@ -159,11 +158,11 @@ class WorkflowMatchingService
     private function evaluateSingleCondition(Expense $expense, array $condition): bool
     {
         $dimensionType = $condition['dimension_type'] ?? null;
-        $operator      = $condition['operator'] ?? 'has_any';
+        $operator = $condition['operator'] ?? 'has_any';
 
-        if (!$dimensionType) {
+        if (! $dimensionType) {
             Log::warning('Match condition missing dimension_type', [
-                'condition'  => $condition,
+                'condition' => $condition,
                 'expense_id' => $expense->id,
             ]);
 
@@ -174,16 +173,16 @@ class WorkflowMatchingService
         $dimensionValues = $this->getExpenseDimensionValues($expense, $dimensionType);
 
         return match ($operator) {
-            'has_any'      => $dimensionValues->isNotEmpty(),
-            'has_none'     => $dimensionValues->isEmpty(),
-            'equals'       => $this->evaluateEquals($dimensionValues, $condition['value'] ?? null),
-            'not_equals'   => !$this->evaluateEquals($dimensionValues, $condition['value'] ?? null),
-            'in'           => $this->evaluateIn($dimensionValues, $condition['values'] ?? []),
-            'not_in'       => !$this->evaluateIn($dimensionValues, $condition['values'] ?? []),
-            'count_gte'    => $dimensionValues->count() >= ($condition['count'] ?? 1),
-            'count_lte'    => $dimensionValues->count() <= ($condition['count'] ?? 0),
+            'has_any' => $dimensionValues->isNotEmpty(),
+            'has_none' => $dimensionValues->isEmpty(),
+            'equals' => $this->evaluateEquals($dimensionValues, $condition['value'] ?? null),
+            'not_equals' => ! $this->evaluateEquals($dimensionValues, $condition['value'] ?? null),
+            'in' => $this->evaluateIn($dimensionValues, $condition['values'] ?? []),
+            'not_in' => ! $this->evaluateIn($dimensionValues, $condition['values'] ?? []),
+            'count_gte' => $dimensionValues->count() >= ($condition['count'] ?? 1),
+            'count_lte' => $dimensionValues->count() <= ($condition['count'] ?? 0),
             'count_equals' => $dimensionValues->count() === ($condition['count'] ?? 0),
-            default        => false,
+            default => false,
         };
     }
 
@@ -210,7 +209,7 @@ class WorkflowMatchingService
      */
     private function evaluateEquals(\Illuminate\Support\Collection $dimensionValues, ?string $value): bool
     {
-        if (!$value) {
+        if (! $value) {
             return false;
         }
 
@@ -239,14 +238,13 @@ class WorkflowMatchingService
             // @phpstan-ignore-next-line active()/byPriority() are local scopes, not visible to PHPStan on the Builder return type
             ->active()
             ->byPriority()
-            ->get()
-        ;
+            ->get();
 
         return $workflows->map(function (ApprovalWorkflow $workflow) use ($expense) {
             return [
-                'workflow'         => $workflow,
-                'matches'          => $this->workflowMatches($expense, $workflow),
-                'amount_matches'   => $this->matchesAmountCriteria($expense, $workflow),
+                'workflow' => $workflow,
+                'matches' => $this->workflowMatches($expense, $workflow),
+                'amount_matches' => $this->matchesAmountCriteria($expense, $workflow),
                 'conditions_match' => $this->matchesAllocationConditions($expense, $workflow),
             ];
         });
@@ -261,8 +259,7 @@ class WorkflowMatchingService
             ->where('tenant_id', $tenantId)
             // @phpstan-ignore-next-line active() is a local scope, not visible to PHPStan on the Builder return type
             ->active()
-            ->exists()
-        ;
+            ->exists();
     }
 
     /**
@@ -274,11 +271,11 @@ class WorkflowMatchingService
         $workflows = ApprovalWorkflow::withoutTenant()->where('tenant_id', $tenantId)->get();
 
         return [
-            'total'                      => $workflows->count(),
-            'active'                     => $workflows->where('is_active', true)->count(),
-            'inactive'                   => $workflows->where('is_active', false)->count(),
-            'with_amount_conditions'     => $workflows->filter(fn ($w) => $w->match_amount_min || $w->match_amount_max)->count(),
-            'with_allocation_conditions' => $workflows->filter(fn ($w) => !empty($w->match_conditions))->count(),
+            'total' => $workflows->count(),
+            'active' => $workflows->where('is_active', true)->count(),
+            'inactive' => $workflows->where('is_active', false)->count(),
+            'with_amount_conditions' => $workflows->filter(fn ($w) => $w->match_amount_min || $w->match_amount_max)->count(),
+            'with_allocation_conditions' => $workflows->filter(fn ($w) => ! empty($w->match_conditions))->count(),
         ];
     }
 }

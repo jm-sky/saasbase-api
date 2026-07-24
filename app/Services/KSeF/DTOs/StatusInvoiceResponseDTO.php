@@ -13,6 +13,5 @@ final class StatusInvoiceResponseDTO
         public readonly string $processingDescription,
         public readonly string $elementReferenceNumber,
         public readonly ?InvoiceStatusDTO $invoiceStatus = null
-    ) {
-    }
+    ) {}
 }

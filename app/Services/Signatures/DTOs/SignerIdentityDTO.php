@@ -13,18 +13,17 @@ final class SignerIdentityDTO extends BaseDataDTO
         public ?string $middleName = null,
         public ?string $trustedProfileId = null,
         public ?string $epuapUsername = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'firstName'        => $this->firstName,
-            'lastName'         => $this->lastName,
-            'pesel'            => $this->pesel,
-            'middleName'       => $this->middleName,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'pesel' => $this->pesel,
+            'middleName' => $this->middleName,
             'trustedProfileId' => $this->trustedProfileId,
-            'epuapUsername'    => $this->epuapUsername,
+            'epuapUsername' => $this->epuapUsername,
         ];
     }
 

@@ -16,17 +16,17 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * @property string      $id
- * @property ?string     $tenant_id
- * @property string      $user_id
- * @property string      $content
- * @property string      $commentable_id
- * @property string      $commentable_type
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
- * @property ?Carbon     $deleted_at
- * @property Model       $commentable
- * @property User        $user
+ * @property string $id
+ * @property ?string $tenant_id
+ * @property string $user_id
+ * @property string $content
+ * @property string $commentable_id
+ * @property string $commentable_type
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property Model $commentable
+ * @property User $user
  * @property CommentMeta $meta
  */
 class Comment extends BaseModel
@@ -73,19 +73,19 @@ class Comment extends BaseModel
     protected static function booted()
     {
         static::created(function ($comment) {
-            if (Contractor::class === $comment->commentable_type) {
+            if ($comment->commentable_type === Contractor::class) {
                 $comment->commentable->logModelActivity(ContractorActivityType::CommentCreated->value, $comment);
             }
         });
 
         static::updated(function ($comment) {
-            if (Contractor::class === $comment->commentable_type) {
+            if ($comment->commentable_type === Contractor::class) {
                 $comment->commentable->logModelActivity(ContractorActivityType::CommentUpdated->value, $comment);
             }
         });
 
         static::deleted(function ($comment) {
-            if (Contractor::class === $comment->commentable_type) {
+            if ($comment->commentable_type === Contractor::class) {
                 $comment->commentable->logModelActivity(ContractorActivityType::CommentDeleted->value, $comment);
             }
         });

@@ -22,11 +22,11 @@ class PdfSignatureVerifierService
             // TODO: In the future, extract CMS from PDF (e.g., PAdES). For now, assume CMS.
             $certContent = $this->extractCertificate($pdfPath);
 
-            if (!$certContent) {
+            if (! $certContent) {
                 throw new \RuntimeException('No certificate extracted.');
             }
 
-            $parsed    = $this->parseCertificateDetails($certContent);
+            $parsed = $this->parseCertificateDetails($certContent);
             $isTrusted = $this->isCertificateTrusted($certContent);
 
             $signatureDTO = new GenericSignatureDetailsDTO(
@@ -62,12 +62,12 @@ class PdfSignatureVerifierService
 
         $result = openssl_pkcs7_verify($pdfPath, 0, $certOut, [], $this->caBundlePath);
 
-        if (false === $result) {
+        if ($result === false) {
             if (file_exists($certOut)) {
                 unlink($certOut);
             }
 
-            throw new \RuntimeException('OpenSSL verification failed: ' . openssl_error_string());
+            throw new \RuntimeException('OpenSSL verification failed: '.openssl_error_string());
         }
 
         $certContent = file_get_contents($certOut);
@@ -78,7 +78,7 @@ class PdfSignatureVerifierService
 
     protected function isCertificateTrusted(string $certPem): bool
     {
-        return true === openssl_x509_checkpurpose($certPem, X509_PURPOSE_ANY, [$this->caBundlePath]);
+        return openssl_x509_checkpurpose($certPem, X509_PURPOSE_ANY, [$this->caBundlePath]) === true;
     }
 
     protected function parseCertificateDetails(string $certPem): array
@@ -86,11 +86,11 @@ class PdfSignatureVerifierService
         $parsed = openssl_x509_parse($certPem);
 
         return [
-            'issuer'     => $parsed['issuer']['CN'] ?? null,
-            'serial'     => $parsed['serialNumberHex'] ?? null,
-            'subject'    => $parsed['subject']['CN'] ?? null,
+            'issuer' => $parsed['issuer']['CN'] ?? null,
+            'serial' => $parsed['serialNumberHex'] ?? null,
+            'subject' => $parsed['subject']['CN'] ?? null,
             'valid_from' => isset($parsed['validFrom_time_t']) ? date('c', $parsed['validFrom_time_t']) : null,
-            'valid_to'   => isset($parsed['validTo_time_t']) ? date('c', $parsed['validTo_time_t']) : null,
+            'valid_to' => isset($parsed['validTo_time_t']) ? date('c', $parsed['validTo_time_t']) : null,
         ];
     }
 }

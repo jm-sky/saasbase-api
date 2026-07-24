@@ -2,6 +2,7 @@
 
 namespace App\Domain\Projects\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Projects\DTOs\ProjectStatusDTO;
@@ -46,7 +47,7 @@ class ProjectStatusController extends Controller
 
     public function index(SearchProjectStatusRequest $request): JsonResponse
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
         $result['data'] = ProjectStatusDTO::collect($result['data']);
 
         return response()->json($result);
@@ -56,7 +57,7 @@ class ProjectStatusController extends Controller
     {
         $this->authorizeManage();
 
-        $dto    = ProjectStatusDTO::from($request->validated());
+        $dto = ProjectStatusDTO::from($request->validated());
         $status = ProjectStatus::create($dto->toDbArray());
 
         return response()->json(
@@ -96,8 +97,8 @@ class ProjectStatusController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

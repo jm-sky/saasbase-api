@@ -1,5 +1,11 @@
 <?php
 
+use App\Domain\EDoreczenia\Providers\EDoreczeniaServiceProvider;
+use App\Domain\Template\Providers\PdfEngineServiceProvider;
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\RouteServiceProvider;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +63,7 @@ return [
 
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
 
-    'api_url'      => env('API_URL', env('APP_URL')),
+    'api_url' => env('API_URL', env('APP_URL')),
     'trim_api_url' => env('TRIM_API_URL', false),
 
     'api_prefix' => env('API_PREFIX', '/api/v1'),
@@ -128,7 +134,7 @@ return [
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store'  => env('APP_MAINTENANCE_STORE', 'database'),
+        'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
     /*
@@ -148,9 +154,9 @@ return [
     /*
      * Application Service Providers...
      */
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthServiceProvider::class,
-    App\Providers\RouteServiceProvider::class,
-    App\Domain\EDoreczenia\Providers\EDoreczeniaServiceProvider::class,
-    App\Domain\Template\Providers\PdfEngineServiceProvider::class,
+    AppServiceProvider::class,
+    AuthServiceProvider::class,
+    RouteServiceProvider::class,
+    EDoreczeniaServiceProvider::class,
+    PdfEngineServiceProvider::class,
 ];

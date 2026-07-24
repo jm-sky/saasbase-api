@@ -14,8 +14,7 @@ class StripeWebhookController
     public function __construct(
         protected StripeSubscriptionService $stripeSubscriptionService,
         protected StripeInvoiceService $stripeInvoiceService
-    ) {
-    }
+    ) {}
 
     /**
      * Handle incoming Stripe webhooks.
@@ -28,9 +27,9 @@ class StripeWebhookController
             $this->handleEvent($event);
         } catch (\Exception $e) {
             Log::error('Failed to handle Stripe webhook', [
-                'error'    => $e->getMessage(),
-                'trace'    => $e->getTraceAsString(),
-                'event'    => $event->type ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'event' => $event->type ?? 'unknown',
                 'event_id' => $event->id ?? 'unknown',
             ]);
 
@@ -49,11 +48,11 @@ class StripeWebhookController
             'customer.subscription.created' => $this->handleSubscriptionCreated($event),
             'customer.subscription.updated' => $this->handleSubscriptionUpdated($event),
             'customer.subscription.deleted' => $this->handleSubscriptionDeleted($event),
-            'invoice.created'               => $this->handleInvoiceCreated($event),
-            'invoice.payment_succeeded'     => $this->handleInvoicePaymentSucceeded($event),
-            'invoice.payment_failed'        => $this->handleInvoicePaymentFailed($event),
-            default                         => Log::info('Unhandled Stripe event', [
-                'type'     => $event->type,
+            'invoice.created' => $this->handleInvoiceCreated($event),
+            'invoice.payment_succeeded' => $this->handleInvoicePaymentSucceeded($event),
+            'invoice.payment_failed' => $this->handleInvoicePaymentFailed($event),
+            default => Log::info('Unhandled Stripe event', [
+                'type' => $event->type,
                 'event_id' => $event->id,
             ]),
         };

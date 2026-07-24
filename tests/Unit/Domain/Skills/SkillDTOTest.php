@@ -16,10 +16,10 @@ class SkillDTOTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCanCreateSkillDtoFromModel(): void
+    public function test_can_create_skill_dto_from_model(): void
     {
         $skill = Skill::factory()->create();
-        $dto   = SkillDTO::fromModel($skill);
+        $dto = SkillDTO::fromModel($skill);
 
         $this->assertEquals($skill->id, $dto->id);
         $this->assertEquals($skill->category, $dto->category);
@@ -29,10 +29,10 @@ class SkillDTOTest extends TestCase
         $this->assertEquals($skill->updated_at, $dto->updatedAt);
     }
 
-    public function testCanConvertSkillDtoToArray(): void
+    public function test_can_convert_skill_dto_to_array(): void
     {
         $skill = Skill::factory()->create();
-        $dto   = SkillDTO::fromModel($skill);
+        $dto = SkillDTO::fromModel($skill);
         $array = $dto->toArray();
 
         $this->assertIsArray($array);

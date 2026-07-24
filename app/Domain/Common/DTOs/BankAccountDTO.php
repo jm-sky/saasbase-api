@@ -9,19 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<BankAccount>
  *
- * @property string  $id           UUID
- * @property ?string $tenantId     UUID
- * @property ?string $bankableId   UUID
+ * @property string $id UUID
+ * @property ?string $tenantId UUID
+ * @property ?string $bankableId UUID
  * @property ?string $bankableType
- * @property string  $iban
+ * @property string $iban
  * @property ?string $country
  * @property ?string $swift
- * @property bool    $isDefault
+ * @property bool $isDefault
  * @property ?string $currency
  * @property ?string $bankName
  * @property ?string $description
- * @property Carbon  $createdAt    Internally Carbon, accepts/serializes ISO 8601
- * @property Carbon  $updatedAt    Internally Carbon, accepts/serializes ISO 8601
+ * @property Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class BankAccountDTO extends BaseDTO
 {
@@ -39,8 +39,7 @@ final class BankAccountDTO extends BaseDTO
         public ?string $id = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -63,7 +62,7 @@ final class BankAccountDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof BankAccount) {
+        if (! $model instanceof BankAccount) {
             throw new \InvalidArgumentException('Model must be instance of BankAccount');
         }
 
@@ -87,19 +86,19 @@ final class BankAccountDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'            => $this->id,
-            'tenantId'      => $this->tenantId,
-            'bankableId'    => $this->bankableId,
-            'bankableType'  => $this->bankableType,
-            'iban'          => $this->iban,
-            'country'       => $this->country,
-            'swift'         => $this->swift,
-            'bankName'      => $this->bankName,
-            'isDefault'     => $this->isDefault,
-            'currency'      => $this->currency,
-            'description'   => $this->description,
-            'createdAt'     => $this->createdAt?->toIso8601String(),
-            'updatedAt'     => $this->updatedAt?->toIso8601String(),
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'bankableId' => $this->bankableId,
+            'bankableType' => $this->bankableType,
+            'iban' => $this->iban,
+            'country' => $this->country,
+            'swift' => $this->swift,
+            'bankName' => $this->bankName,
+            'isDefault' => $this->isDefault,
+            'currency' => $this->currency,
+            'description' => $this->description,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

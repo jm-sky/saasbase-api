@@ -14,8 +14,7 @@ class GetCurrencyRateRequest extends Request
         protected NBPTableEnum $table,
         protected string $code,
         protected ?string $date = null
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {

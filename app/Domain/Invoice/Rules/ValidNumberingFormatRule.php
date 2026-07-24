@@ -14,7 +14,7 @@ class ValidNumberingFormatRule implements ValidationRule
         $found = $matches[0] ?? [];
 
         // Only allow exactly one, and it must be NN, NNN, or NNNN
-        if (1 !== count($found) || !in_array($found[0], ['NN', 'NNN', 'NNNN'], true)) {
+        if (count($found) !== 1 || ! in_array($found[0], ['NN', 'NNN', 'NNNN'], true)) {
             $fail(__('The :attribute must contain exactly one of: NN, NNN, or NNNN.'));
         }
     }

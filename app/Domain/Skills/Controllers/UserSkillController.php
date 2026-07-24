@@ -36,8 +36,8 @@ class UserSkillController extends Controller
 
         /** @var UserSkill $userSkill */
         $userSkill = $user->userSkills()->create([
-            'skill_id'    => $data['skill_id'],
-            'level'       => $data['level'],
+            'skill_id' => $data['skill_id'],
+            'level' => $data['level'],
             'acquired_at' => $data['acquired_at'] ?? null,
         ]);
 
@@ -46,8 +46,7 @@ class UserSkillController extends Controller
 
         return (new UserSkillResource($skill))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED)
-        ;
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(string $userSkillId): UserSkillResource
@@ -59,7 +58,7 @@ class UserSkillController extends Controller
         $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
         // Check if the user skill belongs to the authenticated user
-        if (!$skill || $skill->pivot->user_id !== $user->id) {
+        if (! $skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
@@ -75,7 +74,7 @@ class UserSkillController extends Controller
         $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
         // Check if the user skill belongs to the authenticated user
-        if (!$skill || $skill->pivot->user_id !== $user->id) {
+        if (! $skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 
@@ -83,7 +82,7 @@ class UserSkillController extends Controller
 
         // Update the pivot data
         $skill->pivot->update([
-            'level'       => $data['level'],
+            'level' => $data['level'],
             'acquired_at' => $data['acquired_at'] ?? null,
         ]);
 
@@ -101,7 +100,7 @@ class UserSkillController extends Controller
         $skill = $user->skills()->firstWhere('user_skill.id', $userSkillId);
 
         // Check if the user skill belongs to the authenticated user
-        if (!$skill || $skill->pivot->user_id !== $user->id) {
+        if (! $skill || $skill->pivot->user_id !== $user->id) {
             abort(Response::HTTP_NOT_FOUND);
         }
 

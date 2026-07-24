@@ -13,15 +13,15 @@ trait WithCountries
     public function seedCountries(): void
     {
         Country::create([
-            'code'  => self::DEFAULT_COUNTRY,
+            'code' => self::DEFAULT_COUNTRY,
             'code3' => 'POL',
-            'name'  => 'Poland',
+            'name' => 'Poland',
         ]);
 
         Country::create([
-            'code'  => self::SECONDARY_COUNTRY,
+            'code' => self::SECONDARY_COUNTRY,
             'code3' => 'USA',
-            'name'  => 'United States',
+            'name' => 'United States',
         ]);
     }
 }

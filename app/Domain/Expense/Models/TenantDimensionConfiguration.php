@@ -8,13 +8,13 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Carbon\Carbon;
 
 /**
- * @property string                  $id
- * @property string                  $tenant_id
+ * @property string $id
+ * @property string $tenant_id
  * @property AllocationDimensionType $dimension_type
- * @property bool                    $is_enabled
- * @property int                     $display_order
- * @property Carbon                  $created_at
- * @property Carbon                  $updated_at
+ * @property bool $is_enabled
+ * @property int $display_order
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class TenantDimensionConfiguration extends BaseModel
 {
@@ -29,7 +29,7 @@ class TenantDimensionConfiguration extends BaseModel
 
     protected $casts = [
         'dimension_type' => AllocationDimensionType::class,
-        'is_enabled'     => 'boolean',
-        'display_order'  => 'integer',
+        'is_enabled' => 'boolean',
+        'display_order' => 'integer',
     ];
 }

@@ -16,14 +16,14 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
         if (Auth::guard('web')->attempt($credentials)) {
             $user = Auth::guard('web')->user();
 
-            if (!$user->isAdmin()) {
+            if (! $user->isAdmin()) {
                 Auth::guard('web')->logout();
 
                 return back()->withErrors(['email' => 'Unauthorized']);

@@ -13,8 +13,7 @@ class UserSessionController
 {
     public function __construct(
         private readonly UserSessionService $userSessionService,
-    ) {
-    }
+    ) {}
 
     /**
      * Get all sessions for the authenticated user.
@@ -24,8 +23,7 @@ class UserSessionController
         $sessions = $request->user()
             ->sessions()
             ->orderBy('last_active_at', 'desc')
-            ->paginate()
-        ;
+            ->paginate();
 
         return UserSessionResource::collection($sessions);
     }
@@ -35,7 +33,7 @@ class UserSessionController
      */
     public function revoke(Request $request, string $id): JsonResponse
     {
-        if (!$this->userSessionService->revokeById($request->user(), $id)) {
+        if (! $this->userSessionService->revokeById($request->user(), $id)) {
             return response()->json(['message' => 'Session not found.'], Response::HTTP_NOT_FOUND);
         }
 

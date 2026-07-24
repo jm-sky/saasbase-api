@@ -13,6 +13,5 @@ final class QueryInvoiceResponseDTO
         public readonly int $numberOfElements,
         public readonly int $pageOffset,
         public readonly int $pageSize
-    ) {
-    }
+    ) {}
 }

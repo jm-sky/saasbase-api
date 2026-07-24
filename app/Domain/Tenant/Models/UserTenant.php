@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property RoleName $role
- * @property User     $user
- * @property Tenant   $tenant
+ * @property User $user
+ * @property Tenant $tenant
  */
 class UserTenant extends Pivot
 {

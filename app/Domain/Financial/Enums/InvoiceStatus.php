@@ -4,31 +4,31 @@ namespace App\Domain\Financial\Enums;
 
 enum InvoiceStatus: string
 {
-    case DRAFT      = 'draft';
+    case DRAFT = 'draft';
     case PROCESSING = 'processing';  // General processing state (OCR, allocation, approval)
-    case ISSUED     = 'issued';      // Ready for delivery/sending
-    case COMPLETED  = 'completed';   // Fully paid
-    case CANCELLED  = 'cancelled';
+    case ISSUED = 'issued';      // Ready for delivery/sending
+    case COMPLETED = 'completed';   // Fully paid
+    case CANCELLED = 'cancelled';
 
     public function label(): string
     {
         return match ($this) {
-            self::DRAFT      => 'Draft',
+            self::DRAFT => 'Draft',
             self::PROCESSING => 'Processing',
-            self::ISSUED     => 'Issued',
-            self::COMPLETED  => 'Completed',
-            self::CANCELLED  => 'Cancelled',
+            self::ISSUED => 'Issued',
+            self::COMPLETED => 'Completed',
+            self::CANCELLED => 'Cancelled',
         };
     }
 
     public function labelPL(): string
     {
         return match ($this) {
-            self::DRAFT      => 'Szkic',
+            self::DRAFT => 'Szkic',
             self::PROCESSING => 'W trakcie przetwarzania',
-            self::ISSUED     => 'Wystawiona',
-            self::COMPLETED  => 'Zakończone',
-            self::CANCELLED  => 'Anulowane',
+            self::ISSUED => 'Wystawiona',
+            self::COMPLETED => 'Zakończone',
+            self::CANCELLED => 'Anulowane',
         };
     }
 
@@ -36,7 +36,7 @@ enum InvoiceStatus: string
     {
         return match ($this) {
             self::COMPLETED, self::CANCELLED => true,
-            default                          => false,
+            default => false,
         };
     }
 
@@ -61,7 +61,7 @@ enum InvoiceStatus: string
      */
     public function canBeProcessed(): bool
     {
-        return !$this->isCompleted();
+        return ! $this->isCompleted();
     }
 
     /**
@@ -69,6 +69,6 @@ enum InvoiceStatus: string
      */
     public function canBeSent(): bool
     {
-        return self::ISSUED === $this;
+        return $this === self::ISSUED;
     }
 }

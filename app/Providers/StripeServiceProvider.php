@@ -17,11 +17,11 @@ class StripeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/../../config/stripe.php' => config_path('stripe.php'),
+            __DIR__.'/../../config/stripe.php' => config_path('stripe.php'),
         ], 'stripe-config');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/stripe.php',
+            __DIR__.'/../../config/stripe.php',
             'stripe'
         );
     }

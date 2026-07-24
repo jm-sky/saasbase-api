@@ -29,7 +29,7 @@ class TaskAttachmentsController extends Controller
     {
         $this->authorize('update', $task);
 
-        $file  = $request->file('file');
+        $file = $request->file('file');
         $media = $task->addMedia($file)->toMediaCollection('attachments');
 
         return response()->json([
@@ -51,10 +51,10 @@ class TaskAttachmentsController extends Controller
     {
         $this->authorize('view', $task);
         $this->authorizeMedia($task, $media);
-        $path    = $media->getPath();
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->download($path, $media->file_name, $headers);
@@ -64,10 +64,10 @@ class TaskAttachmentsController extends Controller
     {
         $this->authorize('view', $task);
         $this->authorizeMedia($task, $media);
-        $path    = $media->getPath();
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->file($path, $headers);
@@ -84,7 +84,7 @@ class TaskAttachmentsController extends Controller
 
     protected function authorizeMedia(Task $task, Media $media): void
     {
-        if (Task::class !== $media->model_type || $media->model_id !== $task->id) {
+        if ($media->model_type !== Task::class || $media->model_id !== $task->id) {
             abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this task.');
         }
     }

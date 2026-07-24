@@ -12,7 +12,7 @@ class ProjectRoleSeeder extends Seeder
     {
         $roles = [
             [
-                'name'        => 'Project Manager',
+                'name' => 'Project Manager',
                 'description' => 'Manages and oversees the entire project',
                 'permissions' => [
                     'project.view',
@@ -27,7 +27,7 @@ class ProjectRoleSeeder extends Seeder
                 ],
             ],
             [
-                'name'        => 'Team Lead',
+                'name' => 'Team Lead',
                 'description' => 'Leads a team within the project',
                 'permissions' => [
                     'project.view',
@@ -38,7 +38,7 @@ class ProjectRoleSeeder extends Seeder
                 ],
             ],
             [
-                'name'        => 'Developer',
+                'name' => 'Developer',
                 'description' => 'Works on project tasks',
                 'permissions' => [
                     'project.view',
@@ -47,7 +47,7 @@ class ProjectRoleSeeder extends Seeder
                 ],
             ],
             [
-                'name'        => 'Observer',
+                'name' => 'Observer',
                 'description' => 'Can only view project progress',
                 'permissions' => [
                     'project.view',

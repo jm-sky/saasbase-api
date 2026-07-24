@@ -17,16 +17,16 @@ class CreateInvoiceTemplateRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
-            'userId'      => ['nullable', 'ulid', 'exists:users,id'],
-            'name'        => ['required', 'string', 'max:255'],
+            'tenantId' => ['required', 'ulid', 'exists:tenants,id'],
+            'userId' => ['nullable', 'ulid', 'exists:users,id'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'content'     => ['required', 'string'],
-            'category'    => ['required', 'string', Rule::enum(TemplateCategory::class)],
+            'content' => ['required', 'string'],
+            'category' => ['required', 'string', Rule::enum(TemplateCategory::class)],
             'previewData' => ['nullable', 'array'],
-            'settings'    => ['nullable', 'array'],
-            'isActive'    => ['nullable', 'boolean'],
-            'isDefault'   => ['nullable', 'boolean'],
+            'settings' => ['nullable', 'array'],
+            'isActive' => ['nullable', 'boolean'],
+            'isDefault' => ['nullable', 'boolean'],
         ];
     }
 
@@ -34,29 +34,29 @@ class CreateInvoiceTemplateRequest extends BaseFormRequest
     {
         return [
             'tenantId.required' => 'The tenant ID is required.',
-            'tenantId.ulid'     => 'The tenant ID must be a valid ULID.',
-            'tenantId.exists'   => 'The selected tenant does not exist.',
+            'tenantId.ulid' => 'The tenant ID must be a valid ULID.',
+            'tenantId.exists' => 'The selected tenant does not exist.',
 
-            'userId.ulid'   => 'The user ID must be a valid ULID.',
+            'userId.ulid' => 'The user ID must be a valid ULID.',
             'userId.exists' => 'The selected user does not exist.',
 
             'name.required' => 'The name field is required.',
-            'name.string'   => 'The name must be a string.',
-            'name.max'      => 'The name may not be greater than :max characters.',
+            'name.string' => 'The name must be a string.',
+            'name.max' => 'The name may not be greater than :max characters.',
 
             'description.string' => 'The description must be a string.',
-            'description.max'    => 'The description may not be greater than :max characters.',
+            'description.max' => 'The description may not be greater than :max characters.',
 
             'content.required' => 'The content field is required.',
-            'content.string'   => 'The content must be a string.',
+            'content.string' => 'The content must be a string.',
 
             'category.required' => 'The category field is required.',
-            'category.string'   => 'The category must be a string.',
+            'category.string' => 'The category must be a string.',
 
             'previewData.array' => 'The preview data must be an array.',
-            'settings.array'    => 'The settings must be an array.',
+            'settings.array' => 'The settings must be an array.',
 
-            'isActive.boolean'  => 'The is active field must be true or false.',
+            'isActive.boolean' => 'The is active field must be true or false.',
             'isDefault.boolean' => 'The is default field must be true or false.',
         ];
     }

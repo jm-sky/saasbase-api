@@ -19,7 +19,6 @@ trait BelongsToBillingCustomerOfUser
     {
         return $query
             ->where('billable_type', BillingCustomer::class)
-            ->whereIn('billable_id', BillingCustomer::query()->forUser($user)->select('id'))
-        ;
+            ->whereIn('billable_id', BillingCustomer::query()->forUser($user)->select('id'));
     }
 }

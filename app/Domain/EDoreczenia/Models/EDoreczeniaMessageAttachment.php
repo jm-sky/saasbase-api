@@ -13,18 +13,18 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property string             $id
- * @property string             $tenant_id
- * @property string             $message_id
- * @property string             $file_path
- * @property string             $file_name
- * @property int                $file_size
- * @property string             $mime_type
- * @property Carbon             $created_at
- * @property Carbon             $updated_at
- * @property Carbon             $deleted_at
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $message_id
+ * @property string $file_path
+ * @property string $file_name
+ * @property int $file_size
+ * @property string $mime_type
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
  * @property EDoreczeniaMessage $message
- * @property Collection<Media>  $media
+ * @property Collection<int, Media> $media
  *
  * In this domain, each EDoreczeniaMessageAttachment represents a single file attachment for an e-Doręczenia message.
  * File storage and retrieval is handled via Spatie Media Library. Each attachment has exactly one media file (in the 'attachment' collection).
@@ -33,8 +33,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class EDoreczeniaMessageAttachment extends BaseModel implements HasMedia
 {
     use BelongsToTenant;
-    use SoftDeletes;
     use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',

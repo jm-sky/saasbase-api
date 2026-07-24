@@ -9,18 +9,18 @@ use App\Domain\IdentityCheck\Enums\IdentityCheckStatus;
 use Carbon\Carbon;
 
 /**
- * @property string               $id              Unique identifier for the identity check.
- * @property string               $verifiable_type Polymorphic target: `"User"` or `"Tenant"`.
- * @property string               $verifiable_id   ID of the user or tenant being verified.
- * @property IdentityCheckPurpose $purpose         What is being verified: `identity`, `official_data`, `ownership`.
- * @property IdentityCheckMethod  $method          How verification was performed (see "Verification Methods" below).
- * @property IdentityCheckStatus  $status          Current status: `pending`, `verified`, `rejected`.
- * @property ?Carbon              $verified_at     Timestamp when verification was successfully completed.
- * @property ?string              $verified_by     ID of the admin who verified it (if applicable).
- * @property ?string              $rejected_reason Reason for rejection, if verification failed.
- * @property array                $data            Captured metadata or evidence (e.g. matched names, registry links, confidence scores).
- * @property Carbon               $created_at      When the check was initiated.
- * @property Carbon               $updated_at      Last modification timestamp.
+ * @property string $id Unique identifier for the identity check.
+ * @property string $verifiable_type Polymorphic target: `"User"` or `"Tenant"`.
+ * @property string $verifiable_id ID of the user or tenant being verified.
+ * @property IdentityCheckPurpose $purpose What is being verified: `identity`, `official_data`, `ownership`.
+ * @property IdentityCheckMethod $method How verification was performed (see "Verification Methods" below).
+ * @property IdentityCheckStatus $status Current status: `pending`, `verified`, `rejected`.
+ * @property ?Carbon $verified_at Timestamp when verification was successfully completed.
+ * @property ?string $verified_by ID of the admin who verified it (if applicable).
+ * @property ?string $rejected_reason Reason for rejection, if verification failed.
+ * @property array $data Captured metadata or evidence (e.g. matched names, registry links, confidence scores).
+ * @property Carbon $created_at When the check was initiated.
+ * @property Carbon $updated_at Last modification timestamp.
  *
  * Verification Methods:
  * - For Users:
@@ -51,12 +51,12 @@ class IdentityCheck extends BaseModel
     ];
 
     protected $casts = [
-        'status'      => IdentityCheckStatus::class,
-        'purpose'     => IdentityCheckPurpose::class,
-        'method'      => IdentityCheckMethod::class,
-        'data'        => 'array',
+        'status' => IdentityCheckStatus::class,
+        'purpose' => IdentityCheckPurpose::class,
+        'method' => IdentityCheckMethod::class,
+        'data' => 'array',
         'verified_at' => 'datetime',
-        'created_at'  => 'datetime',
-        'updated_at'  => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 }

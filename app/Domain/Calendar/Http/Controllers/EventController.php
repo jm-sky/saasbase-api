@@ -24,8 +24,7 @@ class EventController extends Controller
 
         $events = Event::with(['creator', 'attendees', 'reminders'])
             ->where('tenant_id', $user->getTenantId())
-            ->get()
-        ;
+            ->get();
 
         return EventResource::collection($events);
     }
@@ -37,16 +36,16 @@ class EventController extends Controller
 
         $event = Event::create([
             ...$request->validated(),
-            'tenant_id'     => $user->getTenantId(),
+            'tenant_id' => $user->getTenantId(),
             'created_by_id' => $user->id,
         ]);
 
         if ($request->has('attendees')) {
             $attendees = collect($request->validated('attendees'))->map(fn (array $attendee) => [
-                'attendee_type'   => $attendee['attendeeType'],
-                'attendee_id'     => $attendee['attendeeId'],
+                'attendee_type' => $attendee['attendeeType'],
+                'attendee_id' => $attendee['attendeeId'],
                 'response_status' => $attendee['responseStatus'],
-                'custom_note'     => $attendee['customNote'] ?? null,
+                'custom_note' => $attendee['customNote'] ?? null,
             ])->all();
 
             $event->attendees()->createMany($attendees);

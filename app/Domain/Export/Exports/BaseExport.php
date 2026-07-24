@@ -2,6 +2,7 @@
 
 namespace App\Domain\Export\Exports;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -22,7 +23,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  * @property array $currencyColumns
  * @property array $amountColumns
  */
-abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+abstract class BaseExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected array $filters = [];
 
@@ -40,8 +41,8 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
 
     public function __construct(array $filters = [], array $columns = [], array $formatting = [])
     {
-        $this->filters    = $filters;
-        $this->columns    = $this->resolveColumns($columns);
+        $this->filters = $filters;
+        $this->columns = $this->resolveColumns($columns);
         $this->formatting = $formatting;
     }
 
@@ -61,7 +62,7 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
 
         $allowed = array_values(array_intersect($requested, $this->columns));
 
-        return !empty($allowed) ? $allowed : $this->columns;
+        return ! empty($allowed) ? $allowed : $this->columns;
     }
 
     /**
@@ -75,10 +76,9 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
     public function query(): Builder
     {
         return QueryBuilder::for($this->baseQuery())
-            ->allowedFilters($this->allowedFilters())
-            ->allowedIncludes($this->allowedIncludes())
-            ->getEloquentBuilder()
-        ;
+            ->allowedFilters(...$this->allowedFilters())
+            ->allowedIncludes(...$this->allowedIncludes())
+            ->getEloquentBuilder();
     }
 
     /**
@@ -127,8 +127,7 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
     {
         return collect($this->columns)
             ->map(fn ($col) => $this->formatColumnName($col))
-            ->toArray()
-        ;
+            ->toArray();
     }
 
     /**
@@ -140,15 +139,15 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
             $value = data_get($row, $col);
 
             if (in_array($col, $this->dateColumns)) {
-                return optional(\Carbon\Carbon::parse($value))->format($this->formatting['date'] ?? 'Y-m-d');
+                return optional(Carbon::parse($value))->format($this->formatting['date'] ?? 'Y-m-d');
             }
 
             if (in_array($col, $this->dateTimeColumns)) {
-                return optional(\Carbon\Carbon::parse($value))->format($this->formatting['datetime'] ?? 'Y-m-d H:i');
+                return optional(Carbon::parse($value))->format($this->formatting['datetime'] ?? 'Y-m-d H:i');
             }
 
             if (in_array($col, $this->currencyColumns)) {
-                return number_format((float) $value, 2, ',', ' ') . ' ' . ($this->formatting['currency'] ?? 'PLN');
+                return number_format((float) $value, 2, ',', ' ').' '.($this->formatting['currency'] ?? 'PLN');
             }
 
             if (in_array($col, $this->amountColumns)) {
@@ -169,12 +168,12 @@ abstract class BaseExport implements FromQuery, WithHeadings, WithMapping, Shoul
      */
     private function neutralizeFormula(mixed $value): mixed
     {
-        if (!\is_string($value) || '' === $value) {
+        if (! \is_string($value) || $value === '') {
             return $value;
         }
 
         if (\in_array($value[0], ['=', '+', '-', '@'], true)) {
-            return "'" . $value;
+            return "'".$value;
         }
 
         return $value;

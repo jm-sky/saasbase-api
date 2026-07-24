@@ -9,14 +9,14 @@ use App\Domain\Contractors\Enums\ContractorActivityType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string     $id
- * @property string     $tenant_id
- * @property string     $contractor_id
- * @property string     $bank_name
- * @property string     $account_number
- * @property string     $swift
- * @property string     $iban
- * @property bool       $is_default
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $contractor_id
+ * @property string $bank_name
+ * @property string $account_number
+ * @property string $swift
+ * @property string $iban
+ * @property bool $is_default
  * @property Contractor $contractor
  *
  * @description This model should extend the `BankAccount` model.

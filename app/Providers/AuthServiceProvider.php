@@ -38,19 +38,19 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Tenant::class            => TenantPolicy::class,
+        Tenant::class => TenantPolicy::class,
         TenantIntegration::class => TenantIntegrationPolicy::class,
-        Invoice::class           => InvoicePolicy::class,
-        UserTableSetting::class  => UserTableSettingPolicy::class,
-        TrustedDevice::class     => TrustedDevicePolicy::class,
-        SecurityEvent::class     => SecurityEventPolicy::class,
-        Address::class           => AddressPolicy::class,
-        BankAccount::class       => BankAccountPolicy::class,
-        Media::class             => MediaPolicy::class,
-        Project::class           => ProjectPolicy::class,
-        Task::class              => TaskPolicy::class,
-        InvoiceTemplate::class   => InvoiceTemplatePolicy::class,
-        Event::class             => EventPolicy::class,
+        Invoice::class => InvoicePolicy::class,
+        UserTableSetting::class => UserTableSettingPolicy::class,
+        TrustedDevice::class => TrustedDevicePolicy::class,
+        SecurityEvent::class => SecurityEventPolicy::class,
+        Address::class => AddressPolicy::class,
+        BankAccount::class => BankAccountPolicy::class,
+        Media::class => MediaPolicy::class,
+        Project::class => ProjectPolicy::class,
+        Task::class => TaskPolicy::class,
+        InvoiceTemplate::class => InvoiceTemplatePolicy::class,
+        Event::class => EventPolicy::class,
     ];
 
     /**

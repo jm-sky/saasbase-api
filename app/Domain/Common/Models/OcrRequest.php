@@ -14,23 +14,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @property string                  $id
- * @property string                  $tenant_id
- * @property string                  $processable_type
- * @property string                  $processable_id
- * @property string                  $media_id
- * @property ?string                 $external_document_id
- * @property OcrRequestStatus        $status
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $processable_type
+ * @property string $processable_id
+ * @property string $media_id
+ * @property ?string $external_document_id
+ * @property OcrRequestStatus $status
  * @property ?DocumentAnalysisResult $result
- * @property ?array                  $errors
- * @property ?Carbon                 $started_at
- * @property ?Carbon                 $finished_at
- * @property string                  $created_by
- * @property Carbon                  $created_at
- * @property Carbon                  $updated_at
- * @property User                    $createdBy
- * @property Media                   $media
- * @property Expense|Invoice         $processable
+ * @property ?array $errors
+ * @property ?Carbon $started_at
+ * @property ?Carbon $finished_at
+ * @property string $created_by
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $createdBy
+ * @property Media $media
+ * @property Expense|Invoice $processable
  */
 class OcrRequest extends BaseModel
 {
@@ -49,10 +49,10 @@ class OcrRequest extends BaseModel
     ];
 
     protected $casts = [
-        'status'      => OcrRequestStatus::class,
-        'result'      => DocumentAnalysisResultCast::class,
-        'errors'      => 'array',
-        'started_at'  => 'datetime',
+        'status' => OcrRequestStatus::class,
+        'result' => DocumentAnalysisResultCast::class,
+        'errors' => 'array',
+        'started_at' => 'datetime',
         'finished_at' => 'datetime',
     ];
 
@@ -74,7 +74,7 @@ class OcrRequest extends BaseModel
 
     public function hasNoDocument(): bool
     {
-        return !$this->result || !isset($this->result->analyzeResult->documents[0]);
+        return ! $this->result || ! isset($this->result->analyzeResult->documents[0]);
     }
 
     public function applyResultToProcessable(): void

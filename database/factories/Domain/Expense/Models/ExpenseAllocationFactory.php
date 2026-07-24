@@ -10,7 +10,7 @@ use Brick\Math\BigDecimal;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Expense\Models\ExpenseAllocation>
+ * @extends Factory<ExpenseAllocation>
  */
 class ExpenseAllocationFactory extends Factory
 {
@@ -27,11 +27,11 @@ class ExpenseAllocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id'  => Tenant::factory(),
+            'tenant_id' => Tenant::factory(),
             'expense_id' => Expense::factory(),
-            'amount'     => BigDecimal::of($this->faker->randomFloat(2, 10, 1000)),
-            'note'       => $this->faker->optional()->sentence(),
-            'status'     => ExpenseAllocationStatus::PENDING,
+            'amount' => BigDecimal::of($this->faker->randomFloat(2, 10, 1000)),
+            'note' => $this->faker->optional()->sentence(),
+            'status' => ExpenseAllocationStatus::PENDING,
         ];
     }
 

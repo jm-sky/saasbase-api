@@ -36,7 +36,7 @@ class AnalyzeDocumentRequest extends Request implements HasBody
         protected ?string $modelId = null,
         protected ?string $apiVersion = '2024-11-30'
     ) {
-        $this->modelId    = $modelId ?? config('azure_doc_intel.model_id');
+        $this->modelId = $modelId ?? config('azure_doc_intel.model_id');
         $this->apiVersion = $apiVersion ?? config('azure_doc_intel.api_version');
     }
 
@@ -49,7 +49,7 @@ class AnalyzeDocumentRequest extends Request implements HasBody
     {
         $mimeType = mime_content_type($this->filePath);
 
-        if (!in_array($mimeType, $this->allowedContentTypes)) {
+        if (! in_array($mimeType, $this->allowedContentTypes)) {
             throw new AzureDocumentIntelligenceException('Invalid file type.', context: ['mime_type' => $mimeType]);
         }
 

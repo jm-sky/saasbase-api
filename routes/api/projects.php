@@ -26,8 +26,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::get('{media}/download', 'download')->name('download');
             Route::get('{media}/preview', 'preview')->name('preview');
             Route::delete('{media}', 'destroy')->name('destroy');
-        })
-    ;
+        });
 
     Route::controller(TaskAttachmentsController::class)
         ->prefix('tasks/{task}/attachments')
@@ -39,6 +38,5 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::get('{media}/download', 'download')->name('download');
             Route::get('{media}/preview', 'preview')->name('preview');
             Route::delete('{media}', 'destroy')->name('destroy');
-        })
-    ;
+        });
 });

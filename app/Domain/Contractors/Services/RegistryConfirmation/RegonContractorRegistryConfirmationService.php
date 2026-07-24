@@ -16,8 +16,7 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
 {
     public function __construct(
         private readonly DataComparatorService $comparatorService,
-    ) {
-    }
+    ) {}
 
     /**
      * Confirm contractor data against REGON registry data.
@@ -29,7 +28,7 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
         // Convert REGON data to common format
         $commonData = $this->convertToCommonData($registryData);
 
-        if (!$commonData) {
+        if (! $commonData) {
             return $confirmations;
         }
 
@@ -66,35 +65,35 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
     private function confirmCompanyData(Contractor $contractor, CommonCompanyLookupData $commonData, $registryData): ?RegistryConfirmation
     {
         // Check if we have required data
-        if (!$contractor->name || !$contractor->vat_id || !$commonData->name || !$commonData->vatId) {
+        if (! $contractor->name || ! $contractor->vat_id || ! $commonData->name || ! $commonData->vatId) {
             return null;
         }
 
         // Prepare payload for comparison
         $payload = [
-            'name'  => $contractor->name,
+            'name' => $contractor->name,
             'vatId' => $contractor->vat_id,
             'regon' => $contractor->regon,
         ];
 
         // Compare data
-        $nameMatch  = $this->comparatorService->compareNames($contractor->name, $commonData->name);
+        $nameMatch = $this->comparatorService->compareNames($contractor->name, $commonData->name);
         $vatIdMatch = $this->comparatorService->compareVatIds($contractor->vat_id, $commonData->vatId);
         $regonMatch = $this->comparatorService->compareRegons($contractor->regon, $commonData->regon);
 
         // Company data is confirmed if name and VAT ID match
         // REGON is optional but if both have it, it should match
-        $isConfirmed = $nameMatch && $vatIdMatch && ($regonMatch || !$contractor->regon || !$commonData->regon);
+        $isConfirmed = $nameMatch && $vatIdMatch && ($regonMatch || ! $contractor->regon || ! $commonData->regon);
 
         // Prepare result data
         $result = [
             'registryData' => [
-                'name'  => $commonData->name,
+                'name' => $commonData->name,
                 'vatId' => $commonData->vatId,
                 'regon' => $commonData->regon,
             ],
             'comparison' => [
-                'nameMatch'  => $nameMatch,
+                'nameMatch' => $nameMatch,
                 'vatIdMatch' => $vatIdMatch,
                 'regonMatch' => $regonMatch,
             ],
@@ -104,14 +103,14 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
         // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
-                'type'             => RegistryConfirmationType::Regon->value,
-                'confirmable_id'   => $contractor->id,
+                'type' => RegistryConfirmationType::Regon->value,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
             ],
             [
-                'payload'    => $payload,
-                'result'     => $result,
-                'status'     => $isConfirmed ? RegistryConfirmationStatus::Success : RegistryConfirmationStatus::Failed,
+                'payload' => $payload,
+                'result' => $result,
+                'status' => $isConfirmed ? RegistryConfirmationStatus::Success : RegistryConfirmationStatus::Failed,
                 'checked_at' => now(),
             ]
         );
@@ -125,25 +124,25 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
         /** @var ?Address $contractorAddress */
         $contractorAddress = $contractor->defaultAddress;
         /** @var ?AddressDTO $registryAddress */
-        $registryAddress   = $commonData->address;
+        $registryAddress = $commonData->address;
 
         // Check if we have required data
-        if (!$contractorAddress->street || !$contractorAddress->city
-            || !$contractorAddress->postal_code || !$contractorAddress->country) {
+        if (! $contractorAddress->street || ! $contractorAddress->city
+            || ! $contractorAddress->postal_code || ! $contractorAddress->country) {
             return null;
         }
 
-        if (!$registryAddress->street || !$registryAddress->city
-            || !$registryAddress->postalCode || !$registryAddress->country) {
+        if (! $registryAddress->street || ! $registryAddress->city
+            || ! $registryAddress->postalCode || ! $registryAddress->country) {
             return null;
         }
 
         // Prepare payload for comparison
         $payload = [
-            'street'     => $contractorAddress->street,
-            'city'       => $contractorAddress->city,
+            'street' => $contractorAddress->street,
+            'city' => $contractorAddress->city,
             'postalCode' => $contractorAddress->postal_code,
-            'country'    => $contractorAddress->country,
+            'country' => $contractorAddress->country,
         ];
 
         // Convert Address model to AddressDTO for comparison
@@ -155,10 +154,10 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
         // Prepare result data
         $result = [
             'registryData' => [
-                'street'     => $registryAddress->street,
-                'city'       => $registryAddress->city,
+                'street' => $registryAddress->street,
+                'city' => $registryAddress->city,
                 'postalCode' => $registryAddress->postalCode,
-                'country'    => $registryAddress->country,
+                'country' => $registryAddress->country,
             ],
             'comparison' => [
                 'addressMatch' => $addressMatch,
@@ -169,14 +168,14 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
         // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
-                'type'             => RegistryConfirmationType::Address->value,
-                'confirmable_id'   => $contractor->id,
+                'type' => RegistryConfirmationType::Address->value,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
             ],
             [
-                'payload'    => $payload,
-                'result'     => $result,
-                'success'    => $addressMatch,
+                'payload' => $payload,
+                'result' => $result,
+                'success' => $addressMatch,
                 'checked_at' => now(),
             ]
         );
@@ -187,7 +186,7 @@ class RegonContractorRegistryConfirmationService implements RegistryConfirmation
      */
     private function convertToCommonData($registryData): ?CommonCompanyLookupData
     {
-        if (!$registryData) {
+        if (! $registryData) {
             return null;
         }
 

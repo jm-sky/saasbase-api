@@ -19,11 +19,11 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'type'        => ['required', new Enum(TenantIntegrationType::class)],
-            'mode'        => ['required', new Enum(TenantIntegrationMode::class)],
-            'enabled'     => ['boolean'],
+            'type' => ['required', new Enum(TenantIntegrationType::class)],
+            'mode' => ['required', new Enum(TenantIntegrationMode::class)],
+            'enabled' => ['boolean'],
             'credentials' => ['nullable', 'array', 'required_if:mode,custom'],
-            'meta'        => ['nullable', 'array'],
+            'meta' => ['nullable', 'array'],
         ];
     }
 
@@ -32,11 +32,11 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
         $validator->after(function (Validator $validator) {
             $endpoint = $this->input('credentials.endpoint');
 
-            if (!$endpoint) {
+            if (! $endpoint) {
                 return;
             }
 
-            if (!IntegrationAllowedHosts::isAllowed((string) $this->input('type'), (string) $endpoint)) {
+            if (! IntegrationAllowedHosts::isAllowed((string) $this->input('type'), (string) $endpoint)) {
                 $validator->errors()->add('credentials.endpoint', 'This endpoint is not allowed for this integration type.');
             }
         });
@@ -45,10 +45,10 @@ class StoreTenantIntegrationRequest extends BaseFormRequest
     public function attributes(): array
     {
         return [
-            'type'        => 'integration type',
-            'mode'        => 'integration mode',
+            'type' => 'integration type',
+            'mode' => 'integration mode',
             'credentials' => 'integration credentials',
-            'meta'        => 'integration metadata',
+            'meta' => 'integration metadata',
         ];
     }
 }

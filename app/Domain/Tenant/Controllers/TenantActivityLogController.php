@@ -20,7 +20,7 @@ class TenantActivityLogController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Activity::class;
+        $this->modelClass = Activity::class;
         $this->defaultWith = ['causer', 'subject'];
 
         $this->filters = [
@@ -46,12 +46,10 @@ class TenantActivityLogController extends Controller
             ->where('subject_id', $tenant->id)
             ->where(function ($query) use ($request) {
                 $query->where('tenant_id', $request->user()->getTenantId())
-                    ->orWhere('tenant_id', null)
-                ;
-            })
-        ;
+                    ->orWhere('tenant_id', null);
+            });
 
-        $result         = $this->getIndexPaginator($request, query: $query);
+        $result = $this->getIndexPaginator($request, query: $query);
         $result['data'] = ActivityLogDTO::collect($result['data']);
 
         return response()->json($result);

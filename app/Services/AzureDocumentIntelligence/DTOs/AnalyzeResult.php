@@ -7,10 +7,10 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 /**
  * DTO for Azure Document Intelligence analyzeResult.
  *
- * @property string               $apiVersion
- * @property string               $modelId
- * @property ?string              $content
- * @property string               $contentFormat
+ * @property string $apiVersion
+ * @property string $modelId
+ * @property ?string $content
+ * @property string $contentFormat
  * @property InvoiceDocumentDTO[] $documents
  */
 final class AnalyzeResult extends BaseDataDTO
@@ -21,17 +21,16 @@ final class AnalyzeResult extends BaseDataDTO
         public readonly string $contentFormat,
         public readonly array $documents,
         public readonly ?string $content = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'apiVersion'    => $this->apiVersion,
-            'modelId'       => $this->modelId,
-            'content'       => $this->content,
+            'apiVersion' => $this->apiVersion,
+            'modelId' => $this->modelId,
+            'content' => $this->content,
             'contentFormat' => $this->contentFormat,
-            'documents'     => array_map(fn ($doc) => $doc->toArray(), $this->documents),
+            'documents' => array_map(fn ($doc) => $doc->toArray(), $this->documents),
         ];
     }
 

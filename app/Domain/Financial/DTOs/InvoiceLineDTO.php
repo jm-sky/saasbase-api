@@ -6,16 +6,16 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 use Brick\Math\BigDecimal;
 
 /**
- * @property string     $id
- * @property ?string    $description
+ * @property string $id
+ * @property ?string $description
  * @property BigDecimal $quantity
  * @property BigDecimal $unitPrice
  * @property VatRateDTO $vatRate
  * @property BigDecimal $totalNet
  * @property BigDecimal $totalVat
  * @property BigDecimal $totalGross
- * @property ?string    $productId
- * @property ?array     $gtuCodes
+ * @property ?string $productId
+ * @property ?array $gtuCodes
  */
 final class InvoiceLineDTO extends BaseDataDTO
 {
@@ -30,22 +30,21 @@ final class InvoiceLineDTO extends BaseDataDTO
         public BigDecimal $totalGross,
         public ?string $productId = null,
         public ?array $gtuCodes = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
+            'id' => $this->id,
             'description' => $this->description ?? '',
-            'quantity'    => $this->quantity->toFloat(),
-            'unitPrice'   => $this->unitPrice->toFloat(),
-            'vatRate'     => $this->vatRate->toArray(),
-            'totalNet'    => $this->totalNet->toFloat(),
-            'totalVat'    => $this->totalVat->toFloat(),
-            'totalGross'  => $this->totalGross->toFloat(),
-            'productId'   => $this->productId,
-            'gtuCodes'    => $this->gtuCodes ?? [],
+            'quantity' => $this->quantity->toFloat(),
+            'unitPrice' => $this->unitPrice->toFloat(),
+            'vatRate' => $this->vatRate->toArray(),
+            'totalNet' => $this->totalNet->toFloat(),
+            'totalVat' => $this->totalVat->toFloat(),
+            'totalGross' => $this->totalGross->toFloat(),
+            'productId' => $this->productId,
+            'gtuCodes' => $this->gtuCodes ?? [],
         ];
     }
 
@@ -79,7 +78,7 @@ final class InvoiceLineDTO extends BaseDataDTO
     {
         $codes = $this->getGtuCodes();
 
-        if (!in_array($code, $codes)) {
+        if (! in_array($code, $codes)) {
             $codes[] = $code;
         }
 

@@ -34,7 +34,7 @@ class MessageControllerTest extends TestCase
         Storage::fake('local');
     }
 
-    public function testCanListMessages(): void
+    public function test_can_list_messages(): void
     {
         $this->markTestSkipped('Need to fix message listing functionality');
 
@@ -68,42 +68,40 @@ class MessageControllerTest extends TestCase
                     'perPage',
                     'total',
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanFilterMessagesByStatus(): void
+    public function test_can_filter_messages_by_status(): void
     {
         $this->markTestSkipped('Need to fix message filtering functionality');
 
         EDoreczeniaMessage::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'status'    => 'pending',
+            'status' => 'pending',
         ]);
         EDoreczeniaMessage::factory()->create([
             'tenant_id' => $this->tenant->id,
-            'status'    => 'sent',
+            'status' => 'sent',
         ]);
 
-        $response = $this->getJson($this->baseUrl . '?filter[status]=pending');
+        $response = $this->getJson($this->baseUrl.'?filter[status]=pending');
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.status', 'pending')
-        ;
+            ->assertJsonPath('data.0.status', 'pending');
     }
 
-    public function testCanCreateMessage(): void
+    public function test_can_create_message(): void
     {
         $this->markTestSkipped('Need to fix message creation functionality');
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         $response = $this->postJson($this->baseUrl, [
-            'provider'    => 'test',
-            'recipient'   => 'test@example.com',
-            'subject'     => 'Test Subject',
-            'content'     => 'Test Content',
+            'provider' => 'test',
+            'recipient' => 'test@example.com',
+            'subject' => 'Test Subject',
+            'content' => 'Test Content',
             'attachments' => [$file],
         ]);
 
@@ -121,22 +119,21 @@ class MessageControllerTest extends TestCase
                     'createdAt',
                     'updatedAt',
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('edoreczenia_messages', [
             'tenant_id' => $this->tenant->id,
-            'provider'  => 'test',
+            'provider' => 'test',
             'recipient' => 'test@example.com',
-            'subject'   => 'Test Subject',
-            'content'   => 'Test Content',
-            'status'    => 'pending',
+            'subject' => 'Test Subject',
+            'content' => 'Test Content',
+            'status' => 'pending',
         ]);
 
-        $this->assertTrue(Storage::disk('local')->exists('edoreczenia/attachments/' . $file->hashName()));
+        $this->assertTrue(Storage::disk('local')->exists('edoreczenia/attachments/'.$file->hashName()));
     }
 
-    public function testCanShowMessage(): void
+    public function test_can_show_message(): void
     {
         $this->markTestSkipped('Need to fix message retrieval functionality');
 
@@ -144,7 +141,7 @@ class MessageControllerTest extends TestCase
             'tenant_id' => $this->tenant->id,
         ]);
 
-        $response = $this->getJson($this->baseUrl . '/' . $message->id);
+        $response = $this->getJson($this->baseUrl.'/'.$message->id);
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -161,11 +158,10 @@ class MessageControllerTest extends TestCase
                     'updatedAt',
                 ],
             ])
-            ->assertJsonPath('data.id', $message->id)
-        ;
+            ->assertJsonPath('data.id', $message->id);
     }
 
-    public function testCanUpdateMessage(): void
+    public function test_can_update_message(): void
     {
         $this->markTestSkipped('Need to fix message update functionality');
 
@@ -174,9 +170,9 @@ class MessageControllerTest extends TestCase
         ]);
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
-        $response = $this->putJson($this->baseUrl . '/' . $message->id, [
-            'subject'     => 'Updated Subject',
-            'content'     => 'Updated Content',
+        $response = $this->putJson($this->baseUrl.'/'.$message->id, [
+            'subject' => 'Updated Subject',
+            'content' => 'Updated Content',
             'attachments' => [$file],
         ]);
 
@@ -196,13 +192,12 @@ class MessageControllerTest extends TestCase
                 ],
             ])
             ->assertJsonPath('data.subject', 'Updated Subject')
-            ->assertJsonPath('data.content', 'Updated Content')
-        ;
+            ->assertJsonPath('data.content', 'Updated Content');
 
-        $this->assertTrue(Storage::disk('local')->exists('edoreczenia/attachments/' . $file->hashName()));
+        $this->assertTrue(Storage::disk('local')->exists('edoreczenia/attachments/'.$file->hashName()));
     }
 
-    public function testCanDeleteMessage(): void
+    public function test_can_delete_message(): void
     {
         $this->markTestSkipped('Need to fix message deletion functionality');
 
@@ -210,7 +205,7 @@ class MessageControllerTest extends TestCase
             'tenant_id' => $this->tenant->id,
         ]);
 
-        $response = $this->deleteJson($this->baseUrl . '/' . $message->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$message->id);
 
         $response->assertNoContent();
         $this->assertDatabaseMissing('edoreczenia_messages', ['id' => $message->id]);

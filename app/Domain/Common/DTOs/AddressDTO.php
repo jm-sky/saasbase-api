@@ -10,21 +10,21 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Address>
  *
- * @property ?string     $id
- * @property ?string     $tenantId
- * @property string      $country
- * @property ?string     $postalCode
- * @property string      $city
- * @property ?string     $street
- * @property ?string     $building
- * @property ?string     $flat
- * @property ?string     $description
+ * @property ?string $id
+ * @property ?string $tenantId
+ * @property string $country
+ * @property ?string $postalCode
+ * @property string $city
+ * @property ?string $street
+ * @property ?string $building
+ * @property ?string $flat
+ * @property ?string $description
  * @property AddressType $type
- * @property bool        $isDefault
- * @property ?string     $addressableId
- * @property ?string     $addressableType
- * @property ?Carbon     $createdAt       Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon     $updatedAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property bool $isDefault
+ * @property ?string $addressableId
+ * @property ?string $addressableType
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class AddressDTO extends BaseDTO
 {
@@ -44,8 +44,7 @@ final class AddressDTO extends BaseDTO
         public ?string $description = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -70,7 +69,7 @@ final class AddressDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof Address) {
+        if (! $model instanceof Address) {
             throw new \InvalidArgumentException('Model must be instance of Address');
         }
 
@@ -96,21 +95,21 @@ final class AddressDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'              => $this->id,
-            'tenantId'        => $this->tenantId,
-            'country'         => $this->country,
-            'postalCode'      => $this->postalCode,
-            'city'            => $this->city,
-            'street'          => $this->street,
-            'building'        => $this->building,
-            'flat'            => $this->flat,
-            'description'     => $this->description,
-            'type'            => $this->type->value,
-            'isDefault'       => $this->isDefault,
-            'addressableId'   => $this->addressableId,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'country' => $this->country,
+            'postalCode' => $this->postalCode,
+            'city' => $this->city,
+            'street' => $this->street,
+            'building' => $this->building,
+            'flat' => $this->flat,
+            'description' => $this->description,
+            'type' => $this->type->value,
+            'isDefault' => $this->isDefault,
+            'addressableId' => $this->addressableId,
             'addressableType' => $this->addressableType,
-            'createdAt'       => $this->createdAt?->toIso8601String(),
-            'updatedAt'       => $this->updatedAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

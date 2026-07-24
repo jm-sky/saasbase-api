@@ -2,6 +2,7 @@
 
 namespace App\Domain\Expense\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Expense\DTOs\DimensionDataDTO;
 use App\Domain\Expense\Enums\AllocationDimensionType;
 use App\Domain\Expense\Requests\UpdateDimensionConfigurationRequest;
@@ -10,6 +11,7 @@ use App\Domain\Expense\Resources\DimensionDataResource;
 use App\Domain\Expense\Resources\DimensionTypeResource;
 use App\Domain\Expense\Services\DimensionVisibilityService;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,24 +24,23 @@ class DimensionConfigurationController extends Controller
 
     public function __construct(
         private DimensionVisibilityService $dimensionService
-    ) {
-    }
+    ) {}
 
     /**
      * Get current dimension configuration for tenant.
      */
     public function index(Request $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
-        $dimensions        = $this->dimensionService->getAllDimensionsForTenant($tenantId);
+        $dimensions = $this->dimensionService->getAllDimensionsForTenant($tenantId);
         $enabledDimensions = $this->dimensionService->getEnabledDimensionsForTenant($tenantId);
 
         return response()->json([
             'data' => [
-                'allDimensions'     => DimensionConfigurationResource::collection($dimensions),
+                'allDimensions' => DimensionConfigurationResource::collection($dimensions),
                 'enabledDimensions' => DimensionTypeResource::collection($enabledDimensions),
             ],
         ]);
@@ -50,8 +51,8 @@ class DimensionConfigurationController extends Controller
      */
     public function update(UpdateDimensionConfigurationRequest $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         $validated = $request->validated();
@@ -67,14 +68,14 @@ class DimensionConfigurationController extends Controller
 
             return response()->json([
                 'message' => 'Dimension configuration updated successfully',
-                'data'    => [
+                'data' => [
                     'dimensions' => DimensionConfigurationResource::collection($dimensions),
                 ],
             ]);
         } catch (\InvalidArgumentException $e) {
             return response()->json([
                 'message' => 'Configuration update failed',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
@@ -84,8 +85,8 @@ class DimensionConfigurationController extends Controller
      */
     public function resetToDefaults(): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         $this->dimensionService->resetToDefaults($tenantId);
@@ -94,7 +95,7 @@ class DimensionConfigurationController extends Controller
 
         return response()->json([
             'message' => 'Dimension configuration reset to defaults',
-            'data'    => [
+            'data' => [
                 'dimensions' => DimensionConfigurationResource::collection($dimensions),
             ],
         ]);
@@ -105,15 +106,15 @@ class DimensionConfigurationController extends Controller
      */
     public function availableDimensions(Request $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user          = Auth::user();
-        $tenantId      = $user->getTenantId();
+        /** @var User $user */
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
         $dimensionType = $request->query('type');
 
         if ($dimensionType) {
             try {
                 $dimension = AllocationDimensionType::from($dimensionType);
-                $data      = $this->getDimensionData($dimension, $tenantId);
+                $data = $this->getDimensionData($dimension, $tenantId);
 
                 $dimensionDataDTO = DimensionDataDTO::fromDimensionTypeWithItems($dimension, $data->toArray());
 
@@ -129,10 +130,10 @@ class DimensionConfigurationController extends Controller
 
         // Return all available dimensions with their data
         $enabledDimensions = $this->dimensionService->getEnabledDimensionsForTenant($tenantId);
-        $dimensionsData    = [];
+        $dimensionsData = [];
 
         foreach ($enabledDimensions as $dimension) {
-            $items            = $this->getDimensionData($dimension, $tenantId);
+            $items = $this->getDimensionData($dimension, $tenantId);
             $dimensionsData[] = DimensionDataDTO::fromDimensionTypeWithItems($dimension, $items->toArray());
         }
 
@@ -146,22 +147,22 @@ class DimensionConfigurationController extends Controller
     /**
      * Get dimension data for a specific dimension type.
      */
-    private function getDimensionData(AllocationDimensionType $dimension, string $tenantId): \Illuminate\Database\Eloquent\Collection
+    private function getDimensionData(AllocationDimensionType $dimension, string $tenantId): Collection
     {
         $modelClass = $dimension->getMorphClass();
 
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             // @phpstan-ignore-next-line
             return collect();
         }
 
         // Handle special cases for User and Project models
-        if (AllocationDimensionType::EMPLOYEES === $dimension) {
+        if ($dimension === AllocationDimensionType::EMPLOYEES) {
             // User model: get users in current tenant (via JWT token context)
             return $modelClass::query()->get(); // User scope handles tenancy automatically via JWT
         }
 
-        if (AllocationDimensionType::PROJECT === $dimension) {
+        if ($dimension === AllocationDimensionType::PROJECT) {
             // Project model: tenant-specific only (uses BelongsToTenant)
             return $modelClass::query()->where('tenant_id', $tenantId)->get();
         }

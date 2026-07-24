@@ -10,13 +10,13 @@ class CreateProjectRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'tenantId'    => ['required', 'ulid', 'exists:tenants,id'],
-            'ownerId'     => ['required', 'ulid', 'exists:users,id'],
-            'name'        => ['required', 'string', 'max:255'],
+            'tenantId' => ['required', 'ulid', 'exists:tenants,id'],
+            'ownerId' => ['required', 'ulid', 'exists:users,id'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'statusId'    => ['required', 'ulid', 'exists:project_statuses,id'],
-            'startDate'   => ['nullable', 'date'],
-            'endDate'     => ['nullable', 'date'],
+            'statusId' => ['required', 'ulid', 'exists:project_statuses,id'],
+            'startDate' => ['nullable', 'date'],
+            'endDate' => ['nullable', 'date'],
         ];
     }
 

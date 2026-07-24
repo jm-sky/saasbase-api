@@ -2,6 +2,17 @@
 
 namespace App\Domain\Common\Traits;
 
+use App\Domain\Auth\Models\User;
+use App\Domain\Common\Models\AllocationContractType;
+use App\Domain\Common\Models\AllocationEquipmentType;
+use App\Domain\Common\Models\AllocationLocation;
+use App\Domain\Financial\Models\AllocationCostType;
+use App\Domain\Financial\Models\AllocationRelatedTransactionCategory;
+use App\Domain\Financial\Models\AllocationRevenueType;
+use App\Domain\Financial\Models\AllocationTransactionType;
+use App\Domain\Products\Models\AllocationProductCategory;
+use App\Domain\Projects\Models\Project;
+use App\Domain\Tenant\Models\OrganizationUnit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait UsesAllocationMorphMap
@@ -9,17 +20,17 @@ trait UsesAllocationMorphMap
     protected static function bootUsesAllocationMorphMap()
     {
         Relation::morphMap([
-            'HA'  => \App\Domain\Auth\Models\User::class,
-            'LO'  => \App\Domain\Common\Models\AllocationLocation::class,
-            'PD'  => \App\Domain\Products\Models\AllocationProductCategory::class,
-            'PR'  => \App\Domain\Projects\Models\Project::class,
-            'RS'  => \App\Domain\Financial\Models\AllocationRevenueType::class,
-            'RTR' => \App\Domain\Financial\Models\AllocationTransactionType::class,
-            'RY'  => \App\Domain\Financial\Models\AllocationCostType::class,
-            'ST'  => \App\Domain\Tenant\Models\OrganizationUnit::class,
-            'TP'  => \App\Domain\Financial\Models\AllocationRelatedTransactionCategory::class,
-            'UM'  => \App\Domain\Common\Models\AllocationContractType::class,
-            'UR'  => \App\Domain\Common\Models\AllocationEquipmentType::class,
+            'HA' => User::class,
+            'LO' => AllocationLocation::class,
+            'PD' => AllocationProductCategory::class,
+            'PR' => Project::class,
+            'RS' => AllocationRevenueType::class,
+            'RTR' => AllocationTransactionType::class,
+            'RY' => AllocationCostType::class,
+            'ST' => OrganizationUnit::class,
+            'TP' => AllocationRelatedTransactionCategory::class,
+            'UM' => AllocationContractType::class,
+            'UR' => AllocationEquipmentType::class,
         ]);
     }
 }

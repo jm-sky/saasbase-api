@@ -32,19 +32,19 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string $user_id
  * @property string $contactable_id
  * @property string $contactable_type
- * @property ?User  $user
+ * @property ?User $user
  * @property ?Model $contactable
  */
 class Contact extends BaseModel implements HasMedia
 {
-    use SoftDeletes;
     use BelongsToTenant;
-    use InteractsWithMedia;
-    use HasTags;
-    use HaveAddresses;
     use HasActivityLog;
     use HasActivityLogging;
+    use HasTags;
+    use HaveAddresses;
+    use InteractsWithMedia;
     use IsSearchable;
+    use SoftDeletes;
 
     protected $fillable = [
         'first_name',
@@ -59,7 +59,7 @@ class Contact extends BaseModel implements HasMedia
     ];
 
     protected $casts = [
-        'emails'        => 'array',
+        'emails' => 'array',
         'phone_numbers' => 'array',
     ];
 
@@ -77,8 +77,7 @@ class Contact extends BaseModel implements HasMedia
     {
         $this->addMediaCollection('profile')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
     }
 
     protected static function newFactory()

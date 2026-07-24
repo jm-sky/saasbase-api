@@ -14,8 +14,7 @@ class InitSessionTokenRequest extends Request implements HasBody
 
     public function __construct(
         protected string $encryptedToken
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -26,7 +25,7 @@ class InitSessionTokenRequest extends Request implements HasBody
     {
         return [
             'Content-Type' => 'application/octet-stream',
-            'Accept'       => 'application/json',
+            'Accept' => 'application/json',
         ];
     }
 

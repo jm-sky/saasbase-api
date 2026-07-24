@@ -16,7 +16,7 @@ class FinancialRevenueWidgetResource extends JsonResource
     {
         return [
             'month' => FinancialWidgetMetricsResource::make($this->resource['month']),
-            'year'  => FinancialWidgetMetricsResource::make($this->resource['year']),
+            'year' => FinancialWidgetMetricsResource::make($this->resource['year']),
         ];
     }
 }

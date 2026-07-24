@@ -19,7 +19,7 @@ class CreateTenantForNewUser
             return;
         }
 
-        if (!config('users.registration.create_tenant')) {
+        if (! config('users.registration.create_tenant')) {
             return;
         }
 
@@ -27,14 +27,14 @@ class CreateTenantForNewUser
 
         $event->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
-        (new InitializeTenantDefaults())->execute($tenant, $event->user);
+        (new InitializeTenantDefaults)->execute($tenant, $event->user);
     }
 
     public static function prepareTenantData(User $user): array
     {
         return [
-            'name'     => "{$user->first_name}'s workspace",
-            'slug'     => Str::slug(Str::before($user->email, '@')),
+            'name' => "{$user->first_name}'s workspace",
+            'slug' => Str::slug(Str::before($user->email, '@')),
             'owner_id' => $user->id,
         ];
     }

@@ -20,23 +20,23 @@ class SubscriptionPlanController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = SubscriptionPlan::class;
+        $this->modelClass = SubscriptionPlan::class;
         $this->defaultWith = ['features.feature', 'prices', 'subscriptions.billable'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('id', new AdvancedFilter()),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('id', new AdvancedFilter),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
             AllowedFilter::custom('isActive', new AdvancedFilter(['is_active' => 'boolean']), 'is_active'),
-            AllowedFilter::custom('billingPeriod', new AdvancedFilter(), 'billing_period'),
-            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('billingPeriod', new AdvancedFilter, 'billing_period'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
 
         $this->sorts = [
             'name',
-            'isActive'  => 'is_active',
+            'isActive' => 'is_active',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
@@ -55,15 +55,13 @@ class SubscriptionPlanController extends Controller
         $plans = $this->getIndexPaginator($request);
 
         return SubscriptionPlanResource::collection($plans['data'])
-            ->additional(['meta' => $plans['meta']])
-        ;
+            ->additional(['meta' => $plans['meta']]);
     }
 
     public function show(string $id)
     {
         $plan = SubscriptionPlan::with(['features.feature', 'prices', 'subscriptions.billable'])
-            ->findOrFail($id)
-        ;
+            ->findOrFail($id);
 
         return new SubscriptionPlanResource($plan);
     }

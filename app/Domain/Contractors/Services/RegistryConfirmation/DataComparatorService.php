@@ -20,7 +20,7 @@ class DataComparatorService
     {
         try {
             $normalizedContractor = $this->normalizeString($contractorName);
-            $normalizedRegistry   = $this->normalizeString($registryName);
+            $normalizedRegistry = $this->normalizeString($registryName);
 
             // Exact match after normalization
             if ($normalizedContractor === $normalizedRegistry) {
@@ -34,8 +34,8 @@ class DataComparatorService
         } catch (\Exception $e) {
             Log::warning('Error comparing names', [
                 'contractor_name' => $contractorName,
-                'registry_name'   => $registryName,
-                'error'           => $e->getMessage(),
+                'registry_name' => $registryName,
+                'error' => $e->getMessage(),
             ]);
 
             return false;
@@ -47,12 +47,12 @@ class DataComparatorService
      */
     public function compareVatIds(?string $contractorVatId, ?string $registryVatId): bool
     {
-        if (!$contractorVatId || !$registryVatId) {
+        if (! $contractorVatId || ! $registryVatId) {
             return false;
         }
 
         $normalizedContractor = $this->normalizeVatId($contractorVatId);
-        $normalizedRegistry   = $this->normalizeVatId($registryVatId);
+        $normalizedRegistry = $this->normalizeVatId($registryVatId);
 
         // If both have country prefixes, they must match exactly
         if (preg_match('/^[A-Z]{2}/', $normalizedContractor) && preg_match('/^[A-Z]{2}/', $normalizedRegistry)) {
@@ -61,7 +61,7 @@ class DataComparatorService
 
         // If one has country prefix and other doesn't, compare numeric parts only
         $contractorNumeric = preg_replace('/^[A-Z]{2}/', '', $normalizedContractor);
-        $registryNumeric   = preg_replace('/^[A-Z]{2}/', '', $normalizedRegistry);
+        $registryNumeric = preg_replace('/^[A-Z]{2}/', '', $normalizedRegistry);
 
         return $contractorNumeric === $registryNumeric;
     }
@@ -71,7 +71,7 @@ class DataComparatorService
      */
     public function compareRegons(?string $contractorRegon, ?string $registryRegon): bool
     {
-        if (!$contractorRegon || !$registryRegon) {
+        if (! $contractorRegon || ! $registryRegon) {
             return false;
         }
 
@@ -95,10 +95,10 @@ class DataComparatorService
         }
 
         // Compare each component
-        $streetMatch     = $this->compareStreetAddresses($contractorAddress->street, $registryAddress->street);
-        $cityMatch       = $this->compareCities($contractorAddress->city, $registryAddress->city);
+        $streetMatch = $this->compareStreetAddresses($contractorAddress->street, $registryAddress->street);
+        $cityMatch = $this->compareCities($contractorAddress->city, $registryAddress->city);
         $postalCodeMatch = $this->comparePostalCodes($contractorAddress->postalCode, $registryAddress->postalCode);
-        $countryMatch    = strtoupper($contractorAddress->country) === strtoupper($registryAddress->country);
+        $countryMatch = strtoupper($contractorAddress->country) === strtoupper($registryAddress->country);
 
         return $streetMatch && $cityMatch && $postalCodeMatch && $countryMatch;
     }
@@ -121,7 +121,7 @@ class DataComparatorService
     private function compareStreetAddresses(string $contractorStreet, string $registryStreet): bool
     {
         $normalizedContractor = $this->normalizeString($contractorStreet);
-        $normalizedRegistry   = $this->normalizeString($registryStreet);
+        $normalizedRegistry = $this->normalizeString($registryStreet);
 
         // Exact match after normalization
         if ($normalizedContractor === $normalizedRegistry) {
@@ -140,7 +140,7 @@ class DataComparatorService
     private function compareCities(string $contractorCity, string $registryCity): bool
     {
         $normalizedContractor = $this->normalizeString($contractorCity);
-        $normalizedRegistry   = $this->normalizeString($registryCity);
+        $normalizedRegistry = $this->normalizeString($registryCity);
 
         // Exact match after normalization
         if ($normalizedContractor === $normalizedRegistry) {
@@ -159,7 +159,7 @@ class DataComparatorService
     private function comparePostalCodes(string $contractorPostalCode, string $registryPostalCode): bool
     {
         $normalizedContractor = preg_replace('/[^0-9]/', '', $contractorPostalCode);
-        $normalizedRegistry   = preg_replace('/[^0-9]/', '', $registryPostalCode);
+        $normalizedRegistry = preg_replace('/[^0-9]/', '', $registryPostalCode);
 
         return $normalizedContractor === $normalizedRegistry;
     }

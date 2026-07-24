@@ -53,8 +53,7 @@ class NumberingTemplateController extends Controller
             NumberingTemplate::query()
                 ->where('tenant_id', $numberingTemplate->tenant_id)
                 ->where('invoice_type', $numberingTemplate->invoice_type)
-                ->update(['is_default' => false])
-            ;
+                ->update(['is_default' => false]);
             $numberingTemplate->is_default = true;
             $numberingTemplate->save();
         });
@@ -64,13 +63,13 @@ class NumberingTemplateController extends Controller
 
     public function preview(PreviewNumberingTemplateRequest $request): JsonResponse
     {
-        $format     = $request->input('format');
+        $format = $request->input('format');
         $nextNumber = $request->input('nextNumber');
-        $prefix     = $request->input('prefix', '');
-        $suffix     = $request->input('suffix', '');
+        $prefix = $request->input('prefix', '');
+        $suffix = $request->input('suffix', '');
 
-        $now   = now();
-        $year  = $now->format('Y');
+        $now = now();
+        $year = $now->format('Y');
         $month = $now->format('m');
         // Zero-pad nextNumber to 3 digits
         $number = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
@@ -81,11 +80,11 @@ class NumberingTemplateController extends Controller
         $preview = str_replace('NNN', $number, $preview);
 
         if ($prefix) {
-            $preview = $prefix . $preview;
+            $preview = $prefix.$preview;
         }
 
         if ($suffix) {
-            $preview = $preview . $suffix;
+            $preview = $preview.$suffix;
         }
 
         return response()->json([

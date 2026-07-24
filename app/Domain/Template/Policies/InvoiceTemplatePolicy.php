@@ -99,7 +99,7 @@ class InvoiceTemplatePolicy
      */
     private function belongsToUserTenant(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return null === $invoiceTemplate->tenant_id || $user->tenant_id === $invoiceTemplate->tenant_id;
+        return $invoiceTemplate->tenant_id === null || $user->tenant_id === $invoiceTemplate->tenant_id;
     }
 
     /**
@@ -112,6 +112,6 @@ class InvoiceTemplatePolicy
      */
     private function ownedByUserTenant(User $user, InvoiceTemplate $invoiceTemplate): bool
     {
-        return null !== $invoiceTemplate->tenant_id && $user->tenant_id === $invoiceTemplate->tenant_id;
+        return $invoiceTemplate->tenant_id !== null && $user->tenant_id === $invoiceTemplate->tenant_id;
     }
 }

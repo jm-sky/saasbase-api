@@ -14,9 +14,9 @@ class LoginRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'email'          => ['required', 'email'],
-            'password'       => ['required', 'string'],
-            'remember'       => ['nullable', 'sometimes', 'boolean'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'remember' => ['nullable', 'sometimes', 'boolean'],
             'recaptchaToken' => ['required', 'string'],
         ];
     }

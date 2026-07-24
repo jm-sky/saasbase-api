@@ -16,8 +16,7 @@ final class CreateSubscriptionDTO extends BaseDataDTO
         public ?string $trialEndsAt,
         public ?string $couponCode,
         public ?array $metadata = null
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -36,14 +35,14 @@ final class CreateSubscriptionDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'planId'            => $this->planId,
+            'planId' => $this->planId,
             'billingCustomerId' => $this->billingCustomerId,
-            'billingInterval'   => $this->billingInterval,
-            'paymentDetails'    => $this->paymentDetails->toArray(),
-            'paymentBehavior'   => $this->paymentBehavior,
-            'trialEndsAt'       => $this->trialEndsAt,
-            'couponCode'        => $this->couponCode,
-            'metadata'          => $this->metadata ?? [],
+            'billingInterval' => $this->billingInterval,
+            'paymentDetails' => $this->paymentDetails->toArray(),
+            'paymentBehavior' => $this->paymentBehavior,
+            'trialEndsAt' => $this->trialEndsAt,
+            'couponCode' => $this->couponCode,
+            'metadata' => $this->metadata ?? [],
         ];
     }
 }

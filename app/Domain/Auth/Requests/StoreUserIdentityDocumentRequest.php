@@ -14,12 +14,12 @@ class StoreUserIdentityDocumentRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'type'           => ['required', 'in:tax_id,passport,id_card'],
-            'number'         => ['required', 'string'],
-            'country'        => ['required', 'string', 'size:2', 'exists:countries,code'],
-            'issued_at'      => ['nullable', 'date'],
-            'expires_at'     => ['required', 'date', 'after:issued_at'],
-            'meta'           => ['nullable', 'array'],
+            'type' => ['required', 'in:tax_id,passport,id_card'],
+            'number' => ['required', 'string'],
+            'country' => ['required', 'string', 'size:2', 'exists:countries,code'],
+            'issued_at' => ['nullable', 'date'],
+            'expires_at' => ['required', 'date', 'after:issued_at'],
+            'meta' => ['nullable', 'array'],
             'document_image' => ['required', 'image', 'max:10240'], // 10MB max
         ];
     }

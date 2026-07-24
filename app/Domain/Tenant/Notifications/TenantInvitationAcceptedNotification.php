@@ -18,7 +18,7 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
     protected array $viaList = ['database', 'broadcast'];
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public User $notifiable,
@@ -45,14 +45,14 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
     public function toDatabase($notifiable): array
     {
         return [
-            'type'    => 'tenantInvitation.accepted',
-            'title'   => __('notifications.tenant_invitation.accepted.title'),
+            'type' => 'tenantInvitation.accepted',
+            'title' => __('notifications.tenant_invitation.accepted.title'),
             'message' => __('notifications.tenant_invitation.accepted.message', [
-                'name'   => $this->invitation->invitedUser->full_name,
+                'name' => $this->invitation->invitedUser->full_name,
                 'tenant' => $this->invitation->tenant->name,
-                'role'   => $this->invitation->role,
+                'role' => $this->invitation->role,
             ]),
-            'source'  => 'System',
+            'source' => 'System',
         ];
     }
 
@@ -74,18 +74,18 @@ class TenantInvitationAcceptedNotification extends Notification implements Shoul
     public function broadcastWith()
     {
         return [
-            'id'      => $this->id,
-            'data'    => [
-                'type'    => 'tenantInvitation.accepted',
-                'title'   => __('notifications.tenant_invitation.accepted.title'),
+            'id' => $this->id,
+            'data' => [
+                'type' => 'tenantInvitation.accepted',
+                'title' => __('notifications.tenant_invitation.accepted.title'),
                 'message' => __('notifications.tenant_invitation.accepted.message', [
-                    'name'   => $this->invitation->invitedUser->full_name,
+                    'name' => $this->invitation->invitedUser->full_name,
                     'tenant' => $this->invitation->tenant->name,
-                    'role'   => $this->invitation->role,
+                    'role' => $this->invitation->role,
                 ]),
-                'source'  => 'System',
+                'source' => 'System',
             ],
-            'readAt'    => null,
+            'readAt' => null,
             'createdAt' => now(),
         ];
     }

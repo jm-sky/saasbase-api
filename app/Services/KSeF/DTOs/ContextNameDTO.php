@@ -8,6 +8,5 @@ final class ContextNameDTO
         public readonly string $type,
         public readonly ?string $tradeName,
         public readonly string $fullName
-    ) {
-    }
+    ) {}
 }

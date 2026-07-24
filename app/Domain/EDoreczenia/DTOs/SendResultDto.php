@@ -12,8 +12,7 @@ final class SendResultDto extends BaseDataDTO
         public readonly ?string $messageId = null,
         public readonly ?string $error = null,
         public readonly ?Carbon $sentAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -28,10 +27,10 @@ final class SendResultDto extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'success'   => $this->success,
+            'success' => $this->success,
             'messageId' => $this->messageId,
-            'error'     => $this->error,
-            'sentAt'    => $this->sentAt?->toIso8601String(),
+            'error' => $this->error,
+            'sentAt' => $this->sentAt?->toIso8601String(),
         ];
     }
 }

@@ -6,7 +6,7 @@ use App\Domain\Exchanges\Models\Currency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Exchanges\Models\Currency>
+ * @extends Factory<Currency>
  */
 class CurrencyFactory extends Factory
 {
@@ -24,8 +24,8 @@ class CurrencyFactory extends Factory
         $currency = $this->faker->randomElement($currencies);
 
         return [
-            'code'   => $currency['code'],
-            'name'   => $currency['name'],
+            'code' => $currency['code'],
+            'name' => $currency['name'],
             'symbol' => $currency['symbol'],
         ];
     }

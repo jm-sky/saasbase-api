@@ -5,8 +5,8 @@ namespace App\Domain\Utils\DTOs;
 use App\Domain\Common\DTOs\BaseDataDTO;
 
 /**
- * @property ?string $name  Person's name
- * @property ?string $nip   NIP number (if applicable)
+ * @property ?string $name Person's name
+ * @property ?string $nip NIP number (if applicable)
  * @property ?string $pesel PESEL number (if applicable)
  */
 final class CompanyPersonDTO extends BaseDataDTO
@@ -15,8 +15,7 @@ final class CompanyPersonDTO extends BaseDataDTO
         public readonly ?string $name,
         public readonly ?string $nip,
         public readonly ?string $pesel,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -30,8 +29,8 @@ final class CompanyPersonDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'name'  => $this->name,
-            'nip'   => $this->nip,
+            'name' => $this->name,
+            'nip' => $this->nip,
             'pesel' => $this->pesel,
         ];
     }

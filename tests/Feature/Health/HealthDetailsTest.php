@@ -26,36 +26,32 @@ class HealthDetailsTest extends TestCase
         Config::set('app.frontend_url', 'http://127.0.0.1:9');
     }
 
-    public function testHealthDetailsRequiresToken(): void
+    public function test_health_details_requires_token(): void
     {
         $this->getJson(self::ENDPOINT)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-        ;
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testHealthDetailsRejectsWrongToken(): void
+    public function test_health_details_rejects_wrong_token(): void
     {
         $this->withHeader('Authorization', 'Bearer wrong-token')
             ->getJson(self::ENDPOINT)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-        ;
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testHealthDetailsRejectsWhenTokenUnconfigured(): void
+    public function test_health_details_rejects_when_token_unconfigured(): void
     {
         Config::set('health.details_token', '');
 
         $this->withHeader('Authorization', 'Bearer anything')
             ->getJson(self::ENDPOINT)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-        ;
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testHealthDetailsReturnsSchemaWithValidToken(): void
+    public function test_health_details_returns_schema_with_valid_token(): void
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . self::TEST_TOKEN)
-            ->getJson(self::ENDPOINT)
-        ;
+        $response = $this->withHeader('Authorization', 'Bearer '.self::TEST_TOKEN)
+            ->getJson(self::ENDPOINT);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -64,12 +60,11 @@ class HealthDetailsTest extends TestCase
                 'environment',
                 'components' => [
                     'database' => ['status'],
-                    'cache'    => ['status'],
-                    'storage'  => ['status'],
+                    'cache' => ['status'],
+                    'storage' => ['status'],
                     'frontend' => ['status'],
                 ],
-            ])
-        ;
+            ]);
 
         $data = $response->json();
 

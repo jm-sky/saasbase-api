@@ -15,8 +15,8 @@ class SearchExchangeRequest extends BaseFormRequest
     {
         return [
             'currency' => ['sometimes', 'string', 'size:3'],
-            'perPage'  => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'sort'     => ['sometimes', 'string', 'in:name,currency,createdAt,updatedAt,-name,-currency,-createdAt,-updatedAt'],
+            'perPage' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'sort' => ['sometimes', 'string', 'in:name,currency,createdAt,updatedAt,-name,-currency,-createdAt,-updatedAt'],
         ];
     }
 }

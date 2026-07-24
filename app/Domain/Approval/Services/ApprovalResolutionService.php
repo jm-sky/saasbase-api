@@ -20,10 +20,10 @@ class ApprovalResolutionService
     public function resolveApprovers(ApprovalStepApprover $stepApprover, Expense $expense): Collection
     {
         return match ($stepApprover->approver_type) {
-            ApproverType::USER              => $this->resolveUserApprover($stepApprover),
-            ApproverType::UNIT_ROLE         => $this->resolveUnitRoleApprover($stepApprover, $expense),
+            ApproverType::USER => $this->resolveUserApprover($stepApprover),
+            ApproverType::UNIT_ROLE => $this->resolveUnitRoleApprover($stepApprover, $expense),
             ApproverType::SYSTEM_PERMISSION => $this->resolveSystemPermissionApprover($stepApprover, $expense),
-            default                         => new Collection(),
+            default => new Collection,
         };
     }
 
@@ -32,33 +32,33 @@ class ApprovalResolutionService
      */
     private function resolveUserApprover(ApprovalStepApprover $stepApprover): Collection
     {
-        if (!$stepApprover->approver_value) {
+        if (! $stepApprover->approver_value) {
             Log::warning('User approver configuration missing approver_value', [
                 'step_approver_id' => $stepApprover->id,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         $user = User::find($stepApprover->approver_value);
 
-        if (!$user) {
+        if (! $user) {
             Log::warning('User approver not found', [
                 'step_approver_id' => $stepApprover->id,
-                'user_id'          => $stepApprover->approver_value,
+                'user_id' => $stepApprover->approver_value,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         // Check if user is active (assuming an active field exists)
-        if (method_exists($user, 'isActive') && !$user->isActive()) {
+        if (method_exists($user, 'isActive') && ! $user->isActive()) {
             Log::info('User approver is inactive', [
                 'step_approver_id' => $stepApprover->id,
-                'user_id'          => $stepApprover->approver_value,
+                'user_id' => $stepApprover->approver_value,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         return new Collection([$user]);
@@ -72,38 +72,38 @@ class ApprovalResolutionService
         // Get the expense creator's organizational context
         $expenseCreator = $expense->createdByUser;
 
-        if (!$expenseCreator) {
+        if (! $expenseCreator) {
             Log::warning('Expense has no creator for unit role resolution', [
-                'expense_id'       => $expense->id,
+                'expense_id' => $expense->id,
                 'step_approver_id' => $stepApprover->id,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         // Get the user's primary organizational unit
         $primaryUnit = $this->getUserPrimaryUnit($expenseCreator);
 
-        if (!$primaryUnit) {
+        if (! $primaryUnit) {
             Log::warning('User has no primary organizational unit', [
-                'user_id'          => $expenseCreator->id,
+                'user_id' => $expenseCreator->id,
                 'step_approver_id' => $stepApprover->id,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         // Determine target unit based on approver configuration
         $targetUnit = $this->resolveTargetUnit($primaryUnit, $stepApprover);
 
-        if (!$targetUnit) {
+        if (! $targetUnit) {
             Log::warning('Could not resolve target unit for approval', [
-                'primary_unit_id'  => $primaryUnit->id,
+                'primary_unit_id' => $primaryUnit->id,
                 'step_approver_id' => $stepApprover->id,
-                'unit_role'        => $stepApprover->approver_value,
+                'unit_role' => $stepApprover->approver_value,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         // Find users with the required role in the target unit
@@ -121,12 +121,12 @@ class ApprovalResolutionService
      */
     private function resolveSystemPermissionApprover(ApprovalStepApprover $stepApprover, Expense $expense): Collection
     {
-        if (!$stepApprover->approver_value) {
+        if (! $stepApprover->approver_value) {
             Log::warning('System permission approver configuration missing permission', [
                 'step_approver_id' => $stepApprover->id,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         $userIds = TenantScopedRoles::userIdsWithPermission($stepApprover->approver_value, $expense->tenant_id);
@@ -143,14 +143,12 @@ class ApprovalResolutionService
             // @phpstan-ignore-next-line active()/primary() come from OrgUnitUserBuilder (OrgUnitUser::newEloquentBuilder()), not visible to PHPStan on the HasMany return type
             ->active()
             ->primary()
-            ->first()
-        ;
+            ->first();
 
         $primaryMembership ??= $user->orgUnitUsers()
             // @phpstan-ignore-next-line same as above
             ->active()
-            ->first()
-        ;
+            ->first();
 
         return $primaryMembership?->organizationUnit;
     }
@@ -165,7 +163,7 @@ class ApprovalResolutionService
             // Find the specific organizational unit
             $unitClass = get_class($primaryUnit);
 
-            if (false === $unitClass) {
+            if ($unitClass === false) {
                 return null;
             }
 
@@ -173,7 +171,7 @@ class ApprovalResolutionService
         }
 
         // Handle special cases in approver_value (role)
-        if ('PARENT_UNIT' === $stepApprover->approver_value) {
+        if ($stepApprover->approver_value === 'PARENT_UNIT') {
             return $primaryUnit->parent;
         }
 
@@ -188,13 +186,13 @@ class ApprovalResolutionService
     {
         $orgUnitRole = OrgUnitRole::tryFrom($role);
 
-        if (!$orgUnitRole) {
+        if (! $orgUnitRole) {
             Log::warning('Unknown organization unit role for approver resolution', [
                 'unit_id' => $unit->id,
-                'role'    => $role,
+                'role' => $role,
             ]);
 
-            return new Collection();
+            return new Collection;
         }
 
         return $unit->orgUnitUsers()
@@ -205,8 +203,7 @@ class ApprovalResolutionService
             ->get()
             ->pluck('user')
             ->filter()
-            ->values()
-        ;
+            ->values();
     }
 
     /**
@@ -214,7 +211,7 @@ class ApprovalResolutionService
      */
     public function userHasSystemPermission(User $user, string $permission): bool
     {
-        if (!method_exists($user, 'hasPermissionTo')) {
+        if (! method_exists($user, 'hasPermissionTo')) {
             return false;
         }
 
@@ -226,7 +223,7 @@ class ApprovalResolutionService
      */
     public function getAllAvailableApprovers(Expense $expense): Collection
     {
-        $allApprovers = new Collection();
+        $allApprovers = new Collection;
 
         // This would be called from the workflow execution context
         // where we have access to the workflow and its steps

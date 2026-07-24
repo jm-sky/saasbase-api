@@ -40,25 +40,25 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
         $this->authenticateUser($this->tenant);
     }
 
-    public function testHandleSuccessfullyProcessesRegonConfirmation(): void
+    public function test_handle_successfully_processes_regon_confirmation(): void
     {
         // Arrange
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
                 'tenant_id' => $this->tenant->id,
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
             ]);
         });
 
         $confirmation = Tenant::bypassTenant($this->tenant->id, function () use ($contractor) {
             return RegistryConfirmation::create([
-                'confirmable_id'   => $contractor->id,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
-                'type'             => RegistryConfirmationType::Regon->value,
-                'payload'          => ['nip' => '1234567890', 'regon' => '123456789', 'country' => 'PL'],
-                'status'           => RegistryConfirmationStatus::Pending,
+                'type' => RegistryConfirmationType::Regon->value,
+                'payload' => ['nip' => '1234567890', 'regon' => '123456789', 'country' => 'PL'],
+                'status' => RegistryConfirmationStatus::Pending,
             ]);
         });
 
@@ -128,26 +128,25 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
             vies: null,
         );
 
-        $mockDataFetcher  = \Mockery::mock(CompanyDataFetcherService::class);
+        $mockDataFetcher = \Mockery::mock(CompanyDataFetcherService::class);
         $mockRegonService = \Mockery::mock(RegonContractorRegistryConfirmationService::class);
-        $mockViesService  = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
-        $mockMfService    = \Mockery::mock(MfContractorRegistryConfirmationService::class);
+        $mockViesService = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
+        $mockMfService = \Mockery::mock(MfContractorRegistryConfirmationService::class);
 
         $mockDataFetcher
             ->shouldReceive('fetch')
             // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
-            ->andReturn($allLookupResults)
-        ;
+            ->andReturn($allLookupResults);
 
         // confirmContractorData() actually returns RegistryConfirmation[] (see
         // Regon/Vies/MfContractorRegistryConfirmationService), not raw arrays —
         // the job reads ->type/->status off each entry.
         $regonCheckConfirmation = RegistryConfirmation::factory()->make([
-            'confirmable_id'   => $contractor->id,
+            'confirmable_id' => $contractor->id,
             'confirmable_type' => get_class($contractor),
-            'type'             => RegistryConfirmationType::Regon->value,
-            'status'           => RegistryConfirmationStatus::Success,
+            'type' => RegistryConfirmationType::Regon->value,
+            'status' => RegistryConfirmationStatus::Success,
         ]);
 
         $mockRegonService
@@ -155,16 +154,13 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
             // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
             ->with(\Mockery::type(Contractor::class), $regonData)
-            ->andReturn([$regonCheckConfirmation])
-        ;
+            ->andReturn([$regonCheckConfirmation]);
 
         Log::shouldReceive('info')
-            ->twice()
-        ;
+            ->twice();
 
         Log::shouldReceive('error')
-            ->zeroOrMoreTimes()
-        ;
+            ->zeroOrMoreTimes();
 
         // Act
         $job = new ProcessContractorRegistryConfirmationJob($confirmation);
@@ -172,52 +168,49 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
 
         // Assert
         $this->assertDatabaseHas('registry_confirmations', [
-            'id'     => $confirmation->id,
+            'id' => $confirmation->id,
             'status' => RegistryConfirmationStatus::Success->value,
         ]);
     }
 
-    public function testHandleFailsWhenNoDataAvailable(): void
+    public function test_handle_fails_when_no_data_available(): void
     {
         // Arrange
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
                 'tenant_id' => $this->tenant->id,
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
             ]);
         });
 
         $confirmation = Tenant::bypassTenant($this->tenant->id, function () use ($contractor) {
             return RegistryConfirmation::create([
-                'confirmable_id'   => $contractor->id,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
-                'type'             => RegistryConfirmationType::Regon->value,
-                'payload'          => ['nip' => '1234567890', 'regon' => '123456789', 'country' => 'PL'],
-                'status'           => RegistryConfirmationStatus::Pending,
+                'type' => RegistryConfirmationType::Regon->value,
+                'payload' => ['nip' => '1234567890', 'regon' => '123456789', 'country' => 'PL'],
+                'status' => RegistryConfirmationStatus::Pending,
             ]);
         });
 
-        $mockDataFetcher  = \Mockery::mock(CompanyDataFetcherService::class);
+        $mockDataFetcher = \Mockery::mock(CompanyDataFetcherService::class);
         $mockRegonService = \Mockery::mock(RegonContractorRegistryConfirmationService::class);
-        $mockViesService  = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
-        $mockMfService    = \Mockery::mock(MfContractorRegistryConfirmationService::class);
+        $mockViesService = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
+        $mockMfService = \Mockery::mock(MfContractorRegistryConfirmationService::class);
 
         $mockDataFetcher
             ->shouldReceive('fetch')
             // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
-            ->andReturn(null)
-        ;
+            ->andReturn(null);
 
         Log::shouldReceive('info')
-            ->once()
-        ;
+            ->once();
 
         Log::shouldReceive('error')
-            ->once()
-        ;
+            ->once();
 
         // Act & Assert
         $job = new ProcessContractorRegistryConfirmationJob($confirmation);
@@ -229,30 +222,30 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
 
         // Assert failure was recorded
         $this->assertDatabaseHas('registry_confirmations', [
-            'id'     => $confirmation->id,
+            'id' => $confirmation->id,
             'status' => RegistryConfirmationStatus::Failed->value,
         ]);
     }
 
-    public function testFailedUpdatesConfirmationStatus(): void
+    public function test_failed_updates_confirmation_status(): void
     {
         // Arrange
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
                 'tenant_id' => $this->tenant->id,
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
             ]);
         });
 
         $confirmation = Tenant::bypassTenant($this->tenant->id, function () use ($contractor) {
             return RegistryConfirmation::create([
-                'confirmable_id'   => $contractor->id,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
-                'type'             => RegistryConfirmationType::Regon->value,
-                'payload'          => ['nip' => '1234567890', 'regon' => '123456789', 'country' => 'PL'],
-                'status'           => RegistryConfirmationStatus::Pending,
+                'type' => RegistryConfirmationType::Regon->value,
+                'payload' => ['nip' => '1234567890', 'regon' => '123456789', 'country' => 'PL'],
+                'status' => RegistryConfirmationStatus::Pending,
             ]);
         });
 
@@ -260,8 +253,7 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
 
         Log::shouldReceive('error')
             ->once()
-            ->with('Registry confirmation job permanently failed', \Mockery::type('array'))
-        ;
+            ->with('Registry confirmation job permanently failed', \Mockery::type('array'));
 
         // Act
         $job = new ProcessContractorRegistryConfirmationJob($confirmation);
@@ -269,12 +261,12 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
 
         // Assert
         $this->assertDatabaseHas('registry_confirmations', [
-            'id'     => $confirmation->id,
+            'id' => $confirmation->id,
             'status' => RegistryConfirmationStatus::Failed->value,
         ]);
     }
 
-    public function testJobConfiguration(): void
+    public function test_job_configuration(): void
     {
         // Arrange
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
@@ -285,11 +277,11 @@ class ProcessContractorRegistryConfirmationJobTest extends TestCase
 
         $confirmation = Tenant::bypassTenant($this->tenant->id, function () use ($contractor) {
             return RegistryConfirmation::create([
-                'confirmable_id'   => $contractor->id,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
-                'type'             => RegistryConfirmationType::Regon->value,
-                'payload'          => ['nip' => '1234567890'],
-                'status'           => RegistryConfirmationStatus::Pending,
+                'type' => RegistryConfirmationType::Regon->value,
+                'payload' => ['nip' => '1234567890'],
+                'status' => RegistryConfirmationStatus::Pending,
             ]);
         });
 

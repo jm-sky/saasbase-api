@@ -12,17 +12,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                          $code
- * @property ?string                         $parent_code
- * @property string                          $name
- * @property ?string                         $description
- * @property int                             $level
- * @property bool                            $is_active
- * @property Carbon                          $created_at
- * @property Carbon                          $updated_at
- * @property PKWiUClassification             $parent
- * @property Collection<PKWiUClassification> $children
- * @property Collection<Product>             $products
+ * @property string $code
+ * @property ?string $parent_code
+ * @property string $name
+ * @property ?string $description
+ * @property int $level
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property PKWiUClassification $parent
+ * @property Collection<int, PKWiUClassification> $children
+ * @property Collection<int, Product> $products
  */
 class PKWiUClassification extends Model
 {
@@ -46,8 +46,8 @@ class PKWiUClassification extends Model
     ];
 
     protected $casts = [
-        'is_active'  => 'boolean',
-        'level'      => 'integer',
+        'is_active' => 'boolean',
+        'level' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -87,7 +87,7 @@ class PKWiUClassification extends Model
     // Helper methods
     public function getFullHierarchyPath(): string
     {
-        $path    = [$this->name];
+        $path = [$this->name];
         $current = $this->parent;
 
         while ($current) {
@@ -100,13 +100,13 @@ class PKWiUClassification extends Model
 
     public function isLeafNode(): bool
     {
-        return 0 === $this->children()->count();
+        return $this->children()->count() === 0;
     }
 
     public function getAncestors(): Collection
     {
-        $ancestors = new Collection();
-        $current   = $this->parent;
+        $ancestors = new Collection;
+        $current = $this->parent;
 
         while ($current) {
             $ancestors->push($current);
@@ -118,7 +118,7 @@ class PKWiUClassification extends Model
 
     public function getDescendants(): Collection
     {
-        $descendants = new Collection();
+        $descendants = new Collection;
 
         foreach ($this->children as $child) {
             $descendants->push($child);

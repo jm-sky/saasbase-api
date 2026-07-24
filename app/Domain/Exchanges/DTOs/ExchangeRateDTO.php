@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<ExchangeRate>
  *
- * @property ?string            $id         UUID
- * @property string             $exchangeId UUID
- * @property Carbon             $date
- * @property float              $rate
- * @property string             $table
+ * @property ?string $id UUID
+ * @property string $exchangeId UUID
+ * @property Carbon $date
+ * @property float $rate
+ * @property string $table
  * @property ExchangeRateSource $source
- * @property ?Carbon            $createdAt  Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class ExchangeRateDTO extends BaseDTO
 {
@@ -28,8 +28,7 @@ final class ExchangeRateDTO extends BaseDTO
         public readonly ExchangeRateSource $source,
         public readonly ?string $id = null,
         public ?Carbon $createdAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -59,12 +58,12 @@ final class ExchangeRateDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'         => $this->id,
-            'date'       => $this->date->toIso8601String(),
-            'rate'       => $this->rate,
-            'table'      => $this->table,
-            'source'     => $this->source->value,
-            'createdAt'  => $this->createdAt?->toIso8601String(),
+            'id' => $this->id,
+            'date' => $this->date->toIso8601String(),
+            'rate' => $this->rate,
+            'table' => $this->table,
+            'source' => $this->source->value,
+            'createdAt' => $this->createdAt?->toIso8601String(),
         ];
     }
 }

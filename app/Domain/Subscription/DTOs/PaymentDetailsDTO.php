@@ -15,8 +15,7 @@ final class PaymentDetailsDTO extends BaseDataDTO
     public function __construct(
         public string $paymentMethodId,
         public string $name,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -30,7 +29,7 @@ final class PaymentDetailsDTO extends BaseDataDTO
     {
         return [
             'paymentMethodId' => $this->paymentMethodId,
-            'name'            => $this->name,
+            'name' => $this->name,
         ];
     }
 }

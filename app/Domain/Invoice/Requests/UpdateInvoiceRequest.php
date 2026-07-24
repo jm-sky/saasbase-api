@@ -40,10 +40,10 @@ class UpdateInvoiceRequest extends BaseFormRequest
         $invoice = $this->route('invoice');
 
         return [
-            'type'      => ['sometimes', new Enum(InvoiceType::class)],
+            'type' => ['sometimes', new Enum(InvoiceType::class)],
             'issueDate' => ['sometimes', 'date'],
-            'status'    => ['sometimes', 'string', new Enum(InvoiceStatus::class)],
-            'number'    => [
+            'status' => ['sometimes', 'string', new Enum(InvoiceStatus::class)],
+            'number' => [
                 'sometimes',
                 'string',
                 Rule::unique('invoices', 'number')
@@ -51,15 +51,15 @@ class UpdateInvoiceRequest extends BaseFormRequest
                     ->ignore($invoice?->id),
             ],
             'numberingTemplateId' => ['sometimes', 'string', 'exists:numbering_templates,id'],
-            'totalNet'            => ['sometimes', 'numeric'],
-            'totalTax'            => ['sometimes', 'numeric'],
-            'totalGross'          => ['sometimes', 'numeric'],
-            'currency'            => ['sometimes', 'string', 'size:3'],
-            'exchangeRate'        => ['sometimes', 'numeric'],
-            'seller'              => ['sometimes', 'array'],
-            'buyer'               => ['sometimes', 'array'],
-            'body'                => ['sometimes', 'array'],
-            'options'             => ['sometimes', 'array'],
+            'totalNet' => ['sometimes', 'numeric'],
+            'totalTax' => ['sometimes', 'numeric'],
+            'totalGross' => ['sometimes', 'numeric'],
+            'currency' => ['sometimes', 'string', 'size:3'],
+            'exchangeRate' => ['sometimes', 'numeric'],
+            'seller' => ['sometimes', 'array'],
+            'buyer' => ['sometimes', 'array'],
+            'body' => ['sometimes', 'array'],
+            'options' => ['sometimes', 'array'],
 
             // InvoicePaymentDTO::fromArray() does PaymentStatus::from() (not
             // tryFrom) and PaymentMethodDTO::fromArray($data['method']) with
@@ -70,22 +70,22 @@ class UpdateInvoiceRequest extends BaseFormRequest
             // hand. Mirrors StoreInvoiceRequest's payment.* rules, but
             // required_with instead of required since payment as a whole is
             // still optional on update.
-            'payment'                     => ['sometimes', 'array'],
-            'payment.status'              => ['required_with:payment', new Enum(PaymentStatus::class)],
-            'payment.dueDate'             => ['nullable', 'date'],
-            'payment.paidDate'            => ['nullable', 'date'],
-            'payment.paidAmount'          => ['nullable', 'numeric', 'min:0'],
-            'payment.method'              => ['required_with:payment', 'array'],
-            'payment.method.id'           => ['required_with:payment.method', 'string', 'exists:payment_methods,id'],
-            'payment.method.name'         => ['required_with:payment.method', 'string', 'max:255'],
-            'payment.method.paymentDays'  => ['nullable', 'integer', 'min:0'],
-            'payment.reference'           => ['nullable', 'string', 'max:255'],
-            'payment.terms'               => ['nullable', 'string', 'max:500'],
-            'payment.notes'               => ['nullable', 'string', 'max:1000'],
-            'payment.bankAccount'         => ['nullable', 'array'],
-            'payment.bankAccount.name'    => ['nullable', 'string', 'max:255'],
-            'payment.bankAccount.iban'    => ['nullable', 'string', 'max:34'],
-            'payment.bankAccount.swift'   => ['nullable', 'string', 'max:11'],
+            'payment' => ['sometimes', 'array'],
+            'payment.status' => ['required_with:payment', new Enum(PaymentStatus::class)],
+            'payment.dueDate' => ['nullable', 'date'],
+            'payment.paidDate' => ['nullable', 'date'],
+            'payment.paidAmount' => ['nullable', 'numeric', 'min:0'],
+            'payment.method' => ['required_with:payment', 'array'],
+            'payment.method.id' => ['required_with:payment.method', 'string', 'exists:payment_methods,id'],
+            'payment.method.name' => ['required_with:payment.method', 'string', 'max:255'],
+            'payment.method.paymentDays' => ['nullable', 'integer', 'min:0'],
+            'payment.reference' => ['nullable', 'string', 'max:255'],
+            'payment.terms' => ['nullable', 'string', 'max:500'],
+            'payment.notes' => ['nullable', 'string', 'max:1000'],
+            'payment.bankAccount' => ['nullable', 'array'],
+            'payment.bankAccount.name' => ['nullable', 'string', 'max:255'],
+            'payment.bankAccount.iban' => ['nullable', 'string', 'max:34'],
+            'payment.bankAccount.swift' => ['nullable', 'string', 'max:11'],
             'payment.bankAccount.address' => ['nullable', 'string', 'max:500'],
         ];
     }
@@ -96,7 +96,7 @@ class UpdateInvoiceRequest extends BaseFormRequest
             /** @var ?Invoice $invoice */
             $invoice = $this->route('invoice');
 
-            if (!$invoice) {
+            if (! $invoice) {
                 return;
             }
 
@@ -108,24 +108,24 @@ class UpdateInvoiceRequest extends BaseFormRequest
 
     private function validateStatusTransition(Validator $validator, Invoice $invoice): void
     {
-        if (!$this->has('status')) {
+        if (! $this->has('status')) {
             return;
         }
 
         $newStatus = InvoiceStatus::tryFrom((string) $this->input('status'));
 
-        if (!$newStatus || $newStatus === $invoice->status) {
+        if (! $newStatus || $newStatus === $invoice->status) {
             return;
         }
 
-        if (!$invoice->status->canTransitionTo($newStatus)) {
+        if (! $invoice->status->canTransitionTo($newStatus)) {
             $validator->errors()->add('status', "Cannot transition invoice from {$invoice->status->value} to {$newStatus->value}.");
         }
     }
 
     private function validateFinancialFieldsNotLocked(Validator $validator, Invoice $invoice): void
     {
-        if (!$invoice->status->isCompleted()) {
+        if (! $invoice->status->isCompleted()) {
             return;
         }
 
@@ -138,11 +138,11 @@ class UpdateInvoiceRequest extends BaseFormRequest
 
     private function validateFinancialSum(Validator $validator): void
     {
-        $net   = $this->input('totalNet');
-        $tax   = $this->input('totalTax');
+        $net = $this->input('totalNet');
+        $tax = $this->input('totalTax');
         $gross = $this->input('totalGross');
 
-        if (null === $net || null === $tax || null === $gross) {
+        if ($net === null || $tax === null || $gross === null) {
             return;
         }
 

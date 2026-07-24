@@ -16,8 +16,7 @@ class UpdateSubscriptionAction
 {
     public function __construct(
         protected StripeSubscriptionService $stripeSubscriptionService
-    ) {
-    }
+    ) {}
 
     /**
      * Update a subscription (e.g., plan change).
@@ -36,16 +35,15 @@ class UpdateSubscriptionAction
             DB::transaction(function () use ($stripeSubscriptionId, $data) {
                 // Find subscription
                 $subscription = Subscription::where('stripe_subscription_id', $stripeSubscriptionId)
-                    ->firstOrFail()
-                ;
+                    ->firstOrFail();
 
                 // Update subscription in Stripe and locally
                 $updatedSubscription = $this->stripeSubscriptionService->updateSubscription(
                     $subscription,
                     [
-                        'plan_id'            => $data['plan_id'] ?? null,
+                        'plan_id' => $data['plan_id'] ?? null,
                         'proration_behavior' => $data['proration_behavior'] ?? null,
-                        'metadata'           => $data['metadata'] ?? [],
+                        'metadata' => $data['metadata'] ?? [],
                     ]
                 );
 
@@ -54,12 +52,12 @@ class UpdateSubscriptionAction
             });
         } catch (\Exception $e) {
             Log::error('Failed to update subscription', [
-                'error'           => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'subscription_id' => $stripeSubscriptionId,
-                'data'            => $data,
+                'data' => $data,
             ]);
 
-            throw new StripeException(message: 'Failed to update subscription: ' . $e->getMessage(), previous: $e);
+            throw new StripeException(message: 'Failed to update subscription: '.$e->getMessage(), previous: $e);
         }
     }
 }

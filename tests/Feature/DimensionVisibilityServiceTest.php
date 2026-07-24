@@ -36,13 +36,13 @@ class DimensionVisibilityServiceTest extends TestCase
 
         // Create a tenant and user for testing
         $this->tenant = Tenant::factory()->create();
-        $this->user   = User::factory()->create();
+        $this->user = User::factory()->create();
 
         // Associate user with tenant
         $this->user->tenants()->attach($this->tenant->id, ['role' => RoleName::Admin->value]);
     }
 
-    public function testInitializeDefaultConfigurationForTenant(): void
+    public function test_initialize_default_configuration_for_tenant(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -51,8 +51,7 @@ class DimensionVisibilityServiceTest extends TestCase
 
         // Assert - Should create configurations for all configurable dimensions
         $configurableDimensions = collect(AllocationDimensionType::cases())
-            ->filter(fn ($dim) => $dim->isConfigurable())
-        ;
+            ->filter(fn ($dim) => $dim->isConfigurable());
 
         $this->assertCount(
             $configurableDimensions->count(),
@@ -61,7 +60,7 @@ class DimensionVisibilityServiceTest extends TestCase
 
         // Assert - RTR should not have configuration (it's always visible)
         $this->assertDatabaseMissing('tenant_dimension_configurations', [
-            'tenant_id'      => $this->tenant->id,
+            'tenant_id' => $this->tenant->id,
             'dimension_type' => AllocationDimensionType::TRANSACTION_TYPE->value,
         ]);
 
@@ -69,8 +68,7 @@ class DimensionVisibilityServiceTest extends TestCase
         foreach ($configurableDimensions as $dimension) {
             $config = TenantDimensionConfiguration::where('tenant_id', $this->tenant->id)
                 ->where('dimension_type', $dimension)
-                ->first()
-            ;
+                ->first();
 
             $this->assertNotNull($config);
             $this->assertEquals($dimension->getDefaultEnabledState(), $config->is_enabled);
@@ -78,7 +76,7 @@ class DimensionVisibilityServiceTest extends TestCase
         }
     }
 
-    public function testGetEnabledDimensionsIncludesRtrAlways(): void
+    public function test_get_enabled_dimensions_includes_rtr_always(): void
     {
         // Arrange - Initialize configurations
         $this->service->initializeDefaultConfigurationForTenant($this->tenant->id);
@@ -91,7 +89,7 @@ class DimensionVisibilityServiceTest extends TestCase
         $this->assertEquals(AllocationDimensionType::TRANSACTION_TYPE, $enabledDimensions->first());
     }
 
-    public function testGetEnabledDimensionsReturnsOnlyEnabled(): void
+    public function test_get_enabled_dimensions_returns_only_enabled(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -115,7 +113,7 @@ class DimensionVisibilityServiceTest extends TestCase
         $this->assertTrue($enabledDimensions->contains(AllocationDimensionType::TRANSACTION_TYPE));
     }
 
-    public function testUpdateDimensionConfiguration(): void
+    public function test_update_dimension_configuration(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -133,14 +131,13 @@ class DimensionVisibilityServiceTest extends TestCase
         // Assert
         $config = TenantDimensionConfiguration::where('tenant_id', $this->tenant->id)
             ->where('dimension_type', AllocationDimensionType::LOCATION)
-            ->first()
-        ;
+            ->first();
 
         $this->assertTrue($config->is_enabled);
         $this->assertEquals(100, $config->display_order);
     }
 
-    public function testCannotConfigureRtrDimension(): void
+    public function test_cannot_configure_rtr_dimension(): void
     {
         // Assert - Should throw exception when trying to configure RTR
         $this->expectException(\InvalidArgumentException::class);
@@ -154,7 +151,7 @@ class DimensionVisibilityServiceTest extends TestCase
         );
     }
 
-    public function testIsDimensionEnabledForTenant(): void
+    public function test_is_dimension_enabled_for_tenant(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -192,7 +189,7 @@ class DimensionVisibilityServiceTest extends TestCase
         );
     }
 
-    public function testGetAllDimensionsForTenant(): void
+    public function test_get_all_dimensions_for_tenant(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -222,7 +219,7 @@ class DimensionVisibilityServiceTest extends TestCase
         $this->assertFalse($rtrData['is_configurable']);
     }
 
-    public function testResetToDefaults(): void
+    public function test_reset_to_defaults(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -243,14 +240,13 @@ class DimensionVisibilityServiceTest extends TestCase
         // Assert - Configuration should be back to defaults
         $config = TenantDimensionConfiguration::where('tenant_id', $this->tenant->id)
             ->where('dimension_type', AllocationDimensionType::PROJECT)
-            ->first()
-        ;
+            ->first();
 
         $this->assertEquals(AllocationDimensionType::PROJECT->getDefaultEnabledState(), $config->is_enabled);
         $this->assertEquals(AllocationDimensionType::PROJECT->getDefaultDisplayOrder(), $config->display_order);
     }
 
-    public function testBulkUpdateDimensionConfigurations(): void
+    public function test_bulk_update_dimension_configurations(): void
     {
         $this->markTestSkipped('Not implemented');
 
@@ -260,13 +256,13 @@ class DimensionVisibilityServiceTest extends TestCase
         $configurations = [
             [
                 'dimension_type' => AllocationDimensionType::PROJECT->value,
-                'is_enabled'     => false,
-                'display_order'  => 10,
+                'is_enabled' => false,
+                'display_order' => 10,
             ],
             [
                 'dimension_type' => AllocationDimensionType::EMPLOYEES->value,
-                'is_enabled'     => true,
-                'display_order'  => 5,
+                'is_enabled' => true,
+                'display_order' => 5,
             ],
         ];
 
@@ -276,13 +272,11 @@ class DimensionVisibilityServiceTest extends TestCase
         // Assert
         $projectConfig = TenantDimensionConfiguration::where('tenant_id', $this->tenant->id)
             ->where('dimension_type', AllocationDimensionType::PROJECT)
-            ->first()
-        ;
+            ->first();
 
         $employeesConfig = TenantDimensionConfiguration::where('tenant_id', $this->tenant->id)
             ->where('dimension_type', AllocationDimensionType::EMPLOYEES)
-            ->first()
-        ;
+            ->first();
 
         $this->assertFalse($projectConfig->is_enabled);
         $this->assertEquals(10, $projectConfig->display_order);

@@ -13,20 +13,20 @@ class DefaultStatusesSeeder extends Seeder
     {
         $defaultStatuses = [
             [
-                'name'       => 'To do',
-                'color'      => '#E5E7EB',
+                'name' => 'To do',
+                'color' => '#E5E7EB',
                 'sort_order' => 1,
                 'is_default' => true,
             ],
             [
-                'name'       => 'In progress',
-                'color'      => '#60A5FA',
+                'name' => 'In progress',
+                'color' => '#60A5FA',
                 'sort_order' => 2,
                 'is_default' => false,
             ],
             [
-                'name'       => 'Done',
-                'color'      => '#34D399',
+                'name' => 'Done',
+                'color' => '#34D399',
                 'sort_order' => 3,
                 'is_default' => false,
             ],

@@ -31,10 +31,10 @@ class CountryApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->user = $this->authenticateUser($this->tenant);
     }
 
-    public function testCanListCountries(): void
+    public function test_can_list_countries(): void
     {
         $countries = Country::factory()->count(3)->create();
 
@@ -63,13 +63,12 @@ class CountryApiTest extends TestCase
                         'updatedAt',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testReturns404ForNonexistentCountry(): void
+    public function test_returns404_for_nonexistent_country(): void
     {
-        $response = $this->getJson($this->baseUrl . '/nonexistent-id');
+        $response = $this->getJson($this->baseUrl.'/nonexistent-id');
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }

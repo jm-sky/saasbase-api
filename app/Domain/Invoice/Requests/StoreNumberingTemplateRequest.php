@@ -18,13 +18,13 @@ class StoreNumberingTemplateRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'        => ['required', 'string'],
+            'name' => ['required', 'string'],
             'invoiceType' => ['required', 'string', Rule::in(InvoiceType::values())],
-            'format'      => ['required', 'string', new ValidNumberingFormatRule()],
-            'nextNumber'  => ['required', 'integer'],
+            'format' => ['required', 'string', new ValidNumberingFormatRule],
+            'nextNumber' => ['required', 'integer'],
             'resetPeriod' => ['required', 'string', Rule::in(ResetPeriod::values())],
-            'prefix'      => ['nullable', 'string'],
-            'suffix'      => ['nullable', 'string'],
+            'prefix' => ['nullable', 'string'],
+            'suffix' => ['nullable', 'string'],
         ];
     }
 }

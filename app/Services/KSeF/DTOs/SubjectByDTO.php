@@ -9,6 +9,5 @@ final class SubjectByDTO
         public readonly string $issuedByName,
         public readonly ?string $issuedToIdentifier = null,
         public readonly ?string $issuedToName = null
-    ) {
-    }
+    ) {}
 }

@@ -35,7 +35,7 @@ class StripeInvoiceService extends StripeService
             // Find associated billing customer
             $billingCustomer = BillingCustomer::where('stripe_customer_id', $stripeInvoiceData['customer'])->first();
 
-            if (!$billingCustomer) {
+            if (! $billingCustomer) {
                 throw new StripeException('Cannot sync invoice: customer not found');
             }
 
@@ -44,20 +44,20 @@ class StripeInvoiceService extends StripeService
 
             // Update invoice data
             $invoice->fill([
-                'billable_type'       => BillingCustomer::class,
-                'billable_id'         => $billingCustomer->id,
-                'amount_due'          => $this->unformatAmount($amountDue),
-                'status'              => SubscriptionInvoiceStatus::from($stripeInvoiceData['status']),
-                'hosted_invoice_url'  => $stripeInvoiceData['hosted_invoice_url'] ?? null,
-                'pdf_url'             => $stripeInvoiceData['invoice_pdf'] ?? null,
-                'issued_at'           => Carbon::createFromTimestamp($stripeInvoiceData['created']),
-                'paid_at'             => SubscriptionInvoiceStatus::from($stripeInvoiceData['status'])->isPaid() ? Carbon::createFromTimestamp($stripeInvoiceData['created']) : null,
+                'billable_type' => BillingCustomer::class,
+                'billable_id' => $billingCustomer->id,
+                'amount_due' => $this->unformatAmount($amountDue),
+                'status' => SubscriptionInvoiceStatus::from($stripeInvoiceData['status']),
+                'hosted_invoice_url' => $stripeInvoiceData['hosted_invoice_url'] ?? null,
+                'pdf_url' => $stripeInvoiceData['invoice_pdf'] ?? null,
+                'issued_at' => Carbon::createFromTimestamp($stripeInvoiceData['created']),
+                'paid_at' => SubscriptionInvoiceStatus::from($stripeInvoiceData['status'])->isPaid() ? Carbon::createFromTimestamp($stripeInvoiceData['created']) : null,
             ]);
 
             $invoice->save();
 
             // Generate and store PDF if not provided by Stripe
-            if (!$invoice->pdf_url) {
+            if (! $invoice->pdf_url) {
                 $pdfPath = $this->generatePdf($invoice->id);
                 $invoice->update(['pdf_url' => $pdfPath]);
             }
@@ -74,18 +74,18 @@ class StripeInvoiceService extends StripeService
     public function generatePdf(string $invoiceId): string
     {
         return $this->handleStripeException(function () use ($invoiceId) {
-            $invoice     = SubscriptionInvoice::findOrFail($invoiceId);
+            $invoice = SubscriptionInvoice::findOrFail($invoiceId);
             /** @var BillingCustomer $customer */
-            $customer    = $invoice->billingCustomer;
+            $customer = $invoice->billingCustomer;
             /** @var User|Tenant $billable */
-            $billable    = $customer->billable;
+            $billable = $customer->billable;
             $billingInfo = $billable->billingInfo;
 
             // Generate PDF using Laravel PDF package
             $pdf = PDF::loadView('subscription.invoices.pdf', [
-                'invoice'      => $invoice,
-                'customer'     => $customer,
-                'billingInfo'  => $billingInfo,
+                'invoice' => $invoice,
+                'customer' => $customer,
+                'billingInfo' => $billingInfo,
             ]);
 
             // Store PDF in storage
@@ -105,7 +105,7 @@ class StripeInvoiceService extends StripeService
     {
         return $this->handleStripeException(function () use ($invoiceId, $status) {
             // TODO: MAYBE ADD TENANT SCOPE & BYPASS HERE
-            $invoice       = SubscriptionInvoice::where('stripe_invoice_id', $invoiceId)->firstOrFail();
+            $invoice = SubscriptionInvoice::where('stripe_invoice_id', $invoiceId)->firstOrFail();
             $invoiceStatus = SubscriptionInvoiceStatus::from($status);
 
             $updates = [
@@ -155,7 +155,7 @@ class StripeInvoiceService extends StripeService
         return $this->handleStripeException(function () use ($customer, $options) {
             $params = array_merge([
                 'customer' => $customer->stripe_customer_id,
-                'limit'    => $options['limit'] ?? 10,
+                'limit' => $options['limit'] ?? 10,
             ], $options);
 
             $invoices = $this->stripe->invoices->all($params);

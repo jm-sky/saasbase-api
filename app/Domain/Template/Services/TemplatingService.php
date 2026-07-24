@@ -42,7 +42,7 @@ class TemplatingService
                     return $value1 === $value2 ? $options['fn']() : $options['inverse']();
                 },
                 'ifNotEmpty' => function ($value, $options) {
-                    return !empty($value) ? $options['fn']() : $options['inverse']();
+                    return ! empty($value) ? $options['fn']() : $options['inverse']();
                 },
                 'logoUrl' => function ($url, $options = null) {
                     return new SafeString($this->generateLogoHtml($url, $options));
@@ -140,11 +140,11 @@ class TemplatingService
     /**
      * Generate logo HTML with width attribute.
      *
-     * @param mixed|null $options
+     * @param  mixed|null  $options
      */
     private function generateLogoHtml(?string $url, $options = null): string
     {
-        if (!$url) {
+        if (! $url) {
             return '';
         }
 
@@ -167,11 +167,11 @@ class TemplatingService
     /**
      * Generate signature HTML with width attribute.
      *
-     * @param mixed|null $options
+     * @param  mixed|null  $options
      */
     private function generateSignatureHtml(?string $url, $options = null): string
     {
-        if (!$url) {
+        if (! $url) {
             return '';
         }
 

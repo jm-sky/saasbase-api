@@ -9,12 +9,12 @@ class TagMeta implements Castable
 {
     public function __construct(
         public ?string $color = null,
-    ) {
-    }
+    ) {}
 
     public static function castUsing(array $arguments): CastsAttributes
     {
-        return new class() implements CastsAttributes {
+        return new class implements CastsAttributes
+        {
             public function get($model, string $key, $value, array $attributes): ?TagMeta
             {
                 if (is_null($value)) {
@@ -34,7 +34,7 @@ class TagMeta implements Castable
                     return null;
                 }
 
-                if (!$value instanceof TagMeta) {
+                if (! $value instanceof TagMeta) {
                     throw new \InvalidArgumentException('The given value is not a TagMeta instance.');
                 }
 

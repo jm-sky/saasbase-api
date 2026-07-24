@@ -13,8 +13,7 @@ final class SyncResultDto extends BaseDataDTO
         public readonly int $updatedMessages = 0,
         public readonly ?string $error = null,
         public readonly ?Carbon $syncedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -30,11 +29,11 @@ final class SyncResultDto extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'success'         => $this->success,
-            'newMessages'     => $this->newMessages,
+            'success' => $this->success,
+            'newMessages' => $this->newMessages,
             'updatedMessages' => $this->updatedMessages,
-            'error'           => $this->error,
-            'syncedAt'        => $this->syncedAt?->toIso8601String(),
+            'error' => $this->error,
+            'syncedAt' => $this->syncedAt?->toIso8601String(),
         ];
     }
 }

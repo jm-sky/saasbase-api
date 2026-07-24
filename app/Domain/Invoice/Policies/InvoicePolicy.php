@@ -14,7 +14,7 @@ class InvoicePolicy
 
     public function viewAny(User $user): bool
     {
-        return null !== $user->getTenantId();
+        return $user->getTenantId() !== null;
     }
 
     public function view(User $user, Invoice $invoice): bool
@@ -24,7 +24,7 @@ class InvoicePolicy
 
     public function create(User $user): bool
     {
-        return null !== $user->getTenantId();
+        return $user->getTenantId() !== null;
     }
 
     public function update(User $user, Invoice $invoice): bool

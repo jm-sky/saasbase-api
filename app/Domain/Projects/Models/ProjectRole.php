@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                       $id
- * @property string                       $name
- * @property ?string                      $description
- * @property ?array                       $permissions
- * @property Carbon                       $created_at
- * @property Carbon                       $updated_at
- * @property ?Carbon                      $deleted_at
+ * @property string $id
+ * @property string $name
+ * @property ?string $description
+ * @property ?array $permissions
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
  * @property Collection<int, ProjectUser> $projectUsers
  */
 class ProjectRole extends BaseModel
