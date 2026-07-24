@@ -18,7 +18,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
 
     Route::get('invoices/{invoice}/attachments/{media}/download', [InvoiceAttachmentsController::class, 'download'])->name('invoices.attachments.download');
     Route::get('invoices/{invoice}/attachments/{media}/preview', [InvoiceAttachmentsController::class, 'preview'])->name('invoices.attachments.preview');
-    Route::apiResource('invoices/{invoice}/attachments', InvoiceAttachmentsController::class);
+    Route::apiResource('invoices/{invoice}/attachments', InvoiceAttachmentsController::class)->names('invoices.attachments');
     Route::apiResource('invoices', InvoiceController::class);
 
     Route::apiResource('invoices.share-tokens', InvoiceShareTokenController::class)->only(['index', 'store', 'destroy']);

@@ -37,6 +37,6 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
 
     Route::get('expenses/{expense}/attachments/{media}/download', [ExpenseAttachmentsController::class, 'download'])->name('expenses.attachments.download');
     Route::get('expenses/{expense}/attachments/{media}/preview', [ExpenseAttachmentsController::class, 'preview'])->name('expenses.attachments.preview');
-    Route::apiResource('expenses/{expense}/attachments', ExpenseAttachmentsController::class);
+    Route::apiResource('expenses/{expense}/attachments', ExpenseAttachmentsController::class)->names('expenses.attachments');
     Route::apiResource('expenses', ExpenseController::class);
 });

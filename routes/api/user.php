@@ -33,7 +33,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->prefix('u
     Route::post('profile-image', [UserProfileImageController::class, 'upload'])->name('user.profile-image.upload');
     Route::delete('profile-image', [UserProfileImageController::class, 'delete'])->name('user.profile-image.delete');
     Route::get('profile-image', [UserProfileImageController::class, 'show'])->name('user.profile-image.show');
-    Route::apiResource('skills', UserSkillController::class);
+    Route::apiResource('skills', UserSkillController::class)->names('user.skills');
 });
 
 Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->group(function () {
