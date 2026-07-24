@@ -76,8 +76,8 @@ abstract class BaseExport implements FromQuery, ShouldAutoSize, WithHeadings, Wi
     public function query(): Builder
     {
         return QueryBuilder::for($this->baseQuery())
-            ->allowedFilters($this->allowedFilters())
-            ->allowedIncludes($this->allowedIncludes())
+            ->allowedFilters(...$this->allowedFilters())
+            ->allowedIncludes(...$this->allowedIncludes())
             ->getEloquentBuilder();
     }
 

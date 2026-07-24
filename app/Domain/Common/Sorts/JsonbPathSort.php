@@ -17,7 +17,7 @@ class JsonbPathSort implements Sort
         $this->jsonPath = $jsonPath;
     }
 
-    public function __invoke(Builder $query, bool $descending, string $property)
+    public function __invoke(Builder $query, bool $descending, string $property): void
     {
         $direction = $descending ? 'DESC' : 'ASC';
 

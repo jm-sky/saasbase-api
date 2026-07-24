@@ -49,7 +49,7 @@ class AdvancedFilter implements Filter
         $this->columnTypes = $columnTypes;
     }
 
-    public function __invoke(Builder $query, $value, string $property): Builder
+    public function __invoke(Builder $query, mixed $value, string $property): void
     {
         if (is_array($value)) {
             foreach ($value as $operator => $val) {
@@ -64,8 +64,6 @@ class AdvancedFilter implements Filter
                 $query->where($property, '=', $value);
             }
         }
-
-        return $query;
     }
 
     protected function applyOperator(Builder $query, string $column, string $operator, $value): void

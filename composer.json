@@ -41,7 +41,7 @@
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-medialibrary": "^11.0",
         "spatie/laravel-permission": "^6.18",
-        "spatie/laravel-query-builder": "^6.3",
+        "spatie/laravel-query-builder": "^7.0",
         "stripe/stripe-php": "^17.3",
         "symfony/uid": "^7.3",
         "tymon/jwt-auth": "^2.2",
