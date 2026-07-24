@@ -14,7 +14,7 @@ use App\Domain\Tenant\Controllers\TenantPublicProfileController;
 use App\Domain\Tenant\Controllers\TenantSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:api', 'session.active')->group(function () {
+Route::middleware(['auth:api', 'session.active'])->group(function () {
     Route::get('tenants/preview', [TenantController::class, 'indexPreview'])->name('tenants.preview');
     Route::apiResource('tenants', TenantController::class);
     Route::post('tenants/{tenant}/switch', GenerateTenantJwtAction::class)->name('tenant.switch');
@@ -28,21 +28,18 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::post('/', 'upload')->name('upload');
             Route::delete('/', 'show')->name('show');
             Route::delete('/', 'delete')->name('delete');
-        })
-    ;
+        });
 
     Route::post('tenants/{tenant}/organization-units/{organizationUnit}/users', [OrganizationUnitController::class, 'assignUserToUnit'])->name('tenants.organizationUnits.assignUserToUnit');
     Route::apiResource('tenants/{tenant}/organization-units', OrganizationUnitController::class)->names('tenants.organizationUnits');
 
     Route::apiResource('tenants/{tenant}/addresses', TenantAddressController::class)->names('tenants.addresses');
     Route::post('tenants/{tenant}/addresses/{address}/set-default', [TenantAddressController::class, 'setDefault'])
-        ->name('tenants.addresses.setDefault')
-    ;
+        ->name('tenants.addresses.setDefault');
 
     Route::apiResource('tenants/{tenant}/bank-accounts', TenantBankAccountController::class)->names('tenants.bankAccounts');
     Route::post('tenants/{tenant}/bank-accounts/{bankAccount}/set-default', [TenantBankAccountController::class, 'setDefault'])
-        ->name('tenants.bankAccounts.setDefault')
-    ;
+        ->name('tenants.bankAccounts.setDefault');
 
     Route::controller(TenantAttachmentsController::class)
         ->prefix('tenants/{tenant}/attachments')
@@ -54,8 +51,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::get('{media}/download', 'download')->name('download');
             Route::get('{media}/preview', 'preview')->name('preview');
             Route::delete('{media}', 'destroy')->name('destroy');
-        })
-    ;
+        });
 
     // Tenant Branding
     Route::get('/tenants/{tenant}/branding', [TenantBrandingController::class, 'show']);

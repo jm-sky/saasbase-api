@@ -21,8 +21,7 @@ class KSeFApiConnector extends Connector
 
     public function __construct(
         protected ?string $encryptedToken = null
-    ) {
-    }
+    ) {}
 
     public function resolveBaseUrl(): string
     {
@@ -32,7 +31,7 @@ class KSeFApiConnector extends Connector
     public function defaultHeaders(): array
     {
         return [
-            'Accept'       => 'application/json',
+            'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ];
     }

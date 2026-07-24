@@ -8,6 +8,7 @@ use App\Domain\Common\Models\MeasurementUnit;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Products\Resources\MeasurementUnitResource;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -22,10 +23,10 @@ class MeasurementUnitController extends Controller
     public function __construct()
     {
         $this->modelClass = MeasurementUnit::class;
-        $this->filters    = [
+        $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'code'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('code', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('code', new AdvancedFilter),
         ];
         $this->sorts = [
             'name',
@@ -44,8 +45,7 @@ class MeasurementUnitController extends Controller
         $units = $this->getIndexPaginator($request);
 
         return MeasurementUnitResource::collection($units['data'])
-            ->additional(['meta' => $units['meta']])
-        ;
+            ->additional(['meta' => $units['meta']]);
     }
 
     /**
@@ -65,7 +65,7 @@ class MeasurementUnitController extends Controller
     /**
      * Remove the specified measurement unit.
      */
-    public function destroy(MeasurementUnit $measurementUnit): \Illuminate\Http\JsonResponse
+    public function destroy(MeasurementUnit $measurementUnit): JsonResponse
     {
         $measurementUnit->delete();
 

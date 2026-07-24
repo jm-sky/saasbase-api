@@ -13,8 +13,7 @@ final class CommonCompanyLookupSources extends BaseDataDTO
         public bool $mf = false,
         public bool $regon = false,
         public bool $vies = false,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -28,9 +27,9 @@ final class CommonCompanyLookupSources extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'mf'    => $this->mf,
+            'mf' => $this->mf,
             'regon' => $this->regon,
-            'vies'  => $this->vies,
+            'vies' => $this->vies,
         ];
     }
 }

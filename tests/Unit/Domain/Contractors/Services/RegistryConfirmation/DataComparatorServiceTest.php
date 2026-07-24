@@ -21,11 +21,11 @@ class DataComparatorServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new DataComparatorService();
+        $this->service = new DataComparatorService;
     }
 
     #[DataProvider('nameComparisonProvider')]
-    public function testCompareNames(string $contractorName, string $registryName, bool $expectedResult): void
+    public function test_compare_names(string $contractorName, string $registryName, bool $expectedResult): void
     {
         $result = $this->service->compareNames($contractorName, $registryName);
 
@@ -71,7 +71,7 @@ class DataComparatorServiceTest extends TestCase
     }
 
     #[DataProvider('vatIdComparisonProvider')]
-    public function testCompareVatIds(?string $contractorVatId, ?string $registryVatId, bool $expectedResult): void
+    public function test_compare_vat_ids(?string $contractorVatId, ?string $registryVatId, bool $expectedResult): void
     {
         $result = $this->service->compareVatIds($contractorVatId, $registryVatId);
 
@@ -106,7 +106,7 @@ class DataComparatorServiceTest extends TestCase
     }
 
     #[DataProvider('regonComparisonProvider')]
-    public function testCompareRegons(?string $contractorRegon, ?string $registryRegon, bool $expectedResult): void
+    public function test_compare_regons(?string $contractorRegon, ?string $registryRegon, bool $expectedResult): void
     {
         $result = $this->service->compareRegons($contractorRegon, $registryRegon);
 
@@ -131,7 +131,7 @@ class DataComparatorServiceTest extends TestCase
         ];
     }
 
-    public function testCompareAddressesSuccessfulMatch(): void
+    public function test_compare_addresses_successful_match(): void
     {
         $contractorAddress = new AddressDTO(
             country: 'PL',
@@ -156,7 +156,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testCompareAddressesFuzzyStreetMatch(): void
+    public function test_compare_addresses_fuzzy_street_match(): void
     {
         $contractorAddress = new AddressDTO(
             country: 'PL',
@@ -181,7 +181,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testCompareAddressesPostalCodeNormalization(): void
+    public function test_compare_addresses_postal_code_normalization(): void
     {
         $contractorAddress = new AddressDTO(
             country: 'PL',
@@ -206,7 +206,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testCompareAddressesMissingRequiredFields(): void
+    public function test_compare_addresses_missing_required_fields(): void
     {
         $contractorAddress = new AddressDTO(
             country: 'PL',
@@ -231,7 +231,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testCompareAddressesDifferentCountries(): void
+    public function test_compare_addresses_different_countries(): void
     {
         $contractorAddress = new AddressDTO(
             country: 'PL',
@@ -256,7 +256,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testCompareBankAccountsSuccessfulMatch(): void
+    public function test_compare_bank_accounts_successful_match(): void
     {
         $contractorAccount = new BankAccountDTO(
             iban: 'PL60102010260000150202000000',
@@ -279,7 +279,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testCompareBankAccountsIbanNormalization(): void
+    public function test_compare_bank_accounts_iban_normalization(): void
     {
         $contractorAccount = new BankAccountDTO(
             iban: 'PL60 1020 1026 0000 1502 0200 0000',  // With spaces
@@ -302,7 +302,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testCompareBankAccountsMissingIban(): void
+    public function test_compare_bank_accounts_missing_iban(): void
     {
         $contractorAccount = new BankAccountDTO(
             iban: '',  // Empty IBAN
@@ -325,7 +325,7 @@ class DataComparatorServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testCompareBankAccountsDifferentIbans(): void
+    public function test_compare_bank_accounts_different_ibans(): void
     {
         $contractorAccount = new BankAccountDTO(
             iban: 'PL60102010260000150202000000',

@@ -20,8 +20,8 @@ class TestStripeConnection extends Command
             $account = $stripe->accounts->retrieve('self');
 
             $this->info('✅ Successfully connected to Stripe!');
-            $this->info('Account ID: ' . $account->id);
-            $this->info('Account Name: ' . ($account->business_profile->name ?? 'Not set'));
+            $this->info('Account ID: '.$account->id);
+            $this->info('Account Name: '.($account->business_profile->name ?? 'Not set'));
 
             // Test webhook configuration
             if (config('stripe.webhook_secret')) {

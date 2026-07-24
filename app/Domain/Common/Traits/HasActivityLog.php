@@ -16,8 +16,7 @@ trait HasActivityLog
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
-        ;
+            ->dontSubmitEmptyLogs();
     }
 
     public function activities(): MorphMany

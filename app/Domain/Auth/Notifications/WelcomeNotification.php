@@ -19,7 +19,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
     protected array $viaList = ['mail', 'database', 'broadcast'];
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public User $notifiable,
@@ -44,18 +44,17 @@ class WelcomeNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable): MailMessage
     {
-        $appName      = Config::get('app.name');
-        $frontendUrl  = Config::get('app.frontend_url');
+        $appName = Config::get('app.name');
+        $frontendUrl = Config::get('app.frontend_url');
         $dashboardUrl = "{$frontendUrl}/";
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(__('notifications.welcome.subject', ['app' => $appName]))
             ->greeting(__('notifications.welcome.greeting', ['name' => $notifiable->full_name]))
             ->line(__('notifications.welcome.message', ['app' => $appName]))
             ->line(__('notifications.welcome.excitement'))
             ->action(__('notifications.welcome.dashboard_button'), $dashboardUrl)
-            ->line(__('notifications.welcome.help'))
-        ;
+            ->line(__('notifications.welcome.help'));
     }
 
     public function toDatabase($notifiable): array
@@ -63,10 +62,10 @@ class WelcomeNotification extends Notification implements ShouldQueue
         $appName = Config::get('app.name');
 
         return [
-            'type'    => 'welcome',
-            'title'   => __('notifications.welcome.title', ['app' => $appName]),
+            'type' => 'welcome',
+            'title' => __('notifications.welcome.title', ['app' => $appName]),
             'message' => __('notifications.welcome.notification_message', ['name' => $notifiable->full_name]),
-            'source'  => 'System',
+            'source' => 'System',
         ];
     }
 
@@ -90,14 +89,14 @@ class WelcomeNotification extends Notification implements ShouldQueue
         $appName = Config::get('app.name');
 
         return [
-            'id'      => $this->id,
-            'data'    => [
-                'type'    => 'welcome',
-                'title'   => __('notifications.welcome.title', ['app' => $appName]),
+            'id' => $this->id,
+            'data' => [
+                'type' => 'welcome',
+                'title' => __('notifications.welcome.title', ['app' => $appName]),
                 'message' => __('notifications.welcome.notification_message', ['name' => $this->notifiable->full_name]),
-                'source'  => 'System',
+                'source' => 'System',
             ],
-            'readAt'    => null,
+            'readAt' => null,
             'createdAt' => now(),
         ];
     }

@@ -14,10 +14,10 @@ class DimensionVisibilityService
     public function getEnabledDimensionsForTenant(?string $tenantId = null): SupportCollection
     {
         /** @var ?User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $tenantId ?? $user?->getTenantId();
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             return collect();
         }
 
@@ -26,8 +26,7 @@ class DimensionVisibilityService
             ->where('is_enabled', true)
             ->orderBy('display_order')
             ->get()
-            ->keyBy('dimension_type')
-        ;
+            ->keyBy('dimension_type');
 
         // Always include RTR (Transaction Type) first
         $enabledDimensions = collect([AllocationDimensionType::TRANSACTION_TYPE]);
@@ -41,7 +40,7 @@ class DimensionVisibilityService
 
         // Sort by display order
         return $enabledDimensions->sortBy(function ($dimension) use ($configurations) {
-            if (AllocationDimensionType::TRANSACTION_TYPE === $dimension) {
+            if ($dimension === AllocationDimensionType::TRANSACTION_TYPE) {
                 return 0; // Always first
             }
 
@@ -52,10 +51,10 @@ class DimensionVisibilityService
     public function getAllDimensionsForTenant(?string $tenantId = null): SupportCollection
     {
         /** @var ?User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $tenantId ?? $user?->getTenantId();
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             return collect();
         }
 
@@ -63,8 +62,7 @@ class DimensionVisibilityService
         $configurations = TenantDimensionConfiguration::where('tenant_id', $tenantId)
             ->orderBy('display_order')
             ->get()
-            ->keyBy('dimension_type')
-        ;
+            ->keyBy('dimension_type');
 
         // Include all dimensions with their configuration status
         $allDimensions = collect();
@@ -89,10 +87,10 @@ class DimensionVisibilityService
             // RTR (Transaction Type) is always visible and doesn't need configuration
             if ($dimension->isConfigurable()) {
                 TenantDimensionConfiguration::create([
-                    'tenant_id'      => $tenantId,
+                    'tenant_id' => $tenantId,
                     'dimension_type' => $dimension,
-                    'is_enabled'     => $dimension->getDefaultEnabledState(),
-                    'display_order'  => $dimension->getDefaultDisplayOrder(),
+                    'is_enabled' => $dimension->getDefaultEnabledState(),
+                    'display_order' => $dimension->getDefaultDisplayOrder(),
                 ]);
             }
         }
@@ -105,17 +103,17 @@ class DimensionVisibilityService
         ?int $displayOrder = null
     ): void {
         // Cannot configure RTR (Transaction Type) - it's always visible
-        if (!$dimension->isConfigurable()) {
+        if (! $dimension->isConfigurable()) {
             throw new \InvalidArgumentException("Dimension {$dimension->value} is not configurable");
         }
 
         TenantDimensionConfiguration::updateOrCreate(
             [
-                'tenant_id'      => $tenantId,
+                'tenant_id' => $tenantId,
                 'dimension_type' => $dimension,
             ],
             [
-                'is_enabled'    => $isEnabled,
+                'is_enabled' => $isEnabled,
                 'display_order' => $displayOrder ?? $dimension->getDefaultDisplayOrder(),
             ]
         );
@@ -139,8 +137,7 @@ class DimensionVisibilityService
     {
         return TenantDimensionConfiguration::where('tenant_id', $tenantId)
             ->where('dimension_type', $dimension)
-            ->first()
-        ;
+            ->first();
     }
 
     public function isDimensionEnabledForTenant(string $tenantId, AllocationDimensionType $dimension): bool

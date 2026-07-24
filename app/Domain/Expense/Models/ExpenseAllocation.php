@@ -14,15 +14,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                               $id
- * @property string                               $tenant_id
- * @property string                               $expense_id
- * @property BigDecimal                           $amount
- * @property ?string                              $note
- * @property ExpenseAllocationStatus              $status
- * @property Carbon                               $created_at
- * @property Carbon                               $updated_at
- * @property Expense                              $expense
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $expense_id
+ * @property BigDecimal $amount
+ * @property ?string $note
+ * @property ExpenseAllocationStatus $status
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Expense $expense
  * @property Collection<int, AllocationDimension> $dimensions
  */
 class ExpenseAllocation extends BaseModel
@@ -67,7 +67,7 @@ class ExpenseAllocation extends BaseModel
         foreach ($this->dimensions as $dimension) {
             $type = $dimension->dimension_type->value;
 
-            if (!isset($dimensionsByType[$type])) {
+            if (! isset($dimensionsByType[$type])) {
                 $dimensionsByType[$type] = [];
             }
             $dimensionsByType[$type][] = $dimension;
@@ -83,8 +83,7 @@ class ExpenseAllocation extends BaseModel
     {
         return $this->dimensions()
             ->where('dimension_type', $dimensionType)
-            ->exists()
-        ;
+            ->exists();
     }
 
     /**
@@ -95,7 +94,6 @@ class ExpenseAllocation extends BaseModel
         // @phpstan-ignore-next-line
         return $this->dimensions()
             ->where('dimension_type', $dimensionType)
-            ->first()
-        ;
+            ->first();
     }
 }

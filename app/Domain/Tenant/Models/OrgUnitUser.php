@@ -13,23 +13,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string           $id
- * @property string           $tenant_id
- * @property string           $organization_unit_id
- * @property string           $user_id
- * @property ?string          $position_id
- * @property OrgUnitRole      $role
- * @property ?UnitRoleLevel   $workflow_role_level
- * @property bool             $is_primary
- * @property bool             $is_active
- * @property Carbon           $valid_from
- * @property ?Carbon          $valid_until
- * @property ?string          $notes
- * @property Carbon           $created_at
- * @property Carbon           $updated_at
- * @property User             $user
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $organization_unit_id
+ * @property string $user_id
+ * @property ?string $position_id
+ * @property OrgUnitRole $role
+ * @property ?UnitRoleLevel $workflow_role_level
+ * @property bool $is_primary
+ * @property bool $is_active
+ * @property Carbon $valid_from
+ * @property ?Carbon $valid_until
+ * @property ?string $notes
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $user
  * @property OrganizationUnit $organizationUnit
- * @property ?Position        $position
+ * @property ?Position $position
  *
  * @method static OrgUnitUserBuilder query()
  * @method static OrgUnitUserBuilder newModelQuery()
@@ -37,8 +37,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class OrgUnitUser extends BaseModel
 {
-    use HasFactory;
     use BelongsToTenant;
+    use HasFactory;
 
     protected $table = 'org_unit_user';
 
@@ -57,12 +57,12 @@ class OrgUnitUser extends BaseModel
     ];
 
     protected $casts = [
-        'role'                => OrgUnitRole::class,
+        'role' => OrgUnitRole::class,
         'workflow_role_level' => UnitRoleLevel::class,
-        'is_primary'          => 'boolean',
-        'is_active'           => 'boolean',
-        'valid_from'          => 'datetime',
-        'valid_until'         => 'datetime',
+        'is_primary' => 'boolean',
+        'is_active' => 'boolean',
+        'valid_from' => 'datetime',
+        'valid_until' => 'datetime',
     ];
 
     protected $attributes = [

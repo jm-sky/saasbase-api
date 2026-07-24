@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $browser
  * @property string $os
  * @property string $location
- * @property User   $user
+ * @property User $user
  */
 class TrustedDevice extends BaseModel
 {
@@ -32,7 +32,7 @@ class TrustedDevice extends BaseModel
 
     protected $casts = [
         'last_active_at' => 'datetime',
-        'trusted_until'  => 'datetime',
+        'trusted_until' => 'datetime',
     ];
 
     public function user(): BelongsTo

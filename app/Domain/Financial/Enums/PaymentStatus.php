@@ -4,38 +4,38 @@ namespace App\Domain\Financial\Enums;
 
 enum PaymentStatus: string
 {
-    case PENDING        = 'pending';
+    case PENDING = 'pending';
     case PARTIALLY_PAID = 'partiallyPaid';
-    case PAID           = 'paid';
-    case OVERDUE        = 'overdue';
-    case CANCELLED      = 'cancelled';
+    case PAID = 'paid';
+    case OVERDUE = 'overdue';
+    case CANCELLED = 'cancelled';
 
     public function label(): string
     {
         return match ($this) {
-            self::PENDING        => 'Pending',
+            self::PENDING => 'Pending',
             self::PARTIALLY_PAID => 'Partially Paid',
-            self::PAID           => 'Paid',
-            self::OVERDUE        => 'Overdue',
-            self::CANCELLED      => 'Cancelled',
+            self::PAID => 'Paid',
+            self::OVERDUE => 'Overdue',
+            self::CANCELLED => 'Cancelled',
         };
     }
 
     public function labelPL(): string
     {
         return match ($this) {
-            self::PENDING        => 'Oczekuje na Płatność',
+            self::PENDING => 'Oczekuje na Płatność',
             self::PARTIALLY_PAID => 'Częściowo Opłacone',
-            self::PAID           => 'Opłacone',
-            self::OVERDUE        => 'Przeterminowane',
-            self::CANCELLED      => 'Anulowane',
+            self::PAID => 'Opłacone',
+            self::OVERDUE => 'Przeterminowane',
+            self::CANCELLED => 'Anulowane',
         };
     }
 
     public function isCompleted(): bool
     {
         return match ($this) {
-            self::PAID, self::CANCELLED                        => true,
+            self::PAID, self::CANCELLED => true,
             self::PENDING, self::PARTIALLY_PAID, self::OVERDUE => false,
         };
     }
@@ -44,7 +44,7 @@ enum PaymentStatus: string
     {
         return match ($this) {
             self::PENDING, self::PARTIALLY_PAID, self::OVERDUE => true,
-            self::PAID, self::CANCELLED                        => false,
+            self::PAID, self::CANCELLED => false,
         };
     }
 

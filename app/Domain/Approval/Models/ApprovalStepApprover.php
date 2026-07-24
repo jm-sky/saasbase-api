@@ -9,16 +9,16 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string               $id
- * @property string               $step_id
- * @property ApproverType         $approver_type
- * @property string               $approver_value
- * @property ?string              $organization_unit_id
- * @property bool                 $can_delegate
- * @property Carbon               $created_at
- * @property Carbon               $updated_at
+ * @property string $id
+ * @property string $step_id
+ * @property ApproverType $approver_type
+ * @property string $approver_value
+ * @property ?string $organization_unit_id
+ * @property bool $can_delegate
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property ApprovalWorkflowStep $step
- * @property ?OrganizationUnit    $organizationUnit
+ * @property ?OrganizationUnit $organizationUnit
  */
 class ApprovalStepApprover extends BaseModel
 {
@@ -32,7 +32,7 @@ class ApprovalStepApprover extends BaseModel
 
     protected $casts = [
         'approver_type' => ApproverType::class,
-        'can_delegate'  => 'boolean',
+        'can_delegate' => 'boolean',
     ];
 
     protected $attributes = [
@@ -86,7 +86,7 @@ class ApprovalStepApprover extends BaseModel
      */
     public function isUserApprover(): bool
     {
-        return ApproverType::USER === $this->approver_type;
+        return $this->approver_type === ApproverType::USER;
     }
 
     /**
@@ -94,7 +94,7 @@ class ApprovalStepApprover extends BaseModel
      */
     public function isUnitRoleApprover(): bool
     {
-        return ApproverType::UNIT_ROLE === $this->approver_type;
+        return $this->approver_type === ApproverType::UNIT_ROLE;
     }
 
     /**
@@ -102,6 +102,6 @@ class ApprovalStepApprover extends BaseModel
      */
     public function isSystemPermissionApprover(): bool
     {
-        return ApproverType::SYSTEM_PERMISSION === $this->approver_type;
+        return $this->approver_type === ApproverType::SYSTEM_PERMISSION;
     }
 }

@@ -39,7 +39,7 @@ class VerifyEmailController extends Controller
         /** @var ?EmailVerificationToken $token */
         $token = $user->emailVerificationToken;
 
-        if (!$token || $token->token !== $request->token) {
+        if (! $token || $token->token !== $request->token) {
             return response()->json([
                 'message' => 'Invalid verification token.',
             ], Response::HTTP_BAD_REQUEST);

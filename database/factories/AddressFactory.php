@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Common\Models\Address>
+ * @extends Factory<Address>
  */
 class AddressFactory extends Factory
 {
@@ -22,17 +22,17 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid()->toString(),
-            'tenant_id'   => fake()->optional()->passthrough((string) Str::ulid()->toString()),
-            'country'     => fake()->countryCode(),
+            'id' => Str::ulid()->toString(),
+            'tenant_id' => fake()->optional()->passthrough((string) Str::ulid()->toString()),
+            'country' => fake()->countryCode(),
             'postal_code' => fake()->optional()->postcode(),
-            'city'        => fake()->city(),
-            'street'      => fake()->optional()->streetAddress(),
-            'building'    => fake()->optional()->buildingNumber(),
-            'flat'        => fake()->optional()->numberBetween(1, 100),
+            'city' => fake()->city(),
+            'street' => fake()->optional()->streetAddress(),
+            'building' => fake()->optional()->buildingNumber(),
+            'flat' => fake()->optional()->numberBetween(1, 100),
             'description' => fake()->optional()->sentence(),
-            'type'        => fake()->randomElement(AddressType::cases()),
-            'is_default'  => false,
+            'type' => fake()->randomElement(AddressType::cases()),
+            'is_default' => false,
         ];
     }
 

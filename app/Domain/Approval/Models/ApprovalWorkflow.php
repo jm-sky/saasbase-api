@@ -14,20 +14,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                                    $id
- * @property string                                    $tenant_id
- * @property string                                    $name
- * @property ?string                                   $description
- * @property ?BigDecimal                               $match_amount_min
- * @property ?BigDecimal                               $match_amount_max
- * @property ?array                                    $match_conditions
- * @property int                                       $priority
- * @property bool                                      $is_active
- * @property string                                    $created_by
- * @property Carbon                                    $created_at
- * @property Carbon                                    $updated_at
- * @property User                                      $creator
- * @property Collection<int, ApprovalWorkflowStep>     $steps
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property ?string $description
+ * @property ?BigDecimal $match_amount_min
+ * @property ?BigDecimal $match_amount_max
+ * @property ?array $match_conditions
+ * @property int $priority
+ * @property bool $is_active
+ * @property string $created_by
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $creator
+ * @property Collection<int, ApprovalWorkflowStep> $steps
  * @property Collection<int, ApprovalExpenseExecution> $executions
  */
 class ApprovalWorkflow extends BaseModel
@@ -51,12 +51,12 @@ class ApprovalWorkflow extends BaseModel
         'match_amount_min' => BigDecimalCast::class,
         'match_amount_max' => BigDecimalCast::class,
         'match_conditions' => 'array',
-        'priority'         => 'integer',
-        'is_active'        => 'boolean',
+        'priority' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     protected $attributes = [
-        'priority'  => 0,
+        'priority' => 0,
         'is_active' => true,
     ];
 
@@ -112,7 +112,7 @@ class ApprovalWorkflow extends BaseModel
      */
     public function matchesAmount(?BigDecimal $amount): bool
     {
-        if (!$amount) {
+        if (! $amount) {
             return true;
         }
 

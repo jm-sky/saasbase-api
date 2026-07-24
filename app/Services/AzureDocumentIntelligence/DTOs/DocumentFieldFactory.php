@@ -16,14 +16,14 @@ final class DocumentFieldFactory
     public static function fromArray(array $data): ValueWrapper
     {
         return match ($data['type'] ?? null) {
-            'string'   => StringField::fromArray($data),
+            'string' => StringField::fromArray($data),
             'currency' => CurrencyField::fromArray($data),
-            'date'     => DateField::fromArray($data),
-            'number'   => NumberField::fromArray($data),
-            'address'  => AddressField::fromArray($data),
-            'object'   => ObjectField::fromArray($data),
-            'array'    => ArrayField::fromArray($data),
-            default    => throw new \InvalidArgumentException('Unknown document field type: ' . ($data['type'] ?? 'null')),
+            'date' => DateField::fromArray($data),
+            'number' => NumberField::fromArray($data),
+            'address' => AddressField::fromArray($data),
+            'object' => ObjectField::fromArray($data),
+            'array' => ArrayField::fromArray($data),
+            default => throw new \InvalidArgumentException('Unknown document field type: '.($data['type'] ?? 'null')),
         };
     }
 

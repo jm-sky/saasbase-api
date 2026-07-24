@@ -14,7 +14,7 @@ class UserMediaPathGenerator implements PathGenerator
      */
     public function getPath(Media $media): string
     {
-        return $this->getBasePath($media) . '/';
+        return $this->getBasePath($media).'/';
     }
 
     /*
@@ -22,7 +22,7 @@ class UserMediaPathGenerator implements PathGenerator
      */
     public function getPathForConversions(Media $media): string
     {
-        return $this->getBasePath($media) . '/conversions/';
+        return $this->getBasePath($media).'/conversions/';
     }
 
     /*
@@ -30,7 +30,7 @@ class UserMediaPathGenerator implements PathGenerator
      */
     public function getPathForResponsiveImages(Media $media): string
     {
-        return $this->getBasePath($media) . '/responsive-images/';
+        return $this->getBasePath($media).'/responsive-images/';
     }
 
     /*
@@ -38,13 +38,13 @@ class UserMediaPathGenerator implements PathGenerator
      */
     protected function getBasePath(Media $media): string
     {
-        $prefix   = config('media-library.prefix', '');
-        $userId   = $media->model_id ?? self::GLOBAL_USER_ID;
+        $prefix = config('media-library.prefix', '');
+        $userId = $media->model_id ?? self::GLOBAL_USER_ID;
 
-        if ('' !== $prefix) {
-            return $prefix . '/users/' . $userId . '/' . $media->getKey();
+        if ($prefix !== '') {
+            return $prefix.'/users/'.$userId.'/'.$media->getKey();
         }
 
-        return 'users/' . $userId . '/' . $media->getKey();
+        return 'users/'.$userId.'/'.$media->getKey();
     }
 }

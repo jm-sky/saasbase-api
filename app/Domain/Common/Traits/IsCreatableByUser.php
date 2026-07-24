@@ -19,7 +19,7 @@ trait IsCreatableByUser
     {
         static::creating(function (Model $model) {
             // @phpstan-ignore-next-line
-            if (!$model->created_by_user_id) {
+            if (! $model->created_by_user_id) {
                 // @phpstan-ignore-next-line
                 $model->created_by_user_id = Auth::id();
             }

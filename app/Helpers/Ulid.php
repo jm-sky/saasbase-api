@@ -9,26 +9,25 @@ class Ulid
     /**
      * Generates a deterministic ULID based on environment, APP_KEY and identifier.
      *
-     * @param string|array        $keywords - identifier or array of identifiers
-     * @param ?\DateTimeInterface $date     - optional date (default: 2025-01-01 UTC)
-     *
+     * @param  string|array  $keywords  - identifier or array of identifiers
+     * @param  ?\DateTimeInterface  $date  - optional date (default: 2025-01-01 UTC)
      * @return string deterministic ULID (26 characters)
      */
     public static function deterministic(string|array $keywords, ?\DateTimeInterface $date = null): string
     {
-        $env    = config('app.env', 'unknown');
+        $env = config('app.env', 'unknown');
         $appKey = config('app.key', 'no-key');
 
         $keyword = is_array($keywords) ? implode('|', $keywords) : $keywords;
         $date ??= new \DateTimeImmutable('2025-01-01T00:00:00Z', new \DateTimeZone('UTC'));
 
         // Create a base ULID
-        $ulid       = new SymfonyUlid();
+        $ulid = new SymfonyUlid;
         $ulidString = $ulid->toBase32();
 
         // Use the hash of our input to modify the random part
         $input = implode('|', [$env, $appKey, $keyword]);
-        $hash  = sha1($input, true);
+        $hash = sha1($input, true);
 
         // Take first 10 bytes of hash for the random part
         $randomPart = substr(bin2hex($hash), 0, 20);
@@ -44,7 +43,7 @@ class Ulid
         $timePart = substr($ulidString, 0, 10);
 
         // Combine parts
-        $ulidString = $timePart . $randomPart;
+        $ulidString = $timePart.$randomPart;
 
         return SymfonyUlid::fromString($ulidString)->toBase32();
     }

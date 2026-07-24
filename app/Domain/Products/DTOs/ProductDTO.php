@@ -12,20 +12,20 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Product>
  *
- * @property ?string             $id          UUID
- * @property string              $tenantId    UUID
- * @property string              $name
- * @property ?string             $description
- * @property float               $priceNet
- * @property string              $unitId
- * @property ?string             $vatRateId
- * @property ?Carbon             $createdAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon             $updatedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon             $deletedAt   Internally Carbon, accepts/serializes ISO 8601
- * @property string[]|null       $tags
+ * @property ?string $id UUID
+ * @property string $tenantId UUID
+ * @property string $name
+ * @property ?string $description
+ * @property float $priceNet
+ * @property string $unitId
+ * @property ?string $vatRateId
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property string[]|null $tags
  * @property ?MeasurementUnitDTO $unit
- * @property ?VatRateDTO         $vatRate
- * @property ?MediaDTO           $logo
+ * @property ?VatRateDTO $vatRate
+ * @property ?MediaDTO $logo
  */
 final class ProductDTO extends BaseDTO
 {
@@ -44,8 +44,7 @@ final class ProductDTO extends BaseDTO
         public readonly ?array $tags = null,
         public readonly ?MeasurementUnitDTO $unit = null,
         public readonly ?VatRateDTO $vatRate = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -69,7 +68,7 @@ final class ProductDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof Product) {
+        if (! $model instanceof Product) {
             throw new \InvalidArgumentException('Model must be instance of Product');
         }
 
@@ -96,20 +95,20 @@ final class ProductDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenantId,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'name' => $this->name,
             'description' => $this->description,
-            'priceNet'    => $this->priceNet,
-            'unitId'      => $this->unitId,
-            'vatRateId'   => $this->vatRateId,
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
-            'deletedAt'   => $this->deletedAt?->toIso8601String(),
-            'logo'        => $this->logo?->toArray(),
-            'tags'        => $this->tags ?? [],
-            'unit'        => $this->unit?->toArray(),
-            'vatRate'     => $this->vatRate?->toArray(),
+            'priceNet' => $this->priceNet,
+            'unitId' => $this->unitId,
+            'vatRateId' => $this->vatRateId,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'logo' => $this->logo?->toArray(),
+            'tags' => $this->tags ?? [],
+            'unit' => $this->unit?->toArray(),
+            'vatRate' => $this->vatRate?->toArray(),
         ];
     }
 }

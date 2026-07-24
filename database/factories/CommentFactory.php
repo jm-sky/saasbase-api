@@ -13,12 +13,12 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id'        => null, // Will be set when creating
-            'user_id'          => User::factory(),
-            'content'          => $this->faker->paragraph(),
-            'commentable_id'   => null, // Will be set when creating
+            'tenant_id' => null, // Will be set when creating
+            'user_id' => User::factory(),
+            'content' => $this->faker->paragraph(),
+            'commentable_id' => null, // Will be set when creating
             'commentable_type' => null, // Will be set when creating
-            'meta'             => null,
+            'meta' => null,
         ];
     }
 }

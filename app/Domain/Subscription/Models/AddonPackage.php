@@ -7,13 +7,13 @@ use App\Domain\Subscription\Enums\AddonType;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * @property string                     $id
- * @property string                     $name
- * @property string                     $stripe_price_id
- * @property string                     $description
- * @property AddonType                  $type
- * @property ?float                     $price
- * @property ?int                       $duration_days
+ * @property string $id
+ * @property string $name
+ * @property string $stripe_price_id
+ * @property string $description
+ * @property AddonType $type
+ * @property ?float $price
+ * @property ?int $duration_days
  * @property Collection|AddonPurchase[] $purchases
  */
 class AddonPackage extends BaseModel
@@ -28,7 +28,7 @@ class AddonPackage extends BaseModel
 
     protected $casts = [
         'price' => 'float',
-        'type'  => AddonType::class,
+        'type' => AddonType::class,
     ];
 
     public function purchases()

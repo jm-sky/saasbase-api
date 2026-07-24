@@ -26,14 +26,14 @@ class TenantIntegrationController extends Controller
     public function __construct()
     {
         $this->modelClass = TenantIntegration::class;
-        $this->filters    = [
+        $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['type'])),
-            AllowedFilter::custom('id', new AdvancedFilter()),
+            AllowedFilter::custom('id', new AdvancedFilter),
             AllowedFilter::exact('type'),
             AllowedFilter::exact('enabled'),
             AllowedFilter::exact('mode'),
         ];
-        $this->sorts       = ['created_at', 'updated_at', 'type', 'mode'];
+        $this->sorts = ['created_at', 'updated_at', 'type', 'mode'];
         $this->defaultSort = '-created_at';
     }
 
@@ -43,7 +43,7 @@ class TenantIntegrationController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         /** @var User $user */
-        $user  = Auth::user();
+        $user = Auth::user();
         $query = $this->getIndexQuery($request);
         $query->where('tenant_id', $user->getTenantId());
 
@@ -58,7 +58,7 @@ class TenantIntegrationController extends Controller
         $this->authorize('create', TenantIntegration::class);
 
         /** @var User $user */
-        $user        = Auth::user();
+        $user = Auth::user();
         $integration = DB::transaction(function () use ($request, $user) {
             return $user->currentTenant()->integrations()->create($request->validated());
         });
@@ -94,7 +94,7 @@ class TenantIntegrationController extends Controller
     public function destroy(string $integrationId): JsonResponse
     {
         /** @var User $user */
-        $user        = Auth::user();
+        $user = Auth::user();
         $integration = $user->currentTenant()->integrations()->findOrFail($integrationId);
 
         $this->authorize('delete', $integration);

@@ -12,6 +12,5 @@ final class SendInvoiceResponseDTO
         public readonly int $processingCode,
         public readonly string $processingDescription,
         public readonly string $elementReferenceNumber
-    ) {
-    }
+    ) {}
 }

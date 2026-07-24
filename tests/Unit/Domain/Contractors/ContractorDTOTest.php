@@ -14,20 +14,20 @@ use Tests\TestCase;
 #[CoversClass(ContractorDTO::class)]
 class ContractorDTOTest extends TestCase
 {
-    public function testCanCreateContractorDtoFromModel(): void
+    public function test_can_create_contractor_dto_from_model(): void
     {
         $tenant = Tenant::factory()->create();
 
         $contractor = Tenant::bypassTenant($tenant->id, function () {
             return Contractor::factory()->create([
-                'name'        => 'Test Contractor',
-                'email'       => 'test@example.com',
-                'phone'       => '1234567890',
-                'country'     => 'US',
-                'tax_id'      => '123456789',
+                'name' => 'Test Contractor',
+                'email' => 'test@example.com',
+                'phone' => '1234567890',
+                'country' => 'US',
+                'tax_id' => '123456789',
                 'description' => 'Test description',
-                'is_active'   => true,
-                'is_buyer'    => true,
+                'is_active' => true,
+                'is_buyer' => true,
                 'is_supplier' => false,
             ]);
         });
@@ -47,7 +47,7 @@ class ContractorDTOTest extends TestCase
         $this->assertEquals($contractor->is_supplier, $dto->isSupplier);
     }
 
-    public function testCanConvertContractorDtoToArray(): void
+    public function test_can_convert_contractor_dto_to_array(): void
     {
         $dto = new ContractorDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',

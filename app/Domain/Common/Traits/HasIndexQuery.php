@@ -56,8 +56,7 @@ trait HasIndexQuery
             ->with($this->defaultWith)
             ->withoutGlobalScopes($this->withoutGlobalScopes)
             // @phpstan-ignore-next-line getEloquentBuilder() is declared on Spatie's QueryBuilder, not visible to PHPStan once the chain returns the base Eloquent Builder type
-            ->getEloquentBuilder()
-        ;
+            ->getEloquentBuilder();
     }
 
     /**
@@ -84,10 +83,10 @@ trait HasIndexQuery
     protected function getPaginatorMeta(LengthAwarePaginator $paginator): array
     {
         return [
-            'currentPage'  => $paginator->currentPage(),
-            'lastPage'     => $paginator->lastPage(),
-            'perPage'      => $paginator->perPage(),
-            'total'        => $paginator->total(),
+            'currentPage' => $paginator->currentPage(),
+            'lastPage' => $paginator->lastPage(),
+            'perPage' => $paginator->perPage(),
+            'total' => $paginator->total(),
         ];
     }
 }

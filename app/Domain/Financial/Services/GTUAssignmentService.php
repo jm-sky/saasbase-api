@@ -3,6 +3,7 @@
 namespace App\Domain\Financial\Services;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\DTOs\InvoiceLineDTO;
 use App\Domain\Financial\Enums\GTUCodeEnum;
 use App\Domain\Financial\Models\GtuCode;
@@ -46,15 +47,14 @@ class GTUAssignmentService
         $gtuCodeModel = GtuCode::query()
             ->where('code', $gtuCode)
             ->where('is_active', true)
-            ->first()
-        ;
+            ->first();
 
-        if (!$gtuCodeModel) {
+        if (! $gtuCodeModel) {
             return false;
         }
 
         // Check if GTU code is effective
-        if (!$this->isGTUCodeEffective($gtuCodeModel)) {
+        if (! $this->isGTUCodeEffective($gtuCodeModel)) {
             return false;
         }
 
@@ -68,7 +68,7 @@ class GTUAssignmentService
 
     public function validateAmountThreshold(InvoiceLineDTO $line, GtuCode $gtuCode): bool
     {
-        if (!$gtuCode->amount_threshold_pln) {
+        if (! $gtuCode->amount_threshold_pln) {
             return true;
         }
 
@@ -103,7 +103,7 @@ class GTUAssignmentService
 
     public function processInvoiceGTUAssignments(Invoice $invoice): Invoice
     {
-        $body         = $invoice->body;
+        $body = $invoice->body;
         $updatedLines = [];
 
         foreach ($body->lines as $line) {
@@ -118,7 +118,7 @@ class GTUAssignmentService
 
             // Merge with existing codes
             $existingCodes = $line->getGtuCodes();
-            $allCodes      = array_unique(array_merge($existingCodes, $autoAssignedCodes));
+            $allCodes = array_unique(array_merge($existingCodes, $autoAssignedCodes));
 
             // Create updated line with GTU codes
             $updatedLine = new InvoiceLineDTO(
@@ -138,7 +138,7 @@ class GTUAssignmentService
         }
 
         // Update invoice body with new lines
-        $updatedBody = new \App\Domain\Financial\DTOs\InvoiceBodyDTO(
+        $updatedBody = new InvoiceBodyDTO(
             lines: $updatedLines,
             vatSummary: $body->vatSummary,
             exchange: $body->exchange,
@@ -155,7 +155,7 @@ class GTUAssignmentService
     {
         foreach ($invoice->body->lines as $line) {
             foreach ($line->getGtuCodes() as $gtuCode) {
-                if (!$this->validateGTUAssignment($line, $gtuCode)) {
+                if (! $this->validateGTUAssignment($line, $gtuCode)) {
                     return false;
                 }
             }
@@ -186,7 +186,7 @@ class GTUAssignmentService
 
     public function detectGTUByKeywords(string $description): array
     {
-        $gtuCodes    = [];
+        $gtuCodes = [];
         $description = strtolower($description);
 
         // Simple keyword detection - this can be enhanced

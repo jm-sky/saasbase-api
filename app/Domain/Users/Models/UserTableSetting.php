@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $user_id
  * @property string $entity
  * @property string $name
- * @property array  $config
- * @property bool   $is_default
- * @property User   $user
+ * @property array $config
+ * @property bool $is_default
+ * @property User $user
  */
 class UserTableSetting extends BaseModel
 {
@@ -26,7 +26,7 @@ class UserTableSetting extends BaseModel
     ];
 
     protected $casts = [
-        'config'     => 'array',
+        'config' => 'array',
         'is_default' => 'boolean',
     ];
 

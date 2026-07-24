@@ -4,7 +4,7 @@ namespace App\Domain\Common\DTOs;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-abstract class BaseDataDTO implements Arrayable, \JsonSerializable
+abstract class BaseDataDTO implements \JsonSerializable, Arrayable
 {
     abstract public static function fromArray(array $data): static;
 

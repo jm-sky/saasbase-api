@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\DB;
  * The corresponding model fix (removing the overriding accessor) is a
  * separate code change in App\Domain\Tenant\Models\TenantIntegration.
  */
-return new class() extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         DB::statement('ALTER TABLE tenant_integrations ALTER COLUMN credentials TYPE text USING credentials::text');
@@ -32,8 +33,7 @@ return new class() extends Migration {
 
             DB::table('tenant_integrations')
                 ->where('id', $row->id)
-                ->update(['credentials' => Crypt::encryptString($row->credentials)])
-            ;
+                ->update(['credentials' => Crypt::encryptString($row->credentials)]);
         }
     }
 
@@ -42,7 +42,7 @@ return new class() extends Migration {
         $rows = DB::table('tenant_integrations')->whereNotNull('credentials')->get(['id', 'credentials']);
 
         foreach ($rows as $row) {
-            if (!self::looksEncrypted($row->credentials)) {
+            if (! self::looksEncrypted($row->credentials)) {
                 continue;
             }
 
@@ -54,8 +54,7 @@ return new class() extends Migration {
 
             DB::table('tenant_integrations')
                 ->where('id', $row->id)
-                ->update(['credentials' => $plain])
-            ;
+                ->update(['credentials' => $plain]);
         }
 
         DB::statement('ALTER TABLE tenant_integrations ALTER COLUMN credentials TYPE jsonb USING credentials::jsonb');
@@ -63,7 +62,7 @@ return new class() extends Migration {
 
     private static function looksEncrypted(?string $value): bool
     {
-        if (null === $value || '' === $value) {
+        if ($value === null || $value === '') {
             return false;
         }
 

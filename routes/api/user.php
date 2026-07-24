@@ -8,6 +8,7 @@ use App\Domain\Auth\Controllers\UserIdentityController;
 use App\Domain\Auth\Controllers\UserProfileController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\IdentityCheck\Controllers\IdentityConfirmationController;
 use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
@@ -18,11 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::withoutMiddleware(['auth:api', 'is_active'])
     ->get('user/profile-image/{user}', [UserProfileImageController::class, 'showForUser'])
-    ->name('user.profile-image.showForUser')
-;
+    ->name('user.profile-image.showForUser');
 
-Route::middleware('auth:api', 'session.active')->get('me', MeController::class);
-Route::middleware('auth:api', 'session.active')->get('me/logs', MeActivityLogsController::class);
+Route::middleware(['auth:api', 'session.active'])->get('me', MeController::class);
+Route::middleware(['auth:api', 'session.active'])->get('me/logs', MeActivityLogsController::class);
 
 Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->prefix('user')->group(function () {
     Route::get('profile', [UserProfileController::class, 'show']);
@@ -92,7 +92,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->group(fun
 
     // User Identity Confirmation (EPUAP)
     Route::prefix('identity/confirmation')->group(function () {
-        Route::get('template', [App\Domain\IdentityCheck\Controllers\IdentityConfirmationController::class, 'generateTemplate']);
-        Route::post('submit', [App\Domain\IdentityCheck\Controllers\IdentityConfirmationController::class, 'submitSigned']);
+        Route::get('template', [IdentityConfirmationController::class, 'generateTemplate']);
+        Route::post('submit', [IdentityConfirmationController::class, 'submitSigned']);
     });
 });

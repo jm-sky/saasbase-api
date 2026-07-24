@@ -20,7 +20,7 @@ trait HasMediaSignedUrls
         /** @var Media $media */
         $media = $this->getFirstMedia($collectionName);
 
-        if (!$media) {
+        if (! $media) {
             return null;
         }
 

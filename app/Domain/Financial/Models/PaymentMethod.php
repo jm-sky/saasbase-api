@@ -9,11 +9,11 @@ use Database\Factories\Domain\Financial\Models\PaymentMethodFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string  $id
+ * @property string $id
  * @property ?string $tenant_id
- * @property string  $name
- * @property string  $code
- * @property ?int    $payment_days
+ * @property string $name
+ * @property string $code
+ * @property ?int $payment_days
  */
 class PaymentMethod extends BaseModel
 {

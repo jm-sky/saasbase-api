@@ -16,7 +16,7 @@ class MeController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 

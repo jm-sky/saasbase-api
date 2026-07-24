@@ -24,37 +24,36 @@ class UserProfileImageController extends Controller
         $uploadedFile = $request->file('image');
 
         // Sanitize filename: slugify user name + original extension
-        $extension     = strtolower($uploadedFile->getClientOriginalExtension());
-        $cleanFileName = Str::slug($user->full_name) . '.' . $extension;
+        $extension = strtolower($uploadedFile->getClientOriginalExtension());
+        $cleanFileName = Str::slug($user->full_name).'.'.$extension;
 
         // Save media with custom name
         $user->addMedia($uploadedFile)
             ->usingFileName($cleanFileName)
-            ->toMediaCollection('profile')
-        ;
+            ->toMediaCollection('profile');
 
         // Return signed URLs
         $avatarUrl = $user->getMediaSignedUrl('profile');
-        $thumbUrl  = $user->getMediaSignedUrl('profile', 'thumb');
+        $thumbUrl = $user->getMediaSignedUrl('profile', 'thumb');
 
         return response()->json([
-            'message'     => 'Profile image uploaded successfully.',
+            'message' => 'Profile image uploaded successfully.',
             'originalUrl' => $avatarUrl,
-            'thumbUrl'    => $thumbUrl,
+            'thumbUrl' => $thumbUrl,
         ]);
     }
 
     public function show(Request $request)
     {
-        $user  = $request->user();
+        $user = $request->user();
         $thumb = $request->query('thumb', false);
         $media = $thumb ? $user->getFirstMedia('profile', 'thumb') : $user->getFirstMedia('profile');
 
-        if ($thumb & !$media) {
+        if ($thumb & ! $media) {
             $media = $user->getFirstMedia('profile');
         }
 
-        if (!$media) {
+        if (! $media) {
             return response()->json(['message' => 'No profile image found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
@@ -63,9 +62,9 @@ class UserProfileImageController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 
@@ -74,11 +73,11 @@ class UserProfileImageController extends Controller
         $thumb = $request->query('thumb', false);
         $media = $thumb ? $user->getFirstMedia('profile', 'thumb') : $user->getFirstMedia('profile');
 
-        if ($thumb & !$media) {
+        if ($thumb & ! $media) {
             $media = $user->getFirstMedia('profile');
         }
 
-        if (!$media) {
+        if (! $media) {
             return response()->json(['message' => 'No profile image found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
@@ -87,9 +86,9 @@ class UserProfileImageController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 

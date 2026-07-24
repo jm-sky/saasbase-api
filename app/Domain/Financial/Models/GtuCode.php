@@ -6,17 +6,17 @@ use App\Domain\Common\Models\BaseModel;
 use Carbon\Carbon;
 
 /**
- * @property string  $id
- * @property string  $code
- * @property string  $name
- * @property string  $description
- * @property ?float  $amount_threshold_pln
- * @property ?array  $applicable_conditions
- * @property bool    $is_active
- * @property Carbon  $effective_from
+ * @property string $id
+ * @property string $code
+ * @property string $name
+ * @property string $description
+ * @property ?float $amount_threshold_pln
+ * @property ?array $applicable_conditions
+ * @property bool $is_active
+ * @property Carbon $effective_from
  * @property ?Carbon $effective_to
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class GtuCode extends BaseModel
 {
@@ -33,9 +33,9 @@ class GtuCode extends BaseModel
 
     protected $casts = [
         'applicable_conditions' => 'array',
-        'is_active'             => 'boolean',
-        'effective_from'        => 'date',
-        'effective_to'          => 'date',
+        'is_active' => 'boolean',
+        'effective_from' => 'date',
+        'effective_to' => 'date',
     ];
 
     protected $primaryKey = 'code';
@@ -54,10 +54,8 @@ class GtuCode extends BaseModel
         return $query->where('effective_from', '<=', $date)
             ->where(function ($q) use ($date) {
                 $q->whereNull('effective_to')
-                    ->orWhere('effective_to', '>=', $date)
-                ;
-            })
-        ;
+                    ->orWhere('effective_to', '>=', $date);
+            });
     }
 
     public function scopeWithAmountThreshold($query)
@@ -80,12 +78,12 @@ class GtuCode extends BaseModel
 
     public function hasAmountThreshold(): bool
     {
-        return null !== $this->amount_threshold_pln;
+        return $this->amount_threshold_pln !== null;
     }
 
     public function meetsAmountThreshold(float $amount): bool
     {
-        if (!$this->hasAmountThreshold()) {
+        if (! $this->hasAmountThreshold()) {
             return true;
         }
 

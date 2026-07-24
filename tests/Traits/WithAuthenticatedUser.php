@@ -13,14 +13,14 @@ trait WithAuthenticatedUser
     {
         $user = $user ?? User::factory()->create();
 
-        if (!$tenant) {
+        if (! $tenant) {
             $token = JwtHelper::createTokenWithoutTenant($user);
         } else {
             $user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
             $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
         }
 
-        $this->withHeader('Authorization', 'Bearer ' . $token);
+        $this->withHeader('Authorization', 'Bearer '.$token);
 
         return $user;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Projects\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Projects\DTOs\TaskStatusDTO;
@@ -46,7 +47,7 @@ class TaskStatusController extends Controller
 
     public function index(SearchTaskStatusRequest $request): JsonResponse
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
         $result['data'] = TaskStatusDTO::collect($result['data']);
 
         return response()->json($result);
@@ -56,7 +57,7 @@ class TaskStatusController extends Controller
     {
         $this->authorizeManage();
 
-        $dto    = TaskStatusDTO::from($request->validated());
+        $dto = TaskStatusDTO::from($request->validated());
         $status = TaskStatus::create($dto->toDbArray());
 
         return response()->json(
@@ -95,8 +96,8 @@ class TaskStatusController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

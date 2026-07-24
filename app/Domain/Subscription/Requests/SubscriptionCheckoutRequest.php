@@ -25,20 +25,20 @@ class SubscriptionCheckoutRequest extends BaseFormRequest
     {
         return [
             'billableType' => ['required', 'in:tenant,user'],
-            'planId'       => ['required', 'exists:subscription_plans,id'],
-            'priceId'      => [
+            'planId' => ['required', 'exists:subscription_plans,id'],
+            'priceId' => [
                 'required',
                 'exists:billing_prices,id',
                 function ($attribute, $value, $fail) {
                     $plan = SubscriptionPlan::find($this->planId);
 
-                    if (!$plan || !$plan->prices()->where('id', $value)->exists()) {
+                    if (! $plan || ! $plan->prices()->where('id', $value)->exists()) {
                         $fail('The selected price does not belong to the specified plan.');
                     }
                 },
             ],
-            'successUrl'   => ['nullable', 'url'],
-            'cancelUrl'    => ['nullable', 'url'],
+            'successUrl' => ['nullable', 'url'],
+            'cancelUrl' => ['nullable', 'url'],
         ];
     }
 
@@ -50,12 +50,12 @@ class SubscriptionCheckoutRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'planId.required'  => 'The plan ID is required.',
-            'planId.exists'    => 'The selected plan does not exist.',
+            'planId.required' => 'The plan ID is required.',
+            'planId.exists' => 'The selected plan does not exist.',
             'priceId.required' => 'The price ID is required.',
-            'priceId.exists'   => 'The selected price does not exist.',
-            'successUrl.url'   => 'The success URL must be a valid URL.',
-            'cancelUrl.url'    => 'The cancel URL must be a valid URL.',
+            'priceId.exists' => 'The selected price does not exist.',
+            'successUrl.url' => 'The success URL must be a valid URL.',
+            'cancelUrl.url' => 'The cancel URL must be a valid URL.',
         ];
     }
 

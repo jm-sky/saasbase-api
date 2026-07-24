@@ -16,6 +16,7 @@ use App\Services\MfLookup\DTOs\MfLookupResultDTO;
 use App\Services\MfLookup\Enums\VatStatusEnum;
 use App\Services\RegonLookup\DTOs\RegonReportUnified;
 use App\Services\ViesLookup\DTOs\ViesLookupResultDTO;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Mockery;
@@ -53,10 +54,10 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->authenticateUser($this->tenant);
 
         // Create mocks
-        $this->dataFetcherService = \Mockery::mock(CompanyDataFetcherService::class);
-        $this->regonService       = \Mockery::mock(RegonContractorRegistryConfirmationService::class);
-        $this->viesService        = \Mockery::mock(ViesContractorRegistryConfirmationService::class);
-        $this->mfService          = \Mockery::mock(MfContractorRegistryConfirmationService::class);
+        $this->dataFetcherService = Mockery::mock(CompanyDataFetcherService::class);
+        $this->regonService = Mockery::mock(RegonContractorRegistryConfirmationService::class);
+        $this->viesService = Mockery::mock(ViesContractorRegistryConfirmationService::class);
+        $this->mfService = Mockery::mock(MfContractorRegistryConfirmationService::class);
 
         // Bind mocks to container
         $this->app->instance(CompanyDataFetcherService::class, $this->dataFetcherService);
@@ -70,17 +71,17 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
 
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
         parent::tearDown();
     }
 
-    public function testConfirmSuccessfullyProcessesAllRegistries()
+    public function test_confirm_successfully_processes_all_registries()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
                 'tenant_id' => $this->tenant->id,
             ]);
         });
@@ -180,32 +181,28 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         );
 
         $regonConfirmation = new RegistryConfirmation(['id' => 1, 'type' => 'regon']);
-        $viesConfirmation  = new RegistryConfirmation(['id' => 2, 'type' => 'vies']);
-        $mfConfirmation    = new RegistryConfirmation(['id' => 3, 'type' => 'mf']);
+        $viesConfirmation = new RegistryConfirmation(['id' => 2, 'type' => 'vies']);
+        $mfConfirmation = new RegistryConfirmation(['id' => 3, 'type' => 'mf']);
 
         $this->dataFetcherService->shouldReceive('fetch')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
-            ->with(\Mockery::type(CompanyContext::class))
-            ->andReturn($allLookupResults)
-        ;
+            ->with(Mockery::type(CompanyContext::class))
+            ->andReturn($allLookupResults);
 
         $this->regonService->shouldReceive('confirmContractorData')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $regonData)
-            ->andReturn([$regonConfirmation])
-        ;
+            ->andReturn([$regonConfirmation]);
 
         $this->viesService->shouldReceive('confirmContractorData')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $viesData)
-            ->andReturn([$viesConfirmation])
-        ;
+            ->andReturn([$viesConfirmation]);
 
         $this->mfService->shouldReceive('confirmContractorData')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $mfData)
-            ->andReturn([$mfConfirmation])
-        ;
+            ->andReturn([$mfConfirmation]);
 
         $result = $this->service->confirm($contractor);
 
@@ -216,22 +213,21 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertContains($mfConfirmation, $result);
     }
 
-    public function testConfirmHandlesNoRegistryData()
+    public function test_confirm_handles_no_registry_data()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
                 'tenant_id' => $this->tenant->id,
             ]);
         });
 
         $this->dataFetcherService->shouldReceive('fetch')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
-            ->with(\Mockery::type(CompanyContext::class))
-            ->andReturn(null)
-        ;
+            ->with(Mockery::type(CompanyContext::class))
+            ->andReturn(null);
 
         $result = $this->service->confirm($contractor);
 
@@ -239,13 +235,13 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertCount(0, $result);
     }
 
-    public function testConfirmHandlesPartialRegistryData()
+    public function test_confirm_handles_partial_registry_data()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
                 'tenant_id' => $this->tenant->id,
             ]);
         });
@@ -320,15 +316,13 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
 
         $this->dataFetcherService->shouldReceive('fetch')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
-            ->with(\Mockery::type(CompanyContext::class))
-            ->andReturn($allLookupResults)
-        ;
+            ->with(Mockery::type(CompanyContext::class))
+            ->andReturn($allLookupResults);
 
         $this->regonService->shouldReceive('confirmContractorData')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $regonData)
-            ->andReturn([$regonConfirmation])
-        ;
+            ->andReturn([$regonConfirmation]);
 
         $result = $this->service->confirm($contractor);
 
@@ -337,13 +331,13 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertContains($regonConfirmation, $result);
     }
 
-    public function testConfirmHandlesRegonServiceException()
+    public function test_confirm_handles_regon_service_exception()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
                 'tenant_id' => $this->tenant->id,
             ]);
         });
@@ -429,31 +423,26 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
 
         $this->dataFetcherService->shouldReceive('fetch')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
-            ->with(\Mockery::type(CompanyContext::class))
-            ->andReturn($allLookupResults)
-        ;
+            ->with(Mockery::type(CompanyContext::class))
+            ->andReturn($allLookupResults);
 
         $this->regonService->shouldReceive('confirmContractorData')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $regonData)
-            ->andThrow(new \Exception('Registry service error'))
-        ;
+            ->andThrow(new \Exception('Registry service error'));
 
         $this->viesService->shouldReceive('confirmContractorData')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->with($contractor, $viesData)
-            ->andReturn([$viesConfirmation])
-        ;
+            ->andReturn([$viesConfirmation]);
 
         Log::shouldReceive('error')
             ->once()
-            ->with('Error processing REGON confirmations', \Mockery::type('array'))
-        ;
+            ->with('Error processing REGON confirmations', Mockery::type('array'));
 
         Log::shouldReceive('info')
             ->once()
-            ->with('Registry confirmations completed', \Mockery::type('array'))
-        ;
+            ->with('Registry confirmations completed', Mockery::type('array'));
 
         $result = $this->service->confirm($contractor);
 
@@ -462,27 +451,25 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertContains($viesConfirmation, $result);
     }
 
-    public function testConfirmHandlesDataFetcherException()
+    public function test_confirm_handles_data_fetcher_exception()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
-                'vat_id'    => '1234567890',
-                'regon'     => '123456789',
-                'country'   => 'PL',
+                'vat_id' => '1234567890',
+                'regon' => '123456789',
+                'country' => 'PL',
                 'tenant_id' => $this->tenant->id,
             ]);
         });
 
         $this->dataFetcherService->shouldReceive('fetch')
             // @phpstan-ignore-next-line with() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
-            ->with(\Mockery::type(CompanyContext::class))
-            ->andThrow(new \Exception('Data fetcher error'))
-        ;
+            ->with(Mockery::type(CompanyContext::class))
+            ->andThrow(new \Exception('Data fetcher error'));
 
         Log::shouldReceive('error')
             ->once()
-            ->with('Error during registry confirmation process', \Mockery::type('array'))
-        ;
+            ->with('Error during registry confirmation process', Mockery::type('array'));
 
         $result = $this->service->confirm($contractor);
 
@@ -490,7 +477,7 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertCount(0, $result);
     }
 
-    public function testGetConfirmationsReturnsOrderedResults()
+    public function test_get_confirmations_returns_ordered_results()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
@@ -500,10 +487,10 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
 
         $result = $this->service->getConfirmations($contractor);
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
+        $this->assertInstanceOf(Collection::class, $result);
     }
 
-    public function testGetLatestConfirmationReturnsCorrectResult()
+    public function test_get_latest_confirmation_returns_correct_result()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
@@ -516,7 +503,7 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testGetLatestConfirmationReturnsNullWhenNotFound()
+    public function test_get_latest_confirmation_returns_null_when_not_found()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
@@ -529,7 +516,7 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testHasSuccessfulConfirmationsReturnsTrueWhenExists()
+    public function test_has_successful_confirmations_returns_true_when_exists()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
@@ -542,7 +529,7 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHasSuccessfulConfirmationsReturnsFalseWhenNoneExist()
+    public function test_has_successful_confirmations_returns_false_when_none_exist()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([
@@ -555,7 +542,7 @@ class ContractorRegistryConfirmationServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testHasSuccessfulConfirmationsReturnsFalseWhenNoConfirmations()
+    public function test_has_successful_confirmations_returns_false_when_no_confirmations()
     {
         $contractor = Tenant::bypassTenant($this->tenant->id, function () {
             return Contractor::factory()->create([

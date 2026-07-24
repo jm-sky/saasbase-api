@@ -19,12 +19,12 @@ class ExchangeRateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'date'       => $this->date->toDateString(),
-            'rate'       => $this->rate,
-            'table'      => $this->table,
-            'source'     => $this->source,
-            'createdAt'  => $this->created_at?->toIso8601String(),
+            'id' => $this->id,
+            'date' => $this->date->toDateString(),
+            'rate' => $this->rate,
+            'table' => $this->table,
+            'source' => $this->source,
+            'createdAt' => $this->created_at?->toIso8601String(),
         ];
     }
 }

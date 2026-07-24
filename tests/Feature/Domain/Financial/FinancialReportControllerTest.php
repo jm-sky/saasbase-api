@@ -33,10 +33,10 @@ class FinancialReportControllerTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->user   = User::factory()->create();
+        $this->user = User::factory()->create();
     }
 
-    public function testGetBalanceWidgetData()
+    public function test_get_balance_widget_data()
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             $numberingTemplate = NumberingTemplate::factory()->create([
@@ -45,18 +45,18 @@ class FinancialReportControllerTest extends TestCase
 
             // Create test invoices and expenses for current month
             Invoice::factory()->create([
-                'tenant_id'             => $this->tenant->id,
-                'status'                => InvoiceStatus::COMPLETED,
-                'issue_date'            => Carbon::now()->startOfMonth(),
-                'total_gross'           => 1000.00,
+                'tenant_id' => $this->tenant->id,
+                'status' => InvoiceStatus::COMPLETED,
+                'issue_date' => Carbon::now()->startOfMonth(),
+                'total_gross' => 1000.00,
                 'numbering_template_id' => $numberingTemplate->id,
             ]);
 
             Expense::factory()->create([
-                'tenant_id'      => $this->tenant->id,
-                'status'         => InvoiceStatus::COMPLETED,
-                'issue_date'     => Carbon::now()->startOfMonth(),
-                'total_gross'    => 300.00,
+                'tenant_id' => $this->tenant->id,
+                'status' => InvoiceStatus::COMPLETED,
+                'issue_date' => Carbon::now()->startOfMonth(),
+                'total_gross' => 300.00,
             ]);
         });
 
@@ -78,11 +78,10 @@ class FinancialReportControllerTest extends TestCase
                         'changePercent',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testGetRevenueWidgetData()
+    public function test_get_revenue_widget_data()
     {
         $this->authenticateUser($this->tenant, $this->user);
 
@@ -100,11 +99,10 @@ class FinancialReportControllerTest extends TestCase
                         'changePercent',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testGetExpensesWidgetData()
+    public function test_get_expenses_widget_data()
     {
         $this->authenticateUser($this->tenant, $this->user);
 
@@ -124,11 +122,10 @@ class FinancialReportControllerTest extends TestCase
                         'changePercent',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testGetOverviewWidgetData()
+    public function test_get_overview_widget_data()
     {
         $this->authenticateUser($this->tenant, $this->user);
 
@@ -147,8 +144,7 @@ class FinancialReportControllerTest extends TestCase
                         ],
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function requiresAuthentication()

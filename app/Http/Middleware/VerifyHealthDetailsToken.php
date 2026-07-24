@@ -11,19 +11,19 @@ class VerifyHealthDetailsToken
     {
         $expected = config('health.details_token');
 
-        if (!is_string($expected) || '' === $expected) {
+        if (! is_string($expected) || $expected === '') {
             return $this->unauthorized();
         }
 
         $authorization = $request->header('Authorization', '');
 
-        if (!str_starts_with($authorization, 'Bearer ')) {
+        if (! str_starts_with($authorization, 'Bearer ')) {
             return $this->unauthorized();
         }
 
         $token = substr($authorization, 7);
 
-        if (!hash_equals($expected, $token)) {
+        if (! hash_equals($expected, $token)) {
             return $this->unauthorized();
         }
 

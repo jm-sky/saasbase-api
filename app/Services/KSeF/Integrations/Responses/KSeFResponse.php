@@ -36,12 +36,12 @@ class KSeFResponse extends Response
         }
 
         // Check if this is a TerminateSession response
-        if (isset($data['processingCode']) && !isset($data['elementReferenceNumber'])) {
+        if (isset($data['processingCode']) && ! isset($data['elementReferenceNumber'])) {
             return $this->createTerminateSessionDto($data);
         }
 
         // Check if this is a SendInvoice response
-        if (isset($data['elementReferenceNumber']) && !isset($data['invoiceStatus'])) {
+        if (isset($data['elementReferenceNumber']) && ! isset($data['invoiceStatus'])) {
             return $this->createSendInvoiceDto($data);
         }
 
@@ -56,7 +56,7 @@ class KSeFResponse extends Response
     protected function createInitSessionDto(array $data): InitSessionResponseDTO
     {
         $sessionTokenData = $data['sessionToken'];
-        $contextData      = $sessionTokenData['context'];
+        $contextData = $sessionTokenData['context'];
 
         $contextIdentifier = new ContextIdentifierDTO(
             type: $contextData['contextIdentifier']['type'],
@@ -173,7 +173,7 @@ class KSeFResponse extends Response
         $invoiceStatus = null;
 
         if (isset($data['invoiceStatus'])) {
-            $statusData    = $data['invoiceStatus'];
+            $statusData = $data['invoiceStatus'];
             $invoiceStatus = new InvoiceStatusDTO(
                 invoiceNumber: $statusData['invoiceNumber'],
                 ksefReferenceNumber: $statusData['ksefReferenceNumber'],

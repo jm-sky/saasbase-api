@@ -13,7 +13,7 @@ class ResetPasswordNotification extends Notification
     use Queueable;
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public string $token,
@@ -32,17 +32,16 @@ class ResetPasswordNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         // Generate frontend URL for password reset
-        $url = Config::get('app.frontend_url') . '/reset-password?' . http_build_query([
+        $url = Config::get('app.frontend_url').'/reset-password?'.http_build_query([
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
         ]);
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(__('notifications.password.reset.subject'))
             ->line(__('notifications.password.reset.message'))
             ->action(__('notifications.password.reset.button'), $url)
             ->line(__('notifications.password.reset.expiry', ['count' => config('auth.passwords.users.expire')]))
-            ->line(__('notifications.password.reset.ignore'))
-        ;
+            ->line(__('notifications.password.reset.ignore'));
     }
 }

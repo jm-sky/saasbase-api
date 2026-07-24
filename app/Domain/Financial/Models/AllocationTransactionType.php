@@ -10,20 +10,20 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property string  $id
+ * @property string $id
  * @property ?string $tenant_id
- * @property string  $code
- * @property string  $name
+ * @property string $code
+ * @property string $name
  * @property ?string $description
- * @property bool    $is_active
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class AllocationTransactionType extends BaseModel implements AllocationDimensionInterface
 {
-    use IsGlobalOrBelongsToTenant;
     use HasAllocationDimensionInterface;
     use HasFactory;
+    use IsGlobalOrBelongsToTenant;
 
     protected $table = 'allocation_transaction_types';
 

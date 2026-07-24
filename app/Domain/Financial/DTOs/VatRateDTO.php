@@ -8,9 +8,9 @@ use App\Domain\Financial\Models\VatRate;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string      $id   ULID
- * @property string      $name
- * @property float       $rate
+ * @property string $id ULID
+ * @property string $name
+ * @property float $rate
  * @property VatRateType $type
  */
 final class VatRateDTO extends BaseDTO
@@ -20,11 +20,10 @@ final class VatRateDTO extends BaseDTO
         public string $name,
         public float $rate,
         public VatRateType $type,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param VatRate $model
+     * @param  VatRate  $model
      */
     public static function fromModel(Model $model): static
     {
@@ -39,7 +38,7 @@ final class VatRateDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'name' => $this->name,
             'rate' => $this->rate,
             'type' => $this->type->value,

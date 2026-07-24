@@ -27,21 +27,20 @@ class OrganizationUnitController extends Controller
 
     public function __construct()
     {
-        $this->tenant                      = Tenant::find(TenantIdResolver::resolve());
+        $this->tenant = Tenant::find(TenantIdResolver::resolve());
         $this->organizationPositionService = new OrganizationPositionService($this->tenant);
     }
 
     public function index(): AnonymousResourceCollection
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->tenant_id;
 
         $units = OrganizationUnit::query()
             ->with('activeUsers', 'parent', 'positions')
             ->where('tenant_id', $tenantId)
-            ->get()
-        ;
+            ->get();
 
         return OrganizationUnitResource::collection($units);
     }
@@ -59,8 +58,7 @@ class OrganizationUnitController extends Controller
     {
         $unit = OrganizationUnit::where('tenant_id', $tenantId)
             ->where('id', $unitId)
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         return new OrganizationUnitResource($unit);
     }
@@ -80,14 +78,13 @@ class OrganizationUnitController extends Controller
 
         $unit = OrganizationUnit::where('tenant_id', $tenantId)
             ->where('id', $unitId)
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         if ($unit->is_technical) {
             return response()->json(['message' => 'Cannot delete technical organization unit'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$unit->parent_id) {
+        if (! $unit->parent_id) {
             return response()->json(['message' => 'Cannot delete root organization unit'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -99,9 +96,9 @@ class OrganizationUnitController extends Controller
     public function assignUserToUnit(Request $request, string $tenantId, string $unitId): JsonResponse
     {
         /** @var OrganizationUnit $unit */
-        $unit     = $this->tenant->organizationUnits()->findOrFail($unitId);
+        $unit = $this->tenant->organizationUnits()->findOrFail($unitId);
         /** @var User $user */
-        $user     = $this->tenant->users()->findOrFail($request->input('userId'));
+        $user = $this->tenant->users()->findOrFail($request->input('userId'));
         /** @var Position $position */
         $position = $unit->positions()->findOrFail($request->input('positionId'));
 
@@ -118,7 +115,7 @@ class OrganizationUnitController extends Controller
     private function authorizeManage(): void
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

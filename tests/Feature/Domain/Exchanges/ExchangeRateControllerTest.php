@@ -32,7 +32,7 @@ class ExchangeRateControllerTest extends TestCase
         $this->authenticateUser($this->tenant);
     }
 
-    public function testCanListExchangeRates(): void
+    public function test_can_list_exchange_rates(): void
     {
         Currency::factory()->create(['code' => 'USD']);
         Currency::factory()->create(['code' => 'EUR']);
@@ -63,11 +63,10 @@ class ExchangeRateControllerTest extends TestCase
                     'perPage',
                     'total',
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanFilterExchangeRatesByCurrency(): void
+    public function test_can_filter_exchange_rates_by_currency(): void
     {
         Currency::factory()->create(['code' => 'USD']);
         Currency::factory()->create(['code' => 'EUR']);
@@ -77,20 +76,19 @@ class ExchangeRateControllerTest extends TestCase
         ExchangeRate::factory()->create(['currency' => 'EUR']);
         ExchangeRate::factory()->create(['currency' => 'PLN']);
 
-        $response = $this->getJson($this->baseUrl . '?filter[currency]=USD');
+        $response = $this->getJson($this->baseUrl.'?filter[currency]=USD');
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.currency', null) // currency is not exposed in resource, so just check count
-        ;
+            ->assertJsonPath('data.0.currency', null); // currency is not exposed in resource, so just check count
     }
 
-    public function testCanShowExchangeRate(): void
+    public function test_can_show_exchange_rate(): void
     {
         Currency::factory()->create(['code' => 'USD']);
         $exchangeRate = ExchangeRate::factory()->create(['currency' => 'USD']);
 
-        $response = $this->getJson($this->baseUrl . '/' . $exchangeRate->id);
+        $response = $this->getJson($this->baseUrl.'/'.$exchangeRate->id);
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -103,11 +101,10 @@ class ExchangeRateControllerTest extends TestCase
                     'createdAt',
                 ],
             ])
-            ->assertJsonPath('data.id', $exchangeRate->id)
-        ;
+            ->assertJsonPath('data.id', $exchangeRate->id);
     }
 
-    public function testCanFilterExchangeRatesByDate(): void
+    public function test_can_filter_exchange_rates_by_date(): void
     {
         $date = now()->toDateString();
 
@@ -117,19 +114,18 @@ class ExchangeRateControllerTest extends TestCase
 
         ExchangeRate::factory()->create([
             'currency' => 'JPY',
-            'date'     => $date,
+            'date' => $date,
         ]);
 
         ExchangeRate::factory()->create([
             'currency' => 'USD',
-            'date'     => now()->subDay()->toDateString(),
+            'date' => now()->subDay()->toDateString(),
         ]);
 
-        $response = $this->getJson($this->baseUrl . '?filter[date]=' . $date);
+        $response = $this->getJson($this->baseUrl.'?filter[date]='.$date);
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.date', $date)
-        ;
+            ->assertJsonPath('data.0.date', $date);
     }
 }

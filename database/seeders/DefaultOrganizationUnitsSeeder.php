@@ -12,43 +12,43 @@ class DefaultOrganizationUnitsSeeder extends Seeder
     {
         $defaultUnits = [
             [
-                'code'        => 'management',
-                'name'        => 'Zarząd',
+                'code' => 'management',
+                'name' => 'Zarząd',
                 'description' => 'Kierownictwo firmy',
             ],
             [
-                'code'        => 'administration',
-                'name'        => 'Administracja',
+                'code' => 'administration',
+                'name' => 'Administracja',
                 'description' => 'Działy administracyjne',
             ],
             [
-                'code'        => 'sales',
-                'name'        => 'Sprzedaż',
+                'code' => 'sales',
+                'name' => 'Sprzedaż',
                 'description' => 'Dział sprzedaży',
             ],
             [
-                'code'        => 'production',
-                'name'        => 'Produkcja',
+                'code' => 'production',
+                'name' => 'Produkcja',
                 'description' => 'Dział produkcyjny',
             ],
             [
-                'code'        => 'it_department',
-                'name'        => 'Dział IT',
+                'code' => 'it_department',
+                'name' => 'Dział IT',
                 'description' => 'Dział informatyczny',
             ],
             [
-                'code'        => 'finance',
-                'name'        => 'Finanse',
+                'code' => 'finance',
+                'name' => 'Finanse',
                 'description' => 'Dział finansowy i księgowość',
             ],
             [
-                'code'        => 'hr',
-                'name'        => 'Kadry',
+                'code' => 'hr',
+                'name' => 'Kadry',
                 'description' => 'Dział kadr i płac',
             ],
             [
-                'code'        => 'logistics',
-                'name'        => 'Logistyka',
+                'code' => 'logistics',
+                'name' => 'Logistyka',
                 'description' => 'Dział logistyki i magazyn',
             ],
         ];

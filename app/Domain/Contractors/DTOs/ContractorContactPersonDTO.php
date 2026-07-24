@@ -12,14 +12,14 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property ?string $id
  * @property ?string $tenantId
- * @property string  $name
+ * @property string $name
  * @property ?string $email
  * @property ?string $phone
  * @property ?string $position
  * @property ?string $description
- * @property string  $contractorId
- * @property ?Carbon $createdAt    Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt    Internally Carbon, accepts/serializes ISO 8601
+ * @property string $contractorId
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class ContractorContactPersonDTO extends BaseDTO
 {
@@ -34,8 +34,7 @@ final class ContractorContactPersonDTO extends BaseDTO
         public readonly ?string $description = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -55,7 +54,7 @@ final class ContractorContactPersonDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof ContractorContactPerson) {
+        if (! $model instanceof ContractorContactPerson) {
             throw new \InvalidArgumentException('Model must be instance of ContractorContactPerson');
         }
 
@@ -76,16 +75,16 @@ final class ContractorContactPersonDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'           => $this->id,
-            'tenantId'     => $this->tenantId,
-            'name'         => $this->name,
-            'email'        => $this->email,
-            'phone'        => $this->phone,
-            'position'     => $this->position,
-            'description'  => $this->description,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'position' => $this->position,
+            'description' => $this->description,
             'contractorId' => $this->contractorId,
-            'createdAt'    => $this->createdAt?->toIso8601String(),
-            'updatedAt'    => $this->updatedAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

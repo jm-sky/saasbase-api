@@ -48,18 +48,18 @@ trait HasUsersTenantScopedFields
     {
         $visibility = $this->preferences?->getFieldVisibility($field);
 
-        if ('public' === $visibility) {
+        if ($visibility === 'public') {
             return true;
         }
 
-        if (null !== $visibility && 'tenant' !== $visibility) {
+        if ($visibility !== null && $visibility !== 'tenant') {
             return false;
         }
 
         /** @var ?User $viewer */
         $viewer = Auth::user();
 
-        if (!$viewer) {
+        if (! $viewer) {
             return false;
         }
 
@@ -69,7 +69,6 @@ trait HasUsersTenantScopedFields
 
         return $this->tenants()
             ->whereIn('tenants.id', $viewer->tenants()->pluck('tenants.id'))
-            ->exists()
-        ;
+            ->exists();
     }
 }

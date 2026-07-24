@@ -5,6 +5,7 @@ namespace App\Domain\Financial\Controllers;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\Models\GtuCode;
 use App\Domain\Financial\Requests\AssignGtuToInvoiceLineRequest;
 use App\Domain\Financial\Requests\AssignGtuToProductRequest;
@@ -28,15 +29,15 @@ class GtuCodeController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = GtuCode::class;
+        $this->modelClass = GtuCode::class;
         $this->defaultWith = [];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name'])), // Update with actual searchable fields
-            AllowedFilter::custom('id', new AdvancedFilter()),
-            AllowedFilter::custom('name', new AdvancedFilter()), // Update with actual fields
-            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('id', new AdvancedFilter),
+            AllowedFilter::custom('name', new AdvancedFilter), // Update with actual fields
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
 
         $this->sorts = [
@@ -76,10 +77,10 @@ class GtuCodeController extends Controller
 
     public function assignToInvoiceLine(AssignGtuToInvoiceLineRequest $request, string $invoiceId, string $lineId): JsonResponse
     {
-        $invoice              = Invoice::findOrFail($invoiceId);
+        $invoice = Invoice::findOrFail($invoiceId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
-        $body         = $invoice->body;
+        $body = $invoice->body;
         $updatedLines = [];
 
         foreach ($body->lines as $line) {
@@ -90,7 +91,7 @@ class GtuCodeController extends Controller
         }
 
         // Update invoice body
-        $updatedBody = new \App\Domain\Financial\DTOs\InvoiceBodyDTO(
+        $updatedBody = new InvoiceBodyDTO(
             lines: $updatedLines,
             vatSummary: $body->vatSummary,
             exchange: $body->exchange,
@@ -102,16 +103,16 @@ class GtuCodeController extends Controller
 
         return response()->json([
             'message' => 'GTU code assigned successfully.',
-            'data'    => ['invoice_id' => $invoiceId, 'line_id' => $lineId, 'gtu_code' => $request->validated('gtuCode')],
+            'data' => ['invoice_id' => $invoiceId, 'line_id' => $lineId, 'gtu_code' => $request->validated('gtuCode')],
         ]);
     }
 
     public function removeFromInvoiceLine(string $invoiceId, string $lineId, string $gtuCode): JsonResponse
     {
-        $invoice              = Invoice::findOrFail($invoiceId);
+        $invoice = Invoice::findOrFail($invoiceId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
-        $body         = $invoice->body;
+        $body = $invoice->body;
         $updatedLines = [];
 
         foreach ($body->lines as $line) {
@@ -122,7 +123,7 @@ class GtuCodeController extends Controller
         }
 
         // Update invoice body
-        $updatedBody = new \App\Domain\Financial\DTOs\InvoiceBodyDTO(
+        $updatedBody = new InvoiceBodyDTO(
             lines: $updatedLines,
             vatSummary: $body->vatSummary,
             exchange: $body->exchange,
@@ -139,7 +140,7 @@ class GtuCodeController extends Controller
 
     public function suggest(string $productId): JsonResponse
     {
-        $product              = Product::findOrFail($productId);
+        $product = Product::findOrFail($productId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
         $suggestions = [];
@@ -151,14 +152,14 @@ class GtuCodeController extends Controller
         $suggestions = array_merge($suggestions, $gtuAssignmentService->detectGTUByProductCategory($product));
 
         // Detect by keywords in name/description
-        $description = $product->name . ' ' . ($product->description ?? '');
+        $description = $product->name.' '.($product->description ?? '');
         $suggestions = array_merge($suggestions, $gtuAssignmentService->detectGTUByKeywords($description));
 
         $suggestions = array_unique($suggestions);
 
         return response()->json([
             'data' => [
-                'product_id'          => $productId,
+                'product_id' => $productId,
                 'suggested_gtu_codes' => $suggestions,
             ],
         ]);
@@ -166,31 +167,31 @@ class GtuCodeController extends Controller
 
     public function assignToProduct(AssignGtuToProductRequest $request, string $productId): JsonResponse
     {
-        $product              = Product::findOrFail($productId);
+        $product = Product::findOrFail($productId);
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
         $updatedProduct = $gtuAssignmentService->assignGTUToProduct($product, $request->validated('gtuCode'), $request->user());
 
         return response()->json([
             'message' => 'GTU code assigned to product successfully.',
-            'data'    => [
+            'data' => [
                 'product_id' => $productId,
-                'gtu_codes'  => $updatedProduct->getGtuCodes(),
+                'gtu_codes' => $updatedProduct->getGtuCodes(),
             ],
         ]);
     }
 
     public function autoAssign(GtuForInvoiceRequest $request): JsonResponse
     {
-        $invoice              = Invoice::findOrFail($request->validated('invoiceId'));
+        $invoice = Invoice::findOrFail($request->validated('invoiceId'));
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
         $updatedInvoice = $gtuAssignmentService->processInvoiceGTUAssignments($invoice);
 
         return response()->json([
             'message' => 'GTU codes auto-assigned successfully.',
-            'data'    => [
-                'invoice_id'      => $updatedInvoice->id,
+            'data' => [
+                'invoice_id' => $updatedInvoice->id,
                 'lines_processed' => count($updatedInvoice->body->lines),
             ],
         ]);
@@ -198,14 +199,14 @@ class GtuCodeController extends Controller
 
     public function validateAssignment(GtuForInvoiceRequest $request): JsonResponse
     {
-        $invoice              = Invoice::findOrFail($request->validated('invoiceId'));
+        $invoice = Invoice::findOrFail($request->validated('invoiceId'));
         $gtuAssignmentService = app(GTUAssignmentService::class);
 
         $isValid = $gtuAssignmentService->validateInvoiceGTUCompliance($invoice);
 
         return response()->json([
             'data' => [
-                'invoice_id'   => $invoice->id,
+                'invoice_id' => $invoice->id,
                 'is_compliant' => $isValid,
             ],
         ]);

@@ -44,6 +44,6 @@ class IbanCacheService
      */
     private function generateCacheKey(string $countryCode, string $bankCode): string
     {
-        return self::CACHE_KEY_PREFIX . ":{$countryCode}_{$bankCode}";
+        return self::CACHE_KEY_PREFIX.":{$countryCode}_{$bankCode}";
     }
 }

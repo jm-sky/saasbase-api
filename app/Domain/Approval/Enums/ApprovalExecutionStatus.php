@@ -4,17 +4,17 @@ namespace App\Domain\Approval\Enums;
 
 enum ApprovalExecutionStatus: string
 {
-    case PENDING   = 'pending';
-    case APPROVED  = 'approved';
-    case REJECTED  = 'rejected';
+    case PENDING = 'pending';
+    case APPROVED = 'approved';
+    case REJECTED = 'rejected';
     case CANCELLED = 'cancelled';
 
     public function label(): string
     {
         return match ($this) {
-            self::PENDING   => 'Pending',
-            self::APPROVED  => 'Approved',
-            self::REJECTED  => 'Rejected',
+            self::PENDING => 'Pending',
+            self::APPROVED => 'Approved',
+            self::REJECTED => 'Rejected',
             self::CANCELLED => 'Cancelled',
         };
     }
@@ -22,9 +22,9 @@ enum ApprovalExecutionStatus: string
     public function labelPL(): string
     {
         return match ($this) {
-            self::PENDING   => 'Oczekuje',
-            self::APPROVED  => 'Zatwierdzone',
-            self::REJECTED  => 'Odrzucone',
+            self::PENDING => 'Oczekuje',
+            self::APPROVED => 'Zatwierdzone',
+            self::REJECTED => 'Odrzucone',
             self::CANCELLED => 'Anulowane',
         };
     }
@@ -33,7 +33,7 @@ enum ApprovalExecutionStatus: string
     {
         return match ($this) {
             self::APPROVED, self::REJECTED, self::CANCELLED => true,
-            self::PENDING                                   => false,
+            self::PENDING => false,
         };
     }
 
@@ -54,21 +54,21 @@ enum ApprovalExecutionStatus: string
 
     public function isPending(): bool
     {
-        return self::PENDING === $this;
+        return $this === self::PENDING;
     }
 
     public function isApproved(): bool
     {
-        return self::APPROVED === $this;
+        return $this === self::APPROVED;
     }
 
     public function isRejected(): bool
     {
-        return self::REJECTED === $this;
+        return $this === self::REJECTED;
     }
 
     public function isCancelled(): bool
     {
-        return self::CANCELLED === $this;
+        return $this === self::CANCELLED;
     }
 }

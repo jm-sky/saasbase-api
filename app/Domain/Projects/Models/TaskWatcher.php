@@ -8,14 +8,14 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string  $id
- * @property string  $task_id
- * @property string  $user_id
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property string $id
+ * @property string $task_id
+ * @property string $user_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property ?Carbon $deleted_at
- * @property Task    $task
- * @property User    $user
+ * @property Task $task
+ * @property User $user
  */
 class TaskWatcher extends BaseModel
 {

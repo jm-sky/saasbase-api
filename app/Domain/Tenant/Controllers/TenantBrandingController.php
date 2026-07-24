@@ -18,7 +18,7 @@ class TenantBrandingController extends Controller
 
         $branding = $tenant->branding;
 
-        if (!$branding) {
+        if (! $branding) {
             $branding = $tenant->branding()->create();
         }
 
@@ -64,7 +64,7 @@ class TenantBrandingController extends Controller
         /** @var TenantBranding $branding */
         $branding = $tenant->branding;
 
-        if (!$branding) {
+        if (! $branding) {
             return response()->json(['message' => 'Branding not found'], Response::HTTP_NOT_FOUND);
         }
 

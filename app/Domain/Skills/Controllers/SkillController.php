@@ -2,6 +2,7 @@
 
 namespace App\Domain\Skills\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
@@ -31,9 +32,9 @@ class SkillController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
-            AllowedFilter::custom('skillCategoryId', new AdvancedFilter(), 'skill_category_id'),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
+            AllowedFilter::custom('skillCategoryId', new AdvancedFilter, 'skill_category_id'),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
         ];
@@ -42,8 +43,8 @@ class SkillController extends Controller
             'name',
             'description',
             'skillCategoryId' => 'skill_category_id',
-            'createdAt'       => 'created_at',
-            'updatedAt'       => 'updated_at',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
         ];
 
         $this->defaultSort = '-created_at';
@@ -51,7 +52,7 @@ class SkillController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
         $result['data'] = SkillDTO::collect($result['data']);
 
         return response()->json($result);
@@ -61,7 +62,7 @@ class SkillController extends Controller
     {
         $this->authorizeManage();
 
-        $dto   = SkillDTO::from($request->validated());
+        $dto = SkillDTO::from($request->validated());
         $skill = Skill::create((array) $dto);
 
         return response()->json(
@@ -105,8 +106,8 @@ class SkillController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

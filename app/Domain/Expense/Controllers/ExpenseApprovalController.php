@@ -6,6 +6,7 @@ use App\Domain\Approval\Actions\ProcessApprovalDecisionAction;
 use App\Domain\Approval\Actions\StartApprovalWorkflowAction;
 use App\Domain\Approval\Enums\ApprovalDecision;
 use App\Domain\Approval\Models\ApprovalExpenseExecution;
+use App\Domain\Auth\Models\User;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Expense\Requests\ProcessApprovalDecisionRequest;
 use App\Domain\Expense\Resources\ApprovalExecutionResource;
@@ -25,15 +26,14 @@ class ExpenseApprovalController extends Controller
     public function __construct(
         private StartApprovalWorkflowAction $startAction,
         private ProcessApprovalDecisionAction $processAction
-    ) {
-    }
+    ) {}
 
     /**
      * Get pending approvals for the current user.
      */
     public function pendingApprovals(Request $request): AnonymousResourceCollection
     {
-        /** @var \App\Domain\Auth\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Get all pending executions where the user is an approver for the current step
@@ -56,13 +56,11 @@ class ExpenseApprovalController extends Controller
                     // This is a simplified check - the actual logic should use ApprovalResolutionService
                     // For now, we'll include all pending approvals and filter them properly in the resource
                     $approverQuery->where('approver_type', 'user')
-                        ->where('approver_value', $user->id)
-                    ;
+                        ->where('approver_value', $user->id);
                 });
             })
             ->orderBy('created_at', 'desc')
-            ->paginate($request->get('perPage', 15))
-        ;
+            ->paginate($request->get('perPage', 15));
 
         return PendingApprovalsResource::collection($pendingExecutions);
     }
@@ -72,7 +70,7 @@ class ExpenseApprovalController extends Controller
      */
     public function approvalHistory(Request $request): AnonymousResourceCollection
     {
-        /** @var \App\Domain\Auth\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Get all executions where the user has made decisions
@@ -90,8 +88,7 @@ class ExpenseApprovalController extends Controller
                 $query->where('approver_id', $user->id);
             })
             ->orderBy('updated_at', 'desc')
-            ->paginate($request->get('perPage', 15))
-        ;
+            ->paginate($request->get('perPage', 15));
 
         return ApprovalExecutionResource::collection($executionsWithDecisions);
     }
@@ -108,10 +105,9 @@ class ExpenseApprovalController extends Controller
                 'decisions.approver',
                 'decisions.step',
             ])
-            ->first()
-        ;
+            ->first();
 
-        if (!$execution) {
+        if (! $execution) {
             return response()->json([
                 'message' => 'No approval workflow found for this expense',
             ], Response::HTTP_NOT_FOUND);
@@ -129,24 +125,24 @@ class ExpenseApprovalController extends Controller
     {
         $this->authorize('update', $expense);
 
-        /** @var \App\Domain\Auth\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
-        if (!$this->startAction->canStartApproval($expense)) {
+        if (! $this->startAction->canStartApproval($expense)) {
             return response()->json([
                 'message' => 'Cannot start approval for this expense',
-                'reason'  => $this->startAction->getCannotStartReason($expense),
+                'reason' => $this->startAction->getCannotStartReason($expense),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         try {
             $execution = $this->startAction->execute($expense, $user->id);
 
-            if (!$execution) {
+            if (! $execution) {
                 return response()->json([
                     'message' => 'Expense was auto-approved (no workflow required)',
-                    'data'    => [
-                        'autoApproved'   => true,
+                    'data' => [
+                        'autoApproved' => true,
                         'approvalStatus' => $expense->fresh()->approval_status->value,
                     ],
                 ]);
@@ -154,7 +150,7 @@ class ExpenseApprovalController extends Controller
 
             return response()->json([
                 'message' => 'Approval workflow started successfully',
-                'data'    => new ApprovalExecutionResource($execution->load([
+                'data' => new ApprovalExecutionResource($execution->load([
                     'workflow',
                     'currentStep.approvers',
                     'decisions.approver',
@@ -163,7 +159,7 @@ class ExpenseApprovalController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to start approval workflow',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
@@ -173,22 +169,22 @@ class ExpenseApprovalController extends Controller
      */
     public function processDecision(ProcessApprovalDecisionRequest $request, Expense $expense): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         /** @var ApprovalExpenseExecution $execution */
         $execution = $expense->approvalExecution()->with(['workflow', 'currentStep.approvers'])->pending()->first(); // @phpstan-ignore-line
 
-        if (!$execution) {
+        if (! $execution) {
             return response()->json([
                 'message' => 'No pending approval workflow found for this expense',
             ], Response::HTTP_NOT_FOUND);
         }
 
-        if (!$this->processAction->canUserMakeDecision($execution, $user)) {
+        if (! $this->processAction->canUserMakeDecision($execution, $user)) {
             return response()->json([
                 'message' => 'You are not authorized to make a decision on this approval',
-                'reason'  => $this->processAction->getCannotDecideReason($execution, $user),
+                'reason' => $this->processAction->getCannotDecideReason($execution, $user),
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -196,7 +192,7 @@ class ExpenseApprovalController extends Controller
 
         try {
             $decision = ApprovalDecision::from($validated['decision']);
-            $reason   = $validated['reason'] ?? null;
+            $reason = $validated['reason'] ?? null;
 
             $decisionRecord = $this->processAction->execute($execution, $user, $decision, $reason);
 
@@ -212,11 +208,11 @@ class ExpenseApprovalController extends Controller
 
             return response()->json([
                 'message' => 'Decision recorded successfully',
-                'data'    => [
-                    'decision'  => [
-                        'id'        => $decisionRecord->id,
-                        'decision'  => $decisionRecord->decision->value,
-                        'reason'    => $decisionRecord->reason,
+                'data' => [
+                    'decision' => [
+                        'id' => $decisionRecord->id,
+                        'decision' => $decisionRecord->decision->value,
+                        'reason' => $decisionRecord->reason,
                         'decidedAt' => $decisionRecord->decided_at->toIso8601String(),
                     ],
                     'execution' => new ApprovalExecutionResource($execution),
@@ -225,12 +221,12 @@ class ExpenseApprovalController extends Controller
         } catch (\InvalidArgumentException $e) {
             return response()->json([
                 'message' => 'Invalid decision',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to process decision',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -240,31 +236,31 @@ class ExpenseApprovalController extends Controller
      */
     public function canApprove(Expense $expense): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         /** @var ApprovalExpenseExecution $execution */
         $execution = $expense->approvalExecution()->with(['workflow', 'currentStep.approvers'])->pending()->first(); // @phpstan-ignore-line
 
-        if (!$execution) {
+        if (! $execution) {
             return response()->json([
                 'data' => [
                     'canApprove' => false,
-                    'reason'     => 'No pending approval workflow found',
+                    'reason' => 'No pending approval workflow found',
                 ],
             ]);
         }
 
         $canApprove = $this->processAction->canUserMakeDecision($execution, $user);
-        $reason     = $canApprove ? null : $this->processAction->getCannotDecideReason($execution, $user);
+        $reason = $canApprove ? null : $this->processAction->getCannotDecideReason($execution, $user);
 
         return response()->json([
             'data' => [
                 'canApprove' => $canApprove,
-                'reason'     => $reason,
-                'execution'  => [
-                    'id'              => $execution->id,
-                    'status'          => $execution->status->value,
+                'reason' => $reason,
+                'execution' => [
+                    'id' => $execution->id,
+                    'status' => $execution->status->value,
                     'currentStepName' => $execution->currentStep?->name,
                 ],
             ],

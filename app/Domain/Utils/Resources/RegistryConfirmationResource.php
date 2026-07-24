@@ -14,11 +14,11 @@ class RegistryConfirmationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'        => $this->id,
-            'type'      => $this->type,
-            'payload'   => $this->payload,
-            'result'    => $this->result,
-            'status'    => $this->status,
+            'id' => $this->id,
+            'type' => $this->type,
+            'payload' => $this->payload,
+            'result' => $this->result,
+            'status' => $this->status,
             'checkedAt' => $this->checked_at,
         ];
     }

@@ -21,15 +21,14 @@ class GlobalOrCurrentTenantScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         /** @var ?User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user?->getTenantId() ?? Tenant::$BYPASSED_TENANT_ID;
 
         $table = $model->getTable();
 
         $builder->where(function ($query) use ($tenantId, $table): void {
             $query->where("{$table}.tenant_id", Tenant::GLOBAL_TENANT_ID)
-                ->orWhere("{$table}.tenant_id", $tenantId)
-            ;
+                ->orWhere("{$table}.tenant_id", $tenantId);
         });
     }
 }

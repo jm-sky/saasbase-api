@@ -21,8 +21,7 @@ class PositionCategoryController extends Controller
     {
         $categories = PositionCategory::query()
             ->ordered()
-            ->get()
-        ;
+            ->get();
 
         return PositionCategoryResource::collection($categories);
     }
@@ -31,7 +30,7 @@ class PositionCategoryController extends Controller
     {
         $this->authorizeManage();
 
-        $data     = $request->validated();
+        $data = $request->validated();
         $category = PositionCategory::create($data);
 
         return new PositionCategoryResource($category);
@@ -66,7 +65,7 @@ class PositionCategoryController extends Controller
     private function authorizeManage(): void
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

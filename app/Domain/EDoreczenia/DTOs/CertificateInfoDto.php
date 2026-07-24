@@ -14,8 +14,7 @@ final class CertificateInfoDto extends BaseDataDTO
         public readonly string $subjectCn,
         public readonly Carbon $validFrom,
         public readonly Carbon $validTo,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -32,12 +31,12 @@ final class CertificateInfoDto extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'filePath'    => $this->filePath,
-            'password'    => $this->password,
+            'filePath' => $this->filePath,
+            'password' => $this->password,
             'fingerprint' => $this->fingerprint,
-            'subjectCn'   => $this->subjectCn,
-            'validFrom'   => $this->validFrom->toIso8601String(),
-            'validTo'     => $this->validTo->toIso8601String(),
+            'subjectCn' => $this->subjectCn,
+            'validFrom' => $this->validFrom->toIso8601String(),
+            'validTo' => $this->validTo->toIso8601String(),
         ];
     }
 }

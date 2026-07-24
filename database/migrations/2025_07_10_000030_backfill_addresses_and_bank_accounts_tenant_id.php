@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\Contact;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Tenant\Models\Tenant;
@@ -20,20 +21,19 @@ use Illuminate\Support\Facades\DB;
  * tenant scoping, so we best-effort pick one membership rather than
  * leaving the row permanently orphaned.
  */
-return new class() extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         DB::table('addresses')
             ->whereNull('tenant_id')
             ->where('addressable_type', Tenant::class)
-            ->update(['tenant_id' => DB::raw('addressable_id')])
-        ;
+            ->update(['tenant_id' => DB::raw('addressable_id')]);
 
         DB::table('bank_accounts')
             ->whereNull('tenant_id')
             ->where('bankable_type', Tenant::class)
-            ->update(['tenant_id' => DB::raw('bankable_id')])
-        ;
+            ->update(['tenant_id' => DB::raw('bankable_id')]);
 
         $this->backfillFromOwner('addresses', 'addressable', Contractor::class, 'contractors');
         $this->backfillFromOwner('addresses', 'addressable', Contact::class, 'contacts');
@@ -74,6 +74,6 @@ return new class() extends Migration {
             WHERE {$table}.tenant_id IS NULL
               AND {$table}.{$morphName}_type = ?
               AND {$table}.{$morphName}_id = membership.user_id
-        SQL, [App\Domain\Auth\Models\User::class]);
+        SQL, [User::class]);
     }
 };

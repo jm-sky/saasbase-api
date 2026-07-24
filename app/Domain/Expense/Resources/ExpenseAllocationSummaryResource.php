@@ -22,11 +22,11 @@ class ExpenseAllocationSummaryResource extends JsonResource
     {
         /* @var Expense $this->resource */
         return [
-            'allocations'         => ExpenseAllocationResource::collection($this->allocations),
-            'expenseTotal'        => $this->total_gross->toFloat(),
-            'totalAllocated'      => $this->total_allocated->toFloat(),
+            'allocations' => ExpenseAllocationResource::collection($this->allocations),
+            'expenseTotal' => $this->total_gross->toFloat(),
+            'totalAllocated' => $this->total_allocated->toFloat(),
             'remainingToAllocate' => $this->remaining_to_allocate->toFloat(),
-            'isFullyAllocated'    => $this->is_fully_allocated,
+            'isFullyAllocated' => $this->is_fully_allocated,
         ];
     }
 }

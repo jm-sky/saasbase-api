@@ -10,15 +10,15 @@ use App\Services\AzureDocumentIntelligence\DTOs\Fields\StringField;
 /**
  * DTO for Invoice Item (line) from Azure Document Intelligence.
  *
- * @property ?StringField   $description
- * @property ?NumberField   $quantity
+ * @property ?StringField $description
+ * @property ?NumberField $quantity
  * @property ?CurrencyField $unitPrice
  * @property ?CurrencyField $totalPrice
  * @property ?CurrencyField $amount
  * @property ?CurrencyField $tax
- * @property ?StringField   $taxRate
- * @property ?StringField   $unit
- * @property float          $confidence
+ * @property ?StringField $taxRate
+ * @property ?StringField $unit
+ * @property float $confidence
  */
 final class InvoiceDocumentItemDTO extends BaseDataDTO
 {
@@ -32,8 +32,7 @@ final class InvoiceDocumentItemDTO extends BaseDataDTO
         public readonly ?StringField $taxRate,
         public readonly ?StringField $unit,
         public readonly float $confidence = 1.0,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -69,14 +68,14 @@ final class InvoiceDocumentItemDTO extends BaseDataDTO
     {
         return [
             'description' => $this->description,
-            'quantity'    => $this->quantity,
-            'unitPrice'   => $this->unitPrice?->toArray(),
-            'totalPrice'  => $this->totalPrice?->toArray(),
-            'amount'      => $this->amount?->toArray(),
-            'tax'         => $this->tax?->toArray(),
-            'taxRate'     => $this->taxRate,
-            'unit'        => $this->unit,
-            'confidence'  => $this->confidence,
+            'quantity' => $this->quantity,
+            'unitPrice' => $this->unitPrice?->toArray(),
+            'totalPrice' => $this->totalPrice?->toArray(),
+            'amount' => $this->amount?->toArray(),
+            'tax' => $this->tax?->toArray(),
+            'taxRate' => $this->taxRate,
+            'unit' => $this->unit,
+            'confidence' => $this->confidence,
         ];
     }
 }

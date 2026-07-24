@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Contractors\Models\ContractorContactPerson>
+ * @extends Factory<ContractorContactPerson>
  */
 class ContractorContactPersonFactory extends Factory
 {
@@ -18,14 +18,14 @@ class ContractorContactPersonFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'            => Str::ulid()->toString(),
-            'tenant_id'     => Tenant::factory(),
+            'id' => Str::ulid()->toString(),
+            'tenant_id' => Tenant::factory(),
             'contractor_id' => Contractor::factory(),
-            'name'          => fake()->name(),
-            'email'         => fake()->optional()->email(),
-            'phone'         => fake()->optional()->phoneNumber(),
-            'position'      => fake()->optional()->jobTitle(),
-            'description'   => fake()->optional()->sentence(),
+            'name' => fake()->name(),
+            'email' => fake()->optional()->email(),
+            'phone' => fake()->optional()->phoneNumber(),
+            'position' => fake()->optional()->jobTitle(),
+            'description' => fake()->optional()->sentence(),
         ];
     }
 }

@@ -16,8 +16,8 @@ class CreateTagRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'    => ['required', 'string', 'max:64', 'unique:tags,name'],
-            'color'   => ['nullable', 'sometimes', 'string', 'max:64', Rule::enum(TagColor::class)],
+            'name' => ['required', 'string', 'max:64', 'unique:tags,name'],
+            'color' => ['nullable', 'sometimes', 'string', 'max:64', Rule::enum(TagColor::class)],
         ];
     }
 }

@@ -26,18 +26,18 @@ class PuppeteerEngine implements PdfEngineInterface
     public function generatePdf(string $html, array $settings = []): string
     {
         $htmlFile = $this->saveHtmlToTempFile($html);
-        $pdfFile  = $this->generateTempPdfPath();
+        $pdfFile = $this->generateTempPdfPath();
 
         try {
             $this->runPuppeteerScript($htmlFile, $pdfFile, array_merge($this->config, $settings));
 
-            if (!file_exists($pdfFile)) {
+            if (! file_exists($pdfFile)) {
                 throw new \RuntimeException('PDF file was not generated');
             }
 
             $pdfContent = file_get_contents($pdfFile);
 
-            if (false === $pdfContent) {
+            if ($pdfContent === false) {
                 throw new \RuntimeException('Failed to read generated PDF content');
             }
 
@@ -57,9 +57,9 @@ class PuppeteerEngine implements PdfEngineInterface
         $pdfContent = $this->generatePdf($html, $settings);
 
         return response($pdfContent, 200, [
-            'Content-Type'        => 'application/pdf',
+            'Content-Type' => 'application/pdf',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Content-Length'      => strlen($pdfContent),
+            'Content-Length' => strlen($pdfContent),
         ]);
     }
 
@@ -68,9 +68,9 @@ class PuppeteerEngine implements PdfEngineInterface
         $pdfContent = $this->generatePdf($html, $settings);
 
         return response($pdfContent, 200, [
-            'Content-Type'        => 'application/pdf',
+            'Content-Type' => 'application/pdf',
             'Content-Disposition' => "inline; filename=\"{$filename}\"",
-            'Content-Length'      => strlen($pdfContent),
+            'Content-Length' => strlen($pdfContent),
         ]);
     }
 
@@ -82,26 +82,26 @@ class PuppeteerEngine implements PdfEngineInterface
     public function isAvailable(): bool
     {
         $nodeExecutable = config('pdf.puppeteer.node_executable', 'node');
-        $npmExecutable  = config('pdf.puppeteer.npm_executable', 'npm');
+        $npmExecutable = config('pdf.puppeteer.npm_executable', 'npm');
 
         // Check if Node.js is available
         exec("which {$nodeExecutable}", $output, $returnCode);
 
-        if (0 !== $returnCode) {
+        if ($returnCode !== 0) {
             return false;
         }
 
         // Check if npm is available
         exec("which {$npmExecutable}", $output, $returnCode);
 
-        if (0 !== $returnCode) {
+        if ($returnCode !== 0) {
             return false;
         }
 
         // Check if Puppeteer package is actually installed
         exec("{$nodeExecutable} -e \"require('puppeteer')\" 2>/dev/null", $output, $returnCode);
 
-        if (0 !== $returnCode) {
+        if ($returnCode !== 0) {
             return false;
         }
 
@@ -124,7 +124,7 @@ class PuppeteerEngine implements PdfEngineInterface
     {
         if ($template->settings) {
             $templateSettings = $this->convertMpdfToPuppeteerSettings($template->settings);
-            $this->config     = array_merge($this->config, $templateSettings);
+            $this->config = array_merge($this->config, $templateSettings);
         }
 
         return $this;
@@ -153,14 +153,14 @@ class PuppeteerEngine implements PdfEngineInterface
      */
     private function runPuppeteerScript(string $htmlFile, string $pdfFile, array $settings): void
     {
-        $resolved       = $this->resolveScriptSettings($htmlFile, $pdfFile, $settings);
-        $settingsFile   = $this->saveSettingsToTempFile($resolved);
-        $scriptContent  = $this->generatePuppeteerScript($settingsFile);
-        $scriptFile     = $this->saveScriptToTempFile($scriptContent);
+        $resolved = $this->resolveScriptSettings($htmlFile, $pdfFile, $settings);
+        $settingsFile = $this->saveSettingsToTempFile($resolved);
+        $scriptContent = $this->generatePuppeteerScript($settingsFile);
+        $scriptFile = $this->saveScriptToTempFile($scriptContent);
 
         try {
             $nodeExecutable = config('pdf.puppeteer.node_executable', 'node');
-            $timeout        = config('pdf.puppeteer.script_timeout', 60);
+            $timeout = config('pdf.puppeteer.script_timeout', 60);
 
             $command = "timeout {$timeout} {$nodeExecutable} {$scriptFile} 2>&1";
 
@@ -170,7 +170,7 @@ class PuppeteerEngine implements PdfEngineInterface
 
             exec($command, $output, $returnCode);
 
-            if (0 !== $returnCode) {
+            if ($returnCode !== 0) {
                 $errorMessage = implode("\n", $output);
 
                 throw new \RuntimeException("Puppeteer script failed: {$errorMessage}");
@@ -195,41 +195,41 @@ class PuppeteerEngine implements PdfEngineInterface
      */
     private function resolveScriptSettings(string $htmlFile, string $pdfFile, array $settings): array
     {
-        $margins        = is_array($settings['margins'] ?? null) ? $settings['margins'] : [];
-        $viewport       = is_array($settings['viewport'] ?? null) ? $settings['viewport'] : [];
-        $format         = (string) ($settings['format'] ?? 'A4');
+        $margins = is_array($settings['margins'] ?? null) ? $settings['margins'] : [];
+        $viewport = is_array($settings['viewport'] ?? null) ? $settings['viewport'] : [];
+        $format = (string) ($settings['format'] ?? 'A4');
         $footerTemplate = (string) ($settings['footer_template'] ?? '');
 
-        if (config('pdf.global.add_footer', true) && '' === $footerTemplate) {
-            $appName        = config('app.name', 'SaasBase');
-            $footerTemplate = '<div style="width: 100%; text-align: center; font-size: 8px; color: #666; border-top: 1px solid #E5E7EB; padding-top: 5px;"><span class="date"></span> | ' . $appName . ' | Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>';
+        if (config('pdf.global.add_footer', true) && $footerTemplate === '') {
+            $appName = config('app.name', 'SaasBase');
+            $footerTemplate = '<div style="width: 100%; text-align: center; font-size: 8px; color: #666; border-top: 1px solid #E5E7EB; padding-top: 5px;"><span class="date"></span> | '.$appName.' | Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>';
         }
 
         return [
-            'chromeExecutable'   => (string) config('pdf.puppeteer.chrome_executable', '/usr/bin/google-chrome-stable'),
-            'chromeFlags'        => array_values(array_filter((array) ($settings['chrome_flags'] ?? []), 'is_string')),
-            'htmlFile'           => $htmlFile,
-            'pdfFile'            => $pdfFile,
-            'viewport'           => [
-                'width'  => $this->clampInt($viewport['width'] ?? 1200, 200, 4000),
+            'chromeExecutable' => (string) config('pdf.puppeteer.chrome_executable', '/usr/bin/google-chrome-stable'),
+            'chromeFlags' => array_values(array_filter((array) ($settings['chrome_flags'] ?? []), 'is_string')),
+            'htmlFile' => $htmlFile,
+            'pdfFile' => $pdfFile,
+            'viewport' => [
+                'width' => $this->clampInt($viewport['width'] ?? 1200, 200, 4000),
                 'height' => $this->clampInt($viewport['height'] ?? 800, 200, 4000),
             ],
-            'format'             => \in_array($format, self::ALLOWED_FORMATS, true) ? $format : 'A4',
-            'landscape'          => 'landscape' === ($settings['orientation'] ?? 'portrait'),
-            'margins'            => [
-                'top'    => $this->resolveMargin($margins['top'] ?? null, '5mm'),
-                'right'  => $this->resolveMargin($margins['right'] ?? null, '5mm'),
+            'format' => \in_array($format, self::ALLOWED_FORMATS, true) ? $format : 'A4',
+            'landscape' => 'landscape' === ($settings['orientation'] ?? 'portrait'),
+            'margins' => [
+                'top' => $this->resolveMargin($margins['top'] ?? null, '5mm'),
+                'right' => $this->resolveMargin($margins['right'] ?? null, '5mm'),
                 'bottom' => $this->resolveMargin($margins['bottom'] ?? null, '10mm'),
-                'left'   => $this->resolveMargin($margins['left'] ?? null, '5mm'),
+                'left' => $this->resolveMargin($margins['left'] ?? null, '5mm'),
             ],
-            'printBackground'     => (bool) ($settings['print_background'] ?? true),
-            'preferCssPageSize'   => (bool) ($settings['prefer_css_page_size'] ?? false),
+            'printBackground' => (bool) ($settings['print_background'] ?? true),
+            'preferCssPageSize' => (bool) ($settings['prefer_css_page_size'] ?? false),
             'displayHeaderFooter' => (bool) ($settings['display_header_footer'] ?? true),
-            'headerTemplate'      => (string) ($settings['header_template'] ?? '<div></div>'),
-            'footerTemplate'      => $footerTemplate,
-            'timeout'             => $this->clampInt($settings['timeout'] ?? 30000, 1000, 120000),
-            'waitForSelector'     => \is_string($settings['wait_for_selector'] ?? null) ? $settings['wait_for_selector'] : null,
-            'waitForTimeout'      => $this->clampInt($settings['wait_for_timeout'] ?? 0, 0, 30000),
+            'headerTemplate' => (string) ($settings['header_template'] ?? '<div></div>'),
+            'footerTemplate' => $footerTemplate,
+            'timeout' => $this->clampInt($settings['timeout'] ?? 30000, 1000, 120000),
+            'waitForSelector' => \is_string($settings['wait_for_selector'] ?? null) ? $settings['wait_for_selector'] : null,
+            'waitForTimeout' => $this->clampInt($settings['wait_for_timeout'] ?? 0, 0, 30000),
         ];
     }
 
@@ -348,9 +348,9 @@ const fs = require('fs');
 
     private function saveHtmlToTempFile(string $html): string
     {
-        $tempDir  = $this->getTempDirectory();
-        $filename = 'invoice_' . Str::random(10) . '.html';
-        $filepath = $tempDir . '/' . $filename;
+        $tempDir = $this->getTempDirectory();
+        $filename = 'invoice_'.Str::random(10).'.html';
+        $filepath = $tempDir.'/'.$filename;
 
         file_put_contents($filepath, $html);
 
@@ -359,9 +359,9 @@ const fs = require('fs');
 
     private function saveScriptToTempFile(string $script): string
     {
-        $tempDir  = $this->getTempDirectory();
-        $filename = 'puppeteer_script_' . Str::random(10) . '.js';
-        $filepath = $tempDir . '/' . $filename;
+        $tempDir = $this->getTempDirectory();
+        $filename = 'puppeteer_script_'.Str::random(10).'.js';
+        $filepath = $tempDir.'/'.$filename;
 
         file_put_contents($filepath, $script);
 
@@ -370,9 +370,9 @@ const fs = require('fs');
 
     private function saveSettingsToTempFile(array $settings): string
     {
-        $tempDir  = $this->getTempDirectory();
-        $filename = 'puppeteer_settings_' . Str::random(10) . '.json';
-        $filepath = $tempDir . '/' . $filename;
+        $tempDir = $this->getTempDirectory();
+        $filename = 'puppeteer_settings_'.Str::random(10).'.json';
+        $filepath = $tempDir.'/'.$filename;
 
         file_put_contents($filepath, json_encode($settings, \JSON_THROW_ON_ERROR));
 
@@ -381,17 +381,17 @@ const fs = require('fs');
 
     private function generateTempPdfPath(): string
     {
-        $tempDir  = $this->getTempDirectory();
-        $filename = 'invoice_' . Str::random(10) . '.pdf';
+        $tempDir = $this->getTempDirectory();
+        $filename = 'invoice_'.Str::random(10).'.pdf';
 
-        return $tempDir . '/' . $filename;
+        return $tempDir.'/'.$filename;
     }
 
     private function getTempDirectory(): string
     {
         $tempDir = config('pdf.puppeteer.temp_dir', storage_path('app/temp'));
 
-        if (!is_dir($tempDir)) {
+        if (! is_dir($tempDir)) {
             mkdir($tempDir, 0755, true);
         }
 
@@ -414,7 +414,7 @@ const fs = require('fs');
 
         // Convert orientation
         if (isset($mpdfSettings['orientation'])) {
-            $puppeteerSettings['orientation'] = 'L' === $mpdfSettings['orientation'] ? 'landscape' : 'portrait';
+            $puppeteerSettings['orientation'] = $mpdfSettings['orientation'] === 'L' ? 'landscape' : 'portrait';
         }
 
         // Convert margins
@@ -422,10 +422,10 @@ const fs = require('fs');
             $margins = $mpdfSettings['margins'];
 
             $puppeteerSettings['margins'] = [
-                'top'    => $this->resolveMargin($this->numericMargin($margins['top'] ?? null), '5mm'),
-                'right'  => $this->resolveMargin($this->numericMargin($margins['right'] ?? null), '5mm'),
+                'top' => $this->resolveMargin($this->numericMargin($margins['top'] ?? null), '5mm'),
+                'right' => $this->resolveMargin($this->numericMargin($margins['right'] ?? null), '5mm'),
                 'bottom' => $this->resolveMargin($this->numericMargin($margins['bottom'] ?? null), '10mm'),
-                'left'   => $this->resolveMargin($this->numericMargin($margins['left'] ?? null), '5mm'),
+                'left' => $this->resolveMargin($this->numericMargin($margins['left'] ?? null), '5mm'),
             ];
         }
 
@@ -434,34 +434,34 @@ const fs = require('fs');
 
     private function numericMargin(mixed $value): ?string
     {
-        if (!is_numeric($value)) {
+        if (! is_numeric($value)) {
             return null;
         }
 
-        return $value . 'mm';
+        return $value.'mm';
     }
 
     private function getDefaultConfig(): array
     {
         return config('pdf.engines.puppeteer.config', [
-            'format'      => 'A4',
+            'format' => 'A4',
             'orientation' => 'portrait',
-            'margins'     => [
-                'top'    => '5mm',
-                'right'  => '5mm',
+            'margins' => [
+                'top' => '5mm',
+                'right' => '5mm',
                 'bottom' => '10mm',
-                'left'   => '5mm',
+                'left' => '5mm',
             ],
-            'print_background'      => true,
-            'prefer_css_page_size'  => false,
+            'print_background' => true,
+            'prefer_css_page_size' => false,
             'display_header_footer' => true,
-            'header_template'       => '<div></div>',
-            'footer_template'       => '',
-            'timeout'               => 30000,
-            'wait_for_selector'     => null,
-            'wait_for_timeout'      => 0,
-            'viewport'              => [
-                'width'  => 1200,
+            'header_template' => '<div></div>',
+            'footer_template' => '',
+            'timeout' => 30000,
+            'wait_for_selector' => null,
+            'wait_for_timeout' => 0,
+            'viewport' => [
+                'width' => 1200,
                 'height' => 800,
             ],
             'chrome_flags' => [

@@ -25,25 +25,25 @@ class CreateExpenseForOcr
     {
         /** @var Expense $expense */
         $expense = Expense::create([
-            'type'                  => InvoiceType::Basic,
-            'issue_date'            => Carbon::now(),
-            'status'                => InvoiceStatus::PROCESSING,
-            'number'                => '',
-            'total_net'             => BigDecimal::of('0'),
-            'total_tax'             => BigDecimal::of('0'),
-            'total_gross'           => BigDecimal::of('0'),
-            'currency'              => Currency::POLISH_CURRENCY_CODE,
-            'exchange_rate'         => BigDecimal::of('1.0'),
-            'seller'                => new InvoicePartyDTO(),
-            'buyer'                 => new InvoicePartyDTO(),
-            'body'                  => new InvoiceBodyDTO(
+            'type' => InvoiceType::Basic,
+            'issue_date' => Carbon::now(),
+            'status' => InvoiceStatus::PROCESSING,
+            'number' => '',
+            'total_net' => BigDecimal::of('0'),
+            'total_tax' => BigDecimal::of('0'),
+            'total_gross' => BigDecimal::of('0'),
+            'currency' => Currency::POLISH_CURRENCY_CODE,
+            'exchange_rate' => BigDecimal::of('1.0'),
+            'seller' => new InvoicePartyDTO,
+            'buyer' => new InvoicePartyDTO,
+            'body' => new InvoiceBodyDTO(
                 lines: [],
                 vatSummary: [],
                 exchange: new InvoiceExchangeDTO(Currency::POLISH_CURRENCY_CODE),
                 description: null,
             ),
-            'payment'               => InvoicePaymentDTO::default(),
-            'options'               => new InvoiceOptionsDTO(),
+            'payment' => InvoicePaymentDTO::default(),
+            'options' => new InvoiceOptionsDTO,
         ]);
 
         $media = $expense->addMedia($file)->toMediaCollection('attachments');
@@ -57,15 +57,15 @@ class CreateExpenseForOcr
     {
         // @phpstan-ignore-next-line
         return $expense->ocrRequest()->create([
-            'tenant_id'            => $expense->tenant_id,
-            'media_id'             => $media->id,
-            'status'               => OcrRequestStatus::Pending->value,
-            'created_by'           => Auth::id(),
+            'tenant_id' => $expense->tenant_id,
+            'media_id' => $media->id,
+            'status' => OcrRequestStatus::Pending->value,
+            'created_by' => Auth::id(),
             'external_document_id' => null,
-            'result'               => null,
-            'errors'               => null,
-            'started_at'           => null,
-            'finished_at'          => null,
+            'result' => null,
+            'errors' => null,
+            'started_at' => null,
+            'finished_at' => null,
         ]);
     }
 }

@@ -24,16 +24,16 @@ class UpdateTenantAddressRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'id'          => ['required', 'ulid', 'exists:addresses,id'],
-            'country'     => ['required', 'string', 'max:2', 'exists:countries,code'],
-            'postalCode'  => ['nullable', 'string', 'max:20'],
-            'city'        => ['required', 'string', 'max:255'],
-            'street'      => ['nullable', 'string', 'max:255'],
-            'building'    => ['nullable', 'string', 'max:20'],
-            'flat'        => ['nullable', 'string', 'max:20'],
+            'id' => ['required', 'ulid', 'exists:addresses,id'],
+            'country' => ['required', 'string', 'max:2', 'exists:countries,code'],
+            'postalCode' => ['nullable', 'string', 'max:20'],
+            'city' => ['required', 'string', 'max:255'],
+            'street' => ['nullable', 'string', 'max:255'],
+            'building' => ['nullable', 'string', 'max:20'],
+            'flat' => ['nullable', 'string', 'max:20'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'type'        => ['required', Rule::enum(AddressType::class)],
-            'isDefault'   => ['boolean'],
+            'type' => ['required', Rule::enum(AddressType::class)],
+            'isDefault' => ['boolean'],
         ];
     }
 }

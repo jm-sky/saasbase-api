@@ -29,7 +29,7 @@ final class StringField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!is_string($this->value)) {
+        if (! is_string($this->value)) {
             throw new \InvalidArgumentException('StringField value must be a string');
         }
     }

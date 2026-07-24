@@ -10,12 +10,12 @@ class CommentMeta implements Castable
     public function __construct(
         public bool $isPinned = false,
         public ?string $displayColor = null,
-    ) {
-    }
+    ) {}
 
     public static function castUsing(array $arguments): CastsAttributes
     {
-        return new class() implements CastsAttributes {
+        return new class implements CastsAttributes
+        {
             public function get($model, string $key, $value, array $attributes): ?CommentMeta
             {
                 if (is_null($value)) {
@@ -36,12 +36,12 @@ class CommentMeta implements Castable
                     return null;
                 }
 
-                if (!$value instanceof CommentMeta) {
+                if (! $value instanceof CommentMeta) {
                     throw new \InvalidArgumentException('The given value is not a CommentMeta instance.');
                 }
 
                 return json_encode([
-                    'isPinned'     => $value->isPinned,
+                    'isPinned' => $value->isPinned,
                     'displayColor' => $value->displayColor,
                 ]);
             }

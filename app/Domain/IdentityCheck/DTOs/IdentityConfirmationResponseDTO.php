@@ -12,8 +12,7 @@ final class IdentityConfirmationResponseDTO extends BaseDataDTO
         public bool $confirmed,
         public ?array $errors,
         public ?array $signatureInfo,
-    ) {
-    }
+    ) {}
 
     public static function fromXmlValidationException(\RuntimeException $e): self
     {
@@ -53,9 +52,9 @@ final class IdentityConfirmationResponseDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'status'        => $this->status->value,
-            'confirmed'     => $this->confirmed,
-            'errors'        => $this->errors,
+            'status' => $this->status->value,
+            'confirmed' => $this->confirmed,
+            'errors' => $this->errors,
             'signatureInfo' => $this->signatureInfo,
         ];
     }

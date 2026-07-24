@@ -18,8 +18,7 @@ class DirectMessageController extends Controller
 
     public function __construct(
         protected DirectMessageService $dmService
-    ) {
-    }
+    ) {}
 
     /**
      * Create or get a direct message room for the current user and another user.
@@ -28,10 +27,10 @@ class DirectMessageController extends Controller
     {
         /** @var User $currentUser */
         $currentUser = $request->user();
-        $tenantId    = $currentUser->getTenantId();
-        $otherUser   = User::findOrFail($request->getUserId());
+        $tenantId = $currentUser->getTenantId();
+        $otherUser = User::findOrFail($request->getUserId());
 
-        if ($otherUser->id === $currentUser->id && !self::ALLOW_SELF_MESSAGE) {
+        if ($otherUser->id === $currentUser->id && ! self::ALLOW_SELF_MESSAGE) {
             return response()->json(['message' => 'Cannot create a direct message room with yourself.'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -44,7 +43,7 @@ class DirectMessageController extends Controller
         );
 
         $room = $this->dmService->findOrCreateRoom($tenantId, $currentUser, $otherUser);
-        $dto  = ChatRoomDTO::fromModel($room);
+        $dto = ChatRoomDTO::fromModel($room);
 
         return response()->json([
             'data' => $dto,
@@ -57,8 +56,8 @@ class DirectMessageController extends Controller
     public function listRooms(Request $request): JsonResponse
     {
         /** @var User $currentUser */
-        $currentUser   = $request->user();
-        $tenantId      = $currentUser->getTenantId();
+        $currentUser = $request->user();
+        $tenantId = $currentUser->getTenantId();
 
         $rooms = ChatRoom::where('tenant_id', $tenantId)
             ->where('type', 'direct')
@@ -66,8 +65,7 @@ class DirectMessageController extends Controller
             ->whereHas('participants', function ($q) use ($currentUser) {
                 $q->where('user_id', $currentUser->id);
             })
-            ->get()
-        ;
+            ->get();
 
         $rooms = ChatRoomDTO::collect($rooms);
 

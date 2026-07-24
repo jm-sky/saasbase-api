@@ -21,8 +21,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::post('/', 'upload')->name('upload');
             Route::get('/', 'show')->name('show');
             Route::delete('/', 'delete')->name('delete');
-        })
-    ;
+        });
 
     Route::controller(ProductAttachmentsController::class)
         ->prefix('products/{product}/attachments')
@@ -34,8 +33,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::get('{media}/download', 'download')->name('download');
             Route::get('{media}/preview', 'preview')->name('preview');
             Route::delete('{media}', 'destroy')->name('destroy');
-        })
-    ;
+        });
 
     Route::prefix('products/{product}/tags')
         ->name('products.tags.')
@@ -44,8 +42,7 @@ Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->
             Route::post('/', [ProductTagsController::class, 'store'])->name('store');
             Route::patch('/', [ProductTagsController::class, 'sync'])->name('sync');
             Route::delete('{tag}', [ProductTagsController::class, 'destroy'])->name('destroy');
-        })
-    ;
+        });
 
     Route::apiResource('products.comments', ProductCommentsController::class)->names('products.comments');
 

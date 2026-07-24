@@ -17,8 +17,7 @@ class SignatureBasedIdentityCheckService
     public function __construct(
         protected SignatureFileDetectorService $signatureFileDetectorService,
         protected SignatureVerifierDispatcher $signatureVerifierDispatcher,
-    ) {
-    }
+    ) {}
 
     public function check(string $content): GenericSignaturesVerificationResultDTO
     {
@@ -36,11 +35,11 @@ class SignatureBasedIdentityCheckService
 
         return IdentityCheck::create([
             'verifiable_type' => User::class,
-            'verifiable_id'   => $user->id,
-            'purpose'         => $purpose,
-            'method'          => IdentityCheckMethod::Epuap,
-            'status'          => $signature ? IdentityCheckStatus::Verified : IdentityCheckStatus::Rejected,
-            'data'            => [
+            'verifiable_id' => $user->id,
+            'purpose' => $purpose,
+            'method' => IdentityCheckMethod::Epuap,
+            'status' => $signature ? IdentityCheckStatus::Verified : IdentityCheckStatus::Rejected,
+            'data' => [
                 'signature' => $signature,
             ],
         ]);
@@ -56,7 +55,6 @@ class SignatureBasedIdentityCheckService
                 && $signature->signerIdentity->lastName === $user->last_name
                 // PESEL is optional, but if it's present, it must match
                 && ($user->personalData?->pesel ? $signature->signerIdentity?->pesel === $user->personalData?->pesel : true)
-            )
-        ;
+            );
     }
 }

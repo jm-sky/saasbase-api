@@ -15,8 +15,8 @@ trait RespondsWithToken
     {
         return [
             'accessToken' => $token,
-            'tokenType'   => 'bearer',
-            'expiresIn'   => JWTAuth::factory()->getTTL() * 60,
+            'tokenType' => 'bearer',
+            'expiresIn' => JWTAuth::factory()->getTTL() * 60,
         ];
     }
 
@@ -24,7 +24,7 @@ trait RespondsWithToken
     {
         $user = $user ?? Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             throw new \RuntimeException('User not found');
         }
 
@@ -33,8 +33,7 @@ trait RespondsWithToken
 
         return response()
             ->json($this->tokenResponseData($token))
-            ->withCookie($this->getRefreshTokenCookie($refreshToken, remember: $remember))
-        ;
+            ->withCookie($this->getRefreshTokenCookie($refreshToken, remember: $remember));
     }
 
     protected function getRefreshTokenCookie(string $refreshToken, bool $remember = false): Cookie

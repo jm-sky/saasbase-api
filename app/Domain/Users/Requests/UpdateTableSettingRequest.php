@@ -14,8 +14,8 @@ class UpdateTableSettingRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['nullable', 'string', 'max:255'],
-            'config'    => ['required', 'array'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'config' => ['required', 'array'],
             'isDefault' => ['boolean'],
         ];
     }

@@ -7,8 +7,7 @@ class OpenRouterDeltaData
     public function __construct(
         public ?string $role = null,
         public ?string $content = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -21,7 +20,7 @@ class OpenRouterDeltaData
     public function toArray(): array
     {
         return [
-            'role'    => $this->role,
+            'role' => $this->role,
             'content' => $this->content,
         ];
     }

@@ -24,8 +24,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 class TenantBranding extends BaseModel implements HasMedia
 {
     use BelongsToTenant;
-    use InteractsWithMedia;
     use HasMediaSignedUrls;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'tenant_id',
@@ -50,45 +50,37 @@ class TenantBranding extends BaseModel implements HasMedia
     {
         $this->addMediaCollection('logo')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('favicon')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/x-icon', 'image/png']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/x-icon', 'image/png']));
 
         $this->addMediaCollection('custom_font')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['font/woff', 'font/woff2']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['font/woff', 'font/woff2']));
 
         $this->addMediaCollection('pdf_logo')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('email_header_image')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
     }
 
     public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.tenants.logo.size', 256))
-            ->height(config('domains.tenants.logo.size', 256))
-        ;
+            ->height(config('domains.tenants.logo.size', 256));
 
         $this->addMediaConversion('pdf')
             ->width(config('domains.tenants.pdf_logo.size', 800))
-            ->height(config('domains.tenants.pdf_logo.size', 800))
-        ;
+            ->height(config('domains.tenants.pdf_logo.size', 800));
 
         $this->addMediaConversion('email')
             ->width(config('domains.tenants.email_header_image.size', 600))
-            ->height(config('domains.tenants.email_header_image.size', 200))
-        ;
+            ->height(config('domains.tenants.email_header_image.size', 200));
     }
 }

@@ -21,15 +21,15 @@ class TenantIntegrationResource extends JsonResource
     {
         /* @var TenantIntegration $this */
         return [
-            'id'           => $this->id,
-            'tenantId'     => $this->tenant_id,
-            'type'         => $this->type,
-            'enabled'      => $this->enabled,
-            'credentials'  => $this->camelizeObjectKeys($this->credentials),
-            'meta'         => $this->meta,
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'type' => $this->type,
+            'enabled' => $this->enabled,
+            'credentials' => $this->camelizeObjectKeys($this->credentials),
+            'meta' => $this->meta,
             'lastSyncedAt' => $this->last_synced_at?->toIso8601String(),
-            'createdAt'    => $this->created_at->toIso8601String(),
-            'updatedAt'    => $this->updated_at->toIso8601String(),
+            'createdAt' => $this->created_at->toIso8601String(),
+            'updatedAt' => $this->updated_at->toIso8601String(),
         ];
     }
 

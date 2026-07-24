@@ -15,7 +15,7 @@ class StoreUserPersonalDataRequest extends BaseFormRequest
     {
         return [
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
-            'pesel'  => ['required', 'string', 'max:11'],
+            'pesel' => ['required', 'string', 'max:11'],
         ];
     }
 }

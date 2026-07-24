@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $user_id
  * @property Carbon $reminder_at
  * @property string $reminder_type
- * @property bool   $is_sent
+ * @property bool $is_sent
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -29,7 +29,7 @@ class EventReminder extends BaseModel
 
     protected $casts = [
         'reminder_at' => 'datetime',
-        'is_sent'     => 'boolean',
+        'is_sent' => 'boolean',
     ];
 
     public function event(): BelongsTo

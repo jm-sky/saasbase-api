@@ -13,12 +13,12 @@ use App\Domain\Financial\Enums\PaymentStatus;
 /**
  * Comprehensive status tracking for invoices/expenses.
  *
- * @property InvoiceStatus    $general    - Overall workflow status
- * @property OcrRequestStatus $ocr        - OCR processing status
+ * @property InvoiceStatus $general - Overall workflow status
+ * @property OcrRequestStatus $ocr - OCR processing status
  * @property AllocationStatus $allocation - Cost allocation status
- * @property ApprovalStatus   $approval   - Approval workflow status
- * @property DeliveryStatus   $delivery   - Sending/delivery status
- * @property PaymentStatus    $payment    - Payment status
+ * @property ApprovalStatus $approval - Approval workflow status
+ * @property DeliveryStatus $delivery - Sending/delivery status
+ * @property PaymentStatus $payment - Payment status
  */
 final class InvoiceStatusDTO extends BaseDataDTO
 {
@@ -29,18 +29,17 @@ final class InvoiceStatusDTO extends BaseDataDTO
         public ApprovalStatus $approval,
         public DeliveryStatus $delivery,
         public PaymentStatus $payment,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'general'    => $this->general->value,
-            'ocr'        => $this->ocr->value,
+            'general' => $this->general->value,
+            'ocr' => $this->ocr->value,
             'allocation' => $this->allocation->value,
-            'approval'   => $this->approval->value,
-            'delivery'   => $this->delivery->value,
-            'payment'    => $this->payment->value,
+            'approval' => $this->approval->value,
+            'delivery' => $this->delivery->value,
+            'payment' => $this->payment->value,
         ];
     }
 
@@ -77,20 +76,20 @@ final class InvoiceStatusDTO extends BaseDataDTO
     public function getOverallDescription(): string
     {
         // Prioritize showing blocking issues
-        if (OcrRequestStatus::Failed === $this->ocr) {
+        if ($this->ocr === OcrRequestStatus::Failed) {
             return 'OCR Processing Failed';
         }
 
-        if (ApprovalStatus::REJECTED === $this->approval) {
+        if ($this->approval === ApprovalStatus::REJECTED) {
             return 'Approval Rejected';
         }
 
-        if (DeliveryStatus::FAILED === $this->delivery) {
+        if ($this->delivery === DeliveryStatus::FAILED) {
             return 'Delivery Failed';
         }
 
         // Show current active process
-        if (OcrRequestStatus::Processing === $this->ocr) {
+        if ($this->ocr === OcrRequestStatus::Processing) {
             return 'Processing OCR';
         }
 
@@ -98,23 +97,23 @@ final class InvoiceStatusDTO extends BaseDataDTO
             return 'Awaiting Allocation';
         }
 
-        if (ApprovalStatus::PENDING === $this->approval) {
+        if ($this->approval === ApprovalStatus::PENDING) {
             return 'Awaiting Approval';
         }
 
-        if (DeliveryStatus::PENDING === $this->delivery) {
+        if ($this->delivery === DeliveryStatus::PENDING) {
             return 'Preparing for Delivery';
         }
 
         if ($this->delivery->isCompleted() && $this->payment->requiresAction()) {
-            if (PaymentStatus::OVERDUE === $this->payment) {
+            if ($this->payment === PaymentStatus::OVERDUE) {
                 return 'Payment Overdue';
             }
 
             return 'Awaiting Payment';
         }
 
-        if (PaymentStatus::PAID === $this->payment) {
+        if ($this->payment === PaymentStatus::PAID) {
             return 'Completed';
         }
 
@@ -126,10 +125,10 @@ final class InvoiceStatusDTO extends BaseDataDTO
      */
     public function needsAttention(): bool
     {
-        return OcrRequestStatus::Failed === $this->ocr
-            || ApprovalStatus::REJECTED === $this->approval
-            || DeliveryStatus::FAILED === $this->delivery
-            || PaymentStatus::OVERDUE === $this->payment;
+        return $this->ocr === OcrRequestStatus::Failed
+            || $this->approval === ApprovalStatus::REJECTED
+            || $this->delivery === DeliveryStatus::FAILED
+            || $this->payment === PaymentStatus::OVERDUE;
     }
 
     /**
@@ -138,9 +137,9 @@ final class InvoiceStatusDTO extends BaseDataDTO
     public function isReadyForNextStage(): bool
     {
         return match ($this->general) {
-            InvoiceStatus::DRAFT                               => OcrRequestStatus::Completed === $this->ocr,
-            InvoiceStatus::PROCESSING                          => $this->isProcessingComplete(),
-            InvoiceStatus::ISSUED                              => true,
+            InvoiceStatus::DRAFT => $this->ocr === OcrRequestStatus::Completed,
+            InvoiceStatus::PROCESSING => $this->isProcessingComplete(),
+            InvoiceStatus::ISSUED => true,
             InvoiceStatus::COMPLETED, InvoiceStatus::CANCELLED => false,
         };
     }
@@ -150,11 +149,11 @@ final class InvoiceStatusDTO extends BaseDataDTO
      */
     private function isProcessingComplete(): bool
     {
-        $ocrComplete        = OcrRequestStatus::Completed === $this->ocr;
-        $allocationComplete = AllocationStatus::NOT_REQUIRED === $this->allocation
-            || AllocationStatus::FULLY_ALLOCATED === $this->allocation;
-        $approvalComplete = ApprovalStatus::NOT_REQUIRED === $this->approval
-            || ApprovalStatus::APPROVED === $this->approval;
+        $ocrComplete = $this->ocr === OcrRequestStatus::Completed;
+        $allocationComplete = $this->allocation === AllocationStatus::NOT_REQUIRED
+            || $this->allocation === AllocationStatus::FULLY_ALLOCATED;
+        $approvalComplete = $this->approval === ApprovalStatus::NOT_REQUIRED
+            || $this->approval === ApprovalStatus::APPROVED;
 
         return $ocrComplete && $allocationComplete && $approvalComplete;
     }
@@ -166,7 +165,7 @@ final class InvoiceStatusDTO extends BaseDataDTO
     {
         $actionable = [];
 
-        if (OcrRequestStatus::Failed === $this->ocr) {
+        if ($this->ocr === OcrRequestStatus::Failed) {
             $actionable[] = 'ocr';
         }
 
@@ -174,15 +173,15 @@ final class InvoiceStatusDTO extends BaseDataDTO
             $actionable[] = 'allocation';
         }
 
-        if (ApprovalStatus::PENDING === $this->approval) {
+        if ($this->approval === ApprovalStatus::PENDING) {
             $actionable[] = 'approval';
         }
 
-        if (ApprovalStatus::REJECTED === $this->approval) {
+        if ($this->approval === ApprovalStatus::REJECTED) {
             $actionable[] = 'approval';
         }
 
-        if (DeliveryStatus::FAILED === $this->delivery) {
+        if ($this->delivery === DeliveryStatus::FAILED) {
             $actionable[] = 'delivery';
         }
 

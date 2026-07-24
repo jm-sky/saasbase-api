@@ -15,13 +15,13 @@ final class AddressField extends ValueWrapper
         ?string $rawAddress
     ) {
         parent::__construct('address', $confidence, [
-            'houseNumber'   => $houseNumber,
-            'road'          => $road,
-            'postalCode'    => $postalCode,
-            'city'          => $city,
+            'houseNumber' => $houseNumber,
+            'road' => $road,
+            'postalCode' => $postalCode,
+            'city' => $city,
             'countryRegion' => $countryRegion,
             'streetAddress' => $streetAddress,
-            'rawAddress'    => $rawAddress,
+            'rawAddress' => $rawAddress,
         ]);
     }
 
@@ -55,14 +55,14 @@ final class AddressField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!is_array($this->value)) {
+        if (! is_array($this->value)) {
             throw new \InvalidArgumentException('AddressField value must be an array');
         }
 
         $requiredFields = ['houseNumber', 'road', 'postalCode', 'city', 'countryRegion', 'streetAddress'];
 
         foreach ($requiredFields as $field) {
-            if (!array_key_exists($field, $this->value)) {
+            if (! array_key_exists($field, $this->value)) {
                 throw new \InvalidArgumentException("AddressField missing required field: {$field}");
             }
         }

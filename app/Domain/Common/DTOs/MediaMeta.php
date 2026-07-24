@@ -10,12 +10,12 @@ class MediaMeta implements Castable
     public function __construct(
         public ?string $altText = null,
         public ?string $license = null,
-    ) {
-    }
+    ) {}
 
     public static function castUsing(array $arguments): CastsAttributes
     {
-        return new class() implements CastsAttributes {
+        return new class implements CastsAttributes
+        {
             public function get($model, string $key, $value, array $attributes): ?MediaMeta
             {
                 if (is_null($value)) {
@@ -36,7 +36,7 @@ class MediaMeta implements Castable
                     return null;
                 }
 
-                if (!$value instanceof MediaMeta) {
+                if (! $value instanceof MediaMeta) {
                     throw new \InvalidArgumentException('The given value is not a MediaMeta instance.');
                 }
 

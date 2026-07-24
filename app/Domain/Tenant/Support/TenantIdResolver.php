@@ -21,7 +21,7 @@ class TenantIdResolver
 
             return $user?->getTenantId() ?? Tenant::$BYPASSED_TENANT_ID;
         } catch (JWTException) {
-            throw new TenantNotFoundException();
+            throw new TenantNotFoundException;
         }
     }
 }

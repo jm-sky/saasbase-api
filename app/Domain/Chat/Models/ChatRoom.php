@@ -11,16 +11,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                       $id
- * @property string                       $tenant_id
- * @property string                       $name
- * @property string                       $type
- * @property ?string                      $description
- * @property Carbon                       $created_at
- * @property Carbon                       $updated_at
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property string $type
+ * @property ?string $description
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property Collection|ChatParticipant[] $participants
- * @property Collection|ChatMessage[]     $messages
- * @property ?Tenant                      $tenant
+ * @property Collection|ChatMessage[] $messages
+ * @property ?Tenant $tenant
  */
 class ChatRoom extends BaseModel
 {

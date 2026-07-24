@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<User>
  *
- * @property ?string $id        UUID
- * @property string  $name
+ * @property ?string $id UUID
+ * @property string $name
  * @property ?string $email
  * @property ?string $avatarUrl
  * @property ?Carbon $createdAt
@@ -24,8 +24,7 @@ final class UserPreviewDTO extends BaseDTO
         public readonly ?string $id = null,
         public readonly ?string $avatarUrl = null,
         public readonly ?Carbon $createdAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -53,9 +52,9 @@ final class UserPreviewDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'name'      => $this->name,
-            'email'     => $this->email,
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
             'avatarUrl' => $this->avatarUrl,
             'createdAt' => $this->createdAt?->toIso8601String(),
         ];

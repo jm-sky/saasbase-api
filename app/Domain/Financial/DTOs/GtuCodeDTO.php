@@ -19,8 +19,7 @@ final class GtuCodeDTO extends BaseDataDTO
         public ?Carbon $effectiveTo = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -42,17 +41,17 @@ final class GtuCodeDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'id'                    => $this->id,
-            'code'                  => $this->code,
-            'name'                  => $this->name,
-            'description'           => $this->description,
-            'amount_threshold_pln'  => $this->amountThresholdPln,
+            'id' => $this->id,
+            'code' => $this->code,
+            'name' => $this->name,
+            'description' => $this->description,
+            'amount_threshold_pln' => $this->amountThresholdPln,
             'applicable_conditions' => $this->applicableConditions,
-            'is_active'             => $this->isActive,
-            'effective_from'        => $this->effectiveFrom?->toIso8601String(),
-            'effective_to'          => $this->effectiveTo?->toIso8601String(),
-            'created_at'            => $this->createdAt?->toIso8601String(),
-            'updated_at'            => $this->updatedAt?->toIso8601String(),
+            'is_active' => $this->isActive,
+            'effective_from' => $this->effectiveFrom?->toIso8601String(),
+            'effective_to' => $this->effectiveTo?->toIso8601String(),
+            'created_at' => $this->createdAt?->toIso8601String(),
+            'updated_at' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

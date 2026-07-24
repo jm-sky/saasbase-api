@@ -10,20 +10,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string  $id
- * @property string  $tenant_id
- * @property string  $user_id
- * @property string  $name
- * @property string  $key
- * @property array   $scopes
- * @property bool    $is_active
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $user_id
+ * @property string $name
+ * @property string $key
+ * @property array $scopes
+ * @property bool $is_active
  * @property ?Carbon $last_used_at
  * @property ?Carbon $expires_at
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property ?Carbon $deleted_at
- * @property Tenant  $tenant
- * @property User    $user
+ * @property Tenant $tenant
+ * @property User $user
  */
 class ApiKey extends BaseModel
 {
@@ -42,10 +42,10 @@ class ApiKey extends BaseModel
     ];
 
     protected $casts = [
-        'scopes'       => 'array',
-        'is_active'    => 'boolean',
+        'scopes' => 'array',
+        'is_active' => 'boolean',
         'last_used_at' => 'datetime',
-        'expires_at'   => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     public function tenant(): BelongsTo

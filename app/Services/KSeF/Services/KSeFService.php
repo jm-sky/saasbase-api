@@ -34,7 +34,7 @@ class KSeFService
 
     public function initSession(string $encryptedToken): InitSessionResponseDTO
     {
-        $request  = new InitSessionTokenRequest($encryptedToken);
+        $request = new InitSessionTokenRequest($encryptedToken);
         $response = $this->connector->send($request);
 
         return $response->dto();
@@ -51,7 +51,7 @@ class KSeFService
 
     public function searchInvoices(QueryInvoiceRequestDTO $queryData): QueryInvoiceResponseDTO
     {
-        $request  = new QueryInvoiceSyncRequest($queryData);
+        $request = new QueryInvoiceSyncRequest($queryData);
         $response = $this->connector->send($request);
 
         return $response->dto();
@@ -94,8 +94,8 @@ class KSeFService
         int $pageOffset = 0
     ): QueryInvoiceResponseDTO {
         $criteria = new QueryCriteriaDTO(
-            subjectByIdentifierList: 'by' === $identifierType ? $identifiers : null,
-            subjectToIdentifierList: 'to' === $identifierType ? $identifiers : null
+            subjectByIdentifierList: $identifierType === 'by' ? $identifiers : null,
+            subjectToIdentifierList: $identifierType === 'to' ? $identifiers : null
         );
 
         $queryData = new QueryInvoiceRequestDTO(
@@ -119,7 +119,7 @@ class KSeFService
      */
     public function initSessionSigned(string $signedDocument): InitSessionResponseDTO
     {
-        $request  = new InitSessionSignedRequest($signedDocument);
+        $request = new InitSessionSignedRequest($signedDocument);
         $response = $this->connector->send($request);
 
         return $response->dto();
@@ -130,7 +130,7 @@ class KSeFService
      */
     public function terminateSession(): TerminateSessionResponseDTO
     {
-        $request  = new TerminateSessionRequest();
+        $request = new TerminateSessionRequest;
         $response = $this->connector->send($request);
 
         return $response->dto();
@@ -141,7 +141,7 @@ class KSeFService
      */
     public function sendInvoice(SendInvoiceRequestDTO $invoiceData): SendInvoiceResponseDTO
     {
-        $request  = new SendInvoiceRequest($invoiceData);
+        $request = new SendInvoiceRequest($invoiceData);
         $response = $this->connector->send($request);
 
         return $response->dto();
@@ -152,7 +152,7 @@ class KSeFService
      */
     public function getInvoiceStatus(string $elementReferenceNumber): StatusInvoiceResponseDTO
     {
-        $request  = new InvoiceStatusRequest($elementReferenceNumber);
+        $request = new InvoiceStatusRequest($elementReferenceNumber);
         $response = $this->connector->send($request);
 
         return $response->dto();
@@ -163,7 +163,7 @@ class KSeFService
      */
     public function getInvoice(string $ksefReferenceNumber): mixed
     {
-        $request  = new InvoiceGetRequest($ksefReferenceNumber);
+        $request = new InvoiceGetRequest($ksefReferenceNumber);
         $response = $this->connector->send($request);
 
         // This endpoint returns raw invoice data (XML/JSON)
@@ -175,7 +175,7 @@ class KSeFService
      */
     public function queryCredentials(QueryCredentialRequestDTO $queryData): mixed
     {
-        $request  = new QueryCredentialSyncRequest($queryData);
+        $request = new QueryCredentialSyncRequest($queryData);
         $response = $this->connector->send($request);
 
         // Return raw response for now - would need proper DTO
@@ -190,7 +190,7 @@ class KSeFService
         ?string $sourceIdentifier = null,
         ?string $targetIdentifier = null
     ): mixed {
-        $request  = new QueryCredentialContextSyncRequest($contextNip, $sourceIdentifier, $targetIdentifier);
+        $request = new QueryCredentialContextSyncRequest($contextNip, $sourceIdentifier, $targetIdentifier);
         $response = $this->connector->send($request);
 
         // Return raw response for now - would need proper DTO

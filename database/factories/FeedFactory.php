@@ -16,14 +16,14 @@ class FeedFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid()->toString(),
-            'tenant_id'   => Str::ulid()->toString(),
-            'user_id'     => Str::ulid()->toString(),
-            'title'       => $this->faker->sentence(6, true),
-            'content'     => $this->faker->paragraphs(3, true),
-            'content_html'=> null,
-            'created_at'  => now(),
-            'updated_at'  => now(),
+            'id' => Str::ulid()->toString(),
+            'tenant_id' => Str::ulid()->toString(),
+            'user_id' => Str::ulid()->toString(),
+            'title' => $this->faker->sentence(6, true),
+            'content' => $this->faker->paragraphs(3, true),
+            'content_html' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

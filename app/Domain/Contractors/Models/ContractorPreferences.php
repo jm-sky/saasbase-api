@@ -9,16 +9,16 @@ use App\Domain\Tenant\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string         $id
- * @property string         $tenant_id
- * @property string         $contractor_id
- * @property ?string        $default_payment_method_id
- * @property ?string        $default_currency_code
- * @property ?string        $default_language
- * @property ?int           $default_payment_days
- * @property ?array         $default_tags
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $contractor_id
+ * @property ?string $default_payment_method_id
+ * @property ?string $default_currency_code
+ * @property ?string $default_language
+ * @property ?int $default_payment_days
+ * @property ?array $default_tags
  * @property ?PaymentMethod $defaultPaymentMethod
- * @property ?Currency      $defaultCurrency
+ * @property ?Currency $defaultCurrency
  */
 class ContractorPreferences extends BaseModel
 {
@@ -41,7 +41,7 @@ class ContractorPreferences extends BaseModel
 
     protected $casts = [
         'default_payment_days' => 'integer',
-        'default_tags'         => 'array',
+        'default_tags' => 'array',
     ];
 
     public function contractor(): BelongsTo

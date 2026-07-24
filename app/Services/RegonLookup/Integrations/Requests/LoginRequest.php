@@ -19,7 +19,7 @@ class LoginRequest extends BaseRegonRequest
 
         $userKey = config('services.regon.user_key');
 
-        if (!$userKey) {
+        if (! $userKey) {
             throw new RegonLookupException('REGON API user key not configured.');
         }
 
@@ -35,7 +35,7 @@ class LoginRequest extends BaseRegonRequest
 
     public function createDtoFromResponse(Response $response): RegonAuthResultDTO
     {
-        $data       = $response->xml();
+        $data = $response->xml();
         $sessionKey = (string) $data->{'ZalogujResponse'}->{'ZalogujResult'};
 
         return new RegonAuthResultDTO($sessionKey);

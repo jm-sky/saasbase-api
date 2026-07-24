@@ -17,14 +17,14 @@ class UpdateNumberingTemplateRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'         => ['sometimes', 'string', 'max:255'],
-            'invoiceType'  => ['sometimes', new Enum(InvoiceType::class)],
-            'format'       => ['sometimes', 'string', 'max:255'],
-            'nextNumber'   => ['sometimes', 'integer', 'min:1'],
-            'resetPeriod'  => ['sometimes', new Enum(ResetPeriod::class)],
-            'prefix'       => ['sometimes', 'nullable', 'string', 'max:50'],
-            'suffix'       => ['sometimes', 'nullable', 'string', 'max:50'],
-            'isDefault'    => ['sometimes', 'boolean'],
+            'name' => ['sometimes', 'string', 'max:255'],
+            'invoiceType' => ['sometimes', new Enum(InvoiceType::class)],
+            'format' => ['sometimes', 'string', 'max:255'],
+            'nextNumber' => ['sometimes', 'integer', 'min:1'],
+            'resetPeriod' => ['sometimes', new Enum(ResetPeriod::class)],
+            'prefix' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'suffix' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'isDefault' => ['sometimes', 'boolean'],
         ];
     }
 }

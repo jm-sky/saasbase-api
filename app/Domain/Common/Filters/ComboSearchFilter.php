@@ -20,7 +20,7 @@ class ComboSearchFilter implements Filter
     {
         return $query->where(function ($q) use ($value) {
             foreach ($this->columns as $column) {
-                $q->orWhereRaw('LOWER(' . $this->wrapColumn($column) . ') LIKE ?', ['%' . strtolower($value) . '%']);
+                $q->orWhereRaw('LOWER('.$this->wrapColumn($column).') LIKE ?', ['%'.strtolower($value).'%']);
             }
         });
     }

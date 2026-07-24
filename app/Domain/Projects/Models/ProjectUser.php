@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @property string      $id
- * @property string      $project_id
- * @property string      $user_id
- * @property string      $project_role_id
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
- * @property Project     $project
- * @property User        $user
+ * @property string $id
+ * @property string $project_id
+ * @property string $user_id
+ * @property string $project_role_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Project $project
+ * @property User $user
  * @property ProjectRole $role
  */
 class ProjectUser extends Pivot

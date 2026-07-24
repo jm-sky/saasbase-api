@@ -24,15 +24,15 @@ class UpdateContractorAddressRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'country'     => ['sometimes', 'required', 'string', 'max:2', 'exists:countries,code'],
-            'postalCode'  => ['nullable', 'string', 'max:20'],
-            'city'        => ['sometimes', 'required', 'string', 'max:255'],
-            'street'      => ['nullable', 'string', 'max:255'],
-            'building'    => ['nullable', 'string', 'max:20'],
-            'flat'        => ['nullable', 'string', 'max:20'],
+            'country' => ['sometimes', 'required', 'string', 'max:2', 'exists:countries,code'],
+            'postalCode' => ['nullable', 'string', 'max:20'],
+            'city' => ['sometimes', 'required', 'string', 'max:255'],
+            'street' => ['nullable', 'string', 'max:255'],
+            'building' => ['nullable', 'string', 'max:20'],
+            'flat' => ['nullable', 'string', 'max:20'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'type'        => ['sometimes', 'required', Rule::enum(AddressType::class)],
-            'isDefault'   => ['boolean'],
+            'type' => ['sometimes', 'required', Rule::enum(AddressType::class)],
+            'isDefault' => ['boolean'],
         ];
     }
 }

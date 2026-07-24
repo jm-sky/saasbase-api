@@ -11,15 +11,14 @@ final class InvoicePaymentBankAccountDTO extends BaseDataDTO
         public ?string $country = null,
         public ?string $swift = null,
         public ?string $bankName = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'iban'     => $this->iban,
-            'country'  => $this->country,
-            'swift'    => $this->swift,
+            'iban' => $this->iban,
+            'country' => $this->country,
+            'swift' => $this->swift,
             'bankName' => $this->bankName,
         ];
     }

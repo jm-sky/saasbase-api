@@ -31,10 +31,10 @@ class TenantApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->user = $this->authenticateUser($this->tenant);
     }
 
-    public function testCanListTenants(): void
+    public function test_can_list_tenants(): void
     {
         // Clear any existing tenants to ensure clean state
         Tenant::query()->forceDelete();
@@ -57,8 +57,7 @@ class TenantApiTest extends TestCase
                         'deletedAt',
                     ],
                 ],
-            ])
-        ;
+            ]);
 
         // Verify we got exactly the tenants we created
         $responseIds = collect($response->json('data'))->pluck('id')->sort()->values();
@@ -66,7 +65,7 @@ class TenantApiTest extends TestCase
         $this->assertEquals($expectedIds, $responseIds);
     }
 
-    public function testCanCreateTenant(): void
+    public function test_can_create_tenant(): void
     {
         $tenantData = [
             'tenant' => [
@@ -93,13 +92,12 @@ class TenantApiTest extends TestCase
                     'name' => $tenantData['tenant']['name'],
                     'slug' => $tenantData['tenant']['slug'],
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('tenants', $tenantData['tenant']);
     }
 
-    public function testCannotCreateTenantWithDuplicateSlug(): void
+    public function test_cannot_create_tenant_with_duplicate_slug(): void
     {
         $existingTenant = Tenant::factory()->create();
 
@@ -113,16 +111,15 @@ class TenantApiTest extends TestCase
         $response = $this->postJson($this->baseUrl, $tenantData);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['tenant.slug'])
-        ;
+            ->assertJsonValidationErrors(['tenant.slug']);
     }
 
-    public function testCanShowTenant(): void
+    public function test_can_show_tenant(): void
     {
         $tenant = Tenant::factory()->create();
         $this->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
-        $response = $this->getJson($this->baseUrl . '/' . $tenant->id);
+        $response = $this->getJson($this->baseUrl.'/'.$tenant->id);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -137,24 +134,23 @@ class TenantApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'id'   => $tenant->id,
+                    'id' => $tenant->id,
                     'name' => $tenant->name,
                     'slug' => $tenant->slug,
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanUpdateTenant(): void
+    public function test_can_update_tenant(): void
     {
-        $tenant     = Tenant::factory()->create();
+        $tenant = Tenant::factory()->create();
         $this->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
         $updateData = [
             'name' => 'Updated Name',
             'slug' => 'updated-slug',
         ];
 
-        $response = $this->putJson($this->baseUrl . '/' . $tenant->id, $updateData);
+        $response = $this->putJson($this->baseUrl.'/'.$tenant->id, $updateData);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -172,36 +168,35 @@ class TenantApiTest extends TestCase
                     'name' => $updateData['name'],
                     'slug' => $updateData['slug'],
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('tenants', $updateData);
     }
 
-    public function testCanDeleteTenant(): void
+    public function test_can_delete_tenant(): void
     {
         $tenant = Tenant::factory()->create();
         $this->user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
-        $response = $this->deleteJson($this->baseUrl . '/' . $tenant->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$tenant->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertSoftDeleted('tenants', ['id' => $tenant->id]);
     }
 
-    public function testReturns404ForNonexistentTenant(): void
+    public function test_returns404_for_nonexistent_tenant(): void
     {
-        $response = $this->getJson($this->baseUrl . '/nonexistent-id');
+        $response = $this->getJson($this->baseUrl.'/nonexistent-id');
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-    public function testCannotAccessTenantUserDoesNotBelongTo(): void
+    public function test_cannot_access_tenant_user_does_not_belong_to(): void
     {
         $unauthorizedTenant = Tenant::factory()->create();
         // Not attaching the tenant to the user
 
-        $response = $this->getJson($this->baseUrl . '/' . $unauthorizedTenant->id);
+        $response = $this->getJson($this->baseUrl.'/'.$unauthorizedTenant->id);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }

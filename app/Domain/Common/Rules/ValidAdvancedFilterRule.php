@@ -13,7 +13,7 @@ class ValidAdvancedFilterRule implements ValidationRule
 
     public function __construct(string $type = 'string', array $allowedOperators = [])
     {
-        $this->type             = $type;
+        $this->type = $type;
         $this->allowedOperators = $allowedOperators ?: AdvancedFilterOperator::values();
     }
 
@@ -22,20 +22,20 @@ class ValidAdvancedFilterRule implements ValidationRule
         if (is_array($value)) {
             foreach ($value as $operator => $val) {
                 $normalizedOperator = strtolower($operator);
-                $allowedOperators   = array_map('strtolower', $this->allowedOperators);
+                $allowedOperators = array_map('strtolower', $this->allowedOperators);
 
-                if (!in_array($normalizedOperator, $allowedOperators, true)) {
+                if (! in_array($normalizedOperator, $allowedOperators, true)) {
                     $fail("The :attribute filter contains an invalid operator: {$operator}.");
 
                     return;
                 }
 
-                if (!$this->validateValueByType($val, $this->type, $normalizedOperator, $fail)) {
+                if (! $this->validateValueByType($val, $this->type, $normalizedOperator, $fail)) {
                     return;
                 }
             }
         } else {
-            if (!$this->validateValueByType($value, $this->type, strtolower(AdvancedFilterOperator::Equals->value), $fail)) {
+            if (! $this->validateValueByType($value, $this->type, strtolower(AdvancedFilterOperator::Equals->value), $fail)) {
                 return;
             }
         }
@@ -50,8 +50,8 @@ class ValidAdvancedFilterRule implements ValidationRule
 
         // Set membership
         if (in_array($operator, [AdvancedFilterOperator::In->value, AdvancedFilterOperator::NotIn->value, AdvancedFilterOperator::NotInAlt->value], true)) {
-            if (!is_array($value) && !is_string($value)) {
-                $fail('The :attribute filter for operator ' . $operator . ' must be an array or comma-separated string.');
+            if (! is_array($value) && ! is_string($value)) {
+                $fail('The :attribute filter for operator '.$operator.' must be an array or comma-separated string.');
 
                 return false;
             }
@@ -62,28 +62,28 @@ class ValidAdvancedFilterRule implements ValidationRule
         // Between
         if ($operator === AdvancedFilterOperator::Between->value) {
             if (is_array($value)) {
-                if (2 !== count($value)) {
+                if (count($value) !== 2) {
                     $fail('The :attribute filter for between must have exactly two values.');
 
                     return false;
                 }
 
                 foreach ($value as $v) {
-                    if (!$this->validateSingleType($v, $type, $fail)) {
+                    if (! $this->validateSingleType($v, $type, $fail)) {
                         return false;
                     }
                 }
             } elseif (is_string($value)) {
                 $parts = explode(',', $value);
 
-                if (2 !== count($parts)) {
+                if (count($parts) !== 2) {
                     $fail('The :attribute filter for between must have exactly two comma-separated values.');
 
                     return false;
                 }
 
                 foreach ($parts as $v) {
-                    if (!$this->validateSingleType($v, $type, $fail)) {
+                    if (! $this->validateSingleType($v, $type, $fail)) {
                         return false;
                     }
                 }
@@ -98,14 +98,14 @@ class ValidAdvancedFilterRule implements ValidationRule
 
         // String operators
         if (in_array($operator, [AdvancedFilterOperator::Like->value, AdvancedFilterOperator::NotLike->value, AdvancedFilterOperator::NotLikeAlt->value, AdvancedFilterOperator::StartsWith->value, AdvancedFilterOperator::EndsWith->value, AdvancedFilterOperator::Regex->value], true)) {
-            if ('string' !== $type) {
-                $fail('The :attribute filter for operator ' . $operator . ' must be a string.');
+            if ($type !== 'string') {
+                $fail('The :attribute filter for operator '.$operator.' must be a string.');
 
                 return false;
             }
 
-            if (!is_string($value)) {
-                $fail('The :attribute filter for operator ' . $operator . ' must be a string value.');
+            if (! is_string($value)) {
+                $fail('The :attribute filter for operator '.$operator.' must be a string value.');
 
                 return false;
             }
@@ -120,12 +120,12 @@ class ValidAdvancedFilterRule implements ValidationRule
     protected function validateSingleType($value, string $type, \Closure $fail): bool
     {
         return match ($type) {
-            'string'          => is_string($value),
-            'int', 'integer'  => false !== filter_var($value, FILTER_VALIDATE_INT),
-            'float', 'double' => false !== filter_var($value, FILTER_VALIDATE_FLOAT),
-            'bool', 'boolean' => is_bool($value) || 0 === $value || 1 === $value || '0' === $value || '1' === $value || true === $value || false === $value,
-            'date'            => $this->validateDate($value),
-            default           => true,
+            'string' => is_string($value),
+            'int', 'integer' => filter_var($value, FILTER_VALIDATE_INT) !== false,
+            'float', 'double' => filter_var($value, FILTER_VALIDATE_FLOAT) !== false,
+            'bool', 'boolean' => is_bool($value) || $value === 0 || $value === 1 || $value === '0' || $value === '1' || $value === true || $value === false,
+            'date' => $this->validateDate($value),
+            default => true,
         };
     }
 
@@ -136,7 +136,7 @@ class ValidAdvancedFilterRule implements ValidationRule
         }
 
         if (is_string($value)) {
-            return false !== strtotime($value);
+            return strtotime($value) !== false;
         }
 
         return false;

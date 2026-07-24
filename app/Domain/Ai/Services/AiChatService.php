@@ -30,8 +30,8 @@ class AiChatService
         ?string $model = null,
         ?OpenRouterService $openRouterService = null
     ) {
-        $this->model             = $model ?? config('services.openrouter.model', self::DEFAULT_MODEL);
-        $this->shouldLog         = config('services.openrouter.log', app()->environment('local'));
+        $this->model = $model ?? config('services.openrouter.model', self::DEFAULT_MODEL);
+        $this->shouldLog = config('services.openrouter.log', app()->environment('local'));
         $this->openRouterService = $openRouterService ?? new OpenRouterService(model: $this->model);
     }
 
@@ -45,11 +45,11 @@ class AiChatService
         $messages = $this->buildMessages($history, $message);
 
         try {
-            if (!self::isStreamingEnabled()) {
+            if (! self::isStreamingEnabled()) {
                 $response = $this->openRouterService->createNonStreamedResponse($messages);
-                $content  = $this->extractFullContent($response);
+                $content = $this->extractFullContent($response);
 
-                if (!$noHistory) {
+                if (! $noHistory) {
                     $this->saveMessages($userId, $message, $content, $tempId);
                 }
 
@@ -61,13 +61,13 @@ class AiChatService
             $response = $this->openRouterService->createStreamedResponse($messages);
             $this->processStreamedResponse($response, $userId, $message, $tempId, $noHistory);
         } catch (RequestException $e) {
-            Log::error('AI request failed: ' . $e->getMessage(), [
+            Log::error('AI request failed: '.$e->getMessage(), [
                 'response' => $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
         } catch (\Throwable $e) {
             Log::error('Unexpected error while streaming AI response', [
                 'message' => $e->getMessage(),
-                'trace'   => $e->getTraceAsString(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
@@ -79,21 +79,21 @@ class AiChatService
         // Save user message
         $userMessageModel = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'user_id'      => $userId,
-            'content'      => $userMessage,
-            'role'         => 'user',
-            'is_ai'        => false,
-            'temp_id'      => $tempId,
+            'user_id' => $userId,
+            'content' => $userMessage,
+            'role' => 'user',
+            'is_ai' => false,
+            'temp_id' => $tempId,
         ]);
 
         // Save AI response
         ChatMessage::create([
             'chat_room_id' => $room->id,
-            'user_id'      => $userId,
-            'content'      => $aiResponse,
-            'role'         => 'assistant',
-            'is_ai'        => true,
-            'parent_id'    => $userMessageModel->id,
+            'user_id' => $userId,
+            'content' => $aiResponse,
+            'role' => 'assistant',
+            'is_ai' => true,
+            'parent_id' => $userMessageModel->id,
         ]);
     }
 
@@ -103,20 +103,19 @@ class AiChatService
             ->whereHas('participants', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })
-            ->first()
-        ;
+            ->first();
 
-        if (!$room) {
+        if (! $room) {
             $room = ChatRoom::create([
-                'name'        => 'AI Chat',
-                'type'        => 'ai',
+                'name' => 'AI Chat',
+                'type' => 'ai',
                 'description' => 'AI Assistant Chat Room',
             ]);
 
             $room->participants()->create([
-                'user_id'      => $userId,
-                'role'         => 'member',
-                'joined_at'    => now(),
+                'user_id' => $userId,
+                'role' => 'member',
+                'joined_at' => now(),
                 'last_read_at' => now(),
             ]);
         }
@@ -158,7 +157,7 @@ class AiChatService
 
     protected function buildMessages(array $history, string $message): array
     {
-        $messages   = $this->conversationService->buildMessages(collect($history));
+        $messages = $this->conversationService->buildMessages(collect($history));
         $messages[] = ['role' => 'user', 'content' => $message];
 
         if ($this->shouldLog) {
@@ -177,13 +176,13 @@ class AiChatService
 
     protected function processStreamedResponse($response, string $userId, string $userMessage, ?string $tempId = null, bool $noHistory = false): void
     {
-        $body        = $response->getBody();
-        $index       = 0;
-        $buffer      = '';
+        $body = $response->getBody();
+        $index = 0;
+        $buffer = '';
         $fullContent = '';
-        $messageId   = uniqid('msg_', true);
+        $messageId = uniqid('msg_', true);
 
-        while (!$body->eof()) {
+        while (! $body->eof()) {
             if ($this->conversationService->isCancelled()) {
                 break;
             }
@@ -197,34 +196,37 @@ class AiChatService
 
             while (($pos = strpos($buffer, "\n")) !== false) {
                 // Ochrona przed nieskończoną pętlą jeśli \n jest na początku bufora
-                if (0 === $pos) {
+                if ($pos === 0) {
                     $buffer = substr($buffer, 1);
+
                     continue;
                 }
 
-                $line   = substr($buffer, 0, $pos);
+                $line = substr($buffer, 0, $pos);
                 $buffer = substr($buffer, $pos + 1);
-                $line   = trim($line);
+                $line = trim($line);
 
                 if (str_starts_with($line, 'data: ')) {
                     $json = substr($line, 6);
 
-                    if (self::DONE_TOKEN === $json) {
-                        if (!$noHistory) {
+                    if ($json === self::DONE_TOKEN) {
+                        if (! $noHistory) {
                             $this->saveMessages($userId, $userMessage, $fullContent, $tempId);
                         }
                         $this->broadcastStreamingComplete($userId, $messageId);
+
                         continue;
                     }
 
                     $json = json_decode($json, true);
 
-                    if (!$json || !isset($json['choices'][0]['delta']['content'])) {
+                    if (! $json || ! isset($json['choices'][0]['delta']['content'])) {
                         Log::warning('Malformed stream chunk', ['line' => $line]);
+
                         continue;
                     }
 
-                    $data  = OpenRouterStreamChunkData::fromArray($json);
+                    $data = OpenRouterStreamChunkData::fromArray($json);
                     $delta = $data->choices[0]->delta;
 
                     if (isset($delta->content)) {
@@ -253,15 +255,15 @@ class AiChatService
 
         try {
             $response = $this->openRouterService->createNonStreamedResponse($messages);
-            $content  = $this->extractFullContent($response);
+            $content = $this->extractFullContent($response);
 
-            if (!$noHistory) {
+            if (! $noHistory) {
                 $this->saveMessages($this->conversationService->getUserId(), $message, $content, $tempId);
             }
 
             return $content;
         } catch (\Throwable $e) {
-            Log::error('AI request failed (non-streamed): ' . $e->getMessage());
+            Log::error('AI request failed (non-streamed): '.$e->getMessage());
 
             return 'Error: AI service unavailable';
         }

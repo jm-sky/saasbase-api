@@ -11,8 +11,7 @@ class AiConversationService
         protected readonly string $userId,
         protected readonly ?string $threadId = null,
         protected readonly ?string $tenantId = null,
-    ) {
-    }
+    ) {}
 
     public function getUserId(): string
     {
@@ -22,22 +21,22 @@ class AiConversationService
     public function generateSystemPrompt(): string
     {
         return "You are an AI assistant for user #{$this->userId}."
-            . ' Never reference other users or external information.'
-            . ' Only use context from this chat.';
+            .' Never reference other users or external information.'
+            .' Only use context from this chat.';
     }
 
     public function buildMessages(Collection $history): array
     {
         $messages = [
             [
-                'role'    => 'system',
+                'role' => 'system',
                 'content' => $this->generateSystemPrompt(),
             ],
         ];
 
         foreach ($history as $msg) {
             $messages[] = [
-                'role'    => 'ai' === $msg['sender'] ? 'assistant' : 'user',
+                'role' => $msg['sender'] === 'ai' ? 'assistant' : 'user',
                 'content' => $msg['content'],
             ];
         }
@@ -62,27 +61,27 @@ class AiConversationService
 
     public function storeLastJobId(string $jobId): void
     {
-        Cache::put($this->cacheKey() . ':job_id', $jobId, now()->addMinutes(5));
+        Cache::put($this->cacheKey().':job_id', $jobId, now()->addMinutes(5));
     }
 
     public function markCancelled(): void
     {
-        Cache::put($this->cacheKey() . ':cancelled', true, now()->addMinutes(5));
+        Cache::put($this->cacheKey().':cancelled', true, now()->addMinutes(5));
     }
 
     public function isCancelled(): bool
     {
-        return Cache::get($this->cacheKey() . ':cancelled', false);
+        return Cache::get($this->cacheKey().':cancelled', false);
     }
 
     public function getLastJobId(): ?string
     {
-        return Cache::get($this->cacheKey() . ':job_id');
+        return Cache::get($this->cacheKey().':job_id');
     }
 
     public function clearState(): void
     {
-        Cache::forget($this->cacheKey() . ':job_id');
-        Cache::forget($this->cacheKey() . ':cancelled');
+        Cache::forget($this->cacheKey().':job_id');
+        Cache::forget($this->cacheKey().':cancelled');
     }
 }

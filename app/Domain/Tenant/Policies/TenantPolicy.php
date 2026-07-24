@@ -29,7 +29,7 @@ class TenantPolicy
 
     private function isOwnerOrAdmin(User $user, Tenant $tenant): bool
     {
-        if (!$user->tenants()->where('tenants.id', $tenant->id)->exists()) {
+        if (! $user->tenants()->where('tenants.id', $tenant->id)->exists()) {
             return false;
         }
 

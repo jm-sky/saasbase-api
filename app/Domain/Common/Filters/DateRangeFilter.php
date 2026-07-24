@@ -9,12 +9,11 @@ class DateRangeFilter implements Filter
 {
     public function __construct(
         private readonly string $field
-    ) {
-    }
+    ) {}
 
     public function __invoke(Builder $query, $value, string $property): Builder
     {
-        if (!is_array($value) || !isset($value['from']) || !isset($value['to'])) {
+        if (! is_array($value) || ! isset($value['from']) || ! isset($value['to'])) {
             return $query;
         }
 

@@ -8,8 +8,8 @@ use Carbon\Carbon;
 final class SendMessageDto extends BaseDataDTO
 {
     /**
-     * @param RecipientDto[]  $recipients
-     * @param AttachmentDto[] $attachments
+     * @param  RecipientDto[]  $recipients
+     * @param  AttachmentDto[]  $attachments
      */
     public function __construct(
         public readonly string $subject,
@@ -18,8 +18,7 @@ final class SendMessageDto extends BaseDataDTO
         public readonly array $attachments = [],
         public readonly ?string $refToMessageId = null,
         public readonly ?Carbon $createdAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -36,12 +35,12 @@ final class SendMessageDto extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'subject'        => $this->subject,
-            'content'        => $this->content,
-            'recipients'     => array_map(fn (RecipientDto $recipient) => $recipient->toArray(), $this->recipients),
-            'attachments'    => array_map(fn (AttachmentDto $attachment) => $attachment->toArray(), $this->attachments),
+            'subject' => $this->subject,
+            'content' => $this->content,
+            'recipients' => array_map(fn (RecipientDto $recipient) => $recipient->toArray(), $this->recipients),
+            'attachments' => array_map(fn (AttachmentDto $attachment) => $attachment->toArray(), $this->attachments),
             'refToMessageId' => $this->refToMessageId,
-            'createdAt'      => $this->createdAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
         ];
     }
 }

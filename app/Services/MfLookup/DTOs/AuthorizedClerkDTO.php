@@ -13,8 +13,7 @@ final class AuthorizedClerkDTO extends BaseDataDTO
         public readonly ?string $name,
         public readonly ?string $nip,
         public readonly ?string $pesel,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -28,8 +27,8 @@ final class AuthorizedClerkDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'name'  => $this->name,
-            'nip'   => $this->nip,
+            'name' => $this->name,
+            'nip' => $this->nip,
             'pesel' => $this->pesel,
         ];
     }

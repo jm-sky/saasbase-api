@@ -9,7 +9,7 @@ use Carbon\Carbon;
  * @property string $code
  * @property string $name
  * @property string $category
- * @property bool   $is_default
+ * @property bool $is_default
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */

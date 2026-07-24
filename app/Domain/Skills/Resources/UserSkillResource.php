@@ -24,16 +24,16 @@ final class UserSkillResource extends JsonResource
     {
         /* @var Skill $this->resource */
         return [
-            'id'          => $this->pivot->id,
-            'userId'      => $this->pivot->user_id,
-            'skillId'     => $this->id,
-            'category'    => $this->category,
-            'name'        => $this->name,
+            'id' => $this->pivot->id,
+            'userId' => $this->pivot->user_id,
+            'skillId' => $this->id,
+            'category' => $this->category,
+            'name' => $this->name,
             'description' => $this->description,
-            'level'       => $this->pivot->level,
-            'acquiredAt'  => $this->pivot->acquired_at?->toDateString(),
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
+            'level' => $this->pivot->level,
+            'acquiredAt' => $this->pivot->acquired_at?->toDateString(),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
         ];
     }
 

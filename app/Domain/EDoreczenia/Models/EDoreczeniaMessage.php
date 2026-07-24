@@ -13,24 +13,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string                                        $id
- * @property string                                        $tenant_id
- * @property string                                        $provider
- * @property string                                        $message_id
- * @property string                                        $subject
- * @property string                                        $content
- * @property string                                        $status
- * @property Carbon                                        $sent_at
- * @property Carbon                                        $delivered_at
- * @property string                                        $created_by
- * @property Tenant                                        $tenant
- * @property User                                          $creator
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $provider
+ * @property string $message_id
+ * @property string $subject
+ * @property string $content
+ * @property string $status
+ * @property Carbon $sent_at
+ * @property Carbon $delivered_at
+ * @property string $created_by
+ * @property Tenant $tenant
+ * @property User $creator
  * @property Collection<int, EDoreczeniaMessageAttachment> $attachments
  */
 class EDoreczeniaMessage extends BaseModel
 {
-    use SoftDeletes;
     use BelongsToTenant;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -45,7 +45,7 @@ class EDoreczeniaMessage extends BaseModel
     ];
 
     protected $casts = [
-        'sent_at'      => 'datetime',
+        'sent_at' => 'datetime',
         'delivered_at' => 'datetime',
     ];
 

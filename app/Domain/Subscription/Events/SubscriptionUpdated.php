@@ -13,6 +13,5 @@ class SubscriptionUpdated
 
     public function __construct(
         public Subscription $subscription
-    ) {
-    }
+    ) {}
 }

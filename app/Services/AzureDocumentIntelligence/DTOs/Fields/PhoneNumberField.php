@@ -29,7 +29,7 @@ final class PhoneNumberField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!is_string($this->value)) {
+        if (! is_string($this->value)) {
             throw new \InvalidArgumentException('PhoneNumberField value must be a string');
         }
     }

@@ -18,22 +18,22 @@ class ProductLookupResource extends JsonResource
         $logoMedia = $this->getFirstMedia('logo');
 
         return [
-            'id'           => $this->id,
-            'tenantId'     => $this->tenant_id,
-            'name'         => $this->name,
-            'type'         => $this->type,
-            'description'  => $this->description,
-            'priceNet'     => $this->price_net,
-            'unitId'       => $this->unit_id,
-            'vatRateId'    => $this->vat_rate_id,
-            'symbol'       => $this->symbol,
-            'ean'          => $this->ean,
-            'externalId'   => $this->external_id,
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'name' => $this->name,
+            'type' => $this->type,
+            'description' => $this->description,
+            'priceNet' => $this->price_net,
+            'unitId' => $this->unit_id,
+            'vatRateId' => $this->vat_rate_id,
+            'symbol' => $this->symbol,
+            'ean' => $this->ean,
+            'externalId' => $this->external_id,
             'sourceSystem' => $this->source_system,
-            'logo'         => $logoMedia ? new MediaResource($logoMedia) : null,
-            'tags'         => TagResource::collection($this->tags),
-            'unit'         => $this->whenLoaded('unit', fn () => new MeasurementUnitResource($this->unit)),
-            'vatRate'      => $this->whenLoaded('vatRate', fn () => new VatRateResource($this->vatRate)),
+            'logo' => $logoMedia ? new MediaResource($logoMedia) : null,
+            'tags' => TagResource::collection($this->tags),
+            'unit' => $this->whenLoaded('unit', fn () => new MeasurementUnitResource($this->unit)),
+            'vatRate' => $this->whenLoaded('vatRate', fn () => new VatRateResource($this->vatRate)),
         ];
     }
 }

@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Tenant>
  *
- * @property string  $name
- * @property string  $slug
- * @property ?string $id        UUID
+ * @property string $name
+ * @property string $slug
+ * @property ?string $id UUID
  * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
@@ -26,8 +26,7 @@ final class TenantPreviewDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -57,9 +56,9 @@ final class TenantPreviewDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'name'      => $this->name,
-            'slug'      => $this->slug,
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
             'createdAt' => $this->createdAt?->toIso8601String(),
             'updatedAt' => $this->updatedAt?->toIso8601String(),
             'deletedAt' => $this->deletedAt?->toIso8601String(),

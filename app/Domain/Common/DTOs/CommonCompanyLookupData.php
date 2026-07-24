@@ -3,18 +3,18 @@
 namespace App\Domain\Common\DTOs;
 
 /**
- * @property string                      $name
- * @property string                      $country
- * @property ?string                     $vatId
- * @property ?string                     $regon
- * @property ?string                     $shortName
- * @property ?string                     $phoneNumber
- * @property ?string                     $email
- * @property ?string                     $website
- * @property ?AddressDTO                 $address
- * @property ?BankAccountDTO             $bankAccount
+ * @property string $name
+ * @property string $country
+ * @property ?string $vatId
+ * @property ?string $regon
+ * @property ?string $shortName
+ * @property ?string $phoneNumber
+ * @property ?string $email
+ * @property ?string $website
+ * @property ?AddressDTO $address
+ * @property ?BankAccountDTO $bankAccount
  * @property ?CommonCompanyLookupSources $sources
- * @property ?bool                       $cache
+ * @property ?bool $cache
  */
 final class CommonCompanyLookupData extends BaseDataDTO
 {
@@ -31,8 +31,7 @@ final class CommonCompanyLookupData extends BaseDataDTO
         public ?BankAccountDTO $bankAccount = null,
         public ?CommonCompanyLookupSources $sources = null,
         public ?bool $cache = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -55,18 +54,18 @@ final class CommonCompanyLookupData extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'name'        => $this->name,
-            'country'     => $this->country,
-            'vatId'       => $this->vatId,
-            'regon'       => $this->regon,
-            'shortName'   => $this->shortName,
+            'name' => $this->name,
+            'country' => $this->country,
+            'vatId' => $this->vatId,
+            'regon' => $this->regon,
+            'shortName' => $this->shortName,
             'phoneNumber' => $this->phoneNumber,
-            'email'       => $this->email,
-            'website'     => $this->website,
-            'address'     => $this->address?->toArray(),
+            'email' => $this->email,
+            'website' => $this->website,
+            'address' => $this->address?->toArray(),
             'bankAccount' => $this->bankAccount?->toArray(),
-            'sources'     => $this->sources?->toArray(),
-            'cache'       => $this->cache,
+            'sources' => $this->sources?->toArray(),
+            'cache' => $this->cache,
         ];
     }
 }

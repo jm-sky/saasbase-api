@@ -32,8 +32,7 @@ class TenantInvitationController extends Controller
 
         $invitations = $tenant->invitations()
             ->orderBy('created_at', 'desc')
-            ->get()
-        ;
+            ->get();
 
         return response()->json([
             'data' => TenantInvitationDTO::collect($invitations),
@@ -55,7 +54,7 @@ class TenantInvitationController extends Controller
     public function send(SendInvitationRequest $request): JsonResponse
     {
         /** @var User $user */
-        $user     = $request->user();
+        $user = $request->user();
         $tenantId = $user->getTenantId();
 
         abort_unless(
@@ -64,17 +63,17 @@ class TenantInvitationController extends Controller
             'Only tenant owners or admins can send invitations.'
         );
 
-        $token     = Str::ulid()->toString();
+        $token = Str::ulid()->toString();
         $expiresAt = now()->addDays(self::TOKEN_EXPIRATION_DAYS);
 
         $invitation = TenantInvitation::create([
-            'tenant_id'   => $tenantId,
-            'inviter_id'  => $user->id,
-            'email'       => $request->input('email'),
-            'role'        => $request->input('role'),
-            'token'       => $token,
-            'status'      => InvitationStatus::PENDING->value,
-            'expires_at'  => $expiresAt,
+            'tenant_id' => $tenantId,
+            'inviter_id' => $user->id,
+            'email' => $request->input('email'),
+            'role' => $request->input('role'),
+            'token' => $token,
+            'status' => InvitationStatus::PENDING->value,
+            'expires_at' => $expiresAt,
         ]);
 
         // Send notification (email)
@@ -89,7 +88,7 @@ class TenantInvitationController extends Controller
         );
 
         return response()->json([
-            'data'    => TenantInvitationDTO::fromModel($invitation)->toArray(),
+            'data' => TenantInvitationDTO::fromModel($invitation)->toArray(),
             'message' => 'Invitation sent.',
         ], Response::HTTP_CREATED);
     }
@@ -117,7 +116,7 @@ class TenantInvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation canceled.',
-            'data'    => TenantInvitationDTO::fromModel($invitation)->toArray(),
+            'data' => TenantInvitationDTO::fromModel($invitation)->toArray(),
         ]);
     }
 
@@ -148,7 +147,7 @@ class TenantInvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation resent.',
-            'data'    => TenantInvitationDTO::fromModel($invitation)->toArray(),
+            'data' => TenantInvitationDTO::fromModel($invitation)->toArray(),
         ]);
     }
 
@@ -157,27 +156,27 @@ class TenantInvitationController extends Controller
      */
     public function accept(Request $request, $token): JsonResponse
     {
-        abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
+        abort_if(! $request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 
-        $user       = $request->user();
+        $user = $request->user();
         $invitation = $this->getPendingInvitation($token);
 
         // Attach user to tenant with role if not already attached
-        if (!$this->isUserMemberOfTenant($user, $invitation->tenant)) {
+        if (! $this->isUserMemberOfTenant($user, $invitation->tenant)) {
             UserTenant::create([
-                'user_id'   => $user->id,
+                'user_id' => $user->id,
                 'tenant_id' => $invitation->tenant_id,
-                'role'      => $invitation->role,
+                'role' => $invitation->role,
             ]);
         }
 
         $invitation->update([
-            'status'          => InvitationStatus::ACCEPTED->value,
+            'status' => InvitationStatus::ACCEPTED->value,
             'invited_user_id' => $user->id,
-            'accepted_at'     => now(),
+            'accepted_at' => now(),
         ]);
 
-        if ($invitation->email === $user->email && !$user->email_verified_at) {
+        if ($invitation->email === $user->email && ! $user->email_verified_at) {
             $user->update([
                 'email_verified_at' => now(),
             ]);
@@ -192,7 +191,7 @@ class TenantInvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation accepted.',
-            'data'    => TenantInvitationDTO::fromModel($invitation)->toArray(),
+            'data' => TenantInvitationDTO::fromModel($invitation)->toArray(),
         ]);
     }
 
@@ -201,13 +200,13 @@ class TenantInvitationController extends Controller
      */
     public function reject(Request $request, $token): JsonResponse
     {
-        abort_if(!$request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
+        abort_if(! $request->user(), Response::HTTP_UNAUTHORIZED, 'User not authenticated.');
 
-        $user       = $request->user();
+        $user = $request->user();
         $invitation = $this->getPendingInvitation($token);
 
         $invitation->update([
-            'status'      => InvitationStatus::REJECTED->value,
+            'status' => InvitationStatus::REJECTED->value,
             'accepted_at' => now(),
         ]);
 
@@ -228,16 +227,14 @@ class TenantInvitationController extends Controller
         return TenantInvitation::where('token', $token)
             ->where('status', InvitationStatus::PENDING->value)
             ->where('expires_at', '>', now())
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
     }
 
     protected function isUserMemberOfTenant(User $user, Tenant $tenant): bool
     {
         return UserTenant::where('user_id', $user->id)
             ->where('tenant_id', $tenant->id)
-            ->exists()
-        ;
+            ->exists();
     }
 
     protected function logActivity(

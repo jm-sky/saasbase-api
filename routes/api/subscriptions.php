@@ -2,6 +2,7 @@
 
 use App\Domain\Subscription\Controllers\AddonPackageController;
 use App\Domain\Subscription\Controllers\AddonPurchaseController;
+use App\Domain\Subscription\Controllers\SubscriptionCheckoutController;
 use App\Domain\Subscription\Controllers\SubscriptionController;
 use App\Domain\Subscription\Controllers\SubscriptionInvoiceController;
 use App\Domain\Subscription\Controllers\SubscriptionPlanController;
@@ -21,9 +22,8 @@ Route::prefix('subscriptions')->group(function () {
 });
 
 // Subscription Checkout
-Route::post('/subscription/checkout', App\Domain\Subscription\Controllers\SubscriptionCheckoutController::class)
-    ->name('subscription.checkout')
-;
+Route::post('/subscription/checkout', SubscriptionCheckoutController::class)
+    ->name('subscription.checkout');
 
 Route::prefix('addon-packages')->group(function () {
     Route::get('/', [AddonPackageController::class, 'index']); // List available addons

@@ -38,9 +38,9 @@ class TenantController extends Controller
 
     public function store(StoreTenantRequest $request): TenantResource
     {
-        $tenantData              = $request->validated('tenant');
-        $tenantData['owner_id']  = $request->user()->id;
-        $tenant                  = Tenant::create($tenantData);
+        $tenantData = $request->validated('tenant');
+        $tenantData['owner_id'] = $request->user()->id;
+        $tenant = Tenant::create($tenantData);
 
         if ($request->has('bankAccount') && $request->validated('bankAccount') && $request->validated('bankAccount')['iban']) {
             $tenant->bankAccounts()->create($request->validated('bankAccount'));
@@ -52,7 +52,7 @@ class TenantController extends Controller
 
         $request->user()->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
-        (new InitializeTenantDefaults())->execute($tenant, $request->user());
+        (new InitializeTenantDefaults)->execute($tenant, $request->user());
 
         return new TenantResource($tenant);
     }
@@ -71,7 +71,7 @@ class TenantController extends Controller
 
         return response()->json([
             'message' => 'Tenant updated successfully.',
-            'data'    => new TenantResource($tenant),
+            'data' => new TenantResource($tenant),
         ]);
     }
 

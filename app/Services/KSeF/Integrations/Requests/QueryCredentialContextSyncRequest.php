@@ -15,8 +15,7 @@ class QueryCredentialContextSyncRequest extends Request
         protected ?string $contextNip = null,
         protected ?string $sourceIdentifier = null,
         protected ?string $targetIdentifier = null
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {

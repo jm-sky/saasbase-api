@@ -10,8 +10,7 @@ final class TenantQuotaItemDTO extends BaseDataDTO
         public readonly float $used,
         public readonly float $total,
         public readonly ?string $unit = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -25,9 +24,9 @@ final class TenantQuotaItemDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'used'  => $this->used,
+            'used' => $this->used,
             'total' => $this->total,
-            'unit'  => $this->unit,
+            'unit' => $this->unit,
         ];
     }
 }

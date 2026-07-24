@@ -36,18 +36,18 @@ class ProjectDTOTest extends TestCase
             'id' => Str::ulid()->toString(),
         ]);
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->user = $this->authenticateUser($this->tenant);
     }
 
-    public function testFromModel(): void
+    public function test_from_model(): void
     {
         $startDate = now()->startOfDay();
-        $project   = Project::factory()->create([
-            'tenant_id'  => $this->tenant->id,
-            'name'       => 'Test Project',
-            'status_id'  => $this->status->id,
+        $project = Project::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'name' => 'Test Project',
+            'status_id' => $this->status->id,
             'start_date' => $startDate,
-            'owner_id'   => $this->user->id,
+            'owner_id' => $this->user->id,
         ]);
 
         $dto = ProjectDTO::from($project);
@@ -60,10 +60,10 @@ class ProjectDTOTest extends TestCase
         $this->assertEquals($project->updated_at, $dto->updatedAt);
     }
 
-    public function testToModel(): void
+    public function test_to_model(): void
     {
         $startDate = now()->startOfDay();
-        $dto       = new ProjectDTO(
+        $dto = new ProjectDTO(
             tenantId: $this->tenant->id,
             name: 'Test Project',
             statusId: $this->status->id,
@@ -73,11 +73,11 @@ class ProjectDTOTest extends TestCase
         );
 
         $project = Project::factory()->create([
-            'tenant_id'  => $dto->tenantId,
-            'name'       => $dto->name,
-            'status_id'  => $dto->statusId,
+            'tenant_id' => $dto->tenantId,
+            'name' => $dto->name,
+            'status_id' => $dto->statusId,
             'start_date' => $startDate,
-            'owner_id'   => $this->user->id,
+            'owner_id' => $this->user->id,
         ]);
 
         $this->assertEquals($dto->name, $project->name);
@@ -85,24 +85,24 @@ class ProjectDTOTest extends TestCase
         $this->assertEquals($dto->startDate, $project->start_date);
     }
 
-    public function testFromCollection(): void
+    public function test_from_collection(): void
     {
         $startDate = now()->startOfDay();
-        $projects  = collect([
+        $projects = collect([
             Project::factory()->create([
-                'tenant_id'  => $this->tenant->id,
-                'name'       => 'Test Project 1',
-                'status_id'  => $this->status->id,
+                'tenant_id' => $this->tenant->id,
+                'name' => 'Test Project 1',
+                'status_id' => $this->status->id,
                 'start_date' => $startDate,
-                'owner_id'   => $this->user->id,
+                'owner_id' => $this->user->id,
             ]),
 
             Project::factory()->create([
-                'tenant_id'  => $this->tenant->id,
-                'name'       => 'Test Project 2',
-                'status_id'  => $this->status->id,
+                'tenant_id' => $this->tenant->id,
+                'name' => 'Test Project 2',
+                'status_id' => $this->status->id,
                 'start_date' => $startDate,
-                'owner_id'   => $this->user->id,
+                'owner_id' => $this->user->id,
             ]),
         ]);
 
@@ -113,18 +113,18 @@ class ProjectDTOTest extends TestCase
         $this->assertEquals('Test Project 2', $dtos[1]->name);
     }
 
-    public function testToArray(): void
+    public function test_to_array(): void
     {
         $startDate = now()->startOfDay();
-        $project   = Project::factory()->create([
-            'tenant_id'  => $this->tenant->id,
-            'name'       => 'Test Project',
-            'status_id'  => $this->status->id,
+        $project = Project::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'name' => 'Test Project',
+            'status_id' => $this->status->id,
             'start_date' => $startDate,
-            'owner_id'   => $this->user->id,
+            'owner_id' => $this->user->id,
         ]);
 
-        $dto   = ProjectDTO::from($project);
+        $dto = ProjectDTO::from($project);
         $array = $dto->toArray();
 
         $this->assertEquals($project->id, $array['id']);

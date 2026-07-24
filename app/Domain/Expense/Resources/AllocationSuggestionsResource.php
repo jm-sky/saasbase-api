@@ -22,7 +22,7 @@ class AllocationSuggestionsResource extends JsonResource
     public function __construct($expense, Collection $suggestions, Collection $enabledDimensions)
     {
         parent::__construct($expense);
-        $this->suggestions       = $suggestions;
+        $this->suggestions = $suggestions;
         $this->enabledDimensions = $enabledDimensions;
     }
 
@@ -35,10 +35,10 @@ class AllocationSuggestionsResource extends JsonResource
     {
         /* @var Expense $this->resource */
         return [
-            'suggestions'         => array_map(fn (AllocationDataDTO $dto) => $dto->toArray(), $this->suggestions->toArray()),
-            'enabledDimensions'   => DimensionTypeResource::collection($this->enabledDimensions),
-            'expenseTotal'        => $this->total_gross->toFloat(),
-            'currentAllocated'    => $this->total_allocated->toFloat(),
+            'suggestions' => array_map(fn (AllocationDataDTO $dto) => $dto->toArray(), $this->suggestions->toArray()),
+            'enabledDimensions' => DimensionTypeResource::collection($this->enabledDimensions),
+            'expenseTotal' => $this->total_gross->toFloat(),
+            'currentAllocated' => $this->total_allocated->toFloat(),
             'remainingToAllocate' => $this->remaining_to_allocate->toFloat(),
         ];
     }

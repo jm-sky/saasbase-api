@@ -14,18 +14,18 @@ class CompanyLookupRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'vatId'   => ['required', 'string'],
+            'vatId' => ['required', 'string'],
             'country' => ['required', 'string', 'size:2', 'exists:countries,code'],
-            'force'   => ['nullable', 'boolean'],
+            'force' => ['nullable', 'boolean'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'vatId.required'   => 'The VAT ID is required.',
+            'vatId.required' => 'The VAT ID is required.',
             'country.required' => 'The country code is required.',
-            'country.size'     => 'The country code must be 2 characters.',
+            'country.size' => 'The country code must be 2 characters.',
         ];
     }
 }

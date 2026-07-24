@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-final class MediaDTO implements Arrayable, \JsonSerializable
+final class MediaDTO implements \JsonSerializable, Arrayable
 {
     public const TEMPORARY_URL_EXPIRATION_TIME = 15;
 
@@ -20,8 +20,7 @@ final class MediaDTO implements Arrayable, \JsonSerializable
         public readonly ?string $collectionName = null,
         public readonly ?Carbon $createdAt = null,
         public readonly ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Media $media, ?HasMediaUrl $parent = null): static
     {
@@ -31,7 +30,7 @@ final class MediaDTO implements Arrayable, \JsonSerializable
             $url = $parent->getMediaSignedUrl($media->collection_name, $media->file_name);
         }
 
-        if ($parent && !$url) {
+        if ($parent && ! $url) {
             $url = $parent->getMediaUrl($media->collection_name, $media->file_name);
         }
 
@@ -50,14 +49,14 @@ final class MediaDTO implements Arrayable, \JsonSerializable
     public function toArray(): array
     {
         return [
-            'id'             => $this->id,
-            'fileName'       => $this->fileName,
-            'fileUrl'        => $this->fileUrl,
-            'mimeType'       => $this->mimeType,
-            'size'           => $this->size,
+            'id' => $this->id,
+            'fileName' => $this->fileName,
+            'fileUrl' => $this->fileUrl,
+            'mimeType' => $this->mimeType,
+            'size' => $this->size,
             'collectionName' => $this->collectionName,
-            'createdAt'      => $this->createdAt?->toIso8601String(),
-            'updatedAt'      => $this->updatedAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 

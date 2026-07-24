@@ -10,8 +10,7 @@ final class TenantQuotaDTO extends BaseDataDTO
         public readonly TenantQuotaItemDTO $storage,
         public readonly TenantQuotaItemDTO $users,
         public readonly TenantQuotaItemDTO $apiCalls,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -25,8 +24,8 @@ final class TenantQuotaDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'storage'  => $this->storage->toArray(),
-            'users'    => $this->users->toArray(),
+            'storage' => $this->storage->toArray(),
+            'users' => $this->users->toArray(),
             'apiCalls' => $this->apiCalls->toArray(),
         ];
     }

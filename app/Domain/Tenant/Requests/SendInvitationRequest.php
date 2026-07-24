@@ -18,7 +18,7 @@ class SendInvitationRequest extends BaseFormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'role'  => ['required', 'string', Rule::in(array_column(RoleName::cases(), 'value'))],
+            'role' => ['required', 'string', Rule::in(array_column(RoleName::cases(), 'value'))],
         ];
     }
 }

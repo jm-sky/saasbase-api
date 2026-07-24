@@ -3,10 +3,11 @@
 namespace App\Traits;
 
 use App\Models\UlidDatabaseNotification;
+use Illuminate\Notifications\Notifiable;
 
 trait UlidNotifiable
 {
-    use \Illuminate\Notifications\Notifiable {
+    use Notifiable {
         notifications as baseNotifications;
     }
 

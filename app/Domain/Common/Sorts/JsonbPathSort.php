@@ -14,14 +14,14 @@ class JsonbPathSort implements Sort
     public function __construct(string $jsonbColumn, string $jsonPath)
     {
         $this->jsonbColumn = $jsonbColumn;
-        $this->jsonPath    = $jsonPath;
+        $this->jsonPath = $jsonPath;
     }
 
     public function __invoke(Builder $query, bool $descending, string $property)
     {
         $direction = $descending ? 'DESC' : 'ASC';
 
-        $path = "'{" . implode(',', explode('.', $this->jsonPath)) . "}'";
+        $path = "'{".implode(',', explode('.', $this->jsonPath))."}'";
         $query->orderByRaw("{$this->jsonbColumn} #>> {$path} {$direction}");
     }
 }

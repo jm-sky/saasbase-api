@@ -9,15 +9,14 @@ use Illuminate\Support\Collection;
 readonly class ExchangeRateTableDTO
 {
     /**
-     * @param Collection<int, ExchangeRateDTO> $rates
+     * @param  Collection<int, ExchangeRateDTO>  $rates
      */
     public function __construct(
         public NBPTableEnum $table,
         public string $no,
         public Carbon $effectiveDate,
         public Collection $rates
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

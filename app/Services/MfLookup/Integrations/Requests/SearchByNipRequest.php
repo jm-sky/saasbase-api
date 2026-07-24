@@ -12,8 +12,7 @@ class SearchByNipRequest extends Request
 
     public function __construct(
         protected string $nip,
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {

@@ -32,27 +32,27 @@ class IdentityConfirmationController extends Controller
     public function generateTemplate(Request $request): StreamedResponse
     {
         /** @var User $user */
-        $user    = Auth::user();
-        $token   = (string) Str::ulid();
+        $user = Auth::user();
+        $token = (string) Str::ulid();
 
         $media = $user->getFirstMedia('identity_confirmation_template');
         $media?->delete();
         $media = null;
 
-        if (!$media) {
+        if (! $media) {
             $media = $this->generateAndStoreTemplateXml($user, $token);
         }
 
         // For S3, stream the file content instead of using local path
-        $stream   = $media->stream();
+        $stream = $media->stream();
         $filename = $media->file_name;
 
         return response()->streamDownload(function () use ($stream) {
             echo stream_get_contents($stream);
             fclose($stream);
         }, $filename, [
-            'Content-Type'        => 'application/xml',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Type' => 'application/xml',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
@@ -63,8 +63,8 @@ class IdentityConfirmationController extends Controller
     public function submitSigned(SubmitSignedIdentityConfirmationRequest $request, XmlValidatorService $xmlValidator): JsonResponse
     {
         /** @var User $user */
-        $user       = Auth::user();
-        $file       = $request->file('file');
+        $user = Auth::user();
+        $file = $request->file('file');
         $xmlContent = file_get_contents($file->getPathname());
 
         // 1. Validate XML against XSD using XmlValidatorService
@@ -108,9 +108,8 @@ class IdentityConfirmationController extends Controller
 
         // 7. Store signed XML in identity_confirmation_final, remove previous template
         $user->addMedia($file)
-            ->usingFileName('identity_confirmation_' . $user->id . '_' . time() . '.xml')
-            ->toMediaCollection('identity_confirmation_final')
-        ;
+            ->usingFileName('identity_confirmation_'.$user->id.'_'.time().'.xml')
+            ->toMediaCollection('identity_confirmation_final');
 
         $user->clearMediaCollection('identity_confirmation_template');
 
@@ -129,17 +128,17 @@ class IdentityConfirmationController extends Controller
 
     protected function confirmIdentity(User $user, string $xmlContent): ConfirmedIdentityDataDTO
     {
-        $xml  = simplexml_load_string($xmlContent);
-        $ns   = $xml->getNamespaces(true);
+        $xml = simplexml_load_string($xmlContent);
+        $ns = $xml->getNamespaces(true);
         $data = [
-            'first_name'         => (string) $xml->FirstName,
-            'last_name'          => (string) $xml->LastName,
-            'full_name'          => (string) $xml->FullName,
-            'birth_date'         => (string) $xml->BirthDate,
-            'pesel'              => (string) $xml->PESEL,
-            'generated_at'       => (string) $xml->GeneratedAt,
+            'first_name' => (string) $xml->FirstName,
+            'last_name' => (string) $xml->LastName,
+            'full_name' => (string) $xml->FullName,
+            'birth_date' => (string) $xml->BirthDate,
+            'pesel' => (string) $xml->PESEL,
+            'generated_at' => (string) $xml->GeneratedAt,
             'confirmation_token' => (string) $xml->ConfirmationToken,
-            'application_name'   => (string) $xml->ApplicationName,
+            'application_name' => (string) $xml->ApplicationName,
         ];
 
         // 4. Confirm that XML is for the current user
@@ -160,25 +159,23 @@ class IdentityConfirmationController extends Controller
                 && $signature->signerIdentity->lastName === $user->last_name
                 // PESEL is optional, but if it's present, it must match
                 && ($user->personalData?->pesel ? $signature->signerIdentity?->pesel === $user->personalData?->pesel : true)
-            )?->valid ?? false
-        ;
+            )?->valid ?? false;
     }
 
     protected function generateAndStoreTemplateXml(User $user, string $token): Media
     {
         $xml = GenerateTemplateXml::generateTemplateXml($user, $token);
 
-        $now    = Carbon::now('UTC');
+        $now = Carbon::now('UTC');
         $stream = fopen('php://memory', 'r+');
         fwrite($stream, $xml);
         rewind($stream);
 
         /** @var Media $media */
         $media = $user->addMediaFromStream($stream)
-            ->usingFileName('identity_confirmation_' . $user->id . '_' . $now->timestamp . '.xml')
+            ->usingFileName('identity_confirmation_'.$user->id.'_'.$now->timestamp.'.xml')
             ->withCustomProperties(['token' => $token])
-            ->toMediaCollection('identity_confirmation_template')
-        ;
+            ->toMediaCollection('identity_confirmation_template');
         fclose($stream);
 
         return $media;

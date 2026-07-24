@@ -35,7 +35,7 @@ class FeedControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user   = User::factory()->create();
+        $this->user = User::factory()->create();
         $this->tenant = Tenant::factory()->create();
         $this->authenticateUser($this->tenant, $this->user);
         Storage::fake('local');
@@ -50,12 +50,12 @@ class FeedControllerTest extends TestCase
         $this->app->instance(ProfanityFilterService::class, $profanityService);
     }
 
-    public function testCanListFeeds(): void
+    public function test_can_list_feeds(): void
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             Feed::factory()->count(3)->create([
                 'tenant_id' => $this->tenant->id,
-                'user_id'   => $this->user->id,
+                'user_id' => $this->user->id,
             ]);
         });
 
@@ -87,15 +87,14 @@ class FeedControllerTest extends TestCase
                     'perPage',
                     'total',
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanCreateFeedWithoutAttachment(): void
+    public function test_can_create_feed_without_attachment(): void
     {
         $response = $this->postJson($this->baseUrl, [
-            'title'       => 'Test Feed',
-            'content'     => 'Test Content',
+            'title' => 'Test Feed',
+            'content' => 'Test Content',
         ]);
 
         $response->assertStatus(Response::HTTP_CREATED)
@@ -115,27 +114,26 @@ class FeedControllerTest extends TestCase
                         'email',
                     ],
                 ],
-            ])
-        ;
+            ]);
 
         Tenant::bypassTenant($this->tenant->id, function () {
             $this->assertDatabaseHas('feeds', [
                 'tenant_id' => $this->tenant->id,
-                'title'     => 'Test Feed',
-                'content'   => 'Test Content',
+                'title' => 'Test Feed',
+                'content' => 'Test Content',
             ]);
         });
     }
 
-    public function testCanCreateFeedWithAttachment(): void
+    public function test_can_create_feed_with_attachment(): void
     {
         $this->fakeStorage('media');
 
         $file = UploadedFile::fake()->image('image.jpg', 500, 500)->size(512);
 
         $response = $this->postJson($this->baseUrl, [
-            'title'       => 'Test Feed',
-            'content'     => 'Test Content',
+            'title' => 'Test Feed',
+            'content' => 'Test Content',
             'attachments' => [$file],
         ]);
 
@@ -156,14 +154,13 @@ class FeedControllerTest extends TestCase
                         'email',
                     ],
                 ],
-            ])
-        ;
+            ]);
 
         Tenant::bypassTenant($this->tenant->id, function () {
             $this->assertDatabaseHas('feeds', [
                 'tenant_id' => $this->tenant->id,
-                'title'     => 'Test Feed',
-                'content'   => 'Test Content',
+                'title' => 'Test Feed',
+                'content' => 'Test Content',
             ]);
 
             $feed = Feed::first();
@@ -172,16 +169,16 @@ class FeedControllerTest extends TestCase
         });
     }
 
-    public function testCanShowFeed(): void
+    public function test_can_show_feed(): void
     {
         $feed = Tenant::bypassTenant($this->tenant->id, function () {
             return Feed::factory()->create([
                 'tenant_id' => $this->tenant->id,
-                'user_id'   => $this->user->id,
+                'user_id' => $this->user->id,
             ]);
         });
 
-        $response = $this->getJson($this->baseUrl . '/' . $feed->id);
+        $response = $this->getJson($this->baseUrl.'/'.$feed->id);
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -201,20 +198,19 @@ class FeedControllerTest extends TestCase
                     ],
                 ],
             ])
-            ->assertJsonPath('data.id', $feed->id)
-        ;
+            ->assertJsonPath('data.id', $feed->id);
     }
 
-    public function testCanDeleteFeed(): void
+    public function test_can_delete_feed(): void
     {
         $feed = Tenant::bypassTenant($this->tenant->id, function () {
             return Feed::factory()->create([
                 'tenant_id' => $this->tenant->id,
-                'user_id'   => $this->user->id,
+                'user_id' => $this->user->id,
             ]);
         });
 
-        $response = $this->deleteJson($this->baseUrl . '/' . $feed->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$feed->id);
 
         $response->assertNoContent();
 
@@ -223,39 +219,38 @@ class FeedControllerTest extends TestCase
         });
     }
 
-    public function testCannotAccessOtherTenantFeed(): void
+    public function test_cannot_access_other_tenant_feed(): void
     {
         $otherTenant = Tenant::factory()->create();
 
         $feed = Tenant::bypassTenant($otherTenant->id, function () use ($otherTenant) {
             return Feed::factory()->create([
                 'tenant_id' => $otherTenant->id,
-                'user_id'   => $this->user->id,
+                'user_id' => $this->user->id,
             ]);
         });
 
-        $response = $this->getJson($this->baseUrl . '/' . $feed->id);
+        $response = $this->getJson($this->baseUrl.'/'.$feed->id);
 
         $response->assertNotFound();
     }
 
-    public function testProfanityIsFilteredAndFlagged(): void
+    public function test_profanity_is_filtered_and_flagged(): void
     {
         // Override the default mock for this specific test
         $profanityService = \Mockery::mock(ProfanityFilterService::class);
         $profanityService->shouldReceive('hasProfanity')
             // @phpstan-ignore-next-line once() is a Mockery\Expectation method, not visible to PHPStan on the shouldReceive() return type
             ->once()
-            ->andReturn(true)
-        ;
+            ->andReturn(true);
 
         $this->app->instance(ProfanityFilterService::class, $profanityService);
 
         $file = UploadedFile::fake()->create('image.jpg', 100);
 
         $response = $this->postJson($this->baseUrl, [
-            'title'       => 'Test Feed',
-            'content'     => 'This is a test with some bad words: fuck shit',
+            'title' => 'Test Feed',
+            'content' => 'This is a test with some bad words: fuck shit',
             'attachments' => [$file],
         ]);
 
@@ -266,14 +261,13 @@ class FeedControllerTest extends TestCase
                     'content',
                 ],
             ])
-            ->assertJsonValidationErrors(['content'])
-        ;
+            ->assertJsonValidationErrors(['content']);
 
         Tenant::bypassTenant($this->tenant->id, function () {
             $this->assertDatabaseMissing('feeds', [
                 'tenant_id' => $this->tenant->id,
-                'title'     => 'Test Feed',
-                'content'   => 'This is a test with some bad words: fuck shit',
+                'title' => 'Test Feed',
+                'content' => 'This is a test with some bad words: fuck shit',
             ]);
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Skills\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
@@ -29,8 +30,8 @@ class SkillCategoryController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
         ];
 
@@ -46,8 +47,7 @@ class SkillCategoryController extends Controller
         $categories = $this->getIndexPaginator($request);
 
         return SkillCategoryResource::collection($categories['data'])
-            ->additional(['meta' => $categories['meta']])
-        ;
+            ->additional(['meta' => $categories['meta']]);
     }
 
     public function store(SkillCategoryRequest $request): SkillCategoryResource
@@ -61,7 +61,7 @@ class SkillCategoryController extends Controller
 
     public function show(SkillCategory $skillCategory): SkillCategoryResource
     {
-        abort_if(!$skillCategory->exists(), Response::HTTP_NOT_FOUND);
+        abort_if(! $skillCategory->exists(), Response::HTTP_NOT_FOUND);
 
         $skillCategory->load('skills');
 
@@ -70,7 +70,7 @@ class SkillCategoryController extends Controller
 
     public function update(SkillCategoryRequest $request, SkillCategory $skillCategory): SkillCategoryResource
     {
-        abort_if(!$skillCategory->exists(), Response::HTTP_NOT_FOUND);
+        abort_if(! $skillCategory->exists(), Response::HTTP_NOT_FOUND);
         $this->authorizeManage();
 
         $skillCategory->update($request->validated());
@@ -80,7 +80,7 @@ class SkillCategoryController extends Controller
 
     public function destroy(SkillCategory $skillCategory): JsonResponse
     {
-        abort_if(!$skillCategory->exists(), Response::HTTP_NOT_FOUND);
+        abort_if(! $skillCategory->exists(), Response::HTTP_NOT_FOUND);
         $this->authorizeManage();
 
         $skillCategory->delete();
@@ -97,8 +97,8 @@ class SkillCategoryController extends Controller
      */
     private function authorizeManage(): void
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         abort_unless(

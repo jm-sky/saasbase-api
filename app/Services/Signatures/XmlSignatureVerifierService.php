@@ -19,7 +19,7 @@ class XmlSignatureVerifierService
 
     public function verify(string $xmlContent): GenericSignaturesVerificationResultDTO
     {
-        $dom                     = new \DOMDocument();
+        $dom = new \DOMDocument;
         $dom->preserveWhiteSpace = false;
         $dom->loadXML($xmlContent, LIBXML_NONET | LIBXML_NOBLANKS);
 
@@ -29,16 +29,16 @@ class XmlSignatureVerifierService
         $xpath->registerNamespace('os', 'http://crd.gov.pl/xml/schematy/osoba/2009/03/06/');
 
         $signatureNodes = $xpath->query("//*[local-name()='Signature' and namespace-uri()='http://www.w3.org/2000/09/xmldsig#']");
-        $signatures     = [];
-        $allValid       = true;
+        $signatures = [];
+        $allValid = true;
 
         foreach ($signatureNodes as $signatureNode) {
             $certificateNode = $xpath->query('.//ds:X509Certificate', $signatureNode)->item(0);
-            $certBase64      = $certificateNode?->nodeValue;
-            $certPem         = $this->wrapCertificate($certBase64);
+            $certBase64 = $certificateNode?->nodeValue;
+            $certPem = $this->wrapCertificate($certBase64);
 
-            $isTrusted   = $this->isCertificateTrusted($certPem);
-            $personData  = $this->extractPersonData($xpath, $signatureNode);
+            $isTrusted = $this->isCertificateTrusted($certPem);
+            $personData = $this->extractPersonData($xpath, $signatureNode);
             $certDetails = $this->parseCertificateDetails($certPem);
 
             $signatures[] = new GenericSignatureDetailsDTO(
@@ -58,7 +58,7 @@ class XmlSignatureVerifierService
                 ),
             );
 
-            if (!$isTrusted) {
+            if (! $isTrusted) {
                 $allValid = false;
             }
         }
@@ -72,36 +72,36 @@ class XmlSignatureVerifierService
 
     protected function wrapCertificate(?string $base64): ?string
     {
-        if (!$base64) {
+        if (! $base64) {
             return null;
         }
 
-        return "-----BEGIN CERTIFICATE-----\n" .
-            chunk_split(trim($base64), 64, "\n") .
+        return "-----BEGIN CERTIFICATE-----\n".
+            chunk_split(trim($base64), 64, "\n").
             "-----END CERTIFICATE-----\n";
     }
 
     protected function isCertificateTrusted(?string $certPem): bool
     {
-        if (!$certPem) {
+        if (! $certPem) {
             return false;
         }
 
-        return true === openssl_x509_checkpurpose($certPem, X509_PURPOSE_ANY, [$this->caBundlePath]);
+        return openssl_x509_checkpurpose($certPem, X509_PURPOSE_ANY, [$this->caBundlePath]) === true;
     }
 
     protected function parseCertificateDetails(?string $certPem): array
     {
-        if (!$certPem || !$parsed = openssl_x509_parse($certPem)) {
+        if (! $certPem || ! $parsed = openssl_x509_parse($certPem)) {
             return [];
         }
 
         return [
-            'issuer'     => $parsed['issuer']['CN'] ?? null,
-            'serial'     => $parsed['serialNumberHex'] ?? null,
-            'subject'    => $parsed['subject']['CN'] ?? null,
+            'issuer' => $parsed['issuer']['CN'] ?? null,
+            'serial' => $parsed['serialNumberHex'] ?? null,
+            'subject' => $parsed['subject']['CN'] ?? null,
             'valid_from' => isset($parsed['validFrom_time_t']) ? date('c', $parsed['validFrom_time_t']) : null,
-            'valid_to'   => isset($parsed['validTo_time_t']) ? date('c', $parsed['validTo_time_t']) : null,
+            'valid_to' => isset($parsed['validTo_time_t']) ? date('c', $parsed['validTo_time_t']) : null,
         ];
     }
 
@@ -110,8 +110,8 @@ class XmlSignatureVerifierService
         $data = [];
 
         $firstNameNode = $xpath->query('.//ppZP:DaneZPOsobyFizycznej/os:Imie', $signatureNode)?->item(0);
-        $lastNameNode  = $xpath->query('.//ppZP:DaneZPOsobyFizycznej/os:Nazwisko', $signatureNode)?->item(0);
-        $peselNode     = $xpath->query('.//ppZP:DaneZPOsobyFizycznej/os:PESEL', $signatureNode)?->item(0);
+        $lastNameNode = $xpath->query('.//ppZP:DaneZPOsobyFizycznej/os:Nazwisko', $signatureNode)?->item(0);
+        $peselNode = $xpath->query('.//ppZP:DaneZPOsobyFizycznej/os:PESEL', $signatureNode)?->item(0);
 
         if ($firstNameNode) {
             $data['first_name'] = $firstNameNode->nodeValue;

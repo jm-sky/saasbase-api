@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<TaskWatcher>
  *
- * @property ?string  $id        UUID
- * @property string   $taskId
- * @property string   $userId
- * @property ?Carbon  $createdAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon  $updatedAt Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon  $deletedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id UUID
+ * @property string $taskId
+ * @property string $userId
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserDTO $user
  */
 final class TaskWatcherDTO extends BaseDTO
@@ -29,8 +29,7 @@ final class TaskWatcherDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
         public ?UserDTO $user = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -62,13 +61,13 @@ final class TaskWatcherDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'taskId'    => $this->taskId,
-            'userId'    => $this->userId,
+            'id' => $this->id,
+            'taskId' => $this->taskId,
+            'userId' => $this->userId,
             'createdAt' => $this->createdAt?->toIso8601String(),
             'updatedAt' => $this->updatedAt?->toIso8601String(),
             'deletedAt' => $this->deletedAt?->toIso8601String(),
-            'user'      => $this->user?->toArray(),
+            'user' => $this->user?->toArray(),
         ];
     }
 }

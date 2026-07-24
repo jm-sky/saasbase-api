@@ -14,10 +14,10 @@ class UpdateNotificationSettingsBulkRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'settings'              => ['required', 'array'],
-            'settings.*.channel'    => ['required', 'string', 'max:255'],
+            'settings' => ['required', 'array'],
+            'settings.*.channel' => ['required', 'string', 'max:255'],
             'settings.*.settingKey' => ['required', 'string', 'max:255'],
-            'settings.*.enabled'    => ['required', 'boolean'],
+            'settings.*.enabled' => ['required', 'boolean'],
         ];
     }
 }

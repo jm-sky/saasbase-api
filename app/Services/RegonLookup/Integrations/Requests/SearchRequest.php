@@ -24,8 +24,7 @@ class SearchRequest extends BaseRegonRequest
 
         $raw = (string) $response->xml()
             ->{'DaneSzukajPodmiotyResponse'}
-            ->{'DaneSzukajPodmiotyResult'}
-        ;
+            ->{'DaneSzukajPodmiotyResult'};
 
         return empty($raw);
     }
@@ -54,8 +53,7 @@ class SearchRequest extends BaseRegonRequest
     {
         $raw = $response->xml()
             ->{'DaneSzukajPodmiotyResponse'}
-            ->{'DaneSzukajPodmiotyResult'}
-        ;
+            ->{'DaneSzukajPodmiotyResult'};
 
         $xml = simplexml_load_string($raw);
 

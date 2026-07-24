@@ -16,24 +16,24 @@ class RegistryConfirmationFactory extends Factory
     public function definition(): array
     {
         return [
-            'confirmable_id'   => $this->faker->uuid(),
+            'confirmable_id' => $this->faker->uuid(),
             'confirmable_type' => 'App\Domain\Contractors\Models\Contractor',
-            'type'             => $this->faker->randomElement(RegistryConfirmationType::cases())->value,
-            'payload'          => [
-                'name'  => $this->faker->company(),
+            'type' => $this->faker->randomElement(RegistryConfirmationType::cases())->value,
+            'payload' => [
+                'name' => $this->faker->company(),
                 'vatId' => $this->faker->numerify('##########'),
             ],
             'result' => [
                 'registryData' => [
-                    'name'  => $this->faker->company(),
+                    'name' => $this->faker->company(),
                     'vatId' => $this->faker->numerify('##########'),
                 ],
                 'comparison' => [
-                    'nameMatch'  => $this->faker->boolean(),
+                    'nameMatch' => $this->faker->boolean(),
                     'vatIdMatch' => $this->faker->boolean(),
                 ],
             ],
-            'success'    => $this->faker->boolean(),
+            'success' => $this->faker->boolean(),
             'checked_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
         ];
     }

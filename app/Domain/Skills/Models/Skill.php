@@ -10,16 +10,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                                $id
- * @property ?string                               $category
- * @property string                                $name
- * @property ?string                               $description
- * @property Carbon                                $created_at
- * @property Carbon                                $updated_at
- * @property SkillCategory                         $skillCategory
- * @property Collection<int, UserSkill>            $userSkills
+ * @property string $id
+ * @property ?string $category
+ * @property string $name
+ * @property ?string $description
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property SkillCategory $skillCategory
+ * @property Collection<int, UserSkill> $userSkills
  * @property Collection<int, ProjectRequiredSkill> $projectRequiredSkills
- * @property UserSkill                             $pivot
+ * @property UserSkill $pivot
  */
 class Skill extends BaseModel
 {

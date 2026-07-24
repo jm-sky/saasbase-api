@@ -1,6 +1,9 @@
 <?php
 
-$finder = PhpCsFixer\Finder::create()
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
+
+$finder = Finder::create()
     ->in([
         __DIR__.'/app',
         __DIR__.'/config',
@@ -13,7 +16,8 @@ $finder = PhpCsFixer\Finder::create()
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
 
-$config = new PhpCsFixer\Config();
+$config = new Config;
+
 return $config
     ->setRules([
         '@PSR12' => true,

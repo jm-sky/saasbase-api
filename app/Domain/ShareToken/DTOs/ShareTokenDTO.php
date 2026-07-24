@@ -7,17 +7,17 @@ use App\Domain\ShareToken\Models\ShareToken;
 use Carbon\Carbon;
 
 /**
- * @property string  $id
- * @property string  $token
- * @property string  $shareableType
- * @property string  $shareableId
- * @property bool    $onlyForAuthenticated
+ * @property string $id
+ * @property string $token
+ * @property string $shareableType
+ * @property string $shareableId
+ * @property bool $onlyForAuthenticated
  * @property ?Carbon $expiresAt
  * @property ?Carbon $lastUsedAt
- * @property int     $usageCount
- * @property ?int    $maxUsage
- * @property Carbon  $createdAt
- * @property Carbon  $updatedAt
+ * @property int $usageCount
+ * @property ?int $maxUsage
+ * @property Carbon $createdAt
+ * @property Carbon $updatedAt
  */
 final class ShareTokenDTO extends BaseDataDTO
 {
@@ -33,8 +33,7 @@ final class ShareTokenDTO extends BaseDataDTO
         public readonly ?int $maxUsage,
         public readonly Carbon $createdAt,
         public readonly Carbon $updatedAt,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -73,17 +72,17 @@ final class ShareTokenDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'id'                   => $this->id,
-            'token'                => $this->token,
-            'shareableType'        => $this->shareableType,
-            'shareableId'          => $this->shareableId,
+            'id' => $this->id,
+            'token' => $this->token,
+            'shareableType' => $this->shareableType,
+            'shareableId' => $this->shareableId,
             'onlyForAuthenticated' => $this->onlyForAuthenticated,
-            'expiresAt'            => $this->expiresAt?->toIso8601String(),
-            'lastUsedAt'           => $this->lastUsedAt?->toIso8601String(),
-            'usageCount'           => $this->usageCount,
-            'maxUsage'             => $this->maxUsage,
-            'createdAt'            => $this->createdAt->toIso8601String(),
-            'updatedAt'            => $this->updatedAt->toIso8601String(),
+            'expiresAt' => $this->expiresAt?->toIso8601String(),
+            'lastUsedAt' => $this->lastUsedAt?->toIso8601String(),
+            'usageCount' => $this->usageCount,
+            'maxUsage' => $this->maxUsage,
+            'createdAt' => $this->createdAt->toIso8601String(),
+            'updatedAt' => $this->updatedAt->toIso8601String(),
         ];
     }
 }

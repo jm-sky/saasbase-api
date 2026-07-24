@@ -24,13 +24,13 @@ class ContractorLogoController extends Controller
 
         $contractor->logModelActivity(ContractorActivityType::LogoCreated->value, $media);
 
-        $logoUrl  = $contractor->getMediaSignedUrl('logo');
+        $logoUrl = $contractor->getMediaSignedUrl('logo');
         $thumbUrl = $contractor->getMediaSignedUrl('logo', 'thumb');
 
         return response()->json([
-            'message'     => 'Contractor logo uploaded successfully.',
+            'message' => 'Contractor logo uploaded successfully.',
             'originalUrl' => $logoUrl,
-            'thumbUrl'    => $thumbUrl,
+            'thumbUrl' => $thumbUrl,
         ]);
     }
 
@@ -39,11 +39,11 @@ class ContractorLogoController extends Controller
         $thumb = $request->query('thumb', false);
         $media = $thumb ? $contractor->getFirstMedia('logo', 'thumb') : $contractor->getFirstMedia('logo');
 
-        if ($thumb && !$media) {
+        if ($thumb && ! $media) {
             $media = $contractor->getFirstMedia('logo');
         }
 
-        if (!$media) {
+        if (! $media) {
             return response()->json(['message' => 'No logo found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
@@ -52,9 +52,9 @@ class ContractorLogoController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 

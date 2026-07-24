@@ -32,9 +32,9 @@ class InvoiceAttachmentsController extends Controller
 
         $media = $media->map(function (Media $media) use ($ocrMediaId): Media {
             if ($media->id === $ocrMediaId) {
-                $meta          = $media->meta ?? [];
+                $meta = $media->meta ?? [];
                 $meta['isOcr'] = true;
-                $media->meta   = $meta;
+                $media->meta = $meta;
             }
 
             return $media;
@@ -50,13 +50,13 @@ class InvoiceAttachmentsController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        $file  = $request->file('file');
+        $file = $request->file('file');
         $media = $invoice->addMedia($file)->toMediaCollection('attachments');
         $invoice->logModelActivity(InvoiceActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
-            'data'    => MediaDTO::fromModel($media)->toArray(),
+            'data' => MediaDTO::fromModel($media)->toArray(),
         ], Response::HTTP_CREATED);
     }
 
@@ -84,13 +84,13 @@ class InvoiceAttachmentsController extends Controller
         $disk = Storage::disk($media->disk);
         $path = $media->getPathRelativeToRoot();
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(Response::HTTP_NOT_FOUND, 'File not found.');
         }
 
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->streamDownload(function () use ($disk, $path) {
@@ -109,13 +109,13 @@ class InvoiceAttachmentsController extends Controller
         $disk = Storage::disk($media->disk);
         $path = $media->getPathRelativeToRoot();
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(Response::HTTP_NOT_FOUND, 'File not found.');
         }
 
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->streamDownload(function () use ($disk, $path) {
@@ -143,7 +143,7 @@ class InvoiceAttachmentsController extends Controller
      */
     protected function authorizeMedia(Invoice $invoice, Media $media): void
     {
-        if (Invoice::class !== $media->model_type || $media->model_id !== $invoice->id) {
+        if ($media->model_type !== Invoice::class || $media->model_id !== $invoice->id) {
             abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this invoice.');
         }
     }

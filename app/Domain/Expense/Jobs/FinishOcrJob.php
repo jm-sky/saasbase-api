@@ -55,8 +55,8 @@ class FinishOcrJob implements ShouldQueue
     protected function failWithReason(string $message, \Exception $ex): void
     {
         $this->ocrRequest->update([
-            'status'      => OcrRequestStatus::Failed,
-            'errors'      => ['message' => $ex->getMessage()],
+            'status' => OcrRequestStatus::Failed,
+            'errors' => ['message' => $ex->getMessage()],
             'finished_at' => now(),
         ]);
 

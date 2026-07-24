@@ -74,8 +74,7 @@ class JwtHelper
         $payload = JWTAuth::factory()
             ->setTTL($ttl)
             ->claims($customClaims)
-            ->make()
-        ;
+            ->make();
 
         return JWTAuth::manager()->encode($payload)->get();
     }

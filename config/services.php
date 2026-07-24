@@ -18,7 +18,7 @@ return [
     ],
 
     'ses' => [
-        'key'    => env('AWS_ACCESS_KEY_ID'),
+        'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
@@ -30,7 +30,7 @@ return [
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel'              => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
 
@@ -45,16 +45,16 @@ return [
     */
 
     'github' => [
-        'client_id'     => env('GITHUB_CLIENT_ID'),
+        'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect'      => env('GITHUB_REDIRECT_URI'),
-        'scope'         => ['read:user', 'user:email'],
+        'redirect' => env('GITHUB_REDIRECT_URI'),
+        'scope' => ['read:user', 'user:email'],
     ],
 
     'google' => [
-        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect'      => env('GOOGLE_REDIRECT_URI'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
     /*
@@ -67,10 +67,10 @@ return [
     */
 
     'openrouter' => [
-        'key'               => env('OPENROUTER_API_KEY'),
-        'model'             => env('OPENROUTER_MODEL', 'openai/gpt-3.5-turbo'),
-        'url'               => env('OPENROUTER_URL', 'https://openrouter.ai/api/v1/chat/completions'),
-        'log'               => env('OPENROUTER_LOG', false),
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openai/gpt-3.5-turbo'),
+        'url' => env('OPENROUTER_URL', 'https://openrouter.ai/api/v1/chat/completions'),
+        'log' => env('OPENROUTER_LOG', false),
         'streaming_enabled' => env('OPENROUTER_STREAMING_ENABLED', true),
     ],
 
@@ -95,9 +95,9 @@ return [
     |
     */
     'ibanapi' => [
-        'key'   => env('IBANAPI_KEY'),
+        'key' => env('IBANAPI_KEY'),
         'cache' => [
-            'mode'  => env('IBANAPI_CACHE_MODE', 'hours'),
+            'mode' => env('IBANAPI_CACHE_MODE', 'hours'),
             'hours' => env('IBANAPI_CACHE_HOURS', 12),
         ],
     ],
@@ -112,7 +112,7 @@ return [
     */
     'mf' => [
         'cache' => [
-            'mode'  => env('MF_LOOKUP_CACHE_MODE', 'hours'),
+            'mode' => env('MF_LOOKUP_CACHE_MODE', 'hours'),
             'hours' => env('MF_LOOKUP_CACHE_HOURS', 12),
         ],
     ],
@@ -128,7 +128,7 @@ return [
     */
     'vies' => [
         'cache' => [
-            'mode'  => env('VIES_LOOKUP_CACHE_MODE', 'hours'),
+            'mode' => env('VIES_LOOKUP_CACHE_MODE', 'hours'),
             'hours' => env('VIES_LOOKUP_CACHE_HOURS', 12),
         ],
     ],
@@ -143,11 +143,11 @@ return [
     |
     */
     'regon' => [
-        'api_url'    => env('REGON_API_URL', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc'),
-        'user_key'   => env('REGON_API_USER_KEY'),
+        'api_url' => env('REGON_API_URL', 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc'),
+        'user_key' => env('REGON_API_USER_KEY'),
         'should_log' => env('REGON_SHOULD_LOG', false),
-        'cache'      => [
-            'mode'  => env('REGON_CACHE_MODE', 'hours'),
+        'cache' => [
+            'mode' => env('REGON_CACHE_MODE', 'hours'),
             'hours' => env('REGON_CACHE_HOURS', 12),
         ],
     ],
@@ -161,7 +161,7 @@ return [
     |
     */
     'edo_post' => [
-        'base_url'        => env('EDO_POST_BASE_URL', 'http://localhost:5005'),
+        'base_url' => env('EDO_POST_BASE_URL', 'http://localhost:5005'),
         'mailbox_address' => env('EDO_POST_MAILBOX_ADDRESS'),
     ],
 
@@ -187,9 +187,9 @@ return [
     |
     */
     'ksef' => [
-        'api_url'    => env('KSEF_API_URL', 'https://ksef.mf.gov.pl/api'),
-        'cache'      => [
-            'mode'  => env('KSEF_CACHE_MODE', 'hours'),
+        'api_url' => env('KSEF_API_URL', 'https://ksef.mf.gov.pl/api'),
+        'cache' => [
+            'mode' => env('KSEF_CACHE_MODE', 'hours'),
             'hours' => env('KSEF_CACHE_HOURS', 1),
         ],
     ],

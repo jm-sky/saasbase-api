@@ -8,7 +8,7 @@ use App\Domain\Skills\Models\UserSkill;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Skills\Models\UserSkill>
+ * @extends Factory<UserSkill>
  */
 class UserSkillFactory extends Factory
 {
@@ -17,9 +17,9 @@ class UserSkillFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id'     => User::factory(),
-            'skill_id'    => Skill::factory(),
-            'level'       => $this->faker->numberBetween(1, 5),
+            'user_id' => User::factory(),
+            'skill_id' => Skill::factory(),
+            'level' => $this->faker->numberBetween(1, 5),
             'acquired_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }

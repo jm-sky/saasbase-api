@@ -21,14 +21,14 @@ class HealthController extends Controller
     {
         $results = [];
 
-        $results['redis']      = $this->getRedis();
-        $results['s3']         = $this->getS3();
-        $results['rustfs']     = $this->getRustfs();
-        $results['soketi']     = $this->getSoketi();
+        $results['redis'] = $this->getRedis();
+        $results['s3'] = $this->getS3();
+        $results['rustfs'] = $this->getRustfs();
+        $results['soketi'] = $this->getSoketi();
         $results['openrouter'] = $this->getOpenRouter();
 
         return response()->json([
-            'status'   => 'ok',
+            'status' => 'ok',
             'services' => $results,
         ]);
     }
@@ -42,7 +42,7 @@ class HealthController extends Controller
             Redis::connection()->ping();
             $status['status'] = 'ok';
         } catch (\Exception $e) {
-            $status['status'] = 'error: ' . $e->getMessage();
+            $status['status'] = 'error: '.$e->getMessage();
         }
 
         if ($this->showDetails()) {
@@ -61,7 +61,7 @@ class HealthController extends Controller
             Storage::disk('minio')->exists('/');
             $status['status'] = 'ok';
         } catch (\Exception $e) {
-            $status['status'] = 'error: ' . $e->getMessage();
+            $status['status'] = 'error: '.$e->getMessage();
         }
 
         if ($this->showDetails()) {
@@ -80,7 +80,7 @@ class HealthController extends Controller
             Storage::disk('s3')->listContents('', 1);
             $status['status'] = 'ok';
         } catch (\Exception $e) {
-            $status['status'] = 'error: ' . $e->getMessage();
+            $status['status'] = 'error: '.$e->getMessage();
         }
 
         if ($this->showDetails()) {
@@ -94,14 +94,14 @@ class HealthController extends Controller
     protected function getSoketi(): array
     {
         $status = [];
-        $url    = null;
+        $url = null;
 
         try {
-            $url              = Str::of(config('broadcasting.connections.pusher.options.host'))->replace('wss://', 'https://');
-            $response         = Http::timeout(2)->get($url);
+            $url = Str::of(config('broadcasting.connections.pusher.options.host'))->replace('wss://', 'https://');
+            $response = Http::timeout(2)->get($url);
             $status['status'] = $response->successful() ? 'ok' : 'error: bad response';
         } catch (\Exception $e) {
-            $status['status'] = 'error: ' . $e->getMessage();
+            $status['status'] = 'error: '.$e->getMessage();
         }
 
         if ($this->showDetails()) {
@@ -115,14 +115,14 @@ class HealthController extends Controller
     protected function getOpenRouter(): array
     {
         $status = [];
-        $url    = null;
+        $url = null;
 
         try {
-            $url              = OpenRouterService::getOpenRouterUrl();
-            $response         = Http::timeout(2)->get($url);
+            $url = OpenRouterService::getOpenRouterUrl();
+            $response = Http::timeout(2)->get($url);
             $status['status'] = $response->successful() ? 'ok' : 'error: bad response';
         } catch (\Exception $e) {
-            $status['status'] = 'error: ' . $e->getMessage();
+            $status['status'] = 'error: '.$e->getMessage();
         }
 
         if ($this->showDetails()) {

@@ -33,9 +33,9 @@ class UserSettings extends BaseModel
      * @var array<string, string>
      */
     protected $casts = [
-        'two_factor_enabled'   => 'boolean',
+        'two_factor_enabled' => 'boolean',
         'two_factor_confirmed' => 'boolean',
-        'preferences'          => 'array',
+        'preferences' => 'array',
     ];
 
     /**
@@ -49,14 +49,14 @@ class UserSettings extends BaseModel
     public static function defaults(): array
     {
         return [
-            'language'                  => null,
-            'theme'                     => null,
-            'timezone'                  => null,
-            'two_factor_enabled'        => false,
-            'two_factor_confirmed'      => false,
-            'two_factor_secret'         => null,
+            'language' => null,
+            'theme' => null,
+            'timezone' => null,
+            'two_factor_enabled' => false,
+            'two_factor_confirmed' => false,
+            'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
-            'preferences'               => null,
+            'preferences' => null,
         ];
     }
 }

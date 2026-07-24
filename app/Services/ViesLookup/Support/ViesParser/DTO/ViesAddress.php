@@ -24,13 +24,13 @@ class ViesAddress
 
         $parts = explode(' ', $this->street);
 
-        if (1 === count($parts)) {
+        if (count($parts) === 1) {
             return;
         }
 
         $last = array_pop($parts);
 
-        if (!Str::match('/^\d+$/', $last)) {
+        if (! Str::match('/^\d+$/', $last)) {
             return;
         }
 

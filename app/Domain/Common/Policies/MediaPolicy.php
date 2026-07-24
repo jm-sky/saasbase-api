@@ -25,7 +25,7 @@ class MediaPolicy
     public function view(User $user, Media $media, Tenant $tenant): bool
     {
         return $user->isCurrentTenant($tenant)
-            && Tenant::class === $media->model_type
+            && $media->model_type === Tenant::class
             && $media->model_id === $tenant->id;
     }
 
@@ -43,7 +43,7 @@ class MediaPolicy
     public function delete(User $user, Media $media, Tenant $tenant): bool
     {
         return $user->isCurrentTenant($tenant)
-            && Tenant::class === $media->model_type
+            && $media->model_type === Tenant::class
             && $media->model_id === $tenant->id;
     }
 }

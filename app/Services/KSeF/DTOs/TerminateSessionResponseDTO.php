@@ -11,6 +11,5 @@ final class TerminateSessionResponseDTO
         public readonly string $referenceNumber,
         public readonly int $processingCode,
         public readonly string $processingDescription
-    ) {
-    }
+    ) {}
 }

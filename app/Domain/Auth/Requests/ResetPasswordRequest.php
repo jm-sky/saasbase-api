@@ -14,11 +14,11 @@ class ResetPasswordRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'token'                => ['required'],
-            'email'                => ['required', 'email'],
-            'password'             => ['required', 'string', 'min:8'],
+            'token' => ['required'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:8'],
             'passwordConfirmation' => ['required', 'string', 'min:8', 'same:password'],
-            'recaptchaToken'       => ['required', 'string'],
+            'recaptchaToken' => ['required', 'string'],
         ];
     }
 }

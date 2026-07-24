@@ -9,14 +9,14 @@ use Brick\Math\BigDecimal;
 use Carbon\Carbon;
 
 /**
- * @property PaymentStatus                 $status
- * @property ?Carbon                       $dueDate
- * @property ?Carbon                       $paidDate
- * @property ?BigDecimal                   $paidAmount
- * @property PaymentMethodDTO              $method
- * @property ?string                       $reference
- * @property ?string                       $terms
- * @property ?string                       $notes
+ * @property PaymentStatus $status
+ * @property ?Carbon $dueDate
+ * @property ?Carbon $paidDate
+ * @property ?BigDecimal $paidAmount
+ * @property PaymentMethodDTO $method
+ * @property ?string $reference
+ * @property ?string $terms
+ * @property ?string $notes
  * @property ?InvoicePaymentBankAccountDTO $bankAccount
  */
 final class InvoicePaymentDTO extends BaseDataDTO
@@ -31,20 +31,19 @@ final class InvoicePaymentDTO extends BaseDataDTO
         public ?string $terms = null,
         public ?string $notes = null,
         public ?InvoicePaymentBankAccountDTO $bankAccount = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'status'      => $this->status->value,
-            'dueDate'     => $this->dueDate?->toDateString(),
-            'paidDate'    => $this->paidDate?->toDateString(),
-            'paidAmount'  => $this->paidAmount?->toFloat(),
-            'method'      => $this->method->toArray(),
-            'reference'   => $this->reference,
-            'terms'       => $this->terms,
-            'notes'       => $this->notes,
+            'status' => $this->status->value,
+            'dueDate' => $this->dueDate?->toDateString(),
+            'paidDate' => $this->paidDate?->toDateString(),
+            'paidAmount' => $this->paidAmount?->toFloat(),
+            'method' => $this->method->toArray(),
+            'reference' => $this->reference,
+            'terms' => $this->terms,
+            'notes' => $this->notes,
             'bankAccount' => $this->bankAccount?->toArray(),
         ];
     }

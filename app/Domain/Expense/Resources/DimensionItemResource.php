@@ -23,13 +23,13 @@ class DimensionItemResource extends JsonResource
     {
         /* @var AllocationDimensionInterface $this->resource */
         return [
-            'id'          => $this->getId(),
-            'code'        => $this->getCode(),
-            'name'        => $this->getName(),
+            'id' => $this->getId(),
+            'code' => $this->getCode(),
+            'name' => $this->getName(),
             'description' => $this->getDescription(),
-            'isGlobal'    => $this->isGlobal(),
+            'isGlobal' => $this->isGlobal(),
             'displayName' => $this->getDisplayName(),
-            'isActive'    => $this->getIsActive(),
+            'isActive' => $this->getIsActive(),
         ];
     }
 }

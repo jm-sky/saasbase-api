@@ -73,8 +73,7 @@ final class InvoiceDocumentDTO extends BaseDataDTO
 
         // Document Confidence
         public readonly float $confidence = 1.0,
-    ) {
-    }
+    ) {}
 
     /**
      * Map from Azure Document Intelligence response (fields array).
@@ -222,56 +221,56 @@ final class InvoiceDocumentDTO extends BaseDataDTO
     {
         return [
             // Basic Invoice Information
-            'invoiceId'                    => $this->invoiceId?->toArray(),
-            'customerName'                 => $this->customerName?->toArray(),
-            'customerTaxId'                => $this->customerTaxId?->toArray(),
-            'vendorName'                   => $this->vendorName?->toArray(),
-            'vendorTaxId'                  => $this->vendorTaxId?->toArray(),
-            'purchaseOrder'                => $this->purchaseOrder?->toArray(),
-            'invoiceType'                  => $this->invoiceType?->toArray(),
-            'invoiceTypeConfidence'        => $this->invoiceTypeConfidence?->toArray(),
-            'invoiceCategory'              => $this->invoiceCategory?->toArray(),
-            'invoiceCategoryConfidence'    => $this->invoiceCategoryConfidence?->toArray(),
-            'invoiceSubCategory'           => $this->invoiceSubCategory?->toArray(),
+            'invoiceId' => $this->invoiceId?->toArray(),
+            'customerName' => $this->customerName?->toArray(),
+            'customerTaxId' => $this->customerTaxId?->toArray(),
+            'vendorName' => $this->vendorName?->toArray(),
+            'vendorTaxId' => $this->vendorTaxId?->toArray(),
+            'purchaseOrder' => $this->purchaseOrder?->toArray(),
+            'invoiceType' => $this->invoiceType?->toArray(),
+            'invoiceTypeConfidence' => $this->invoiceTypeConfidence?->toArray(),
+            'invoiceCategory' => $this->invoiceCategory?->toArray(),
+            'invoiceCategoryConfidence' => $this->invoiceCategoryConfidence?->toArray(),
+            'invoiceSubCategory' => $this->invoiceSubCategory?->toArray(),
             'invoiceSubCategoryConfidence' => $this->invoiceSubCategoryConfidence?->toArray(),
 
             // Contact Information
-            'customerContactName'  => $this->customerContactName?->toArray(),
+            'customerContactName' => $this->customerContactName?->toArray(),
             'customerContactPhone' => $this->customerContactPhone?->toArray(),
             'customerContactEmail' => $this->customerContactEmail?->toArray(),
-            'vendorContactName'    => $this->vendorContactName?->toArray(),
-            'vendorContactPhone'   => $this->vendorContactPhone?->toArray(),
-            'vendorContactEmail'   => $this->vendorContactEmail?->toArray(),
+            'vendorContactName' => $this->vendorContactName?->toArray(),
+            'vendorContactPhone' => $this->vendorContactPhone?->toArray(),
+            'vendorContactEmail' => $this->vendorContactEmail?->toArray(),
 
             // Addresses
-            'customerAddress'            => $this->customerAddress?->toArray(),
-            'customerAddressRecipient'   => $this->customerAddressRecipient?->toArray(),
-            'vendorAddress'              => $this->vendorAddress?->toArray(),
-            'vendorAddressRecipient'     => $this->vendorAddressRecipient?->toArray(),
-            'serviceAddress'             => $this->serviceAddress?->toArray(),
-            'serviceAddressRecipient'    => $this->serviceAddressRecipient?->toArray(),
-            'billingAddress'             => $this->billingAddress?->toArray(),
-            'billingAddressRecipient'    => $this->billingAddressRecipient?->toArray(),
-            'shippingAddress'            => $this->shippingAddress?->toArray(),
-            'shippingAddressRecipient'   => $this->shippingAddressRecipient?->toArray(),
-            'remittanceAddress'          => $this->remittanceAddress?->toArray(),
+            'customerAddress' => $this->customerAddress?->toArray(),
+            'customerAddressRecipient' => $this->customerAddressRecipient?->toArray(),
+            'vendorAddress' => $this->vendorAddress?->toArray(),
+            'vendorAddressRecipient' => $this->vendorAddressRecipient?->toArray(),
+            'serviceAddress' => $this->serviceAddress?->toArray(),
+            'serviceAddressRecipient' => $this->serviceAddressRecipient?->toArray(),
+            'billingAddress' => $this->billingAddress?->toArray(),
+            'billingAddressRecipient' => $this->billingAddressRecipient?->toArray(),
+            'shippingAddress' => $this->shippingAddress?->toArray(),
+            'shippingAddressRecipient' => $this->shippingAddressRecipient?->toArray(),
+            'remittanceAddress' => $this->remittanceAddress?->toArray(),
             'remittanceAddressRecipient' => $this->remittanceAddressRecipient?->toArray(),
 
             // Financial Information
-            'amountDue'    => $this->amountDue?->toArray(),
+            'amountDue' => $this->amountDue?->toArray(),
             'invoiceTotal' => $this->invoiceTotal?->toArray(),
-            'subTotal'     => $this->subTotal?->toArray(),
-            'totalTax'     => $this->totalTax?->toArray(),
-            'paymentTerm'  => $this->paymentTerm,
+            'subTotal' => $this->subTotal?->toArray(),
+            'totalTax' => $this->totalTax?->toArray(),
+            'paymentTerm' => $this->paymentTerm,
 
             // Dates and Times
-            'dueDate'     => $this->dueDate?->toArray(),
+            'dueDate' => $this->dueDate?->toArray(),
             'invoiceDate' => $this->invoiceDate?->toArray(),
             'invoiceTime' => $this->invoiceTime?->toArray(),
             'serviceDate' => $this->serviceDate?->toArray(),
 
             // Collections
-            'items'          => array_map(fn ($item) => $item->toArray(), $this->items),
+            'items' => array_map(fn ($item) => $item->toArray(), $this->items),
             'paymentDetails' => array_map(fn ($pd) => $pd->toArray(), $this->paymentDetails),
 
             // Document Confidence

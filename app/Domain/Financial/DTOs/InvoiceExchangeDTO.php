@@ -6,9 +6,9 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 use Brick\Math\BigDecimal;
 
 /**
- * @property string      $currency
+ * @property string $currency
  * @property ?BigDecimal $exchangeRate
- * @property ?string     $date
+ * @property ?string $date
  */
 final class InvoiceExchangeDTO extends BaseDataDTO
 {
@@ -16,15 +16,14 @@ final class InvoiceExchangeDTO extends BaseDataDTO
         public string $currency,
         public ?BigDecimal $exchangeRate = null,
         public ?string $date = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'currency'     => $this->currency,
+            'currency' => $this->currency,
             // 'exchangeRate' => $this->exchangeRate?->toFloat(),
-            'date'         => $this->date,
+            'date' => $this->date,
         ];
     }
 

@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string               $id
- * @property string               $tenant_id
- * @property string               $name
- * @property string               $color
- * @property int                  $sort_order
- * @property bool                 $is_default
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property string $color
+ * @property int $sort_order
+ * @property bool $is_default
  * @property Collection|Project[] $projects
  */
 class ProjectStatus extends BaseModel

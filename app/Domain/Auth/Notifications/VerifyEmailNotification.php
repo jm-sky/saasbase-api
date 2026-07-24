@@ -36,7 +36,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
         );
 
         $frontendUrl = rtrim(config('app.frontend_url', config('app.url')), '/');
-        $apiPrefix   = rtrim(config('app.api_prefix', '/api/v1'), '/');
+        $apiPrefix = rtrim(config('app.api_prefix', '/api/v1'), '/');
 
         $url = route('verification.verify', [
             'token' => $token,
@@ -46,7 +46,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
         $url = str_replace($apiPrefix, '', $url);
 
         // Return the frontend URL with token
-        return $frontendUrl . $url;
+        return $frontendUrl.$url;
     }
 
     /**
@@ -56,12 +56,11 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(__('notifications.email_verification.subject'))
             ->view('emails.verify-email', [
-                'url'        => $verificationUrl,
+                'url' => $verificationUrl,
                 'notifiable' => $notifiable,
-            ])
-        ;
+            ]);
     }
 }

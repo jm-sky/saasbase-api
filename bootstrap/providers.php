@@ -1,9 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\CommandServiceProvider;
+use App\Providers\IbanServiceProvider;
+use App\Providers\StripeServiceProvider;
+use App\Providers\TelescopeServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\CommandServiceProvider::class,
-    App\Providers\TelescopeServiceProvider::class,
-    App\Providers\IbanServiceProvider::class,
-    App\Providers\StripeServiceProvider::class,
+    AppServiceProvider::class,
+    CommandServiceProvider::class,
+    TelescopeServiceProvider::class,
+    IbanServiceProvider::class,
+    StripeServiceProvider::class,
 ];

@@ -15,19 +15,19 @@ class PreviewInvoiceTemplateRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'content'                   => ['required', 'string'],
-            'options'                   => ['sometimes', 'array'],
-            'options.language'          => ['sometimes', 'string', 'in:' . implode(',', config('app.supported_locales'))],
-            'options.currency'          => ['sometimes', 'string'],
-            'options.accentColor'       => ['sometimes', 'string'],
-            'options.secondaryColor'    => ['sometimes', 'string'],
-            'options.includeLogo'       => ['sometimes', 'boolean'],
+            'content' => ['required', 'string'],
+            'options' => ['sometimes', 'array'],
+            'options.language' => ['sometimes', 'string', 'in:'.implode(',', config('app.supported_locales'))],
+            'options.currency' => ['sometimes', 'string'],
+            'options.accentColor' => ['sometimes', 'string'],
+            'options.secondaryColor' => ['sometimes', 'string'],
+            'options.includeLogo' => ['sometimes', 'boolean'],
             'options.includeSignatures' => ['sometimes', 'boolean'],
-            'options.dateFormat'        => ['sometimes', 'string'],
-            'options.timezone'          => ['sometimes', 'string'],
-            'previewData'               => ['required', 'array'],
-            'previewData.invoice'       => ['required', 'array'],
-            'previewData.options'       => ['required', 'array'],
+            'options.dateFormat' => ['sometimes', 'string'],
+            'options.timezone' => ['sometimes', 'string'],
+            'previewData' => ['required', 'array'],
+            'previewData.invoice' => ['required', 'array'],
+            'previewData.options' => ['required', 'array'],
         ];
     }
 

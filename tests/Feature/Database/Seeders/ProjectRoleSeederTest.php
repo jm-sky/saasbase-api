@@ -16,7 +16,7 @@ class ProjectRoleSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testProjectRoleSeederCreatesExpectedRecords(): void
+    public function test_project_role_seeder_creates_expected_records(): void
     {
         $this->seed(ProjectRoleSeeder::class);
 
@@ -24,7 +24,7 @@ class ProjectRoleSeederTest extends TestCase
 
         // Test Project Manager role
         $this->assertDatabaseHas('project_roles', [
-            'name'        => 'Project Manager',
+            'name' => 'Project Manager',
             'description' => 'Manages and oversees the entire project',
         ]);
 
@@ -35,7 +35,7 @@ class ProjectRoleSeederTest extends TestCase
 
         // Test Developer role
         $this->assertDatabaseHas('project_roles', [
-            'name'        => 'Developer',
+            'name' => 'Developer',
             'description' => 'Works on project tasks',
         ]);
 
@@ -47,7 +47,7 @@ class ProjectRoleSeederTest extends TestCase
 
         // Test Observer role
         $this->assertDatabaseHas('project_roles', [
-            'name'        => 'Observer',
+            'name' => 'Observer',
             'description' => 'Can only view project progress',
         ]);
 

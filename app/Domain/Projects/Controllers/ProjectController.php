@@ -21,8 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
-    use HasIndexQuery;
     use AuthorizesRequests;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -34,10 +34,10 @@ class ProjectController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
-            AllowedFilter::custom('status_id', new AdvancedFilter()),
-            AllowedFilter::custom('owner_id', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
+            AllowedFilter::custom('status_id', new AdvancedFilter),
+            AllowedFilter::custom('owner_id', new AdvancedFilter),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
         ];
@@ -58,15 +58,14 @@ class ProjectController extends Controller
         $projects = $this->getIndexPaginator($request);
 
         return ProjectResource::collection($projects['data'])
-            ->additional(['meta' => $projects['meta']])
-        ;
+            ->additional(['meta' => $projects['meta']]);
     }
 
     public function store(CreateProjectRequest $request): ProjectResource
     {
         $this->authorize('create', Project::class);
 
-        $dto     = ProjectDTO::from($request->validated());
+        $dto = ProjectDTO::from($request->validated());
         $project = Project::create($dto->toDbArray());
 
         return new ProjectResource($project);

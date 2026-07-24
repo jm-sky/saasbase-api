@@ -11,7 +11,7 @@ class IsActive
     {
         $user = $request->user();
 
-        if (!$user || !$user->isActive()) {
+        if (! $user || ! $user->isActive()) {
             return response()->json([
                 'message' => 'Account is not active.',
             ], Response::HTTP_FORBIDDEN);

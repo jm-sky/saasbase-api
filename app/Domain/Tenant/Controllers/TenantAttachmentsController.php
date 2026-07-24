@@ -32,7 +32,7 @@ class TenantAttachmentsController extends Controller
     {
         $this->authorize('create', [Media::class, $tenant]);
 
-        $file  = $request->file('file');
+        $file = $request->file('file');
         $media = $tenant->addMedia($file)->toMediaCollection('attachments');
         $tenant->logModelActivity(TenantActivityType::AttachmentCreated->value, $media);
 
@@ -54,10 +54,10 @@ class TenantAttachmentsController extends Controller
     {
         $this->authorize('view', [$media, $tenant]);
 
-        $path    = $media->getPath();
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->download($path, $media->file_name, $headers);
@@ -67,10 +67,10 @@ class TenantAttachmentsController extends Controller
     {
         $this->authorize('view', [$media, $tenant]);
 
-        $path    = $media->getPath();
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->file($path, $headers);

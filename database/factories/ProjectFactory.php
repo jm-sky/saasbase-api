@@ -16,14 +16,14 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid()->toString(),
-            'tenant_id'   => Tenant::factory(),
-            'name'        => fake()->sentence(),
+            'id' => Str::ulid()->toString(),
+            'tenant_id' => Tenant::factory(),
+            'name' => fake()->sentence(),
             'description' => fake()->paragraph(),
-            'status_id'   => ProjectStatus::factory(),
-            'owner_id'    => User::factory(),
-            'start_date'  => fake()->dateTimeBetween('-1 year', 'now'),
-            'end_date'    => fake()->optional()->dateTimeBetween('now', '+1 year'),
+            'status_id' => ProjectStatus::factory(),
+            'owner_id' => User::factory(),
+            'start_date' => fake()->dateTimeBetween('-1 year', 'now'),
+            'end_date' => fake()->optional()->dateTimeBetween('now', '+1 year'),
         ];
     }
 }

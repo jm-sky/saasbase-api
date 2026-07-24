@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Financial\Models\VatRate>
+ * @extends Factory<VatRate>
  */
 class VatRateFactory extends Factory
 {
@@ -17,14 +17,14 @@ class VatRateFactory extends Factory
     public function definition(): array
     {
         $name = fake()->randomElement(['Standard', 'Reduced', 'Zero', 'Exempt']);
-        $rate = 'Zero' === $name ? 0 : fake()->randomElement([5, 8, 23]);
+        $rate = $name === 'Zero' ? 0 : fake()->randomElement([5, 8, 23]);
 
         return [
-            'id'           => Str::ulid()->toString(),
+            'id' => Str::ulid()->toString(),
             'country_code' => 'PL',
-            'name'         => $name,
-            'type'         => $rate > 0 ? VatRateType::PERCENTAGE : VatRateType::ZERO_PERCENT,
-            'rate'         => $rate,
+            'name' => $name,
+            'type' => $rate > 0 ? VatRateType::PERCENTAGE : VatRateType::ZERO_PERCENT,
+            'rate' => $rate,
         ];
     }
 }

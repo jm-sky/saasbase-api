@@ -18,15 +18,15 @@ class UserSessionService
         // @phpstan-ignore-next-line
         $tokenId = Arr::get(JWTAuth::getJWTProvider()->decode($token), 'jti');
 
-        $session                 = new UserSession();
-        $session->user_id        = $user->id;
-        $session->type           = SessionType::JWT;
-        $session->token_id       = $tokenId;
-        $session->ip_address     = $request->ip();
-        $session->user_agent     = $request->userAgent();
-        $session->device_name    = $this->extractDeviceName($request->userAgent());
+        $session = new UserSession;
+        $session->user_id = $user->id;
+        $session->type = SessionType::JWT;
+        $session->token_id = $tokenId;
+        $session->ip_address = $request->ip();
+        $session->user_agent = $request->userAgent();
+        $session->device_name = $this->extractDeviceName($request->userAgent());
         $session->last_active_at = now();
-        $session->expires_at     = now()->addMinutes(Config::get('jwt.refresh_ttl'));
+        $session->expires_at = now()->addMinutes(Config::get('jwt.refresh_ttl'));
         $session->save();
 
         return $session;
@@ -40,9 +40,10 @@ class UserSessionService
         // request; the raw JWTAuth facade instead requires something to have
         // called parseToken()/getToken() on it first in the same request, or
         // it throws "A token is required" — a distinct, easy-to-miss state.
+        // @phpstan-ignore-next-line payload() is provided by the JWTAuth guard, not declared on the base Auth facade
         $tokenId = Auth::payload()?->get('jti');
 
-        if (!$tokenId) {
+        if (! $tokenId) {
             return null;
         }
 
@@ -54,7 +55,7 @@ class UserSessionService
     {
         $session = $this->getCurrentSession();
 
-        if (!$session) {
+        if (! $session) {
             return;
         }
 
@@ -66,7 +67,7 @@ class UserSessionService
     {
         $session = $this->getCurrentSession();
 
-        if (!$session) {
+        if (! $session) {
             return;
         }
 
@@ -83,7 +84,7 @@ class UserSessionService
         /** @var UserSession|null $session */
         $session = $user->sessions()->whereNull('revoked_at')->find($sessionId);
 
-        if (!$session) {
+        if (! $session) {
             return false;
         }
 
@@ -104,13 +105,12 @@ class UserSessionService
         return $user->sessions()
             ->whereNull('revoked_at')
             ->when($currentSession, fn ($query) => $query->where('id', '!=', $currentSession->id))
-            ->update(['revoked_at' => now()])
-        ;
+            ->update(['revoked_at' => now()]);
     }
 
     private function extractDeviceName(?string $userAgent): string
     {
-        if (!$userAgent) {
+        if (! $userAgent) {
             return 'Unknown Device';
         }
 

@@ -9,17 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                                    $id
- * @property string                                    $workflow_id
- * @property int                                       $step_order
- * @property string                                    $name
- * @property bool                                      $require_all_approvers
- * @property int                                       $min_approvers
- * @property Carbon                                    $created_at
- * @property Carbon                                    $updated_at
- * @property ApprovalWorkflow                          $workflow
- * @property Collection<int, ApprovalStepApprover>     $approvers
- * @property Collection<int, ApprovalExpenseDecision>  $decisions
+ * @property string $id
+ * @property string $workflow_id
+ * @property int $step_order
+ * @property string $name
+ * @property bool $require_all_approvers
+ * @property int $min_approvers
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ApprovalWorkflow $workflow
+ * @property Collection<int, ApprovalStepApprover> $approvers
+ * @property Collection<int, ApprovalExpenseDecision> $decisions
  * @property Collection<int, ApprovalExpenseExecution> $executions
  */
 class ApprovalWorkflowStep extends BaseModel
@@ -33,14 +33,14 @@ class ApprovalWorkflowStep extends BaseModel
     ];
 
     protected $casts = [
-        'step_order'            => 'integer',
+        'step_order' => 'integer',
         'require_all_approvers' => 'boolean',
-        'min_approvers'         => 'integer',
+        'min_approvers' => 'integer',
     ];
 
     protected $attributes = [
         'require_all_approvers' => false,
-        'min_approvers'         => 1,
+        'min_approvers' => 1,
     ];
 
     public function workflow(): BelongsTo
@@ -79,8 +79,7 @@ class ApprovalWorkflowStep extends BaseModel
         return self::where('workflow_id', $this->workflow_id)
             ->where('step_order', '>', $this->step_order)
             ->orderBy('step_order')
-            ->first()
-        ;
+            ->first();
     }
 
     /**
@@ -91,8 +90,7 @@ class ApprovalWorkflowStep extends BaseModel
         return self::where('workflow_id', $this->workflow_id)
             ->where('step_order', '<', $this->step_order)
             ->orderByDesc('step_order')
-            ->first()
-        ;
+            ->first();
     }
 
     /**

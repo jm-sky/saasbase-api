@@ -37,55 +37,55 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @property string                        $id
- * @property string                        $name
- * @property string                        $slug
- * @property ?string                       $vat_id
- * @property ?string                       $tax_id
- * @property ?string                       $regon
- * @property ?string                       $country
- * @property ?string                       $email
- * @property ?string                       $phone
- * @property ?string                       $website
- * @property ?string                       $description
- * @property ?string                       $owner_id
- * @property Carbon                        $created_at
- * @property Carbon                        $updated_at
- * @property ?Carbon                       $deleted_at
- * @property ?User                         $owner
- * @property ?TenantPreferences            $preferences
- * @property ?TenantBranding               $branding
- * @property ?TenantPublicProfile          $publicProfile
- * @property Collection<Tag>               $tags
- * @property Collection<Address>           $addresses
- * @property ?Address                      $defaultAddress
- * @property Collection<BankAccount>       $bankAccounts
- * @property Collection<Media>             $media
- * @property Collection<TenantInvitation>  $invitations
- * @property Collection<TenantIntegration> $integrations
- * @property Collection<Project>           $projects
- * @property Collection<Contractor>        $contractors
- * @property Collection<Product>           $products
- * @property Collection<OrganizationUnit>  $organizationUnits
- * @property Collection<Invoice>           $invoices
- * @property Collection<Expense>           $expenses
- * @property ?BillingCustomer              $billingCustomer
- * @property ?BillingInfo                  $billingInfo
- * @property ?Subscription                 $subscription
- * @property ?Subscription                 $currentSubscription
- * @property ?OrganizationUnit             $rootOrganizationUnit
- * @property ?OrganizationUnit             $unassignedOrganizationUnit
- * @property ?OrganizationUnit             $formerEmployeesOrganizationUnit
+ * @property string $id
+ * @property string $name
+ * @property string $slug
+ * @property ?string $vat_id
+ * @property ?string $tax_id
+ * @property ?string $regon
+ * @property ?string $country
+ * @property ?string $email
+ * @property ?string $phone
+ * @property ?string $website
+ * @property ?string $description
+ * @property ?string $owner_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property ?User $owner
+ * @property ?TenantPreferences $preferences
+ * @property ?TenantBranding $branding
+ * @property ?TenantPublicProfile $publicProfile
+ * @property Collection<int, Tag> $tags
+ * @property Collection<int, Address> $addresses
+ * @property ?Address $defaultAddress
+ * @property Collection<int, BankAccount> $bankAccounts
+ * @property Collection<int, Media> $media
+ * @property Collection<int, TenantInvitation> $invitations
+ * @property Collection<int, TenantIntegration> $integrations
+ * @property Collection<int, Project> $projects
+ * @property Collection<int, Contractor> $contractors
+ * @property Collection<int, Product> $products
+ * @property Collection<int, OrganizationUnit> $organizationUnits
+ * @property Collection<int, Invoice> $invoices
+ * @property Collection<int, Expense> $expenses
+ * @property ?BillingCustomer $billingCustomer
+ * @property ?BillingInfo $billingInfo
+ * @property ?Subscription $subscription
+ * @property ?Subscription $currentSubscription
+ * @property ?OrganizationUnit $rootOrganizationUnit
+ * @property ?OrganizationUnit $unassignedOrganizationUnit
+ * @property ?OrganizationUnit $formerEmployeesOrganizationUnit
  */
 class Tenant extends BaseModel implements HasMedia, HasMediaUrl
 {
-    use SoftDeletes;
-    use InteractsWithMedia;
+    use HasActivityLog;
+    use HasActivityLogging;
     use HasMediaSignedUrls;
     use HaveAddresses;
     use HaveBankAccounts;
-    use HasActivityLog;
-    use HasActivityLogging;
+    use InteractsWithMedia;
+    use SoftDeletes;
 
     public const GLOBAL_TENANT_ID = null;
 
@@ -110,7 +110,7 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     ];
 
     protected $casts = [
-        'id'        => 'string',
+        'id' => 'string',
         'is_active' => 'boolean',
     ];
 
@@ -144,8 +144,7 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
         return $this->belongsToMany(User::class, 'user_tenants')
             ->using(UserTenant::class)
             ->withPivot(['role'])
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     public function preferences(): HasOne
@@ -250,7 +249,7 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     {
         OrgUnitUser::firstOrCreate([
             'organization_unit_id' => $this->rootOrganizationUnit->id,
-            'user_id'              => $user->id,
+            'user_id' => $user->id,
         ], [
             'role' => $role->value,
         ]);
@@ -260,7 +259,7 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     {
         OrgUnitUser::firstOrCreate([
             'organization_unit_id' => $this->unassignedOrganizationUnit->id,
-            'user_id'              => $user->id,
+            'user_id' => $user->id,
         ], [
             'role' => OrgUnitRole::Employee->value,
         ]);
@@ -270,8 +269,7 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     {
         $this->addMediaCollection('logo')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('attachments');
     }
@@ -280,13 +278,12 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.tenants.logo.size', 256))
-            ->height(config('domains.tenants.logo.size', 256))
-        ;
+            ->height(config('domains.tenants.logo.size', 256));
     }
 
     public function getMediaUrl(string $collectionName, string $fileName): string
     {
-        if ('logo' === $collectionName) {
+        if ($collectionName === 'logo') {
             return $this->getMediaSignedUrl($collectionName, $fileName);
         }
 
@@ -295,7 +292,7 @@ class Tenant extends BaseModel implements HasMedia, HasMediaUrl
 
     public static function bypassTenant(?string $tenantId, \Closure $callback): mixed
     {
-        $previousTenantId         = self::$BYPASSED_TENANT_ID;
+        $previousTenantId = self::$BYPASSED_TENANT_ID;
         self::$BYPASSED_TENANT_ID = $tenantId;
 
         try {

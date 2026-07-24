@@ -41,10 +41,9 @@ class IntegrationCredentialService
         $integration = TenantIntegration::where('tenant_id', $tenantId)
             ->where('type', $type)
             ->where('enabled', true)
-            ->first()
-        ;
+            ->first();
 
-        if (!$integration) {
+        if (! $integration) {
             return $this->getGlobalCredentials($type);
         }
 
@@ -57,9 +56,9 @@ class IntegrationCredentialService
     private function getGlobalCredentials(TenantIntegrationType $type): ?array
     {
         $configKey = "integrations.{$type->value}";
-        $config    = Config::get($configKey);
+        $config = Config::get($configKey);
 
-        if (!$config || !is_array($config)) {
+        if (! $config || ! is_array($config)) {
             return null;
         }
 
@@ -68,7 +67,7 @@ class IntegrationCredentialService
 
     private function getCacheKey(string $tenantId, TenantIntegrationType $type): string
     {
-        return self::CACHE_PREFIX . ":{$tenantId}:{$type->value}";
+        return self::CACHE_PREFIX.":{$tenantId}:{$type->value}";
     }
 
     public function hasCustomCredentials(string $tenantId, TenantIntegrationType $type): bool
@@ -76,18 +75,16 @@ class IntegrationCredentialService
         $integration = TenantIntegration::where('tenant_id', $tenantId)
             ->where('type', $type)
             ->where('enabled', true)
-            ->first()
-        ;
+            ->first();
 
-        return $integration && TenantIntegrationMode::Custom === $integration->mode;
+        return $integration && $integration->mode === TenantIntegrationMode::Custom;
     }
 
     public function isIntegrationEnabled(string $tenantId, TenantIntegrationType $type): bool
     {
         $integration = TenantIntegration::where('tenant_id', $tenantId)
             ->where('type', $type)
-            ->first()
-        ;
+            ->first();
 
         return $integration && $integration->enabled;
     }

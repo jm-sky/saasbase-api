@@ -14,7 +14,7 @@ trait WithFakeStorage
 
         config()->set('filesystems.disks.media', [
             'driver' => 'local',
-            'root'   => Storage::disk($disk)->path(''),
+            'root' => Storage::disk($disk)->path(''),
         ]);
     }
 }

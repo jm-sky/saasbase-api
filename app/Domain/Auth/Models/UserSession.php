@@ -8,19 +8,19 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string      $id
- * @property string      $user_id
+ * @property string $id
+ * @property string $user_id
  * @property SessionType $type
- * @property ?string     $token_id
- * @property ?string     $ip_address
- * @property ?string     $user_agent
- * @property ?string     $device_name
- * @property Carbon      $last_active_at
- * @property ?Carbon     $expires_at
- * @property ?Carbon     $revoked_at
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
- * @property User        $user
+ * @property ?string $token_id
+ * @property ?string $ip_address
+ * @property ?string $user_agent
+ * @property ?string $device_name
+ * @property Carbon $last_active_at
+ * @property ?Carbon $expires_at
+ * @property ?Carbon $revoked_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $user
  */
 class UserSession extends BaseModel
 {
@@ -37,10 +37,10 @@ class UserSession extends BaseModel
     ];
 
     protected $casts = [
-        'type'           => SessionType::class,
+        'type' => SessionType::class,
         'last_active_at' => 'datetime',
-        'expires_at'     => 'datetime',
-        'revoked_at'     => 'datetime',
+        'expires_at' => 'datetime',
+        'revoked_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -60,11 +60,11 @@ class UserSession extends BaseModel
 
     public function isRevoked(): bool
     {
-        return null !== $this->revoked_at;
+        return $this->revoked_at !== null;
     }
 
     public function isActive(): bool
     {
-        return !$this->isExpired() && !$this->isRevoked();
+        return ! $this->isExpired() && ! $this->isRevoked();
     }
 }

@@ -15,32 +15,32 @@ class StoreTenantRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'tenant'             => ['nullable', 'array'],
-            'tenant.name'        => ['required', 'string', 'max:255'],
-            'tenant.slug'        => ['nullable', 'string', 'max:255', 'unique:tenants,slug'],
-            'tenant.vatId'       => ['nullable', 'string', 'max:20'],
-            'tenant.taxId'       => ['nullable', 'string', 'max:20'],
-            'tenant.regon'       => ['nullable', 'string', 'max:20'],
-            'tenant.email'       => ['nullable', 'email', 'max:254'],
-            'tenant.phone'       => ['nullable', 'string', 'max:20'],
-            'tenant.website'     => ['nullable', 'string', 'max:255'],
-            'tenant.country'     => ['nullable', 'string', 'max:2', 'exists:countries,code'],
+            'tenant' => ['nullable', 'array'],
+            'tenant.name' => ['required', 'string', 'max:255'],
+            'tenant.slug' => ['nullable', 'string', 'max:255', 'unique:tenants,slug'],
+            'tenant.vatId' => ['nullable', 'string', 'max:20'],
+            'tenant.taxId' => ['nullable', 'string', 'max:20'],
+            'tenant.regon' => ['nullable', 'string', 'max:20'],
+            'tenant.email' => ['nullable', 'email', 'max:254'],
+            'tenant.phone' => ['nullable', 'string', 'max:20'],
+            'tenant.website' => ['nullable', 'string', 'max:255'],
+            'tenant.country' => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'tenant.description' => ['nullable', 'string'],
 
-            'address'            => ['nullable', 'array'],
-            'address.country'    => ['nullable', 'string', 'max:2', 'exists:countries,code'],
-            'address.city'       => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'array'],
+            'address.country' => ['nullable', 'string', 'max:2', 'exists:countries,code'],
+            'address.city' => ['nullable', 'string', 'max:255'],
             'address.postalCode' => ['nullable', 'string', 'max:20'],
-            'address.street'     => ['nullable', 'string', 'max:255'],
-            'address.building'   => ['nullable', 'string', 'max:20'],
-            'address.flat'       => ['nullable', 'string', 'max:20'],
+            'address.street' => ['nullable', 'string', 'max:255'],
+            'address.building' => ['nullable', 'string', 'max:20'],
+            'address.flat' => ['nullable', 'string', 'max:20'],
 
-            'bankAccount'           => ['nullable', 'array'],
-            'bankAccount.iban'      => ['nullable', 'string', 'max:100'],
-            'bankAccount.swift'     => ['nullable', 'string', 'max:50'],
-            'bankAccount.bankName'  => ['nullable', 'string', 'max:255'],
-            'bankAccount.currency'  => ['nullable', 'string', 'max:3'],
-            'bankAccount.country'   => ['nullable', 'string', 'max:2', 'exists:countries,code'],
+            'bankAccount' => ['nullable', 'array'],
+            'bankAccount.iban' => ['nullable', 'string', 'max:100'],
+            'bankAccount.swift' => ['nullable', 'string', 'max:50'],
+            'bankAccount.bankName' => ['nullable', 'string', 'max:255'],
+            'bankAccount.currency' => ['nullable', 'string', 'max:3'],
+            'bankAccount.country' => ['nullable', 'string', 'max:2', 'exists:countries,code'],
             'bankAccount.isDefault' => ['nullable', 'boolean'],
         ];
     }
@@ -50,9 +50,9 @@ class StoreTenantRequest extends BaseFormRequest
         return [
             'tenant.name.required' => 'The name field is required.',
             'tenant.slug.required' => 'The slug field is required.',
-            'tenant.slug.unique'   => 'This slug is already taken.',
-            'tenant.email.email'   => 'The email must be a valid email address.',
-            'tenant.country.max'   => 'The country must be a 2-letter ISO code.',
+            'tenant.slug.unique' => 'This slug is already taken.',
+            'tenant.email.email' => 'The email must be a valid email address.',
+            'tenant.country.max' => 'The country must be a 2-letter ISO code.',
         ];
     }
 

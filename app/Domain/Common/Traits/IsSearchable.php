@@ -12,16 +12,16 @@ trait IsSearchable
 
     public static function bootSearchable()
     {
-        if (!config('scout.enabled')) {
+        if (! config('scout.enabled')) {
             return;
         }
 
-        static::addGlobalScope(new SearchableScope());
+        static::addGlobalScope(new SearchableScope);
 
-        static::observe(new ModelObserver());
+        static::observe(new ModelObserver);
 
         // @phpstan-ignore-next-line
-        (new static())->registerSearchableMacros();
+        (new static)->registerSearchableMacros();
     }
 
     public function toSearchableArray(): array

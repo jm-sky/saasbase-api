@@ -12,6 +12,5 @@ class AllLookupResults
         public ?RegonReportUnified $regon = null,
         public ?MfLookupResultDTO $mf = null,
         public ?ViesLookupResultDTO $vies = null,
-    ) {
-    }
+    ) {}
 }

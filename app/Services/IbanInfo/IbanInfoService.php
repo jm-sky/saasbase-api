@@ -14,19 +14,18 @@ class IbanInfoService
     public function __construct(
         private readonly IbanApiService $ibanApiService,
         private readonly IbanCacheService $ibanCacheService,
-    ) {
-    }
+    ) {}
 
     public function getBankInfoFromIban(string $iban, ?string $country = null): ?IbanInfoDTO
     {
         $iban = $this->sanitizeIban($iban);
 
-        if (!$this->isValidIban($iban)) {
+        if (! $this->isValidIban($iban)) {
             return null;
         }
 
         $countryCode = $this->getCountryCode($iban, $country);
-        $bankCode    = $this->extractBankCode($iban);
+        $bankCode = $this->extractBankCode($iban);
 
         // 1. Check Redis cache
         $cachedBank = $this->ibanCacheService->get($countryCode, $bankCode);
@@ -38,8 +37,7 @@ class IbanInfoService
         // 2. Check database
         $dbBank = BankCode::where('country_code', $countryCode)
             ->where('bank_code', $bankCode)
-            ->first()
-        ;
+            ->first();
 
         if ($dbBank) {
             // Re-validate if stale
@@ -59,16 +57,16 @@ class IbanInfoService
     {
         $apiInfo = $this->ibanApiService->getIbanInfo($iban);
 
-        if (!$apiInfo || !$apiInfo->data->bank->bank_name) {
+        if (! $apiInfo || ! $apiInfo->data->bank->bank_name) {
             return null;
         }
 
         $bankData = [
             'country_code' => $countryCode,
-            'bank_code'    => $bankCode,
-            'bank_name'    => $apiInfo->data->bank->bank_name,
-            'swift'        => $apiInfo->data->bank->bic,
-            'currency'     => $apiInfo->data->currency_code,
+            'bank_code' => $bankCode,
+            'bank_name' => $apiInfo->data->bank->bank_name,
+            'swift' => $apiInfo->data->bank->bic,
+            'currency' => $apiInfo->data->currency_code,
             'validated_at' => now(),
         ];
 

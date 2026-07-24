@@ -6,10 +6,10 @@ use App\Domain\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string  $id
- * @property string  $subscription_plan_id
- * @property string  $feature_id
- * @property string  $value
+ * @property string $id
+ * @property string $subscription_plan_id
+ * @property string $feature_id
+ * @property string $value
  * @property Feature $feature
  */
 class PlanFeature extends BaseModel

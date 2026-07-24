@@ -11,9 +11,9 @@ class HealthDetailsService
 {
     /** @var array<string, int> */
     private const STATUS_SEVERITY = [
-        'ok'       => 0,
+        'ok' => 0,
         'degraded' => 1,
-        'failed'   => 2,
+        'failed' => 2,
     ];
 
     /**
@@ -23,21 +23,21 @@ class HealthDetailsService
     {
         $components = [
             'database' => $this->checkDatabase(),
-            'cache'    => $this->checkCache(),
-            'storage'  => $this->checkStorage(),
+            'cache' => $this->checkCache(),
+            'storage' => $this->checkStorage(),
             'frontend' => $this->checkFrontend(),
         ];
 
         $response = [
             'schema_version' => 1,
-            'status'         => $this->worstStatus(array_column($components, 'status')),
-            'environment'    => (string) config('app.env'),
-            'components'     => $components,
+            'status' => $this->worstStatus(array_column($components, 'status')),
+            'environment' => (string) config('app.env'),
+            'components' => $components,
         ];
 
         $version = config('app.version');
 
-        if (is_string($version) && '' !== $version) {
+        if (is_string($version) && $version !== '') {
             $response['version'] = $version;
         }
 
@@ -105,7 +105,7 @@ class HealthDetailsService
     {
         $url = (string) config('app.frontend_url');
 
-        if ('' === $url) {
+        if ($url === '') {
             return ['status' => 'ok'];
         }
 
@@ -129,7 +129,7 @@ class HealthDetailsService
     }
 
     /**
-     * @param list<string> $statuses
+     * @param  list<string>  $statuses
      */
     private function worstStatus(array $statuses): string
     {

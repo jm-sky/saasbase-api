@@ -50,15 +50,15 @@ class ApprovalWorkflowExecutionTest extends TestCase
     {
         parent::setUp();
 
-        $this->startAction   = app(StartApprovalWorkflowAction::class);
+        $this->startAction = app(StartApprovalWorkflowAction::class);
         $this->processAction = app(ProcessApprovalDecisionAction::class);
 
         // Create test tenant with owner
-        $owner        = User::factory()->create();
+        $owner = User::factory()->create();
         $this->tenant = Tenant::factory()->create(['owner_id' => $owner->id]);
 
         // Initialize tenant with organizational structure
-        (new InitializeTenantDefaults())->execute($this->tenant, $owner);
+        (new InitializeTenantDefaults)->execute($this->tenant, $owner);
 
         // Create test users and attach them to tenant through organization system
         Tenant::bypassTenant($this->tenant->id, function () {
@@ -76,10 +76,10 @@ class ApprovalWorkflowExecutionTest extends TestCase
         });
     }
 
-    public function testCanStartApprovalWorkflowForExpense(): void
+    public function test_can_start_approval_workflow_for_expense(): void
     {
         // Given: An expense and matching workflow
-        $expense  = $this->createExpense();
+        $expense = $this->createExpense();
         $workflow = $this->createSingleStepWorkflow();
 
         // When: Starting approval workflow
@@ -93,7 +93,7 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::PENDING, $expense->fresh()->approval_status);
     }
 
-    public function testAutoApprovesWhenNoWorkflowMatches(): void
+    public function test_auto_approves_when_no_workflow_matches(): void
     {
         // Given: An expense with no matching workflow
         $expense = $this->createExpense();
@@ -106,11 +106,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    public function testCanProcessApprovalDecisionAndCompleteSingleStepWorkflow(): void
+    public function test_can_process_approval_decision_and_complete_single_step_workflow(): void
     {
         // Given: A running approval execution
-        $expense   = $this->createExpense();
-        $workflow  = $this->createSingleStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createSingleStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // When: Processing approval decision
@@ -130,11 +130,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    public function testCanProcessRejectionAndCompleteWorkflow(): void
+    public function test_can_process_rejection_and_complete_workflow(): void
     {
         // Given: A running approval execution
-        $expense   = $this->createExpense();
-        $workflow  = $this->createSingleStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createSingleStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // When: Processing rejection decision
@@ -154,11 +154,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::REJECTED, $expense->fresh()->approval_status);
     }
 
-    public function testCanHandleMultiStepWorkflow(): void
+    public function test_can_handle_multi_step_workflow(): void
     {
         // Given: A multi-step workflow
-        $expense   = $this->createExpense();
-        $workflow  = $this->createMultiStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createMultiStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // When: First step is approved
@@ -186,11 +186,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    public function testCanHandleParallelApproversWithMinimumThreshold(): void
+    public function test_can_handle_parallel_approvers_with_minimum_threshold(): void
     {
         // Given: A workflow with parallel approvers (min 2 out of 3)
-        $expense   = $this->createExpense();
-        $workflow  = $this->createParallelApprovalWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createParallelApprovalWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // When: First approver approves
@@ -209,11 +209,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    public function testCanHandleRequireAllApproversWorkflow(): void
+    public function test_can_handle_require_all_approvers_workflow(): void
     {
         // Given: A workflow requiring all approvers
-        $expense   = $this->createExpense();
-        $workflow  = $this->createRequireAllApproversWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createRequireAllApproversWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // When: First approver approves
@@ -239,11 +239,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalStatus::APPROVED, $expense->fresh()->approval_status);
     }
 
-    public function testPreventsDuplicateDecisionsFromSameApprover(): void
+    public function test_prevents_duplicate_decisions_from_same_approver(): void
     {
         // Given: A running approval execution
-        $expense   = $this->createExpense();
-        $workflow  = $this->createSingleStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createSingleStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // When: Same approver makes decision twice
@@ -255,11 +255,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->assertEquals(ApprovalDecision::APPROVED, $decision2->decision);
     }
 
-    public function testValidatesApproverAuthorization(): void
+    public function test_validates_approver_authorization(): void
     {
         // Given: A running approval execution
-        $expense   = $this->createExpense();
-        $workflow  = $this->createSingleStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createSingleStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // Create unauthorized user (not associated with any tenant/organization)
@@ -272,11 +272,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
         $this->processAction->execute($execution, $unauthorizedUser, ApprovalDecision::APPROVED);
     }
 
-    public function testProvidesDebugInformationForFailedApprovals(): void
+    public function test_provides_debug_information_for_failed_approvals(): void
     {
         // Given: A running approval execution
-        $expense   = $this->createExpense();
-        $workflow  = $this->createSingleStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createSingleStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // Create unauthorized user (not associated with any tenant/organization)
@@ -284,18 +284,18 @@ class ApprovalWorkflowExecutionTest extends TestCase
 
         // When: Checking if unauthorized user can approve
         $canApprove = $this->processAction->canUserMakeDecision($execution, $unauthorizedUser);
-        $reason     = $this->processAction->getCannotDecideReason($execution, $unauthorizedUser);
+        $reason = $this->processAction->getCannotDecideReason($execution, $unauthorizedUser);
 
         // Then: Should provide clear feedback
         $this->assertFalse($canApprove);
         $this->assertEquals('User is not authorized to approve this step', $reason);
     }
 
-    public function testPreventsApprovalOfCompletedExecutions(): void
+    public function test_prevents_approval_of_completed_executions(): void
     {
         // Given: A completed approval execution
-        $expense   = $this->createExpense();
-        $workflow  = $this->createSingleStepWorkflow();
+        $expense = $this->createExpense();
+        $workflow = $this->createSingleStepWorkflow();
         $execution = $this->startAction->execute($expense);
 
         // Complete the execution
@@ -314,11 +314,11 @@ class ApprovalWorkflowExecutionTest extends TestCase
     {
         return Tenant::bypassTenant($this->tenant->id, function () {
             return Expense::factory()->create([
-                'tenant_id'          => $this->tenant->id,
+                'tenant_id' => $this->tenant->id,
                 'created_by_user_id' => $this->expenseCreator->id,
-                'status'             => InvoiceStatus::PROCESSING,
-                'approval_status'    => ApprovalStatus::NOT_REQUIRED,
-                'total_gross'        => 1000.00,
+                'status' => InvoiceStatus::PROCESSING,
+                'approval_status' => ApprovalStatus::NOT_REQUIRED,
+                'total_gross' => 1000.00,
             ]);
         });
     }
@@ -327,25 +327,25 @@ class ApprovalWorkflowExecutionTest extends TestCase
     {
         return Tenant::bypassTenant($this->tenant->id, function () {
             $workflow = ApprovalWorkflow::factory()->create([
-                'tenant_id'          => $this->tenant->id,
-                'name'               => 'Single Step Workflow',
-                'is_active'          => true,
-                'match_amount_min'   => 0,
-                'match_amount_max'   => 2000,
-                'priority'           => 1,
+                'tenant_id' => $this->tenant->id,
+                'name' => 'Single Step Workflow',
+                'is_active' => true,
+                'match_amount_min' => 0,
+                'match_amount_max' => 2000,
+                'priority' => 1,
             ]);
 
             $step = ApprovalWorkflowStep::factory()->create([
-                'workflow_id'           => $workflow->id,
-                'step_order'            => 1,
-                'name'                  => 'Manager Approval',
+                'workflow_id' => $workflow->id,
+                'step_order' => 1,
+                'name' => 'Manager Approval',
                 'require_all_approvers' => false,
-                'min_approvers'         => 1,
+                'min_approvers' => 1,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver1->id,
             ]);
 
@@ -357,41 +357,41 @@ class ApprovalWorkflowExecutionTest extends TestCase
     {
         return Tenant::bypassTenant($this->tenant->id, function () {
             $workflow = ApprovalWorkflow::factory()->create([
-                'tenant_id'          => $this->tenant->id,
-                'name'               => 'Multi Step Workflow',
-                'is_active'          => true,
-                'match_amount_min'   => 0,
-                'match_amount_max'   => 2000,
-                'priority'           => 1,
+                'tenant_id' => $this->tenant->id,
+                'name' => 'Multi Step Workflow',
+                'is_active' => true,
+                'match_amount_min' => 0,
+                'match_amount_max' => 2000,
+                'priority' => 1,
             ]);
 
             // First step
             $step1 = ApprovalWorkflowStep::factory()->create([
-                'workflow_id'           => $workflow->id,
-                'step_order'            => 1,
-                'name'                  => 'Manager Approval',
+                'workflow_id' => $workflow->id,
+                'step_order' => 1,
+                'name' => 'Manager Approval',
                 'require_all_approvers' => false,
-                'min_approvers'         => 1,
+                'min_approvers' => 1,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step1->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step1->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver1->id,
             ]);
 
             // Second step
             $step2 = ApprovalWorkflowStep::factory()->create([
-                'workflow_id'           => $workflow->id,
-                'step_order'            => 2,
-                'name'                  => 'Director Approval',
+                'workflow_id' => $workflow->id,
+                'step_order' => 2,
+                'name' => 'Director Approval',
                 'require_all_approvers' => false,
-                'min_approvers'         => 1,
+                'min_approvers' => 1,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step2->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step2->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver2->id,
             ]);
 
@@ -403,38 +403,38 @@ class ApprovalWorkflowExecutionTest extends TestCase
     {
         return Tenant::bypassTenant($this->tenant->id, function () {
             $workflow = ApprovalWorkflow::factory()->create([
-                'tenant_id'          => $this->tenant->id,
-                'name'               => 'Parallel Approval Workflow',
-                'is_active'          => true,
-                'match_amount_min'   => 0,
-                'match_amount_max'   => 2000,
-                'priority'           => 1,
+                'tenant_id' => $this->tenant->id,
+                'name' => 'Parallel Approval Workflow',
+                'is_active' => true,
+                'match_amount_min' => 0,
+                'match_amount_max' => 2000,
+                'priority' => 1,
             ]);
 
             $step = ApprovalWorkflowStep::factory()->create([
-                'workflow_id'           => $workflow->id,
-                'step_order'            => 1,
-                'name'                  => 'Parallel Approval',
+                'workflow_id' => $workflow->id,
+                'step_order' => 1,
+                'name' => 'Parallel Approval',
                 'require_all_approvers' => false,
-                'min_approvers'         => 2, // Require 2 out of 3 approvers
+                'min_approvers' => 2, // Require 2 out of 3 approvers
             ]);
 
             // Create 3 approvers
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver1->id,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver2->id,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver3->id,
             ]);
 
@@ -446,38 +446,38 @@ class ApprovalWorkflowExecutionTest extends TestCase
     {
         return Tenant::bypassTenant($this->tenant->id, function () {
             $workflow = ApprovalWorkflow::factory()->create([
-                'tenant_id'          => $this->tenant->id,
-                'name'               => 'Require All Approvers Workflow',
-                'is_active'          => true,
-                'match_amount_min'   => 0,
-                'match_amount_max'   => 2000,
-                'priority'           => 1,
+                'tenant_id' => $this->tenant->id,
+                'name' => 'Require All Approvers Workflow',
+                'is_active' => true,
+                'match_amount_min' => 0,
+                'match_amount_max' => 2000,
+                'priority' => 1,
             ]);
 
             $step = ApprovalWorkflowStep::factory()->create([
-                'workflow_id'           => $workflow->id,
-                'step_order'            => 1,
-                'name'                  => 'All Approvers Required',
+                'workflow_id' => $workflow->id,
+                'step_order' => 1,
+                'name' => 'All Approvers Required',
                 'require_all_approvers' => true,
-                'min_approvers'         => 1,
+                'min_approvers' => 1,
             ]);
 
             // Create 3 approvers - all required
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver1->id,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver2->id,
             ]);
 
             ApprovalStepApprover::factory()->create([
-                'step_id'        => $step->id,
-                'approver_type'  => ApproverType::USER,
+                'step_id' => $step->id,
+                'approver_type' => ApproverType::USER,
                 'approver_value' => $this->approver3->id,
             ]);
 

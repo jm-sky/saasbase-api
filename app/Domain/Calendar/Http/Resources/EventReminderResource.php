@@ -15,15 +15,15 @@ class EventReminderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
-            'eventId'      => $this->event_id,
-            'userId'       => $this->user_id,
-            'reminderAt'   => $this->reminder_at,
+            'id' => $this->id,
+            'eventId' => $this->event_id,
+            'userId' => $this->user_id,
+            'reminderAt' => $this->reminder_at,
             'reminderType' => $this->reminder_type,
-            'isSent'       => $this->is_sent,
-            'createdAt'    => $this->created_at,
-            'updatedAt'    => $this->updated_at,
-            'user'         => new UserPreviewResource($this->whenLoaded('user')),
+            'isSent' => $this->is_sent,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'user' => new UserPreviewResource($this->whenLoaded('user')),
         ];
     }
 }

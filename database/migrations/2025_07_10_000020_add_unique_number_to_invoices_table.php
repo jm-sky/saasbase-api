@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Schema;
  * closes the immediate gap: two invoices with the same number could be
  * created in the same tenant.
  */
-return new class() extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {

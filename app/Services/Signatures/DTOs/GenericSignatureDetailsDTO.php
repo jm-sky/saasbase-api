@@ -11,16 +11,15 @@ final class GenericSignatureDetailsDTO extends BaseDataDTO
         public bool $trustedCA,
         public ?SignerIdentityDTO $signerIdentity = null,
         public ?CertificateDTO $certificate = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'valid'          => $this->valid,
-            'trustedCA'      => $this->trustedCA,
+            'valid' => $this->valid,
+            'trustedCA' => $this->trustedCA,
             'signerIdentity' => $this->signerIdentity?->toArray(),
-            'certificate'    => $this->certificate?->toArray(),
+            'certificate' => $this->certificate?->toArray(),
         ];
     }
 

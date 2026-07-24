@@ -34,8 +34,7 @@ class TenantScopedRoles
             ->where('model_has_roles.model_type', $user->getMorphClass())
             ->where('model_has_roles.tenant_id', $tenantId)
             ->whereIn('roles.name', $roleNames)
-            ->exists()
-        ;
+            ->exists();
     }
 
     /**
@@ -54,8 +53,7 @@ class TenantScopedRoles
             ->where('permissions.name', $permissionName)
             ->where('model_has_permissions.tenant_id', $tenantId)
             ->where('model_has_permissions.model_type', $modelType)
-            ->pluck('model_has_permissions.model_id')
-        ;
+            ->pluck('model_has_permissions.model_id');
 
         $viaRole = DB::table('model_has_roles')
             ->join('role_has_permissions', 'role_has_permissions.role_id', '=', 'model_has_roles.role_id')
@@ -63,8 +61,7 @@ class TenantScopedRoles
             ->where('permissions.name', $permissionName)
             ->where('model_has_roles.tenant_id', $tenantId)
             ->where('model_has_roles.model_type', $modelType)
-            ->pluck('model_has_roles.model_id')
-        ;
+            ->pluck('model_has_roles.model_id');
 
         return $direct->merge($viaRole)->unique()->values()->all();
     }
@@ -73,7 +70,7 @@ class TenantScopedRoles
     {
         /** @var PermissionRegistrar $registrar */
         $registrar = app(PermissionRegistrar::class);
-        $previous  = $registrar->getPermissionsTeamId();
+        $previous = $registrar->getPermissionsTeamId();
 
         $registrar->setPermissionsTeamId($tenantId);
 

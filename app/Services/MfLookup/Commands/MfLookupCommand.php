@@ -13,40 +13,40 @@ class MfLookupCommand extends Command
 
     public function handle(MfLookupService $service): int
     {
-        $nip   = $this->argument('nip');
+        $nip = $this->argument('nip');
         $force = $this->option('force');
 
-        $this->info('Looking up company details in MF for ' . $nip . ($force ? ' (force)' : '') . '...');
+        $this->info('Looking up company details in MF for '.$nip.($force ? ' (force)' : '').'...');
 
         try {
             $company = $service->findByNip($nip, force: $force);
 
-            if (null === $company) {
+            if ($company === null) {
                 $this->warn('No company found for given NIP.');
 
                 return self::FAILURE;
             }
 
             $this->info('Company Details:');
-            $this->line('- Name              : ' . $company->name);
-            $this->line('- NIP               : ' . $company->nip);
-            $this->line('- REGON             : ' . ($company->regon ?? 'N/A'));
-            $this->line('- KRS               : ' . ($company->krs ?? 'N/A'));
-            $this->line('- Residence Address : ' . ($company->residenceAddress ?? 'N/A'));
-            $this->line('- Working Address   : ' . ($company->workingAddress ?? 'N/A'));
-            $this->line('- VAT Status        : ' . $company->vatStatus->value);
+            $this->line('- Name              : '.$company->name);
+            $this->line('- NIP               : '.$company->nip);
+            $this->line('- REGON             : '.($company->regon ?? 'N/A'));
+            $this->line('- KRS               : '.($company->krs ?? 'N/A'));
+            $this->line('- Residence Address : '.($company->residenceAddress ?? 'N/A'));
+            $this->line('- Working Address   : '.($company->workingAddress ?? 'N/A'));
+            $this->line('- VAT Status        : '.$company->vatStatus->value);
 
-            if (!empty($company->accountNumbers)) {
+            if (! empty($company->accountNumbers)) {
                 $this->line('Account Numbers:');
 
                 foreach ($company->accountNumbers as $account) {
-                    $this->line('  - ' . $account);
+                    $this->line('  - '.$account);
                 }
             }
 
             return self::SUCCESS;
         } catch (\Throwable $e) {
-            $this->error('Error: ' . $e->getMessage());
+            $this->error('Error: '.$e->getMessage());
 
             return self::FAILURE;
         }

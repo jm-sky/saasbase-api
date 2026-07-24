@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * @property string   $id
- * @property string   $tenant_id
- * @property string   $name
- * @property string   $slug
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property string $slug
  * @property TagColor $color
- * @property Carbon   $created_at
- * @property Carbon   $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Tag extends BaseModel
 {

@@ -26,7 +26,7 @@ class DefaultTenantSeeder extends Seeder
     {
         CreateTenantForNewUser::$BYPASSED = true;
 
-        $user   = $this->createDefaultUser();
+        $user = $this->createDefaultUser();
         $tenant = $this->createTenant($user);
 
         $this->createBotUser($tenant);
@@ -42,10 +42,10 @@ class DefaultTenantSeeder extends Seeder
     {
         $user = User::factory()->create([
             'first_name' => config('users.default_user.first_name'),
-            'last_name'  => config('users.default_user.last_name'),
-            'email'      => config('users.default_user.email'),
-            'password'   => Hash::make(config('users.default_user.password')),
-            'is_admin'   => config('users.default_user.is_admin'),
+            'last_name' => config('users.default_user.last_name'),
+            'email' => config('users.default_user.email'),
+            'password' => Hash::make(config('users.default_user.password')),
+            'is_admin' => config('users.default_user.is_admin'),
         ]);
 
         $user->notify(new WelcomeNotification($user));
@@ -61,7 +61,7 @@ class DefaultTenantSeeder extends Seeder
 
         $user->tenants()->attach($tenant, ['role' => RoleName::Admin->value]);
 
-        (new InitializeTenantDefaults())->execute($tenant, $user);
+        (new InitializeTenantDefaults)->execute($tenant, $user);
 
         return $tenant;
     }
@@ -73,19 +73,19 @@ class DefaultTenantSeeder extends Seeder
                 'tenant_id' => $tenant->id,
             ])->each(function ($contractor) use ($tenant) {
                 AddressFactory::new()->count(3)->create([
-                    'tenant_id'        => $tenant->id,
-                    'addressable_id'   => $contractor->id,
+                    'tenant_id' => $tenant->id,
+                    'addressable_id' => $contractor->id,
                     'addressable_type' => Contractor::class,
                 ]);
 
                 BankAccountFactory::new()->count(3)->create([
-                    'tenant_id'     => $tenant->id,
-                    'bankable_id'   => $contractor->id,
+                    'tenant_id' => $tenant->id,
+                    'bankable_id' => $contractor->id,
                     'bankable_type' => Contractor::class,
                 ]);
 
                 ContractorContactPersonFactory::new()->count(3)->create([
-                    'tenant_id'     => $tenant->id,
+                    'tenant_id' => $tenant->id,
                     'contractor_id' => $contractor->id,
                 ]);
 
@@ -97,9 +97,9 @@ class DefaultTenantSeeder extends Seeder
 
                 // Add some random comments for each contractor
                 CommentFactory::new()->count(rand(1, 3))->create([
-                    'tenant_id'        => $tenant->id,
-                    'user_id'          => self::getBotUserId(),
-                    'commentable_id'   => $contractor->id,
+                    'tenant_id' => $tenant->id,
+                    'user_id' => self::getBotUserId(),
+                    'commentable_id' => $contractor->id,
                     'commentable_type' => Contractor::class,
                 ]);
 
@@ -115,11 +115,11 @@ class DefaultTenantSeeder extends Seeder
         $domain = Str::after(config('app.url'), '://');
 
         $botUser = User::factory()->create([
-            'id'         => self::getBotUserId(),
+            'id' => self::getBotUserId(),
             'first_name' => 'Botto',
-            'last_name'  => 'Bot',
-            'email'      => "botto.bot@{$domain}",
-            'password'   => Hash::make(config('users.default_user.password')),
+            'last_name' => 'Bot',
+            'email' => "botto.bot@{$domain}",
+            'password' => Hash::make(config('users.default_user.password')),
         ]);
 
         $botUser->tenants()->attach($tenant, ['role' => 'user']);

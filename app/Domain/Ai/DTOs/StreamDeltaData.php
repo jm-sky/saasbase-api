@@ -10,17 +10,16 @@ class StreamDeltaData
         public ?string $provider,
         public string $model,
         public string $content,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'id'       => $this->id,
-            'index'    => $this->index,
+            'id' => $this->id,
+            'index' => $this->index,
             'provider' => $this->provider,
-            'model'    => $this->model,
-            'content'  => $this->content,
+            'model' => $this->model,
+            'content' => $this->content,
         ];
     }
 }

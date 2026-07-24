@@ -13,8 +13,7 @@ class InvoiceTemplateService
 {
     public function __construct(
         private TemplatingService $templatingService
-    ) {
-    }
+    ) {}
 
     /**
      * Get all templates for a tenant.
@@ -25,8 +24,7 @@ class InvoiceTemplateService
             ->where('tenant_id', $tenantId)
             ->active()
             ->orderBy('name')
-            ->get()
-        ;
+            ->get();
     }
 
     /**
@@ -38,8 +36,7 @@ class InvoiceTemplateService
             ->where('tenant_id', $tenantId)
             ->active()
             ->orderBy('name')
-            ->paginate($perPage)
-        ;
+            ->paginate($perPage);
     }
 
     /**
@@ -52,8 +49,7 @@ class InvoiceTemplateService
             ->byCategory($category)
             ->active()
             ->orderBy('name')
-            ->get()
-        ;
+            ->get();
     }
 
     /**
@@ -63,7 +59,7 @@ class InvoiceTemplateService
     {
         $template = InvoiceTemplate::find($id);
 
-        if (!$template) {
+        if (! $template) {
             throw new TemplateNotFoundException("Template with ID {$id} not found");
         }
 
@@ -80,8 +76,7 @@ class InvoiceTemplateService
             ->byCategory($category)
             ->default()
             ->active()
-            ->first()
-        ;
+            ->first();
     }
 
     /**
@@ -90,7 +85,7 @@ class InvoiceTemplateService
     public function create(InvoiceTemplateDTO $dto): InvoiceTemplate
     {
         // Validate template syntax
-        if (!$this->templatingService->validate($dto->content)) {
+        if (! $this->templatingService->validate($dto->content)) {
             $errors = $this->templatingService->getValidationErrors($dto->content);
 
             throw new \InvalidArgumentException("Invalid template syntax: {$errors}");
@@ -112,14 +107,14 @@ class InvoiceTemplateService
         $template = $this->findById($id);
 
         // Validate template syntax
-        if (!$this->templatingService->validate($dto->content)) {
+        if (! $this->templatingService->validate($dto->content)) {
             $errors = $this->templatingService->getValidationErrors($dto->content);
 
             throw new \InvalidArgumentException("Invalid template syntax: {$errors}");
         }
 
         // If this is set as default, unset other defaults in the same category
-        if ($dto->isDefault && (!$template->is_default || $template->category !== $dto->category)) {
+        if ($dto->isDefault && (! $template->is_default || $template->category !== $dto->category)) {
             $this->unsetDefaultForCategory($dto->tenantId, $dto->category);
         }
 
@@ -159,11 +154,11 @@ class InvoiceTemplateService
     public function validateTemplate(string $content): array
     {
         $isValid = $this->templatingService->validate($content);
-        $errors  = $isValid ? null : $this->templatingService->getValidationErrors($content);
+        $errors = $isValid ? null : $this->templatingService->getValidationErrors($content);
 
         return [
             'isValid' => $isValid,
-            'errors'  => $errors,
+            'errors' => $errors,
         ];
     }
 
@@ -184,7 +179,6 @@ class InvoiceTemplateService
             ->where('tenant_id', $tenantId)
             ->byCategory($category)
             ->where('is_default', true)
-            ->update(['is_default' => false])
-        ;
+            ->update(['is_default' => false]);
     }
 }

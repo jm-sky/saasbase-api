@@ -11,25 +11,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @property string  $id
- * @property string  $tenant_id
- * @property string  $title
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $title
  * @property ?string $description
- * @property Carbon  $start_at
- * @property Carbon  $end_at
- * @property bool    $is_all_day
+ * @property Carbon $start_at
+ * @property Carbon $end_at
+ * @property bool $is_all_day
  * @property ?string $location
  * @property ?string $color
- * @property string  $status
- * @property string  $visibility
- * @property string  $timezone
+ * @property string $status
+ * @property string $visibility
+ * @property string $timezone
  * @property ?string $recurrence_rule
- * @property ?array  $reminder_settings
- * @property string  $created_by_id
+ * @property ?array $reminder_settings
+ * @property string $created_by_id
  * @property ?string $related_type
  * @property ?string $related_id
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Event extends BaseModel
 {
@@ -54,9 +54,9 @@ class Event extends BaseModel
     ];
 
     protected $casts = [
-        'start_at'          => 'datetime',
-        'end_at'            => 'datetime',
-        'is_all_day'        => 'boolean',
+        'start_at' => 'datetime',
+        'end_at' => 'datetime',
+        'is_all_day' => 'boolean',
         'reminder_settings' => 'array',
     ];
 

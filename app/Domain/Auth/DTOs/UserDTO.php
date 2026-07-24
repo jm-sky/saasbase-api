@@ -10,21 +10,21 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<User>
  *
- * @property string  $firstName
- * @property string  $lastName
- * @property string  $email
- * @property ?string $id                 UUID
+ * @property string $firstName
+ * @property string $lastName
+ * @property string $email
+ * @property ?string $id UUID
  * @property ?string $bio
  * @property ?string $birthDate
  * @property ?string $phone
- * @property bool    $isAdmin
- * @property bool    $isEmailVerified
- * @property bool    $isTwoFactorEnabled
- * @property array   $roles
- * @property array   $permissions
- * @property ?Carbon $createdAt          Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt          Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $deletedAt          Internally Carbon, accepts/serializes ISO 8601
+ * @property bool $isAdmin
+ * @property bool $isEmailVerified
+ * @property bool $isTwoFactorEnabled
+ * @property array $roles
+ * @property array $permissions
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class UserDTO extends BaseDTO
 {
@@ -44,11 +44,10 @@ final class UserDTO extends BaseDTO
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param User $model
+     * @param  User  $model
      */
     public static function fromModel(Model $model): static
     {
@@ -95,21 +94,21 @@ final class UserDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'                 => $this->id,
-            'firstName'          => $this->firstName,
-            'lastName'           => $this->lastName,
-            'email'              => $this->email,
-            'bio'                => $this->bio,
-            'birthDate'          => $this->birthDate,
-            'phone'              => $this->phone,
-            'isAdmin'            => $this->isAdmin,
-            'isEmailVerified'    => $this->isEmailVerified,
+            'id' => $this->id,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'email' => $this->email,
+            'bio' => $this->bio,
+            'birthDate' => $this->birthDate,
+            'phone' => $this->phone,
+            'isAdmin' => $this->isAdmin,
+            'isEmailVerified' => $this->isEmailVerified,
             'isTwoFactorEnabled' => $this->isTwoFactorEnabled,
-            'roles'              => $this->roles,
-            'permissions'        => $this->permissions,
-            'createdAt'          => $this->createdAt?->toIso8601String(),
-            'updatedAt'          => $this->updatedAt?->toIso8601String(),
-            'deletedAt'          => $this->deletedAt?->toIso8601String(),
+            'roles' => $this->roles,
+            'permissions' => $this->permissions,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
         ];
     }
 }

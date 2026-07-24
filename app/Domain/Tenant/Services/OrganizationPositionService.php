@@ -24,7 +24,7 @@ class OrganizationPositionService
     public function createSpecialUnits(): array
     {
         $unassigned = CreateTechnicalOrganizationUnits::createUnassignedUnit($this->tenant, $this->tenant->rootOrganizationUnit);
-        $inactive   = CreateTechnicalOrganizationUnits::createFormerEmployeesUnit($this->tenant, $this->tenant->rootOrganizationUnit);
+        $inactive = CreateTechnicalOrganizationUnits::createFormerEmployeesUnit($this->tenant, $this->tenant->rootOrganizationUnit);
 
         return [$unassigned, $inactive];
     }
@@ -61,8 +61,7 @@ class OrganizationPositionService
         $orgUnitUser = $user->orgUnitUsers()
             ->where('organization_unit_id', $unit->id)
             ->whereNull('valid_until')
-            ->first()
-        ;
+            ->first();
 
         if ($orgUnitUser) {
             $orgUnitUser->update([
@@ -74,10 +73,9 @@ class OrganizationPositionService
                 $hasOtherPositionsWithRole = $user->currentPositions()
                     ->where('role_name', $orgUnitUser->position->role_name)
                     ->where('id', '!=', $orgUnitUser->position->id)
-                    ->exists()
-                ;
+                    ->exists();
 
-                if (!$hasOtherPositionsWithRole) {
+                if (! $hasOtherPositionsWithRole) {
                     $user->removeRole($orgUnitUser->position->role_name);
                 }
             }
@@ -91,8 +89,7 @@ class OrganizationPositionService
             $user->orgUnitUsers()->active()
                 ->update([
                     'valid_until' => now(),
-                ])
-            ;
+                ]);
 
             // Remove all current roles
             $user->syncRoles([]);
@@ -103,7 +100,7 @@ class OrganizationPositionService
             if ($inactiveUnit) {
                 $user->assignToPosition($inactiveUnit, null, [
                     'is_primary' => true,
-                    'role'       => OrgUnitRole::Employee,
+                    'role' => OrgUnitRole::Employee,
                 ]);
             }
         });
@@ -116,8 +113,7 @@ class OrganizationPositionService
             $query->active()
                 ->whereHas('position', function ($q) {
                     $q->where('is_director', true);
-                })
-            ;
+                });
         })->with(['orgUnitUsers.organizationUnit', 'orgUnitUsers.position'])->get();
     }
 
@@ -128,8 +124,7 @@ class OrganizationPositionService
             $query->active()
                 ->whereHas('position', function ($q) {
                     $q->where('is_learning', true);
-                })
-            ;
+                });
         })->with(['orgUnitUsers.organizationUnit', 'orgUnitUsers.position'])->get();
     }
 
@@ -143,12 +138,12 @@ class OrganizationPositionService
 
         return $units->map(function (OrganizationUnit $unit) {
             return [
-                'unit'                 => $unit,
+                'unit' => $unit,
                 'users_with_positions' => $unit->getUsersWithPositions(),
-                'positions'            => $unit->positions->map(function (Position $position) {
+                'positions' => $unit->positions->map(function (Position $position) {
                     return [
-                        'position'            => $position,
-                        'category'            => $position->category,
+                        'position' => $position,
+                        'category' => $position->category,
                         'current_users_count' => $position->currentUsers()->count(),
                     ];
                 }),

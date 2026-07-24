@@ -9,15 +9,15 @@ use Database\Factories\Domain\Exchanges\ExchangeRateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string   $id
- * @property string   $base_currency ISO-4217 code
- * @property string   $currency      ISO-4217 code
- * @property Carbon   $date
- * @property float    $rate
- * @property string   $table         Table name of the rate i.e. A
- * @property string   $source        Provider of the rate i.e. NPB
- * @property ?string  $no            Internal publication number, e.g. 001/A/NBP/2025
- * @property Carbon   $created_at
+ * @property string $id
+ * @property string $base_currency ISO-4217 code
+ * @property string $currency ISO-4217 code
+ * @property Carbon $date
+ * @property float $rate
+ * @property string $table Table name of the rate i.e. A
+ * @property string $source Provider of the rate i.e. NPB
+ * @property ?string $no Internal publication number, e.g. 001/A/NBP/2025
+ * @property Carbon $created_at
  * @property Currency $baseCurrency
  * @property Currency $quoteCurrency
  */
@@ -38,9 +38,9 @@ class ExchangeRate extends BaseModel
     ];
 
     protected $casts = [
-        'date'       => 'date',
-        'rate'       => 'float',
-        'source'     => ExchangeRateSource::class,
+        'date' => 'date',
+        'rate' => 'float',
+        'source' => ExchangeRateSource::class,
         'created_at' => 'datetime',
     ];
 

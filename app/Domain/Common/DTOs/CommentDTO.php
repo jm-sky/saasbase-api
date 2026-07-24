@@ -10,15 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Comment>
  *
- * @property string          $userId
- * @property string          $content
- * @property string          $commentableId
- * @property string          $commentableType
- * @property ?string         $id              UUID
- * @property ?array          $meta            (canEdit, canDelete)
- * @property ?Carbon         $createdAt       Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon         $updatedAt       Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon         $deletedAt       Internally Carbon, accepts/serializes ISO 8601
+ * @property string $userId
+ * @property string $content
+ * @property string $commentableId
+ * @property string $commentableType
+ * @property ?string $id UUID
+ * @property ?array $meta (canEdit, canDelete)
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?UserPreviewDTO $user
  */
 final class CommentDTO extends BaseDTO
@@ -34,8 +34,7 @@ final class CommentDTO extends BaseDTO
         public ?Carbon $deletedAt = null,
         public ?UserPreviewDTO $user = null,
         public ?array $meta = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -51,7 +50,7 @@ final class CommentDTO extends BaseDTO
             deletedAt: $model->deleted_at,
             user: $model->user ? UserPreviewDTO::fromModel($model->user) : null,
             meta: [
-                'canEdit'   => $model->canEdit(),
+                'canEdit' => $model->canEdit(),
                 'canDelete' => $model->canDelete(),
             ],
         );
@@ -76,16 +75,16 @@ final class CommentDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'              => $this->id,
-            'userId'          => $this->userId,
-            'content'         => $this->content,
-            'commentableId'   => $this->commentableId,
+            'id' => $this->id,
+            'userId' => $this->userId,
+            'content' => $this->content,
+            'commentableId' => $this->commentableId,
             'commentableType' => $this->commentableType,
-            'createdAt'       => $this->createdAt?->toIso8601String(),
-            'updatedAt'       => $this->updatedAt?->toIso8601String(),
-            'deletedAt'       => $this->deletedAt?->toIso8601String(),
-            'user'            => $this->user?->toArray(),
-            'meta'            => $this->meta,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'user' => $this->user?->toArray(),
+            'meta' => $this->meta,
         ];
     }
 }

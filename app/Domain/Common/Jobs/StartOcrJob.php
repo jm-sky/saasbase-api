@@ -18,7 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class StartOcrJob implements ShouldQueue, ShouldBeUnique
+class StartOcrJob implements ShouldBeUnique, ShouldQueue
 {
     use InteractsWithQueue;
     use Queueable;
@@ -42,14 +42,14 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
         $temporaryUrlTtl = 5;
 
         $this->ocrRequest->update([
-            'status'     => OcrRequestStatus::Processing,
+            'status' => OcrRequestStatus::Processing,
             'started_at' => now(),
         ]);
 
         try {
             $media = $this->ocrRequest->media;
 
-            if (!$media) {
+            if (! $media) {
                 throw new \Exception("Media not found for OCR request ID {$this->ocrRequest->id}");
             }
 
@@ -68,9 +68,9 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
             $this->deleteProcessedMediaFile();
 
             $this->ocrRequest->update([
-                'status'               => OcrRequestStatus::Completed,
-                'result'               => $result,
-                'finished_at'          => now(),
+                'status' => OcrRequestStatus::Completed,
+                'result' => $result,
+                'finished_at' => now(),
             ]);
 
             FinishOcrJob::dispatch($this->ocrRequest);
@@ -85,12 +85,12 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
     {
         Log::error("[OCR] {$message}: {$ex->getMessage()}", [
             'ocr_request_id' => $this->ocrRequest->id,
-            'exception'      => $ex,
+            'exception' => $ex,
         ]);
 
         $this->ocrRequest->update([
-            'status'      => OcrRequestStatus::Failed,
-            'errors'      => ['message' => $ex->getMessage()],
+            'status' => OcrRequestStatus::Failed,
+            'errors' => ['message' => $ex->getMessage()],
             'finished_at' => now(),
         ]);
 
@@ -106,7 +106,7 @@ class StartOcrJob implements ShouldQueue, ShouldBeUnique
 
         // Get temporary URL and download the file
         $temporaryUrl = $media->getTemporaryUrl(now()->addMinutes(5));
-        $fileContent  = file_get_contents($temporaryUrl);
+        $fileContent = file_get_contents($temporaryUrl);
 
         Storage::disk('local')->put("ocr-temp/{$filename}", $fileContent);
 

@@ -20,14 +20,14 @@ class DimensionConfigurationResource extends JsonResource
     {
         /* @var DimensionConfigurationDTO $this->resource */
         return [
-            'dimensionType'        => $this->dimensionType->value,
-            'label'                => $this->label,
-            'labelEN'              => $this->labelEN,
-            'isEnabled'            => $this->isEnabled,
-            'isAlwaysVisible'      => $this->isAlwaysVisible,
-            'isConfigurable'       => $this->isConfigurable,
-            'displayOrder'         => $this->displayOrder,
-            'defaultDisplayOrder'  => $this->defaultDisplayOrder,
+            'dimensionType' => $this->dimensionType->value,
+            'label' => $this->label,
+            'labelEN' => $this->labelEN,
+            'isEnabled' => $this->isEnabled,
+            'isAlwaysVisible' => $this->isAlwaysVisible,
+            'isConfigurable' => $this->isConfigurable,
+            'displayOrder' => $this->displayOrder,
+            'defaultDisplayOrder' => $this->defaultDisplayOrder,
         ];
     }
 }

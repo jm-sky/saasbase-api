@@ -2,6 +2,4 @@
 
 namespace App\Domain\Common\Support\RegonValidator\Exceptions;
 
-class InvalidRegonException extends \InvalidArgumentException
-{
-}
+class InvalidRegonException extends \InvalidArgumentException {}

@@ -22,7 +22,7 @@ class AiChatController extends Controller
         $data = $request->validated();
 
         $conversationService = new AiConversationService($user->id, $data['threadId'] ?? null, $user->getTenantId() ?? null);
-        $chatService         = new AiChatService($conversationService);
+        $chatService = new AiChatService($conversationService);
 
         if (AiChatService::isStreamingEnabled()) {
             // Streamowanie - zwracamy natychmiast potwierdzenie, dalsza praca dzieje się w tle (broadcast)

@@ -19,7 +19,7 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
 
     public function __construct(string $baseUrl, string $mailboxAddress)
     {
-        $this->baseUrl        = rtrim($baseUrl, '/');
+        $this->baseUrl = rtrim($baseUrl, '/');
         $this->mailboxAddress = $mailboxAddress;
     }
 
@@ -31,10 +31,10 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
                 'MailboxAddress' => $this->mailboxAddress,
             ])->post("{$this->baseUrl}/api/conversations");
 
-            if (!$draftResponse->successful()) {
+            if (! $draftResponse->successful()) {
                 Log::error('Failed to create draft', [
                     'response' => $draftResponse->json(),
-                    'status'   => $draftResponse->status(),
+                    'status' => $draftResponse->status(),
                 ]);
 
                 return new SendResultDto(false, null, 'Failed to create draft');
@@ -47,13 +47,12 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
                 $attachmentResponse = Http::withHeaders([
                     'MailboxAddress' => $this->mailboxAddress,
                 ])->attach('file', $this->getAttachmentContent($attachment), $attachment->fileName)
-                    ->post("{$this->baseUrl}/api/conversations/{$draftId}/drafts/{$draftId}/attachment")
-                ;
+                    ->post("{$this->baseUrl}/api/conversations/{$draftId}/drafts/{$draftId}/attachment");
 
-                if (!$attachmentResponse->successful()) {
+                if (! $attachmentResponse->successful()) {
                     Log::error('Failed to add attachment', [
                         'response' => $attachmentResponse->json(),
-                        'status'   => $attachmentResponse->status(),
+                        'status' => $attachmentResponse->status(),
                     ]);
 
                     return new SendResultDto(false, null, 'Failed to add attachment');
@@ -64,17 +63,17 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
             $sendResponse = Http::withHeaders([
                 'MailboxAddress' => $this->mailboxAddress,
             ])->post("{$this->baseUrl}/api/send-messages", [
-                'draftId'         => $draftId,
-                'topic'           => $message->subject,
-                'content'         => $message->content,
+                'draftId' => $draftId,
+                'topic' => $message->subject,
+                'content' => $message->content,
                 'finalRecipients' => $message->recipients,
-                'refToMessageId'  => $message->refToMessageId,
+                'refToMessageId' => $message->refToMessageId,
             ]);
 
-            if (!$sendResponse->successful()) {
+            if (! $sendResponse->successful()) {
                 Log::error('Failed to send message', [
                     'response' => $sendResponse->json(),
-                    'status'   => $sendResponse->status(),
+                    'status' => $sendResponse->status(),
                 ]);
 
                 return new SendResultDto(false, null, 'Failed to send message');
@@ -110,10 +109,10 @@ class EDOPostProvider implements EDoreczeniaProviderInterface
                 'MailboxAddress' => $this->mailboxAddress,
             ])->post("{$this->baseUrl}/api/messages-synchronization");
 
-            if (!$syncResponse->successful()) {
+            if (! $syncResponse->successful()) {
                 Log::error('Failed to trigger sync', [
                     'response' => $syncResponse->json(),
-                    'status'   => $syncResponse->status(),
+                    'status' => $syncResponse->status(),
                 ]);
 
                 return new SyncResultDto(false, 0, 0, 'Failed to trigger sync');

@@ -9,6 +9,5 @@ class CompanyContext
         public ?string $regon,
         public ?string $country,
         public bool $force = false,
-    ) {
-    }
+    ) {}
 }

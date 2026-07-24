@@ -13,8 +13,7 @@ class CertificateValidationService
 {
     public function __construct(
         private readonly EDoreczeniaProviderManager $providerManager
-    ) {
-    }
+    ) {}
 
     /**
      * Validate a certificate file and return its info.
@@ -24,13 +23,13 @@ class CertificateValidationService
         try {
             $certificate = openssl_x509_read(file_get_contents($filePath));
 
-            if (!$certificate) {
+            if (! $certificate) {
                 return null;
             }
 
             $certInfo = openssl_x509_parse($certificate);
 
-            if (!$certInfo) {
+            if (! $certInfo) {
                 return null;
             }
 
@@ -60,7 +59,7 @@ class CertificateValidationService
      */
     public function isExpiringSoon(EDoreczeniaCertificate $certificate, int $days = 30): bool
     {
-        return $certificate->valid_to->subDays($days)->isPast() && !$this->isExpired($certificate);
+        return $certificate->valid_to->subDays($days)->isPast() && ! $this->isExpired($certificate);
     }
 
     /**
@@ -72,8 +71,7 @@ class CertificateValidationService
             ->where('is_valid', true)
             ->where('valid_to', '<=', now()->addDays($days))
             ->where('valid_to', '>', now())
-            ->get()
-        ;
+            ->get();
     }
 
     /**
@@ -83,7 +81,7 @@ class CertificateValidationService
     {
         $provider = $this->providerManager->getProvider($certificate->provider);
 
-        if (!$provider) {
+        if (! $provider) {
             return false;
         }
 
@@ -105,7 +103,7 @@ class CertificateValidationService
     public function validateAndUpdateStatus(EDoreczeniaCertificate $certificate): bool
     {
         // Check if certificate file exists
-        if (!Storage::exists($certificate->file_path)) {
+        if (! Storage::exists($certificate->file_path)) {
             $certificate->update(['is_valid' => false]);
 
             return false;
@@ -132,8 +130,7 @@ class CertificateValidationService
     {
         return EDoreczeniaCertificate::query()
             ->where('is_valid', false)
-            ->get()
-        ;
+            ->get();
     }
 
     /**
@@ -143,7 +140,6 @@ class CertificateValidationService
     {
         return EDoreczeniaCertificate::query()
             ->where('is_valid', true)
-            ->get()
-        ;
+            ->get();
     }
 }

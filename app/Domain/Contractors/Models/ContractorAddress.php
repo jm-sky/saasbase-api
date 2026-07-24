@@ -15,22 +15,22 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * Class ContractorAddress.
  *
- * @property string      $id
- * @property string      $tenant_id
- * @property string      $country
- * @property ?string     $postal_code
- * @property string      $city
- * @property ?string     $street
- * @property ?string     $building
- * @property ?string     $flat
- * @property ?string     $description
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $country
+ * @property ?string $postal_code
+ * @property string $city
+ * @property ?string $street
+ * @property ?string $building
+ * @property ?string $flat
+ * @property ?string $description
  * @property AddressType $type
- * @property bool        $is_default
- * @property string      $addressable_id
- * @property string      $addressable_type
- * @property Contractor  $addressable
- * @property ?Carbon     $created_at
- * @property ?Carbon     $updated_at
+ * @property bool $is_default
+ * @property string $addressable_id
+ * @property string $addressable_type
+ * @property Contractor $addressable
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @description This model should extend the `Address` model.
  */

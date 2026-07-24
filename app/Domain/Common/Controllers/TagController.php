@@ -22,8 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TagController extends Controller
 {
-    use HasIndexQuery;
     use AuthorizesRequests;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -33,8 +33,8 @@ class TagController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'slug'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('slug', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('slug', new AdvancedFilter),
         ];
 
         $this->sorts = [
@@ -52,8 +52,7 @@ class TagController extends Controller
         $tags = $this->getIndexPaginator($request);
 
         return TagResource::collection($tags['data'])
-            ->additional(['meta' => $tags['meta']])
-        ;
+            ->additional(['meta' => $tags['meta']]);
     }
 
     public function store(CreateTagRequest $request): JsonResponse
@@ -63,9 +62,9 @@ class TagController extends Controller
 
         $tag = Tag::create([
             'tenant_id' => $user->tenant_id,
-            'name'      => $request->name,
-            'slug'      => Str::slug($request->name),
-            'color'     => $this->getTagColor($request->name, $request->color),
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'color' => $this->getTagColor($request->name, $request->color),
         ]);
 
         return response()->json(new TagResource($tag), Response::HTTP_CREATED);

@@ -25,11 +25,11 @@ enum ApprovalDecision: string
 
     public function isPositive(): bool
     {
-        return self::APPROVED === $this;
+        return $this === self::APPROVED;
     }
 
     public function isNegative(): bool
     {
-        return self::REJECTED === $this;
+        return $this === self::REJECTED;
     }
 }

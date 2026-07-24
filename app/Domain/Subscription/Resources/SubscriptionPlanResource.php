@@ -22,22 +22,22 @@ class SubscriptionPlanResource extends JsonResource
     public function toArray(Request $request): array
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         return [
-            'id'              => $this->id,
-            'name'            => $this->name,
-            'description'     => $this->description,
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
             'stripeProductId' => $this->stripe_product_id,
-            'prices'          => BillingPriceResource::collection($this->whenLoaded('prices')),
-            'features'        => $this->whenLoaded('features', function () {
+            'prices' => BillingPriceResource::collection($this->whenLoaded('prices')),
+            'features' => $this->whenLoaded('features', function () {
                 return PlanFeatureResource::collection($this->features);
             }),
-            'isActive'        => $this->is_active,
-            'isCurrent'       => $this->isCurrent($tenantId),
-            'createdAt'       => $this->created_at,
-            'updatedAt'       => $this->updated_at,
+            'isActive' => $this->is_active,
+            'isCurrent' => $this->isCurrent($tenantId),
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

@@ -23,12 +23,12 @@ class InvoiceStatusService
         }
 
         // If payment is complete, mark as completed
-        if (PaymentStatus::PAID === $status->payment) {
+        if ($status->payment === PaymentStatus::PAID) {
             return InvoiceStatus::COMPLETED;
         }
 
         // If sent and has payment activity, mark as active
-        if ($status->delivery->isCompleted() && PaymentStatus::PENDING !== $status->payment) {
+        if ($status->delivery->isCompleted() && $status->payment !== PaymentStatus::PENDING) {
             return InvoiceStatus::ISSUED;
         }
 
@@ -51,14 +51,14 @@ class InvoiceStatusService
      */
     public function handleOcrCompletion(InvoiceStatusDTO $status): InvoiceStatusDTO
     {
-        if (OcrRequestStatus::Completed !== $status->ocr) {
+        if ($status->ocr !== OcrRequestStatus::Completed) {
             return $status;
         }
 
         $newStatus = clone $status;
 
         // If allocation is required, set it to pending
-        if (AllocationStatus::NOT_REQUIRED === $newStatus->allocation) {
+        if ($newStatus->allocation === AllocationStatus::NOT_REQUIRED) {
             // This would be determined by business rules
             $newStatus->allocation = AllocationStatus::PENDING;
         }
@@ -74,14 +74,14 @@ class InvoiceStatusService
      */
     public function handleAllocationCompletion(InvoiceStatusDTO $status): InvoiceStatusDTO
     {
-        if (AllocationStatus::FULLY_ALLOCATED !== $status->allocation) {
+        if ($status->allocation !== AllocationStatus::FULLY_ALLOCATED) {
             return $status;
         }
 
         $newStatus = clone $status;
 
         // If approval is required, set it to pending
-        if (ApprovalStatus::NOT_REQUIRED === $newStatus->approval) {
+        if ($newStatus->approval === ApprovalStatus::NOT_REQUIRED) {
             // This would be determined by business rules (amount, type, etc.)
             $newStatus->approval = ApprovalStatus::PENDING;
         }
@@ -97,11 +97,11 @@ class InvoiceStatusService
      */
     public function handleApprovalCompletion(InvoiceStatusDTO $status): InvoiceStatusDTO
     {
-        if (ApprovalStatus::APPROVED !== $status->approval) {
+        if ($status->approval !== ApprovalStatus::APPROVED) {
             return $status;
         }
 
-        $newStatus          = clone $status;
+        $newStatus = clone $status;
         $newStatus->general = $this->calculateGeneralStatus($newStatus);
 
         return $newStatus;
@@ -112,7 +112,7 @@ class InvoiceStatusService
      */
     public function handleDeliveryStatusChange(InvoiceStatusDTO $status, DeliveryStatus $newDeliveryStatus): InvoiceStatusDTO
     {
-        $newStatus           = clone $status;
+        $newStatus = clone $status;
         $newStatus->delivery = $newDeliveryStatus;
 
         // Update general status based on delivery
@@ -126,7 +126,7 @@ class InvoiceStatusService
      */
     public function handlePaymentStatusChange(InvoiceStatusDTO $status, PaymentStatus $newPaymentStatus): InvoiceStatusDTO
     {
-        $newStatus          = clone $status;
+        $newStatus = clone $status;
         $newStatus->payment = $newPaymentStatus;
 
         // Update general status based on payment
@@ -140,15 +140,15 @@ class InvoiceStatusService
      */
     private function isReadyToSend(InvoiceStatusDTO $status): bool
     {
-        $ocrComplete = OcrRequestStatus::Completed === $status->ocr;
+        $ocrComplete = $status->ocr === OcrRequestStatus::Completed;
 
-        $allocationComplete = AllocationStatus::NOT_REQUIRED === $status->allocation
-            || AllocationStatus::FULLY_ALLOCATED === $status->allocation;
+        $allocationComplete = $status->allocation === AllocationStatus::NOT_REQUIRED
+            || $status->allocation === AllocationStatus::FULLY_ALLOCATED;
 
-        $approvalComplete = ApprovalStatus::NOT_REQUIRED === $status->approval
-            || ApprovalStatus::APPROVED === $status->approval;
+        $approvalComplete = $status->approval === ApprovalStatus::NOT_REQUIRED
+            || $status->approval === ApprovalStatus::APPROVED;
 
-        $notYetSent = DeliveryStatus::NOT_SENT === $status->delivery;
+        $notYetSent = $status->delivery === DeliveryStatus::NOT_SENT;
 
         return $ocrComplete && $allocationComplete && $approvalComplete && $notYetSent;
     }
@@ -169,16 +169,16 @@ class InvoiceStatusService
         }
 
         // Approval pending
-        if (ApprovalStatus::PENDING === $status->approval) {
+        if ($status->approval === ApprovalStatus::PENDING) {
             return true;
         }
 
         // Failed states that need reprocessing
-        if (OcrRequestStatus::Failed === $status->ocr) {
+        if ($status->ocr === OcrRequestStatus::Failed) {
             return true;
         }
 
-        if (ApprovalStatus::REJECTED === $status->approval) {
+        if ($status->approval === ApprovalStatus::REJECTED) {
             return true;
         }
 
@@ -192,7 +192,7 @@ class InvoiceStatusService
     {
         $actions = [];
 
-        if (OcrRequestStatus::Failed === $status->ocr) {
+        if ($status->ocr === OcrRequestStatus::Failed) {
             $actions[] = 'Retry OCR processing';
         }
 
@@ -200,23 +200,23 @@ class InvoiceStatusService
             $actions[] = 'Complete cost allocation';
         }
 
-        if (ApprovalStatus::PENDING === $status->approval) {
+        if ($status->approval === ApprovalStatus::PENDING) {
             $actions[] = 'Pending approval decision';
         }
 
-        if (ApprovalStatus::REJECTED === $status->approval) {
+        if ($status->approval === ApprovalStatus::REJECTED) {
             $actions[] = 'Address approval rejection';
         }
 
-        if ($status->isReadyForNextStage() && InvoiceStatus::ISSUED === $status->general) {
+        if ($status->isReadyForNextStage() && $status->general === InvoiceStatus::ISSUED) {
             $actions[] = 'Ready to send';
         }
 
-        if (DeliveryStatus::FAILED === $status->delivery) {
+        if ($status->delivery === DeliveryStatus::FAILED) {
             $actions[] = 'Retry delivery';
         }
 
-        if (PaymentStatus::OVERDUE === $status->payment) {
+        if ($status->payment === PaymentStatus::OVERDUE) {
             $actions[] = 'Follow up on overdue payment';
         }
 

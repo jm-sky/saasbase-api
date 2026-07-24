@@ -22,11 +22,11 @@ class DimensionTypeResource extends JsonResource
     {
         /* @var AllocationDimensionType $this->resource */
         return [
-            'type'                => $this->value,
-            'label'               => $this->label(),
-            'labelEN'             => $this->labelEN(),
-            'isAlwaysVisible'     => $this->isAlwaysVisible(),
-            'isConfigurable'      => $this->isConfigurable(),
+            'type' => $this->value,
+            'label' => $this->label(),
+            'labelEN' => $this->labelEN(),
+            'isAlwaysVisible' => $this->isAlwaysVisible(),
+            'isConfigurable' => $this->isConfigurable(),
             'defaultDisplayOrder' => $this->getDefaultDisplayOrder(),
         ];
     }

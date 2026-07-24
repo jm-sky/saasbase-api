@@ -30,7 +30,7 @@ class GenerateInvoicePdfCommand extends Command
      */
     public function handle(InvoiceGeneratorService $invoiceGenerator): int
     {
-        $invoiceId  = $this->argument('invoice_id');
+        $invoiceId = $this->argument('invoice_id');
         $templateId = $this->option('template_id');
         $collection = $this->option('collection');
 
@@ -40,7 +40,7 @@ class GenerateInvoicePdfCommand extends Command
             // Find the invoice
             $invoice = Invoice::find($invoiceId);
 
-            if (!$invoice) {
+            if (! $invoice) {
                 $this->error("Invoice with ID {$invoiceId} not found.");
 
                 return self::FAILURE;
@@ -59,7 +59,7 @@ class GenerateInvoicePdfCommand extends Command
             $this->info('✅ PDF generated successfully!');
             $this->info("Media ID: {$media->id}");
             $this->info("File name: {$media->file_name}");
-            $this->info('File size: ' . $this->formatBytes($media->size));
+            $this->info('File size: '.$this->formatBytes($media->size));
             $this->info("Collection: {$media->collection_name}");
             $this->info("URL: {$media->getUrl()}");
 
@@ -80,10 +80,10 @@ class GenerateInvoicePdfCommand extends Command
     {
         $units = ['B', 'KB', 'MB', 'GB'];
 
-        for ($i = 0; $size > 1024 && $i < count($units) - 1; ++$i) {
+        for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
             $size /= 1024;
         }
 
-        return round($size, $precision) . ' ' . $units[$i];
+        return round($size, $precision).' '.$units[$i];
     }
 }

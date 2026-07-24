@@ -42,8 +42,7 @@ class ExchangeRateController extends Controller
         $rates = $this->getIndexPaginator($request);
 
         return ExchangeRateResource::collection($rates['data'])
-            ->additional(['meta' => $rates['meta']])
-        ;
+            ->additional(['meta' => $rates['meta']]);
     }
 
     public function show(ExchangeRate $exchangeRate): ExchangeRateResource

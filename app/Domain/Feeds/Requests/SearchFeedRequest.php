@@ -15,7 +15,7 @@ class SearchFeedRequest extends BaseFormRequest
     {
         return [
             'perPage' => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'sort'    => ['sometimes', 'string', 'in:createdAt,updatedAt,-createdAt,-updatedAt'],
+            'sort' => ['sometimes', 'string', 'in:createdAt,updatedAt,-createdAt,-updatedAt'],
         ];
     }
 }

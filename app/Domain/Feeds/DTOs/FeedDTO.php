@@ -11,17 +11,17 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Feed>
  *
- * @property ?string         $id
- * @property string          $tenantId
- * @property string          $userId
- * @property string          $title
- * @property string          $content
- * @property ?string         $contentHtml
- * @property ?Carbon         $createdAt
- * @property ?Carbon         $updatedAt
- * @property ?Carbon         $deletedAt
+ * @property ?string $id
+ * @property string $tenantId
+ * @property string $userId
+ * @property string $title
+ * @property string $content
+ * @property ?string $contentHtml
+ * @property ?Carbon $createdAt
+ * @property ?Carbon $updatedAt
+ * @property ?Carbon $deletedAt
  * @property ?UserPreviewDTO $user
- * @property ?int            $commentsCount
+ * @property ?int $commentsCount
  */
 final class FeedDTO extends BaseDTO
 {
@@ -37,8 +37,7 @@ final class FeedDTO extends BaseDTO
         public ?Carbon $deletedAt = null,
         public readonly ?UserPreviewDTO $user = null,
         public readonly ?int $commentsCount = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -59,7 +58,7 @@ final class FeedDTO extends BaseDTO
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof Feed) {
+        if (! $model instanceof Feed) {
             throw new \InvalidArgumentException('Model must be instance of Feed');
         }
 
@@ -87,16 +86,16 @@ final class FeedDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'            => $this->id,
-            'tenantId'      => $this->tenantId,
-            'userId'        => $this->userId,
-            'title'         => $this->title,
-            'content'       => $this->content,
-            'contentHtml'   => $this->contentHtml,
-            'createdAt'     => $this->createdAt?->toIso8601String(),
-            'updatedAt'     => $this->updatedAt?->toIso8601String(),
-            'deletedAt'     => $this->deletedAt?->toIso8601String(),
-            'user'          => $this->user?->toArray(),
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'userId' => $this->userId,
+            'title' => $this->title,
+            'content' => $this->content,
+            'contentHtml' => $this->contentHtml,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'user' => $this->user?->toArray(),
             'commentsCount' => $this->commentsCount,
         ];
     }

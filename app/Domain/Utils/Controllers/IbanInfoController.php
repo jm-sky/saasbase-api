@@ -12,8 +12,7 @@ class IbanInfoController extends Controller
 {
     public function __construct(
         private readonly IbanInfoService $ibanInfoService
-    ) {
-    }
+    ) {}
 
     public function __invoke(GetIbanInfoRequest $request): IbanInfoResource|JsonResponse
     {
@@ -22,7 +21,7 @@ class IbanInfoController extends Controller
             $request->input('country')
         );
 
-        if (!$ibanInfo) {
+        if (! $ibanInfo) {
             return new JsonResponse(['error' => 'Bank not found for the provided IBAN']);
         }
 
