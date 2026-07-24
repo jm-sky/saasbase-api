@@ -15,7 +15,7 @@
         "consoletvs/profanity": "^3.5",
         "doctrine/dbal": "^4.2",
         "globalcitizen/php-iban": "^4.2",
-        "intervention/image": "^3.11",
+        "intervention/image": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.31",
         "laravel/sanctum": "^4.0",

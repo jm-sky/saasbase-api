@@ -136,7 +136,7 @@ class LogoFetcherService
                 }
 
                 try {
-                    $image = $this->imageManager->read($response->body());
+                    $image = $this->imageManager->decode($response->body());
                     $mime = $response->header('Content-Type');
 
                     $candidates[] = new LogoCandidate(
@@ -214,7 +214,7 @@ class LogoFetcherService
     protected function convertIcoToPng(): void
     {
         $pngFile = str_replace('.ico', '.png', $this->tempFile);
-        $this->imageManager->read($this->tempFile)->save($pngFile);
+        $this->imageManager->decode($this->tempFile)->save($pngFile);
         unlink($this->tempFile);
         $this->tempFile = $pngFile;
     }
