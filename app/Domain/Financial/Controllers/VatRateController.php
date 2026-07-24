@@ -2,16 +2,20 @@
 
 namespace App\Domain\Financial\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Financial\Models\VatRate;
 use App\Domain\Products\Resources\VatRateResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class VatRateController extends Controller
@@ -23,10 +27,10 @@ class VatRateController extends Controller
     public function __construct()
     {
         $this->modelClass = VatRate::class;
-        $this->filters = [
+        $this->filters    = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name'])),
-            AllowedFilter::custom('name', new AdvancedFilter),
-            AllowedFilter::custom('rate', new AdvancedFilter),
+            AllowedFilter::custom('name', new AdvancedFilter()),
+            AllowedFilter::custom('rate', new AdvancedFilter()),
         ];
         $this->sorts = [
             'name',
@@ -50,7 +54,8 @@ class VatRateController extends Controller
         $rates = $this->getIndexPaginator($request, query: $query);
 
         return VatRateResource::collection($rates['data'])
-            ->additional(['meta' => $rates['meta']]);
+            ->additional(['meta' => $rates['meta']])
+        ;
     }
 
     /**
@@ -58,6 +63,8 @@ class VatRateController extends Controller
      */
     public function store(Request $request): VatRateResource
     {
+        $this->authorizeManage();
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'rate' => ['required', 'numeric', 'min:0', 'max:100'],
@@ -72,8 +79,27 @@ class VatRateController extends Controller
      */
     public function destroy(VatRate $vatRate): JsonResponse
     {
+        $this->authorizeManage();
+
         $vatRate->delete();
 
         return response()->json(['message' => 'Vat rate deleted successfully.'], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * VAT rates are global (shared by every tenant), so creating/deleting
+     * them is gated the same way ProjectStatusController gates tenant-wide
+     * shared records — Owner/Admin only, not any authenticated user.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var User $user */
+        $user     = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
+        );
     }
 }
