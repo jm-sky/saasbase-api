@@ -48,32 +48,38 @@ class OAuthController extends Controller
             /** @var User $user */
             $user = $oauthAccount->user;
         } else {
-            // An account with this email may already exist from local
-            // registration or another OAuth provider. Logging in as it here
-            // without any proof of ownership beyond "the OAuth provider says
-            // so" would let anyone who controls that address on this
-            // provider take over a pre-existing account. Require a fresh
-            // identity to link instead of silently attaching to one.
-            if ($email && User::where('email', $email)->exists()) {
-                $url = config('app.frontend_url').'/oauth/callback?error=account_exists';
+            /** @var ?User $existingUser */
+            $existingUser = $email ? User::where('email', $email)->first() : null;
 
-                return response()->redirectTo($url);
+            if ($existingUser) {
+                // Provider-verified email is proof of ownership (Google email_verified,
+                // GitHub primary+verified email). Link and continue login — same
+                // behaviour as gear-stack. Reject only when the provider did not
+                // confirm the address, to avoid takeover via unverified claims.
+                if (! $this->providerVerifiedEmail($provider, $socialUser)) {
+                    $url = config('app.frontend_url').'/oauth/callback?error=account_exists';
+
+                    return response()->redirectTo($url);
+                }
+
+                $user = $existingUser;
+            } else {
+                /** @var User $user */
+                $user = User::create([
+                    'first_name' => $this->extractFirstName($socialUser->getName(), $email),
+                    'last_name' => $this->extractLastName($socialUser->getName()),
+                    'email' => $email,
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(40)),
+                ]);
             }
-
-            /** @var User $user */
-            $user = User::create([
-                'first_name' => $this->extractFirstName($socialUser->getName(), $email),
-                'last_name' => $this->extractLastName($socialUser->getName()),
-                'email' => $email,
-                'email_verified_at' => now(),
-                'password' => bcrypt(Str::random(40)),
-            ]);
 
             OAuthAccount::create([
                 'user_id' => $user->id,
                 'provider' => $provider,
                 'provider_user_id' => $providerUserId,
                 'email' => $email,
+                'linked_at' => now(),
             ]);
         }
 
@@ -82,6 +88,23 @@ class OAuthController extends Controller
         $url = config('app.frontend_url').'/oauth/callback?jwtToken='.$token;
 
         return response()->redirectTo($url);
+    }
+
+    /**
+     * Whether the OAuth provider confirmed ownership of the returned email.
+     *
+     * @param  \Laravel\Socialite\Contracts\User|\Laravel\Socialite\Two\User  $socialUser
+     */
+    private function providerVerifiedEmail(string $provider, object $socialUser): bool
+    {
+        // Socialite's GitHub driver only returns a primary+verified address.
+        if ($provider === 'github') {
+            return filled($socialUser->getEmail());
+        }
+
+        $raw = method_exists($socialUser, 'getRaw') ? $socialUser->getRaw() : ($socialUser->user ?? []);
+
+        return (bool) ($raw['email_verified'] ?? $raw['verified_email'] ?? false);
     }
 
     private function extractFirstName(?string $fullName, ?string $fallback = null): string
