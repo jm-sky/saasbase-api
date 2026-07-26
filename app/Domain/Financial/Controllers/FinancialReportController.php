@@ -188,22 +188,38 @@ class FinancialReportController extends Controller
         $tenantId = $user->getTenantId();
 
         $currentYear = Carbon::now()->startOfYear();
+        $yearStart = $currentYear->copy()->startOfYear();
+        $yearEnd = $currentYear->copy()->endOfYear();
+
+        // Two grouped queries instead of 24 period scans (Sentry SAASBASE-API-38).
+        $revenueByMonth = Invoice::query()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('status', [InvoiceStatus::ISSUED, InvoiceStatus::COMPLETED])
+            ->whereBetween('issue_date', [$yearStart, $yearEnd])
+            ->selectRaw('EXTRACT(MONTH FROM issue_date)::int as month, COALESCE(SUM(total_gross), 0) as total')
+            ->groupByRaw('EXTRACT(MONTH FROM issue_date)')
+            ->pluck('total', 'month');
+
+        $expensesByMonth = Expense::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', '!=', InvoiceStatus::CANCELLED)
+            ->whereBetween('issue_date', [$yearStart, $yearEnd])
+            ->selectRaw('EXTRACT(MONTH FROM issue_date)::int as month, COALESCE(SUM(total_gross), 0) as total')
+            ->groupByRaw('EXTRACT(MONTH FROM issue_date)')
+            ->pluck('total', 'month');
+
         $monthsData = [];
 
         for ($month = 1; $month <= 12; $month++) {
-            $startOfMonth = $currentYear->copy()->month($month)->startOfMonth();
-            $endOfMonth = $startOfMonth->copy()->endOfMonth();
-
-            $revenue = $this->getRevenueForPeriod($tenantId, $startOfMonth, $endOfMonth);
-            $expenses = $this->getExpensesForPeriod($tenantId, $startOfMonth, $endOfMonth);
-            $balance = $revenue - $expenses;
+            $revenue = (float) ($revenueByMonth[$month] ?? 0);
+            $expenses = (float) ($expensesByMonth[$month] ?? 0);
 
             $monthsData[] = [
                 'month' => $month,
-                'monthName' => $startOfMonth->format('M'),
+                'monthName' => $currentYear->copy()->month($month)->format('M'),
                 'revenue' => $revenue,
                 'expenses' => $expenses,
-                'balance' => $balance,
+                'balance' => $revenue - $expenses,
             ];
         }
 
@@ -221,15 +237,11 @@ class FinancialReportController extends Controller
      */
     private function getRevenueForPeriod(string $tenantId, Carbon $startDate, Carbon $endDate): float
     {
-        $result = Invoice::where('tenant_id', $tenantId)
+        return (float) Invoice::query()
+            ->where('tenant_id', $tenantId)
             ->whereIn('status', [InvoiceStatus::ISSUED, InvoiceStatus::COMPLETED])
             ->whereBetween('issue_date', [$startDate, $endDate])
-            ->get()
-            ->sum(function ($invoice) {
-                return $invoice->total_gross->toFloat();
-            });
-
-        return (float) $result;
+            ->sum('total_gross');
     }
 
     /**
@@ -238,15 +250,11 @@ class FinancialReportController extends Controller
      */
     private function getExpensesForPeriod(string $tenantId, Carbon $startDate, Carbon $endDate): float
     {
-        $result = Expense::where('tenant_id', $tenantId)
+        return (float) Expense::query()
+            ->where('tenant_id', $tenantId)
             ->where('status', '!=', InvoiceStatus::CANCELLED)
             ->whereBetween('issue_date', [$startDate, $endDate])
-            ->get()
-            ->sum(function ($expense) {
-                return $expense->total_gross->toFloat();
-            });
-
-        return (float) $result;
+            ->sum('total_gross');
     }
 
     /**

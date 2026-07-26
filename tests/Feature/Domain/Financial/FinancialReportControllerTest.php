@@ -11,6 +11,7 @@ use App\Domain\Invoice\Models\NumberingTemplate;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
@@ -129,6 +130,32 @@ class FinancialReportControllerTest extends TestCase
     {
         $this->authenticateUser($this->tenant, $this->user);
 
+        Tenant::bypassTenant($this->tenant->id, function () {
+            $numberingTemplate = NumberingTemplate::factory()->create([
+                'tenant_id' => $this->tenant->id,
+            ]);
+
+            Invoice::factory()->create([
+                'tenant_id' => $this->tenant->id,
+                'numbering_template_id' => $numberingTemplate->id,
+                'status' => InvoiceStatus::COMPLETED,
+                'issue_date' => Carbon::now()->startOfYear()->month(3)->startOfMonth(),
+                'total_gross' => '150.00',
+            ]);
+
+            Expense::factory()->create([
+                'tenant_id' => $this->tenant->id,
+                'status' => InvoiceStatus::COMPLETED,
+                'issue_date' => Carbon::now()->startOfYear()->month(3)->startOfMonth(),
+                'total_gross' => '40.00',
+            ]);
+        });
+
+        $queryCount = 0;
+        DB::listen(function () use (&$queryCount) {
+            $queryCount++;
+        });
+
         $response = $this->get('/api/v1/financial-reports/overview-widget');
 
         $response->assertStatus(200)
@@ -145,6 +172,14 @@ class FinancialReportControllerTest extends TestCase
                     ],
                 ],
             ]);
+
+        $march = collect($response->json('data.months'))->firstWhere('month', 3);
+        $this->assertSame(150.0, (float) $march['revenue']);
+        $this->assertSame(40.0, (float) $march['expenses']);
+        $this->assertSame(110.0, (float) $march['balance']);
+
+        // Auth/tenant overhead + 2 aggregated month queries (not 24 period scans).
+        $this->assertLessThanOrEqual(15, $queryCount);
     }
 
     public function requiresAuthentication()
