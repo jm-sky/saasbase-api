@@ -9,6 +9,8 @@ use App\Domain\Common\Models\BankAccount;
 use App\Domain\Common\Policies\AddressPolicy;
 use App\Domain\Common\Policies\BankAccountPolicy;
 use App\Domain\Common\Policies\MediaPolicy;
+use App\Domain\Expense\Models\Expense;
+use App\Domain\Expense\Policies\ExpensePolicy;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Policies\InvoicePolicy;
 use App\Domain\Projects\Models\Project;
@@ -41,6 +43,7 @@ class AuthServiceProvider extends ServiceProvider
         Tenant::class => TenantPolicy::class,
         TenantIntegration::class => TenantIntegrationPolicy::class,
         Invoice::class => InvoicePolicy::class,
+        Expense::class => ExpensePolicy::class,
         UserTableSetting::class => UserTableSettingPolicy::class,
         TrustedDevice::class => TrustedDevicePolicy::class,
         SecurityEvent::class => SecurityEventPolicy::class,

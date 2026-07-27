@@ -87,6 +87,8 @@ class ExpenseController extends Controller
 
     public function store(StoreExpenseRequest $request): JsonResponse
     {
+        $this->authorize('create', Expense::class);
+
         $expense = Expense::create($request->validated());
 
         return response()->json([
@@ -96,11 +98,15 @@ class ExpenseController extends Controller
 
     public function show(Expense $expense): ExpenseResource
     {
+        $this->authorize('view', $expense);
+
         return new ExpenseResource($expense);
     }
 
     public function update(UpdateExpenseRequest $request, Expense $expense): JsonResponse
     {
+        $this->authorize('update', $expense);
+
         $expense->update($request->validated());
 
         return response()->json(new ExpenseResource($expense));
@@ -108,6 +114,8 @@ class ExpenseController extends Controller
 
     public function destroy(Expense $expense): JsonResponse
     {
+        $this->authorize('delete', $expense);
+
         $expense->delete();
 
         return response()->json(['message' => 'Expense deleted successfully.'], Response::HTTP_NO_CONTENT);
