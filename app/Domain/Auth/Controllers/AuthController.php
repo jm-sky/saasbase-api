@@ -10,7 +10,6 @@ use App\Domain\Auth\Requests\LoginRequest;
 use App\Domain\Auth\Requests\RegisterRequest;
 use App\Domain\Auth\Services\UserSessionService;
 use App\Domain\Auth\Traits\RespondsWithToken;
-use App\Domain\Tenant\Models\Tenant;
 use App\Http\Controllers\Controller;
 use App\Services\ReCaptcha\Enums\ReCaptchaAction;
 use App\Services\ReCaptcha\ReCaptchaService;
@@ -48,13 +47,10 @@ class AuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if ($this->shouldChooseFirstTenant($user)) {
-            /** @var Tenant $tenant */
-            $tenant = $user->tenants()->first();
-            $token = JwtHelper::createTokenWithTenant($user, $tenant->id);
-        } else {
-            $token = JwtHelper::createTokenWithoutTenant($user);
-        }
+        // Never auto-attach tenant context on login — users with one or more
+        // tenants must pick (or confirm) a tenant on /select-tenant before
+        // entering tenant-scoped routes like the dashboard.
+        $token = JwtHelper::createTokenWithoutTenant($user);
 
         $userSessionService->createSession($user, $request, $token);
 
@@ -151,10 +147,5 @@ class AuthController extends Controller
 
             return response()->json(['error' => 'Token not provided or expired', 'message' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
         }
-    }
-
-    protected function shouldChooseFirstTenant(User $user): bool
-    {
-        return $user->tenants()->count() === 1;
     }
 }
