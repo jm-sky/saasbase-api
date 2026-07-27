@@ -62,7 +62,7 @@ final class ShareTokenDTO extends BaseDataDTO
             onlyForAuthenticated: $model->only_for_authenticated,
             expiresAt: $model->expires_at,
             lastUsedAt: $model->last_used_at,
-            usageCount: $model->usage_count,
+            usageCount: $model->usage_count ?? 0,
             maxUsage: $model->max_usage,
             createdAt: $model->created_at,
             updatedAt: $model->updated_at,

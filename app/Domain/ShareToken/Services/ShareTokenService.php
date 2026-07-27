@@ -25,6 +25,7 @@ class ShareTokenService
             'only_for_authenticated' => $onlyForAuthenticated,
             'expires_at' => $expiresAt,
             'max_usage' => $maxUsage,
+            'usage_count' => 0,
         ]);
     }
 

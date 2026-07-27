@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantIntegration;
 use App\Domain\Tenant\Requests\StoreTenantIntegrationRequest;
 use App\Domain\Tenant\Requests\UpdateTenantIntegrationRequest;
@@ -91,15 +92,13 @@ class TenantIntegrationController extends Controller
     /**
      * Remove the specified integration.
      */
-    public function destroy(string $integrationId): JsonResponse
+    public function destroy(Tenant $tenant, string $integration): JsonResponse
     {
-        /** @var User $user */
-        $user = Auth::user();
-        $integration = $user->currentTenant()->integrations()->findOrFail($integrationId);
+        $model = $tenant->integrations()->findOrFail($integration);
 
-        $this->authorize('delete', $integration);
+        $this->authorize('delete', $model);
 
-        $integration->delete();
+        $model->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
