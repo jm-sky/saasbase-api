@@ -10,6 +10,10 @@ class ReCaptchaService
 
     public function verify(string $token, string $expectedAction, float $minScore = 0.5, ?string $ip = null): bool
     {
+        if (app()->environment('local') && config('services.recaptcha.skip_verify')) {
+            return true;
+        }
+
         $response = Http::asForm()->post(self::RECAPTCHA_VERIFY_URL, [
             'secret' => config('services.recaptcha.secret'),
             'response' => $token,

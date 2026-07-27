@@ -175,6 +175,7 @@ return [
     */
     'recaptcha' => [
         'secret' => env('RECAPTCHA_SECRET_KEY'),
+        'skip_verify' => env('RECAPTCHA_SKIP_VERIFY', false),
     ],
 
     /*
