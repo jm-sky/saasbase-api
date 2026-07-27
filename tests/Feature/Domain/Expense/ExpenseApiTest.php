@@ -9,6 +9,7 @@ use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\Support\ExpenseApiPayloadFactory;
 use Tests\TestCase;
 use Tests\Traits\WithAuthenticatedUser;
 
@@ -91,6 +92,90 @@ class ExpenseApiTest extends TestCase
             ]);
     }
 
+    public function test_cannot_show_expense_from_other_tenant(): void
+    {
+        $otherTenant = Tenant::factory()->create();
+        $expense = Tenant::bypassTenant($otherTenant->id, function () use ($otherTenant) {
+            return Expense::factory()->create([
+                'tenant_id' => $otherTenant->id,
+            ]);
+        });
+
+        $response = $this->getJson($this->baseUrl.'/'.$expense->id);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_can_create_expense(): void
+    {
+        $payload = ExpenseApiPayloadFactory::make([
+            'number' => 'EXP-CREATE-001',
+        ]);
+
+        $response = $this->postJson($this->baseUrl, $payload);
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonPath('data.number', 'EXP-CREATE-001')
+            ->assertJsonPath('data.tenantId', $this->tenant->id);
+
+        $this->assertDatabaseHas('expenses', [
+            'tenant_id' => $this->tenant->id,
+            'number' => 'EXP-CREATE-001',
+        ]);
+    }
+
+    public function test_can_update_expense(): void
+    {
+        $expense = Tenant::bypassTenant($this->tenant->id, function () {
+            return Expense::factory()->create([
+                'tenant_id' => $this->tenant->id,
+            ]);
+        });
+
+        $response = $this->putJson($this->baseUrl.'/'.$expense->id, [
+            'number' => 'EXP-UPDATED-001',
+            'totalNet' => 200,
+            'totalTax' => 46,
+            'totalGross' => 246,
+        ]);
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('number', 'EXP-UPDATED-001');
+
+        $this->assertDatabaseHas('expenses', [
+            'id' => $expense->id,
+            'number' => 'EXP-UPDATED-001',
+        ]);
+    }
+
+    public function test_cannot_update_expense_from_other_tenant(): void
+    {
+        $otherTenant = Tenant::factory()->create();
+        $expense = Tenant::bypassTenant($otherTenant->id, function () use ($otherTenant) {
+            return Expense::factory()->create([
+                'tenant_id' => $otherTenant->id,
+            ]);
+        });
+
+        $response = $this->putJson($this->baseUrl.'/'.$expense->id, [
+            'number' => 'EXP-HACKED',
+        ]);
+
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $this->assertDatabaseMissing('expenses', [
+            'id' => $expense->id,
+            'number' => 'EXP-HACKED',
+        ]);
+    }
+
+    public function test_unauthenticated_user_cannot_create_expense(): void
+    {
+        $response = $this->withHeader('Authorization', 'Bearer invalid-token')
+            ->postJson($this->baseUrl, ExpenseApiPayloadFactory::make());
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
     public function test_can_delete_expense(): void
     {
         $expense = Tenant::bypassTenant($this->tenant->id, function () {
@@ -116,9 +201,8 @@ class ExpenseApiTest extends TestCase
 
     public function test_unauthenticated_user_cannot_list_expenses(): void
     {
-        $this->app['auth']->forgetGuards();
-
-        $response = $this->getJson($this->baseUrl);
+        $response = $this->withHeader('Authorization', 'Bearer invalid-token')
+            ->getJson($this->baseUrl);
 
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
