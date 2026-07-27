@@ -14,8 +14,7 @@ final class IbanInfoDTO extends BaseDataDTO
         public ?string $bankCode,
         public ?string $routingCode,
         public ?string $currency = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -33,13 +32,13 @@ final class IbanInfoDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'iban'        => $this->iban,
-            'bankName'    => $this->bankName,
-            'branchName'  => $this->branchName,
-            'swift'       => $this->swift,
-            'bankCode'    => $this->bankCode,
+            'iban' => $this->iban,
+            'bankName' => $this->bankName,
+            'branchName' => $this->branchName,
+            'swift' => $this->swift,
+            'bankCode' => $this->bankCode,
             'routingCode' => $this->routingCode,
-            'currency'    => $this->currency,
+            'currency' => $this->currency,
         ];
     }
 }

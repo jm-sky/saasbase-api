@@ -43,40 +43,57 @@ class ProcessContractorRegistryConfirmationJob implements ShouldQueue
         try {
             Log::info('Processing registry confirmation', [
                 'confirmation_id' => $this->confirmation->id,
-                'type'            => $this->confirmation->type,
-                'job_id'          => $this->job?->getJobId(),
+                'type' => $this->confirmation->type,
+                'job_id' => $this->job?->getJobId(),
             ]);
 
-            $result = $this->processConfirmation(
+            $confirmations = $this->processConfirmation(
                 $dataFetcherService,
                 $regonService,
                 $viesService,
                 $mfService
             );
 
+            // $confirmations holds the per-check RegistryConfirmation rows the
+            // comparison services just wrote (each with its own real
+            // Success/Failed status based on whether the data actually
+            // matched). Mirror that here instead of always reporting Success
+            // regardless of outcome — the pending record's status is what
+            // callers/UI actually read.
+            $status = $this->resolveOverallStatus($confirmations);
+
             $this->confirmation->update([
-                'result'     => $result,
-                'status'     => RegistryConfirmationStatus::Success,
+                'result' => [
+                    'checks' => array_map(
+                        fn (RegistryConfirmation $confirmation) => [
+                            'type' => $confirmation->type,
+                            'status' => $confirmation->status->value,
+                        ],
+                        $confirmations
+                    ),
+                ],
+                'status' => $status,
                 'checked_at' => now(),
             ]);
 
-            Log::info('Registry confirmation completed successfully', [
+            Log::info('Registry confirmation completed', [
                 'confirmation_id' => $this->confirmation->id,
-                'type'            => $this->confirmation->type,
-                'job_id'          => $this->job?->getJobId(),
+                'type' => $this->confirmation->type,
+                'status' => $status->value,
+                'job_id' => $this->job?->getJobId(),
             ]);
         } catch (\Exception $e) {
             $this->confirmation->update([
-                'result'     => ['error' => $e->getMessage()],
-                'status'     => RegistryConfirmationStatus::Failed,
+                'result' => ['error' => $e->getMessage()],
+                'status' => RegistryConfirmationStatus::Failed,
                 'checked_at' => now(),
             ]);
 
             Log::error('Registry confirmation failed', [
                 'confirmation_id' => $this->confirmation->id,
-                'type'            => $this->confirmation->type,
-                'error'           => $e->getMessage(),
-                'job_id'          => $this->job?->getJobId(),
+                'type' => $this->confirmation->type,
+                'error' => $e->getMessage(),
+                'job_id' => $this->job?->getJobId(),
             ]);
 
             throw $e;
@@ -100,12 +117,12 @@ class ProcessContractorRegistryConfirmationJob implements ShouldQueue
         // Fetch data from external services
         $lookupResults = $dataFetcherService->fetch($context);
 
-        if (!$lookupResults) {
+        if (! $lookupResults) {
             throw new \Exception('No data available from external registries');
         }
 
         $contractor = $this->confirmation->load('confirmable')->confirmable;
-        $type       = RegistryConfirmationType::from($this->confirmation->type);
+        $type = RegistryConfirmationType::from($this->confirmation->type);
 
         // Process based on confirmation type
         return match ($type) {
@@ -122,19 +139,40 @@ class ProcessContractorRegistryConfirmationJob implements ShouldQueue
         };
     }
 
+    /**
+     * @param  RegistryConfirmation[]  $confirmations
+     */
+    private function resolveOverallStatus(array $confirmations): RegistryConfirmationStatus
+    {
+        if ($confirmations === []) {
+            // No comparable data was available at all (e.g. contractor is
+            // missing a name/VAT ID, or the registry returned nothing to
+            // compare against) — that is not a verified match.
+            return RegistryConfirmationStatus::Failed;
+        }
+
+        foreach ($confirmations as $confirmation) {
+            if ($confirmation->status !== RegistryConfirmationStatus::Success) {
+                return RegistryConfirmationStatus::Failed;
+            }
+        }
+
+        return RegistryConfirmationStatus::Success;
+    }
+
     public function failed(\Exception $exception): void
     {
         $this->confirmation->update([
-            'result'     => ['error' => $exception->getMessage()],
-            'status'     => RegistryConfirmationStatus::Failed,
+            'result' => ['error' => $exception->getMessage()],
+            'status' => RegistryConfirmationStatus::Failed,
             'checked_at' => now(),
         ]);
 
         Log::error('Registry confirmation job permanently failed', [
             'confirmation_id' => $this->confirmation->id,
-            'type'            => $this->confirmation->type,
-            'error'           => $exception->getMessage(),
-            'job_id'          => $this->job?->getJobId(),
+            'type' => $this->confirmation->type,
+            'error' => $exception->getMessage(),
+            'job_id' => $this->job?->getJobId(),
         ]);
     }
 }

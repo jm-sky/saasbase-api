@@ -38,7 +38,7 @@ class ContactControllerTest extends TestCase
         // Scout::fake();
     }
 
-    public function testCanSearchContacts(): void
+    public function test_can_search_contacts(): void
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             Contact::factory()->count(3)->create();
@@ -48,7 +48,7 @@ class ContactControllerTest extends TestCase
             'first_name' => 'UniqueSearchName',
         ]);
 
-        $response = $this->getJson($this->baseUrl . '/search?q=UniqueSearchName');
+        $response = $this->getJson($this->baseUrl.'/search?q=UniqueSearchName');
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -77,17 +77,15 @@ class ContactControllerTest extends TestCase
                     'total',
                 ],
             ])
-            ->assertJsonFragment(['firstName' => 'UniqueSearchName'])
-        ;
+            ->assertJsonFragment(['firstName' => 'UniqueSearchName']);
     }
 
-    public function testSearchRequiresQueryParam(): void
+    public function test_search_requires_query_param(): void
     {
         $this->markTestSkipped('Skipping because of Scout');
 
-        $response = $this->getJson($this->baseUrl . '/search');
+        $response = $this->getJson($this->baseUrl.'/search');
         $response->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJson(['message' => 'Search query is required'])
-        ;
+            ->assertJson(['message' => 'Search query is required']);
     }
 }

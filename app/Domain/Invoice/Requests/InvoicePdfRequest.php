@@ -15,10 +15,10 @@ class InvoicePdfRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'templateId'  => ['sometimes', 'nullable', 'string', 'exists:invoice_templates,id'],
-            'collection'  => ['sometimes', 'string', 'max:255'],
-            'action'      => ['sometimes', 'string', 'in:download,stream,attach,preview'],
-            'language'    => ['sometimes', 'string', 'in:' . implode(',', config('app.supported_locales'))],
+            'templateId' => ['sometimes', 'nullable', 'string', 'exists:invoice_templates,id'],
+            'collection' => ['sometimes', 'string', 'max:255'],
+            'action' => ['sometimes', 'string', 'in:download,stream,attach,preview'],
+            'language' => ['sometimes', 'string', 'in:'.implode(',', config('app.supported_locales'))],
         ];
     }
 

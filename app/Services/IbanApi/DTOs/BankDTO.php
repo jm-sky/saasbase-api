@@ -14,8 +14,7 @@ final class BankDTO extends BaseDataDTO
         public ?string $city = null,
         public ?string $state = null,
         public ?string $zip = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -34,12 +33,12 @@ final class BankDTO extends BaseDataDTO
     {
         return [
             'bank_name' => $this->bank_name,
-            'phone'     => $this->phone ?? null,
-            'address'   => $this->address ?? null,
-            'bic'       => $this->bic ?? null,
-            'city'      => $this->city ?? null,
-            'state'     => $this->state ?? null,
-            'zip'       => $this->zip ?? null,
+            'phone' => $this->phone ?? null,
+            'address' => $this->address ?? null,
+            'bic' => $this->bic ?? null,
+            'city' => $this->city ?? null,
+            'state' => $this->state ?? null,
+            'zip' => $this->zip ?? null,
         ];
     }
 }

@@ -31,66 +31,64 @@ class NumberingTemplateApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->user = $this->authenticateUser($this->tenant);
     }
 
-    public function testCanUpdateNumberingTemplate(): void
+    public function test_can_update_numbering_template(): void
     {
         $template = Tenant::bypassTenant($this->tenant->id, function () {
             return NumberingTemplate::factory()->create(['tenant_id' => $this->tenant->id]);
         });
         $updateData = [
-            'name'       => 'Updated Template',
+            'name' => 'Updated Template',
             'nextNumber' => 42,
         ];
-        $response = $this->putJson($this->baseUrl . '/' . $template->id, $updateData);
+        $response = $this->putJson($this->baseUrl.'/'.$template->id, $updateData);
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    'id'         => $template->id,
-                    'name'       => 'Updated Template',
+                    'id' => $template->id,
+                    'name' => 'Updated Template',
                     'nextNumber' => 42,
                 ],
-            ])
-        ;
+            ]);
         $this->assertDatabaseHas('numbering_templates', [
-            'id'          => $template->id,
-            'name'        => 'Updated Template',
+            'id' => $template->id,
+            'name' => 'Updated Template',
             'next_number' => 42,
         ]);
     }
 
-    public function testCanDeleteNumberingTemplate(): void
+    public function test_can_delete_numbering_template(): void
     {
         $template = Tenant::bypassTenant($this->tenant->id, function () {
             return NumberingTemplate::factory()->create(['tenant_id' => $this->tenant->id]);
         });
-        $response = $this->deleteJson($this->baseUrl . '/' . $template->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$template->id);
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertSoftDeleted('numbering_templates', ['id' => $template->id]);
     }
 
-    public function testCanSetDefaultNumberingTemplate(): void
+    public function test_can_set_default_numbering_template(): void
     {
         $templates = Tenant::bypassTenant($this->tenant->id, function () {
             return NumberingTemplate::factory()->count(2)->create(['tenant_id' => $this->tenant->id, 'is_default' => false]);
         });
         $template = $templates->first();
-        $response = $this->postJson($this->baseUrl . '/' . $template->id . '/set-default');
+        $response = $this->postJson($this->baseUrl.'/'.$template->id.'/set-default');
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    'id'        => $template->id,
+                    'id' => $template->id,
                     'isDefault' => true,
                 ],
-            ])
-        ;
+            ]);
         $this->assertDatabaseHas('numbering_templates', [
-            'id'         => $template->id,
+            'id' => $template->id,
             'is_default' => true,
         ]);
         $this->assertDatabaseHas('numbering_templates', [
-            'id'         => $templates->last()->id,
+            'id' => $templates->last()->id,
             'is_default' => false,
         ]);
     }

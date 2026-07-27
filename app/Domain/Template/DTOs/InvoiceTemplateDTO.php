@@ -27,12 +27,11 @@ final class InvoiceTemplateDTO extends BaseDTO
         public readonly array $settings = [],
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof InvoiceTemplate) {
+        if (! $model instanceof InvoiceTemplate) {
             throw new \InvalidArgumentException('Model must be instance of InvoiceTemplate');
         }
 
@@ -75,19 +74,19 @@ final class InvoiceTemplateDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenantId,
-            'userId'      => $this->userId,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'userId' => $this->userId,
+            'name' => $this->name,
             'description' => $this->description,
-            'content'     => $this->content,
-            'category'    => $this->category->value,
+            'content' => $this->content,
+            'category' => $this->category->value,
             'previewData' => $this->previewData,
-            'settings'    => $this->settings,
-            'isActive'    => $this->isActive,
-            'isDefault'   => $this->isDefault,
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
+            'settings' => $this->settings,
+            'isActive' => $this->isActive,
+            'isDefault' => $this->isDefault,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

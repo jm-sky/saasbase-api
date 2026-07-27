@@ -17,12 +17,12 @@ class TenantDTOTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCanCreateTenantDto(): void
+    public function test_can_create_tenant_dto(): void
     {
         $data = [
-            'id'         => fake()->uuid(),
-            'name'       => 'Test Tenant',
-            'slug'       => 'test-tenant',
+            'id' => fake()->uuid(),
+            'name' => 'Test Tenant',
+            'slug' => 'test-tenant',
             'created_at' => now()->toIso8601String(),
             'updated_at' => now()->toIso8601String(),
             'deleted_at' => null,
@@ -38,7 +38,7 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($data['deleted_at'], $dto->deletedAt);
     }
 
-    public function testCanCreateTenantDtoWithMinimalData(): void
+    public function test_can_create_tenant_dto_with_minimal_data(): void
     {
         $data = [
             'name' => 'Test Tenant',
@@ -55,16 +55,16 @@ class TenantDTOTest extends TestCase
         $this->assertNull($dto->deletedAt);
     }
 
-    public function testCanCollectMultipleTenantDtos(): void
+    public function test_can_collect_multiple_tenant_dtos(): void
     {
         $data = [
             [
-                'id'   => fake()->uuid(),
+                'id' => fake()->uuid(),
                 'name' => 'Test Tenant 1',
                 'slug' => 'test-tenant-1',
             ],
             [
-                'id'   => fake()->uuid(),
+                'id' => fake()->uuid(),
                 'name' => 'Test Tenant 2',
                 'slug' => 'test-tenant-2',
             ],
@@ -77,7 +77,7 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($data[1]['name'], $dtos[1]->name);
     }
 
-    public function testCanCreateTenantDtoFromModel(): void
+    public function test_can_create_tenant_dto_from_model(): void
     {
         $tenant = Tenant::factory()->create([
             'name' => 'Test Tenant',
@@ -94,7 +94,7 @@ class TenantDTOTest extends TestCase
         $this->assertEquals($tenant->deleted_at, $dto->deletedAt);
     }
 
-    public function testCanConvertTenantDtoToArray(): void
+    public function test_can_convert_tenant_dto_to_array(): void
     {
         $dto = new TenantDTO(
             id: '123e4567-e89b-12d3-a456-426614174000',

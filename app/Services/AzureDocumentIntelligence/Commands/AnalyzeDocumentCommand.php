@@ -16,18 +16,18 @@ class AnalyzeDocumentCommand extends Command
     {
         $filePath = $this->argument('file');
         $useCache = $this->option('cache');
-        $force    = $this->option('force');
+        $force = $this->option('force');
 
         $this->info('--------------------------------');
         $this->info('Analyzing document...');
         $this->info('--------------------------------');
-        $this->info('File        : ' . $filePath);
-        $this->info('Using cache : ' . ($useCache ? 'yes' : 'no'));
-        $this->info('Force       : ' . ($force ? 'yes' : 'no'));
+        $this->info('File        : '.$filePath);
+        $this->info('Using cache : '.($useCache ? 'yes' : 'no'));
+        $this->info('Force       : '.($force ? 'yes' : 'no'));
         $this->info('--------------------------------');
 
-        if (!file_exists($filePath)) {
-            $this->error('File does not exist: ' . $filePath);
+        if (! file_exists($filePath)) {
+            $this->error('File does not exist: '.$filePath);
 
             return 1;
         }
@@ -42,7 +42,7 @@ class AnalyzeDocumentCommand extends Command
 
             return 0;
         } catch (AzureDocumentIntelligenceException $e) {
-            $this->error('Error: ' . $e->getMessage());
+            $this->error('Error: '.$e->getMessage());
             $this->error(json_encode($e->getContext(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
             return 1;

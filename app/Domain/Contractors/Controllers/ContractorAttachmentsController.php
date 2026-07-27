@@ -32,13 +32,13 @@ class ContractorAttachmentsController extends Controller
      */
     public function store(ContractorAttachmentRequest $request, Contractor $contractor)
     {
-        $file  = $request->file('file');
+        $file = $request->file('file');
         $media = $contractor->addMedia($file)->toMediaCollection('attachments');
         $contractor->logModelActivity(ContractorActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
-            'data'    => MediaDTO::fromModel($media)->toArray(),
+            'data' => MediaDTO::fromModel($media)->toArray(),
         ], Response::HTTP_CREATED);
     }
 
@@ -60,11 +60,11 @@ class ContractorAttachmentsController extends Controller
     public function download(Contractor $contractor, Media $media)
     {
         $this->authorizeMedia($contractor, $media);
-        $disk    = $media->disk;
-        $path    = $media->getPath();
+        $disk = $media->disk;
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->download($path, $media->file_name, $headers);
@@ -76,11 +76,11 @@ class ContractorAttachmentsController extends Controller
     public function preview(Contractor $contractor, Media $media)
     {
         $this->authorizeMedia($contractor, $media);
-        $disk    = $media->disk;
-        $path    = $media->getPath();
+        $disk = $media->disk;
+        $path = $media->getPath();
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->file($path, $headers);
@@ -104,7 +104,7 @@ class ContractorAttachmentsController extends Controller
      */
     protected function authorizeMedia(Contractor $contractor, Media $media): void
     {
-        if (Contractor::class !== $media->model_type || $media->model_id !== $contractor->id) {
+        if ($media->model_type !== Contractor::class || $media->model_id !== $contractor->id) {
             abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this contractor.');
         }
     }

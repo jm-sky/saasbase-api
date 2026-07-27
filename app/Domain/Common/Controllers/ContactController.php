@@ -24,7 +24,7 @@ class ContactController extends Controller
     public function __construct()
     {
         $this->modelClass = Contact::class;
-        $this->filters    = [
+        $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter([
                 'first_name',
                 'last_name',
@@ -33,25 +33,25 @@ class ContactController extends Controller
                 'position',
                 'notes',
             ])),
-            AllowedFilter::custom('firstName', new AdvancedFilter(), 'first_name'),
-            AllowedFilter::custom('lastName', new AdvancedFilter(), 'last_name'),
-            AllowedFilter::custom('email', new AdvancedFilter()),
-            AllowedFilter::custom('phoneNumber', new AdvancedFilter(), 'phone_number'),
-            AllowedFilter::custom('position', new AdvancedFilter()),
-            AllowedFilter::custom('userId', new AdvancedFilter(), 'user_id'),
-            AllowedFilter::custom('contactableId', new AdvancedFilter(), 'contactable_id'),
-            AllowedFilter::custom('contactableType', new AdvancedFilter(), 'contactable_type'),
-            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('firstName', new AdvancedFilter, 'first_name'),
+            AllowedFilter::custom('lastName', new AdvancedFilter, 'last_name'),
+            AllowedFilter::custom('email', new AdvancedFilter),
+            AllowedFilter::custom('phoneNumber', new AdvancedFilter, 'phone_number'),
+            AllowedFilter::custom('position', new AdvancedFilter),
+            AllowedFilter::custom('userId', new AdvancedFilter, 'user_id'),
+            AllowedFilter::custom('contactableId', new AdvancedFilter, 'contactable_id'),
+            AllowedFilter::custom('contactableType', new AdvancedFilter, 'contactable_type'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
         $this->sorts = [
-            'firstName'     => 'first_name',
-            'lastName'      => 'last_name',
+            'firstName' => 'first_name',
+            'lastName' => 'last_name',
             'email',
-            'phoneNumber'   => 'phone_number',
+            'phoneNumber' => 'phone_number',
             'position',
-            'createdAt'     => 'created_at',
-            'updatedAt'     => 'updated_at',
+            'createdAt' => 'created_at',
+            'updatedAt' => 'updated_at',
         ];
         $this->defaultSort = '-created_at';
     }
@@ -64,12 +64,11 @@ class ContactController extends Controller
             ->additional([
                 'meta' => [
                     'currentPage' => $contacts->currentPage(),
-                    'lastPage'    => $contacts->lastPage(),
-                    'perPage'     => $contacts->perPage(),
-                    'total'       => $contacts->total(),
+                    'lastPage' => $contacts->lastPage(),
+                    'perPage' => $contacts->perPage(),
+                    'total' => $contacts->total(),
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function store(ContactRequest $request): JsonResponse
@@ -78,7 +77,7 @@ class ContactController extends Controller
 
         return response()->json([
             'message' => 'Contact created successfully.',
-            'data'    => new ContactResource($contact),
+            'data' => new ContactResource($contact),
         ], Response::HTTP_CREATED);
     }
 
@@ -93,7 +92,7 @@ class ContactController extends Controller
 
         return response()->json([
             'message' => 'Contact updated successfully.',
-            'data'    => new ContactResource($contact->fresh()),
+            'data' => new ContactResource($contact->fresh()),
         ]);
     }
 
@@ -106,10 +105,10 @@ class ContactController extends Controller
 
     public function search(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $query   = $request->input('q');
+        $query = $request->input('q');
         $perPage = $request->input('perPage', $this->defaultPerPage);
 
-        if (!$query) {
+        if (! $query) {
             return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -117,18 +116,16 @@ class ContactController extends Controller
             ->query(function ($builder) use ($request) {
                 return $this->getIndexQuery($request);
             })
-            ->paginate($perPage)
-        ;
+            ->paginate($perPage);
 
         return ContactResource::collection($results)
             ->additional([
                 'meta' => [
                     'currentPage' => $results->currentPage(),
-                    'lastPage'    => $results->lastPage(),
-                    'perPage'     => $results->perPage(),
-                    'total'       => $results->total(),
+                    'lastPage' => $results->lastPage(),
+                    'perPage' => $results->perPage(),
+                    'total' => $results->total(),
                 ],
-            ])
-        ;
+            ]);
     }
 }

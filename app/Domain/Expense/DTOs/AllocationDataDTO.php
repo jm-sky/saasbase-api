@@ -6,27 +6,26 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 use Brick\Math\BigDecimal;
 
 /**
- * @property BigDecimal               $amount
- * @property ?string                  $note
+ * @property BigDecimal $amount
+ * @property ?string $note
  * @property AllocationDimensionDTO[] $dimensions
  */
 final class AllocationDataDTO extends BaseDataDTO
 {
     /**
-     * @param AllocationDimensionDTO[] $dimensions
+     * @param  AllocationDimensionDTO[]  $dimensions
      */
     public function __construct(
         public readonly BigDecimal $amount,
         public readonly ?string $note,
         public readonly array $dimensions = [],
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'amount'     => $this->amount->toFloat(),
-            'note'       => $this->note,
+            'amount' => $this->amount->toFloat(),
+            'note' => $this->note,
             'dimensions' => array_map(fn (AllocationDimensionDTO $dimension) => $dimension->toArray(), $this->dimensions),
         ];
     }

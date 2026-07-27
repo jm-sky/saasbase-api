@@ -12,12 +12,14 @@ use App\Domain\Template\Requests\UpdateInvoiceTemplateRequest;
 use App\Domain\Template\Resources\InvoiceTemplatePreviewResource;
 use App\Domain\Template\Resources\InvoiceTemplateResource;
 use App\Domain\Template\Services\InvoiceGeneratorService;
+use App\Domain\Template\Services\TemplatingService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class InvoiceTemplateController extends Controller
@@ -26,28 +28,28 @@ class InvoiceTemplateController extends Controller
 
     protected int $defaultPerPage = 15;
 
-    public function __construct()
+    public function __construct(private readonly TemplatingService $templatingService)
     {
-        $this->modelClass  = InvoiceTemplate::class;
+        $this->modelClass = InvoiceTemplate::class;
         $this->defaultWith = ['user'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
-            AllowedFilter::custom('category', new AdvancedFilter()),
-            AllowedFilter::custom('userId', new AdvancedFilter(), 'user_id'),
-            AllowedFilter::custom('isActive', new AdvancedFilter(), 'is_active'),
-            AllowedFilter::custom('isDefault', new AdvancedFilter(), 'is_default'),
-            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
+            AllowedFilter::custom('category', new AdvancedFilter),
+            AllowedFilter::custom('userId', new AdvancedFilter, 'user_id'),
+            AllowedFilter::custom('isActive', new AdvancedFilter, 'is_active'),
+            AllowedFilter::custom('isDefault', new AdvancedFilter, 'is_default'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
 
         $this->sorts = [
             'name',
             'description',
             'category',
-            'isActive'  => 'is_active',
+            'isActive' => 'is_active',
             'isDefault' => 'is_default',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
@@ -63,24 +65,23 @@ class InvoiceTemplateController extends Controller
         $templates = $this->getIndexPaginator($request);
 
         return InvoiceTemplatePreviewResource::collection($templates['data'])
-            ->additional(['meta' => $templates['meta']])
-        ;
+            ->additional(['meta' => $templates['meta']]);
     }
 
     public function store(CreateInvoiceTemplateRequest $request): JsonResponse
     {
         $this->authorize('create', InvoiceTemplate::class);
 
-        $template = DB::transaction(function () use ($request) {
-            $data = $request->validated();
+        $data = $request->validated();
+        $this->validateHandlebarsContent($data['content'] ?? '');
 
+        $template = DB::transaction(function () use ($data) {
             // If this template is set as default, unset other defaults in the same category
             if ($data['isDefault'] ?? false) {
                 InvoiceTemplate::query()
                     ->where('tenant_id', $data['tenantId'])
                     ->where('category', $data['category'])
-                    ->update(['is_default' => false])
-                ;
+                    ->update(['is_default' => false]);
             }
 
             return InvoiceTemplate::create($data);
@@ -90,7 +91,7 @@ class InvoiceTemplateController extends Controller
 
         return response()->json([
             'message' => 'Invoice template created successfully.',
-            'data'    => new InvoiceTemplateResource($template),
+            'data' => new InvoiceTemplateResource($template),
         ], Response::HTTP_CREATED);
     }
 
@@ -109,16 +110,19 @@ class InvoiceTemplateController extends Controller
     {
         $this->authorize('update', $invoiceTemplate);
 
-        DB::transaction(function () use ($request, $invoiceTemplate) {
-            $data = $request->validated();
+        $data = $request->validated();
 
+        if (\array_key_exists('content', $data)) {
+            $this->validateHandlebarsContent($data['content']);
+        }
+
+        DB::transaction(function () use ($data, $invoiceTemplate) {
             // If this template is set as default, unset other defaults in the same category
-            if (($data['isDefault'] ?? false) && (!$invoiceTemplate->is_default || $invoiceTemplate->category !== $data['category'])) {
+            if (($data['isDefault'] ?? false) && (! $invoiceTemplate->is_default || $invoiceTemplate->category !== $data['category'])) {
                 InvoiceTemplate::query()
                     ->where('tenant_id', $invoiceTemplate->tenant_id)
                     ->where('category', $data['category'])
-                    ->update(['is_default' => false])
-                ;
+                    ->update(['is_default' => false]);
             }
 
             $invoiceTemplate->update($data);
@@ -128,7 +132,7 @@ class InvoiceTemplateController extends Controller
 
         return response()->json([
             'message' => 'Invoice template updated successfully.',
-            'data'    => new InvoiceTemplateResource($invoiceTemplate->fresh()),
+            'data' => new InvoiceTemplateResource($invoiceTemplate->fresh()),
         ]);
     }
 
@@ -152,8 +156,7 @@ class InvoiceTemplateController extends Controller
             InvoiceTemplate::query()
                 ->where('tenant_id', $invoiceTemplate->tenant_id)
                 ->where('category', $invoiceTemplate->category)
-                ->update(['is_default' => false])
-            ;
+                ->update(['is_default' => false]);
 
             // Set this template as default
             $invoiceTemplate->update(['is_default' => true]);
@@ -163,7 +166,7 @@ class InvoiceTemplateController extends Controller
 
         return response()->json([
             'message' => 'Invoice template set as default successfully.',
-            'data'    => new InvoiceTemplateResource($invoiceTemplate->fresh()),
+            'data' => new InvoiceTemplateResource($invoiceTemplate->fresh()),
         ]);
     }
 
@@ -172,9 +175,9 @@ class InvoiceTemplateController extends Controller
         $this->authorize('preview', InvoiceTemplate::class);
 
         $templateContent = $request->getTemplateContent();
-        $previewData     = $request->getPreviewData();
-        $language        = $request->getLanguage();
-        $options         = $request->getOptions();
+        $previewData = $request->getPreviewData();
+        $language = $request->getLanguage();
+        $options = $request->getOptions();
 
         // Generate styled HTML using the service
         $styledHtml = $invoiceGeneratorService->generatePreviewHtml(
@@ -187,5 +190,21 @@ class InvoiceTemplateController extends Controller
         return response()->json([
             'html' => $styledHtml,
         ]);
+    }
+
+    /**
+     * InvoiceTemplateService::create/update() already run this check, but
+     * store()/update() bypass the service and write to the model directly —
+     * without this, a broken Handlebars template saves fine and only blows
+     * up later at PDF-generation time (TemplateRenderingException) instead
+     * of at save time (422).
+     */
+    private function validateHandlebarsContent(string $content): void
+    {
+        if ($this->templatingService->validate($content)) {
+            return;
+        }
+
+        throw ValidationException::withMessages(['content' => [$this->templatingService->getValidationErrors($content) ?? 'Invalid Handlebars template syntax.']]);
     }
 }

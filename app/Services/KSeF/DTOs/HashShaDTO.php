@@ -8,6 +8,5 @@ final class HashShaDTO
         public readonly string $algorithm,
         public readonly string $encoding,
         public readonly string $value
-    ) {
-    }
+    ) {}
 }

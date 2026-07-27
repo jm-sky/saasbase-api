@@ -6,6 +6,7 @@ use App\Domain\Common\DTOs\BankAccountDTO;
 use App\Domain\Common\DTOs\CommonCompanyLookupData;
 use App\Domain\Contractors\Models\Contractor;
 use App\Domain\Contractors\Services\RegistryConfirmation\Contracts\RegistryConfirmationServiceInterface;
+use App\Domain\Utils\Enums\RegistryConfirmationStatus;
 use App\Domain\Utils\Enums\RegistryConfirmationType;
 use App\Domain\Utils\Models\RegistryConfirmation;
 use App\Services\MfLookup\DTOs\MfLookupResultDTO;
@@ -14,8 +15,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
 {
     public function __construct(
         private readonly DataComparatorService $comparatorService,
-    ) {
-    }
+    ) {}
 
     /**
      * Confirm contractor data against MF registry data.
@@ -27,7 +27,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
         // Convert MF data to common format
         $commonData = $this->convertToCommonData($registryData);
 
-        if (!$commonData) {
+        if (! $commonData) {
             return $confirmations;
         }
 
@@ -64,35 +64,35 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
     private function confirmCompanyData(Contractor $contractor, CommonCompanyLookupData $commonData, $registryData): ?RegistryConfirmation
     {
         // Check if we have required data
-        if (!$contractor->name || !$contractor->vat_id || !$commonData->name || !$commonData->vatId) {
+        if (! $contractor->name || ! $contractor->vat_id || ! $commonData->name || ! $commonData->vatId) {
             return null;
         }
 
         // Prepare payload for comparison
         $payload = [
-            'name'  => $contractor->name,
+            'name' => $contractor->name,
             'vatId' => $contractor->vat_id,
             'regon' => $contractor->regon,
         ];
 
         // Compare data
-        $nameMatch  = $this->comparatorService->compareNames($contractor->name, $commonData->name);
+        $nameMatch = $this->comparatorService->compareNames($contractor->name, $commonData->name);
         $vatIdMatch = $this->comparatorService->compareVatIds($contractor->vat_id, $commonData->vatId);
         $regonMatch = $this->comparatorService->compareRegons($contractor->regon, $commonData->regon);
 
         // Company data is confirmed if name and VAT ID match
         // REGON is optional but if both have it, it should match
-        $isConfirmed = $nameMatch && $vatIdMatch && ($regonMatch || !$contractor->regon || !$commonData->regon);
+        $isConfirmed = $nameMatch && $vatIdMatch && ($regonMatch || ! $contractor->regon || ! $commonData->regon);
 
         // Prepare result data
         $result = [
             'registryData' => [
-                'name'  => $commonData->name,
+                'name' => $commonData->name,
                 'vatId' => $commonData->vatId,
                 'regon' => $commonData->regon,
             ],
             'comparison' => [
-                'nameMatch'  => $nameMatch,
+                'nameMatch' => $nameMatch,
                 'vatIdMatch' => $vatIdMatch,
                 'regonMatch' => $regonMatch,
             ],
@@ -102,14 +102,14 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
         // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
-                'type'             => RegistryConfirmationType::Mf->value,
-                'confirmable_id'   => $contractor->id,
+                'type' => RegistryConfirmationType::Mf->value,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
             ],
             [
-                'payload'    => $payload,
-                'result'     => $result,
-                'success'    => $isConfirmed,
+                'payload' => $payload,
+                'result' => $result,
+                'status' => $isConfirmed ? RegistryConfirmationStatus::Success : RegistryConfirmationStatus::Failed,
                 'checked_at' => now(),
             ]
         );
@@ -121,16 +121,16 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
     private function confirmBankAccountData(Contractor $contractor, CommonCompanyLookupData $commonData, $registryData): ?RegistryConfirmation
     {
         $contractorBankAccount = $contractor->defaultBankAccount;
-        $registryBankAccount   = $commonData->bankAccount;
+        $registryBankAccount = $commonData->bankAccount;
 
         // Check if we have required data
-        if (!$contractorBankAccount->iban || !$registryBankAccount->iban) {
+        if (! $contractorBankAccount->iban || ! $registryBankAccount->iban) {
             return null;
         }
 
         // Prepare payload for comparison
         $payload = [
-            'iban'  => $contractorBankAccount->iban,
+            'iban' => $contractorBankAccount->iban,
             'vatId' => $contractor->vat_id,
         ];
 
@@ -146,9 +146,9 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
         // Prepare result data
         $result = [
             'registryData' => [
-                'iban'     => $registryBankAccount->iban,
+                'iban' => $registryBankAccount->iban,
                 'bankName' => $registryBankAccount->bankName,
-                'swift'    => $registryBankAccount->swift,
+                'swift' => $registryBankAccount->swift,
                 'currency' => $registryBankAccount->currency,
             ],
             'comparison' => [
@@ -160,14 +160,14 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
         // @phpstan-ignore-next-line
         return $contractor->registryConfirmations()->updateOrCreate(
             [
-                'type'             => RegistryConfirmationType::BankAccount->value,
-                'confirmable_id'   => $contractor->id,
+                'type' => RegistryConfirmationType::BankAccount->value,
+                'confirmable_id' => $contractor->id,
                 'confirmable_type' => get_class($contractor),
             ],
             [
-                'payload'    => $payload,
-                'result'     => $result,
-                'success'    => $isConfirmed,
+                'payload' => $payload,
+                'result' => $result,
+                'status' => $isConfirmed ? RegistryConfirmationStatus::Success : RegistryConfirmationStatus::Failed,
                 'checked_at' => now(),
             ]
         );
@@ -178,7 +178,7 @@ class MfContractorRegistryConfirmationService implements RegistryConfirmationSer
      */
     private function convertToCommonData($registryData): ?CommonCompanyLookupData
     {
-        if (!$registryData) {
+        if (! $registryData) {
             return null;
         }
 

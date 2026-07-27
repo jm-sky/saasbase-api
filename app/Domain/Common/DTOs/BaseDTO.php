@@ -15,12 +15,12 @@ use Illuminate\Support\Str;
  *
  * @implements CreatedFromModelOrArray<TModel>
  */
-abstract class BaseDTO implements Arrayable, \JsonSerializable, CreatedFromModelOrArray
+abstract class BaseDTO implements \JsonSerializable, Arrayable, CreatedFromModelOrArray
 {
     /**
      * Create a DTO instance from a model or array.
      *
-     * @param TModel|array<string,mixed> $data
+     * @param  TModel|array<string,mixed>  $data
      *
      * @throws \InvalidArgumentException
      */
@@ -40,14 +40,14 @@ abstract class BaseDTO implements Arrayable, \JsonSerializable, CreatedFromModel
     /**
      * Create a DTO instance from a model.
      *
-     * @param TModel $model
+     * @param  TModel  $model
      */
     abstract public static function fromModel(Model $model): static;
 
     /**
      * Create a DTO instance from an array.
      *
-     * @param array<string,mixed> $data
+     * @param  array<string,mixed>  $data
      */
     abstract public static function fromArray(array $data): static;
 
@@ -72,8 +72,7 @@ abstract class BaseDTO implements Arrayable, \JsonSerializable, CreatedFromModel
     /**
      * Convert an array of items to DTOs.
      *
-     * @param array<mixed> $items
-     *
+     * @param  array<mixed>  $items
      * @return array<static>
      */
     public static function collect(array|Model|Collection|EloquentCollection|LengthAwarePaginator $items): array|Collection

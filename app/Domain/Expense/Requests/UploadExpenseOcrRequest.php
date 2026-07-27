@@ -14,10 +14,10 @@ class UploadExpenseOcrRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'files'   => ['required', 'array', 'min:1'],
+            'files' => ['required', 'array', 'min:1'],
             'files.*' => ['required', 'file'],
-            'month'   => ['nullable', 'sometimes', 'integer', 'min:1', 'max:12'],
-            'year'    => ['nullable', 'sometimes', 'integer', 'min:2000'],
+            'month' => ['nullable', 'sometimes', 'integer', 'min:1', 'max:12'],
+            'year' => ['nullable', 'sometimes', 'integer', 'min:2000'],
         ];
     }
 }

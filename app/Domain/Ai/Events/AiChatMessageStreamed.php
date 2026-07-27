@@ -17,12 +17,11 @@ class AiChatMessageStreamed implements ShouldBroadcastNow
         public string $userId,
         public StreamDeltaData $delta,
         public int $index = 0
-    ) {
-    }
+    ) {}
 
     public function broadcastOn(): array
     {
-        return [new PrivateChannel('chat.ai.' . $this->userId)];
+        return [new PrivateChannel('chat.ai.'.$this->userId)];
     }
 
     public function broadcastWith(): array

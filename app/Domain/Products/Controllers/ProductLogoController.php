@@ -21,18 +21,17 @@ class ProductLogoController extends Controller
         $product->clearMediaCollection('logo');
 
         $media = $product->addMediaFromRequest('image')
-            ->toMediaCollection('logo')
-        ;
+            ->toMediaCollection('logo');
 
         $product->logModelActivity(ProductActivityType::LogoCreated->value, $media);
 
-        $logoUrl  = $product->getMediaSignedUrl('logo');
+        $logoUrl = $product->getMediaSignedUrl('logo');
         $thumbUrl = $product->getMediaSignedUrl('logo', 'thumb');
 
         return response()->json([
-            'message'     => 'Product logo uploaded successfully.',
+            'message' => 'Product logo uploaded successfully.',
             'originalUrl' => $logoUrl,
-            'thumbUrl'    => $thumbUrl,
+            'thumbUrl' => $thumbUrl,
         ]);
     }
 
@@ -41,11 +40,11 @@ class ProductLogoController extends Controller
         $thumb = $request->query('thumb', false);
         $media = $thumb ? $product->getFirstMedia('logo', 'thumb') : $product->getFirstMedia('logo');
 
-        if ($thumb && !$media) {
+        if ($thumb && ! $media) {
             $media = $product->getFirstMedia('logo');
         }
 
-        if (!$media) {
+        if (! $media) {
             return response()->json(['message' => 'No logo found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
@@ -54,9 +53,9 @@ class ProductLogoController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 

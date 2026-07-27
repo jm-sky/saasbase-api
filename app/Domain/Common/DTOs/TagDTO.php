@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<Tag>
  *
- * @property ?string  $id
- * @property string   $tenantId
- * @property string   $name
- * @property string   $slug
+ * @property ?string $id
+ * @property string $tenantId
+ * @property string $name
+ * @property string $slug
  * @property TagColor $color
- * @property ?Carbon  $createdAt
- * @property ?Carbon  $updatedAt
+ * @property ?Carbon $createdAt
+ * @property ?Carbon $updatedAt
  */
 final class TagDTO extends BaseDTO
 {
@@ -28,8 +28,7 @@ final class TagDTO extends BaseDTO
         public readonly ?string $id = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -61,11 +60,11 @@ final class TagDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'tenantId'  => $this->tenantId,
-            'name'      => $this->name,
-            'slug'      => $this->slug,
-            'color'     => $this->color,
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'color' => $this->color,
             'createdAt' => $this->createdAt?->toIso8601String(),
             'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];

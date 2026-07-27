@@ -13,16 +13,16 @@ class CreateTechnicalOrganizationUnits
     {
         return OrganizationUnit::firstOrCreate(
             [
-                'tenant_id'    => $tenant->id,
-                'code'         => TechnicalOrganizationUnit::Unassigned->value,
-                'parent_id'    => $rootUnit->id,
+                'tenant_id' => $tenant->id,
+                'code' => TechnicalOrganizationUnit::Unassigned->value,
+                'parent_id' => $rootUnit->id,
                 'is_technical' => true,
             ],
             [
-                'id'         => (string) Str::ulid(),
-                'name'       => TechnicalOrganizationUnit::Unassigned->getName(),
-                'code'       => TechnicalOrganizationUnit::Unassigned->value,
-                'is_active'  => true,
+                'id' => (string) Str::ulid(),
+                'name' => TechnicalOrganizationUnit::Unassigned->getName(),
+                'code' => TechnicalOrganizationUnit::Unassigned->value,
+                'is_active' => true,
             ]
         );
     }
@@ -31,16 +31,16 @@ class CreateTechnicalOrganizationUnits
     {
         return OrganizationUnit::firstOrCreate(
             [
-                'tenant_id'    => $tenant->id,
-                'code'         => TechnicalOrganizationUnit::FormerEmployees->value,
-                'parent_id'    => $rootUnit->id,
+                'tenant_id' => $tenant->id,
+                'code' => TechnicalOrganizationUnit::FormerEmployees->value,
+                'parent_id' => $rootUnit->id,
                 'is_technical' => true,
             ],
             [
-                'id'         => (string) Str::ulid(),
-                'name'       => TechnicalOrganizationUnit::FormerEmployees->getName(),
-                'code'       => TechnicalOrganizationUnit::FormerEmployees->value,
-                'is_active'  => true,
+                'id' => (string) Str::ulid(),
+                'name' => TechnicalOrganizationUnit::FormerEmployees->getName(),
+                'code' => TechnicalOrganizationUnit::FormerEmployees->value,
+                'is_active' => true,
             ]
         );
     }

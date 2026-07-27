@@ -9,6 +9,7 @@ use App\Domain\Template\Enums\TemplateCategory;
 use App\Domain\Template\Exceptions\TemplateNotFoundException;
 use App\Domain\Template\Models\InvoiceTemplate;
 use App\Domain\Tenant\Models\Tenant;
+use App\Domain\Tenant\Models\TenantBranding;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -57,7 +58,7 @@ class InvoiceGeneratorService
         $tempPath = storage_path("app/temp/{$filename}");
 
         // Ensure temp directory exists
-        if (!file_exists(dirname($tempPath))) {
+        if (! file_exists(dirname($tempPath))) {
             mkdir(dirname($tempPath), 0755, true);
         }
 
@@ -68,10 +69,9 @@ class InvoiceGeneratorService
             // Remove existing PDF from the same collection if exists
             $existingMedia = $invoice->getMedia($collection)
                 ->filter(function (Media $media) {
-                    return true === $media->getCustomProperty('generated', false);
+                    return $media->getCustomProperty('generated', false) === true;
                 })
-                ->first()
-            ;
+                ->first();
 
             if ($existingMedia) {
                 $existingMedia->delete();
@@ -82,14 +82,13 @@ class InvoiceGeneratorService
             return $invoice
                 ->addMedia($tempPath)
                 ->withCustomProperties([
-                    'generated'   => true,
-                    'generator'   => 'invoice_generator',
+                    'generated' => true,
+                    'generator' => 'invoice_generator',
                     'template_id' => $templateId,
                 ])
                 ->usingName("Invoice {$invoice->number}")
                 ->usingFileName($filename)
-                ->toMediaCollection($collection)
-            ;
+                ->toMediaCollection($collection);
         } finally {
             // Clean up temporary file
             if (file_exists($tempPath)) {
@@ -104,8 +103,8 @@ class InvoiceGeneratorService
     public function downloadPdf(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): Response
     {
         $styledHtml = $this->generateStyledHtml($invoice, $templateId, $language);
-        $template   = $this->getTemplate($invoice, $templateId);
-        $filename   = $this->generateFilename($invoice);
+        $template = $this->getTemplate($invoice, $templateId);
+        $filename = $this->generateFilename($invoice);
 
         $this->pdfEngine->applyTemplateSettings($template);
 
@@ -118,8 +117,8 @@ class InvoiceGeneratorService
     public function streamPdf(Invoice $invoice, ?string $templateId = null, ?string $language = 'pl'): \Symfony\Component\HttpFoundation\Response
     {
         $styledHtml = $this->generateStyledHtml($invoice, $templateId, $language);
-        $template   = $this->getTemplate($invoice, $templateId);
-        $filename   = $this->generateFilename($invoice);
+        $template = $this->getTemplate($invoice, $templateId);
+        $filename = $this->generateFilename($invoice);
 
         $this->pdfEngine->applyTemplateSettings($template);
 
@@ -139,7 +138,7 @@ class InvoiceGeneratorService
      */
     public function generateStyledHtml(Invoice $invoice, ?string $templateId = null, ?string $language = null): string
     {
-        $template     = $this->getTemplate($invoice, $templateId);
+        $template = $this->getTemplate($invoice, $templateId);
         $templateData = $this->transformer->transform($invoice);
 
         $resolvedLanguage = $this->resolveLanguage($language, $templateData->options);
@@ -202,14 +201,14 @@ class InvoiceGeneratorService
             TemplateCategory::INVOICE
         );
 
-        if (!$template) {
+        if (! $template) {
             $template = $this->templateService->getDefaultForCategory(
                 Tenant::GLOBAL_TENANT_ID,
                 TemplateCategory::INVOICE
             );
         }
 
-        if (!$template) {
+        if (! $template) {
             throw new TemplateNotFoundException('No default invoice template found for tenant');
         }
 
@@ -230,15 +229,15 @@ class InvoiceGeneratorService
 
     private function saveHtmlToFile(string $html, string $invoiceId): void
     {
-        if (!config('pdf.global.save_html_debug', false)) {
+        if (! config('pdf.global.save_html_debug', false)) {
             return;
         }
 
         $filename = "invoice-{$invoiceId}.html";
-        $path     = storage_path("app/temp/{$filename}");
+        $path = storage_path("app/temp/{$filename}");
 
         // Ensure temp directory exists
-        if (!file_exists(dirname($path))) {
+        if (! file_exists(dirname($path))) {
             mkdir(dirname($path), 0755, true);
         }
 
@@ -250,7 +249,7 @@ class InvoiceGeneratorService
      */
     private function addCssToHtml(string $html, ?string $language = 'pl', array $options = []): string
     {
-        $css       = $this->loadCss();
+        $css = $this->loadCss();
         $customCss = $this->generateCustomCss($options);
 
         return "<!DOCTYPE html>
@@ -274,7 +273,7 @@ class InvoiceGeneratorService
         // Determine which CSS file to use based on PDF engine
         $engineName = $this->pdfEngine->getName();
 
-        if ('mpdf' === $engineName || false !== strpos(strtolower($engineName), 'mpdf')) {
+        if ($engineName === 'mpdf' || strpos(strtolower($engineName), 'mpdf') !== false) {
             // Use legacy CSS for mPDF (no CSS variables)
             $cssPath = resource_path('css/invoice-pdf-legacy.css');
         } else {
@@ -305,7 +304,7 @@ class InvoiceGeneratorService
     private function generateCustomCss(array $options = []): string
     {
         // Always get accent color (with fallback chain)
-        $accentColor    = $this->resolveAccentColor($options);
+        $accentColor = $this->resolveAccentColor($options);
         $secondaryColor = $this->resolveSecondaryColor($options);
 
         // Always generate custom CSS to override defaults if needed
@@ -332,7 +331,7 @@ class InvoiceGeneratorService
     private function resolveAccentColor(array $options): string
     {
         // 1. First check request options (for preview)
-        if (!empty($options['accentColor'])) {
+        if (! empty($options['accentColor'])) {
             $color = $this->validateColor($options['accentColor']);
 
             if ($color) {
@@ -341,10 +340,10 @@ class InvoiceGeneratorService
         }
 
         // 2. Then check tenant branding color_primary
-        if (!empty($options['tenant_id'])) {
+        if (! empty($options['tenant_id'])) {
             $tenantColors = $this->getTenantBrandingColors($options['tenant_id']);
 
-            if (!empty($tenantColors['primary'])) {
+            if (! empty($tenantColors['primary'])) {
                 return $tenantColors['primary'];
             }
         }
@@ -359,12 +358,12 @@ class InvoiceGeneratorService
     private function resolveSecondaryColor(array $options): ?string
     {
         // First check options (for preview)
-        if (!empty($options['secondaryColor'])) {
+        if (! empty($options['secondaryColor'])) {
             return $this->validateColor($options['secondaryColor']);
         }
 
         // Then check tenant branding
-        if (!empty($options['tenant_id'])) {
+        if (! empty($options['tenant_id'])) {
             $tenantColors = $this->getTenantBrandingColors($options['tenant_id']);
 
             return $tenantColors['secondary'] ?? null;
@@ -379,22 +378,22 @@ class InvoiceGeneratorService
     private function getTenantBrandingColors(string $tenantId): array
     {
         try {
-            $branding = \App\Domain\Tenant\Models\TenantBranding::where('tenant_id', $tenantId)->first();
+            $branding = TenantBranding::where('tenant_id', $tenantId)->first();
 
-            if (!$branding) {
+            if (! $branding) {
                 return [];
             }
 
             return [
-                'primary'   => $this->validateColor($branding->color_primary),
-                'accent'    => $this->validateColor($branding->pdf_accent_color),
+                'primary' => $this->validateColor($branding->color_primary),
+                'accent' => $this->validateColor($branding->pdf_accent_color),
                 'secondary' => $this->validateColor($branding->color_secondary),
             ];
         } catch (\Exception $e) {
             // Log error but don't fail the entire generation
             Log::warning('Failed to load tenant branding colors', [
                 'tenant_id' => $tenantId,
-                'error'     => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
 
             return [];
@@ -406,7 +405,7 @@ class InvoiceGeneratorService
      */
     private function validateColor(?string $color): ?string
     {
-        if (!$color) {
+        if (! $color) {
             return null;
         }
 
@@ -435,14 +434,14 @@ class InvoiceGeneratorService
      */
     private function lightenColor(string $color, int $percent): string
     {
-        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+        if (! preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
             return $color; // Return original if not valid hex
         }
 
         $hex = ltrim($color, '#');
-        $r   = hexdec(substr($hex, 0, 2));
-        $g   = hexdec(substr($hex, 2, 2));
-        $b   = hexdec(substr($hex, 4, 2));
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
 
         $r = min(255, $r + ($percent * 255 / 100));
         $g = min(255, $g + ($percent * 255 / 100));
@@ -456,14 +455,14 @@ class InvoiceGeneratorService
      */
     private function darkenColor(string $color, int $percent): string
     {
-        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+        if (! preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
             return $color; // Return original if not valid hex
         }
 
         $hex = ltrim($color, '#');
-        $r   = hexdec(substr($hex, 0, 2));
-        $g   = hexdec(substr($hex, 2, 2));
-        $b   = hexdec(substr($hex, 4, 2));
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
 
         $r = max(0, $r - ($percent * 255 / 100));
         $g = max(0, $g - ($percent * 255 / 100));
@@ -483,7 +482,7 @@ class InvoiceGeneratorService
         }
 
         // 2. Then check options (from request)
-        if (!empty($options['language'])) {
+        if (! empty($options['language'])) {
             return $options['language'];
         }
 

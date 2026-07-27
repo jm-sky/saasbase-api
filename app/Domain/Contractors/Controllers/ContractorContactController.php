@@ -24,9 +24,9 @@ class ContractorContactController extends Controller
             'data' => collect($contacts->items())->map(fn (ContractorContactPerson $contact) => ContractorContactPersonDTO::fromModel($contact)),
             'meta' => [
                 'currentPage' => $contacts->currentPage(),
-                'lastPage'    => $contacts->lastPage(),
-                'perPage'     => $contacts->perPage(),
-                'total'       => $contacts->total(),
+                'lastPage' => $contacts->lastPage(),
+                'perPage' => $contacts->perPage(),
+                'total' => $contacts->total(),
             ],
         ]);
     }
@@ -38,7 +38,7 @@ class ContractorContactController extends Controller
 
         return response()->json([
             'message' => 'Contact created successfully.',
-            'data'    => ContractorContactPersonDTO::fromModel($contact),
+            'data' => ContractorContactPersonDTO::fromModel($contact),
         ], Response::HTTP_CREATED);
     }
 
@@ -59,7 +59,7 @@ class ContractorContactController extends Controller
 
         return response()->json([
             'message' => 'Contact updated successfully.',
-            'data'    => ContractorContactPersonDTO::fromModel($contact->fresh()),
+            'data' => ContractorContactPersonDTO::fromModel($contact->fresh()),
         ]);
     }
 

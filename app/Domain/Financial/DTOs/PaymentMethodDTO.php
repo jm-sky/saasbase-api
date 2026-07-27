@@ -12,14 +12,13 @@ final class PaymentMethodDTO extends BaseDataDTO
         public readonly ?string $name = null,
         public readonly ?string $id = null,
         public readonly ?int $paymentDays = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'paymentDays' => $this->paymentDays,
         ];
     }

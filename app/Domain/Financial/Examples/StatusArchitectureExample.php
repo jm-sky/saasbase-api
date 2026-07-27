@@ -21,7 +21,7 @@ class StatusArchitectureExample
 {
     public function demonstrateStatusCombinations()
     {
-        $statusService = new InvoiceStatusService();
+        $statusService = new InvoiceStatusService;
 
         // Example 1: Invoice that is SENT and OVERDUE simultaneously
         $sentAndOverdue = new InvoiceStatusDTO(
@@ -34,11 +34,11 @@ class StatusArchitectureExample
         );
 
         echo "=== Example 1: Invoice both SENT and OVERDUE ===\n";
-        echo 'Overall Description: ' . $sentAndOverdue->getOverallDescription() . "\n";
-        echo 'Delivery Status: ' . $sentAndOverdue->delivery->label() . "\n";
-        echo 'Payment Status: ' . $sentAndOverdue->payment->label() . "\n";
-        echo 'Needs Attention: ' . ($sentAndOverdue->needsAttention() ? 'YES' : 'NO') . "\n";
-        echo 'Recommended Actions: ' . implode(', ', $statusService->getRecommendedActions($sentAndOverdue)) . "\n\n";
+        echo 'Overall Description: '.$sentAndOverdue->getOverallDescription()."\n";
+        echo 'Delivery Status: '.$sentAndOverdue->delivery->label()."\n";
+        echo 'Payment Status: '.$sentAndOverdue->payment->label()."\n";
+        echo 'Needs Attention: '.($sentAndOverdue->needsAttention() ? 'YES' : 'NO')."\n";
+        echo 'Recommended Actions: '.implode(', ', $statusService->getRecommendedActions($sentAndOverdue))."\n\n";
 
         // Example 2: Invoice with complex processing state
         $complexProcessing = new InvoiceStatusDTO(
@@ -51,10 +51,10 @@ class StatusArchitectureExample
         );
 
         echo "=== Example 2: Complex Processing State ===\n";
-        echo 'Overall Description: ' . $complexProcessing->getOverallDescription() . "\n";
-        echo 'Actionable Statuses: ' . implode(', ', $complexProcessing->getActionableStatuses()) . "\n";
-        echo 'Ready for Next Stage: ' . ($complexProcessing->isReadyForNextStage() ? 'YES' : 'NO') . "\n";
-        echo 'Recommended Actions: ' . implode(', ', $statusService->getRecommendedActions($complexProcessing)) . "\n\n";
+        echo 'Overall Description: '.$complexProcessing->getOverallDescription()."\n";
+        echo 'Actionable Statuses: '.implode(', ', $complexProcessing->getActionableStatuses())."\n";
+        echo 'Ready for Next Stage: '.($complexProcessing->isReadyForNextStage() ? 'YES' : 'NO')."\n";
+        echo 'Recommended Actions: '.implode(', ', $statusService->getRecommendedActions($complexProcessing))."\n\n";
 
         // Example 3: Failed states requiring attention
         $failedState = new InvoiceStatusDTO(
@@ -67,10 +67,10 @@ class StatusArchitectureExample
         );
 
         echo "=== Example 3: Multiple Failed States ===\n";
-        echo 'Overall Description: ' . $failedState->getOverallDescription() . "\n";
-        echo 'Needs Attention: ' . ($failedState->needsAttention() ? 'YES' : 'NO') . "\n";
-        echo 'Actionable Statuses: ' . implode(', ', $failedState->getActionableStatuses()) . "\n";
-        echo 'Recommended Actions: ' . implode(', ', $statusService->getRecommendedActions($failedState)) . "\n\n";
+        echo 'Overall Description: '.$failedState->getOverallDescription()."\n";
+        echo 'Needs Attention: '.($failedState->needsAttention() ? 'YES' : 'NO')."\n";
+        echo 'Actionable Statuses: '.implode(', ', $failedState->getActionableStatuses())."\n";
+        echo 'Recommended Actions: '.implode(', ', $statusService->getRecommendedActions($failedState))."\n\n";
 
         // Example 4: Workflow progression
         echo "=== Example 4: Status Workflow Progression ===\n";
@@ -87,7 +87,7 @@ class StatusArchitectureExample
 
         // OCR completes
         $status->ocr = OcrRequestStatus::Completed;
-        $status      = $statusService->handleOcrCompletion($status);
+        $status = $statusService->handleOcrCompletion($status);
         echo "2. After OCR Completion:\n";
         echo "   General: {$status->general->label()}\n";
         echo "   Allocation: {$status->allocation->label()}\n";
@@ -95,7 +95,7 @@ class StatusArchitectureExample
 
         // Allocation completes
         $status->allocation = AllocationStatus::FULLY_ALLOCATED;
-        $status             = $statusService->handleAllocationCompletion($status);
+        $status = $statusService->handleAllocationCompletion($status);
         echo "3. After Allocation Completion:\n";
         echo "   General: {$status->general->label()}\n";
         echo "   Approval: {$status->approval->label()}\n";
@@ -103,10 +103,10 @@ class StatusArchitectureExample
 
         // Approval completes
         $status->approval = ApprovalStatus::APPROVED;
-        $status           = $statusService->handleApprovalCompletion($status);
+        $status = $statusService->handleApprovalCompletion($status);
         echo "4. After Approval:\n";
         echo "   General: {$status->general->label()}\n";
-        echo '   Ready to Send: ' . ($status->general->canBeSent() ? 'YES' : 'NO') . "\n";
+        echo '   Ready to Send: '.($status->general->canBeSent() ? 'YES' : 'NO')."\n";
         echo "   Description: {$status->getOverallDescription()}\n\n";
 
         // Invoice gets sent
@@ -150,7 +150,7 @@ class StatusArchitectureExample
         // Example: Find all invoices that are sent but not paid
         $sentButNotPaid = [
             'delivery_status' => DeliveryStatus::SENT,
-            'payment_status'  => [PaymentStatus::PENDING, PaymentStatus::OVERDUE, PaymentStatus::PARTIALLY_PAID],
+            'payment_status' => [PaymentStatus::PENDING, PaymentStatus::OVERDUE, PaymentStatus::PARTIALLY_PAID],
         ];
 
         echo "Query: Invoices that are SENT but not fully PAID\n";
@@ -160,7 +160,7 @@ class StatusArchitectureExample
         $needsAttention = [
             'OR' => [
                 ['payment_status' => PaymentStatus::OVERDUE],
-                ['ocr_status'      => OcrRequestStatus::Failed],
+                ['ocr_status' => OcrRequestStatus::Failed],
                 ['approval_status' => ApprovalStatus::REJECTED],
                 ['delivery_status' => DeliveryStatus::FAILED],
             ],
@@ -171,8 +171,8 @@ class StatusArchitectureExample
 
         // Example: Find invoices ready for next workflow step
         $readyForProcessing = [
-            'general_status'    => InvoiceStatus::PROCESSING,
-            'ocr_status'        => OcrRequestStatus::Completed,
+            'general_status' => InvoiceStatus::PROCESSING,
+            'ocr_status' => OcrRequestStatus::Completed,
             'allocation_status' => AllocationStatus::PENDING,
         ];
 

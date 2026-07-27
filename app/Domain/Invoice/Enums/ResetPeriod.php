@@ -8,7 +8,7 @@ enum ResetPeriod: string
 {
     use HasEnumValues;
 
-    case NEVER   = 'never';
-    case YEARLY  = 'yearly';
+    case NEVER = 'never';
+    case YEARLY = 'yearly';
     case MONTHLY = 'monthly';
 }

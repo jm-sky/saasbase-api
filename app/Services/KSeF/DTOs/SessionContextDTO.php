@@ -8,6 +8,5 @@ final class SessionContextDTO
         public readonly ContextIdentifierDTO $contextIdentifier,
         public readonly ContextNameDTO $contextName,
         public readonly array $credentialsRoleList
-    ) {
-    }
+    ) {}
 }

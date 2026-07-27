@@ -8,16 +8,16 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @property int                        $id
- * @property int                        $confirmable_id
- * @property string                     $confirmable_type
- * @property string                     $type
- * @property array                      $payload
- * @property array                      $result
+ * @property int $id
+ * @property int $confirmable_id
+ * @property string $confirmable_type
+ * @property string $type
+ * @property array $payload
+ * @property array $result
  * @property RegistryConfirmationStatus $status
- * @property ?Carbon                    $checked_at
- * @property Carbon                     $created_at
- * @property ?Carbon                    $updated_at
+ * @property ?Carbon $checked_at
+ * @property Carbon $created_at
+ * @property ?Carbon $updated_at
  */
 class RegistryConfirmation extends BaseModel
 {
@@ -33,9 +33,9 @@ class RegistryConfirmation extends BaseModel
     ];
 
     protected $casts = [
-        'payload'    => 'array',
-        'result'     => 'array',
-        'status'     => RegistryConfirmationStatus::class,
+        'payload' => 'array',
+        'result' => 'array',
+        'status' => RegistryConfirmationStatus::class,
         'checked_at' => 'datetime',
     ];
 

@@ -14,15 +14,14 @@ class CompanyLookupController extends Controller
 {
     public function __construct(
         private readonly CompanyDataAutoFillService $autoFillService,
-    ) {
-    }
+    ) {}
 
     public function lookup(CompanyLookupRequest $request): CommonCompanyLookupResource|JsonResponse
     {
-        $vatId   = $request->input('vatId');
-        $regon   = $request->input('regon');
+        $vatId = $request->input('vatId');
+        $regon = $request->input('regon');
         $country = strtoupper($request->input('country'));
-        $force   = $request->user()?->isAdmin() ? $request->boolean('force', false) : false;
+        $force = $request->user()?->isAdmin() ? $request->boolean('force', false) : false;
 
         try {
             $result = $this->autoFillService->autoFill($vatId, $regon, $country, $force);

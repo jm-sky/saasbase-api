@@ -31,7 +31,7 @@ final class DateField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!$this->value instanceof Carbon) {
+        if (! $this->value instanceof Carbon) {
             throw new \InvalidArgumentException('DateField value must be a Carbon instance');
         }
     }
@@ -39,9 +39,9 @@ final class DateField extends ValueWrapper
     public function toArray(): array
     {
         return [
-            'type'       => $this->type,
+            'type' => $this->type,
             'confidence' => $this->confidence,
-            'value'      => $this->value->toIso8601String(),
+            'value' => $this->value->toIso8601String(),
         ];
     }
 

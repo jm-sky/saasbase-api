@@ -10,6 +10,7 @@ use App\Domain\Utils\DTOs\CompanyContext;
 use App\Domain\Utils\Enums\RegistryConfirmationStatus;
 use App\Domain\Utils\Models\RegistryConfirmation;
 use App\Domain\Utils\Services\CompanyDataFetcherService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -27,8 +28,7 @@ class ContractorRegistryConfirmationService
         private readonly RegonContractorRegistryConfirmationService $regonService,
         private readonly ViesContractorRegistryConfirmationService $viesService,
         private readonly MfContractorRegistryConfirmationService $mfService,
-    ) {
-    }
+    ) {}
 
     /**
      * Confirm contractor data against all available registries.
@@ -50,11 +50,11 @@ class ContractorRegistryConfirmationService
 
             $allLookupResults = $this->dataFetcherService->fetch($companyContext);
 
-            if (!$allLookupResults) {
+            if (! $allLookupResults) {
                 Log::warning('No registry data found for contractor', [
                     'contractor_id' => $contractor->id,
-                    'vat_id'        => $contractor->vat_id,
-                    'regon'         => $contractor->regon,
+                    'vat_id' => $contractor->vat_id,
+                    'regon' => $contractor->regon,
                 ]);
 
                 return [];
@@ -64,11 +64,11 @@ class ContractorRegistryConfirmationService
             if ($allLookupResults->regon) {
                 try {
                     $regonConfirmations = $this->regonService->confirmContractorData($contractor, $allLookupResults->regon);
-                    $allConfirmations   = array_merge($allConfirmations, $regonConfirmations);
+                    $allConfirmations = array_merge($allConfirmations, $regonConfirmations);
                 } catch (\Exception $e) {
                     Log::error('Error processing REGON confirmations', [
                         'contractor_id' => $contractor->id,
-                        'error'         => $e->getMessage(),
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }
@@ -77,11 +77,11 @@ class ContractorRegistryConfirmationService
             if ($allLookupResults->vies) {
                 try {
                     $viesConfirmations = $this->viesService->confirmContractorData($contractor, $allLookupResults->vies);
-                    $allConfirmations  = array_merge($allConfirmations, $viesConfirmations);
+                    $allConfirmations = array_merge($allConfirmations, $viesConfirmations);
                 } catch (\Exception $e) {
                     Log::error('Error processing VIES confirmations', [
                         'contractor_id' => $contractor->id,
-                        'error'         => $e->getMessage(),
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }
@@ -89,30 +89,30 @@ class ContractorRegistryConfirmationService
             // Process MF confirmations
             if ($allLookupResults->mf) {
                 try {
-                    $mfConfirmations  = $this->mfService->confirmContractorData($contractor, $allLookupResults->mf);
+                    $mfConfirmations = $this->mfService->confirmContractorData($contractor, $allLookupResults->mf);
                     $allConfirmations = array_merge($allConfirmations, $mfConfirmations);
                 } catch (\Exception $e) {
                     Log::error('Error processing MF confirmations', [
                         'contractor_id' => $contractor->id,
-                        'error'         => $e->getMessage(),
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }
 
             Log::info('Registry confirmations completed', [
-                'contractor_id'         => $contractor->id,
+                'contractor_id' => $contractor->id,
                 'confirmations_created' => count($allConfirmations),
-                'registries_used'       => [
+                'registries_used' => [
                     'regon' => $allLookupResults->regon ? true : false,
-                    'vies'  => $allLookupResults->vies ? true : false,
-                    'mf'    => $allLookupResults->mf ? true : false,
+                    'vies' => $allLookupResults->vies ? true : false,
+                    'mf' => $allLookupResults->mf ? true : false,
                 ],
             ]);
         } catch (\Exception $e) {
             Log::error('Error during registry confirmation process', [
                 'contractor_id' => $contractor->id,
-                'error'         => $e->getMessage(),
-                'trace'         => $e->getTraceAsString(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
 
@@ -122,7 +122,7 @@ class ContractorRegistryConfirmationService
     /**
      * Get all confirmations for a contractor.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getConfirmations(Contractor $contractor)
     {
@@ -138,8 +138,7 @@ class ContractorRegistryConfirmationService
         return $contractor->registryConfirmations()
             ->where('type', $registryType)
             ->orderBy('checked_at', 'desc')
-            ->first()
-        ;
+            ->first();
     }
 
     /**
@@ -149,7 +148,6 @@ class ContractorRegistryConfirmationService
     {
         return $contractor->registryConfirmations()
             ->where('status', RegistryConfirmationStatus::Success)
-            ->exists()
-        ;
+            ->exists();
     }
 }

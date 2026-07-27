@@ -14,10 +14,10 @@ class SearchMessageRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'status'   => ['sometimes', 'string', 'in:pending,sent,failed'],
+            'status' => ['sometimes', 'string', 'in:pending,sent,failed'],
             'provider' => ['sometimes', 'string'],
-            'perPage'  => ['sometimes', 'integer', 'min:1', 'max:100'],
-            'sort'     => ['sometimes', 'string', 'in:createdAt,updatedAt,-createdAt,-updatedAt'],
+            'perPage' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'sort' => ['sometimes', 'string', 'in:createdAt,updatedAt,-createdAt,-updatedAt'],
         ];
     }
 }

@@ -4,31 +4,31 @@ namespace App\Domain\Financial\Enums;
 
 enum DeliveryStatus: string
 {
-    case NOT_SENT    = 'notSent';
-    case PENDING     = 'pending';
-    case SENT        = 'sent';
-    case DELIVERED   = 'delivered';
-    case FAILED      = 'failed';
+    case NOT_SENT = 'notSent';
+    case PENDING = 'pending';
+    case SENT = 'sent';
+    case DELIVERED = 'delivered';
+    case FAILED = 'failed';
 
     public function label(): string
     {
         return match ($this) {
-            self::NOT_SENT  => 'Not Sent',
-            self::PENDING   => 'Pending Send',
-            self::SENT      => 'Sent',
+            self::NOT_SENT => 'Not Sent',
+            self::PENDING => 'Pending Send',
+            self::SENT => 'Sent',
             self::DELIVERED => 'Delivered',
-            self::FAILED    => 'Failed',
+            self::FAILED => 'Failed',
         };
     }
 
     public function labelPL(): string
     {
         return match ($this) {
-            self::NOT_SENT  => 'Nie Wysłane',
-            self::PENDING   => 'Oczekuje na Wysyłkę',
-            self::SENT      => 'Wysłane',
+            self::NOT_SENT => 'Nie Wysłane',
+            self::PENDING => 'Oczekuje na Wysyłkę',
+            self::SENT => 'Wysłane',
             self::DELIVERED => 'Dostarczone',
-            self::FAILED    => 'Nieudane',
+            self::FAILED => 'Nieudane',
         };
     }
 
@@ -53,7 +53,7 @@ enum DeliveryStatus: string
                 self::DELIVERED, self::FAILED,
             ], true),
             self::DELIVERED => false, // Final state
-            self::FAILED    => in_array($newStatus, [
+            self::FAILED => in_array($newStatus, [
                 self::PENDING, self::SENT,
             ], true),
         };

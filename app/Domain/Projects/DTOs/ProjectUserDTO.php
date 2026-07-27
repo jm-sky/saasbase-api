@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<ProjectUser>
  *
- * @property ?string         $id            UUID
- * @property string          $projectId
- * @property string          $userId
- * @property string          $projectRoleId
- * @property ?Carbon         $createdAt     Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon         $updatedAt     Internally Carbon, accepts/serializes ISO 8601
- * @property ?UserDTO        $user
+ * @property ?string $id UUID
+ * @property string $projectId
+ * @property string $userId
+ * @property string $projectRoleId
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?UserDTO $user
  * @property ?ProjectRoleDTO $role
  */
 final class ProjectUserDTO extends BaseDTO
@@ -31,8 +31,7 @@ final class ProjectUserDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?UserDTO $user = null,
         public ?ProjectRoleDTO $role = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -66,14 +65,14 @@ final class ProjectUserDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'            => $this->id,
-            'projectId'     => $this->projectId,
-            'userId'        => $this->userId,
+            'id' => $this->id,
+            'projectId' => $this->projectId,
+            'userId' => $this->userId,
             'projectRoleId' => $this->projectRoleId,
-            'createdAt'     => $this->createdAt?->toIso8601String(),
-            'updatedAt'     => $this->updatedAt?->toIso8601String(),
-            'user'          => $this->user?->toArray(),
-            'role'          => $this->role?->toArray(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'user' => $this->user?->toArray(),
+            'role' => $this->role?->toArray(),
         ];
     }
 }

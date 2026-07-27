@@ -14,9 +14,11 @@ class TenantBrandingController extends Controller
 {
     public function show(Tenant $tenant): TenantBrandingResource
     {
+        $this->authorize('view', $tenant);
+
         $branding = $tenant->branding;
 
-        if (!$branding) {
+        if (! $branding) {
             $branding = $tenant->branding()->create();
         }
 
@@ -25,6 +27,8 @@ class TenantBrandingController extends Controller
 
     public function update(TenantBrandingRequest $request, Tenant $tenant): TenantBrandingResource
     {
+        $this->authorize('update', $tenant);
+
         /** @var TenantBranding $branding */
         $branding = $tenant->branding ?? new TenantBranding(['tenant_id' => $tenant->id]);
         $branding->fill($request->validated());
@@ -55,10 +59,12 @@ class TenantBrandingController extends Controller
 
     public function deleteMedia(Tenant $tenant, string $collection): JsonResponse
     {
+        $this->authorize('update', $tenant);
+
         /** @var TenantBranding $branding */
         $branding = $tenant->branding;
 
-        if (!$branding) {
+        if (! $branding) {
             return response()->json(['message' => 'Branding not found'], Response::HTTP_NOT_FOUND);
         }
 

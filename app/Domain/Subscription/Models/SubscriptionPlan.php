@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * @property string                    $id
- * @property string                    $name
- * @property ?string                   $description
- * @property string                    $stripe_product_id
- * @property bool                      $is_active
+ * @property string $id
+ * @property string $name
+ * @property ?string $description
+ * @property string $stripe_product_id
+ * @property bool $is_active
  * @property Collection|Subscription[] $subscriptions
- * @property Collection|PlanFeature[]  $features
+ * @property Collection|PlanFeature[] $features
  * @property Collection|BillingPrice[] $prices
  */
 class SubscriptionPlan extends BaseModel
@@ -55,8 +55,7 @@ class SubscriptionPlan extends BaseModel
                 $query->where('id', $tenantId);
             })
             ->where('status', 'active')
-            ->exists()
-        ;
+            ->exists();
     }
 
     public function getFeature(FeatureName $feature)
@@ -66,8 +65,7 @@ class SubscriptionPlan extends BaseModel
             ->whereHas('feature', function ($query) use ($feature) {
                 $query->where('name', $feature->value);
             })
-            ->first()
-        ;
+            ->first();
 
         return $planFeature?->value;
     }
@@ -78,8 +76,7 @@ class SubscriptionPlan extends BaseModel
             ->whereHas('feature', function ($query) use ($feature) {
                 $query->where('name', $feature->value);
             })
-            ->exists()
-        ;
+            ->exists();
     }
 
     public function setFeature(FeatureName $feature, $value): void
@@ -87,7 +84,7 @@ class SubscriptionPlan extends BaseModel
         /** @var ?Feature $featureModel */
         $featureModel = Feature::where('name', $feature->value)->first();
 
-        if (!$featureModel) {
+        if (! $featureModel) {
             throw new \InvalidArgumentException("Feature {$feature->value} does not exist");
         }
 
@@ -105,8 +102,7 @@ class SubscriptionPlan extends BaseModel
             ->mapWithKeys(function (PlanFeature $planFeature) {
                 return [$planFeature->feature->name => $planFeature->value];
             })
-            ->toArray()
-        ;
+            ->toArray();
     }
 
     public function getPriceForInterval(BillingInterval $interval): ?BillingPrice
@@ -115,7 +111,6 @@ class SubscriptionPlan extends BaseModel
         return $this->prices()
             ->where('billing_period', $interval->value)
             ->where('is_active', true)
-            ->first()
-        ;
+            ->first();
     }
 }

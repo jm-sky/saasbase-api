@@ -11,7 +11,7 @@ class IsAdmin
     {
         $user = $request->user();
 
-        if (!$user || !$user->isAdmin()) {
+        if (! $user || ! $user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized. Admins only.',
             ], Response::HTTP_FORBIDDEN); // zamiast 403

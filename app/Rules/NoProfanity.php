@@ -16,7 +16,7 @@ class NoProfanity implements ValidationRule
 
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
-        if (!$this->profanityFilter->hasProfanity($value)) {
+        if (! $this->profanityFilter->hasProfanity($value)) {
             return;
         }
 

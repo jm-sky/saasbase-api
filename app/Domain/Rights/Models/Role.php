@@ -8,9 +8,9 @@ use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 /**
- * @property string  $id
- * @property string  $name
- * @property string  $guard_name
+ * @property string $id
+ * @property string $name
+ * @property string $guard_name
  * @property ?string $tenant_id
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at

@@ -31,14 +31,14 @@ class NipValidator
     {
         $checkedValue = self::sanitize($checkedValue);
 
-        if (self::NIP_LENGTH !== strlen($checkedValue) || '0000000000' === $checkedValue) {
+        if (strlen($checkedValue) !== self::NIP_LENGTH || $checkedValue === '0000000000') {
             throw new InvalidNipException('Invalid NIP format. NIP must be 10 digits.');
         }
 
-        $weights  = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+        $weights = [6, 5, 7, 2, 3, 4, 5, 6, 7];
         $checkSum = static::getChecksum($checkedValue, $weights) % 10;
 
-        if ($checkSum !== intval(substr($checkedValue, -1)) || 10 === $checkSum) {
+        if ($checkSum !== intval(substr($checkedValue, -1)) || $checkSum === 10) {
             throw new InvalidNipException('Checksum Error', 1);
         }
 
@@ -47,10 +47,10 @@ class NipValidator
 
     public static function getChecksum(string $checkedValue, array $weights, int $modulo = 11): int
     {
-        $sum          = 0;
+        $sum = 0;
         $countWeights = count($weights);
 
-        for ($i = 0; $i < $countWeights; ++$i) {
+        for ($i = 0; $i < $countWeights; $i++) {
             $sum += $weights[$i] * intval($checkedValue[$i]);
         }
 

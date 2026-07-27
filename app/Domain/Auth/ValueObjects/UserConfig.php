@@ -8,8 +8,7 @@ class UserConfig
         public bool $isPhonePublic = false,
         public bool $isEmailPublic = false,
         public bool $isBirthDatePublic = false,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -23,8 +22,8 @@ class UserConfig
     public function toArray(): array
     {
         return [
-            'isPhonePublic'     => $this->isPhonePublic,
-            'isEmailPublic'     => $this->isEmailPublic,
+            'isPhonePublic' => $this->isPhonePublic,
+            'isEmailPublic' => $this->isEmailPublic,
             'isBirthDatePublic' => $this->isBirthDatePublic,
         ];
     }

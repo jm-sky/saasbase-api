@@ -23,10 +23,10 @@ class ProductCommentsController extends Controller
         return response()->json([
             'data' => CommentDTO::collect($comments->items()),
             'meta' => [
-                'currentPage'  => $comments->currentPage(),
-                'lastPage'     => $comments->lastPage(),
-                'perPage'      => $comments->perPage(),
-                'total'        => $comments->total(),
+                'currentPage' => $comments->currentPage(),
+                'lastPage' => $comments->lastPage(),
+                'perPage' => $comments->perPage(),
+                'total' => $comments->total(),
             ],
         ]);
     }
@@ -43,17 +43,17 @@ class ProductCommentsController extends Controller
     public function store(ProductCommentRequest $request, Product $product): JsonResponse
     {
         $validated = $request->validated();
-        $comment   = $product->comments()->create([
-            'tenant_id'        => $product->tenant_id,
-            'user_id'          => $request->user()->id,
-            'content'          => $validated['content'],
+        $comment = $product->comments()->create([
+            'tenant_id' => $product->tenant_id,
+            'user_id' => $request->user()->id,
+            'content' => $validated['content'],
         ]);
 
         $product->logModelActivity(ProductActivityType::CommentCreated->value, $comment);
 
         return response()->json([
             'message' => 'Comment created successfully.',
-            'data'    => CommentDTO::fromModel($comment),
+            'data' => CommentDTO::fromModel($comment),
         ], Response::HTTP_CREATED);
     }
 
@@ -66,7 +66,7 @@ class ProductCommentsController extends Controller
 
         return response()->json([
             'message' => 'Comment updated successfully.',
-            'data'    => CommentDTO::fromModel($comment->fresh()),
+            'data' => CommentDTO::fromModel($comment->fresh()),
         ]);
     }
 

@@ -12,20 +12,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property string                                   $id
- * @property string                                   $expense_id
- * @property string                                   $workflow_id
- * @property ?string                                  $current_step_id
- * @property ApprovalExecutionStatus                  $status
- * @property ?string                                  $initiator_id
- * @property ?Carbon                                  $started_at
- * @property ?Carbon                                  $completed_at
- * @property Carbon                                   $created_at
- * @property Carbon                                   $updated_at
- * @property Expense                                  $expense
- * @property ApprovalWorkflow                         $workflow
- * @property ?ApprovalWorkflowStep                    $currentStep
- * @property ?User                                    $initiator
+ * @property string $id
+ * @property string $expense_id
+ * @property string $workflow_id
+ * @property ?string $current_step_id
+ * @property ApprovalExecutionStatus $status
+ * @property ?string $initiator_id
+ * @property ?Carbon $started_at
+ * @property ?Carbon $completed_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Expense $expense
+ * @property ApprovalWorkflow $workflow
+ * @property ?ApprovalWorkflowStep $currentStep
+ * @property ?User $initiator
  * @property Collection<int, ApprovalExpenseDecision> $decisions
  */
 class ApprovalExpenseExecution extends BaseModel
@@ -41,8 +41,8 @@ class ApprovalExpenseExecution extends BaseModel
     ];
 
     protected $casts = [
-        'status'       => ApprovalExecutionStatus::class,
-        'started_at'   => 'datetime',
+        'status' => ApprovalExecutionStatus::class,
+        'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
 
@@ -139,7 +139,7 @@ class ApprovalExpenseExecution extends BaseModel
      */
     public function getDurationInSeconds(): ?int
     {
-        if (!$this->started_at || !$this->completed_at) {
+        if (! $this->started_at || ! $this->completed_at) {
             return null;
         }
 

@@ -12,7 +12,7 @@ final class CurrencyField extends ValueWrapper
         ?string $currencyCode
     ) {
         parent::__construct('currency', $confidence, [
-            'amount'       => $amount,
+            'amount' => $amount,
             'currencyCode' => $currencyCode,
         ]);
     }
@@ -38,26 +38,26 @@ final class CurrencyField extends ValueWrapper
     public function toArray(): array
     {
         return [
-            'type'         => $this->type,
-            'confidence'   => $this->confidence,
-            'amount'       => $this->getAmount()->toFloat(),
+            'type' => $this->type,
+            'confidence' => $this->confidence,
+            'amount' => $this->getAmount()->toFloat(),
             'currencyCode' => $this->getCurrencyCode(),
         ];
     }
 
     public function validate(): void
     {
-        if (!is_array($this->value)
-            || !isset($this->value['amount'])
-            || !isset($this->value['currencyCode'])) {
+        if (! is_array($this->value)
+            || ! isset($this->value['amount'])
+            || ! isset($this->value['currencyCode'])) {
             throw new \InvalidArgumentException('CurrencyField value must have amount and currencyCode');
         }
 
-        if (!$this->value['amount'] instanceof BigDecimal) {
+        if (! $this->value['amount'] instanceof BigDecimal) {
             throw new \InvalidArgumentException('CurrencyField amount must be numeric');
         }
 
-        if (!is_string($this->value['currencyCode'])) {
+        if (! is_string($this->value['currencyCode'])) {
             throw new \InvalidArgumentException('CurrencyField currencyCode must be a string');
         }
     }

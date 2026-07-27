@@ -13,6 +13,5 @@ class SubscriptionCancelled
 
     public function __construct(
         public Subscription $subscription
-    ) {
-    }
+    ) {}
 }

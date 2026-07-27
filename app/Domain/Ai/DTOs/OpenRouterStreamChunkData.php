@@ -13,8 +13,7 @@ class OpenRouterStreamChunkData
         /** @var array<OpenRouterChoiceData> */
         public array $choices,
         public $systemFingerprint = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
@@ -24,7 +23,7 @@ class OpenRouterStreamChunkData
             model: $data['model'],
             object: $data['object'],
             created: $data['created'],
-            choices: is_array($data['choices']) ? array_map(fn (array $choice) =>OpenRouterChoiceData::fromArray($choice), $data['choices']) : [],
+            choices: is_array($data['choices']) ? array_map(fn (array $choice) => OpenRouterChoiceData::fromArray($choice), $data['choices']) : [],
             systemFingerprint: $data['systemFingerprint'] ?? null,
         );
     }

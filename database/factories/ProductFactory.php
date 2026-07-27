@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Products\Models\Product>
+ * @extends Factory<Product>
  */
 class ProductFactory extends Factory
 {
@@ -18,12 +18,12 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => Str::ulid()->toString(),
-            'name'        => fake()->words(3, true),
-            'type'        => ProductType::PRODUCT,
+            'id' => Str::ulid()->toString(),
+            'name' => fake()->words(3, true),
+            'type' => ProductType::PRODUCT,
             'description' => fake()->optional()->paragraph(),
-            'unit_id'     => fn (array $attributes) => $attributes['tenant_id'] ? MeasurementUnit::factory(['tenant_id' => $attributes['tenant_id']]) : null,
-            'price_net'   => fake()->randomFloat(2, 10, 1000),
+            'unit_id' => fn (array $attributes) => $attributes['tenant_id'] ? MeasurementUnit::factory(['tenant_id' => $attributes['tenant_id']]) : null,
+            'price_net' => fake()->randomFloat(2, 10, 1000),
             'vat_rate_id' => null, // VatRate::factory(),
         ];
     }

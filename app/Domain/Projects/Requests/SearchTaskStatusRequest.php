@@ -14,12 +14,12 @@ class SearchTaskStatusRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'filter.name'      => ['sometimes', 'string'],
+            'filter.name' => ['sometimes', 'string'],
             'filter.isDefault' => ['sometimes', 'boolean'],
             'filter.createdAt' => ['sometimes', 'array'],
             'filter.updatedAt' => ['sometimes', 'array'],
-            'sort'             => ['sometimes', 'string'],
-            'per_page'         => ['sometimes', 'integer', 'min:1'],
+            'sort' => ['sometimes', 'string'],
+            'per_page' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }

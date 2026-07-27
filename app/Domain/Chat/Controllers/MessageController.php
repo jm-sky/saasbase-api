@@ -20,7 +20,7 @@ class MessageController extends Controller
 
     public function __construct()
     {
-        self::$sendDummyMessages = 'local' === config('app.env');
+        self::$sendDummyMessages = config('app.env') === 'local';
     }
 
     /**
@@ -32,7 +32,7 @@ class MessageController extends Controller
         $currentUser = $request->user();
 
         // Authorization: ensure user is a participant
-        if (!$room->isUserParticipant($currentUser->id)) {
+        if (! $room->isUserParticipant($currentUser->id)) {
             return response()->json(['message' => 'Forbidden'], Response::HTTP_FORBIDDEN);
         }
 
@@ -40,10 +40,10 @@ class MessageController extends Controller
 
         $message = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'user_id'      => $currentUser->id,
-            'parent_id'    => $data['parentId'] ?? null,
-            'content'      => $data['content'],
-            'tenant_id'    => $room->tenant_id,
+            'user_id' => $currentUser->id,
+            'parent_id' => $data['parentId'] ?? null,
+            'content' => $data['content'],
+            'tenant_id' => $room->tenant_id,
         ]);
 
         event(new MessageSent($message));
@@ -63,9 +63,9 @@ class MessageController extends Controller
     {
         $message = ChatMessage::create([
             'chat_room_id' => $room->id,
-            'user_id'      => config('seeding.bot_user_id', '01JXMGRDQVE4FWTZNE1WR9K8G1'),
-            'content'      => 'Yes, that\'s right! But what do You think about this? ' . Inspiring::quotes()->random(),
-            'tenant_id'    => $room->tenant_id,
+            'user_id' => config('seeding.bot_user_id', '01JXMGRDQVE4FWTZNE1WR9K8G1'),
+            'content' => 'Yes, that\'s right! But what do You think about this? '.Inspiring::quotes()->random(),
+            'tenant_id' => $room->tenant_id,
         ]);
 
         event(new MessageSent($message));
@@ -80,11 +80,11 @@ class MessageController extends Controller
         $currentUser = $request->user();
 
         // Authorization: ensure user is a participant
-        if (!$room->participants()->where('user_id', $currentUser->id)->exists()) {
+        if (! $room->participants()->where('user_id', $currentUser->id)->exists()) {
             return response()->json(['message' => 'Forbidden'], Response::HTTP_FORBIDDEN);
         }
 
-        $query    = $room->messages()->orderBy('created_at', 'asc');
+        $query = $room->messages()->orderBy('created_at', 'asc');
         $messages = $query->get();
 
         $dtos = ChatMessageDTO::collect($messages);

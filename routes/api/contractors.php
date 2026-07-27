@@ -8,10 +8,11 @@ use App\Domain\Contractors\Controllers\ContractorCommentsController;
 use App\Domain\Contractors\Controllers\ContractorContactController;
 use App\Domain\Contractors\Controllers\ContractorController;
 use App\Domain\Contractors\Controllers\ContractorLogoController;
+use App\Domain\Contractors\Controllers\ContractorPreferencesController;
 use App\Domain\Contractors\Controllers\ContractorTagsController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->group(function () {
     Route::get('contractors/search', [ContractorController::class, 'search'])->name('contractors.search');
     Route::get('contractors/lookup', [ContractorController::class, 'lookup'])->name('contractors.lookup');
     Route::get('contractors/export', [ContractorController::class, 'export']);
@@ -22,20 +23,17 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
         ->name('contractors.logo.')
         ->group(function () {
             Route::post('/', 'upload')->name('upload');
-            Route::delete('/', 'show')->name('show');
+            Route::get('/', 'show')->name('show');
             Route::delete('/', 'delete')->name('delete');
-        })
-    ;
+        });
 
     Route::apiResource('contractors/{contractor}/addresses', ContractorAddressController::class)->names('contractors.addresses');
     Route::post('contractors/{contractor}/addresses/{contractorAddress}/set-default', [ContractorAddressController::class, 'setDefault'])
-        ->name('contractors.addresses.setDefault')
-    ;
+        ->name('contractors.addresses.setDefault');
 
     Route::apiResource('contractors/{contractor}/bank-accounts', ContractorBankAccountController::class)->names('contractors.bankAccounts');
     Route::post('contractors/{contractor}/bank-accounts/{bankAccount}/set-default', [ContractorBankAccountController::class, 'setDefault'])
-        ->name('contractors.bankAccounts.setDefault')
-    ;
+        ->name('contractors.bankAccounts.setDefault');
 
     Route::apiResource('contractors/{contractor}/contacts', ContractorContactController::class)->names('contractors.contacts');
 
@@ -49,8 +47,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::get('{media}/download', 'download')->name('download');
             Route::get('{media}/preview', 'preview')->name('preview');
             Route::delete('{media}', 'destroy')->name('destroy');
-        })
-    ;
+        });
 
     Route::prefix('contractors/{contractor}/tags')
         ->name('contractors.tags.')
@@ -59,17 +56,14 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
             Route::post('/', [ContractorTagsController::class, 'store'])->name('store');
             Route::patch('/', [ContractorTagsController::class, 'sync'])->name('sync');
             Route::delete('{tag}', [ContractorTagsController::class, 'destroy'])->name('destroy');
-        })
-    ;
+        });
 
     Route::apiResource('contractors/{contractor}/comments', ContractorCommentsController::class)->names('contractors.comments');
 
     Route::get('/contractors/{contractor}/logs', [ContractorActivityLogController::class, 'index']);
 
-    Route::get('contractors/{contractor}/preferences', [App\Domain\Contractors\Controllers\ContractorPreferencesController::class, 'show'])
-        ->name('contractors.preferences.show')
-    ;
-    Route::patch('contractors/{contractor}/preferences', [App\Domain\Contractors\Controllers\ContractorPreferencesController::class, 'update'])
-        ->name('contractors.preferences.update')
-    ;
+    Route::get('contractors/{contractor}/preferences', [ContractorPreferencesController::class, 'show'])
+        ->name('contractors.preferences.show');
+    Route::patch('contractors/{contractor}/preferences', [ContractorPreferencesController::class, 'update'])
+        ->name('contractors.preferences.update');
 });

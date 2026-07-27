@@ -19,8 +19,7 @@ final class RegisterUserDTO extends BaseDTO
         public readonly ?string $description = null,
         public readonly ?string $birthDate = null,
         public readonly ?string $phone = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new DTO from an array of data.
@@ -43,7 +42,7 @@ final class RegisterUserDTO extends BaseDTO
      * Note: This method is implemented to satisfy the interface but should not typically be used
      * for registration DTOs as they are input-only DTOs.
      *
-     * @param User $model
+     * @param  User  $model
      *
      * @throws \InvalidArgumentException
      */
@@ -56,13 +55,13 @@ final class RegisterUserDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'first_name'  => $this->firstName,
-            'last_name'   => $this->lastName,
-            'email'       => $this->email,
-            'password'    => $this->password,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
+            'email' => $this->email,
+            'password' => $this->password,
             'description' => $this->description,
-            'birth_date'  => $this->birthDate,
-            'phone'       => $this->phone,
+            'birth_date' => $this->birthDate,
+            'phone' => $this->phone,
         ];
     }
 }

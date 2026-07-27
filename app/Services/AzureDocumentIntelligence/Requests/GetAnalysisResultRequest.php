@@ -11,9 +11,7 @@ class GetAnalysisResultRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(protected string $resultUrl)
-    {
-    }
+    public function __construct(protected string $resultUrl) {}
 
     public function resolveEndpoint(): string
     {

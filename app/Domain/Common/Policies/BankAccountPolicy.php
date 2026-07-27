@@ -4,6 +4,8 @@ namespace App\Domain\Common\Policies;
 
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BankAccount;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -28,11 +30,13 @@ class BankAccountPolicy
     }
 
     /**
-     * Determine whether the user can create bank accounts.
+     * Determine whether the user can create bank accounts. This is the
+     * account used to receive payments from clients, so — unlike viewing —
+     * it's restricted to Owner/Admin, not any member.
      */
     public function create(User $user, Tenant $tenant): bool
     {
-        return $user->isCurrentTenant($tenant);
+        return $this->isOwnerOrAdmin($user, $tenant);
     }
 
     /**
@@ -40,7 +44,7 @@ class BankAccountPolicy
      */
     public function update(User $user, BankAccount $bankAccount, Tenant $tenant): bool
     {
-        return $user->isCurrentTenant($tenant) && $bankAccount->tenant_id === $tenant->id;
+        return $bankAccount->tenant_id === $tenant->id && $this->isOwnerOrAdmin($user, $tenant);
     }
 
     /**
@@ -48,6 +52,15 @@ class BankAccountPolicy
      */
     public function delete(User $user, BankAccount $bankAccount, Tenant $tenant): bool
     {
-        return $user->isCurrentTenant($tenant) && $bankAccount->tenant_id === $tenant->id;
+        return $bankAccount->tenant_id === $tenant->id && $this->isOwnerOrAdmin($user, $tenant);
+    }
+
+    private function isOwnerOrAdmin(User $user, Tenant $tenant): bool
+    {
+        if (! $user->isCurrentTenant($tenant)) {
+            return false;
+        }
+
+        return TenantScopedRoles::userHasAnyRole($user, $tenant->id, [RoleName::Owner->value, RoleName::Admin->value]);
     }
 }

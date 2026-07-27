@@ -15,17 +15,17 @@ class EDoreczeniaCertificateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
-            'tenantId'     => $this->tenant_id,
-            'userId'       => $this->created_by,
-            'provider'     => $this->provider,
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'userId' => $this->created_by,
+            'provider' => $this->provider,
             // 'serialNumber' => $this->serial_number,
-            'validFrom'    => $this->valid_from,
-            'validTo'      => $this->valid_to,
+            'validFrom' => $this->valid_from,
+            'validTo' => $this->valid_to,
             // 'status'       => $this->status,
-            'createdAt'    => $this->created_at,
-            'updatedAt'    => $this->updated_at,
-            'creator'      => new UserPreviewResource($this->whenLoaded('creator')),
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'creator' => new UserPreviewResource($this->whenLoaded('creator')),
         ];
     }
 }

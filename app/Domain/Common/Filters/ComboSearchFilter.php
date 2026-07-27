@@ -16,11 +16,11 @@ class ComboSearchFilter implements Filter
         $this->columns = $columns;
     }
 
-    public function __invoke(Builder $query, $value, string $property): Builder
+    public function __invoke(Builder $query, mixed $value, string $property): void
     {
-        return $query->where(function ($q) use ($value) {
+        $query->where(function ($q) use ($value) {
             foreach ($this->columns as $column) {
-                $q->orWhereRaw('LOWER(' . $this->wrapColumn($column) . ') LIKE ?', ['%' . strtolower($value) . '%']);
+                $q->orWhereRaw('LOWER('.$this->wrapColumn($column).') LIKE ?', ['%'.strtolower($value).'%']);
             }
         });
     }

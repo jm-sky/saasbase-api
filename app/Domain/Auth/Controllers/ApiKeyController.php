@@ -33,12 +33,12 @@ class ApiKeyController extends Controller
         $user = Auth::user();
 
         $apiKey = ApiKey::create([
-            'tenant_id'  => $user->getTenantId(),
-            'user_id'    => $user->id,
-            'name'       => $request->name,
-            'key'        => Str::random(64),
-            'scopes'     => $request->scopes,
-            'is_active'  => true,
+            'tenant_id' => $user->getTenantId(),
+            'user_id' => $user->id,
+            'name' => $request->name,
+            'key' => Str::random(64),
+            'scopes' => $request->scopes,
+            'is_active' => true,
             'expires_at' => $request->expiresAt,
         ]);
 

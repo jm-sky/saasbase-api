@@ -6,21 +6,20 @@ use App\Domain\Common\Models\BaseModel;
 use App\Domain\Tenant\Enums\TenantIntegrationMode;
 use App\Domain\Tenant\Enums\TenantIntegrationType;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string                $id
- * @property string                $tenant_id
+ * @property string $id
+ * @property string $tenant_id
  * @property TenantIntegrationType $type
  * @property TenantIntegrationMode $mode
- * @property bool                  $enabled
- * @property ?array                $credentials
- * @property ?array                $meta
- * @property ?Carbon               $last_synced_at
- * @property Carbon                $created_at
- * @property Carbon                $updated_at
- * @property Tenant                $tenant
+ * @property bool $enabled
+ * @property ?array $credentials
+ * @property ?array $meta
+ * @property ?Carbon $last_synced_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Tenant $tenant
  */
 class TenantIntegration extends BaseModel
 {
@@ -35,11 +34,11 @@ class TenantIntegration extends BaseModel
     ];
 
     protected $casts = [
-        'type'           => TenantIntegrationType::class,
-        'mode'           => TenantIntegrationMode::class,
-        'enabled'        => 'boolean',
-        'credentials'    => 'encrypted:json',
-        'meta'           => 'json',
+        'type' => TenantIntegrationType::class,
+        'mode' => TenantIntegrationMode::class,
+        'enabled' => 'boolean',
+        'credentials' => 'encrypted:json',
+        'meta' => 'json',
         'last_synced_at' => 'datetime',
     ];
 
@@ -49,16 +48,5 @@ class TenantIntegration extends BaseModel
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
-    }
-
-    /**
-     * Interact with the credentials attribute.
-     */
-    protected function credentials(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => json_decode($value, true),
-            set: fn ($value) => json_encode($value),
-        );
     }
 }

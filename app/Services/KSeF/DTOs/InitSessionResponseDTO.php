@@ -10,6 +10,5 @@ final class InitSessionResponseDTO
         public readonly Carbon $timestamp,
         public readonly string $referenceNumber,
         public readonly SessionTokenDTO $sessionToken
-    ) {
-    }
+    ) {}
 }

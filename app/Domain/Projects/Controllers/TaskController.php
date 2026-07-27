@@ -2,6 +2,7 @@
 
 namespace App\Domain\Projects\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Filters\DateRangeFilter;
@@ -13,6 +14,8 @@ use App\Domain\Projects\Models\Task;
 use App\Domain\Projects\Requests\CreateTaskRequest;
 use App\Domain\Projects\Requests\UpdateTaskRequest;
 use App\Domain\Projects\Resources\TaskResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
@@ -20,12 +23,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
-    use HasIndexQuery;
     use AuthorizesRequests;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -37,12 +41,12 @@ class TaskController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['title', 'description'])),
-            AllowedFilter::custom('projectId', new AdvancedFilter(), 'project_id'),
-            AllowedFilter::custom('statusId', new AdvancedFilter(), 'status_id'),
-            AllowedFilter::custom('assigneeId', new AdvancedFilter(), 'assignee_id'),
-            AllowedFilter::custom('priority', new AdvancedFilter()),
-            AllowedFilter::custom('title', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
+            AllowedFilter::custom('projectId', new AdvancedFilter, 'project_id'),
+            AllowedFilter::custom('statusId', new AdvancedFilter, 'status_id'),
+            AllowedFilter::custom('assigneeId', new AdvancedFilter, 'assignee_id'),
+            AllowedFilter::custom('priority', new AdvancedFilter),
+            AllowedFilter::custom('title', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
             AllowedFilter::custom('dueDate', new DateRangeFilter('due_date')),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
@@ -52,13 +56,13 @@ class TaskController extends Controller
             'title',
             'priority',
             'status_id',
-            'dueDate'   => 'due_date',
+            'dueDate' => 'due_date',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort   = '-created_at';
-        $this->defaultWith   = ['assignee', 'status'];
+        $this->defaultSort = '-created_at';
+        $this->defaultWith = ['assignee', 'status'];
         $this->exportService = app(ExportService::class);
     }
 
@@ -67,22 +71,17 @@ class TaskController extends Controller
         $result = $this->getIndexPaginator($request);
 
         return TaskResource::collection($result['data'])
-            ->additional(['meta' => $result['meta']])
-        ;
+            ->additional(['meta' => $result['meta']]);
     }
 
     public function store(CreateTaskRequest $request): TaskResource
     {
+        $this->authorize('create', Task::class);
+
         $task = Task::create([
-            'tenant_id'      => Auth::user()->tenant_id,
-            'project_id'     => $request->input('project_id'),
-            'title'          => $request->input('title'),
-            'description'    => $request->input('description'),
-            'status_id'      => $request->input('status_id'),
-            'priority'       => $request->input('priority'),
-            'assigned_to_id' => $request->input('assigned_to_id'),
-            'created_by_id'  => Auth::id(),
-            'due_date'       => $request->input('due_date'),
+            ...$request->validated(),
+            'tenant_id' => Auth::user()->getTenantId(),
+            'created_by_id' => Auth::id(),
         ]);
 
         return new TaskResource($task);
@@ -116,10 +115,12 @@ class TaskController extends Controller
     /**
      * Export tasks as Excel file.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -130,6 +131,23 @@ class TaskController extends Controller
             TasksExport::class,
             $config,
             'tasks.xlsx'
+        );
+    }
+
+    /**
+     * Bulk-exporting every task (across all projects/assignees) is
+     * destructive/broad enough to require Owner/Admin, unlike everyday
+     * CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 }

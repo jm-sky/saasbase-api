@@ -29,7 +29,7 @@ class MessageController extends Controller
         private readonly EDoreczeniaProviderManager $providerManager
     ) {
         $this->authorizeResource(EDoreczeniaMessage::class, 'message');
-        $this->modelClass  = EDoreczeniaMessage::class;
+        $this->modelClass = EDoreczeniaMessage::class;
         $this->defaultWith = ['creator', 'attachments'];
 
         $this->filters = [
@@ -50,8 +50,7 @@ class MessageController extends Controller
         $messages = $this->getIndexPaginator($request);
 
         return EDoreczeniaMessageResource::collection($messages['data'])
-            ->additional(['meta' => $messages['meta']])
-        ;
+            ->additional(['meta' => $messages['meta']]);
     }
 
     public function store(SendMessageRequest $request): EDoreczeniaMessageResource
@@ -59,12 +58,12 @@ class MessageController extends Controller
         /** @var EDoreczeniaMessage $message */
         $message = EDoreczeniaMessage::create([
             'tenant_id' => $request->user()->tenant_id,
-            'user_id'   => $request->user()->id,
-            'provider'  => $request->input('provider'),
+            'user_id' => $request->user()->id,
+            'provider' => $request->input('provider'),
             'recipient' => $request->input('recipients'),
-            'subject'   => $request->input('subject'),
-            'content'   => $request->input('content'),
-            'status'    => 'pending',
+            'subject' => $request->input('subject'),
+            'content' => $request->input('content'),
+            'status' => 'pending',
         ]);
 
         $attachments = collect($request->file('attachments'))
@@ -77,8 +76,7 @@ class MessageController extends Controller
                     'mime_type' => $file->getMimeType(),
                 ]);
                 $media = $attachment->addMedia($file)
-                    ->toMediaCollection('attachment')
-                ;
+                    ->toMediaCollection('attachment');
 
                 return new AttachmentDto(
                     fileName: $media->file_name,
@@ -87,16 +85,14 @@ class MessageController extends Controller
                     mimeType: $media->mime_type,
                     createdAt: $media->created_at
                 );
-            })
-        ;
+            });
 
         $recipients = collect($request->input('recipients'))
             ->map(fn (array $recipient) => new RecipientDto(
                 email: $recipient['email'],
                 name: $recipient['name'],
                 identifier: $recipient['identifier']
-            ))
-        ;
+            ));
 
         $sendMessageDto = new SendMessageDto(
             subject: $request->input('subject'),
@@ -109,7 +105,7 @@ class MessageController extends Controller
 
         $provider = $this->providerManager->getProvider($request->input('provider'));
 
-        if (!$provider) {
+        if (! $provider) {
             abort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Provider not found or is not configured.');
         }
 
@@ -117,14 +113,14 @@ class MessageController extends Controller
             $result = $provider->send($sendMessageDto);
 
             $message->update([
-                'status'      => $result->success ? 'sent' : 'failed',
-                'message_id'  => $result->messageId,
-                'sent_at'     => $result->sentAt,
+                'status' => $result->success ? 'sent' : 'failed',
+                'message_id' => $result->messageId,
+                'sent_at' => $result->sentAt,
                 'status_info' => $result->success ? null : $result->error,
             ]);
         } catch (\Throwable $e) {
             $message->update([
-                'status'      => 'failed',
+                'status' => 'failed',
                 'status_info' => $e->getMessage(),
             ]);
         }
@@ -151,8 +147,7 @@ class MessageController extends Controller
                     'mime_type' => $file->getMimeType(),
                 ]);
                 $attachment->addMedia($file)
-                    ->toMediaCollection('attachment')
-                ;
+                    ->toMediaCollection('attachment');
             }
         }
 

@@ -22,10 +22,10 @@ enum NBPTableEnum: string
     public static function fromString(string $table): self
     {
         return match (strtoupper($table)) {
-            'A'     => self::A,
-            'B'     => self::B,
-            'C'     => self::C,
-            'H'     => self::H,
+            'A' => self::A,
+            'B' => self::B,
+            'C' => self::C,
+            'H' => self::H,
             default => throw new \InvalidArgumentException("Invalid NBP table: {$table}"),
         };
     }

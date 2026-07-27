@@ -17,8 +17,7 @@ class NotificationController extends Controller
     {
         $notifications = $request->user()->notifications()
             ->orderBy('created_at', 'desc')
-            ->paginate(self::NOTIFICATIONS_PER_PAGE)
-        ;
+            ->paginate(self::NOTIFICATIONS_PER_PAGE);
 
         return NotificationResource::collection($notifications);
     }
@@ -27,8 +26,7 @@ class NotificationController extends Controller
     {
         $request->user()->unreadNotifications()
             ->whereIn('id', $request->input('ids'))
-            ->update(['read_at' => now()])
-        ;
+            ->update(['read_at' => now()]);
 
         return response()->noContent();
     }
@@ -37,8 +35,7 @@ class NotificationController extends Controller
     {
         $request->user()->notifications()
             ->whereIn('id', $request->input('ids'))
-            ->delete() // or move to a separate table
-        ;
+            ->delete(); // or move to a separate table
 
         return response()->noContent();
     }

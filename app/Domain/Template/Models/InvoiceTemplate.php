@@ -12,19 +12,19 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string           $id
- * @property ?string          $tenant_id
- * @property ?string          $user_id
- * @property string           $name
- * @property ?string          $description
- * @property string           $content
+ * @property string $id
+ * @property ?string $tenant_id
+ * @property ?string $user_id
+ * @property string $name
+ * @property ?string $description
+ * @property string $content
  * @property TemplateCategory $category
- * @property array            $preview_data
- * @property array            $settings
- * @property bool             $is_active
- * @property bool             $is_default
- * @property ?Carbon          $created_at
- * @property ?Carbon          $updated_at
+ * @property array $preview_data
+ * @property array $settings
+ * @property bool $is_active
+ * @property bool $is_default
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  */
 class InvoiceTemplate extends BaseModel
 {
@@ -46,11 +46,11 @@ class InvoiceTemplate extends BaseModel
     ];
 
     protected $casts = [
-        'category'     => TemplateCategory::class,
+        'category' => TemplateCategory::class,
         'preview_data' => TemplatePreviewDataCast::class,
-        'settings'     => TemplateSettingsCast::class,
-        'is_active'    => 'boolean',
-        'is_default'   => 'boolean',
+        'settings' => TemplateSettingsCast::class,
+        'is_active' => 'boolean',
+        'is_default' => 'boolean',
     ];
 
     public function user(): BelongsTo

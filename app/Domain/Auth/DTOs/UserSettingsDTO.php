@@ -9,14 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<UserSettings>
  *
- * @property ?string $id                 UUID
- * @property string  $userId             UUID
+ * @property ?string $id UUID
+ * @property string $userId UUID
  * @property ?string $language
  * @property ?string $theme
  * @property ?string $timezone
- * @property bool    $twoFactorEnabled
- * @property bool    $twoFactorConfirmed
- * @property ?array  $preferences
+ * @property bool $twoFactorEnabled
+ * @property bool $twoFactorConfirmed
+ * @property ?array $preferences
  */
 final class UserSettingsDTO extends BaseDTO
 {
@@ -29,8 +29,7 @@ final class UserSettingsDTO extends BaseDTO
         public readonly bool $twoFactorConfirmed,
         public readonly ?string $id = null,
         public readonly ?array $preferences = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -64,14 +63,14 @@ final class UserSettingsDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'                 => $this->id,
-            'userId'             => $this->userId,
-            'language'           => $this->language,
-            'theme'              => $this->theme,
-            'timezone'           => $this->timezone,
-            'twoFactorEnabled'   => $this->twoFactorEnabled,
+            'id' => $this->id,
+            'userId' => $this->userId,
+            'language' => $this->language,
+            'theme' => $this->theme,
+            'timezone' => $this->timezone,
+            'twoFactorEnabled' => $this->twoFactorEnabled,
             'twoFactorConfirmed' => $this->twoFactorConfirmed,
-            'preferences'        => $this->preferences,
+            'preferences' => $this->preferences,
         ];
     }
 }

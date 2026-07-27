@@ -29,9 +29,9 @@ class ExpenseAttachmentsController extends Controller
 
         $media = $media->map(function (Media $media) use ($ocrMediaId): Media {
             if ($media->id === $ocrMediaId) {
-                $meta          = $media->meta ?? [];
+                $meta = $media->meta ?? [];
                 $meta['isOcr'] = true;
-                $media->meta   = $meta;
+                $media->meta = $meta;
             }
 
             return $media;
@@ -45,17 +45,17 @@ class ExpenseAttachmentsController extends Controller
      */
     public function store(ExpenseAttachmentRequest $request, Expense $expense)
     {
-        $file  = $request->file('file');
+        $file = $request->file('file');
         $media = $expense->addMedia($file)->toMediaCollection('attachments');
         $expense->logModelActivity(ExpenseActivityType::AttachmentCreated->value, $media);
 
-        if (!$expense->ocrRequest) {
+        if (! $expense->ocrRequest) {
             CreateExpenseForOcr::createOcrRequest($expense, $media);
         }
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
-            'data'    => MediaDTO::fromModel($media)->toArray(),
+            'data' => MediaDTO::fromModel($media)->toArray(),
         ], Response::HTTP_CREATED);
     }
 
@@ -81,13 +81,13 @@ class ExpenseAttachmentsController extends Controller
         $disk = Storage::disk($media->disk);
         $path = $media->getPathRelativeToRoot();
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(Response::HTTP_NOT_FOUND, 'File not found.');
         }
 
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->streamDownload(function () use ($disk, $path) {
@@ -105,13 +105,13 @@ class ExpenseAttachmentsController extends Controller
         $disk = Storage::disk($media->disk);
         $path = $media->getPathRelativeToRoot();
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(Response::HTTP_NOT_FOUND, 'File not found.');
         }
 
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->streamDownload(function () use ($disk, $path) {
@@ -137,7 +137,7 @@ class ExpenseAttachmentsController extends Controller
      */
     protected function authorizeMedia(Expense $expense, Media $media): void
     {
-        if (Expense::class !== $media->model_type || $media->model_id !== $expense->id) {
+        if ($media->model_type !== Expense::class || $media->model_id !== $expense->id) {
             abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this expense.');
         }
     }

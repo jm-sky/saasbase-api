@@ -7,13 +7,13 @@ use App\Domain\Expense\Enums\AllocationDimensionType;
 
 /**
  * @property AllocationDimensionType $dimensionType
- * @property string                  $label
- * @property string                  $labelEN
- * @property bool                    $isEnabled
- * @property bool                    $isAlwaysVisible
- * @property bool                    $isConfigurable
- * @property int                     $displayOrder
- * @property int                     $defaultDisplayOrder
+ * @property string $label
+ * @property string $labelEN
+ * @property bool $isEnabled
+ * @property bool $isAlwaysVisible
+ * @property bool $isConfigurable
+ * @property int $displayOrder
+ * @property int $defaultDisplayOrder
  */
 final class DimensionConfigurationDTO extends BaseDataDTO
 {
@@ -26,20 +26,19 @@ final class DimensionConfigurationDTO extends BaseDataDTO
         public readonly bool $isConfigurable,
         public readonly int $displayOrder,
         public readonly int $defaultDisplayOrder,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'dimensionType'        => $this->dimensionType->value,
-            'label'                => $this->label,
-            'labelEN'              => $this->labelEN,
-            'isEnabled'            => $this->isEnabled,
-            'isAlwaysVisible'      => $this->isAlwaysVisible,
-            'isConfigurable'       => $this->isConfigurable,
-            'displayOrder'         => $this->displayOrder,
-            'defaultDisplayOrder'  => $this->defaultDisplayOrder,
+            'dimensionType' => $this->dimensionType->value,
+            'label' => $this->label,
+            'labelEN' => $this->labelEN,
+            'isEnabled' => $this->isEnabled,
+            'isAlwaysVisible' => $this->isAlwaysVisible,
+            'isConfigurable' => $this->isConfigurable,
+            'displayOrder' => $this->displayOrder,
+            'defaultDisplayOrder' => $this->defaultDisplayOrder,
         ];
     }
 

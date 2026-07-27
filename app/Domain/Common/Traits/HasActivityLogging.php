@@ -20,14 +20,13 @@ trait HasActivityLogging
             ->causedBy(request()->user())
             ->withProperties(array_merge($baseProperties, $properties))
             ->event($event)
-            ->log($description ?? $event)
-        ;
+            ->log($description ?? $event);
     }
 
     public function logModelActivity(string $event, Model $model, array $additionalProperties = []): void
     {
         $properties = [
-            $this->getForeignKey()  => $this->getKey(),
+            $this->getForeignKey() => $this->getKey(),
             $model->getForeignKey() => $model->getKey(),
         ];
 

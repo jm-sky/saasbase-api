@@ -14,7 +14,7 @@ class AssignGtuToInvoiceLineRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'gtuCode'          => ['required', 'exists:gtu_codes,code'],
+            'gtuCode' => ['required', 'exists:gtu_codes,code'],
             'assignmentReason' => ['nullable', 'string', 'max:500'],
         ];
     }

@@ -15,16 +15,16 @@ class NumberingTemplateFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'           => (string) Str::ulid(),
-            'tenant_id'    => null, // Set in test or use Tenant factory if needed
-            'name'         => $this->faker->words(2, true),
+            'id' => (string) Str::ulid(),
+            'tenant_id' => null, // Set in test or use Tenant factory if needed
+            'name' => $this->faker->words(2, true),
             'invoice_type' => InvoiceType::Basic,
-            'format'       => 'INV-YYYY-MM-NNNN',
-            'next_number'  => 1,
+            'format' => 'INV-YYYY-MM-NNNN',
+            'next_number' => 1,
             'reset_period' => ResetPeriod::YEARLY,
-            'prefix'       => '',
-            'suffix'       => '',
-            'is_default'   => false,
+            'prefix' => '',
+            'suffix' => '',
+            'is_default' => false,
         ];
     }
 }

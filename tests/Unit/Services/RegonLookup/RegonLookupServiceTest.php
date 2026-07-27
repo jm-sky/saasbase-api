@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\RegonLookup;
 use App\Services\RegonLookup\DTOs\RegonAuthResultDTO;
 use App\Services\RegonLookup\DTOs\RegonLookupResultDTO;
 use App\Services\RegonLookup\DTOs\RegonReportUnified;
+use App\Services\RegonLookup\Enums\EntityType;
 use App\Services\RegonLookup\Exceptions\RegonLookupException;
 use App\Services\RegonLookup\Integrations\RegonApiConnector;
 use App\Services\RegonLookup\Integrations\Requests\GetFullReportRequest;
@@ -32,15 +33,15 @@ class RegonLookupServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->apiConnector = new RegonApiConnector();
-        $this->service      = new RegonLookupService($this->apiConnector);
+        $this->apiConnector = new RegonApiConnector;
+        $this->service = new RegonLookupService($this->apiConnector);
 
         config()->set('regon_lookup.user_key', '1234567890');
 
         Cache::flush();
     }
 
-    public function testFindByNipReturnsNullWhenSearchFails(): void
+    public function test_find_by_nip_returns_null_when_search_fails(): void
     {
         $nip = '1234567890';
 
@@ -52,7 +53,7 @@ class RegonLookupServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testFindByNipReturnsNullWhenSearchResultIsInvalid(): void
+    public function test_find_by_nip_returns_null_when_search_result_is_invalid(): void
     {
         $nip = '1234567890';
 
@@ -64,11 +65,11 @@ class RegonLookupServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testFindByNipReturnsFullReportWhenSearchSucceeds(): void
+    public function test_find_by_nip_returns_full_report_when_search_succeeds(): void
     {
         $this->markTestSkipped('Need to mock XML response');
 
-        $nip   = '1234567890';
+        $nip = '1234567890';
         $regon = '123456789';
 
         // Mock search response
@@ -76,7 +77,7 @@ class RegonLookupServiceTest extends TestCase
             name: 'Test Company',
             regon: $regon,
             nip: $nip,
-            type: \App\Services\RegonLookup\Enums\EntityType::LegalPerson,
+            type: EntityType::LegalPerson,
             statusNip: null,
             dateOfEnd: null,
             voivodeship: null,
@@ -153,8 +154,8 @@ class RegonLookupServiceTest extends TestCase
         );
 
         Saloon::fake([
-            LoginRequest::class         => MockResponse::make(json_encode(new RegonAuthResultDTO('1234567890')), HttpResponse::HTTP_OK),
-            SearchRequest::class        => MockResponse::make(json_encode($searchResult), HttpResponse::HTTP_OK),
+            LoginRequest::class => MockResponse::make(json_encode(new RegonAuthResultDTO('1234567890')), HttpResponse::HTTP_OK),
+            SearchRequest::class => MockResponse::make(json_encode($searchResult), HttpResponse::HTTP_OK),
             GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
         ]);
 
@@ -166,7 +167,7 @@ class RegonLookupServiceTest extends TestCase
         $this->assertEquals('Test Company', $result->name);
     }
 
-    public function testFindByRegonReturnsNullWhenRequestFails(): void
+    public function test_find_by_regon_returns_null_when_request_fails(): void
     {
         $regon = '123456789';
 
@@ -178,7 +179,7 @@ class RegonLookupServiceTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testFindByRegonReturnsFullReportWhenRequestSucceeds(): void
+    public function test_find_by_regon_returns_full_report_when_request_succeeds(): void
     {
         $this->markTestSkipped('Need to mock XML response');
 
@@ -246,7 +247,7 @@ class RegonLookupServiceTest extends TestCase
         );
 
         Saloon::fake([
-            LoginRequest::class         => MockResponse::make(json_encode(new RegonAuthResultDTO('1234567890')), HttpResponse::HTTP_OK),
+            LoginRequest::class => MockResponse::make(json_encode(new RegonAuthResultDTO('1234567890')), HttpResponse::HTTP_OK),
             GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
         ]);
 
@@ -257,7 +258,7 @@ class RegonLookupServiceTest extends TestCase
         $this->assertEquals('Test Company', $result->name);
     }
 
-    public function testFindByNipThrowsExceptionForInvalidNip(): void
+    public function test_find_by_nip_throws_exception_for_invalid_nip(): void
     {
         $this->expectException(RegonLookupException::class);
         $this->expectExceptionMessage('Invalid NIP format. NIP must be 10 digits.');
@@ -265,7 +266,7 @@ class RegonLookupServiceTest extends TestCase
         $this->service->findByNip('123');
     }
 
-    public function testFindByRegonThrowsExceptionForInvalidRegon(): void
+    public function test_find_by_regon_throws_exception_for_invalid_regon(): void
     {
         $this->expectException(RegonLookupException::class);
         $this->expectExceptionMessage('Invalid REGON format. REGON must be 9 or 14 digits.');
@@ -273,11 +274,11 @@ class RegonLookupServiceTest extends TestCase
         $this->service->findByRegon('123');
     }
 
-    public function testFindByNipUsesCache(): void
+    public function test_find_by_nip_uses_cache(): void
     {
         $this->markTestSkipped('Need to mock XML response');
 
-        $nip   = '1234567890';
+        $nip = '1234567890';
         $regon = '123456789';
 
         // Mock search response
@@ -285,7 +286,7 @@ class RegonLookupServiceTest extends TestCase
             name: 'Test Company',
             regon: $regon,
             nip: $nip,
-            type: \App\Services\RegonLookup\Enums\EntityType::LegalPerson,
+            type: EntityType::LegalPerson,
             statusNip: null,
             dateOfEnd: null,
             voivodeship: null,
@@ -362,7 +363,7 @@ class RegonLookupServiceTest extends TestCase
         );
 
         Saloon::fake([
-            SearchRequest::class        => MockResponse::make(json_encode($searchResult), HttpResponse::HTTP_OK),
+            SearchRequest::class => MockResponse::make(json_encode($searchResult), HttpResponse::HTTP_OK),
             GetFullReportRequest::class => MockResponse::make(json_encode($fullReportResult), HttpResponse::HTTP_OK),
         ]);
 
@@ -376,7 +377,7 @@ class RegonLookupServiceTest extends TestCase
         $this->assertEquals($result1, $result2);
     }
 
-    public function testFindByRegonUsesCache(): void
+    public function test_find_by_regon_uses_cache(): void
     {
         $this->markTestSkipped('Need to mock XML response');
 

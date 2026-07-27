@@ -53,18 +53,18 @@ class GenerateTenantJwtAction
         $tenant = request()->route('tenant');
 
         // Verify user is authenticated
-        if (!$user) {
+        if (! $user) {
             throw new \RuntimeException('User not authenticated');
         }
 
         // Verify tenant exists and is active
-        if (!$tenant->exists || null !== $tenant->deleted_at) {
+        if (! $tenant->exists || $tenant->deleted_at !== null) {
             throw new TenantNotFoundException('Tenant not found or inactive');
         }
 
         // Verify user belongs to tenant
-        if (!$user->tenants()->find($tenant->id)) {
-            throw new UserNotBelongToTenantException();
+        if (! $user->tenants()->find($tenant->id)) {
+            throw new UserNotBelongToTenantException;
         }
 
         return true;

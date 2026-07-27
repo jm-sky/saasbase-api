@@ -12,17 +12,16 @@ final class IbanApiResponse extends BaseDataDTO
         public array $validations,
         public int $expremental,
         public IbanDataDTO $data,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'result'      => $this->result,
-            'message'     => $this->message,
+            'result' => $this->result,
+            'message' => $this->message,
             'validations' => $this->validations,
             'expremental' => $this->expremental,
-            'data'        => $this->data->toArray(),
+            'data' => $this->data->toArray(),
         ];
     }
 

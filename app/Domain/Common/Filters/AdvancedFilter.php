@@ -49,7 +49,7 @@ class AdvancedFilter implements Filter
         $this->columnTypes = $columnTypes;
     }
 
-    public function __invoke(Builder $query, $value, string $property): Builder
+    public function __invoke(Builder $query, mixed $value, string $property): void
     {
         if (is_array($value)) {
             foreach ($value as $operator => $val) {
@@ -58,14 +58,12 @@ class AdvancedFilter implements Filter
         } else {
             $type = $this->columnTypes[$property] ?? 'string';
 
-            if ('string' === $type) {
+            if ($type === 'string') {
                 $query->where($property, 'like', "%{$value}%");
             } else {
                 $query->where($property, '=', $value);
             }
         }
-
-        return $query;
     }
 
     protected function applyOperator(Builder $query, string $column, string $operator, $value): void
@@ -73,33 +71,33 @@ class AdvancedFilter implements Filter
         $op = strtolower($operator);
 
         match ($op) {
-            AdvancedFilterOperator::IsNull->value      => $query->whereNull($column),
-            AdvancedFilterOperator::IsNotNull->value   => $query->whereNotNull($column),
-            AdvancedFilterOperator::IsNullish->value   => $query->where(fn ($q) => $q->whereNull($column)->orWhere($column, '')),
-            AdvancedFilterOperator::In->value          => $query->whereIn($column, $this->splitToArray($value)),
+            AdvancedFilterOperator::IsNull->value => $query->whereNull($column),
+            AdvancedFilterOperator::IsNotNull->value => $query->whereNotNull($column),
+            AdvancedFilterOperator::IsNullish->value => $query->where(fn ($q) => $q->whereNull($column)->orWhere($column, '')),
+            AdvancedFilterOperator::In->value => $query->whereIn($column, $this->splitToArray($value)),
             AdvancedFilterOperator::NotIn->value, AdvancedFilterOperator::NotInAlt->value => $query->whereNotIn($column, $this->splitToArray($value)),
-            AdvancedFilterOperator::Between->value   => $this->applyBetween($query, $column, $value),
-            AdvancedFilterOperator::Like->value      => $query->where($column, 'like', "%{$value}%"),
+            AdvancedFilterOperator::Between->value => $this->applyBetween($query, $column, $value),
+            AdvancedFilterOperator::Like->value => $query->where($column, 'like', "%{$value}%"),
             AdvancedFilterOperator::NotLike->value, AdvancedFilterOperator::NotLikeAlt->value => $query->where($column, 'not like', "%{$value}%"),
             AdvancedFilterOperator::StartsWith->value => $query->where($column, 'like', "{$value}%"),
-            AdvancedFilterOperator::EndsWith->value   => $query->where($column, 'like', "%{$value}"),
-            AdvancedFilterOperator::Regex->value      => $query->whereRaw("{$column} REGEXP ?", [$value]),
-            default                                   => $query->where($column, $this->mapOperator($op), $value),
+            AdvancedFilterOperator::EndsWith->value => $query->where($column, 'like', "%{$value}"),
+            AdvancedFilterOperator::Regex->value => $query->whereRaw("{$column} REGEXP ?", [$value]),
+            default => $query->where($column, $this->mapOperator($op), $value),
         };
     }
 
     protected function mapOperator(string $op): string
     {
         return match ($op) {
-            AdvancedFilterOperator::Equals->value  => '=',
+            AdvancedFilterOperator::Equals->value => '=',
             AdvancedFilterOperator::NotEquals->value, AdvancedFilterOperator::NotEqualsAlt->value => '!=',
-            AdvancedFilterOperator::GreaterThan->value           => '>',
-            AdvancedFilterOperator::GreaterThanOrEqual->value    => '>=',
-            AdvancedFilterOperator::From->value                  => '>=',
-            AdvancedFilterOperator::LessThan->value              => '<',
-            AdvancedFilterOperator::LessThanOrEqual->value       => '<=',
-            AdvancedFilterOperator::To->value                    => '<=',
-            default                                              => '=',
+            AdvancedFilterOperator::GreaterThan->value => '>',
+            AdvancedFilterOperator::GreaterThanOrEqual->value => '>=',
+            AdvancedFilterOperator::From->value => '>=',
+            AdvancedFilterOperator::LessThan->value => '<',
+            AdvancedFilterOperator::LessThanOrEqual->value => '<=',
+            AdvancedFilterOperator::To->value => '<=',
+            default => '=',
         };
     }
 
@@ -107,7 +105,7 @@ class AdvancedFilter implements Filter
     {
         $parts = $this->splitToArray($value);
 
-        if (2 === count($parts)) {
+        if (count($parts) === 2) {
             $query->whereBetween($column, [$parts[0], $parts[1]]);
         }
     }

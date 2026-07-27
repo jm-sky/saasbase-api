@@ -29,9 +29,9 @@ class StoreRoleRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'name'          => 'required|string|max:255',
-            'tenantId'      => 'required|string|exists:tenants,id',
-            'permissions'   => 'required|array',
+            'name' => 'required|string|max:255',
+            'tenantId' => 'required|string|exists:tenants,id',
+            'permissions' => 'required|array',
             'permissions.*' => 'exists:permissions,name',
         ];
     }

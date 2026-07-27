@@ -10,10 +10,10 @@ class RegonReportResolver
     public static function resolveReportName(EntityType $entityType): RegonReportName
     {
         return match ($entityType) {
-            EntityType::LegalPerson             => RegonReportName::BIR11LegalPerson,
-            EntityType::NaturalPerson           => RegonReportName::BIR11NaturalPersonCeidg,
-            EntityType::LocalLegalPersonUnit    => RegonReportName::BIR11LocalLegalPersonUnit,
-            EntityType::LocalNaturalPersonUnit  => RegonReportName::BIR11LocalNaturalPersonUnit,
+            EntityType::LegalPerson => RegonReportName::BIR11LegalPerson,
+            EntityType::NaturalPerson => RegonReportName::BIR11NaturalPersonCeidg,
+            EntityType::LocalLegalPersonUnit => RegonReportName::BIR11LocalLegalPersonUnit,
+            EntityType::LocalNaturalPersonUnit => RegonReportName::BIR11LocalNaturalPersonUnit,
         };
     }
 }

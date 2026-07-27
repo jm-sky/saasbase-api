@@ -2,15 +2,19 @@
 
 namespace App\Domain\Projects\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\DateRangeFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
 use App\Domain\Projects\DTOs\ProjectStatusDTO;
 use App\Domain\Projects\Models\ProjectStatus;
 use App\Domain\Projects\Requests\ProjectStatusRequest;
 use App\Domain\Projects\Requests\SearchProjectStatusRequest;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class ProjectStatusController extends Controller
@@ -43,7 +47,7 @@ class ProjectStatusController extends Controller
 
     public function index(SearchProjectStatusRequest $request): JsonResponse
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
         $result['data'] = ProjectStatusDTO::collect($result['data']);
 
         return response()->json($result);
@@ -51,8 +55,10 @@ class ProjectStatusController extends Controller
 
     public function store(ProjectStatusRequest $request): JsonResponse
     {
-        $dto    = ProjectStatusDTO::from($request->validated());
-        $status = ProjectStatus::create((array) $dto);
+        $this->authorizeManage();
+
+        $dto = ProjectStatusDTO::from($request->validated());
+        $status = ProjectStatus::create($dto->toDbArray());
 
         return response()->json(
             ['data' => ProjectStatusDTO::from($status)],
@@ -67,16 +73,37 @@ class ProjectStatusController extends Controller
 
     public function update(ProjectStatusRequest $request, ProjectStatus $projectStatus): JsonResponse
     {
+        $this->authorizeManage();
+
         $dto = ProjectStatusDTO::from($request->validated());
-        $projectStatus->update((array) $dto);
+        $projectStatus->update($dto->toDbArray());
 
         return response()->json(['data' => ProjectStatusDTO::from($projectStatus)]);
     }
 
     public function destroy(ProjectStatus $projectStatus): JsonResponse
     {
+        $this->authorizeManage();
+
         $projectStatus->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Project statuses are shared across every project in the tenant, so
+     * changing them needs to be gated the same way TaskController::export()
+     * gates bulk/tenant-wide actions.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
+        );
     }
 }

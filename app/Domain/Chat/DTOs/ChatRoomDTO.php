@@ -14,12 +14,11 @@ final class ChatRoomDTO extends BaseDTO
         public string $name,
         public string $type,
         public array $participants,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof ChatRoom) {
+        if (! $model instanceof ChatRoom) {
             throw new \InvalidArgumentException('Model must be instance of ChatRoom');
         }
 
@@ -44,9 +43,9 @@ final class ChatRoomDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'           => $this->id,
-            'name'         => $this->name,
-            'type'         => $this->type,
+            'id' => $this->id,
+            'name' => $this->name,
+            'type' => $this->type,
             'participants' => $this->participants,
         ];
     }

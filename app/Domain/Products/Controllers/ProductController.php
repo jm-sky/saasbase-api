@@ -2,6 +2,7 @@
 
 namespace App\Domain\Products\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasActivityLogging;
@@ -15,17 +16,21 @@ use App\Domain\Products\Requests\ProductRequest;
 use App\Domain\Products\Requests\SearchProductRequest;
 use App\Domain\Products\Resources\ProductLookupResource;
 use App\Domain\Products\Resources\ProductResource;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ProductController extends Controller
 {
-    use HasIndexQuery;
     use HasActivityLogging;
+    use HasIndexQuery;
 
     protected int $defaultPerPage = 15;
 
@@ -33,18 +38,18 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Product::class;
+        $this->modelClass = Product::class;
         $this->defaultWith = ['tags', 'unit', 'vatRate'];
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('type', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
-            AllowedFilter::custom('unitId', new AdvancedFilter(), 'unit_id'),
-            AllowedFilter::custom('vatRateId', new AdvancedFilter(), 'vat_rate_id'),
-            AllowedFilter::custom('createdAt', new AdvancedFilter(), 'created_at'),
-            AllowedFilter::custom('updatedAt', new AdvancedFilter(), 'updated_at'),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('type', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
+            AllowedFilter::custom('unitId', new AdvancedFilter, 'unit_id'),
+            AllowedFilter::custom('vatRateId', new AdvancedFilter, 'vat_rate_id'),
+            AllowedFilter::custom('createdAt', new AdvancedFilter, 'created_at'),
+            AllowedFilter::custom('updatedAt', new AdvancedFilter, 'updated_at'),
         ];
 
         $this->sorts = [
@@ -54,7 +59,7 @@ class ProductController extends Controller
             'updatedAt' => 'updated_at',
         ];
 
-        $this->defaultSort   = '-created_at';
+        $this->defaultSort = '-created_at';
         $this->exportService = app(ExportService::class);
     }
 
@@ -63,8 +68,7 @@ class ProductController extends Controller
         $products = $this->getIndexPaginator($request);
 
         return ProductResource::collection($products['data'])
-            ->additional(['meta' => $products['meta']])
-        ;
+            ->additional(['meta' => $products['meta']]);
     }
 
     public function lookup(SearchProductRequest $request): AnonymousResourceCollection
@@ -72,8 +76,7 @@ class ProductController extends Controller
         $products = $this->getIndexPaginator($request);
 
         return ProductLookupResource::collection($products['data'])
-            ->additional(['meta' => $products['meta']])
-        ;
+            ->additional(['meta' => $products['meta']]);
     }
 
     public function store(ProductRequest $request): ProductResource
@@ -101,12 +104,14 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 'Product updated successfully.',
-            'data'    => new ProductResource($product),
+            'data' => new ProductResource($product),
         ]);
     }
 
     public function destroy(Product $product): JsonResponse
     {
+        $this->authorizeManage();
+
         $product->logModelActivity(ProductActivityType::Deleted->value, $product);
         $product->delete();
 
@@ -115,10 +120,10 @@ class ProductController extends Controller
 
     public function search(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $query   = $request->input('q');
+        $query = $request->input('q');
         $perPage = $request->input('perPage', $this->defaultPerPage);
 
-        if (!$query) {
+        if (! $query) {
             return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -126,8 +131,7 @@ class ProductController extends Controller
             ->query(function ($builder) use ($request) {
                 return $this->getIndexQuery($request);
             })
-            ->paginate($perPage)
-        ;
+            ->paginate($perPage);
 
         return ProductResource::collection($results);
     }
@@ -135,10 +139,12 @@ class ProductController extends Controller
     /**
      * Export products as Excel file.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function export(Request $request)
     {
+        $this->authorizeManage();
+
         $config = new ExportConfigDTO(
             filters: $request->all(),
             columns: $request->get('columns', []),
@@ -149,6 +155,23 @@ class ProductController extends Controller
             ProductsExport::class,
             $config,
             'products.xlsx'
+        );
+    }
+
+    /**
+     * Deleting a product or exporting the whole catalog (including net
+     * prices) is broad/destructive enough to require Owner/Admin, unlike
+     * everyday CRUD which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
         );
     }
 }

@@ -1,0 +1,885 @@
+
+   PASS  Tests\Unit\Approval\ApprovalResolutionServiceSimpleTest
+  ✓ it can be instantiated
+  ✓ it has required public methods
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Approval\WorkflowMatchingServiceTest
+  ✓ finds workflow matching amount range                                 3.38s  
+  ✓ returns null when amount below minimum                               0.14s  
+  ✓ returns null when amount above maximum                               0.13s  
+  ✓ selects highest priority when multiple match                         0.15s  
+  ✓ returns null when no workflows exist                                 0.12s  
+  ✓ skips inactive workflows                                             0.12s  
+  ✓ matches workflow with no amount restrictions                         0.14s  
+  ✓ matches workflow with allocation conditions has any                  0.18s  
+  ✓ fails allocation condition when dimension missing                    0.16s  
+  ✓ matches workflow with allocation conditions equals                   0.18s  
+  ✓ fails allocation condition equals wrong value                        0.20s  
+  ✓ matches workflow with allocation conditions in                       0.21s  
+  ✓ matches workflow with multiple conditions                            0.20s  
+  ✓ fails when one condition fails in multiple conditions                0.19s  
+  ✓ gets potential workflows for debugging                               0.15s  
+  ✓ checks if workflows exist for tenant                                 0.15s  
+  ✓ gets workflow statistics                                             0.17s  
+  ✓ only finds workflows for correct tenant                              0.17s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Auth\UserDTOTest
+  ✓ can create user dto from model                                       0.14s  
+  ✓ can convert user dto to array                                        0.09s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Common\Models\Concerns\BelongsToTenantTest
+  ✓ model is scoped to tenant                                            0.14s  
+  ✓ model automatically sets tenant id on create                         0.13s  
+  ✓ can query only current tenant                                        0.11s  
+  ✓ can query different tenant                                           0.11s  
+
+   PASS  Tests\Unit\Domain\Common\Rules\ValidAdvancedFilterRuleTest
+  ✓ valid single value passes                                            0.02s  
+  ✓ valid operator array passes
+  ✓ invalid operator fails
+  ✓ between operator array passes
+  ✓ between operator string passes
+  ✓ in operator array passes
+  ✓ null operator passes
+  ✓ string operator fails on non string type
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Contractors\ContractorDTOTest
+  ✓ can create contractor dto from model                                 0.12s  
+  ✓ can convert contractor dto to array                                  0.08s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   FAIL  Tests\Unit\Domain\Contractors\Jobs\ProcessContractorRegistryConfirmationJobTest
+  ⨯ handle successfully processes regon confirmation                     0.16s  
+  ✓ handle fails when no data available                                  0.12s  
+  ✓ failed updates confirmation status                                   0.13s  
+  ✓ job configuration                                                    0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Contractors\Services\ContractorRegistryConfirmationServiceTest
+  ✓ confirm successfully processes all registries                        0.16s  
+  ✓ confirm handles no registry data                                     0.13s  
+  ✓ confirm handles partial registry data                                0.15s  
+  ✓ confirm handles regon service exception                              0.14s  
+  ✓ confirm handles data fetcher exception                               0.12s  
+  ✓ get confirmations returns ordered results                            0.14s  
+  ✓ get latest confirmation returns correct result                       0.11s  
+  ✓ get latest confirmation returns null when not found                  0.13s  
+  ✓ has successful confirmations returns true when exists                0.13s  
+  ✓ has successful confirmations returns false when none exist           0.12s  
+  ✓ has successful confirmations returns false when no confirmations     0.17s  
+
+   PASS  Tests\Unit\Domain\Contractors\Services\RegistryConfirmation\DataComparatorServiceTest
+  ✓ compare names with data set #0                                       0.01s  
+  ✓ compare names with data set #1
+  ✓ compare names with data set #2
+  ✓ compare names with data set #3
+  ✓ compare names with data set #4
+  ✓ compare names with data set #5
+  ✓ compare names with data set #6
+  ✓ compare names with data set #7
+  ✓ compare names with data set #8
+  ✓ compare names with data set #9
+  ✓ compare names with data set #10
+  ✓ compare names with data set #11
+  ✓ compare names with data set #12
+  ✓ compare names with data set #13
+  ✓ compare names with data set #14
+  ✓ compare names with data set #15
+  ✓ compare names with data set #16
+  ✓ compare vat ids with data set #0
+  ✓ compare vat ids with data set #1
+  ✓ compare vat ids with data set #2
+  ✓ compare vat ids with data set #3
+  ✓ compare vat ids with data set #4
+  ✓ compare vat ids with data set #5
+  ✓ compare vat ids with data set #6
+  ✓ compare vat ids with data set #7
+  ✓ compare vat ids with data set #8
+  ✓ compare vat ids with data set #9
+  ✓ compare vat ids with data set #10
+  ✓ compare vat ids with data set #11
+  ✓ compare regons with data set #0
+  ✓ compare regons with data set #1
+  ✓ compare regons with data set #2
+  ✓ compare regons with data set #3
+  ✓ compare regons with data set #4
+  ✓ compare regons with data set #5
+  ✓ compare regons with data set #6
+  ✓ compare addresses successful match
+  ✓ compare addresses fuzzy street match
+  ✓ compare addresses postal code normalization
+  ✓ compare addresses missing required fields
+  ✓ compare addresses different countries
+  ✓ compare bank accounts successful match
+  ✓ compare bank accounts iban normalization
+  ✓ compare bank accounts missing iban
+  ✓ compare bank accounts different ibans
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Financial\Services\PKWiUServiceTest
+  ✓ validates pkwiu code format                                          0.14s  
+  ✓ checks if code exists                                                0.11s  
+  ✓ validates complete pkwiu code                                        0.09s  
+  ✓ searches by name                                                     0.08s  
+  ✓ searches by code prefix                                              0.10s  
+  ✓ gets hierarchy tree                                                  0.13s  
+  ✓ gets code suggestions                                                0.09s  
+  ✓ assigns pkwiu to product                                             0.13s  
+  ✓ cannot assign invalid pkwiu to product                               0.11s  
+  ✓ bulk assigns pkwiu to products                                       0.19s  
+  ✓ validates invoice body pkwiu                                         0.12s  
+  ✓ enriches invoice items with pkwiu                                    0.12s  
+  ✓ extracts pkwiu codes from invoice body                               0.10s  
+  ✓ gets full hierarchy path                                             0.12s  
+  ✓ gets parent chain                                                    0.14s  
+  ✓ gets leaf nodes                                                      0.15s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Projects\ProjectDTOTest
+  ✓ from model                                                           0.18s  
+  ✓ to model                                                             0.14s  
+  ✓ from collection                                                      0.15s  
+  ✓ to array                                                             0.20s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Skills\SkillCategoryDTOTest
+  ✓ can create skill category dto from model                             0.08s  
+  ✓ can convert skill category dto to array                              0.07s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Skills\SkillDTOTest
+  ✓ can create skill dto from model                                      0.09s  
+  ✓ can convert skill dto to array                                       0.08s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Tenant\Actions\GenerateTenantJwtActionTest
+  ✓ generates jwt with tenant context                                    0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Tenant\BelongsToTenantTest
+  ✓ model is scoped to tenant                                            0.13s  
+  ✓ model automatically sets tenant id                                   0.12s  
+  ✓ can create record for different tenant                               0.12s  
+  ✓ can bypass tenant scope with callback                                0.14s  
+  ✓ can query specific tenant when bypassing scope                       0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Domain\Tenant\TenantDTOTest
+  ✓ can create tenant dto                                                0.10s  
+  ✓ can create tenant dto with minimal data                              0.10s  
+  ✓ can collect multiple tenant dtos                                     0.07s  
+  ✓ can create tenant dto from model                                     0.10s  
+  ✓ can convert tenant dto to array                                      0.07s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Unit\Services\RegonLookup\RegonLookupServiceTest
+  ✓ find by nip returns null when search fails                           0.11s  
+  ✓ find by nip returns null when search result is invalid               0.08s  
+  - find by nip returns full report when search succeeds → Need to mock… 0.06s  
+  ✓ find by regon returns null when request fails                        0.09s  
+  - find by regon returns full report when request succeeds → Need to m… 0.07s  
+  ✓ find by nip throws exception for invalid nip                         0.07s  
+  ✓ find by regon throws exception for invalid regon                     0.07s  
+  - find by nip uses cache → Need to mock XML response                   0.08s  
+  - find by regon uses cache → Need to mock XML response                 0.07s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Unit\Services\ViesLookup\ViesLookupServiceTest
+  ✓ find by vat returns null when search fails                           0.10s  
+  ✓ find by vat returns null when search result is invalid               0.07s  
+  ✓ find by vat returns full report when search succeeds                 0.07s  
+  ✓ find by vat uses cache                                               0.07s  
+  ✓ find by vat handles soap fault                                       0.07s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Approval\ApprovalWorkflowExecutionTest
+  ✓ can start approval workflow for expense                              0.29s  
+  ✓ auto approves when no workflow matches                               0.25s  
+  ✓ can process approval decision and complete single step workflow      0.30s  
+  ✓ can process rejection and complete workflow                          0.28s  
+  ✓ can handle multi step workflow                                       0.31s  
+  ✓ can handle parallel approvers with minimum threshold                 0.32s  
+  ✓ can handle require all approvers workflow                            0.34s  
+  ✓ prevents duplicate decisions from same approver                      0.30s  
+  ✓ validates approver authorization                                     0.31s  
+  ✓ provides debug information for failed approvals                      0.30s  
+  ✓ prevents approval of completed executions                            0.33s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Auth\UserSettingsTest
+  ✓ user can get settings                                                0.16s  
+  ✓ user can update settings                                             0.17s  
+  ✓ user can update language                                             0.12s  
+  ✓ user cannot update settings with invalid data                        0.11s  
+  ✓ user cannot update language with invalid data                        0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Database\Seeders\DefaultMeasurementUnitSeederTest
+  ✓ measurement unit seeder creates expected records                     0.12s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Database\Seeders\ProjectRoleSeederTest
+  ✓ project role seeder creates expected records                         0.10s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Database\Seeders\SkillSeederTest
+  ✓ skill category seeder creates expected records                       0.09s  
+  ✓ skill seeder creates expected records                                0.13s  
+  ✓ skills are properly related to categories                            0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Database\Seeders\VatRateSeederTest
+  ✓ vat rate seeder creates expected records                             0.10s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Feature\DimensionVisibilityServiceTest
+  - initialize default configuration for tenant → Not implemented        0.11s  
+  ✓ get enabled dimensions includes rtr always                           0.14s  
+  - get enabled dimensions returns only enabled → Not implemented        0.12s  
+  - update dimension configuration → Not implemented                     0.11s  
+  ✓ cannot configure rtr dimension                                       0.13s  
+  - is dimension enabled for tenant → Not implemented                    0.14s  
+  - get all dimensions for tenant → Not implemented                      0.14s  
+  - reset to defaults → Not implemented                                  0.14s  
+  - bulk update dimension configurations → Not implemented               0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   FAIL  Tests\Feature\Domain\Auth\Controllers\ApplicationInvitationControllerTest
+  ✓ can send invitation                                                  0.33s  
+  ⨯ can accept invitation                                                0.13s  
+  ⨯ can reject invitation                                                0.09s  
+  ✓ can cancel invitation                                                0.10s  
+  ✓ can resend invitation                                                0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Feature\Domain\Common\Controllers\ContactControllerTest
+  - can search contacts → Skipping because of Scout
+  - search requires query param → Skipping because of Scout
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Common\Controllers\CountryControllerTest
+  ✓ can list countries                                                   0.16s  
+  ✓ can filter countries by name                                         0.14s  
+  ✓ can filter countries by code                                         0.15s  
+  ✓ can filter countries by region                                       0.14s  
+  ✓ can sort countries                                                   0.15s  
+  ✓ validates sort parameter                                             0.13s  
+  ✓ validates date range filter                                          0.15s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Common\CountryApiTest
+  ✓ can list countries                                                   0.15s  
+  ✓ returns404 for nonexistent country                                   0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Common\Filters\AdvancedFilterTest
+  ✓ null operator filters correctly                                      0.19s  
+  ✓ nullish operator filters correctly                                   0.19s  
+  ✓ starts with operator                                                 0.19s  
+  ✓ between operator                                                     0.18s  
+  ✓ default like operator for strings                                    0.17s  
+  ✓ eq operator for numbers                                              0.17s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Contractors\Controllers\ContractorAddressControllerTest
+  ✓ can list contractor addresses                                        0.17s  
+  ✓ can create contractor address                                        0.16s  
+  ✓ can show contractor address                                          0.15s  
+  ✓ cannot show address of different contractor                          0.17s  
+  ✓ can update contractor address                                        0.17s  
+  ✓ cannot update address of different contractor                        0.16s  
+  ✓ can delete contractor address                                        0.15s  
+  ✓ cannot delete address of different contractor                        0.17s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Feature\Domain\EDoreczenia\CertificateControllerTest
+  - can list certificates → Need to fix certificate listing functionali… 0.16s  
+  - can create certificate → Need to fix certificate creation functiona… 0.12s  
+  - can show certificate → Need to fix certificate retrieval functional… 0.12s  
+  - can update certificate → Need to fix certificate update functionali… 0.11s  
+  - can delete certificate → Need to fix certificate deletion functiona… 0.11s  
+  - cannot access other tenant certificate → Need to fix tenant isolati… 0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Feature\Domain\EDoreczenia\MessageControllerTest
+  - can list messages → Need to fix message listing functionality        0.12s  
+  - can filter messages by status → Need to fix message filtering funct… 0.12s  
+  - can create message → Need to fix message creation functionality      0.13s  
+  - can show message → Need to fix message retrieval functionality       0.17s  
+  - can update message → Need to fix message update functionality        0.15s  
+  - can delete message → Need to fix message deletion functionality      0.12s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Exchanges\ExchangeRateControllerTest
+  ✓ can list exchange rates                                              0.14s  
+  ✓ can filter exchange rates by currency                                0.17s  
+  ✓ can show exchange rate                                               0.14s  
+  ✓ can filter exchange rates by date                                    0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Feeds\FeedControllerTest
+  ✓ can list feeds                                                       0.24s  
+  ✓ can create feed without attachment                                   0.14s  
+  ✓ can create feed with attachment                                      0.20s  
+  ✓ can show feed                                                        0.17s  
+  ✓ can delete feed                                                      0.19s  
+  ✓ cannot access other tenant feed                                      0.19s  
+  ✓ profanity is filtered and flagged                                    0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Financial\FinancialReportControllerTest
+  ✓ get balance widget data                                              0.24s  
+  ✓ get revenue widget data                                              0.14s  
+  ✓ get expenses widget data                                             0.14s  
+  ✓ get overview widget data                                             0.20s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Financial\PKWiUClassificationTest
+  ✓ can list pkwiu classifications                                       0.15s  
+  ✓ can search pkwiu by name                                             0.16s  
+  ✓ can validate pkwiu code                                              0.14s  
+  ✓ can get hierarchy tree                                               0.14s  
+  ✓ can validate invoice body pkwiu                                      0.13s  
+  ✓ can get single pkwiu classification                                  0.18s  
+  ✓ can get code suggestions                                             0.19s  
+  ✓ product can have pkwiu code                                          0.15s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Invoice\InvoiceApiTest
+  ✓ can show invoice                                                     0.19s  
+  ✓ can delete invoice                                                   0.20s  
+  ✓ returns404 for nonexistent invoice                                   0.18s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Invoice\NumberingTemplateApiTest
+  ✓ can update numbering template                                        0.17s  
+  ✓ can delete numbering template                                        0.14s  
+  ✓ can set default numbering template                                   0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Products\ProductApiFilterAndSortTest
+  ✓ it can filter products by name                                       0.17s  
+  ✓ it can filter products by unit id                                    0.16s  
+  ✓ it can filter products by date range                                 0.17s  
+  ✓ it can sort products                                                 0.18s  
+  ✓ it validates date range format                                       0.14s  
+  ✓ it validates sort parameter                                          0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Products\ProductApiTest
+  ✓ can list products                                                    0.22s  
+  ✓ can create product                                                   0.17s  
+  ✓ cannot create product with invalid data                              0.15s  
+  ✓ can show product                                                     0.19s  
+  ✓ can update product                                                   0.23s  
+  ✓ can delete product                                                   0.15s  
+  ✓ returns404 for nonexistent product                                   0.13s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Skills\SkillApiTest
+  ✓ can list skills                                                      0.16s  
+  ✓ can create skill                                                     0.13s  
+  ✓ cannot create skill with invalid data                                0.14s  
+  ✓ can show skill                                                       0.15s  
+  ✓ can update skill                                                     0.16s  
+  ✓ can delete skill                                                     0.13s  
+  ✓ returns404 for nonexistent skill                                     0.14s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   FAIL  Tests\Feature\Domain\Skills\SkillCategoryApiTest
+  ✓ can list categories                                                  0.16s  
+  ⨯ can create category                                                  0.11s  
+  ✓ cannot create category with invalid data                             0.11s  
+  ✓ can show category                                                    0.11s  
+  ⨯ can update category                                                  0.13s  
+  ⨯ can delete category                                                  0.11s  
+  ✓ returns404 for nonexistent category                                  0.11s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Skills\UserSkillApiTest
+  ✓ can list user skills                                                 0.16s  
+  ✓ can create user skill                                                0.17s  
+  ✓ cannot create user skill with invalid data                           0.16s  
+  ✓ can show user skill                                                  0.15s  
+  ✓ can update user skill                                                0.14s  
+  ✓ can delete user skill                                                0.14s  
+  ✓ returns404 for nonexistent user skill                                0.15s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Feature\Domain\Tenant\Controllers\TenantControllerTest
+  - index returns all tenants → Need to implement filter logic
+  - store creates new tenant → Need to implement filter logic
+  - show returns specific tenant → Need to implement filter logic
+  - update modifies existing tenant → Need to implement filter logic
+  - destroy deletes tenant → Need to implement filter logic
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Tenant\Controllers\TenantInvitationControllerTest
+  ✓ can send invitation                                                  0.18s  
+  ✓ can accept invitation                                                0.15s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Tenant\TenantApiTest
+  ✓ can list tenants                                                     0.25s  
+  ✓ can create tenant                                                    0.16s  
+  ✓ cannot create tenant with duplicate slug                             0.14s  
+  ✓ can show tenant                                                      0.17s  
+  ✓ can update tenant                                                    0.20s  
+  ✓ can delete tenant                                                    0.19s  
+  ✓ returns404 for nonexistent tenant                                    0.14s  
+  ✓ cannot access tenant user does not belong to                         0.18s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   PASS  Tests\Feature\Domain\Utils\IbanInfoControllerTest
+  ✓ successful lookup returns enriched data                              0.15s  
+  ✓ lookup for unknown iban returns not found                            0.10s  
+  ✓ lookup with invalid iban format returns validation error             0.12s  
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+WARNING:  database "testing" has no actual collation version, but a version was recorded
+
+   WARN  Tests\Feature\GTU\GTUAssignmentTest
+  ✓ auto assign gtu codes for high value item                            0.08s  
+  - auto assign gtu codes from product → Requires database setup         0.11s  
+  ✓ assign gtu code to invoice line                                      0.08s  
+  ✓ remove gtu code from invoice line                                    0.08s  
+  ✓ detect gtu by amount                                                 0.08s  
+  ✓ detect gtu by keywords                                               0.08s  
+  ✓ invoice line dto gtu methods                                         0.07s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Domain\Contractors\Jobs\ProcessContrac…  ErrorException   
+  Attempt to read property "status" on array
+
+  at app/Domain/Contractors/Jobs/ProcessContractorRegistryConfirmationJob.php:155
+    151▕             return RegistryConfirmationStatus::Failed;
+    152▕         }
+    153▕ 
+    154▕         foreach ($confirmations as $confirmation) {
+  ➜ 155▕             if (RegistryConfirmationStatus::Success !== $confirmation->status) {
+    156▕                 return RegistryConfirmationStatus::Failed;
+    157▕             }
+    158▕         }
+    159▕
+
+  1   app/Domain/Contractors/Jobs/ProcessContractorRegistryConfirmationJob.php:63
+  2   tests/Unit/Domain/Contractors/Jobs/ProcessContractorRegistryConfirmationJobTest.php:161
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Domain\Auth\Controllers\ApplicationInvitationContro…   
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+The following exception occurred during the last request:
+
+Tymon\JWTAuth\Exceptions\JWTException: Token could not be parsed from the request. in /var/www/html/vendor/tymon/jwt-auth/src/JWTGuard.php:412
+Stack trace:
+#0 /var/www/html/vendor/tymon/jwt-auth/src/JWTGuard.php(259): Tymon\JWTAuth\JWTGuard->requireToken()
+#1 /var/www/html/vendor/tymon/jwt-auth/src/JWTGuard.php(269): Tymon\JWTAuth\JWTGuard->getPayload()
+#2 /var/www/html/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php(339): Tymon\JWTAuth\JWTGuard->payload()
+#3 /var/www/html/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(361): Illuminate\Auth\AuthManager->__call()
+#4 /var/www/html/app/Http/Middleware/EnsureTwoFactorVerified.php(20): Illuminate\Support\Facades\Facade::__callStatic()
+#5 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): App\Http\Middleware\EnsureTwoFactorVerified->handle()
+#6 /var/www/html/app/Http/Middleware/SetLocaleFromHeader.php(23): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#7 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): App\Http\Middleware\SetLocaleFromHeader->handle()
+#8 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#9 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Routing\Middleware\SubstituteBindings->handle()
+#10 /var/www/html/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(63): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#11 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Auth\Middleware\Authenticate->handle()
+#12 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(126): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#13 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\Pipeline\Pipeline->then()
+#14 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\Routing\Router->runRouteWithinStack()
+#15 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\Routing\Router->runRoute()
+#16 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\Routing\Router->dispatchToRoute()
+#17 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
+#18 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(169): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}()
+#19 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#20 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#21 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
+#22 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#23 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#24 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
+#25 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#26 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\ValidatePostSize->handle()
+#27 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#28 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
+#29 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(61): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#30 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\HandleCors->handle()
+#31 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#32 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\TrustProxies->handle()
+#33 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#34 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle()
+#35 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#36 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\ValidatePathEncoding->handle()
+#37 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(126): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#38 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
+#39 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
+#40 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle()
+#41 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call()
+#42 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json()
+#43 /var/www/html/tests/Feature/Domain/Auth/Controllers/ApplicationInvitationControllerTest.php(61): Illuminate\Foundation\Testing\TestCase->postJson()
+#44 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php(1656): Tests\Feature\Domain\Auth\Controllers\ApplicationInvitationControllerTest->testCanAcceptInvitation()
+#45 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php(514): PHPUnit\Framework\TestCase->runTest()
+#46 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#47 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php(361): PHPUnit\Framework\TestRunner->run()
+#48 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#49 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#50 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#51 /var/www/html/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#52 /var/www/html/vendor/phpunit/phpunit/src/TextUI/Application.php(210): PHPUnit\TextUI\TestRunner->run()
+#53 /var/www/html/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run()
+#54 {main}
+
+----------------------------------------------------------------------------------
+
+Token could not be parsed from the request.
+
+  at tests/Feature/Domain/Auth/Controllers/ApplicationInvitationControllerTest.php:62
+     58▕         $invitee = User::factory()->create(['email' => 'invitee@example.com']);
+     59▕         $this->actingAs($invitee);
+     60▕ 
+     61▕         $response = $this->postJson("/api/v1/application/invitations/{$token}/accept");
+  ➜  62▕         $response->assertOk();
+     63▕         $this->assertDatabaseHas('application_invitations', [
+     64▕             'id'     => $invitation->id,
+     65▕             'status' => 'accepted',
+     66▕         ]);
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Domain\Auth\Controllers\ApplicationInvitationContro…   
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+The following exception occurred during the last request:
+
+Tymon\JWTAuth\Exceptions\JWTException: Token could not be parsed from the request. in /var/www/html/vendor/tymon/jwt-auth/src/JWTGuard.php:412
+Stack trace:
+#0 /var/www/html/vendor/tymon/jwt-auth/src/JWTGuard.php(259): Tymon\JWTAuth\JWTGuard->requireToken()
+#1 /var/www/html/vendor/tymon/jwt-auth/src/JWTGuard.php(269): Tymon\JWTAuth\JWTGuard->getPayload()
+#2 /var/www/html/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php(339): Tymon\JWTAuth\JWTGuard->payload()
+#3 /var/www/html/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(361): Illuminate\Auth\AuthManager->__call()
+#4 /var/www/html/app/Http/Middleware/EnsureTwoFactorVerified.php(20): Illuminate\Support\Facades\Facade::__callStatic()
+#5 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): App\Http\Middleware\EnsureTwoFactorVerified->handle()
+#6 /var/www/html/app/Http/Middleware/SetLocaleFromHeader.php(23): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#7 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): App\Http\Middleware\SetLocaleFromHeader->handle()
+#8 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#9 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Routing\Middleware\SubstituteBindings->handle()
+#10 /var/www/html/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(63): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#11 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Auth\Middleware\Authenticate->handle()
+#12 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(126): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#13 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\Pipeline\Pipeline->then()
+#14 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\Routing\Router->runRouteWithinStack()
+#15 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\Routing\Router->runRoute()
+#16 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\Routing\Router->dispatchToRoute()
+#17 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
+#18 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(169): Illuminate\Foundation\Http\Kernel->Illuminate\Foundation\Http\{closure}()
+#19 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#20 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#21 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
+#22 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#23 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#24 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
+#25 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#26 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\ValidatePostSize->handle()
+#27 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#28 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
+#29 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(61): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#30 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\HandleCors->handle()
+#31 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#32 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\TrustProxies->handle()
+#33 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#34 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle()
+#35 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#36 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(208): Illuminate\Http\Middleware\ValidatePathEncoding->handle()
+#37 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(126): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#38 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
+#39 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
+#40 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle()
+#41 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call()
+#42 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json()
+#43 /var/www/html/tests/Feature/Domain/Auth/Controllers/ApplicationInvitationControllerTest.php(85): Illuminate\Foundation\Testing\TestCase->postJson()
+#44 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php(1656): Tests\Feature\Domain\Auth\Controllers\ApplicationInvitationControllerTest->testCanRejectInvitation()
+#45 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php(514): PHPUnit\Framework\TestCase->runTest()
+#46 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#47 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php(361): PHPUnit\Framework\TestRunner->run()
+#48 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#49 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#50 /var/www/html/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#51 /var/www/html/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#52 /var/www/html/vendor/phpunit/phpunit/src/TextUI/Application.php(210): PHPUnit\TextUI\TestRunner->run()
+#53 /var/www/html/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run()
+#54 {main}
+
+----------------------------------------------------------------------------------
+
+Token could not be parsed from the request.
+
+  at tests/Feature/Domain/Auth/Controllers/ApplicationInvitationControllerTest.php:86
+     82▕         $invitee = User::factory()->create(['email' => 'invitee@example.com']);
+     83▕         $this->actingAs($invitee);
+     84▕ 
+     85▕         $response = $this->postJson("/api/v1/application/invitations/{$token}/reject");
+  ➜  86▕         $response->assertOk();
+     87▕         $this->assertDatabaseHas('application_invitations', [
+     88▕             'id'     => $invitation->id,
+     89▕             'status' => 'rejected',
+     90▕         ]);
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Domain\Skills\SkillCategoryApiTest > can create cat…   
+  Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+  at tests/Feature/Domain/Skills/SkillCategoryApiTest.php:67
+     63▕         ];
+     64▕ 
+     65▕         $response = $this->postJson($this->baseUrl, $categoryData);
+     66▕ 
+  ➜  67▕         $response->assertStatus(Response::HTTP_CREATED)
+     68▕             ->assertJsonStructure([
+     69▕                 'data' => [
+     70▕                     'id',
+     71▕                     'name',
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Domain\Skills\SkillCategoryApiTest > can update cat…   
+  Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+  at tests/Feature/Domain/Skills/SkillCategoryApiTest.php:141
+    137▕         ];
+    138▕ 
+    139▕         $response = $this->putJson($this->baseUrl . '/' . $category->id, $updateData);
+    140▕ 
+  ➜ 141▕         $response->assertStatus(Response::HTTP_OK)
+    142▕             ->assertJsonStructure([
+    143▕                 'data' => [
+    144▕                     'id',
+    145▕                     'name',
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Domain\Skills\SkillCategoryApiTest > can delete cat…   
+  Expected response status code [204] but received 403.
+Failed asserting that 403 is identical to 204.
+
+  at tests/Feature/Domain/Skills/SkillCategoryApiTest.php:172
+    168▕         $category = SkillCategory::factory()->create();
+    169▕ 
+    170▕         $response = $this->deleteJson($this->baseUrl . '/' . $category->id);
+    171▕ 
+  ➜ 172▕         $response->assertStatus(Response::HTTP_NO_CONTENT);
+    173▕         $this->assertDatabaseMissing('skill_categories', ['id' => $category->id]);
+    174▕     }
+    175▕ 
+    176▕     public function testReturns404ForNonexistentCategory(): void
+
+
+  Tests:    6 failed, 31 skipped, 269 passed (1317 assertions)
+  Duration: 40.00s
+

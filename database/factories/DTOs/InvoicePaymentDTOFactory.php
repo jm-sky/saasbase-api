@@ -16,11 +16,11 @@ class InvoicePaymentDTOFactory extends DTOFactory
             dueDate: $attributes['dueDate'] ?? Carbon::now()->addDays(14),
             paidDate: $attributes['paidDate'] ?? null,
             paidAmount: $attributes['paidAmount'] ?? BigDecimal::of('0'),
-            method: $attributes['method'] ?? (new PaymentMethodDTOFactory())->make(),
+            method: $attributes['method'] ?? (new PaymentMethodDTOFactory)->make(),
             reference: $attributes['reference'] ?? fake()->numerify('PAY-####'),
             terms: $attributes['terms'] ?? 'Net 14',
             notes: $attributes['notes'] ?? fake()->optional()->sentence(),
-            bankAccount: $attributes['bankAccount'] ?? (new InvoicePaymentBankAccountDTOFactory())->make(),
+            bankAccount: $attributes['bankAccount'] ?? (new InvoicePaymentBankAccountDTOFactory)->make(),
         );
     }
 
@@ -31,11 +31,11 @@ class InvoicePaymentDTOFactory extends DTOFactory
             dueDate: Carbon::now()->addDays(14),
             paidDate: Carbon::now(),
             paidAmount: BigDecimal::of(fake()->randomFloat(2, 100, 1000)),
-            method: (new PaymentMethodDTOFactory())->make(),
+            method: (new PaymentMethodDTOFactory)->make(),
             reference: fake()->numerify('PAY-####'),
             terms: 'Net 14',
             notes: fake()->optional()->sentence(),
-            bankAccount: $attributes['bankAccount'] ?? (new InvoicePaymentBankAccountDTOFactory())->make(),
+            bankAccount: $attributes['bankAccount'] ?? (new InvoicePaymentBankAccountDTOFactory)->make(),
         );
     }
 }

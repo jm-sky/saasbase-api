@@ -2,13 +2,15 @@
 
 namespace App\Domain\Tenant\Requests;
 
+use App\Domain\Rights\Enums\RoleName;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rule;
 
 class SendInvitationRequest extends BaseFormRequest
 {
     public function authorize(): bool
     {
-        // Authorization handled in controller/policy
+        // Role-level authorization (Owner/Admin only) handled in the controller.
         return true;
     }
 
@@ -16,7 +18,7 @@ class SendInvitationRequest extends BaseFormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'role'  => ['required', 'string', 'max:64'],
+            'role' => ['required', 'string', Rule::in(array_column(RoleName::cases(), 'value'))],
         ];
     }
 }

@@ -29,16 +29,16 @@ class UserSettingsTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->user = $this->authenticateUser($this->tenant);
     }
 
-    public function testUserCanGetSettings(): void
+    public function test_user_can_get_settings(): void
     {
         // Create settings
         UserSettings::create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'language' => 'en',
-            'theme'    => 'light',
+            'theme' => 'light',
             'timezone' => 'UTC',
         ]);
 
@@ -54,30 +54,28 @@ class UserSettingsTest extends TestCase
                 'twoFactorEnabled',
                 'twoFactorConfirmed',
                 'preferences',
-            ])
-        ;
+            ]);
     }
 
-    public function testUserCanUpdateSettings(): void
+    public function test_user_can_update_settings(): void
     {
         $response = $this->putJson('/api/v1/user/settings', [
-            'language'    => 'pl',
-            'theme'       => 'dark',
-            'timezone'    => 'Europe/Warsaw',
+            'language' => 'pl',
+            'theme' => 'dark',
+            'timezone' => 'Europe/Warsaw',
             'preferences' => ['notifications' => 'email'],
         ]);
 
         $response->assertOk()
             ->assertJsonFragment([
-                'language'    => 'pl',
-                'theme'       => 'dark',
-                'timezone'    => 'Europe/Warsaw',
+                'language' => 'pl',
+                'theme' => 'dark',
+                'timezone' => 'Europe/Warsaw',
                 'preferences' => ['notifications' => 'email'],
-            ])
-        ;
+            ]);
     }
 
-    public function testUserCanUpdateLanguage(): void
+    public function test_user_can_update_language(): void
     {
         $response = $this->patchJson('/api/v1/user/settings/language', [
             'language' => 'de',
@@ -86,29 +84,26 @@ class UserSettingsTest extends TestCase
         $response->assertOk()
             ->assertJsonFragment([
                 'language' => 'de',
-            ])
-        ;
+            ]);
     }
 
-    public function testUserCannotUpdateSettingsWithInvalidData(): void
+    public function test_user_cannot_update_settings_with_invalid_data(): void
     {
         $response = $this->putJson('/api/v1/user/settings', [
             'theme' => 'invalid-theme',
         ]);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['theme'])
-        ;
+            ->assertJsonValidationErrors(['theme']);
     }
 
-    public function testUserCannotUpdateLanguageWithInvalidData(): void
+    public function test_user_cannot_update_language_with_invalid_data(): void
     {
         $response = $this->patchJson('/api/v1/user/settings/language', [
             'language' => '',
         ]);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['language'])
-        ;
+            ->assertJsonValidationErrors(['language']);
     }
 }

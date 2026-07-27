@@ -10,9 +10,9 @@ class FinancialWidgetMetricsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'current'       => $this->resource['current'],
-            'previous'      => $this->resource['previous'],
-            'year'          => $this->resource['year'],
+            'current' => $this->resource['current'],
+            'previous' => $this->resource['previous'],
+            'year' => $this->resource['year'],
             'changePercent' => $this->resource['changePercent'],
         ];
     }

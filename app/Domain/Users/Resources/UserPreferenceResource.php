@@ -15,19 +15,19 @@ class UserPreferenceResource extends JsonResource
     {
         /* @var UserPreference $this */
         return [
-            'id'                  => $this->id,
-            'userId'              => $this->user_id,
-            'language'            => $this->language,
-            'timezone'            => $this->timezone,
-            'decimalSeparator'    => $this->decimal_separator,
-            'dateFormat'          => $this->date_format,
-            'darkMode'            => $this->dark_mode,
-            'isSoundEnabled'      => $this->is_sound_enabled,
-            'isProfilePublic'     => $this->is_profile_public,
-            'fieldVisibility'     => $this->field_visibility,
+            'id' => $this->id,
+            'userId' => $this->user_id,
+            'language' => $this->language,
+            'timezone' => $this->timezone,
+            'decimalSeparator' => $this->decimal_separator,
+            'dateFormat' => $this->date_format,
+            'darkMode' => $this->dark_mode,
+            'isSoundEnabled' => $this->is_sound_enabled,
+            'isProfilePublic' => $this->is_profile_public,
+            'fieldVisibility' => $this->field_visibility,
             'visibilityPerTenant' => $this->visibility_per_tenant,
-            'createdAt'           => $this->created_at,
-            'updatedAt'           => $this->updated_at,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

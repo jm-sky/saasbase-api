@@ -22,8 +22,7 @@ class RegonLookupJob implements ShouldQueue
 
     public function __construct(
         public CompanyContext $context,
-    ) {
-    }
+    ) {}
 
     /**
      * Executes the job.

@@ -20,12 +20,11 @@ final class ChatMessageDTO extends BaseDTO
         public ?string $parentId,
         public string $createdAt,
         public ?string $editedAt,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
-        if (!$model instanceof ChatMessage) {
+        if (! $model instanceof ChatMessage) {
             throw new \InvalidArgumentException('Model must be instance of ChatMessage');
         }
 
@@ -62,16 +61,16 @@ final class ChatMessageDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'tempId'    => $this->tempId,
-            'userId'    => $this->userId,
-            'user'      => $this->user->toArray(),
-            'content'   => $this->content,
-            'role'      => $this->role,
-            'isAi'      => $this->isAi,
-            'parentId'  => $this->parentId,
+            'id' => $this->id,
+            'tempId' => $this->tempId,
+            'userId' => $this->userId,
+            'user' => $this->user->toArray(),
+            'content' => $this->content,
+            'role' => $this->role,
+            'isAi' => $this->isAi,
+            'parentId' => $this->parentId,
             'createdAt' => $this->createdAt,
-            'editedAt'  => $this->editedAt,
+            'editedAt' => $this->editedAt,
         ];
     }
 }

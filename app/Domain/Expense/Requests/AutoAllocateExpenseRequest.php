@@ -16,7 +16,7 @@ class AutoAllocateExpenseRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'dimensions'        => ['nullable', 'array'],
+            'dimensions' => ['nullable', 'array'],
             'dimensions.*.type' => [
                 'required_with:dimensions',
                 'string',
@@ -30,8 +30,8 @@ class AutoAllocateExpenseRequest extends BaseFormRequest
     {
         return [
             'dimensions.*.type.required_with' => 'Dimension type is required when dimensions are provided.',
-            'dimensions.*.type.in'            => 'Invalid dimension type.',
-            'dimensions.*.id.required_with'   => 'Dimension ID is required when dimensions are provided.',
+            'dimensions.*.type.in' => 'Invalid dimension type.',
+            'dimensions.*.id.required_with' => 'Dimension ID is required when dimensions are provided.',
         ];
     }
 }

@@ -9,22 +9,22 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
 
 /**
- * @property string      $id
- * @property ?string     $tenant_id
- * @property ?string     $log_name
- * @property string      $description
- * @property ?string     $subject_type
- * @property ?int        $subject_id
- * @property ?string     $causer_type
- * @property ?int        $causer_id
- * @property ?string     $event
- * @property ?string     $batch_uuid
+ * @property string $id
+ * @property ?string $tenant_id
+ * @property ?string $log_name
+ * @property string $description
+ * @property ?string $subject_type
+ * @property ?int $subject_id
+ * @property ?string $causer_type
+ * @property ?int $causer_id
+ * @property ?string $event
+ * @property ?string $batch_uuid
  * @property ?Collection $properties
- * @property ?Carbon     $created_at
- * @property ?Carbon     $updated_at
- * @property ?Model      $causer
- * @property Collection  $changes
- * @property ?Model      $subject
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Model $causer
+ * @property Collection $changes
+ * @property ?Model $subject
  */
 class Activity extends BaseActivity
 {

@@ -2,6 +2,4 @@
 
 namespace App\Services\ViesLookup\Exceptions;
 
-class ViesLookupException extends \Exception
-{
-}
+class ViesLookupException extends \Exception {}

@@ -26,8 +26,7 @@ final class InvoiceDataTemplateDTO extends BaseDataDTO
         public readonly array $options = [],
         public readonly ?string $description = null,
         public readonly ?string $logoUrl = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -54,22 +53,22 @@ final class InvoiceDataTemplateDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'id'                  => $this->id,
-            'number'              => $this->number,
-            'issueDate'           => $this->issueDate,
-            'dueDate'             => $this->dueDate,
-            'seller'              => $this->seller->toArray(),
-            'buyer'               => $this->buyer->toArray(),
-            'lines'               => $this->lines,
-            'vatSummary'          => $this->vatSummary,
-            'formattedTotalNet'   => $this->formattedTotalNet,
-            'formattedTotalTax'   => $this->formattedTotalTax,
+            'id' => $this->id,
+            'number' => $this->number,
+            'issueDate' => $this->issueDate,
+            'dueDate' => $this->dueDate,
+            'seller' => $this->seller->toArray(),
+            'buyer' => $this->buyer->toArray(),
+            'lines' => $this->lines,
+            'vatSummary' => $this->vatSummary,
+            'formattedTotalNet' => $this->formattedTotalNet,
+            'formattedTotalTax' => $this->formattedTotalTax,
             'formattedTotalGross' => $this->formattedTotalGross,
-            'currency'            => $this->currency,
-            'payment'             => $this->payment,
-            'options'             => $this->options,
-            'description'         => $this->description,
-            'logoUrl'             => $this->logoUrl,
+            'currency' => $this->currency,
+            'payment' => $this->payment,
+            'options' => $this->options,
+            'description' => $this->description,
+            'logoUrl' => $this->logoUrl,
         ];
     }
 }

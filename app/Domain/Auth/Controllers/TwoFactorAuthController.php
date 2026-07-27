@@ -14,8 +14,7 @@ class TwoFactorAuthController extends Controller
 {
     public function __construct(
         private readonly TwoFactorAuthService $twoFactorAuthService
-    ) {
-    }
+    ) {}
 
     public function setup(Request $request): JsonResponse
     {
@@ -25,8 +24,8 @@ class TwoFactorAuthController extends Controller
         $setup = $this->twoFactorAuthService->generateTwoFactorSetup($user);
 
         return response()->json([
-            'secret'        => $setup['secret'],
-            'qrCodeUrl'     => $setup['qr_code_url'],
+            'secret' => $setup['secret'],
+            'qrCodeUrl' => $setup['qr_code_url'],
             'recoveryCodes' => $setup['recovery_codes'],
         ]);
     }
@@ -40,11 +39,13 @@ class TwoFactorAuthController extends Controller
             'code' => ['required', 'string', 'size:6'],
         ]);
 
-        if (!$this->twoFactorAuthService->enableTwoFactor($user, $request->input('code'))) {
+        if (! $this->twoFactorAuthService->enableTwoFactor($user, $request->input('code'))) {
             return response()->json([
                 'message' => 'Invalid authentication code.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        activity('security')->causedBy($user)->event('2fa_enabled')->log('Two factor authentication enabled');
 
         return response()->json([
             'message' => 'Two factor authentication has been enabled.',
@@ -58,6 +59,8 @@ class TwoFactorAuthController extends Controller
 
         $this->twoFactorAuthService->disableTwoFactor($user);
 
+        activity('security')->causedBy($user)->event('2fa_disabled')->log('Two factor authentication disabled');
+
         return response()->json([
             'message' => 'Two factor authentication has been disabled.',
         ]);
@@ -68,7 +71,7 @@ class TwoFactorAuthController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        if (!$user->settings?->two_factor_enabled) {
+        if (! $user->settings?->two_factor_enabled) {
             return response()->json([
                 'message' => 'Two factor authentication is not enabled.',
             ], Response::HTTP_BAD_REQUEST);
@@ -78,13 +81,13 @@ class TwoFactorAuthController extends Controller
             'code' => ['required', 'string'],
         ]);
 
-        $code   = $request->input('code');
+        $code = $request->input('code');
         $secret = decrypt($user->settings->two_factor_secret);
 
-        $isValidCode         = $this->twoFactorAuthService->verifyCode($secret, $code);
+        $isValidCode = $this->twoFactorAuthService->verifyCode($secret, $code);
         $isValidRecoveryCode = $this->twoFactorAuthService->verifyRecoveryCode($user, $code);
 
-        if (!$isValidCode && !$isValidRecoveryCode) {
+        if (! $isValidCode && ! $isValidRecoveryCode) {
             return response()->json([
                 'message' => 'Invalid authentication code.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -95,7 +98,7 @@ class TwoFactorAuthController extends Controller
 
         return response()->json([
             'accessToken' => $token,
-            'tokenType'   => 'bearer',
+            'tokenType' => 'bearer',
         ]);
     }
 }

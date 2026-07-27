@@ -23,13 +23,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon $valid_to
  * @property string $created_by
  * @property Tenant $tenant
- * @property User   $creator
+ * @property User $creator
  */
 class EDoreczeniaCertificate extends BaseModel implements HasMedia
 {
-    use SoftDeletes;
     use BelongsToTenant;
     use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -44,7 +44,7 @@ class EDoreczeniaCertificate extends BaseModel implements HasMedia
 
     protected $casts = [
         'valid_from' => 'datetime',
-        'valid_to'   => 'datetime',
+        'valid_to' => 'datetime',
     ];
 
     public function tenant(): BelongsTo
@@ -60,7 +60,6 @@ class EDoreczeniaCertificate extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('certificate')
-            ->singleFile()
-        ;
+            ->singleFile();
     }
 }

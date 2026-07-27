@@ -15,8 +15,8 @@ class StoreFeedRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'title'   => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string', new NoProfanity()],
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', new NoProfanity],
         ];
     }
 }

@@ -45,6 +45,8 @@ class InitializeTenantDefaults
             $this->createDefaultPositionCategories($tenant);
             $this->createOrganizationUnits($tenant, $owner);
             $this->seedDefaultMeasurementUnits($tenant);
+            $this->seedDefaultProjectStatuses($tenant);
+            $this->seedDefaultTaskStatuses($tenant);
             $this->seedDefaultTags($tenant);
             $this->createSubscription($tenant);
             $this->createNumberingTemplates($tenant);
@@ -55,35 +57,35 @@ class InitializeTenantDefaults
     {
         $defaultCategories = [
             [
-                'name'        => DefaultPositionCategory::Director->value,
-                'slug'        => Str::slug(DefaultPositionCategory::Director->value),
+                'name' => DefaultPositionCategory::Director->value,
+                'slug' => Str::slug(DefaultPositionCategory::Director->value),
                 'description' => 'Leadership positions',
-                'sort_order'  => 1,
+                'sort_order' => 1,
             ],
             [
-                'name'        => DefaultPositionCategory::Manager->value,
-                'slug'        => Str::slug(DefaultPositionCategory::Manager->value),
+                'name' => DefaultPositionCategory::Manager->value,
+                'slug' => Str::slug(DefaultPositionCategory::Manager->value),
                 'description' => 'Management positions',
-                'sort_order'  => 2,
+                'sort_order' => 2,
             ],
             [
-                'name'        => DefaultPositionCategory::Employee->value,
-                'slug'        => Str::slug(DefaultPositionCategory::Employee->value),
+                'name' => DefaultPositionCategory::Employee->value,
+                'slug' => Str::slug(DefaultPositionCategory::Employee->value),
                 'description' => 'Regular employee positions',
-                'sort_order'  => 3,
+                'sort_order' => 3,
             ],
             [
-                'name'        => DefaultPositionCategory::Trainee->value,
-                'slug'        => Str::slug(DefaultPositionCategory::Trainee->value),
+                'name' => DefaultPositionCategory::Trainee->value,
+                'slug' => Str::slug(DefaultPositionCategory::Trainee->value),
                 'description' => 'Learning and training positions',
-                'sort_order'  => 4,
+                'sort_order' => 4,
             ],
         ];
 
         foreach ($defaultCategories as $category) {
             PositionCategory::firstOrCreate([
                 'tenant_id' => $tenant->id,
-                'name'      => $category['name'],
+                'name' => $category['name'],
             ], $category);
         }
     }
@@ -111,9 +113,9 @@ class InitializeTenantDefaults
         foreach ($defaultUnits as $unit) {
             MeasurementUnit::withoutTenant()->firstOrCreate([
                 'tenant_id' => $tenant->id,
-                'code'      => $unit->code,
-                'name'      => $unit->name,
-                'category'  => $unit->category,
+                'code' => $unit->code,
+                'name' => $unit->name,
+                'category' => $unit->category,
             ]);
         }
     }
@@ -124,9 +126,9 @@ class InitializeTenantDefaults
 
         foreach ($defaultStatuses as $status) {
             ProjectStatus::withoutTenant()->firstOrCreate([
-                'tenant_id'  => $tenant->id,
-                'name'       => $status->name,
-                'color'      => $status->color,
+                'tenant_id' => $tenant->id,
+                'name' => $status->name,
+                'color' => $status->color,
                 'sort_order' => $status->sort_order,
                 'is_default' => $status->is_default,
             ]);
@@ -139,9 +141,9 @@ class InitializeTenantDefaults
 
         foreach ($defaultStatuses as $status) {
             TaskStatus::withoutTenant()->firstOrCreate([
-                'tenant_id'  => $tenant->id,
-                'name'       => $status->name,
-                'color'      => $status->color,
+                'tenant_id' => $tenant->id,
+                'name' => $status->name,
+                'color' => $status->color,
                 'sort_order' => $status->sort_order,
                 'is_default' => $status->is_default,
             ]);
@@ -152,18 +154,18 @@ class InitializeTenantDefaults
     {
         $subscriptionPlan = SubscriptionPlan::where('name', 'Free')->first();
 
-        if (!$subscriptionPlan) {
+        if (! $subscriptionPlan) {
             return;
         }
 
         $tenant->subscription()->create([
-            'id'                     => (string) Str::ulid(),
-            'subscription_plan_id'   => $subscriptionPlan->id,
+            'id' => (string) Str::ulid(),
+            'subscription_plan_id' => $subscriptionPlan->id,
             'stripe_subscription_id' => null,
-            'status'                 => SubscriptionStatus::ACTIVE,
-            'current_period_start'   => now(),
-            'current_period_end'     => now()->addYear(),
-            'cancel_at_period_end'   => false,
+            'status' => SubscriptionStatus::ACTIVE,
+            'current_period_start' => now(),
+            'current_period_end' => now()->addYear(),
+            'cancel_at_period_end' => false,
         ]);
     }
 
@@ -172,16 +174,16 @@ class InitializeTenantDefaults
         foreach (self::$defaultTags as $name => $meta) {
             Tag::withoutTenant()->firstOrCreate([
                 'tenant_id' => $tenant->id,
-                'name'      => $name,
-                'slug'      => Str::slug($name),
+                'name' => $name,
+                'slug' => Str::slug($name),
             ], [
-                'color'     => $meta['color'],
+                'color' => $meta['color'],
             ]);
         }
     }
 
     public function createNumberingTemplates(Tenant $tenant): void
     {
-        (new CreateNumberingTemplates())->execute($tenant);
+        (new CreateNumberingTemplates)->execute($tenant);
     }
 }

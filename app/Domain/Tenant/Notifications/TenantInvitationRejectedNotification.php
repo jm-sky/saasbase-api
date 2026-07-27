@@ -16,7 +16,7 @@ class TenantInvitationRejectedNotification extends Notification implements Shoul
     use Queueable;
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public User $notifiable,
@@ -36,14 +36,14 @@ class TenantInvitationRejectedNotification extends Notification implements Shoul
     public function toDatabase($notifiable): array
     {
         return [
-            'type'    => 'tenantInvitation.rejected',
-            'title'   => __('notifications.tenant_invitation.rejected.title'),
+            'type' => 'tenantInvitation.rejected',
+            'title' => __('notifications.tenant_invitation.rejected.title'),
             'message' => __('notifications.tenant_invitation.rejected.message', [
-                'name'   => $this->invitation->invitedUser->full_name,
+                'name' => $this->invitation->invitedUser->full_name,
                 'tenant' => $this->invitation->tenant->name,
-                'role'   => $this->invitation->role,
+                'role' => $this->invitation->role,
             ]),
-            'source'  => 'System',
+            'source' => 'System',
         ];
     }
 
@@ -65,18 +65,18 @@ class TenantInvitationRejectedNotification extends Notification implements Shoul
     public function broadcastWith()
     {
         return [
-            'id'      => $this->id,
-            'data'    => [
-                'type'    => 'tenantInvitation.rejected',
-                'title'   => __('notifications.tenant_invitation.rejected.title'),
+            'id' => $this->id,
+            'data' => [
+                'type' => 'tenantInvitation.rejected',
+                'title' => __('notifications.tenant_invitation.rejected.title'),
                 'message' => __('notifications.tenant_invitation.rejected.message', [
-                    'name'   => $this->invitation->invitedUser->full_name,
+                    'name' => $this->invitation->invitedUser->full_name,
                     'tenant' => $this->invitation->tenant->name,
-                    'role'   => $this->invitation->role,
+                    'role' => $this->invitation->role,
                 ]),
-                'source'  => 'System',
+                'source' => 'System',
             ],
-            'readAt'    => null,
+            'readAt' => null,
             'createdAt' => now(),
         ];
     }

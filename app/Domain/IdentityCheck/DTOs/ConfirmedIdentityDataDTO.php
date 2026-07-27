@@ -10,14 +10,13 @@ final class ConfirmedIdentityDataDTO extends BaseDataDTO
         public ?string $fullName = null,
         public ?string $pesel = null,
         public ?string $birthDate = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'fullName'  => $this->fullName,
-            'pesel'     => $this->pesel,
+            'fullName' => $this->fullName,
+            'pesel' => $this->pesel,
             'birthDate' => $this->birthDate,
         ];
     }

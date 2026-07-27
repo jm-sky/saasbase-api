@@ -30,11 +30,11 @@ class AdminProductController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'description'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('description', new AdvancedFilter()),
-            AllowedFilter::custom('unitId', new AdvancedFilter(), 'unit_id'),
-            AllowedFilter::custom('vatRateId', new AdvancedFilter(), 'vat_rate_id'),
-            AllowedFilter::custom('tenantId', new AdvancedFilter(), 'tenant_id'),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('description', new AdvancedFilter),
+            AllowedFilter::custom('unitId', new AdvancedFilter, 'unit_id'),
+            AllowedFilter::custom('vatRateId', new AdvancedFilter, 'vat_rate_id'),
+            AllowedFilter::custom('tenantId', new AdvancedFilter, 'tenant_id'),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
         ];
@@ -52,7 +52,7 @@ class AdminProductController extends Controller
 
     public function index(SearchProductRequest $request): JsonResponse
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
         $result['data'] = ProductDTO::collect($result['data']);
 
         return response()->json($result);
@@ -73,8 +73,7 @@ class AdminProductController extends Controller
     {
         $product = Product::withoutGlobalScope(TenantScope::class)
             ->with(['unit', 'vatRate'])
-            ->findOrFail($product->getKey())
-        ;
+            ->findOrFail($product->getKey());
 
         return response()->json(
             ProductDTO::fromModel($product)
@@ -84,8 +83,7 @@ class AdminProductController extends Controller
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
         $product = Product::withoutGlobalScope(TenantScope::class)
-            ->findOrFail($product->getKey())
-        ;
+            ->findOrFail($product->getKey());
 
         $product->update($request->validated());
         $product->load(['unit', 'vatRate']);
@@ -99,8 +97,7 @@ class AdminProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $product = Product::withoutGlobalScope(TenantScope::class)
-            ->findOrFail($product->getKey())
-        ;
+            ->findOrFail($product->getKey());
 
         $product->delete();
 

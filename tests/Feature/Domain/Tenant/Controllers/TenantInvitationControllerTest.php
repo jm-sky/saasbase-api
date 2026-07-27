@@ -26,10 +26,10 @@ class TenantInvitationControllerTest extends TestCase
     use RefreshDatabase;
     use WithAuthenticatedUser;
 
-    public function testCanSendInvitation(): void
+    public function test_can_send_invitation(): void
     {
         /** @var User $user */
-        $user   = User::factory()->create();
+        $user = User::factory()->create();
         $tenant = Tenant::factory()->create();
 
         $this->authenticateUser($tenant, $user);
@@ -38,32 +38,32 @@ class TenantInvitationControllerTest extends TestCase
             "/api/v1/tenants/{$tenant->id}/invitations",
             [
                 'email' => 'invitee@example.com',
-                'role'  => RoleName::ProjectMember->value,
+                'role' => RoleName::ProjectMember->value,
             ]
         );
 
         $response->assertCreated();
         $this->assertDatabaseHas('tenant_invitations', [
             'tenant_id' => $tenant->id,
-            'email'     => 'invitee@example.com',
-            'role'      => RoleName::ProjectMember->value,
-            'status'    => InvitationStatus::PENDING->value,
+            'email' => 'invitee@example.com',
+            'role' => RoleName::ProjectMember->value,
+            'status' => InvitationStatus::PENDING->value,
         ]);
     }
 
-    public function testCanAcceptInvitation(): void
+    public function test_can_accept_invitation(): void
     {
-        $user       = User::factory()->create();
-        $tenant     = Tenant::factory()->create();
-        $token      = 'e93cae90-1111-2222-3333-c1059f16a997';
+        $user = User::factory()->create();
+        $tenant = Tenant::factory()->create();
+        $token = 'e93cae90-1111-2222-3333-c1059f16a997';
         $invitation = TenantInvitation::create([
-            'tenant_id'   => $tenant->id,
-            'inviter_id'  => $user->id,
-            'email'       => 'invitee@example.com',
-            'role'        => RoleName::ProjectMember->value,
-            'token'       => $token,
-            'status'      => InvitationStatus::PENDING->value,
-            'expires_at'  => now()->addDays(7),
+            'tenant_id' => $tenant->id,
+            'inviter_id' => $user->id,
+            'email' => 'invitee@example.com',
+            'role' => RoleName::ProjectMember->value,
+            'token' => $token,
+            'status' => InvitationStatus::PENDING->value,
+            'expires_at' => now()->addDays(7),
         ]);
 
         /** @var User $invitee */
@@ -73,13 +73,13 @@ class TenantInvitationControllerTest extends TestCase
         $response = $this->postJson("/api/v1/tenants/invitations/{$token}/accept");
         $response->assertOk();
         $this->assertDatabaseHas('tenant_invitations', [
-            'id'     => $invitation->id,
+            'id' => $invitation->id,
             'status' => InvitationStatus::ACCEPTED->value,
         ]);
         $this->assertDatabaseHas('user_tenants', [
-            'user_id'   => $invitee->id,
+            'user_id' => $invitee->id,
             'tenant_id' => $tenant->id,
-            'role'      => RoleName::ProjectMember->value,
+            'role' => RoleName::ProjectMember->value,
         ]);
     }
 }

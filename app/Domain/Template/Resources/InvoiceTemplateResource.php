@@ -15,21 +15,21 @@ class InvoiceTemplateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenant_id,
-            'userId'      => $this->user_id,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'userId' => $this->user_id,
+            'name' => $this->name,
             'description' => $this->description,
-            'content'     => $this->content,
-            'category'    => $this->category?->value,
+            'content' => $this->content,
+            'category' => $this->category?->value,
             'previewData' => $this->preview_data,
-            'settings'    => $this->settings,
-            'isActive'    => $this->is_active,
-            'isDefault'   => $this->is_default,
-            'isSystem'    => null === $this->tenant_id,
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
-            'user'        => $this->whenLoaded('user', fn () => new UserPreviewResource($this->user)),
+            'settings' => $this->settings,
+            'isActive' => $this->is_active,
+            'isDefault' => $this->is_default,
+            'isSystem' => $this->tenant_id === null,
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
+            'user' => $this->whenLoaded('user', fn () => new UserPreviewResource($this->user)),
         ];
     }
 }

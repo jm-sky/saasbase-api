@@ -11,20 +11,20 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<TenantInvitation>
  *
- * @property string           $id
- * @property string           $tenantId
- * @property string           $inviterId
- * @property string           $email
- * @property string           $role
- * @property string           $token
- * @property string           $status
- * @property ?Carbon          $acceptedAt
- * @property Carbon           $expiresAt
- * @property ?Carbon          $createdAt
- * @property ?Carbon          $updatedAt
+ * @property string $id
+ * @property string $tenantId
+ * @property string $inviterId
+ * @property string $email
+ * @property string $role
+ * @property string $token
+ * @property string $status
+ * @property ?Carbon $acceptedAt
+ * @property Carbon $expiresAt
+ * @property ?Carbon $createdAt
+ * @property ?Carbon $updatedAt
  * @property TenantPreviewDTO $tenant
- * @property UserPreviewDTO   $inviter
- * @property ?UserPreviewDTO  $invitedUser
+ * @property UserPreviewDTO $inviter
+ * @property ?UserPreviewDTO $invitedUser
  */
 final class TenantInvitationDTO extends BaseDTO
 {
@@ -43,8 +43,7 @@ final class TenantInvitationDTO extends BaseDTO
         public readonly ?Carbon $createdAt = null,
         public readonly ?Carbon $updatedAt = null,
         public readonly ?UserPreviewDTO $invitedUser = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -90,20 +89,20 @@ final class TenantInvitationDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenantId,
-            'inviterId'   => $this->inviterId,
-            'email'       => $this->email,
-            'role'        => $this->role,
-            'token'       => $this->token,
-            'status'      => $this->status,
-            'tenant'      => $this->tenant->toArray(),
-            'inviter'     => $this->inviter->toArray(),
+            'id' => $this->id,
+            'tenantId' => $this->tenantId,
+            'inviterId' => $this->inviterId,
+            'email' => $this->email,
+            'role' => $this->role,
+            'token' => $this->token,
+            'status' => $this->status,
+            'tenant' => $this->tenant->toArray(),
+            'inviter' => $this->inviter->toArray(),
             'invitedUser' => $this->invitedUser?->toArray(),
-            'acceptedAt'  => $this->acceptedAt?->toIso8601String(),
-            'expiresAt'   => $this->expiresAt?->toIso8601String(),
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
+            'acceptedAt' => $this->acceptedAt?->toIso8601String(),
+            'expiresAt' => $this->expiresAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

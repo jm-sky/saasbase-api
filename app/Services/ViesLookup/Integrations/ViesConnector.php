@@ -20,7 +20,7 @@ class ViesConnector extends Connector
     {
         return [
             'Content-Type' => 'text/xml',
-            'Accept'       => 'text/xml; charset=UTF-8',
+            'Accept' => 'text/xml; charset=UTF-8',
         ];
     }
 }

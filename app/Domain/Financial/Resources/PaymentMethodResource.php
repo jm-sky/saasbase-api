@@ -13,13 +13,13 @@ class PaymentMethodResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'          => $this->id,
-            'tenantId'    => $this->tenant_id,
-            'code'        => $this->code,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'code' => $this->code,
+            'name' => $this->name,
             'paymentDays' => $this->payment_days,
-            'createdAt'   => $this->created_at?->toIso8601String(),
-            'updatedAt'   => $this->updated_at?->toIso8601String(),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
         ];
     }
 }

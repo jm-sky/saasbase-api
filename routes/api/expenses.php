@@ -7,7 +7,7 @@ use App\Domain\Expense\Controllers\ExpenseAttachmentsController;
 use App\Domain\Expense\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->group(function () {
     Route::get('expenses/search', [ExpenseController::class, 'search'])->name('expenses.search');
     Route::get('expenses/export', [ExpenseController::class, 'export']);
     Route::post('expenses/upload-for-ocr', [ExpenseController::class, 'uploadForOcr']);
@@ -37,6 +37,6 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::get('expenses/{expense}/attachments/{media}/download', [ExpenseAttachmentsController::class, 'download'])->name('expenses.attachments.download');
     Route::get('expenses/{expense}/attachments/{media}/preview', [ExpenseAttachmentsController::class, 'preview'])->name('expenses.attachments.preview');
-    Route::apiResource('expenses/{expense}/attachments', ExpenseAttachmentsController::class);
+    Route::apiResource('expenses/{expense}/attachments', ExpenseAttachmentsController::class)->names('expenses.attachments');
     Route::apiResource('expenses', ExpenseController::class);
 });

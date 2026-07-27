@@ -20,14 +20,14 @@ class VatRateResource extends JsonResource
     {
         /* @var VatRate $this->resource */
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'rate'        => $this->rate,
-            'type'        => $this->type->value,
+            'id' => $this->id,
+            'name' => $this->name,
+            'rate' => $this->rate,
+            'type' => $this->type->value,
             'countryCode' => $this->country_code,
-            'active'      => $this->active,
-            'validFrom'   => $this->valid_from?->toIso8601String(),
-            'validTo'     => $this->valid_to?->toIso8601String(),
+            'active' => $this->active,
+            'validFrom' => $this->valid_from?->toIso8601String(),
+            'validTo' => $this->valid_to?->toIso8601String(),
         ];
     }
 }

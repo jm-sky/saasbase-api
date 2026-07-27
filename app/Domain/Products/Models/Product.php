@@ -30,39 +30,39 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @property string               $id
- * @property string               $tenant_id
- * @property string               $name
- * @property ProductType          $type
- * @property ?string              $description
- * @property string               $unit_id
- * @property float                $price_net
- * @property ?string              $vat_rate_id
- * @property ?string              $pkwiu_code
- * @property ?array               $gtu_codes
- * @property string               $symbol
- * @property ?string              $ean
- * @property ?string              $external_id
- * @property ?string              $source_system
- * @property Carbon               $created_at
- * @property Carbon               $updated_at
- * @property ?Carbon              $deleted_at
- * @property MeasurementUnit      $unit
- * @property ?VatRate             $vatRate
+ * @property string $id
+ * @property string $tenant_id
+ * @property string $name
+ * @property ProductType $type
+ * @property ?string $description
+ * @property string $unit_id
+ * @property float $price_net
+ * @property ?string $vat_rate_id
+ * @property ?string $pkwiu_code
+ * @property ?array $gtu_codes
+ * @property string $symbol
+ * @property ?string $ean
+ * @property ?string $external_id
+ * @property ?string $source_system
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Carbon $deleted_at
+ * @property MeasurementUnit $unit
+ * @property ?VatRate $vatRate
  * @property ?PKWiUClassification $pkwiuClassification
- * @property Collection|string[]  $tags
+ * @property Collection|string[] $tags
  */
 class Product extends BaseModel implements HasMedia, HasMediaUrl
 {
-    use SoftDeletes;
     use BelongsToTenant;
-    use InteractsWithMedia;
+    use HasActivityLog;
+    use HasActivityLogging;
     use HasMediaSignedUrls;
     use HasTags;
     use HaveComments;
-    use HasActivityLog;
-    use HasActivityLogging;
+    use InteractsWithMedia;
     use IsSearchable;
+    use SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -87,7 +87,7 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
      */
     protected $casts = [
         'price_net' => 'float',
-        'type'      => ProductType::class,
+        'type' => ProductType::class,
         'gtu_codes' => 'json',
     ];
 
@@ -106,8 +106,7 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
             ->append('-', $name)
             ->slug()
             ->limit(100, '')
-            ->toString()
-        ;
+            ->toString();
     }
 
     public function unit(): BelongsTo
@@ -139,15 +138,15 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
     {
         $codes = $this->getGtuCodes();
 
-        if (!in_array($code, $codes)) {
-            $codes[]         = $code;
+        if (! in_array($code, $codes)) {
+            $codes[] = $code;
             $this->gtu_codes = $codes;
         }
     }
 
     public function removeGtuCode(string $code): void
     {
-        $codes           = array_values(array_filter($this->getGtuCodes(), fn ($c) => $c !== $code));
+        $codes = array_values(array_filter($this->getGtuCodes(), fn ($c) => $c !== $code));
         $this->gtu_codes = $codes;
     }
 
@@ -160,8 +159,7 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
     {
         $this->addMediaCollection('logo')
             ->singleFile()
-            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']))
-        ;
+            ->acceptsFile(fn (File $file) => in_array($file->mimeType, ['image/jpeg', 'image/png', 'image/webp']));
 
         $this->addMediaCollection('attachments');
     }
@@ -170,13 +168,12 @@ class Product extends BaseModel implements HasMedia, HasMediaUrl
     {
         $this->addMediaConversion('thumb')
             ->width(config('domains.products.logo.size', 256))
-            ->height(config('domains.products.logo.size', 256))
-        ;
+            ->height(config('domains.products.logo.size', 256));
     }
 
     public function getMediaUrl(string $collectionName, string $fileName): string
     {
-        if ('logo' === $collectionName) {
+        if ($collectionName === 'logo') {
             return $this->getMediaSignedUrl($collectionName, $fileName);
         }
 

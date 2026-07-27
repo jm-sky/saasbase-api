@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Common\Models\Contact>
+ * @extends Factory<Contact>
  */
 class ContactFactory extends Factory
 {
@@ -18,17 +18,17 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'            => Str::ulid()->toString(),
-            'first_name'    => $this->faker->firstName(),
-            'last_name'     => $this->faker->lastName(),
-            'position'      => $this->faker->optional()->jobTitle(),
-            'email'         => $this->faker->unique()->safeEmail(),
-            'phone_number'  => $this->faker->optional()->phoneNumber(),
-            'emails'        => [$this->faker->safeEmail()],
+            'id' => Str::ulid()->toString(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'position' => $this->faker->optional()->jobTitle(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone_number' => $this->faker->optional()->phoneNumber(),
+            'emails' => [$this->faker->safeEmail()],
             'phone_numbers' => [$this->faker->phoneNumber()],
-            'notes'         => $this->faker->optional()->sentence(),
-            'user_id'       => User::factory(),
-            'tenant_id'     => Tenant::factory(),
+            'notes' => $this->faker->optional()->sentence(),
+            'user_id' => User::factory(),
+            'tenant_id' => Tenant::factory(),
         ];
     }
 }

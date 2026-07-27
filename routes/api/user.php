@@ -8,22 +8,23 @@ use App\Domain\Auth\Controllers\UserIdentityController;
 use App\Domain\Auth\Controllers\UserProfileController;
 use App\Domain\Auth\Controllers\UserProfileImageController;
 use App\Domain\Auth\Controllers\UserSettingsController;
+use App\Domain\IdentityCheck\Controllers\IdentityConfirmationController;
 use App\Domain\Skills\Controllers\UserSkillController;
 use App\Domain\Users\Controllers\NotificationSettingController;
 use App\Domain\Users\Controllers\SecurityEventController;
 use App\Domain\Users\Controllers\TrustedDeviceController;
+use App\Domain\Users\Controllers\UserPreferenceController;
 use App\Domain\Users\Controllers\UserTableSettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::withoutMiddleware(['auth:api', 'is_active'])
     ->get('user/profile-image/{user}', [UserProfileImageController::class, 'showForUser'])
-    ->name('user.profile-image.showForUser')
-;
+    ->name('user.profile-image.showForUser');
 
-Route::middleware('auth:api')->get('me', MeController::class);
-Route::middleware('auth:api')->get('me/logs', MeActivityLogsController::class);
+Route::middleware(['auth:api', 'session.active'])->get('me', MeController::class);
+Route::middleware(['auth:api', 'session.active'])->get('me/logs', MeActivityLogsController::class);
 
-Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->prefix('user')->group(function () {
     Route::get('profile', [UserProfileController::class, 'show']);
     Route::put('profile', [UserProfileController::class, 'update']);
     Route::get('settings', [UserSettingsController::class, 'show']);
@@ -32,10 +33,10 @@ Route::middleware(['auth:api', 'is_active'])->prefix('user')->group(function () 
     Route::post('profile-image', [UserProfileImageController::class, 'upload'])->name('user.profile-image.upload');
     Route::delete('profile-image', [UserProfileImageController::class, 'delete'])->name('user.profile-image.delete');
     Route::get('profile-image', [UserProfileImageController::class, 'show'])->name('user.profile-image.show');
-    Route::apiResource('skills', UserSkillController::class);
+    Route::apiResource('skills', UserSkillController::class)->names('user.skills');
 });
 
-Route::middleware(['auth:api', 'is_active'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/archive', [NotificationController::class, 'archive']);
@@ -65,6 +66,14 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
         Route::put('/bulk', [NotificationSettingController::class, 'updateBulk']);
     });
 
+    // Preferences routes (incl. profile field visibility — the only way a
+    // user can limit what PublicUserController::show() exposes about them)
+    Route::prefix('preferences')->group(function () {
+        Route::get('/', [UserPreferenceController::class, 'show']);
+        Route::put('/', [UserPreferenceController::class, 'update']);
+        Route::post('/reset', [UserPreferenceController::class, 'reset']);
+    });
+
     // Trusted devices routes
     Route::prefix('trusted-devices')->group(function () {
         Route::get('/', [TrustedDeviceController::class, 'index']);
@@ -83,7 +92,7 @@ Route::middleware(['auth:api', 'is_active'])->group(function () {
 
     // User Identity Confirmation (EPUAP)
     Route::prefix('identity/confirmation')->group(function () {
-        Route::get('template', [App\Domain\IdentityCheck\Controllers\IdentityConfirmationController::class, 'generateTemplate']);
-        Route::post('submit', [App\Domain\IdentityCheck\Controllers\IdentityConfirmationController::class, 'submitSigned']);
+        Route::get('template', [IdentityConfirmationController::class, 'generateTemplate']);
+        Route::post('submit', [IdentityConfirmationController::class, 'submitSigned']);
     });
 });

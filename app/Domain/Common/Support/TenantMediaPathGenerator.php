@@ -15,7 +15,7 @@ class TenantMediaPathGenerator implements PathGenerator
      */
     public function getPath(Media $media): string
     {
-        return $this->getBasePath($media) . '/';
+        return $this->getBasePath($media).'/';
     }
 
     /*
@@ -23,7 +23,7 @@ class TenantMediaPathGenerator implements PathGenerator
      */
     public function getPathForConversions(Media $media): string
     {
-        return $this->getBasePath($media) . '/conversions/';
+        return $this->getBasePath($media).'/conversions/';
     }
 
     /*
@@ -31,7 +31,7 @@ class TenantMediaPathGenerator implements PathGenerator
      */
     public function getPathForResponsiveImages(Media $media): string
     {
-        return $this->getBasePath($media) . '/responsive-images/';
+        return $this->getBasePath($media).'/responsive-images/';
     }
 
     /*
@@ -39,14 +39,14 @@ class TenantMediaPathGenerator implements PathGenerator
      */
     protected function getBasePath(Media $media): string
     {
-        $prefix   = config('media-library.prefix', '');
+        $prefix = config('media-library.prefix', '');
         $tenantId = $media->tenant_id ?? self::GLOBAL_TENANT_ID;
-        $model    = Str::of($media->model_type)->afterLast('\\')->lower()->plural()->toString();
+        $model = Str::of($media->model_type)->afterLast('\\')->lower()->plural()->toString();
 
-        if ('' !== $prefix) {
-            return $prefix . '/tenants/' . $tenantId . '/' . $model . '/' . $media->getKey();
+        if ($prefix !== '') {
+            return $prefix.'/tenants/'.$tenantId.'/'.$model.'/'.$media->getKey();
         }
 
-        return 'tenants/' . $tenantId . '/' . $model . '/' . $media->getKey();
+        return 'tenants/'.$tenantId.'/'.$model.'/'.$media->getKey();
     }
 }

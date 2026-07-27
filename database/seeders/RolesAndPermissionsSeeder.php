@@ -7,13 +7,14 @@ use App\Domain\Rights\Models\Permission;
 use App\Domain\Rights\Models\Role;
 use App\Domain\Tenant\Models\Tenant;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create permissions
         $permissions = [
@@ -40,18 +41,18 @@ class RolesAndPermissionsSeeder extends Seeder
         foreach ($permissions as $permission) {
             Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () use ($permission) {
                 Permission::create([
-                    'name'       => $permission,
+                    'name' => $permission,
                     'guard_name' => 'api',
-                    'tenant_id'  => Tenant::GLOBAL_TENANT_ID,
+                    'tenant_id' => Tenant::GLOBAL_TENANT_ID,
                 ]);
             });
         }
 
         // Create roles and assign permissions
         $roles = [
-            RoleName::Admin->value            => $permissions,
-            RoleName::Owner->value            => $permissions,
-            RoleName::Manager->value          => $permissions,
+            RoleName::Admin->value => $permissions,
+            RoleName::Owner->value => $permissions,
+            RoleName::Manager->value => $permissions,
             RoleName::FinancialManager->value => [
                 'contractor.view',
                 'contractor.manage',
@@ -76,9 +77,9 @@ class RolesAndPermissionsSeeder extends Seeder
         foreach ($roles as $roleName => $rolePermissions) {
             Tenant::bypassTenant(Tenant::GLOBAL_TENANT_ID, function () use ($roleName, $rolePermissions) {
                 $role = Role::create([
-                    'name'       => $roleName,
+                    'name' => $roleName,
                     'guard_name' => 'api',
-                    'tenant_id'  => Tenant::GLOBAL_TENANT_ID,
+                    'tenant_id' => Tenant::GLOBAL_TENANT_ID,
                 ]);
 
                 $role->syncPermissions($rolePermissions);

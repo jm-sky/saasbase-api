@@ -34,7 +34,7 @@ class CertificateControllerTest extends TestCase
         Storage::fake('local');
     }
 
-    public function testCanListCertificates(): void
+    public function test_can_list_certificates(): void
     {
         $this->markTestSkipped('Need to fix certificate listing functionality');
 
@@ -70,11 +70,10 @@ class CertificateControllerTest extends TestCase
                     'total',
                 ],
             ])
-            ->assertJsonCount(3, 'data')
-        ;
+            ->assertJsonCount(3, 'data');
     }
 
-    public function testCanCreateCertificate(): void
+    public function test_can_create_certificate(): void
     {
         $this->markTestSkipped('Need to fix certificate creation functionality');
 
@@ -85,10 +84,10 @@ class CertificateControllerTest extends TestCase
         $this->app->instance(EDoreczeniaProviderManager::class, $providerManager);
 
         $response = $this->postJson($this->baseUrl, [
-            'provider'         => 'test_provider',
-            'serialNumber'     => '123456',
-            'validFrom'        => now()->subYear(),
-            'validTo'          => now()->addYear(),
+            'provider' => 'test_provider',
+            'serialNumber' => '123456',
+            'validFrom' => now()->subYear(),
+            'validTo' => now()->addYear(),
             'certificate_file' => $file,
         ]);
 
@@ -107,20 +106,19 @@ class CertificateControllerTest extends TestCase
                     'updatedAt',
                     'creator',
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('e_doreczenia_certificates', [
-            'tenant_id'     => $this->tenant->id,
-            'provider'      => 'test_provider',
+            'tenant_id' => $this->tenant->id,
+            'provider' => 'test_provider',
             'serial_number' => '123456',
-            'status'        => 'active',
+            'status' => 'active',
         ]);
 
-        $this->assertTrue(Storage::disk('local')->exists('certificates/' . $file->hashName()));
+        $this->assertTrue(Storage::disk('local')->exists('certificates/'.$file->hashName()));
     }
 
-    public function testCanShowCertificate(): void
+    public function test_can_show_certificate(): void
     {
         $this->markTestSkipped('Need to fix certificate retrieval functionality');
 
@@ -145,11 +143,10 @@ class CertificateControllerTest extends TestCase
                     'updatedAt',
                     'creator',
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanUpdateCertificate(): void
+    public function test_can_update_certificate(): void
     {
         $this->markTestSkipped('Need to fix certificate update functionality');
 
@@ -159,10 +156,10 @@ class CertificateControllerTest extends TestCase
         $file = UploadedFile::fake()->create('new_certificate.p12', 100);
 
         $response = $this->putJson("{$this->baseUrl}/{$certificate->id}", [
-            'provider'         => 'updated_provider',
-            'serialNumber'     => '654321',
-            'validFrom'        => now()->subYear(),
-            'validTo'          => now()->addYear(),
+            'provider' => 'updated_provider',
+            'serialNumber' => '654321',
+            'validFrom' => now()->subYear(),
+            'validTo' => now()->addYear(),
             'certificate_file' => $file,
         ]);
 
@@ -181,19 +178,18 @@ class CertificateControllerTest extends TestCase
                     'updatedAt',
                     'creator',
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('e_doreczenia_certificates', [
-            'id'            => $certificate->id,
-            'provider'      => 'updated_provider',
+            'id' => $certificate->id,
+            'provider' => 'updated_provider',
             'serial_number' => '654321',
         ]);
 
-        $this->assertTrue(Storage::disk('local')->exists('certificates/' . $file->hashName()));
+        $this->assertTrue(Storage::disk('local')->exists('certificates/'.$file->hashName()));
     }
 
-    public function testCanDeleteCertificate(): void
+    public function test_can_delete_certificate(): void
     {
         $this->markTestSkipped('Need to fix certificate deletion functionality');
 
@@ -207,7 +203,7 @@ class CertificateControllerTest extends TestCase
         $this->assertDatabaseMissing('e_doreczenia_certificates', ['id' => $certificate->id]);
     }
 
-    public function testCannotAccessOtherTenantCertificate(): void
+    public function test_cannot_access_other_tenant_certificate(): void
     {
         $this->markTestSkipped('Need to fix tenant isolation for certificates');
 

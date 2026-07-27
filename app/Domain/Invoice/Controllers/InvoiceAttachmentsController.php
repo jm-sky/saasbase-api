@@ -10,11 +10,13 @@ use App\Domain\Invoice\Enums\InvoiceActivityType;
 use App\Domain\Invoice\Models\Invoice;
 use App\Domain\Invoice\Requests\InvoiceAttachmentRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceAttachmentsController extends Controller
 {
+    use AuthorizesRequests;
     use HasActivityLogging;
 
     /**
@@ -22,15 +24,17 @@ class InvoiceAttachmentsController extends Controller
      */
     public function index(Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
+
         $media = $invoice->getMedia('attachments');
 
         $ocrMediaId = $invoice->ocrRequest?->media_id;
 
         $media = $media->map(function (Media $media) use ($ocrMediaId): Media {
             if ($media->id === $ocrMediaId) {
-                $meta          = $media->meta ?? [];
+                $meta = $media->meta ?? [];
                 $meta['isOcr'] = true;
-                $media->meta   = $meta;
+                $media->meta = $meta;
             }
 
             return $media;
@@ -44,13 +48,15 @@ class InvoiceAttachmentsController extends Controller
      */
     public function store(InvoiceAttachmentRequest $request, Invoice $invoice)
     {
-        $file  = $request->file('file');
+        $this->authorize('update', $invoice);
+
+        $file = $request->file('file');
         $media = $invoice->addMedia($file)->toMediaCollection('attachments');
         $invoice->logModelActivity(InvoiceActivityType::AttachmentCreated->value, $media);
 
         return response()->json([
             'message' => 'Attachment uploaded successfully.',
-            'data'    => MediaDTO::fromModel($media)->toArray(),
+            'data' => MediaDTO::fromModel($media)->toArray(),
         ], Response::HTTP_CREATED);
     }
 
@@ -59,6 +65,7 @@ class InvoiceAttachmentsController extends Controller
      */
     public function show(Invoice $invoice, Media $media)
     {
+        $this->authorize('view', $invoice);
         $this->authorizeMedia($invoice, $media);
 
         return response()->json([
@@ -71,18 +78,19 @@ class InvoiceAttachmentsController extends Controller
      */
     public function download(Invoice $invoice, Media $media)
     {
+        $this->authorize('view', $invoice);
         $this->authorizeMedia($invoice, $media);
 
         $disk = Storage::disk($media->disk);
         $path = $media->getPathRelativeToRoot();
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(Response::HTTP_NOT_FOUND, 'File not found.');
         }
 
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'attachment; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'attachment; filename="'.$media->file_name.'"',
         ];
 
         return response()->streamDownload(function () use ($disk, $path) {
@@ -95,18 +103,19 @@ class InvoiceAttachmentsController extends Controller
      */
     public function preview(Invoice $invoice, Media $media)
     {
+        $this->authorize('view', $invoice);
         $this->authorizeMedia($invoice, $media);
 
         $disk = Storage::disk($media->disk);
         $path = $media->getPathRelativeToRoot();
 
-        if (!$disk->exists($path)) {
+        if (! $disk->exists($path)) {
             abort(Response::HTTP_NOT_FOUND, 'File not found.');
         }
 
         $headers = [
-            'Content-Type'        => $media->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ];
 
         return response()->streamDownload(function () use ($disk, $path) {
@@ -119,6 +128,8 @@ class InvoiceAttachmentsController extends Controller
      */
     public function destroy(Invoice $invoice, $mediaId)
     {
+        $this->authorize('update', $invoice);
+
         $media = Media::findOrFail($mediaId);
         $this->authorizeMedia($invoice, $media);
         $invoice->logModelActivity(InvoiceActivityType::AttachmentDeleted->value, $media);
@@ -132,7 +143,7 @@ class InvoiceAttachmentsController extends Controller
      */
     protected function authorizeMedia(Invoice $invoice, Media $media): void
     {
-        if (Invoice::class !== $media->model_type || $media->model_id !== $invoice->id) {
+        if ($media->model_type !== Invoice::class || $media->model_id !== $invoice->id) {
             abort(Response::HTTP_NOT_FOUND, 'Attachment not found for this invoice.');
         }
     }

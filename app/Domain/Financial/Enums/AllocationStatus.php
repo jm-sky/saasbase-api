@@ -4,34 +4,34 @@ namespace App\Domain\Financial\Enums;
 
 enum AllocationStatus: string
 {
-    case NOT_REQUIRED        = 'notRequired';
-    case PENDING             = 'pending';
+    case NOT_REQUIRED = 'notRequired';
+    case PENDING = 'pending';
     case PARTIALLY_ALLOCATED = 'partiallyAllocated';
-    case FULLY_ALLOCATED     = 'fullyAllocated';
+    case FULLY_ALLOCATED = 'fullyAllocated';
 
     public function label(): string
     {
         return match ($this) {
-            self::NOT_REQUIRED        => 'Not Required',
-            self::PENDING             => 'Pending Allocation',
+            self::NOT_REQUIRED => 'Not Required',
+            self::PENDING => 'Pending Allocation',
             self::PARTIALLY_ALLOCATED => 'Partially Allocated',
-            self::FULLY_ALLOCATED     => 'Fully Allocated',
+            self::FULLY_ALLOCATED => 'Fully Allocated',
         };
     }
 
     public function labelPL(): string
     {
         return match ($this) {
-            self::NOT_REQUIRED        => 'Nie Wymagane',
-            self::PENDING             => 'Oczekuje na Alokację',
+            self::NOT_REQUIRED => 'Nie Wymagane',
+            self::PENDING => 'Oczekuje na Alokację',
             self::PARTIALLY_ALLOCATED => 'Częściowo Przydzielone',
-            self::FULLY_ALLOCATED     => 'W Pełni Przydzielone',
+            self::FULLY_ALLOCATED => 'W Pełni Przydzielone',
         };
     }
 
     public function isCompleted(): bool
     {
-        return self::FULLY_ALLOCATED === $this;
+        return $this === self::FULLY_ALLOCATED;
     }
 
     public function requiresAction(): bool

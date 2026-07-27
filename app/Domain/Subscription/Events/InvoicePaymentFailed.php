@@ -13,6 +13,5 @@ class InvoicePaymentFailed
 
     public function __construct(
         public SubscriptionInvoice $invoice
-    ) {
-    }
+    ) {}
 }

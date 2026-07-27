@@ -15,7 +15,7 @@ class ProductCommentRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'content' => ['required', 'string', 'max:1000', new NoProfanity()],
+            'content' => ['required', 'string', 'max:1000', new NoProfanity],
         ];
     }
 
@@ -23,8 +23,8 @@ class ProductCommentRequest extends BaseFormRequest
     {
         return [
             'content.required' => 'The comment content is required.',
-            'content.string'   => 'The comment content must be a string.',
-            'content.max'      => 'The comment content may not be greater than :max characters.',
+            'content.string' => 'The comment content must be a string.',
+            'content.max' => 'The comment content may not be greater than :max characters.',
         ];
     }
 }

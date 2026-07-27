@@ -8,27 +8,26 @@ use App\Services\AzureDocumentIntelligence\Concerns\DocumentFieldInterface;
 /**
  * DTO for a single document in Azure Document Intelligence response.
  *
- * @property string                                $docType
+ * @property string $docType
  * @property array<string, DocumentFieldInterface> $fields
- * @property float                                 $confidence
+ * @property float $confidence
  */
 final class Document extends BaseDataDTO
 {
     /**
-     * @param array<string, DocumentFieldInterface> $fields
+     * @param  array<string, DocumentFieldInterface>  $fields
      */
     public function __construct(
         public readonly string $docType,
         public readonly array $fields,
         public readonly float $confidence
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'docType'    => $this->docType,
-            'fields'     => array_map(fn ($field) => $field->toArray(), $this->fields),
+            'docType' => $this->docType,
+            'fields' => array_map(fn ($field) => $field->toArray(), $this->fields),
             'confidence' => $this->confidence,
         ];
     }

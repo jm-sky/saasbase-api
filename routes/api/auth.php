@@ -15,11 +15,9 @@ Route::prefix('auth')->group(function () {
 
     // Password Reset Routes
     Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
-        ->name('password.email')
-    ;
+        ->name('password.email');
     Route::post('reset-password', [PasswordResetController::class, 'reset'])
-        ->name('password.reset')
-    ;
+        ->name('password.reset');
 });
 
 // OAuth Routes
@@ -30,16 +28,14 @@ Route::prefix('oauth')->group(function () {
 
 // Email Verification Routes
 Route::post('/email/verify', [VerifyEmailController::class, 'verify'])
-    ->name('verification.verify')
-;
+    ->name('verification.verify');
 
 Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])
-    ->middleware(['auth:api', 'throttle:6,1'])
-    ->name('verification.send')
-;
+    ->middleware(['auth:api', 'session.active', 'throttle:6,1'])
+    ->name('verification.send');
 
 // Two Factor Authentication Routes
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'session.active'])->group(function () {
     Route::post('2fa/setup', [TwoFactorAuthController::class, 'setup']);
     Route::post('2fa/enable', [TwoFactorAuthController::class, 'enable']);
     Route::post('2fa/disable', [TwoFactorAuthController::class, 'disable']);
@@ -47,4 +43,6 @@ Route::middleware('auth:api')->group(function () {
 
     // User Sessions Routes
     Route::get('sessions', [UserSessionController::class, 'index']);
+    Route::post('sessions/revoke-others', [UserSessionController::class, 'revokeOthers']);
+    Route::delete('sessions/{id}', [UserSessionController::class, 'revoke']);
 });

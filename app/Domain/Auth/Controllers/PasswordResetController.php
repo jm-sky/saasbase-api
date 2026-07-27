@@ -20,15 +20,14 @@ class PasswordResetController extends Controller
 {
     public function __construct(
         private readonly ReCaptchaService $recaptchaService,
-    ) {
-    }
+    ) {}
 
     /**
      * Send a reset link to the given user.
      */
     public function sendResetLinkEmail(SendResetLinkEmailRequest $request): JsonResponse
     {
-        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::FORGOT_PASSWORD->value, 0.6)) {
+        if (! $this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::FORGOT_PASSWORD->value, 0.6)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 
@@ -36,7 +35,7 @@ class PasswordResetController extends Controller
             $request->only('email')
         );
 
-        if (Password::RESET_LINK_SENT !== $status) {
+        if ($status !== Password::RESET_LINK_SENT) {
             return response()->json([
                 'message' => __($status),
             ], Response::HTTP_BAD_REQUEST);
@@ -52,7 +51,7 @@ class PasswordResetController extends Controller
      */
     public function reset(ResetPasswordRequest $request): JsonResponse
     {
-        if (!$this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::RESET_PASSWORD->value, 0.6)) {
+        if (! $this->recaptchaService->verify($request->input('recaptchaToken'), ReCaptchaAction::RESET_PASSWORD->value, 0.6)) {
             throw new BadRequestHttpException('Invalid recaptcha token');
         }
 
@@ -60,13 +59,13 @@ class PasswordResetController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user, string $password) {
                 $user->forceFill([
-                    'password'       => Hash::make($password),
+                    'password' => Hash::make($password),
                     'remember_token' => Str::random(60),
                 ])->save();
             }
         );
 
-        if (Password::PASSWORD_RESET !== $status) {
+        if ($status !== Password::PASSWORD_RESET) {
             return response()->json([
                 'message' => __($status),
             ], Response::HTTP_BAD_REQUEST);
@@ -74,6 +73,10 @@ class PasswordResetController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $user?->notify(new PasswordChangedNotification($user));
+
+        if ($user) {
+            activity('security')->causedBy($user)->withProperties(['ip' => $request->ip()])->event('password_change')->log('Password changed');
+        }
 
         return response()->json([
             'message' => __($status),

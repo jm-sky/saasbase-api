@@ -14,8 +14,7 @@ class ValidateIbanRequest extends Request
 
     public function __construct(
         protected string $iban,
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -26,7 +25,7 @@ class ValidateIbanRequest extends Request
     {
         $data = $response->json();
 
-        if (HttpFoundationResponse::HTTP_OK !== $data['result']) {
+        if ($data['result'] !== HttpFoundationResponse::HTTP_OK) {
             throw new \Exception('Invalid IBAN');
         }
 

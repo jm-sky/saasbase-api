@@ -13,10 +13,10 @@ use Tests\TestCase;
 #[CoversClass(SkillCategoryDTO::class)]
 class SkillCategoryDTOTest extends TestCase
 {
-    public function testCanCreateSkillCategoryDtoFromModel(): void
+    public function test_can_create_skill_category_dto_from_model(): void
     {
         $category = SkillCategory::factory()->create();
-        $dto      = SkillCategoryDTO::fromModel($category);
+        $dto = SkillCategoryDTO::fromModel($category);
 
         $this->assertEquals($category->id, $dto->id);
         $this->assertEquals($category->name, $dto->name);
@@ -26,11 +26,11 @@ class SkillCategoryDTOTest extends TestCase
         $this->assertEquals($category->deleted_at, $dto->deletedAt);
     }
 
-    public function testCanConvertSkillCategoryDtoToArray(): void
+    public function test_can_convert_skill_category_dto_to_array(): void
     {
         $category = SkillCategory::factory()->create();
-        $dto      = SkillCategoryDTO::fromModel($category);
-        $array    = $dto->toArray();
+        $dto = SkillCategoryDTO::fromModel($category);
+        $array = $dto->toArray();
 
         $this->assertIsArray($array);
         $this->assertEquals($category->id, $array['id']);

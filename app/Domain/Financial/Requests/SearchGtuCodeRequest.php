@@ -24,11 +24,11 @@ class SearchGtuCodeRequest extends BaseFormRequest
         $sortValidationString = $this->generateSortValidationString();
 
         return [
-            'filter.id'         => ['sometimes', new ValidAdvancedFilterRule('string')],
-            'filter.name'       => ['sometimes', new ValidAdvancedFilterRule('string')], // Update with actual fields
-            'filter.createdAt'  => ['sometimes', new ValidAdvancedFilterRule('date')],
-            'filter.updatedAt'  => ['sometimes', new ValidAdvancedFilterRule('date')],
-            'sort'              => ['sometimes', 'string', 'in:' . $sortValidationString],
+            'filter.id' => ['sometimes', new ValidAdvancedFilterRule('string')],
+            'filter.name' => ['sometimes', new ValidAdvancedFilterRule('string')], // Update with actual fields
+            'filter.createdAt' => ['sometimes', new ValidAdvancedFilterRule('date')],
+            'filter.updatedAt' => ['sometimes', new ValidAdvancedFilterRule('date')],
+            'sort' => ['sometimes', 'string', 'in:'.$sortValidationString],
         ];
     }
 
@@ -38,7 +38,7 @@ class SearchGtuCodeRequest extends BaseFormRequest
 
         foreach ($this->allowedSortColumns as $column) {
             $sortOptions[] = $column;
-            $sortOptions[] = '-' . $column;
+            $sortOptions[] = '-'.$column;
         }
 
         return implode(',', $sortOptions);

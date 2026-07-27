@@ -23,10 +23,10 @@ class GTUAssignmentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new GTUAssignmentService();
+        $this->service = new GTUAssignmentService;
     }
 
-    public function testAutoAssignGtuCodesForHighValueItem()
+    public function test_auto_assign_gtu_codes_for_high_value_item()
     {
         // Create test invoice line with high value (>50,000 PLN)
         $line = new InvoiceLineDTO(
@@ -52,13 +52,13 @@ class GTUAssignmentTest extends TestCase
         $this->assertContains('GTU_07', $result);
     }
 
-    public function testAutoAssignGtuCodesFromProduct()
+    public function test_auto_assign_gtu_codes_from_product()
     {
         // This test would require database setup, so it's a placeholder
         $this->markTestSkipped('Requires database setup');
     }
 
-    public function testAssignGtuCodeToInvoiceLine()
+    public function test_assign_gtu_code_to_invoice_line()
     {
         $line = new InvoiceLineDTO(
             id: 'test-line-1',
@@ -84,7 +84,7 @@ class GTUAssignmentTest extends TestCase
         $this->assertContains('GTU_01', $updatedLine->getGtuCodes());
     }
 
-    public function testRemoveGtuCodeFromInvoiceLine()
+    public function test_remove_gtu_code_from_invoice_line()
     {
         $line = new InvoiceLineDTO(
             id: 'test-line-1',
@@ -111,7 +111,7 @@ class GTUAssignmentTest extends TestCase
         $this->assertNotContains('GTU_01', $updatedLine->getGtuCodes());
     }
 
-    public function testDetectGtuByAmount()
+    public function test_detect_gtu_by_amount()
     {
         $highValueLine = new InvoiceLineDTO(
             id: 'test-line-1',
@@ -156,26 +156,26 @@ class GTUAssignmentTest extends TestCase
         $this->assertEmpty($result);
     }
 
-    public function testDetectGtuByKeywords()
+    public function test_detect_gtu_by_keywords()
     {
         $alcoholDescription = 'Piwo żywieckie 500ml';
-        $result             = $this->service->detectGTUByKeywords($alcoholDescription);
+        $result = $this->service->detectGTUByKeywords($alcoholDescription);
         $this->assertContains('GTU_01', $result);
 
         $tobaccoDescription = 'Papierosy marlboro';
-        $result             = $this->service->detectGTUByKeywords($tobaccoDescription);
+        $result = $this->service->detectGTUByKeywords($tobaccoDescription);
         $this->assertContains('GTU_02', $result);
 
         $fuelDescription = 'Benzyna 95';
-        $result          = $this->service->detectGTUByKeywords($fuelDescription);
+        $result = $this->service->detectGTUByKeywords($fuelDescription);
         $this->assertContains('GTU_03', $result);
 
         $normalDescription = 'Zwykły produkt';
-        $result            = $this->service->detectGTUByKeywords($normalDescription);
+        $result = $this->service->detectGTUByKeywords($normalDescription);
         $this->assertEmpty($result);
     }
 
-    public function testInvoiceLineDtoGtuMethods()
+    public function test_invoice_line_dto_gtu_methods()
     {
         $line = new InvoiceLineDTO(
             id: 'test-line-1',

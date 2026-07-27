@@ -10,9 +10,10 @@ class IsInTenant
 {
     public function handle(Request $request, \Closure $next): Response
     {
-        if (!Auth::check() || !Auth::payload()?->get('tid')) {
+        // @phpstan-ignore-next-line payload() is provided by the JWTAuth guard, not declared on the base Auth facade
+        if (! Auth::check() || ! Auth::payload()?->get('tid')) {
             return response()->json([
-                'message'        => 'Tenant context required',
+                'message' => 'Tenant context required',
                 'actionRequired' => 'select-tenant',
             ], Response::HTTP_FORBIDDEN);
         }

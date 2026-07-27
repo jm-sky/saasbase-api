@@ -26,21 +26,21 @@ class ViesLookupServiceTest extends TestCase
         Cache::flush();
     }
 
-    public function testFindByVatReturnsNullWhenSearchFails(): void
+    public function test_find_by_vat_returns_null_when_search_fails(): void
     {
         Saloon::fake([
             CheckVatRequest::class => MockResponse::make('', HttpResponse::HTTP_BAD_REQUEST),
         ]);
 
-        $connector = new ViesConnector();
-        $service   = new ViesLookupService($connector);
+        $connector = new ViesConnector;
+        $service = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
         $this->expectExceptionMessage('Unsuccessful VIES API response: 400');
         $service->findByVat('PL', '1111111111');
     }
 
-    public function testFindByVatReturnsNullWhenSearchResultIsInvalid(): void
+    public function test_find_by_vat_returns_null_when_search_result_is_invalid(): void
     {
         $invalidXml = '<?xml version="1.0" encoding="UTF-8"?><invalid>';
 
@@ -48,15 +48,15 @@ class ViesLookupServiceTest extends TestCase
             CheckVatRequest::class => MockResponse::make($invalidXml, HttpResponse::HTTP_OK),
         ]);
 
-        $connector = new ViesConnector();
-        $service   = new ViesLookupService($connector);
+        $connector = new ViesConnector;
+        $service = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
         $this->expectExceptionMessage('Invalid VIES XML response');
         $service->findByVat('PL', '2222222222');
     }
 
-    public function testFindByVatReturnsFullReportWhenSearchSucceeds(): void
+    public function test_find_by_vat_returns_full_report_when_search_succeeds(): void
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -75,8 +75,8 @@ class ViesLookupServiceTest extends TestCase
             CheckVatRequest::class => MockResponse::make($xml, HttpResponse::HTTP_OK),
         ]);
 
-        $connector = new ViesConnector();
-        $service   = new ViesLookupService($connector);
+        $connector = new ViesConnector;
+        $service = new ViesLookupService($connector);
 
         $result = $service->findByVat('PL', '3333333333');
         $this->assertInstanceOf(ViesLookupResultDTO::class, $result);
@@ -87,7 +87,7 @@ class ViesLookupServiceTest extends TestCase
         $this->assertEquals('Test Address', $result->address);
     }
 
-    public function testFindByVatUsesCache(): void
+    public function test_find_by_vat_uses_cache(): void
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -106,15 +106,15 @@ class ViesLookupServiceTest extends TestCase
             CheckVatRequest::class => MockResponse::make($xml, HttpResponse::HTTP_OK),
         ]);
 
-        $connector = new ViesConnector();
-        $service   = new ViesLookupService($connector);
+        $connector = new ViesConnector;
+        $service = new ViesLookupService($connector);
 
         $result1 = $service->findByVat('PL', '4444444444');
         $result2 = $service->findByVat('PL', '4444444444');
         $this->assertEquals($result1, $result2);
     }
 
-    public function testFindByVatHandlesSoapFault(): void
+    public function test_find_by_vat_handles_soap_fault(): void
     {
         $soapFault = '<?xml version="1.0" encoding="UTF-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -130,8 +130,8 @@ class ViesLookupServiceTest extends TestCase
             CheckVatRequest::class => MockResponse::make($soapFault, HttpResponse::HTTP_OK),
         ]);
 
-        $connector = new ViesConnector();
-        $service   = new ViesLookupService($connector);
+        $connector = new ViesConnector;
+        $service = new ViesLookupService($connector);
 
         $this->expectException(ViesLookupException::class);
         $this->expectExceptionMessage('VIES API error: Invalid VAT number format');

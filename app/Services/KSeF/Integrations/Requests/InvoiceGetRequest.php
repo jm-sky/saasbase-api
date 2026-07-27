@@ -13,8 +13,7 @@ class InvoiceGetRequest extends Request
 
     public function __construct(
         protected string $ksefReferenceNumber
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {

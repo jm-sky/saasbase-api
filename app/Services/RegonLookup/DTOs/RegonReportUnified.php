@@ -8,66 +8,66 @@ use App\Domain\Common\Enums\AddressType;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * @property string  $regon                     | Example: 140672685
- * @property ?string $nip                       | Example: 1251402446
- * @property ?string $nipStatus                 | Example:
- * @property string  $name                      | Example: SKŁODOWSCY SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
- * @property ?string $shortName                 | Example:
- * @property string  $registrationNumber        | Example: 0000264193
- * @property string  $registrationDate          | Example: 2006-09-25
- * @property string  $establishmentDate         | Example: 2006-09-11
- * @property string  $businessStartDate         | Example: 2006-09-11
- * @property ?string $regonRegistrationDate     | Example:
- * @property ?string $businessSuspensionDate    | Example:
- * @property ?string $businessResumptionDate    | Example:
- * @property string  $lastChangeDate            | Example: 2024-03-27
- * @property ?string $businessEndDate           | Example:
- * @property ?string $regonDeletionDate         | Example:
+ * @property string $regon | Example: 140672685
+ * @property ?string $nip | Example: 1251402446
+ * @property ?string $nipStatus | Example:
+ * @property string $name | Example: SKŁODOWSCY SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
+ * @property ?string $shortName | Example:
+ * @property string $registrationNumber | Example: 0000264193
+ * @property string $registrationDate | Example: 2006-09-25
+ * @property string $establishmentDate | Example: 2006-09-11
+ * @property string $businessStartDate | Example: 2006-09-11
+ * @property ?string $regonRegistrationDate | Example:
+ * @property ?string $businessSuspensionDate | Example:
+ * @property ?string $businessResumptionDate | Example:
+ * @property string $lastChangeDate | Example: 2024-03-27
+ * @property ?string $businessEndDate | Example:
+ * @property ?string $regonDeletionDate | Example:
  * @property ?string $bankruptcyDeclarationDate | Example:
- * @property ?string $bankruptcyEndDate         | Example:
- * @property string  $countryCode               | Example: PL
- * @property string  $provinceCode              | Example: 14
- * @property string  $countyCode                | Example: 34
- * @property string  $municipalityCode          | Example: 021
- * @property string  $postalCode                | Example: 05270
- * @property string  $postalCityCode            | Example: 0920901
- * @property string  $cityCode                  | Example: 0920901
- * @property string  $streetCode                | Example: 09582
- * @property string  $buildingNumber            | Example: 43
- * @property ?string $apartmentNumber           | Example:
- * @property ?string $unusualLocation           | Example:
- * @property ?string $phoneNumber               | Example: 0222426007
- * @property ?string $internalPhoneNumber       | Example:
- * @property ?string $faxNumber                 | Example:
- * @property ?string $email                     | Example:
- * @property ?string $website                   | Example:
- * @property string  $countryName               | Example: POLSKA
- * @property string  $provinceName              | Example: MAZOWIECKIE
- * @property string  $countyName                | Example: wołomiński
- * @property string  $municipalityName          | Example: Marki
- * @property string  $cityName                  | Example: Marki
- * @property string  $postalCityName            | Example: Marki
- * @property string  $streetName                | Example: ul. Tadeusza Kościuszki
- * @property ?string $registrationDeletionDate  | Example:
- * @property string  $registrationAuthorityCode | Example: 071010060
- * @property string  $registryTypeCode          | Example: 138
- * @property string  $registrationAuthorityName | Example: SĄD REJONOWY DLA M.ST.WARSZAWY W WARSZAWIE
- * @property string  $registryTypeName          | Example: REJESTR PRZEDSIĘBIORCÓW
- * @property ?string $legalFormCode             | Example: 1
- * @property ?string $detailedLegalFormCode     | Example: 117
- * @property ?string $financingFormCode         | Example: 1
- * @property ?string $ownershipFormCode         | Example: 214
- * @property ?string $foundingBodyCode          | Example:
- * @property ?string $legalFormName             | Example: OSOBA PRAWNA
- * @property ?string $detailedLegalFormName     | Example: SPÓŁKI Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
- * @property ?string $financingFormName         | Example: JEDNOSTKA SAMOFINANSUJĄCA
- * @property ?string $ownershipFormName         | Example: WŁASNOŚĆ KRAJOWYCH OSÓB FIZYCZNYCH
- * @property ?string $foundingBodyName          | Example:
- * @property ?int    $localUnitsCount           | Example: 0
- * @property ?bool   $hasNotStartedActivity     | Example: false
- * @property ?bool   $cache
+ * @property ?string $bankruptcyEndDate | Example:
+ * @property string $countryCode | Example: PL
+ * @property string $provinceCode | Example: 14
+ * @property string $countyCode | Example: 34
+ * @property string $municipalityCode | Example: 021
+ * @property string $postalCode | Example: 05270
+ * @property string $postalCityCode | Example: 0920901
+ * @property string $cityCode | Example: 0920901
+ * @property string $streetCode | Example: 09582
+ * @property string $buildingNumber | Example: 43
+ * @property ?string $apartmentNumber | Example:
+ * @property ?string $unusualLocation | Example:
+ * @property ?string $phoneNumber | Example: 0222426007
+ * @property ?string $internalPhoneNumber | Example:
+ * @property ?string $faxNumber | Example:
+ * @property ?string $email | Example:
+ * @property ?string $website | Example:
+ * @property string $countryName | Example: POLSKA
+ * @property string $provinceName | Example: MAZOWIECKIE
+ * @property string $countyName | Example: wołomiński
+ * @property string $municipalityName | Example: Marki
+ * @property string $cityName | Example: Marki
+ * @property string $postalCityName | Example: Marki
+ * @property string $streetName | Example: ul. Tadeusza Kościuszki
+ * @property ?string $registrationDeletionDate | Example:
+ * @property string $registrationAuthorityCode | Example: 071010060
+ * @property string $registryTypeCode | Example: 138
+ * @property string $registrationAuthorityName | Example: SĄD REJONOWY DLA M.ST.WARSZAWY W WARSZAWIE
+ * @property string $registryTypeName | Example: REJESTR PRZEDSIĘBIORCÓW
+ * @property ?string $legalFormCode | Example: 1
+ * @property ?string $detailedLegalFormCode | Example: 117
+ * @property ?string $financingFormCode | Example: 1
+ * @property ?string $ownershipFormCode | Example: 214
+ * @property ?string $foundingBodyCode | Example:
+ * @property ?string $legalFormName | Example: OSOBA PRAWNA
+ * @property ?string $detailedLegalFormName | Example: SPÓŁKI Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ
+ * @property ?string $financingFormName | Example: JEDNOSTKA SAMOFINANSUJĄCA
+ * @property ?string $ownershipFormName | Example: WŁASNOŚĆ KRAJOWYCH OSÓB FIZYCZNYCH
+ * @property ?string $foundingBodyName | Example:
+ * @property ?int $localUnitsCount | Example: 0
+ * @property ?bool $hasNotStartedActivity | Example: false
+ * @property ?bool $cache
  */
-final class RegonReportUnified implements Arrayable, \JsonSerializable
+final class RegonReportUnified implements \JsonSerializable, Arrayable
 {
     public function __construct(
         public readonly string $regon,
@@ -128,8 +128,7 @@ final class RegonReportUnified implements Arrayable, \JsonSerializable
         public readonly ?int $localUnitsCount,
         public readonly ?bool $hasNotStartedActivity,
         public readonly ?bool $cache = null,
-    ) {
-    }
+    ) {}
 
     public static function fromXml(\SimpleXMLElement $xml): static
     {
@@ -198,64 +197,64 @@ final class RegonReportUnified implements Arrayable, \JsonSerializable
     public function toArray(): array
     {
         return [
-            'regon'                     => $this->regon,
-            'nip'                       => $this->nip,
-            'nipStatus'                 => $this->nipStatus,
-            'name'                      => $this->name,
-            'shortName'                 => $this->shortName,
-            'registrationNumber'        => $this->registrationNumber,
-            'registrationDate'          => $this->registrationDate,
-            'establishmentDate'         => $this->establishmentDate,
-            'businessStartDate'         => $this->businessStartDate,
-            'regonRegistrationDate'     => $this->regonRegistrationDate,
-            'businessSuspensionDate'    => $this->businessSuspensionDate,
-            'businessResumptionDate'    => $this->businessResumptionDate,
-            'lastChangeDate'            => $this->lastChangeDate,
-            'businessEndDate'           => $this->businessEndDate,
-            'regonDeletionDate'         => $this->regonDeletionDate,
+            'regon' => $this->regon,
+            'nip' => $this->nip,
+            'nipStatus' => $this->nipStatus,
+            'name' => $this->name,
+            'shortName' => $this->shortName,
+            'registrationNumber' => $this->registrationNumber,
+            'registrationDate' => $this->registrationDate,
+            'establishmentDate' => $this->establishmentDate,
+            'businessStartDate' => $this->businessStartDate,
+            'regonRegistrationDate' => $this->regonRegistrationDate,
+            'businessSuspensionDate' => $this->businessSuspensionDate,
+            'businessResumptionDate' => $this->businessResumptionDate,
+            'lastChangeDate' => $this->lastChangeDate,
+            'businessEndDate' => $this->businessEndDate,
+            'regonDeletionDate' => $this->regonDeletionDate,
             'bankruptcyDeclarationDate' => $this->bankruptcyDeclarationDate,
-            'bankruptcyEndDate'         => $this->bankruptcyEndDate,
-            'countryCode'               => $this->countryCode,
-            'provinceCode'              => $this->provinceCode,
-            'countyCode'                => $this->countyCode,
-            'municipalityCode'          => $this->municipalityCode,
-            'postalCode'                => $this->postalCode,
-            'postalCityCode'            => $this->postalCityCode,
-            'cityCode'                  => $this->cityCode,
-            'streetCode'                => $this->streetCode,
-            'buildingNumber'            => $this->buildingNumber,
-            'apartmentNumber'           => $this->apartmentNumber,
-            'unusualLocation'           => $this->unusualLocation,
-            'phoneNumber'               => $this->phoneNumber,
-            'internalPhoneNumber'       => $this->internalPhoneNumber,
-            'faxNumber'                 => $this->faxNumber,
-            'email'                     => $this->email,
-            'website'                   => $this->website,
-            'countryName'               => $this->countryName,
-            'provinceName'              => $this->provinceName,
-            'countyName'                => $this->countyName,
-            'municipalityName'          => $this->municipalityName,
-            'cityName'                  => $this->cityName,
-            'postalCityName'            => $this->postalCityName,
-            'streetName'                => $this->streetName,
-            'registrationDeletionDate'  => $this->registrationDeletionDate,
+            'bankruptcyEndDate' => $this->bankruptcyEndDate,
+            'countryCode' => $this->countryCode,
+            'provinceCode' => $this->provinceCode,
+            'countyCode' => $this->countyCode,
+            'municipalityCode' => $this->municipalityCode,
+            'postalCode' => $this->postalCode,
+            'postalCityCode' => $this->postalCityCode,
+            'cityCode' => $this->cityCode,
+            'streetCode' => $this->streetCode,
+            'buildingNumber' => $this->buildingNumber,
+            'apartmentNumber' => $this->apartmentNumber,
+            'unusualLocation' => $this->unusualLocation,
+            'phoneNumber' => $this->phoneNumber,
+            'internalPhoneNumber' => $this->internalPhoneNumber,
+            'faxNumber' => $this->faxNumber,
+            'email' => $this->email,
+            'website' => $this->website,
+            'countryName' => $this->countryName,
+            'provinceName' => $this->provinceName,
+            'countyName' => $this->countyName,
+            'municipalityName' => $this->municipalityName,
+            'cityName' => $this->cityName,
+            'postalCityName' => $this->postalCityName,
+            'streetName' => $this->streetName,
+            'registrationDeletionDate' => $this->registrationDeletionDate,
             'registrationAuthorityCode' => $this->registrationAuthorityCode,
-            'registryTypeCode'          => $this->registryTypeCode,
+            'registryTypeCode' => $this->registryTypeCode,
             'registrationAuthorityName' => $this->registrationAuthorityName,
-            'registryTypeName'          => $this->registryTypeName,
-            'legalFormCode'             => $this->legalFormCode,
-            'detailedLegalFormCode'     => $this->detailedLegalFormCode,
-            'financingFormCode'         => $this->financingFormCode,
-            'ownershipFormCode'         => $this->ownershipFormCode,
-            'foundingBodyCode'          => $this->foundingBodyCode,
-            'legalFormName'             => $this->legalFormName,
-            'detailedLegalFormName'     => $this->detailedLegalFormName,
-            'financingFormName'         => $this->financingFormName,
-            'ownershipFormName'         => $this->ownershipFormName,
-            'foundingBodyName'          => $this->foundingBodyName,
-            'localUnitsCount'           => $this->localUnitsCount,
-            'hasNotStartedActivity'     => $this->hasNotStartedActivity,
-            'cache'                     => $this->cache,
+            'registryTypeName' => $this->registryTypeName,
+            'legalFormCode' => $this->legalFormCode,
+            'detailedLegalFormCode' => $this->detailedLegalFormCode,
+            'financingFormCode' => $this->financingFormCode,
+            'ownershipFormCode' => $this->ownershipFormCode,
+            'foundingBodyCode' => $this->foundingBodyCode,
+            'legalFormName' => $this->legalFormName,
+            'detailedLegalFormName' => $this->detailedLegalFormName,
+            'financingFormName' => $this->financingFormName,
+            'ownershipFormName' => $this->ownershipFormName,
+            'foundingBodyName' => $this->foundingBodyName,
+            'localUnitsCount' => $this->localUnitsCount,
+            'hasNotStartedActivity' => $this->hasNotStartedActivity,
+            'cache' => $this->cache,
         ];
     }
 

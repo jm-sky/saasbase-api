@@ -3,6 +3,8 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Tenant\Models\PositionCategory;
 use App\Domain\Tenant\Requests\StorePositionCategoryRequest;
 use App\Domain\Tenant\Requests\UpdatePositionCategoryRequest;
@@ -19,15 +21,16 @@ class PositionCategoryController extends Controller
     {
         $categories = PositionCategory::query()
             ->ordered()
-            ->get()
-        ;
+            ->get();
 
         return PositionCategoryResource::collection($categories);
     }
 
     public function store(StorePositionCategoryRequest $request): PositionCategoryResource
     {
-        $data     = $request->validated();
+        $this->authorizeManage();
+
+        $data = $request->validated();
         $category = PositionCategory::create($data);
 
         return new PositionCategoryResource($category);
@@ -35,12 +38,7 @@ class PositionCategoryController extends Controller
 
     public function update(UpdatePositionCategoryRequest $request, PositionCategory $positionCategory): PositionCategoryResource
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if ($user->tenant_id !== $positionCategory->tenant_id) {
-            throw new \Exception('You are not allowed to update this position category');
-        }
+        $this->authorizeManage();
 
         $positionCategory->update($request->validated());
 
@@ -49,15 +47,30 @@ class PositionCategoryController extends Controller
 
     public function destroy(PositionCategory $positionCategory): Response
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if ($user->tenant_id !== $positionCategory->tenant_id) {
-            throw new \Exception('You are not allowed to delete this position category');
-        }
+        $this->authorizeManage();
 
         $positionCategory->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * Position categories drive org-chart/RBAC structure, so — like
+     * OrganizationUnitController — writes are restricted to Owner/Admin.
+     * Tenant isolation itself is already enforced by PositionCategory's
+     * IsGlobalOrBelongsToTenant global scope (route-model binding 404s
+     * for a category outside the current tenant), so no manual tenant_id
+     * comparison is needed here.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
+        );
     }
 }

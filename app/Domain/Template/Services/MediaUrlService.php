@@ -12,7 +12,7 @@ class MediaUrlService
     public function getSecureUrl(Media $media): string
     {
         // For local files, use the URL method
-        if ('local' === config('filesystems.default')) {
+        if (config('filesystems.default') === 'local') {
             return $media->getUrl();
         }
 

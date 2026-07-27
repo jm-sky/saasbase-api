@@ -288,7 +288,7 @@ The default `docker-compose.yml` includes:
 
 - `pgsql`: PostgreSQL 17
 - `redis`: Redis (for cache & queues)
-- `minio`: S3-compatible storage
+- `rustfs`: S3-compatible storage (local dev)
 - `mailpit`: Dev SMTP server
 - `soketi`: WebSocket server
 - Meilisearch 

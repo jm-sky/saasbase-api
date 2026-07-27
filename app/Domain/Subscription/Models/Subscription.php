@@ -4,26 +4,29 @@ namespace App\Domain\Subscription\Models;
 
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Subscription\Enums\SubscriptionStatus;
+use App\Domain\Subscription\Traits\BelongsToBillingCustomerOfUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string             $id
- * @property string             $billable_type
- * @property string             $billable_id
- * @property ?string            $subscription_plan_id
- * @property string             $stripe_subscription_id
+ * @property string $id
+ * @property string $billable_type
+ * @property string $billable_id
+ * @property ?string $subscription_plan_id
+ * @property string $stripe_subscription_id
  * @property SubscriptionStatus $status
- * @property Carbon             $current_period_start
- * @property Carbon             $current_period_end
- * @property ?Carbon            $ends_at
- * @property bool               $cancel_at_period_end
- * @property ?Carbon            $canceled_at
- * @property ?Model             $billable
- * @property ?SubscriptionPlan  $plan
+ * @property Carbon $current_period_start
+ * @property Carbon $current_period_end
+ * @property ?Carbon $ends_at
+ * @property bool $cancel_at_period_end
+ * @property ?Carbon $canceled_at
+ * @property ?Model $billable
+ * @property ?SubscriptionPlan $plan
  */
 class Subscription extends BaseModel
 {
+    use BelongsToBillingCustomerOfUser;
+
     protected $fillable = [
         'billable_type',
         'billable_id',
@@ -39,11 +42,11 @@ class Subscription extends BaseModel
 
     protected $casts = [
         'current_period_start' => 'datetime',
-        'current_period_end'   => 'datetime',
-        'ends_at'              => 'datetime',
+        'current_period_end' => 'datetime',
+        'ends_at' => 'datetime',
         'cancel_at_period_end' => 'boolean',
-        'canceled_at'          => 'datetime',
-        'status'               => SubscriptionStatus::class,
+        'canceled_at' => 'datetime',
+        'status' => SubscriptionStatus::class,
     ];
 
     public function billable()
@@ -63,16 +66,16 @@ class Subscription extends BaseModel
 
     public function isCanceled(): bool
     {
-        return SubscriptionStatus::CANCELED === $this->status;
+        return $this->status === SubscriptionStatus::CANCELED;
     }
 
     public function isPastDue(): bool
     {
-        return SubscriptionStatus::PAST_DUE === $this->status;
+        return $this->status === SubscriptionStatus::PAST_DUE;
     }
 
     public function isOnTrial(): bool
     {
-        return SubscriptionStatus::TRIALING === $this->status;
+        return $this->status === SubscriptionStatus::TRIALING;
     }
 }

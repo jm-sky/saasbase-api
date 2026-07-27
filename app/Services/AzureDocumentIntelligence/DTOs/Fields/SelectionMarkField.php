@@ -21,7 +21,7 @@ final class SelectionMarkField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!is_bool($this->value)) {
+        if (! is_bool($this->value)) {
             throw new \InvalidArgumentException('SelectionMarkField value must be a boolean');
         }
     }

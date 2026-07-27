@@ -14,12 +14,12 @@ class NotificationSettingResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'channel'    => $this->channel,
+            'id' => $this->id,
+            'channel' => $this->channel,
             'settingKey' => $this->setting_key,
-            'enabled'    => $this->enabled,
-            'createdAt'  => $this->created_at,
-            'updatedAt'  => $this->updated_at,
+            'enabled' => $this->enabled,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

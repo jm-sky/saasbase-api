@@ -6,10 +6,10 @@ use App\Domain\Common\DTOs\BaseDataDTO;
 use App\Services\Signatures\Enums\SignatureType;
 
 /**
- * @property bool                              $valid
- * @property SignatureType                     $type
+ * @property bool $valid
+ * @property SignatureType $type
  * @property array<GenericSignatureDetailsDTO> $signatures
- * @property ?string                           $error
+ * @property ?string $error
  */
 final class GenericSignaturesVerificationResultDTO extends BaseDataDTO
 {
@@ -18,16 +18,15 @@ final class GenericSignaturesVerificationResultDTO extends BaseDataDTO
         public SignatureType $type,
         public array $signatures,
         public ?string $error = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'valid'      => $this->valid,
-            'type'       => $this->type->value,
+            'valid' => $this->valid,
+            'type' => $this->type->value,
             'signatures' => collect($this->signatures)->map(fn (GenericSignatureDetailsDTO $signature) => $signature->toArray())->toArray(),
-            'error'      => $this->error,
+            'error' => $this->error,
         ];
     }
 

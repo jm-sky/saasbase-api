@@ -20,18 +20,18 @@ class RegisterUserAction
         $requiresApproval = Config::get('users.registration.require_admin_approval', true);
 
         $user = User::create([
-            'first_name'  => $dto->firstName,
-            'last_name'   => $dto->lastName,
-            'email'       => $dto->email,
-            'password'    => Hash::make($dto->password),
-            'phone'       => $dto->phone,
-            'is_active'   => !$requiresApproval,
+            'first_name' => $dto->firstName,
+            'last_name' => $dto->lastName,
+            'email' => $dto->email,
+            'password' => Hash::make($dto->password),
+            'phone' => $dto->phone,
+            'is_active' => ! $requiresApproval,
         ]);
 
         // Create user profile
         UserProfile::create([
-            'user_id'    => $user->id,
-            'bio'        => $dto->description,
+            'user_id' => $user->id,
+            'bio' => $dto->description,
             'birth_date' => $dto->birthDate,
         ]);
 

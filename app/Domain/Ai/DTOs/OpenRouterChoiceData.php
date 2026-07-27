@@ -10,8 +10,7 @@ class OpenRouterChoiceData
         public $finishReason = null,
         public $nativeFinishReason = null,
         public $logprobs = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

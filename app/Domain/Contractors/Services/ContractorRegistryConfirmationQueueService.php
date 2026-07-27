@@ -31,16 +31,16 @@ class ContractorRegistryConfirmationQueueService
         $confirmationTypes = $this->getConfirmationTypes($contractor);
 
         foreach ($confirmationTypes as $type) {
-            $confirmation    = $this->createPendingConfirmation($contractor, $type, $context);
+            $confirmation = $this->createPendingConfirmation($contractor, $type, $context);
             $confirmations[] = $confirmation;
 
             // Dispatch job to process this confirmation
             ProcessContractorRegistryConfirmationJob::dispatch($confirmation);
 
             Log::info('Queued registry confirmation job', [
-                'contractor_id'   => $contractor->id,
+                'contractor_id' => $contractor->id,
                 'confirmation_id' => $confirmation->id,
-                'type'            => $type->value,
+                'type' => $type->value,
             ]);
         }
 
@@ -56,17 +56,17 @@ class ContractorRegistryConfirmationQueueService
         CompanyContext $context
     ): RegistryConfirmation {
         return RegistryConfirmation::create([
-            'confirmable_id'   => $contractor->id,
+            'confirmable_id' => $contractor->id,
             'confirmable_type' => get_class($contractor),
-            'type'             => $type->value,
-            'payload'          => [
-                'nip'     => $context->nip,
-                'regon'   => $context->regon,
+            'type' => $type->value,
+            'payload' => [
+                'nip' => $context->nip,
+                'regon' => $context->regon,
                 'country' => $context->country,
-                'force'   => $context->force,
+                'force' => $context->force,
             ],
-            'result'     => null,
-            'status'     => RegistryConfirmationStatus::Pending,
+            'result' => null,
+            'status' => RegistryConfirmationStatus::Pending,
             'checked_at' => null,
         ]);
     }

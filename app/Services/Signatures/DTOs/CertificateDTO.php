@@ -12,17 +12,16 @@ final class CertificateDTO extends BaseDataDTO
         public ?string $validFrom = null,
         public ?string $validTo = null,
         public ?string $subject = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'issuer'       => $this->issuer,
+            'issuer' => $this->issuer,
             'serialNumber' => $this->serialNumber,
-            'validFrom'    => $this->validFrom,
-            'validTo'      => $this->validTo,
-            'subject'      => $this->subject,
+            'validFrom' => $this->validFrom,
+            'validTo' => $this->validTo,
+            'subject' => $this->subject,
         ];
     }
 

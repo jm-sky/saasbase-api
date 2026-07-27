@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<UserSkill>
  *
- * @property ?string   $id         UUID
- * @property string    $userId     UUID
- * @property string    $skillId    UUID
- * @property int       $level      1-5
- * @property ?Carbon   $acquiredAt When the skill was acquired, Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $createdAt  Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $updatedAt  Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id UUID
+ * @property string $userId UUID
+ * @property string $skillId UUID
+ * @property int $level 1-5
+ * @property ?Carbon $acquiredAt When the skill was acquired, Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?SkillDTO $skill
  */
 final class UserSkillDTO extends BaseDTO
@@ -68,14 +68,14 @@ final class UserSkillDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'userId'      => $this->userId,
-            'skillId'     => $this->skillId,
-            'level'       => $this->level,
-            'acquiredAt'  => $this->acquiredAt?->toDateString(),
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
-            'skill'       => $this->skill?->toArray(),
+            'id' => $this->id,
+            'userId' => $this->userId,
+            'skillId' => $this->skillId,
+            'level' => $this->level,
+            'acquiredAt' => $this->acquiredAt?->toDateString(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'skill' => $this->skill?->toArray(),
         ];
     }
 }

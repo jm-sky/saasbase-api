@@ -17,7 +17,7 @@ class ViesLookupService
 
     public function __construct(?ViesConnector $connector = null)
     {
-        $this->connector = $connector ?? new ViesConnector();
+        $this->connector = $connector ?? new ViesConnector;
     }
 
     /**
@@ -26,7 +26,7 @@ class ViesLookupService
     public function findByVat(string $countryCode, string $vatNumber, bool $force = false): ?ViesLookupResultDTO
     {
         $countryCode = strtoupper(trim($countryCode));
-        $vatNumber   = preg_replace('/[^0-9A-Za-z]/', '', $vatNumber);
+        $vatNumber = preg_replace('/[^0-9A-Za-z]/', '', $vatNumber);
 
         $cacheKey = "vies_lookup:{$countryCode}:{$vatNumber}";
         $cacheTtl = $this->getCacheExpiration();
@@ -54,18 +54,18 @@ class ViesLookupService
     public function lookup(string $countryCode, string $vatNumber): ?ViesLookupResultDTO
     {
         try {
-            $request  = new CheckVatRequest($countryCode, $vatNumber);
+            $request = new CheckVatRequest($countryCode, $vatNumber);
             $response = $this->connector->send($request);
 
             if ($response->successful()) {
                 return $response->dtoOrFail();
             }
 
-            throw new ViesLookupException('Unsuccessful VIES API response: ' . $response->status());
+            throw new ViesLookupException('Unsuccessful VIES API response: '.$response->status());
         } catch (\Throwable $e) {
-            Log::error('ViesLookupService error: ' . $e->getMessage(), [
+            Log::error('ViesLookupService error: '.$e->getMessage(), [
                 'countryCode' => $countryCode,
-                'vatNumber'   => $vatNumber,
+                'vatNumber' => $vatNumber,
             ]);
 
             if ($e instanceof ViesLookupException) {
@@ -80,7 +80,7 @@ class ViesLookupService
     {
         $cacheMode = config('services.vies.cache_mode', 'hours');
 
-        if ('week' === $cacheMode) {
+        if ($cacheMode === 'week') {
             return now()->next('Sunday')->startOfDay();
         }
 

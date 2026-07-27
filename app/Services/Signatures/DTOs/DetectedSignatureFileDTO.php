@@ -12,6 +12,5 @@ readonly class DetectedSignatureFileDTO
         public SignatureType $signature,
         public ?string $mime = null,
         public ?string $extension = null,
-    ) {
-    }
+    ) {}
 }

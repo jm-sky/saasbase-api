@@ -14,11 +14,11 @@ class UpdateProfilePrivacyRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'isProfilePublic'         => ['boolean'],
-            'fieldVisibility'         => ['nullable', 'array'],
-            'fieldVisibility.*'       => ['string', 'in:hidden,tenant,public'],
-            'visibilityPerTenant'     => ['nullable', 'array'],
-            'visibilityPerTenant.*'   => ['array'],
+            'isProfilePublic' => ['boolean'],
+            'fieldVisibility' => ['nullable', 'array'],
+            'fieldVisibility.*' => ['string', 'in:hidden,tenant,public'],
+            'visibilityPerTenant' => ['nullable', 'array'],
+            'visibilityPerTenant.*' => ['array'],
             'visibilityPerTenant.*.*' => ['string', 'in:hidden,tenant,public'],
         ];
     }

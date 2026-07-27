@@ -3,6 +3,7 @@
 namespace App\Domain\Subscription\Services;
 
 use App\Domain\Subscription\Exceptions\StripeException;
+use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
 abstract class StripeService
@@ -19,8 +20,7 @@ abstract class StripeService
      *
      * @template T
      *
-     * @param callable(): T $callback
-     *
+     * @param  callable(): T  $callback
      * @return T
      *
      * @throws StripeException
@@ -29,7 +29,7 @@ abstract class StripeService
     {
         try {
             return $callback();
-        } catch (\Stripe\Exception\ApiErrorException $e) {
+        } catch (ApiErrorException $e) {
             throw new StripeException(message: $e->getMessage(), stripeCode: $e->getStripeCode(), previous: $e);
         }
     }

@@ -14,7 +14,7 @@ class ApplicationInvitationNotification extends Notification implements ShouldQu
     use Queueable;
 
     /**
-     * @param ?string $locale
+     * @param  ?string  $locale
      */
     public function __construct(
         public ApplicationInvitation $invitation,
@@ -33,16 +33,15 @@ class ApplicationInvitationNotification extends Notification implements ShouldQu
     public function toMail($notifiable): MailMessage
     {
         $frontendUrl = config('app.frontend_url');
-        $url         = $frontendUrl . '/login?applicationInvitationToken=' . $this->invitation->token;
+        $url = $frontendUrl.'/login?applicationInvitationToken='.$this->invitation->token;
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject(__('notifications.application_invitation.subject'))
             ->greeting(__('notifications.application_invitation.greeting'))
             ->line(__('notifications.application_invitation.intro'))
             ->line('')
             ->line(__('notifications.application_invitation.accept_button'))
             ->action(__('notifications.application_invitation.accept_button'), $url)
-            ->line(__('notifications.application_invitation.ignore_info'))
-        ;
+            ->line(__('notifications.application_invitation.ignore_info'));
     }
 }

@@ -10,8 +10,7 @@ class QueryInvoiceSyncRequest extends BaseKSeFRequest
 {
     public function __construct(
         protected QueryInvoiceRequestDTO $queryData
-    ) {
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -21,7 +20,7 @@ class QueryInvoiceSyncRequest extends BaseKSeFRequest
     protected function defaultQuery(): array
     {
         return [
-            'PageSize'   => $this->queryData->pageSize,
+            'PageSize' => $this->queryData->pageSize,
             'PageOffset' => $this->queryData->pageOffset,
         ];
     }
@@ -35,7 +34,7 @@ class QueryInvoiceSyncRequest extends BaseKSeFRequest
 
     protected function buildQueryCriteria(): array
     {
-        $criteria      = [];
+        $criteria = [];
         $queryCriteria = $this->queryData->queryCriteria;
 
         if ($queryCriteria->subjectType) {
@@ -82,7 +81,7 @@ class QueryInvoiceSyncRequest extends BaseKSeFRequest
             $criteria['currencyCode'] = $queryCriteria->currencyCode;
         }
 
-        if (null !== $queryCriteria->faP17Annotation) {
+        if ($queryCriteria->faP17Annotation !== null) {
             $criteria['faP17Annotation'] = $queryCriteria->faP17Annotation;
         }
 

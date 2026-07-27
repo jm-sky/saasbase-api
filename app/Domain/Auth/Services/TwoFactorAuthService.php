@@ -13,7 +13,7 @@ class TwoFactorAuthService
 
     public function __construct()
     {
-        $this->google2fa = new Google2FA();
+        $this->google2fa = new Google2FA;
     }
 
     public function generateSecretKey(): string
@@ -50,7 +50,7 @@ class TwoFactorAuthService
     {
         $settings = $user->settings;
 
-        if (!$settings || !$settings->two_factor_recovery_codes) {
+        if (! $settings || ! $settings->two_factor_recovery_codes) {
             return false;
         }
 
@@ -61,7 +61,7 @@ class TwoFactorAuthService
 
         $position = array_search($code, $recoveryCodes);
 
-        if (false === $position) {
+        if ($position === false) {
             return false;
         }
 
@@ -79,18 +79,18 @@ class TwoFactorAuthService
     {
         $settings = $user->settings;
 
-        if (!$settings || !$settings->two_factor_secret) {
+        if (! $settings || ! $settings->two_factor_secret) {
             return false;
         }
 
         $secret = Crypt::decryptString($settings->two_factor_secret);
 
-        if (!$this->verifyCode($secret, $code)) {
+        if (! $this->verifyCode($secret, $code)) {
             return false;
         }
 
         $settings->update([
-            'two_factor_enabled'   => true,
+            'two_factor_enabled' => true,
             'two_factor_confirmed' => true,
         ]);
 
@@ -101,14 +101,14 @@ class TwoFactorAuthService
     {
         $settings = $user->settings;
 
-        if (!$settings) {
+        if (! $settings) {
             return;
         }
 
         $settings->update([
-            'two_factor_enabled'        => false,
-            'two_factor_confirmed'      => false,
-            'two_factor_secret'         => null,
+            'two_factor_enabled' => false,
+            'two_factor_confirmed' => false,
+            'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
         ]);
     }
@@ -117,24 +117,24 @@ class TwoFactorAuthService
     {
         $settings = $user->settings;
 
-        if (!$settings) {
+        if (! $settings) {
             return [];
         }
 
-        $secret        = $this->generateSecretKey();
+        $secret = $this->generateSecretKey();
         $recoveryCodes = $this->generateRecoveryCodes();
 
         $settings->update([
-            'two_factor_secret'         => Crypt::encryptString($secret),
+            'two_factor_secret' => Crypt::encryptString($secret),
             'two_factor_recovery_codes' => Crypt::encryptString(json_encode($recoveryCodes)),
-            'two_factor_enabled'        => false,
-            'two_factor_confirmed'      => false,
+            'two_factor_enabled' => false,
+            'two_factor_confirmed' => false,
         ]);
 
         return [
-            'secret'         => $secret,
+            'secret' => $secret,
             'recovery_codes' => $recoveryCodes,
-            'qr_code_url'    => $this->google2fa->getQRCodeUrl(
+            'qr_code_url' => $this->google2fa->getQRCodeUrl(
                 config('app.name'),
                 $user->email,
                 $secret

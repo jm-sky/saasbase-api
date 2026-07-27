@@ -20,10 +20,10 @@ class TaskStatusResource extends JsonResource
     {
         /* @var TaskStatus $this->resource */
         return [
-            'id'        => $this->id,
-            'tenantId'  => $this->tenant_id,
-            'name'      => $this->name,
-            'color'     => $this->color,
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'name' => $this->name,
+            'color' => $this->color,
             'sortOrder' => $this->sort_order,
             'isDefault' => $this->is_default,
             'createdAt' => $this->created_at?->toIso8601String(),

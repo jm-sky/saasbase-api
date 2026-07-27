@@ -18,34 +18,37 @@ class TenantLogoController extends Controller
 
     public function upload(TenantLogoUploadRequest $request, Tenant $tenant)
     {
+        $this->authorize('update', $tenant);
+
         $tenant->clearMediaCollection('logo');
 
         $media = $tenant->addMediaFromRequest('image')
-            ->toMediaCollection('logo')
-        ;
+            ->toMediaCollection('logo');
 
         $tenant->logModelActivity(TenantActivityType::LogoCreated->value, $media);
 
-        $logoUrl  = $tenant->getMediaSignedUrl('logo');
+        $logoUrl = $tenant->getMediaSignedUrl('logo');
         $thumbUrl = $tenant->getMediaSignedUrl('logo', 'thumb');
 
         return response()->json([
-            'message'     => 'Tenant logo uploaded successfully.',
+            'message' => 'Tenant logo uploaded successfully.',
             'originalUrl' => $logoUrl,
-            'thumbUrl'    => $thumbUrl,
+            'thumbUrl' => $thumbUrl,
         ]);
     }
 
     public function show(Tenant $tenant, Request $request)
     {
+        $this->authorize('view', $tenant);
+
         $thumb = $request->query('thumb', false);
         $media = $thumb ? $tenant->getFirstMedia('logo', 'thumb') : $tenant->getFirstMedia('logo');
 
-        if ($thumb && !$media) {
+        if ($thumb && ! $media) {
             $media = $tenant->getFirstMedia('logo');
         }
 
-        if (!$media) {
+        if (! $media) {
             return response()->json(['message' => 'No logo found.'], HttpResponse::HTTP_NOT_FOUND);
         }
 
@@ -54,14 +57,16 @@ class TenantLogoController extends Controller
         return Response::stream(function () use ($stream) {
             fpassthru($stream);
         }, HttpResponse::HTTP_OK, [
-            'Content-Type'        => $media->mime_type,
-            'Content-Length'      => $media->size,
-            'Content-Disposition' => 'inline; filename="' . $media->file_name . '"',
+            'Content-Type' => $media->mime_type,
+            'Content-Length' => $media->size,
+            'Content-Disposition' => 'inline; filename="'.$media->file_name.'"',
         ]);
     }
 
     public function delete(Tenant $tenant)
     {
+        $this->authorize('update', $tenant);
+
         $media = $tenant->getFirstMedia('logo');
         $tenant->clearMediaCollection('logo');
 

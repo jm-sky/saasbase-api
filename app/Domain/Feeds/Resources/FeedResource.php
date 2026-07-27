@@ -15,16 +15,16 @@ class FeedResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'            => $this->id,
-            'tenantId'      => $this->tenant_id,
-            'userId'        => $this->user_id,
-            'title'         => $this->title,
-            'content'       => $this->content,
-            'createdAt'     => $this->created_at,
-            'updatedAt'     => $this->updated_at,
-            'creator'       => new UserPreviewResource($this->whenLoaded('user')),
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'userId' => $this->user_id,
+            'title' => $this->title,
+            'content' => $this->content,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'creator' => new UserPreviewResource($this->whenLoaded('user')),
             'commentsCount' => $this->whenCounted('comments'),
-            'comments'      => CommentResource::collection($this->whenLoaded('comments')),
+            'comments' => CommentResource::collection($this->whenLoaded('comments')),
         ];
     }
 }

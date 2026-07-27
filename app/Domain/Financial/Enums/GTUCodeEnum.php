@@ -41,14 +41,14 @@ enum GTUCodeEnum: string
 
     public function hasAmountThreshold(): bool
     {
-        return self::GTU_07 === $this;
+        return $this === self::GTU_07;
     }
 
     public function getAmountThreshold(): ?float
     {
         return match ($this) {
             self::GTU_07 => self::THRESHOLD_50_000,
-            default      => null,
+            default => null,
         };
     }
 

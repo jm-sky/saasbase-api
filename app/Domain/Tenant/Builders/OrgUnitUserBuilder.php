@@ -23,10 +23,8 @@ class OrgUnitUserBuilder extends Builder
             ->where('valid_from', '<=', now())
             ->where(function ($query) {
                 $query->whereNull('valid_until')
-                    ->orWhere('valid_until', '>=', now())
-                ;
-            })
-        ;
+                    ->orWhere('valid_until', '>=', now());
+            });
     }
 
     /**

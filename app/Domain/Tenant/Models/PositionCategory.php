@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
- * @property string                    $name
- * @property string                    $slug
- * @property string                    $description
- * @property int                       $sort_order
- * @property bool                      $is_active
+ * @property string $name
+ * @property string $slug
+ * @property string $description
+ * @property int $sort_order
+ * @property bool $is_active
  * @property Collection<int, Position> $positions
  * @property Collection<int, Position> $activePositions
- * @property Collection<int, User>     $users
+ * @property Collection<int, User> $users
  */
 class PositionCategory extends BaseModel
 {
@@ -33,7 +33,7 @@ class PositionCategory extends BaseModel
     ];
 
     protected $casts = [
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];
 

@@ -19,14 +19,14 @@ final class PlanFeatureResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'            => $this->feature->id,
-            'name'          => $this->feature->name,
-            'description'   => $this->feature->description,
-            'type'          => $this->feature->type,
-            'value'         => $this->value,
-            'defaultValue'  => $this->feature->default_value,
-            'isUnlimited'   => 'boolean' === $this->feature->type && true === $this->value,
-            'isLimited'     => 'integer' === $this->feature->type && 'unlimited' !== $this->value,
+            'id' => $this->feature->id,
+            'name' => $this->feature->name,
+            'description' => $this->feature->description,
+            'type' => $this->feature->type,
+            'value' => $this->value,
+            'defaultValue' => $this->feature->default_value,
+            'isUnlimited' => $this->feature->type === 'boolean' && $this->value === true,
+            'isLimited' => $this->feature->type === 'integer' && $this->value !== 'unlimited',
         ];
     }
 }

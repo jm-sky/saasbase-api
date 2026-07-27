@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $token
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property User   $user
+ * @property User $user
  */
 class EmailVerificationToken extends BaseModel
 {

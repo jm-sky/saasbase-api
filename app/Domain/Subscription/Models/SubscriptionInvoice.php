@@ -5,31 +5,34 @@ namespace App\Domain\Subscription\Models;
 use App\Domain\Auth\Models\User;
 use App\Domain\Common\Models\BaseModel;
 use App\Domain\Subscription\Enums\SubscriptionInvoiceStatus;
+use App\Domain\Subscription\Traits\BelongsToBillingCustomerOfUser;
 use App\Domain\Tenant\Models\Tenant;
 use Carbon\Carbon;
 
 /**
- * @property string                    $id
- * @property string                    $billable_type
- * @property string                    $billable_id
- * @property string                    $stripe_invoice_id
- * @property string                    $number
- * @property float                     $amount_due
- * @property float                     $amount
- * @property string                    $currency
+ * @property string $id
+ * @property string $billable_type
+ * @property string $billable_id
+ * @property string $stripe_invoice_id
+ * @property string $number
+ * @property float $amount_due
+ * @property float $amount
+ * @property string $currency
  * @property SubscriptionInvoiceStatus $status
- * @property string                    $hosted_invoice_url
- * @property string                    $pdf_url
- * @property string                    $invoice_pdf
- * @property Carbon                    $issued_at
- * @property ?Carbon                   $due_date
- * @property ?Carbon                   $paid_at
- * @property array                     $items
- * @property Tenant|User               $billable
- * @property ?BillingCustomer          $billingCustomer
+ * @property string $hosted_invoice_url
+ * @property string $pdf_url
+ * @property string $invoice_pdf
+ * @property Carbon $issued_at
+ * @property ?Carbon $due_date
+ * @property ?Carbon $paid_at
+ * @property array $items
+ * @property Tenant|User $billable
+ * @property ?BillingCustomer $billingCustomer
  */
 class SubscriptionInvoice extends BaseModel
 {
+    use BelongsToBillingCustomerOfUser;
+
     protected $fillable = [
         'billable_type',
         'billable_id',
@@ -50,12 +53,12 @@ class SubscriptionInvoice extends BaseModel
 
     protected $casts = [
         'amount_due' => 'float',
-        'amount'     => 'float',
-        'issued_at'  => 'datetime',
-        'due_date'   => 'datetime',
-        'paid_at'    => 'datetime',
-        'status'     => SubscriptionInvoiceStatus::class,
-        'items'      => 'array',
+        'amount' => 'float',
+        'issued_at' => 'datetime',
+        'due_date' => 'datetime',
+        'paid_at' => 'datetime',
+        'status' => SubscriptionInvoiceStatus::class,
+        'items' => 'array',
     ];
 
     public function billable()

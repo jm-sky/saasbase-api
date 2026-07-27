@@ -20,7 +20,7 @@ class SubscriptionCheckoutResource extends JsonResource
     {
         return [
             'checkoutUrl' => $this->checkoutUrl,
-            'sessionId'   => $this->sessionId,
+            'sessionId' => $this->sessionId,
         ];
     }
 }

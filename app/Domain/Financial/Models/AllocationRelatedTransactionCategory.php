@@ -3,21 +3,24 @@
 namespace App\Domain\Financial\Models;
 
 use App\Domain\Common\Models\BaseModel;
+use App\Domain\Expense\Contracts\AllocationDimensionInterface;
+use App\Domain\Expense\Traits\HasAllocationDimensionInterface;
 use App\Domain\Tenant\Traits\IsGlobalOrBelongsToTenant;
 use Carbon\Carbon;
 
 /**
- * @property string  $id
+ * @property string $id
  * @property ?string $tenant_id
- * @property string  $code
- * @property string  $name
+ * @property string $code
+ * @property string $name
  * @property ?string $description
- * @property bool    $is_active
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
-class AllocationRelatedTransactionCategory extends BaseModel
+class AllocationRelatedTransactionCategory extends BaseModel implements AllocationDimensionInterface
 {
+    use HasAllocationDimensionInterface;
     use IsGlobalOrBelongsToTenant;
 
     protected $table = 'allocation_related_transaction_categories';

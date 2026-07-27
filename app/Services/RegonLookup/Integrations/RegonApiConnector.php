@@ -28,13 +28,13 @@ class RegonApiConnector extends Connector
     {
         return [
             'Content-Type' => 'application/soap+xml',
-            'Accept'       => 'application/soap+xml',
+            'Accept' => 'application/soap+xml',
         ];
     }
 
     protected function defaultAuth(): ?Authenticator
     {
-        return new RegonAuthenticator();
+        return new RegonAuthenticator;
     }
 
     protected function resolveLimits(): array

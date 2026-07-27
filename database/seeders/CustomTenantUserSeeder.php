@@ -54,7 +54,7 @@ class CustomTenantUserSeeder extends Seeder
 
     public function run(): void
     {
-        if (!static::shouldRun()) {
+        if (! static::shouldRun()) {
             return;
         }
 
@@ -79,7 +79,7 @@ class CustomTenantUserSeeder extends Seeder
 
     public static function getSeedFilePath(): string
     {
-        return database_path('data/' . static::$seedFile);
+        return database_path('data/'.static::$seedFile);
     }
 
     protected function loadData(): void
@@ -90,9 +90,9 @@ class CustomTenantUserSeeder extends Seeder
     protected function createTenants(array $tenants): void
     {
         foreach ($tenants as $tenantInput) {
-            $tenantId     = Arr::get($tenantInput, 'id');
-            $tenantData   = collect($tenantInput)->except(['relations', 'meta'])->toArray();
-            $addresses    = collect(Arr::get($tenantInput, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $tenantId = Arr::get($tenantInput, 'id');
+            $tenantData = collect($tenantInput)->except(['relations', 'meta'])->toArray();
+            $addresses = collect(Arr::get($tenantInput, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
             $bankAccounts = collect(Arr::get($tenantInput, 'relations.bankAccounts', []))->map(fn ($bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             $tenant = Tenant::create($tenantData);
@@ -101,18 +101,18 @@ class CustomTenantUserSeeder extends Seeder
                 $tenant->addresses()->createMany($addresses);
                 $tenant->bankAccounts()->createMany($bankAccounts);
                 $tenant->subscription()->create([
-                    'id'                     => (string) Str::ulid(),
-                    'subscription_plan_id'   => SubscriptionPlan::where('name', 'Free')->firstOrFail()->id,
+                    'id' => (string) Str::ulid(),
+                    'subscription_plan_id' => SubscriptionPlan::where('name', 'Free')->firstOrFail()->id,
                     'stripe_subscription_id' => null,
-                    'status'                 => SubscriptionStatus::ACTIVE,
-                    'current_period_start'   => now(),
-                    'current_period_end'     => now()->addYear(),
-                    'cancel_at_period_end'   => false,
+                    'status' => SubscriptionStatus::ACTIVE,
+                    'current_period_start' => now(),
+                    'current_period_end' => now()->addYear(),
+                    'cancel_at_period_end' => false,
                 ]);
 
-                $initializer = new InitializeTenantDefaults();
+                $initializer = new InitializeTenantDefaults;
                 $initializer->createDefaultPositionCategories($tenant);
-                $rootUnit    = $initializer->createOrganizationUnits($tenant, $tenant->owner);
+                $rootUnit = $initializer->createOrganizationUnits($tenant, $tenant->owner);
                 $initializer->seedDefaultMeasurementUnits($tenant);
                 $initializer->seedDefaultProjectStatuses($tenant);
                 $initializer->seedDefaultTaskStatuses($tenant);
@@ -136,8 +136,8 @@ class CustomTenantUserSeeder extends Seeder
             $userPayload = collect($userData)->except(['relations', 'meta'])->toArray();
 
             /** @var User $user */
-            $user                    = User::create($userPayload);
-            $user->is_active         = true;
+            $user = User::create($userPayload);
+            $user->is_active = true;
             $user->email_verified_at = now();
             $user->save();
 
@@ -159,20 +159,20 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createUserTenant(User $user, ?array $tenantData = null): void
     {
-        if (!$tenantData) {
+        if (! $tenantData) {
             return;
         }
 
         $tenantId = Arr::get($tenantData, 'id');
-        $isOwner  = Arr::get($tenantData, 'isOwner') ?? false;
-        $role     = $user->is_admin ? RoleName::Admin : null;
-        $role     = $role ?? ($isOwner ? RoleName::Owner : $role);
-        $role     = $role ?? (Arr::get($tenantData, 'role') ? RoleName::fromCaseInsensitive(Arr::get($tenantData, 'role')) : $role);
-        $role     = $role ?? RoleName::Manager;
+        $isOwner = Arr::get($tenantData, 'isOwner') ?? false;
+        $role = $user->is_admin ? RoleName::Admin : null;
+        $role = $role ?? ($isOwner ? RoleName::Owner : $role);
+        $role = $role ?? (Arr::get($tenantData, 'role') ? RoleName::fromCaseInsensitive(Arr::get($tenantData, 'role')) : $role);
+        $role = $role ?? RoleName::Manager;
 
         $tenant = $this->tenants[$tenantId] ?? null;
 
-        if (!$tenant) {
+        if (! $tenant) {
             return;
         }
 
@@ -197,15 +197,15 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createUserSkills(User $user, ?array $skills = null): void
     {
-        if (!$skills) {
+        if (! $skills) {
             return;
         }
 
         collect($skills)->each(function (array $skill) use ($user) {
             UserSkill::create([
-                'user_id'     => $user->id,
-                'skill_id'    => Skill::firstOrCreate(['name' => $skill['name']])->id,
-                'level'       => $skill['level'] ?? 3,
+                'user_id' => $user->id,
+                'skill_id' => Skill::firstOrCreate(['name' => $skill['name']])->id,
+                'level' => $skill['level'] ?? 3,
                 'acquired_at' => $skill['acquired_at'] ?? now(),
             ]);
         });
@@ -213,14 +213,14 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createTenantLogo(Tenant $tenant, ?string $logoUrl = null): void
     {
-        if (!$logoUrl) {
+        if (! $logoUrl) {
             return;
         }
 
         try {
             $stream = $this->getCachedImageStream($logoUrl);
 
-            if (!$stream) {
+            if (! $stream) {
                 return;
             }
 
@@ -228,8 +228,7 @@ class CustomTenantUserSeeder extends Seeder
 
             $tenant->addMediaFromStream($stream)
                 ->usingFileName('logo.png')
-                ->toMediaCollection('logo')
-            ;
+                ->toMediaCollection('logo');
         } catch (\Exception $e) {
             $this->command->error("Error creating tenant logo: {$e->getMessage()}");
         }
@@ -237,14 +236,14 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createUserAvatar(User $user, ?string $avatarUrl = null): void
     {
-        if (!$avatarUrl) {
+        if (! $avatarUrl) {
             return;
         }
 
         try {
             $stream = $this->getCachedImageStream($avatarUrl);
 
-            if (!$stream) {
+            if (! $stream) {
                 return;
             }
 
@@ -252,8 +251,7 @@ class CustomTenantUserSeeder extends Seeder
 
             $user->addMediaFromStream($stream)
                 ->usingFileName('profile.png')
-                ->toMediaCollection('profile')
-            ;
+                ->toMediaCollection('profile');
         } catch (\Exception $e) {
             $this->command->error("Error creating user avatar: {$e->getMessage()}");
         }
@@ -262,8 +260,8 @@ class CustomTenantUserSeeder extends Seeder
     protected function createContractors(array $contractors): void
     {
         foreach ($contractors as $contractorData) {
-            $tenantId     = Arr::get($contractorData, 'tenant_id');
-            $addresses    = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
+            $tenantId = Arr::get($contractorData, 'tenant_id');
+            $addresses = collect(Arr::get($contractorData, 'relations.addresses', []))->map(fn ($address) => [...$address, 'tenant_id' => $tenantId])->toArray();
             $bankAccounts = collect(Arr::get($contractorData, 'relations.bankAccounts', []))->map(fn ($bankAccount) => [...$bankAccount, 'tenant_id' => $tenantId])->toArray();
 
             Tenant::bypassTenant($tenantId, function () use ($contractorData, $addresses, $bankAccounts) {
@@ -277,14 +275,14 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createContractorLogo(Contractor $contractor, ?string $logoUrl = null): void
     {
-        if (!$logoUrl) {
+        if (! $logoUrl) {
             return;
         }
 
         try {
             $stream = $this->getCachedImageStream($logoUrl);
 
-            if (!$stream) {
+            if (! $stream) {
                 return;
             }
 
@@ -292,8 +290,7 @@ class CustomTenantUserSeeder extends Seeder
 
             $contractor->addMediaFromStream($stream)
                 ->usingFileName('logo.png')
-                ->toMediaCollection('logo')
-            ;
+                ->toMediaCollection('logo');
         } catch (\Exception $e) {
             $this->command->error("Error creating contractor logo: {$e->getMessage()}");
         }
@@ -303,19 +300,19 @@ class CustomTenantUserSeeder extends Seeder
     {
         $cacheDir = storage_path('app/seeder_cache');
 
-        if (!is_dir($cacheDir)) {
+        if (! is_dir($cacheDir)) {
             mkdir($cacheDir, 0775, true);
         }
 
         $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'png';
-        $filename  = md5($url) . '.' . $extension;
-        $filepath  = $cacheDir . '/' . $filename;
+        $filename = md5($url).'.'.$extension;
+        $filepath = $cacheDir.'/'.$filename;
 
-        if (!file_exists($filepath)) {
+        if (! file_exists($filepath)) {
             try {
                 $contents = file_get_contents($url);
 
-                if (!$contents) {
+                if (! $contents) {
                     return null;
                 }
 
@@ -332,18 +329,18 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createProjects(): void
     {
-        $tenants   = Tenant::all();
+        $tenants = Tenant::all();
         $templates = [
             'onboarding' => [
-                'name'        => 'Onboarding',
+                'name' => 'Onboarding',
                 'description' => 'Tenants onboarding project for new users. This project is used to onboard new users to the platform.',
             ],
             'saasbase-development' => [
-                'name'        => 'SaasBase development',
+                'name' => 'SaasBase development',
                 'description' => 'SaasBase development project to test our platform and add new features.',
             ],
             'project-management' => [
-                'name'        => 'Project Management',
+                'name' => 'Project Management',
                 'description' => 'Project management project for new tenants',
             ],
         ];
@@ -364,11 +361,11 @@ class CustomTenantUserSeeder extends Seeder
 
         /** @var Project $project */
         $project = $tenant->projects()->create([
-            'name'        => $template['name'],
-            'status_id'   => $status->id,
+            'name' => $template['name'],
+            'status_id' => $status->id,
             'description' => $template['description'],
-            'start_date'  => now(),
-            'owner_id'    => $tenant->owner_id,
+            'start_date' => now(),
+            'owner_id' => $tenant->owner_id,
         ]);
 
         /** @var Collection<int, User> $users */
@@ -383,10 +380,10 @@ class CustomTenantUserSeeder extends Seeder
 
         Tenant::bypassTenant($tenant->id, function () use ($tenant, $users, $project) {
             $project->tasks()->create([
-                'title'         => 'Task 1',
-                'description'   => 'Task 1 description',
-                'status_id'     => TaskStatus::orderBy('sort_order', 'asc')->first()->id,
-                'assignee_id'   => $users->first()->id,
+                'title' => 'Task 1',
+                'description' => 'Task 1 description',
+                'status_id' => TaskStatus::orderBy('sort_order', 'asc')->first()->id,
+                'assignee_id' => $users->first()->id,
                 'created_by_id' => $tenant->owner_id,
             ]);
         });
@@ -407,24 +404,24 @@ class CustomTenantUserSeeder extends Seeder
 
     protected function createProducts(Tenant $tenant): void
     {
-        $unit    = MeasurementUnit::where('code', 'mh')->first();
+        $unit = MeasurementUnit::where('code', 'mh')->first();
         $vatRate = VatRate::where('name', '23%')->first();
 
         $products = [
             'product-1' => [
-                'name'        => 'Usługi IT',
+                'name' => 'Usługi IT',
                 'description' => 'Usługi IT dla klienta',
-                'price_net'   => 200,
-                'type'        => ProductType::SERVICE,
-                'unit_id'     => $unit->id,
+                'price_net' => 200,
+                'type' => ProductType::SERVICE,
+                'unit_id' => $unit->id,
                 'vat_rate_id' => $vatRate->id,
             ],
             'product-2' => [
-                'name'        => 'Szkolenie z cyberbezpieczeństwa',
+                'name' => 'Szkolenie z cyberbezpieczeństwa',
                 'description' => 'Szkolenie z cyberbezpieczeństwa dla klienta',
-                'price_net'   => 300,
-                'type'        => ProductType::SERVICE,
-                'unit_id'     => $unit->id,
+                'price_net' => 300,
+                'type' => ProductType::SERVICE,
+                'unit_id' => $unit->id,
                 'vat_rate_id' => $vatRate->id,
             ],
         ];
@@ -442,7 +439,7 @@ class CustomTenantUserSeeder extends Seeder
         // Generate invoices for the previous year (all 12 months)
         $previousYear = now()->subYear()->startOfYear();
 
-        for ($i = 0; $i < 12; ++$i) {
+        for ($i = 0; $i < 12; $i++) {
             $invoiceDate = $previousYear->copy()->addMonths($i);
 
             $tenant->invoices()->create(
@@ -450,23 +447,23 @@ class CustomTenantUserSeeder extends Seeder
                     ->soldServicesToNasa($tenant)
                     ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
                     ->make([
-                        'number'                => "TEST/{$template->generateNextNumber()}",
-                        'type'                  => InvoiceType::Basic,
-                        'status'                => InvoiceStatus::COMPLETED,
+                        'number' => "TEST/{$template->generateNextNumber()}",
+                        'type' => InvoiceType::Basic,
+                        'status' => InvoiceStatus::COMPLETED,
                         'numbering_template_id' => $template->id,
-                        'created_at'            => $invoiceDate,
+                        'created_at' => $invoiceDate,
                     ])->toArray()
             );
         }
 
         // Generate invoices for the current year up to current month
-        $currentYear  = now()->startOfYear();
+        $currentYear = now()->startOfYear();
         $currentMonth = now()->month;
 
         $contractor = Contractor::where('tenant_id', $tenant->id)->first();
-        $product    = Product::where('tenant_id', $tenant->id)->first();
+        $product = Product::where('tenant_id', $tenant->id)->first();
 
-        for ($i = 0; $i < $currentMonth; ++$i) {
+        for ($i = 0; $i < $currentMonth; $i++) {
             $invoiceDate = $currentYear->copy()->addMonths($i);
 
             $tenant->invoices()->create(
@@ -474,10 +471,10 @@ class CustomTenantUserSeeder extends Seeder
                     ->soldServicesToNasa($tenant)
                     ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
                     ->make([
-                        'number'                => "TEST/{$template->generateNextNumber()}",
-                        'type'                  => InvoiceType::Export,
+                        'number' => "TEST/{$template->generateNextNumber()}",
+                        'type' => InvoiceType::Export,
                         'numbering_template_id' => $template->id,
-                        'created_at'            => $invoiceDate,
+                        'created_at' => $invoiceDate,
                     ])->toArray()
             );
 
@@ -486,10 +483,10 @@ class CustomTenantUserSeeder extends Seeder
                     ->soldServicesToContractor($tenant, $contractor, $product)
                     ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
                     ->make([
-                        'number'                => "TEST/{$template->generateNextNumber()}",
-                        'type'                  => InvoiceType::Basic,
+                        'number' => "TEST/{$template->generateNextNumber()}",
+                        'type' => InvoiceType::Basic,
                         'numbering_template_id' => $template->id,
-                        'created_at'            => $invoiceDate,
+                        'created_at' => $invoiceDate,
                     ])->toArray()
             );
         }
@@ -499,11 +496,11 @@ class CustomTenantUserSeeder extends Seeder
                 ->soldServicesToContractor($tenant, $contractor, $product)
                 ->withDates(now(), now()->addDays(14))
                 ->make([
-                    'number'                => "DEMO/{$template->generateNextNumber()}",
-                    'type'                  => InvoiceType::Basic,
+                    'number' => "DEMO/{$template->generateNextNumber()}",
+                    'type' => InvoiceType::Basic,
                     'numbering_template_id' => $template->id,
-                    'status'                => InvoiceStatus::ISSUED,
-                    'created_at'            => now(),
+                    'status' => InvoiceStatus::ISSUED,
+                    'created_at' => now(),
                 ])->toArray()
         );
     }
@@ -511,10 +508,10 @@ class CustomTenantUserSeeder extends Seeder
     protected function createExpenses(Tenant $tenant): void
     {
         // Generate invoices for the current year up to current month
-        $currentYear  = now()->startOfYear();
+        $currentYear = now()->startOfYear();
         $currentMonth = now()->month;
 
-        for ($i = 0; $i < $currentMonth; ++$i) {
+        for ($i = 0; $i < $currentMonth; $i++) {
             $invoiceDate = $currentYear->copy()->addMonths($i);
 
             $tenant->expenses()->create(
@@ -522,8 +519,8 @@ class CustomTenantUserSeeder extends Seeder
                     ->receivedFromOvh($tenant)
                     ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
                     ->make([
-                        'type'       => InvoiceType::Import,
-                        'status'     => InvoiceStatus::ISSUED,
+                        'type' => InvoiceType::Import,
+                        'status' => InvoiceStatus::ISSUED,
                         'created_at' => $invoiceDate,
                     ])->toArray()
             );
@@ -535,8 +532,8 @@ class CustomTenantUserSeeder extends Seeder
                     ->receivedFromBp($tenant)
                     ->withDates($invoiceDate, $invoiceDate->copy()->addDays(14))
                     ->make([
-                        'type'       => InvoiceType::Basic,
-                        'status'     => InvoiceStatus::ISSUED,
+                        'type' => InvoiceType::Basic,
+                        'status' => InvoiceStatus::ISSUED,
                         'created_at' => $invoiceDate,
                     ])->toArray()
             );
@@ -555,10 +552,10 @@ class CustomTenantUserSeeder extends Seeder
                 foreach ($users as $user) {
                     $user->apiKeys()->create([
                         'tenant_id' => $tenant->id,
-                        'user_id'   => $user->id,
-                        'name'      => 'Default API Key',
-                        'key'       => Str::random(64),
-                        'scopes'    => ['read', 'write'],
+                        'user_id' => $user->id,
+                        'name' => 'Default API Key',
+                        'key' => Str::random(64),
+                        'scopes' => ['read', 'write'],
                         'is_active' => false,
                     ]);
                 }
@@ -576,11 +573,11 @@ class CustomTenantUserSeeder extends Seeder
 
         foreach ($units as $unit) {
             $unit = OrganizationUnit::create([
-                'id'         => Ulid::deterministic([$tenant->id, $unit]),
-                'tenant_id'  => $tenant->id,
-                'parent_id'  => $rootUnit->id,
-                'name'       => $unit,
-                'code'       => Str::slug($unit),
+                'id' => Ulid::deterministic([$tenant->id, $unit]),
+                'tenant_id' => $tenant->id,
+                'parent_id' => $rootUnit->id,
+                'name' => $unit,
+                'code' => Str::slug($unit),
             ]);
 
             $categories = [
@@ -591,15 +588,15 @@ class CustomTenantUserSeeder extends Seeder
 
             foreach ($categories as $category) {
                 $position = $unit->positions()->create([
-                    'id'                   => Ulid::deterministic([$tenant->id, $unit, 'position', $category->value]),
-                    'tenant_id'            => $tenant->id,
+                    'id' => Ulid::deterministic([$tenant->id, $unit, 'position', $category->value]),
+                    'tenant_id' => $tenant->id,
                     'organization_unit_id' => $unit->id,
                     'position_category_id' => PositionCategory::where('name', $category->value)->first()->id,
-                    'name'                 => $category->value,
-                    'description'          => $category->value . ' position',
-                    'is_active'            => true,
-                    'is_director'          => DefaultPositionCategory::Director === $category,
-                    'is_learning'          => DefaultPositionCategory::Trainee === $category,
+                    'name' => $category->value,
+                    'description' => $category->value.' position',
+                    'is_active' => true,
+                    'is_director' => $category === DefaultPositionCategory::Director,
+                    'is_learning' => $category === DefaultPositionCategory::Trainee,
                 ]);
             }
         }

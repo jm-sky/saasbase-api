@@ -10,8 +10,7 @@ final class RecipientDto extends BaseDataDTO
         public readonly string $email,
         public readonly string $name,
         public readonly ?string $identifier = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -25,8 +24,8 @@ final class RecipientDto extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'email'      => $this->email,
-            'name'       => $this->name,
+            'email' => $this->email,
+            'name' => $this->name,
             'identifier' => $this->identifier,
         ];
     }

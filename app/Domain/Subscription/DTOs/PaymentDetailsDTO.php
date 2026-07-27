@@ -4,22 +4,23 @@ namespace App\Domain\Subscription\DTOs;
 
 use App\Domain\Common\DTOs\BaseDataDTO;
 
+/**
+ * Carries a Stripe PaymentMethod token created client-side via Stripe.js/Elements.
+ * Raw card number/CVC must never be sent to or handled by this backend (PCI-DSS
+ * SAQ A vs SAQ D) — the frontend tokenizes the card directly with Stripe and only
+ * the resulting `pm_...` id is transmitted here.
+ */
 final class PaymentDetailsDTO extends BaseDataDTO
 {
     public function __construct(
-        public string $cardNumber,
-        public string $expiry,
-        public string $cvc,
+        public string $paymentMethodId,
         public string $name,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
         return new self(
-            $data['cardNumber'],
-            $data['expiry'],
-            $data['cvc'],
+            $data['paymentMethodId'],
             $data['name'],
         );
     }
@@ -27,10 +28,8 @@ final class PaymentDetailsDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'cardNumber' => $this->cardNumber,
-            'expiry'     => $this->expiry,
-            'cvc'        => $this->cvc,
-            'name'       => $this->name,
+            'paymentMethodId' => $this->paymentMethodId,
+            'name' => $this->name,
         ];
     }
 }

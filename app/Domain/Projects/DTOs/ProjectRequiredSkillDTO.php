@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<ProjectRequiredSkill>
  *
- * @property ?string   $id            UUID
- * @property string    $projectId
- * @property string    $skillId
- * @property int       $requiredLevel
- * @property ?Carbon   $createdAt     Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $updatedAt     Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon   $deletedAt     Internally Carbon, accepts/serializes ISO 8601
+ * @property ?string $id UUID
+ * @property string $projectId
+ * @property string $skillId
+ * @property int $requiredLevel
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $deletedAt Internally Carbon, accepts/serializes ISO 8601
  * @property ?SkillDTO $skill
  */
 final class ProjectRequiredSkillDTO extends BaseDTO
@@ -31,8 +31,7 @@ final class ProjectRequiredSkillDTO extends BaseDTO
         public ?Carbon $updatedAt = null,
         public ?Carbon $deletedAt = null,
         public ?SkillDTO $skill = null,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Model $model): static
     {
@@ -66,14 +65,14 @@ final class ProjectRequiredSkillDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'            => $this->id,
-            'projectId'     => $this->projectId,
-            'skillId'       => $this->skillId,
+            'id' => $this->id,
+            'projectId' => $this->projectId,
+            'skillId' => $this->skillId,
             'requiredLevel' => $this->requiredLevel,
-            'createdAt'     => $this->createdAt?->toIso8601String(),
-            'updatedAt'     => $this->updatedAt?->toIso8601String(),
-            'deletedAt'     => $this->deletedAt?->toIso8601String(),
-            'skill'         => $this->skill?->toArray(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
+            'deletedAt' => $this->deletedAt?->toIso8601String(),
+            'skill' => $this->skill?->toArray(),
         ];
     }
 }

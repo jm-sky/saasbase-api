@@ -14,14 +14,14 @@ class InvoiceTemplatePreviewResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'description' => $this->description,
-            'category'    => $this->category?->value,
-            'settings'    => $this->settings,
-            'isActive'    => $this->is_active,
-            'isDefault'   => $this->is_default,
-            'isSystem'    => null === $this->tenant_id,
+            'category' => $this->category?->value,
+            'settings' => $this->settings,
+            'isActive' => $this->is_active,
+            'isDefault' => $this->is_default,
+            'isSystem' => $this->tenant_id === null,
         ];
     }
 }

@@ -7,11 +7,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string  $name
- * @property string  $code
- * @property string  $code3
- * @property string  $numericCode
- * @property string  $phoneCode
+ * @property string $name
+ * @property string $code
+ * @property string $code3
+ * @property string $numericCode
+ * @property string $phoneCode
  * @property ?string $capital
  * @property ?string $currencyCode
  * @property ?string $currencySymbol
@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $subregion
  * @property ?string $emoji
  * @property ?string $emojiU
- * @property ?Carbon $createdAt      Internally Carbon, accepts/serializes ISO 8601
- * @property ?Carbon $updatedAt      Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $createdAt Internally Carbon, accepts/serializes ISO 8601
+ * @property ?Carbon $updatedAt Internally Carbon, accepts/serializes ISO 8601
  */
 final class CountryDTO extends BaseDTO
 {
@@ -43,11 +43,10 @@ final class CountryDTO extends BaseDTO
         public readonly ?string $emojiU = null,
         public ?Carbon $createdAt = null,
         public ?Carbon $updatedAt = null,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param Country $model
+     * @param  Country  $model
      */
     public static function fromModel(Model $model): static
     {
@@ -96,22 +95,22 @@ final class CountryDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'name'           => $this->name,
-            'code'           => $this->code,
-            'code3'          => $this->code3,
-            'numericCode'    => $this->numericCode,
-            'phoneCode'      => $this->phoneCode,
-            'capital'        => $this->capital,
-            'currencyCode'   => $this->currencyCode,
+            'name' => $this->name,
+            'code' => $this->code,
+            'code3' => $this->code3,
+            'numericCode' => $this->numericCode,
+            'phoneCode' => $this->phoneCode,
+            'capital' => $this->capital,
+            'currencyCode' => $this->currencyCode,
             'currencySymbol' => $this->currencySymbol,
-            'tld'            => $this->tld,
-            'native'         => $this->native,
-            'region'         => $this->region,
-            'subregion'      => $this->subregion,
-            'emoji'          => $this->emoji,
-            'emojiU'         => $this->emojiU,
-            'createdAt'      => $this->createdAt?->toIso8601String(),
-            'updatedAt'      => $this->updatedAt?->toIso8601String(),
+            'tld' => $this->tld,
+            'native' => $this->native,
+            'region' => $this->region,
+            'subregion' => $this->subregion,
+            'emoji' => $this->emoji,
+            'emojiU' => $this->emojiU,
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

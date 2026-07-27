@@ -19,15 +19,15 @@ class UserSessionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
-            'type'         => $this->type->value,
-            'deviceName'   => $this->device_name,
-            'userAgent'    => $this->user_agent,
-            'ipAddress'    => $this->ip_address,
+            'id' => $this->id,
+            'type' => $this->type->value,
+            'deviceName' => $this->device_name,
+            'userAgent' => $this->user_agent,
+            'ipAddress' => $this->ip_address,
             'lastActiveAt' => $this->last_active_at->toIso8601String(),
-            'expiresAt'    => $this->expires_at?->toIso8601String(),
-            'isCurrent'    => $this->isCurrent(),
-            'isActive'     => $this->isActive(),
+            'expiresAt' => $this->expires_at?->toIso8601String(),
+            'isCurrent' => $this->isCurrent(),
+            'isActive' => $this->isActive(),
         ];
     }
 }

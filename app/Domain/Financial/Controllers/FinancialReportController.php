@@ -2,6 +2,7 @@
 
 namespace App\Domain\Financial\Controllers;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Expense\Models\Expense;
 use App\Domain\Financial\Enums\InvoiceStatus;
 use App\Domain\Financial\Resources\FinancialBalanceWidgetResource;
@@ -26,47 +27,47 @@ class FinancialReportController extends Controller
      */
     public function balanceWidget(Request $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
-        $now           = Carbon::now();
-        $currentMonth  = $now->copy()->startOfMonth();
+        $now = Carbon::now();
+        $currentMonth = $now->copy()->startOfMonth();
         $previousMonth = $now->copy()->subMonth()->startOfMonth();
-        $currentYear   = $now->copy()->startOfYear();
-        $previousYear  = $now->copy()->subYear()->startOfYear();
+        $currentYear = $now->copy()->startOfYear();
+        $previousYear = $now->copy()->subYear()->startOfYear();
 
         // Current month balance
-        $currentMonthRevenue  = $this->getRevenueForPeriod($tenantId, $currentMonth, $currentMonth->copy()->endOfMonth());
+        $currentMonthRevenue = $this->getRevenueForPeriod($tenantId, $currentMonth, $currentMonth->copy()->endOfMonth());
         $currentMonthExpenses = $this->getExpensesForPeriod($tenantId, $currentMonth, $currentMonth->copy()->endOfMonth());
-        $currentMonthBalance  = $currentMonthRevenue - $currentMonthExpenses;
+        $currentMonthBalance = $currentMonthRevenue - $currentMonthExpenses;
 
         // Previous month balance
-        $previousMonthRevenue  = $this->getRevenueForPeriod($tenantId, $previousMonth, $previousMonth->copy()->endOfMonth());
+        $previousMonthRevenue = $this->getRevenueForPeriod($tenantId, $previousMonth, $previousMonth->copy()->endOfMonth());
         $previousMonthExpenses = $this->getExpensesForPeriod($tenantId, $previousMonth, $previousMonth->copy()->endOfMonth());
-        $previousMonthBalance  = $previousMonthRevenue - $previousMonthExpenses;
+        $previousMonthBalance = $previousMonthRevenue - $previousMonthExpenses;
 
         // Current year balance
-        $currentYearRevenue  = $this->getRevenueForPeriod($tenantId, $currentYear, $currentYear->copy()->endOfYear());
+        $currentYearRevenue = $this->getRevenueForPeriod($tenantId, $currentYear, $currentYear->copy()->endOfYear());
         $currentYearExpenses = $this->getExpensesForPeriod($tenantId, $currentYear, $currentYear->copy()->endOfYear());
-        $currentYearBalance  = $currentYearRevenue - $currentYearExpenses;
+        $currentYearBalance = $currentYearRevenue - $currentYearExpenses;
 
         // Previous year balance
-        $previousYearRevenue  = $this->getRevenueForPeriod($tenantId, $previousYear, $previousYear->copy()->endOfYear());
+        $previousYearRevenue = $this->getRevenueForPeriod($tenantId, $previousYear, $previousYear->copy()->endOfYear());
         $previousYearExpenses = $this->getExpensesForPeriod($tenantId, $previousYear, $previousYear->copy()->endOfYear());
-        $previousYearBalance  = $previousYearRevenue - $previousYearExpenses;
+        $previousYearBalance = $previousYearRevenue - $previousYearExpenses;
 
         $data = [
             'month' => [
-                'current'       => $currentMonthBalance,
-                'previous'      => $previousMonthBalance,
-                'year'          => $now->year,
+                'current' => $currentMonthBalance,
+                'previous' => $previousMonthBalance,
+                'year' => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousMonthBalance, $currentMonthBalance),
             ],
             'year' => [
-                'current'       => $currentYearBalance,
-                'previous'      => $previousYearBalance,
-                'year'          => $now->year,
+                'current' => $currentYearBalance,
+                'previous' => $previousYearBalance,
+                'year' => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousYearBalance, $currentYearBalance),
             ],
         ];
@@ -83,15 +84,15 @@ class FinancialReportController extends Controller
      */
     public function revenueWidget(Request $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
-        $now           = Carbon::now();
-        $currentMonth  = $now->copy()->startOfMonth();
+        $now = Carbon::now();
+        $currentMonth = $now->copy()->startOfMonth();
         $previousMonth = $now->copy()->subMonth()->startOfMonth();
-        $currentYear   = $now->copy()->startOfYear();
-        $previousYear  = $now->copy()->subYear()->startOfYear();
+        $currentYear = $now->copy()->startOfYear();
+        $previousYear = $now->copy()->subYear()->startOfYear();
 
         // Current month revenue
         $currentMonthRevenue = $this->getRevenueForPeriod($tenantId, $currentMonth, $currentMonth->copy()->endOfMonth());
@@ -107,15 +108,15 @@ class FinancialReportController extends Controller
 
         $data = [
             'month' => [
-                'current'       => $currentMonthRevenue,
-                'previous'      => $previousMonthRevenue,
-                'year'          => $now->year,
+                'current' => $currentMonthRevenue,
+                'previous' => $previousMonthRevenue,
+                'year' => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousMonthRevenue, $currentMonthRevenue),
             ],
             'year' => [
-                'current'       => $currentYearRevenue,
-                'previous'      => $previousYearRevenue,
-                'year'          => $now->year,
+                'current' => $currentYearRevenue,
+                'previous' => $previousYearRevenue,
+                'year' => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousYearRevenue, $currentYearRevenue),
             ],
         ];
@@ -132,15 +133,15 @@ class FinancialReportController extends Controller
      */
     public function expensesWidget(Request $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
-        $now           = Carbon::now();
-        $currentMonth  = $now->copy()->startOfMonth();
+        $now = Carbon::now();
+        $currentMonth = $now->copy()->startOfMonth();
         $previousMonth = $now->copy()->subMonth()->startOfMonth();
-        $currentYear   = $now->copy()->startOfYear();
-        $previousYear  = $now->copy()->subYear()->startOfYear();
+        $currentYear = $now->copy()->startOfYear();
+        $previousYear = $now->copy()->subYear()->startOfYear();
 
         // Current month expenses
         $currentMonthExpenses = $this->getExpensesForPeriod($tenantId, $currentMonth, $currentMonth->copy()->endOfMonth());
@@ -156,15 +157,15 @@ class FinancialReportController extends Controller
 
         $data = [
             'month' => [
-                'current'       => $currentMonthExpenses,
-                'previous'      => $previousMonthExpenses,
-                'year'          => $now->year,
+                'current' => $currentMonthExpenses,
+                'previous' => $previousMonthExpenses,
+                'year' => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousMonthExpenses, $currentMonthExpenses),
             ],
             'year' => [
-                'current'       => $currentYearExpenses,
-                'previous'      => $previousYearExpenses,
-                'year'          => $now->year,
+                'current' => $currentYearExpenses,
+                'previous' => $previousYearExpenses,
+                'year' => $now->year,
                 'changePercent' => $this->calculatePercentageChange($previousYearExpenses, $currentYearExpenses),
             ],
         ];
@@ -182,32 +183,48 @@ class FinancialReportController extends Controller
      */
     public function overviewWidget(Request $request): JsonResponse
     {
-        /** @var \App\Domain\Auth\Models\User $user */
-        $user     = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $tenantId = $user->getTenantId();
 
         $currentYear = Carbon::now()->startOfYear();
-        $monthsData  = [];
+        $yearStart = $currentYear->copy()->startOfYear();
+        $yearEnd = $currentYear->copy()->endOfYear();
 
-        for ($month = 1; $month <= 12; ++$month) {
-            $startOfMonth = $currentYear->copy()->month($month)->startOfMonth();
-            $endOfMonth   = $startOfMonth->copy()->endOfMonth();
+        // Two grouped queries instead of 24 period scans (Sentry SAASBASE-API-38).
+        $revenueByMonth = Invoice::query()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('status', [InvoiceStatus::ISSUED, InvoiceStatus::COMPLETED])
+            ->whereBetween('issue_date', [$yearStart, $yearEnd])
+            ->selectRaw('EXTRACT(MONTH FROM issue_date)::int as month, COALESCE(SUM(total_gross), 0) as total')
+            ->groupByRaw('EXTRACT(MONTH FROM issue_date)')
+            ->pluck('total', 'month');
 
-            $revenue  = $this->getRevenueForPeriod($tenantId, $startOfMonth, $endOfMonth);
-            $expenses = $this->getExpensesForPeriod($tenantId, $startOfMonth, $endOfMonth);
-            $balance  = $revenue - $expenses;
+        $expensesByMonth = Expense::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', '!=', InvoiceStatus::CANCELLED)
+            ->whereBetween('issue_date', [$yearStart, $yearEnd])
+            ->selectRaw('EXTRACT(MONTH FROM issue_date)::int as month, COALESCE(SUM(total_gross), 0) as total')
+            ->groupByRaw('EXTRACT(MONTH FROM issue_date)')
+            ->pluck('total', 'month');
+
+        $monthsData = [];
+
+        for ($month = 1; $month <= 12; $month++) {
+            $revenue = (float) ($revenueByMonth[$month] ?? 0);
+            $expenses = (float) ($expensesByMonth[$month] ?? 0);
 
             $monthsData[] = [
-                'month'     => $month,
-                'monthName' => $startOfMonth->format('M'),
-                'revenue'   => $revenue,
-                'expenses'  => $expenses,
-                'balance'   => $balance,
+                'month' => $month,
+                'monthName' => $currentYear->copy()->month($month)->format('M'),
+                'revenue' => $revenue,
+                'expenses' => $expenses,
+                'balance' => $revenue - $expenses,
             ];
         }
 
         $data = [
-            'year'   => $currentYear->year,
+            'year' => $currentYear->year,
             'months' => $monthsData,
         ];
 
@@ -220,16 +237,11 @@ class FinancialReportController extends Controller
      */
     private function getRevenueForPeriod(string $tenantId, Carbon $startDate, Carbon $endDate): float
     {
-        $result = Invoice::where('tenant_id', $tenantId)
+        return (float) Invoice::query()
+            ->where('tenant_id', $tenantId)
             ->whereIn('status', [InvoiceStatus::ISSUED, InvoiceStatus::COMPLETED])
             ->whereBetween('issue_date', [$startDate, $endDate])
-            ->get()
-            ->sum(function ($invoice) {
-                return $invoice->total_gross->toFloat();
-            })
-        ;
-
-        return (float) $result;
+            ->sum('total_gross');
     }
 
     /**
@@ -238,16 +250,11 @@ class FinancialReportController extends Controller
      */
     private function getExpensesForPeriod(string $tenantId, Carbon $startDate, Carbon $endDate): float
     {
-        $result = Expense::where('tenant_id', $tenantId)
+        return (float) Expense::query()
+            ->where('tenant_id', $tenantId)
             ->where('status', '!=', InvoiceStatus::CANCELLED)
             ->whereBetween('issue_date', [$startDate, $endDate])
-            ->get()
-            ->sum(function ($expense) {
-                return $expense->total_gross->toFloat();
-            })
-        ;
-
-        return (float) $result;
+            ->sum('total_gross');
     }
 
     /**
@@ -255,7 +262,7 @@ class FinancialReportController extends Controller
      */
     private function calculatePercentageChange(float $previousValue, float $currentValue): float
     {
-        if (0 == $previousValue) {
+        if ($previousValue == 0) {
             return $currentValue > 0 ? 100.0 : 0.0;
         }
 

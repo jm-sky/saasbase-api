@@ -31,12 +31,12 @@ class AdminContractorController extends Controller
 
         $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['name', 'email', 'phone', 'notes'])),
-            AllowedFilter::custom('name', new AdvancedFilter()),
-            AllowedFilter::custom('email', new AdvancedFilter()),
-            AllowedFilter::custom('phone', new AdvancedFilter()),
-            AllowedFilter::custom('country', new AdvancedFilter()),
-            AllowedFilter::custom('taxId', new AdvancedFilter(), 'tax_id'),
-            AllowedFilter::custom('notes', new AdvancedFilter()),
+            AllowedFilter::custom('name', new AdvancedFilter),
+            AllowedFilter::custom('email', new AdvancedFilter),
+            AllowedFilter::custom('phone', new AdvancedFilter),
+            AllowedFilter::custom('country', new AdvancedFilter),
+            AllowedFilter::custom('taxId', new AdvancedFilter, 'tax_id'),
+            AllowedFilter::custom('notes', new AdvancedFilter),
             AllowedFilter::custom('isActive', new AdvancedFilter(['is_active' => 'boolean']), 'is_active'),
             AllowedFilter::custom('createdAt', new DateRangeFilter('created_at')),
             AllowedFilter::custom('updatedAt', new DateRangeFilter('updated_at')),
@@ -46,7 +46,7 @@ class AdminContractorController extends Controller
             'name',
             'email',
             'country',
-            'isActive'  => 'is_active',
+            'isActive' => 'is_active',
             'createdAt' => 'created_at',
             'updatedAt' => 'updated_at',
         ];
@@ -56,7 +56,7 @@ class AdminContractorController extends Controller
 
     public function index(SearchContractorRequest $request): JsonResponse
     {
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request);
         $result['data'] = ContractorDTO::collect($result['data']);
 
         return response()->json($result);
@@ -64,8 +64,8 @@ class AdminContractorController extends Controller
 
     public function store(StoreContractorRequest $request): JsonResponse
     {
-        $dto        = ContractorDTO::from($request->validated());
-        $contractor = Contractor::withoutGlobalScope(TenantScope::class)->create((array) $dto);
+        $dto = ContractorDTO::from($request->validated());
+        $contractor = Contractor::withoutGlobalScope(TenantScope::class)->create($dto->toDbArray());
 
         return response()->json(
             ContractorDTO::from($contractor),
@@ -87,7 +87,7 @@ class AdminContractorController extends Controller
         $contractor = Contractor::withoutGlobalScope(TenantScope::class)->findOrFail($contractor->getKey());
 
         $dto = ContractorDTO::from($request->validated());
-        $contractor->update((array) $dto);
+        $contractor->update($dto->toDbArray());
 
         return response()->json(
             ContractorDTO::from($contractor)

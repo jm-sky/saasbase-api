@@ -11,16 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends BaseDTO<ApplicationInvitation>
  *
- * @property string          $id
- * @property string          $inviterId
- * @property string          $email
- * @property string          $token
- * @property string          $status
- * @property ?Carbon         $acceptedAt
- * @property Carbon          $expiresAt
- * @property ?Carbon         $createdAt
- * @property ?Carbon         $updatedAt
- * @property UserPreviewDTO  $inviter
+ * @property string $id
+ * @property string $inviterId
+ * @property string $email
+ * @property string $token
+ * @property string $status
+ * @property ?Carbon $acceptedAt
+ * @property Carbon $expiresAt
+ * @property ?Carbon $createdAt
+ * @property ?Carbon $updatedAt
+ * @property UserPreviewDTO $inviter
  * @property ?UserPreviewDTO $invitedUser
  */
 final class ApplicationInvitationDTO extends BaseDTO
@@ -37,8 +37,7 @@ final class ApplicationInvitationDTO extends BaseDTO
         public readonly ?Carbon $createdAt = null,
         public readonly ?Carbon $updatedAt = null,
         public readonly ?UserPreviewDTO $invitedUser = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -58,7 +57,7 @@ final class ApplicationInvitationDTO extends BaseDTO
     }
 
     /**
-     * @param ApplicationInvitation $model
+     * @param  ApplicationInvitation  $model
      */
     public static function fromModel(Model $model): static
     {
@@ -80,17 +79,17 @@ final class ApplicationInvitationDTO extends BaseDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'inviterId'   => $this->inviterId,
-            'email'       => $this->email,
-            'token'       => $this->token,
-            'status'      => $this->status,
-            'inviter'     => $this->inviter->toArray(),
+            'id' => $this->id,
+            'inviterId' => $this->inviterId,
+            'email' => $this->email,
+            'token' => $this->token,
+            'status' => $this->status,
+            'inviter' => $this->inviter->toArray(),
             'invitedUser' => $this->invitedUser?->toArray(),
-            'acceptedAt'  => $this->acceptedAt?->toIso8601String(),
-            'expiresAt'   => $this->expiresAt?->toIso8601String(),
-            'createdAt'   => $this->createdAt?->toIso8601String(),
-            'updatedAt'   => $this->updatedAt?->toIso8601String(),
+            'acceptedAt' => $this->acceptedAt?->toIso8601String(),
+            'expiresAt' => $this->expiresAt?->toIso8601String(),
+            'createdAt' => $this->createdAt?->toIso8601String(),
+            'updatedAt' => $this->updatedAt?->toIso8601String(),
         ];
     }
 }

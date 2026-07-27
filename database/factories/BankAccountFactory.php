@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Common\Models\BankAccount>
+ * @extends Factory<BankAccount>
  */
 class BankAccountFactory extends Factory
 {
@@ -17,15 +17,15 @@ class BankAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'           => Str::ulid()->toString(),
-            'tenant_id'    => Tenant::factory(),
-            'iban'         => fake()->iban(),
-            'country'      => fake()->countryCode(),
-            'swift'        => fake()->optional()->swiftBicNumber(),
-            'bank_name'    => fake()->optional()->company(),
-            'is_default'   => false,
-            'currency'     => fake()->optional()->currencyCode(),
-            'description'  => fake()->optional()->sentence(),
+            'id' => Str::ulid()->toString(),
+            'tenant_id' => Tenant::factory(),
+            'iban' => fake()->iban(),
+            'country' => fake()->countryCode(),
+            'swift' => fake()->optional()->swiftBicNumber(),
+            'bank_name' => fake()->optional()->company(),
+            'is_default' => false,
+            'currency' => fake()->optional()->currencyCode(),
+            'description' => fake()->optional()->sentence(),
         ];
     }
 

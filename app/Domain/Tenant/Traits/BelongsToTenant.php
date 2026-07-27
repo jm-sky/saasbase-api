@@ -26,22 +26,22 @@ trait BelongsToTenant
     {
         static::creating(function (Model $model) {
             // @phpstan-ignore-next-line
-            if (!$model->tenant_id) {
+            if (! $model->tenant_id) {
                 try {
                     /** @var ?User $user */
-                    $user             = Auth::user();
+                    $user = Auth::user();
                     $model->tenant_id = $user?->getTenantId() ?? Tenant::$BYPASSED_TENANT_ID;
                 } catch (JWTException) {
-                    throw new TenantNotFoundException();
+                    throw new TenantNotFoundException;
                 }
             }
 
-            if (Tenant::NONE_TENANT_ID === $model->tenant_id) {
-                throw new TenantNotFoundException();
+            if ($model->tenant_id === Tenant::NONE_TENANT_ID) {
+                throw new TenantNotFoundException;
             }
         });
 
-        static::addGlobalScope(new TenantScope());
+        static::addGlobalScope(new TenantScope);
     }
 
     /**

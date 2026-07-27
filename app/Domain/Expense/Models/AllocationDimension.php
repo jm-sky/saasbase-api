@@ -22,13 +22,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @property string                                                                                                                                                                                                                            $id
- * @property string                                                                                                                                                                                                                            $allocation_id
- * @property AllocationDimensionType                                                                                                                                                                                                           $dimension_type
- * @property string                                                                                                                                                                                                                            $dimension_id
- * @property Carbon                                                                                                                                                                                                                            $created_at
- * @property Carbon                                                                                                                                                                                                                            $updated_at
- * @property ExpenseAllocation                                                                                                                                                                                                                 $allocation
+ * @property string $id
+ * @property string $allocation_id
+ * @property AllocationDimensionType $dimension_type
+ * @property string $dimension_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ExpenseAllocation $allocation
  * @property User|AllocationLocation|AllocationProductCategory|Project|AllocationRevenueType|AllocationTransactionType|AllocationCostType|OrganizationUnit|AllocationRelatedTransactionCategory|AllocationContractType|AllocationEquipmentType $dimensionable
  */
 class AllocationDimension extends BaseModel

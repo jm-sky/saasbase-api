@@ -14,7 +14,7 @@ class UpdateUserAccountRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'unique:users,email,' . $this->user->id],
+            'email' => ['required', 'email', 'unique:users,email,'.$this->user->id],
             'phone' => ['required', 'string', 'min:2', 'max:20'],
         ];
     }

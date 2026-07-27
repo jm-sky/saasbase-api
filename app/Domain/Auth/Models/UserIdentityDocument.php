@@ -26,11 +26,11 @@ class UserIdentityDocument extends BaseModel implements HasMedia
     ];
 
     protected $casts = [
-        'issued_at'   => 'date',
-        'expires_at'  => 'date',
+        'issued_at' => 'date',
+        'expires_at' => 'date',
         'verified_at' => 'datetime',
         'is_verified' => 'boolean',
-        'meta'        => 'array',
+        'meta' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -51,7 +51,6 @@ class UserIdentityDocument extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('document_images')
-            ->singleFile()
-        ;
+            ->singleFile();
     }
 }

@@ -9,7 +9,7 @@ use Brick\Math\BigDecimal;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Approval\Models\ApprovalWorkflow>
+ * @extends Factory<ApprovalWorkflow>
  */
 class ApprovalWorkflowFactory extends Factory
 {
@@ -26,15 +26,15 @@ class ApprovalWorkflowFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id'        => Tenant::factory(),
-            'name'             => $this->faker->words(3, true),
-            'description'      => $this->faker->optional()->sentence(),
+            'tenant_id' => Tenant::factory(),
+            'name' => $this->faker->words(3, true),
+            'description' => $this->faker->optional()->sentence(),
             'match_amount_min' => null,
             'match_amount_max' => null,
             'match_conditions' => null,
-            'priority'         => $this->faker->numberBetween(0, 10),
-            'is_active'        => true,
-            'created_by'       => User::factory(),
+            'priority' => $this->faker->numberBetween(0, 10),
+            'is_active' => true,
+            'created_by' => User::factory(),
         ];
     }
 

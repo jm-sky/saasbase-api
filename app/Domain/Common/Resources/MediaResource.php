@@ -20,13 +20,13 @@ class MediaResource extends JsonResource
     {
         /* @var Media $this->resource */
         return [
-            'id'        => $this->id,
-            'name'      => $this->name,
-            'fileName'  => $this->file_name,
-            'mimeType'  => $this->mime_type,
-            'size'      => $this->size,
-            'url'       => $this->getUrl(),
-            'meta'      => $this->meta,
+            'id' => $this->id,
+            'name' => $this->name,
+            'fileName' => $this->file_name,
+            'mimeType' => $this->mime_type,
+            'size' => $this->size,
+            'url' => $this->getUrl(),
+            'meta' => $this->meta,
             'createdAt' => $this->created_at?->toIso8601String(),
             'updatedAt' => $this->updated_at?->toIso8601String(),
         ];

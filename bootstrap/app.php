@@ -1,10 +1,19 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
+use App\Http\Middleware\EnsureSessionNotRevoked;
+use App\Http\Middleware\EnsureTwoFactorVerified;
+use App\Http\Middleware\IsActive;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsInTenant;
+use App\Http\Middleware\SetLocaleFromHeader;
+use App\Http\Middleware\StripeWebhook;
+use App\Http\Middleware\VerifyHealthDetailsToken;
+use App\Services\NBP\Jobs\ImportExchangeRatesJob;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,18 +35,21 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->appendToGroup('api', [
-            \App\Http\Middleware\SetLocaleFromHeader::class,
+            SetLocaleFromHeader::class,
         ]);
 
         $middleware->alias([
-            'stripe.webhook' => \App\Http\Middleware\StripeWebhook::class,
-            'is_active' => \App\Http\Middleware\IsActive::class,
-            'is_in_tenant' => \App\Http\Middleware\IsInTenant::class,
-            'is_admin' => \App\Http\Middleware\IsAdmin::class,
+            'stripe.webhook' => StripeWebhook::class,
+            'health.details' => VerifyHealthDetailsToken::class,
+            'is_active' => IsActive::class,
+            'is_in_tenant' => IsInTenant::class,
+            'is_admin' => IsAdmin::class,
+            'mfa' => EnsureTwoFactorVerified::class,
+            'session.active' => EnsureSessionNotRevoked::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->job(new \App\Services\NBP\Jobs\ImportExchangeRatesJob())
+        $schedule->job(new ImportExchangeRatesJob)
             ->weekdays()
             ->dailyAt('18:00')
             ->withoutOverlapping();

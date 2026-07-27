@@ -7,6 +7,7 @@ use App\Domain\Template\Models\InvoiceTemplate;
 use Illuminate\Http\Response;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 use Mccarlosen\LaravelMpdf\LaravelMpdf;
+use Mpdf\Mpdf;
 
 class MpdfEngine implements PdfEngineInterface
 {
@@ -26,7 +27,7 @@ class MpdfEngine implements PdfEngineInterface
 
     public function downloadPdf(string $html, string $filename, array $settings = []): Response
     {
-        $pdf             = $this->createPdfFromHtml($html, $settings);
+        $pdf = $this->createPdfFromHtml($html, $settings);
         $symfonyResponse = $pdf->download($filename);
 
         return response(
@@ -50,7 +51,7 @@ class MpdfEngine implements PdfEngineInterface
 
     public function isAvailable(): bool
     {
-        return class_exists(\Mpdf\Mpdf::class);
+        return class_exists(Mpdf::class);
     }
 
     public function getConfig(): array
@@ -90,7 +91,7 @@ class MpdfEngine implements PdfEngineInterface
     private function applyPdfSettings(LaravelMpdf $pdf, array $settings): void
     {
         // Format and orientation
-        $format      = $settings['format'] ?? 'A4';
+        $format = $settings['format'] ?? 'A4';
         $orientation = $settings['orientation'] ?? 'P';
 
         // @phpstan-ignore-next-line
@@ -128,9 +129,9 @@ class MpdfEngine implements PdfEngineInterface
 
     private function addFooter(LaravelMpdf $pdf, array $settings): void
     {
-        $appName     = config('app.name', 'SaasBase');
+        $appName = config('app.name', 'SaasBase');
         $generatedAt = now()->format('Y-m-d H:i:s');
-        $footerText  = config('pdf.global.footer_text') ?? "Generated at {$generatedAt} | {$appName} | Page {PAGENO} of {nbpg}";
+        $footerText = config('pdf.global.footer_text') ?? "Generated at {$generatedAt} | {$appName} | Page {PAGENO} of {nbpg}";
 
         $footerHtml = "<div style='text-align: center; font-size: 8px; color: #666; border-top: 1px solid #E5E7EB; padding-top: 5px;'>";
         $footerHtml .= $footerText;
@@ -143,16 +144,16 @@ class MpdfEngine implements PdfEngineInterface
     private function getDefaultConfig(): array
     {
         return config('pdf.engines.mpdf.config', [
-            'format'      => 'A4',
+            'format' => 'A4',
             'orientation' => 'P',
-            'margins'     => [
-                'left'   => 10,
-                'right'  => 10,
-                'top'    => 10,
+            'margins' => [
+                'left' => 10,
+                'right' => 10,
+                'top' => 10,
                 'bottom' => 15,
             ],
             'use_substitutions' => false,
-            'simple_tables'     => false,
+            'simple_tables' => false,
         ]);
     }
 }

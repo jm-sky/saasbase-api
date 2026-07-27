@@ -19,7 +19,7 @@ class ActivityLogController extends Controller
 
     public function __construct()
     {
-        $this->modelClass  = Activity::class;
+        $this->modelClass = Activity::class;
         $this->defaultWith = ['causer', 'subject'];
 
         $this->filters = [
@@ -35,7 +35,7 @@ class ActivityLogController extends Controller
             'createdAt' => 'created_at',
             'event',
             'subjectType' => 'subject_type',
-            'causerType'  => 'causer_type',
+            'causerType' => 'causer_type',
         ];
 
         $this->defaultSort = '-created_at';
@@ -46,7 +46,7 @@ class ActivityLogController extends Controller
         $query = $this->getIndexQuery($request);
         $query->where('tenant_id', $request->user()->tenant_id);
 
-        $result         = $this->getIndexPaginator($request);
+        $result = $this->getIndexPaginator($request, query: $query);
         $result['data'] = ActivityLogDTO::collect($result['data']);
 
         return response()->json($result);

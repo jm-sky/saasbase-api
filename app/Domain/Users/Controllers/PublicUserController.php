@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class PublicUserController extends Controller
 {
@@ -39,6 +40,14 @@ class PublicUserController extends Controller
 
     public function show(User $user): UserProfileTenantScopedResource
     {
+        /** @var User $viewer */
+        $viewer = Auth::user();
+
+        abort_unless(
+            $viewer->is($user) || $viewer->tenants()->whereIn('tenants.id', $user->tenants()->pluck('tenants.id'))->exists(),
+            Response::HTTP_FORBIDDEN
+        );
+
         return new UserProfileTenantScopedResource($user);
     }
 }

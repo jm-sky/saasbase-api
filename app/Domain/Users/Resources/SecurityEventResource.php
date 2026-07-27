@@ -14,7 +14,7 @@ class SecurityEventResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'        => $this->id,
+            'id' => $this->id,
             'eventType' => $this->event_type,
             'ipAddress' => $this->ip_address,
             'createdAt' => $this->created_at,

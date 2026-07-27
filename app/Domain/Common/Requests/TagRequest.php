@@ -14,8 +14,8 @@ class TagRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'tag'    => ['sometimes', 'required', 'string', 'max:64'],
-            'tags'   => ['sometimes', 'required', 'array'],
+            'tag' => ['sometimes', 'required', 'string', 'max:64'],
+            'tags' => ['sometimes', 'required', 'array'],
             'tags.*' => ['string', 'max:64'],
         ];
     }

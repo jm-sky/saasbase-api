@@ -31,7 +31,7 @@ final class TimeField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!$this->value instanceof Carbon) {
+        if (! $this->value instanceof Carbon) {
             throw new \InvalidArgumentException('TimeField value must be a Carbon instance');
         }
     }
@@ -39,9 +39,9 @@ final class TimeField extends ValueWrapper
     public function toArray(): array
     {
         return [
-            'type'       => $this->type,
+            'type' => $this->type,
             'confidence' => $this->confidence,
-            'value'      => $this->value->format('H:i:s'),
+            'value' => $this->value->format('H:i:s'),
         ];
     }
 }

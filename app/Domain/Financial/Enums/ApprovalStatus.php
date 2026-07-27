@@ -4,20 +4,20 @@ namespace App\Domain\Financial\Enums;
 
 enum ApprovalStatus: string
 {
-    case NOT_REQUIRED    = 'notRequired';
-    case PENDING         = 'pending';
-    case APPROVED        = 'approved';
-    case REJECTED        = 'rejected';
-    case CANCELLED       = 'cancelled';
+    case NOT_REQUIRED = 'notRequired';
+    case PENDING = 'pending';
+    case APPROVED = 'approved';
+    case REJECTED = 'rejected';
+    case CANCELLED = 'cancelled';
 
     public function label(): string
     {
         return match ($this) {
             self::NOT_REQUIRED => 'Not Required',
-            self::PENDING      => 'Pending Approval',
-            self::APPROVED     => 'Approved',
-            self::REJECTED     => 'Rejected',
-            self::CANCELLED    => 'Cancelled',
+            self::PENDING => 'Pending Approval',
+            self::APPROVED => 'Approved',
+            self::REJECTED => 'Rejected',
+            self::CANCELLED => 'Cancelled',
         };
     }
 
@@ -25,10 +25,10 @@ enum ApprovalStatus: string
     {
         return match ($this) {
             self::NOT_REQUIRED => 'Nie Wymagane',
-            self::PENDING      => 'Oczekuje na Zatwierdzenie',
-            self::APPROVED     => 'Zatwierdzone',
-            self::REJECTED     => 'Odrzucone',
-            self::CANCELLED    => 'Anulowane',
+            self::PENDING => 'Oczekuje na Zatwierdzenie',
+            self::APPROVED => 'Zatwierdzone',
+            self::REJECTED => 'Odrzucone',
+            self::CANCELLED => 'Anulowane',
         };
     }
 

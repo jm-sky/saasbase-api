@@ -15,11 +15,11 @@ class UpdateContractorPreferencesRequest extends BaseFormRequest
     {
         return [
             'defaultPaymentMethodId' => ['nullable', 'ulid', 'exists:payment_methods,id'],
-            'defaultCurrencyCode'    => ['nullable', 'string', 'min:3', 'max:3', 'exists:currencies,code'],
-            'defaultLanguage'        => ['nullable', 'string', 'max:10'],
-            'defaultPaymentDays'     => ['nullable', 'integer', 'min:0'],
-            'defaultTags'            => ['nullable', 'array'],
-            'defaultTags.*'          => ['string', 'max:50'],
+            'defaultCurrencyCode' => ['nullable', 'string', 'min:3', 'max:3', 'exists:currencies,code'],
+            'defaultLanguage' => ['nullable', 'string', 'max:10'],
+            'defaultPaymentDays' => ['nullable', 'integer', 'min:0'],
+            'defaultTags' => ['nullable', 'array'],
+            'defaultTags.*' => ['string', 'max:50'],
         ];
     }
 
@@ -27,10 +27,10 @@ class UpdateContractorPreferencesRequest extends BaseFormRequest
     {
         $this->merge([
             'default_payment_method_id' => $this->input('defaultPaymentMethodId'),
-            'default_currency_code'     => $this->input('defaultCurrencyCode'),
-            'default_language'          => $this->input('defaultLanguage'),
-            'default_payment_days'      => $this->input('defaultPaymentDays'),
-            'default_tags'              => $this->input('defaultTags'),
+            'default_currency_code' => $this->input('defaultCurrencyCode'),
+            'default_language' => $this->input('defaultLanguage'),
+            'default_payment_days' => $this->input('defaultPaymentDays'),
+            'default_tags' => $this->input('defaultTags'),
         ]);
     }
 }

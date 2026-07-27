@@ -22,30 +22,30 @@ class StoreExpenseRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'type'                     => ['required', new Enum(InvoiceType::class)],
-            'issueDate'                => ['required', 'date'],
+            'type' => ['required', new Enum(InvoiceType::class)],
+            'issueDate' => ['required', 'date'],
             // Backward compatibility
-            'status'                   => ['sometimes', 'string'],
+            'status' => ['sometimes', 'string', new Enum(InvoiceStatus::class)],
             // New status structure
-            'statusInfo'               => ['sometimes', 'array'],
-            'statusInfo.general'       => ['sometimes', new Enum(InvoiceStatus::class)],
-            'statusInfo.ocr'           => ['sometimes', 'nullable', new Enum(OcrRequestStatus::class)],
-            'statusInfo.allocation'    => ['sometimes', 'nullable', new Enum(AllocationStatus::class)],
-            'statusInfo.approval'      => ['sometimes', 'nullable', new Enum(ApprovalStatus::class)],
-            'statusInfo.delivery'      => ['sometimes', 'nullable', new Enum(DeliveryStatus::class)],
-            'statusInfo.payment'       => ['sometimes', 'nullable', new Enum(PaymentStatus::class)],
+            'statusInfo' => ['sometimes', 'array'],
+            'statusInfo.general' => ['sometimes', new Enum(InvoiceStatus::class)],
+            'statusInfo.ocr' => ['sometimes', 'nullable', new Enum(OcrRequestStatus::class)],
+            'statusInfo.allocation' => ['sometimes', 'nullable', new Enum(AllocationStatus::class)],
+            'statusInfo.approval' => ['sometimes', 'nullable', new Enum(ApprovalStatus::class)],
+            'statusInfo.delivery' => ['sometimes', 'nullable', new Enum(DeliveryStatus::class)],
+            'statusInfo.payment' => ['sometimes', 'nullable', new Enum(PaymentStatus::class)],
             // Other fields
-            'number'                   => ['required', 'string'],
-            'totalNet'                 => ['required', 'numeric'],
-            'totalTax'                 => ['required', 'numeric'],
-            'totalGross'               => ['required', 'numeric'],
-            'currency'                 => ['required', 'string', 'size:3'],
-            'exchangeRate'             => ['required', 'numeric'],
-            'seller'                   => ['required', 'array'],
-            'buyer'                    => ['required', 'array'],
-            'body'                     => ['required', 'array'],
-            'payment'                  => ['required', 'array'],
-            'options'                  => ['required', 'array'],
+            'number' => ['required', 'string'],
+            'totalNet' => ['required', 'numeric'],
+            'totalTax' => ['required', 'numeric'],
+            'totalGross' => ['required', 'numeric'],
+            'currency' => ['required', 'string', 'size:3'],
+            'exchangeRate' => ['required', 'numeric'],
+            'seller' => ['required', 'array'],
+            'buyer' => ['required', 'array'],
+            'body' => ['required', 'array'],
+            'payment' => ['required', 'array'],
+            'options' => ['required', 'array'],
         ];
     }
 }

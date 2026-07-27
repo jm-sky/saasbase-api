@@ -18,15 +18,15 @@ class IbanApiService
 
     public function __construct(?IbanApiConnector $connector = null)
     {
-        $this->connector = $connector ?? new IbanApiConnector();
+        $this->connector = $connector ?? new IbanApiConnector;
     }
 
     public function getIbanInfo(string $iban, ?bool $throw = null, bool $force = false): ?IbanApiResponse
     {
-        $iban     = trim($iban);
+        $iban = trim($iban);
         $cacheKey = "iban_lookup:{$iban}";
         $cacheTtl = $this->getCacheExpiration();
-        $throw    = $throw ?? self::$throw;
+        $throw = $throw ?? self::$throw;
 
         if ($force) {
             return $this->lookupAndCache($iban, $cacheKey, $cacheTtl, $throw);
@@ -39,8 +39,8 @@ class IbanApiService
 
     protected function lookupAndCache(string $iban, string $cacheKey, \DateTimeInterface|\DateInterval|int $cacheTtl, ?bool $throw = null): ?IbanApiResponse
     {
-        $throw    = $throw ?? self::$throw;
-        $result   = $this->lookup($iban, $throw);
+        $throw = $throw ?? self::$throw;
+        $result = $this->lookup($iban, $throw);
         Cache::put($cacheKey, $result, $cacheTtl);
 
         return $result;
@@ -49,7 +49,7 @@ class IbanApiService
     protected function lookup(string $iban, ?bool $throw = null): ?IbanApiResponse
     {
         try {
-            $throw    = $throw ?? self::$throw;
+            $throw = $throw ?? self::$throw;
             $response = $this->connector->send(new ValidateIbanRequest($iban));
 
             if ($throw) {
@@ -62,7 +62,7 @@ class IbanApiService
 
             return $response->dto();
         } catch (\Throwable $e) {
-            Log::error('IbanApiService error: ' . $e->getMessage(), [
+            Log::error('IbanApiService error: '.$e->getMessage(), [
                 'iban' => $iban,
             ]);
 
@@ -76,8 +76,8 @@ class IbanApiService
 
     public function getSwiftForIban(string $iban, ?bool $throw = null, bool $force = false): ?string
     {
-        $throw    = $throw ?? self::$throw;
-        $info     = $this->getIbanInfo($iban, $throw, $force);
+        $throw = $throw ?? self::$throw;
+        $info = $this->getIbanInfo($iban, $throw, $force);
 
         return $info?->data?->bank?->bic;
     }
@@ -86,7 +86,7 @@ class IbanApiService
     {
         $cacheMode = config('services.ibanapi.cache.mode', 'hours');
 
-        if ('week' === $cacheMode) {
+        if ($cacheMode === 'week') {
             return now()->next('Sunday')->startOfDay();
         }
 

@@ -11,19 +11,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @property string  $user_id
- * @property string  $skill_id
- * @property int     $level
+ * @property string $user_id
+ * @property string $skill_id
+ * @property int $level
  * @property ?Carbon $acquired_at
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property User    $user
- * @property Skill   $skill
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $user
+ * @property Skill $skill
  */
 class UserSkill extends Pivot
 {
-    use HasUlids;
     use HasFactory;
+    use HasUlids;
 
     protected $fillable = [
         'user_id',
@@ -46,7 +46,7 @@ class UserSkill extends Pivot
      * @var array<string, string>
      */
     protected $casts = [
-        'level'       => 'integer',
+        'level' => 'integer',
         'acquired_at' => 'datetime',
     ];
 

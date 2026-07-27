@@ -13,6 +13,5 @@ class InvoicePaid
 
     public function __construct(
         public SubscriptionInvoice $invoice
-    ) {
-    }
+    ) {}
 }

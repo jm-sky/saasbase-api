@@ -46,8 +46,7 @@ class GetFullReportRequest extends BaseRegonRequest
 
         $raw = (string) $response->xml()
             ->{'DanePobierzPelnyRaportResponse'}
-            ->{'DanePobierzPelnyRaportResult'}
-        ;
+            ->{'DanePobierzPelnyRaportResult'};
 
         return empty($raw);
     }
@@ -55,13 +54,12 @@ class GetFullReportRequest extends BaseRegonRequest
     public function createDtoFromResponse(Response $response): RegonReportForNaturalPerson|RegonReportForLegalPerson
     {
         if ($this->hasRequestFailed($response)) {
-            throw new BusinessNotFoundException();
+            throw new BusinessNotFoundException;
         }
 
         $raw = $response->xml()
             ->{'DanePobierzPelnyRaportResponse'}
-            ->{'DanePobierzPelnyRaportResult'}
-        ;
+            ->{'DanePobierzPelnyRaportResult'};
 
         $xml = simplexml_load_string($raw)->dane;
 

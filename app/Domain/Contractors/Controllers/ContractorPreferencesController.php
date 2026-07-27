@@ -14,15 +14,15 @@ class ContractorPreferencesController extends Controller
     {
         $preferences = $contractor->preferences;
 
-        if (!$preferences) {
+        if (! $preferences) {
             $preferences = ContractorPreferences::create([
-                'tenant_id'                 => $contractor->tenant_id,
-                'contractor_id'             => $contractor->id,
+                'tenant_id' => $contractor->tenant_id,
+                'contractor_id' => $contractor->id,
                 'default_payment_method_id' => null,
-                'default_currency_code'     => null,
-                'default_language'          => null,
-                'default_payment_days'      => null,
-                'default_tags'              => null,
+                'default_currency_code' => null,
+                'default_language' => null,
+                'default_payment_days' => null,
+                'default_tags' => null,
             ]);
         }
 
@@ -31,13 +31,13 @@ class ContractorPreferencesController extends Controller
 
     public function update(UpdateContractorPreferencesRequest $request, Contractor $contractor)
     {
-        $data        = $request->validated();
+        $data = $request->validated();
         $preferences = $contractor->preferences;
 
-        if (!$preferences) {
+        if (! $preferences) {
             $preferences = ContractorPreferences::create([
-                'tenant_id'    => $contractor->tenant_id,
-                'contractor_id'=> $contractor->id,
+                'tenant_id' => $contractor->tenant_id,
+                'contractor_id' => $contractor->id,
             ]);
         }
         $preferences->update($data);

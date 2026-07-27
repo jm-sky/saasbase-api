@@ -18,7 +18,7 @@ class AnalyzeDocumentByUrlRequest extends Request implements HasBody
         protected ?string $modelId = null,
         protected ?string $apiVersion = '2024-11-30'
     ) {
-        $this->modelId    = $modelId ?? config('azure_doc_intel.model_id');
+        $this->modelId = $modelId ?? config('azure_doc_intel.model_id');
         $this->apiVersion = $apiVersion ?? config('azure_doc_intel.api_version');
     }
 

@@ -18,7 +18,7 @@ class UserIdentityDocumentRevision extends BaseModel
     ];
 
     protected $casts = [
-        'issued_at'  => 'date',
+        'issued_at' => 'date',
         'expires_at' => 'date',
         'changed_at' => 'datetime',
     ];

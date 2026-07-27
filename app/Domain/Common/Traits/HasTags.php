@@ -22,9 +22,9 @@ trait HasTags
     public function addTag(string $name, ?string $tenantId = null): Tag
     {
         $slug = Str::slug($name);
-        $tag  = Tag::firstOrCreate([
+        $tag = Tag::firstOrCreate([
             'tenant_id' => $tenantId,
-            'slug'      => $slug,
+            'slug' => $slug,
         ], [
             'name' => $name,
         ]);
@@ -36,7 +36,7 @@ trait HasTags
     public function removeTag(string $name, ?string $tenantId = null): void
     {
         $slug = Str::slug($name);
-        $tag  = Tag::where('tenant_id', $tenantId)->where('slug', $slug)->first();
+        $tag = Tag::where('tenant_id', $tenantId)->where('slug', $slug)->first();
 
         if ($tag) {
             $this->tags()->detach($tag->id);
@@ -50,7 +50,7 @@ trait HasTags
 
             return Tag::firstOrCreate([
                 'tenant_id' => $tenantId,
-                'slug'      => $slug,
+                'slug' => $slug,
             ], [
                 'name' => $name,
             ])->id;

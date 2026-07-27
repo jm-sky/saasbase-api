@@ -14,9 +14,9 @@ class UpdateNotificationSettingRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'channel'    => ['required', 'string', 'max:255'],
+            'channel' => ['required', 'string', 'max:255'],
             'settingKey' => ['required', 'string', 'max:255'],
-            'enabled'    => ['required', 'boolean'],
+            'enabled' => ['required', 'boolean'],
         ];
     }
 }

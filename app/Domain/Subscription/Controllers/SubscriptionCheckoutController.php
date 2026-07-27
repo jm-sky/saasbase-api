@@ -18,8 +18,7 @@ class SubscriptionCheckoutController
     public function __construct(
         protected StripeSubscriptionService $stripeSubscriptionService,
         protected StripeCustomerService $stripeCustomerService
-    ) {
-    }
+    ) {}
 
     /**
      * Create a Stripe Checkout session for subscription.
@@ -27,11 +26,11 @@ class SubscriptionCheckoutController
     public function __invoke(SubscriptionCheckoutRequest $request): SubscriptionCheckoutResource
     {
         /** @var User $user */
-        $user            = Auth::user();
-        $tenantId        = $user->getTenantId();
-        $tenant          = Tenant::findOrFail($tenantId);
-        $plan            = SubscriptionPlan::findOrFail($request->planId);
-        $price           = $this->provideBillingPrice($plan, $request->priceId);
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
+        $tenant = Tenant::findOrFail($tenantId);
+        $plan = SubscriptionPlan::findOrFail($request->planId);
+        $price = $this->provideBillingPrice($plan, $request->priceId);
         $billingCustomer = $this->provideBillingCustomer($user, $tenant, $request->billableType);
 
         $checkoutData = $this->stripeSubscriptionService->createCheckoutSession(
@@ -40,7 +39,7 @@ class SubscriptionCheckoutController
             $price,
             [
                 'success_url' => $request->successUrl,
-                'cancel_url'  => $request->cancelUrl,
+                'cancel_url' => $request->cancelUrl,
             ]
         );
 
@@ -49,17 +48,17 @@ class SubscriptionCheckoutController
 
     protected function provideBillingCustomer(User $user, Tenant $tenant, string $billableType): BillingCustomer
     {
-        if ('tenant' === $billableType) {
+        if ($billableType === 'tenant') {
             return $tenant->billingCustomer ?? $this->stripeCustomerService->createCustomer($tenant, [
                 'email' => $tenant->email ?? $user->email,
-                'name'  => $tenant->name ?? $user->name,
+                'name' => $tenant->name ?? $user->name,
             ]);
         }
 
-        if ('user' === $billableType) {
+        if ($billableType === 'user') {
             return $this->stripeCustomerService->createCustomer($user, [
                 'email' => $user->email,
-                'name'  => $user->name,
+                'name' => $user->name,
             ]);
         }
 
@@ -72,7 +71,6 @@ class SubscriptionCheckoutController
         return $plan->prices()
             ->where('id', $priceId)
             ->where('is_active', true)
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
     }
 }

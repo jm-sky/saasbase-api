@@ -14,7 +14,7 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
-    'use_s3_temporary_urls' => env('USE_S3_TEMPORARY_URL', 'production' === env('APP_ENV')),
+    'use_s3_temporary_urls' => env('USE_S3_TEMPORARY_URL', env('APP_ENV') === 'production'),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,43 +32,43 @@ return [
     'disks' => [
         'local' => [
             'driver' => 'local',
-            'root'   => storage_path('app/private'),
-            'serve'  => true,
-            'throw'  => false,
+            'root' => storage_path('app/private'),
+            'serve' => true,
+            'throw' => false,
             'report' => false,
         ],
 
         'public' => [
-            'driver'     => 'local',
-            'root'       => storage_path('app/public'),
-            'url'        => env('APP_URL') . '/storage',
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
-            'throw'      => false,
-            'report'     => false,
+            'throw' => false,
+            'report' => false,
         ],
 
         's3' => [
-            'driver'                  => 's3',
-            'key'                     => env('S3_ACCESS_KEY'),
-            'secret'                  => env('S3_SECRET_KEY'),
-            'region'                  => env('S3_REGION'),
-            'bucket'                  => env('S3_BUCKET'),
-            'endpoint'                => env('S3_ENDPOINT'),
+            'driver' => 's3',
+            'key' => env('S3_ACCESS_KEY'),
+            'secret' => env('S3_SECRET_KEY'),
+            'region' => env('S3_REGION'),
+            'bucket' => env('S3_BUCKET'),
+            'endpoint' => env('S3_ENDPOINT'),
             'use_path_style_endpoint' => env('S3_USE_PATH_STYLE_ENDPOINT', false),
-            'throw'                   => false,
-            'report'                  => false,
+            'throw' => false,
+            'report' => false,
         ],
 
         'minio' => [
-            'driver'                  => 's3',
-            'key'                     => env('MINIO_ROOT_USER', 'sail'),
-            'secret'                  => env('MINIO_ROOT_PASSWORD', 'password'),
-            'endpoint'                => env('MINIO_ENDPOINT_URL', 'http://minio:9000'),
-            'region'                  => 'us-east-1',
-            'bucket'                  => env('MINIO_BUCKET', 'saasbase'),
+            'driver' => 's3',
+            'key' => env('MINIO_ROOT_USER', 'sail'),
+            'secret' => env('MINIO_ROOT_PASSWORD', 'password'),
+            'endpoint' => env('MINIO_ENDPOINT_URL', 'http://rustfs:9000'),
+            'region' => 'us-east-1',
+            'bucket' => env('MINIO_BUCKET', 'saasbase'),
             'use_path_style_endpoint' => true,
-            'throw'                   => false,
-            'report'                  => false,
+            'throw' => false,
+            'report' => false,
         ],
     ],
 

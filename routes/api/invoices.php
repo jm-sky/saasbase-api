@@ -5,7 +5,7 @@ use App\Domain\Invoice\Controllers\InvoiceController;
 use App\Domain\Invoice\Controllers\InvoiceShareTokenController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () {
+Route::middleware(['auth:api', 'session.active', 'is_active', 'is_in_tenant'])->group(function () {
     Route::get('invoices/search', [InvoiceController::class, 'search'])->name('invoices.search');
     Route::get('invoices/export', [InvoiceController::class, 'export']);
 
@@ -18,7 +18,7 @@ Route::middleware(['auth:api', 'is_active', 'is_in_tenant'])->group(function () 
 
     Route::get('invoices/{invoice}/attachments/{media}/download', [InvoiceAttachmentsController::class, 'download'])->name('invoices.attachments.download');
     Route::get('invoices/{invoice}/attachments/{media}/preview', [InvoiceAttachmentsController::class, 'preview'])->name('invoices.attachments.preview');
-    Route::apiResource('invoices/{invoice}/attachments', InvoiceAttachmentsController::class);
+    Route::apiResource('invoices/{invoice}/attachments', InvoiceAttachmentsController::class)->names('invoices.attachments');
     Route::apiResource('invoices', InvoiceController::class);
 
     Route::apiResource('invoices.share-tokens', InvoiceShareTokenController::class)->only(['index', 'store', 'destroy']);

@@ -13,8 +13,7 @@ final class CreateSubscriptionOptionsDTO extends BaseDataDTO
         public ?Carbon $trialEndsAt = null,
         public ?string $paymentBehavior = null,
         public ?array $metadata = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -30,9 +29,9 @@ final class CreateSubscriptionOptionsDTO extends BaseDataDTO
     {
         return [
             'billingInterval' => $this->billingInterval,
-            'trialEndsAt'     => $this->trialEndsAt->toDateString(),
+            'trialEndsAt' => $this->trialEndsAt->toDateString(),
             'paymentBehavior' => $this->paymentBehavior,
-            'metadata'        => $this->metadata,
+            'metadata' => $this->metadata,
         ];
     }
 }

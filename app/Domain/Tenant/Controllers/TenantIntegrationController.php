@@ -6,6 +6,7 @@ use App\Domain\Auth\Models\User;
 use App\Domain\Common\Filters\AdvancedFilter;
 use App\Domain\Common\Filters\ComboSearchFilter;
 use App\Domain\Common\Traits\HasIndexQuery;
+use App\Domain\Tenant\Models\Tenant;
 use App\Domain\Tenant\Models\TenantIntegration;
 use App\Domain\Tenant\Requests\StoreTenantIntegrationRequest;
 use App\Domain\Tenant\Requests\UpdateTenantIntegrationRequest;
@@ -26,14 +27,14 @@ class TenantIntegrationController extends Controller
     public function __construct()
     {
         $this->modelClass = TenantIntegration::class;
-        $this->filters    = [
+        $this->filters = [
             AllowedFilter::custom('search', new ComboSearchFilter(['type'])),
-            AllowedFilter::custom('id', new AdvancedFilter()),
+            AllowedFilter::custom('id', new AdvancedFilter),
             AllowedFilter::exact('type'),
             AllowedFilter::exact('enabled'),
             AllowedFilter::exact('mode'),
         ];
-        $this->sorts       = ['created_at', 'updated_at', 'type', 'mode'];
+        $this->sorts = ['created_at', 'updated_at', 'type', 'mode'];
         $this->defaultSort = '-created_at';
     }
 
@@ -43,7 +44,7 @@ class TenantIntegrationController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         /** @var User $user */
-        $user  = Auth::user();
+        $user = Auth::user();
         $query = $this->getIndexQuery($request);
         $query->where('tenant_id', $user->getTenantId());
 
@@ -55,8 +56,10 @@ class TenantIntegrationController extends Controller
      */
     public function store(StoreTenantIntegrationRequest $request): TenantIntegrationResource
     {
+        $this->authorize('create', TenantIntegration::class);
+
         /** @var User $user */
-        $user        = Auth::user();
+        $user = Auth::user();
         $integration = DB::transaction(function () use ($request, $user) {
             return $user->currentTenant()->integrations()->create($request->validated());
         });
@@ -89,15 +92,13 @@ class TenantIntegrationController extends Controller
     /**
      * Remove the specified integration.
      */
-    public function destroy(string $integrationId): JsonResponse
+    public function destroy(Tenant $tenant, string $integration): JsonResponse
     {
-        /** @var User $user */
-        $user        = Auth::user();
-        $integration = $user->currentTenant()->integrations()->findOrFail($integrationId);
+        $model = $tenant->integrations()->findOrFail($integration);
 
-        $this->authorize('delete', $integration);
+        $this->authorize('delete', $model);
 
-        $integration->delete();
+        $model->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

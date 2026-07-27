@@ -19,10 +19,10 @@ class StripeWebhook
             return $next($request);
         }
 
-        $payload   = $request->getContent();
+        $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
 
-        if (!$sigHeader) {
+        if (! $sigHeader) {
             return response('No signature provided', 400);
         }
 
@@ -39,9 +39,9 @@ class StripeWebhook
             return $next($request);
         } catch (SignatureVerificationException $e) {
             Log::error('Stripe webhook signature verification failed', [
-                'error'               => $e->getMessage(),
-                'signature'           => $sigHeader,
-                'webhook_secret'      => config('stripe.webhook_secret') ? 'set' : 'not set',
+                'error' => $e->getMessage(),
+                'signature' => $sigHeader,
+                'webhook_secret' => config('stripe.webhook_secret') ? 'set' : 'not set',
                 'signature_timestamp' => explode(',', $sigHeader)[0] ?? 'unknown',
             ]);
 

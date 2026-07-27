@@ -14,7 +14,7 @@ class ArchiveNotificationsRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'ids'   => ['required', 'array'],
+            'ids' => ['required', 'array'],
             'ids.*' => ['required', 'uuid', 'exists:notifications,id'],
         ];
     }

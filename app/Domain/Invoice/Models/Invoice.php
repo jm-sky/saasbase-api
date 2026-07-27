@@ -22,6 +22,7 @@ use App\Domain\Financial\DTOs\InvoiceBodyDTO;
 use App\Domain\Financial\DTOs\InvoiceOptionsDTO;
 use App\Domain\Financial\DTOs\InvoicePartyDTO;
 use App\Domain\Financial\DTOs\InvoicePaymentDTO;
+use App\Domain\Financial\DTOs\InvoiceStatusDTO;
 use App\Domain\Financial\Enums\AllocationStatus;
 use App\Domain\Financial\Enums\ApprovalStatus;
 use App\Domain\Financial\Enums\DeliveryStatus;
@@ -41,45 +42,45 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 
 /**
- * @property string            $id
- * @property string            $tenant_id
- * @property InvoiceType       $type
- * @property InvoiceStatus     $status
- * @property OcrRequestStatus  $ocrStatus
- * @property AllocationStatus  $allocationStatus
- * @property ApprovalStatus    $approvalStatus
- * @property DeliveryStatus    $deliveryStatus
- * @property PaymentStatus     $paymentStatus
- * @property string            $number
- * @property string            $numbering_template_id
- * @property BigDecimal        $total_net
- * @property BigDecimal        $total_tax
- * @property BigDecimal        $total_gross
- * @property string            $currency
- * @property BigDecimal        $exchange_rate
- * @property InvoicePartyDTO   $seller
- * @property InvoicePartyDTO   $buyer
- * @property InvoiceBodyDTO    $body
+ * @property string $id
+ * @property string $tenant_id
+ * @property InvoiceType $type
+ * @property InvoiceStatus $status
+ * @property OcrRequestStatus $ocrStatus
+ * @property AllocationStatus $allocationStatus
+ * @property ApprovalStatus $approvalStatus
+ * @property DeliveryStatus $deliveryStatus
+ * @property PaymentStatus $paymentStatus
+ * @property string $number
+ * @property string $numbering_template_id
+ * @property BigDecimal $total_net
+ * @property BigDecimal $total_tax
+ * @property BigDecimal $total_gross
+ * @property string $currency
+ * @property BigDecimal $exchange_rate
+ * @property InvoicePartyDTO $seller
+ * @property InvoicePartyDTO $buyer
+ * @property InvoiceBodyDTO $body
  * @property InvoicePaymentDTO $payment
  * @property InvoiceOptionsDTO $options
- * @property Collection<Tag>   $tags
- * @property User              $createdByUser
- * @property OcrRequest        $ocrRequest
+ * @property Collection<int, Tag> $tags
+ * @property User $createdByUser
+ * @property OcrRequest $ocrRequest
  *
  * @method Media|null getFirstMedia(string $collectionName = 'default')
- * @method FileAdder  addMedia(string|\Symfony\Component\HttpFoundation\File\UploadedFile $file)
+ * @method FileAdder addMedia(string|\Symfony\Component\HttpFoundation\File\UploadedFile $file)
  */
 class Invoice extends BaseModel implements HasMedia
 {
-    use SoftDeletes;
     use BelongsToTenant;
-    use IsSearchable;
-    use HasShareTokens;
-    use HasTags;
-    use IsCreatableByUser;
-    use InteractsWithMedia;
     use HasActivityLog;
     use HasActivityLogging;
+    use HasShareTokens;
+    use HasTags;
+    use InteractsWithMedia;
+    use IsCreatableByUser;
+    use IsSearchable;
+    use SoftDeletes;
 
     protected $fillable = [
         'type',
@@ -105,23 +106,23 @@ class Invoice extends BaseModel implements HasMedia
     ];
 
     protected $casts = [
-        'type'              => InvoiceType::class,
-        'status'            => InvoiceStatus::class,
-        'ocr_status'        => OcrRequestStatus::class,
+        'type' => InvoiceType::class,
+        'status' => InvoiceStatus::class,
+        'ocr_status' => OcrRequestStatus::class,
         'allocation_status' => AllocationStatus::class,
-        'approval_status'   => ApprovalStatus::class,
-        'delivery_status'   => DeliveryStatus::class,
-        'payment_status'    => PaymentStatus::class,
-        'issue_date'        => 'date',
-        'total_net'         => BigDecimalCast::class,
-        'total_tax'         => BigDecimalCast::class,
-        'total_gross'       => BigDecimalCast::class,
-        'exchange_rate'     => BigDecimalCast::class,
-        'seller'            => InvoicePartyCast::class,
-        'buyer'             => InvoicePartyCast::class,
-        'body'              => InvoiceBodyCast::class,
-        'payment'           => InvoicePaymentCast::class,
-        'options'           => InvoiceOptionsCast::class,
+        'approval_status' => ApprovalStatus::class,
+        'delivery_status' => DeliveryStatus::class,
+        'payment_status' => PaymentStatus::class,
+        'issue_date' => 'date',
+        'total_net' => BigDecimalCast::class,
+        'total_tax' => BigDecimalCast::class,
+        'total_gross' => BigDecimalCast::class,
+        'exchange_rate' => BigDecimalCast::class,
+        'seller' => InvoicePartyCast::class,
+        'buyer' => InvoicePartyCast::class,
+        'body' => InvoiceBodyCast::class,
+        'payment' => InvoicePaymentCast::class,
+        'options' => InvoiceOptionsCast::class,
     ];
 
     public function numberingTemplate(): BelongsTo
@@ -137,9 +138,9 @@ class Invoice extends BaseModel implements HasMedia
     /**
      * Get comprehensive status information as DTO.
      */
-    public function getStatusDTO(): \App\Domain\Financial\DTOs\InvoiceStatusDTO
+    public function getStatusDTO(): InvoiceStatusDTO
     {
-        return new \App\Domain\Financial\DTOs\InvoiceStatusDTO(
+        return new InvoiceStatusDTO(
             general: $this->status ?? InvoiceStatus::DRAFT,
             ocr: $this->ocr_status,
             allocation: $this->allocation_status,
@@ -152,15 +153,15 @@ class Invoice extends BaseModel implements HasMedia
     /**
      * Update status using the status service.
      */
-    public function updateStatusFromDTO(\App\Domain\Financial\DTOs\InvoiceStatusDTO $statusDTO): void
+    public function updateStatusFromDTO(InvoiceStatusDTO $statusDTO): void
     {
         $this->update([
-            'status'            => $statusDTO->general,
-            'ocr_status'        => $statusDTO->ocr,
+            'status' => $statusDTO->general,
+            'ocr_status' => $statusDTO->ocr,
             'allocation_status' => $statusDTO->allocation,
-            'approval_status'   => $statusDTO->approval,
-            'delivery_status'   => $statusDTO->delivery,
-            'payment_status'    => $statusDTO->payment,
+            'approval_status' => $statusDTO->approval,
+            'delivery_status' => $statusDTO->delivery,
+            'payment_status' => $statusDTO->payment,
         ]);
     }
 

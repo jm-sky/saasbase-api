@@ -22,11 +22,11 @@ class EDoreczeniaProviderManager
     /**
      * Register a new provider.
      *
-     * @param class-string<EDoreczeniaProviderInterface> $providerClass
+     * @param  class-string<EDoreczeniaProviderInterface>  $providerClass
      */
     public function registerProvider(string $providerClass): void
     {
-        if (!is_subclass_of($providerClass, EDoreczeniaProviderInterface::class)) {
+        if (! is_subclass_of($providerClass, EDoreczeniaProviderInterface::class)) {
             throw new \InvalidArgumentException('Provider class must implement EDoreczeniaProviderInterface');
         }
 
@@ -64,10 +64,9 @@ class EDoreczeniaProviderManager
     {
         $certificate = EDoreczeniaCertificate::where('tenant_id', $tenant->id)
             ->where('is_valid', true)
-            ->first()
-        ;
+            ->first();
 
-        if (!$certificate) {
+        if (! $certificate) {
             return null;
         }
 

@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string  $id
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
+ * @property string $id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property ?Carbon $deleted_at
  */
 class BaseModel extends Model
 {
-    use HasUlids;
     use HasFactory;
+    use HasUlids;
 
     protected static function newFactory()
     {
-        $factoryClass = 'Database\Factories\\' . class_basename(static::class) . 'Factory';
+        $factoryClass = 'Database\Factories\\'.class_basename(static::class).'Factory';
 
         return class_exists($factoryClass) ? $factoryClass::new() : null;
     }

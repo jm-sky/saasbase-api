@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Chat\Models\ChatParticipant;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('users.{userId}.notifications', function ($user, $userId) {
@@ -7,10 +8,9 @@ Broadcast::channel('users.{userId}.notifications', function ($user, $userId) {
 });
 
 Broadcast::channel('chat.room.{roomId}', function ($user, $roomId) {
-    return App\Domain\Chat\Models\ChatParticipant::where('chat_room_id', $roomId)
+    return ChatParticipant::where('chat_room_id', $roomId)
         ->where('user_id', $user->id)
-        ->exists()
-    ;
+        ->exists();
 });
 
 Broadcast::channel('chat.ai.{userId}', function ($user, $userId) {

@@ -19,12 +19,13 @@ class ShareTokenService
         ?int $maxUsage = null
     ): ShareToken {
         return ShareToken::create([
-            'token'                  => Str::random(40),
-            'shareable_type'         => $shareableType,
-            'shareable_id'           => $shareableId,
+            'token' => Str::random(40),
+            'shareable_type' => $shareableType,
+            'shareable_id' => $shareableId,
             'only_for_authenticated' => $onlyForAuthenticated,
-            'expires_at'             => $expiresAt,
-            'max_usage'              => $maxUsage,
+            'expires_at' => $expiresAt,
+            'max_usage' => $maxUsage,
+            'usage_count' => 0,
         ]);
     }
 
@@ -37,7 +38,7 @@ class ShareTokenService
             return false;
         }
 
-        if (null !== $token->max_usage && $token->usage_count >= $token->max_usage) {
+        if ($token->max_usage !== null && $token->usage_count >= $token->max_usage) {
             return false;
         }
 
@@ -50,7 +51,7 @@ class ShareTokenService
     public function incrementUsage(ShareToken $token): void
     {
         $token->last_used_at = now();
-        ++$token->usage_count;
+        $token->usage_count++;
         $token->save();
     }
 }

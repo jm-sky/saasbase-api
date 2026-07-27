@@ -3,6 +3,8 @@
 namespace App\Domain\Tenant\Controllers;
 
 use App\Domain\Auth\Models\User;
+use App\Domain\Rights\Enums\RoleName;
+use App\Domain\Rights\Support\TenantScopedRoles;
 use App\Domain\Tenant\Models\OrganizationUnit;
 use App\Domain\Tenant\Models\Position;
 use App\Domain\Tenant\Models\Tenant;
@@ -25,27 +27,28 @@ class OrganizationUnitController extends Controller
 
     public function __construct()
     {
-        $this->tenant                      = Tenant::find(TenantIdResolver::resolve());
+        $this->tenant = Tenant::find(TenantIdResolver::resolve());
         $this->organizationPositionService = new OrganizationPositionService($this->tenant);
     }
 
     public function index(): AnonymousResourceCollection
     {
         /** @var User $user */
-        $user     = Auth::user();
+        $user = Auth::user();
         $tenantId = $user->tenant_id;
 
         $units = OrganizationUnit::query()
             ->with('activeUsers', 'parent', 'positions')
             ->where('tenant_id', $tenantId)
-            ->get()
-        ;
+            ->get();
 
         return OrganizationUnitResource::collection($units);
     }
 
     public function store(StoreOrganizationUnitRequest $request): OrganizationUnitResource
     {
+        $this->authorizeManage();
+
         $unit = OrganizationUnit::create($request->validated());
 
         return new OrganizationUnitResource($unit);
@@ -55,14 +58,15 @@ class OrganizationUnitController extends Controller
     {
         $unit = OrganizationUnit::where('tenant_id', $tenantId)
             ->where('id', $unitId)
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         return new OrganizationUnitResource($unit);
     }
 
     public function update(StoreOrganizationUnitRequest $request, OrganizationUnit $unit): OrganizationUnitResource
     {
+        $this->authorizeManage();
+
         $unit->update($request->validated());
 
         return new OrganizationUnitResource($unit);
@@ -70,16 +74,17 @@ class OrganizationUnitController extends Controller
 
     public function destroy(string $tenantId, string $unitId): JsonResponse
     {
+        $this->authorizeManage();
+
         $unit = OrganizationUnit::where('tenant_id', $tenantId)
             ->where('id', $unitId)
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         if ($unit->is_technical) {
             return response()->json(['message' => 'Cannot delete technical organization unit'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$unit->parent_id) {
+        if (! $unit->parent_id) {
             return response()->json(['message' => 'Cannot delete root organization unit'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -91,14 +96,31 @@ class OrganizationUnitController extends Controller
     public function assignUserToUnit(Request $request, string $tenantId, string $unitId): JsonResponse
     {
         /** @var OrganizationUnit $unit */
-        $unit     = $this->tenant->organizationUnits()->findOrFail($unitId);
+        $unit = $this->tenant->organizationUnits()->findOrFail($unitId);
         /** @var User $user */
-        $user     = $this->tenant->users()->findOrFail($request->input('userId'));
+        $user = $this->tenant->users()->findOrFail($request->input('userId'));
         /** @var Position $position */
         $position = $unit->positions()->findOrFail($request->input('positionId'));
 
         $this->organizationPositionService->assignUserToPosition($user, $unit, $position);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Restructuring the organizational hierarchy (which drives approval
+     * routing and RBAC scoping) is restricted to Owner/Admin, unlike
+     * viewing it which any tenant member needs.
+     */
+    private function authorizeManage(): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $tenantId = $user->getTenantId();
+
+        abort_unless(
+            $tenantId && TenantScopedRoles::userHasAnyRole($user, $tenantId, [RoleName::Owner->value, RoleName::Admin->value]),
+            Response::HTTP_FORBIDDEN
+        );
     }
 }

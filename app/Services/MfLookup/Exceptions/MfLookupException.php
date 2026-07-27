@@ -2,6 +2,4 @@
 
 namespace App\Services\MfLookup\Exceptions;
 
-class MfLookupException extends \Exception
-{
-}
+class MfLookupException extends \Exception {}

@@ -14,8 +14,8 @@ class SkillRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'category'    => ['required', 'string', 'exists:skill_categories,name'],
-            'name'        => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', 'exists:skill_categories,name'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ];
     }
@@ -24,8 +24,8 @@ class SkillRequest extends BaseFormRequest
     {
         return [
             'category.required' => 'The category is required.',
-            'category.exists'   => 'The selected category does not exist.',
-            'name.required'     => 'The name field is required.',
+            'category.exists' => 'The selected category does not exist.',
+            'name.required' => 'The name field is required.',
         ];
     }
 }

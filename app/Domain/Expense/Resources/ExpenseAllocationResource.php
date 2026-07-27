@@ -20,18 +20,18 @@ class ExpenseAllocationResource extends JsonResource
     {
         /* @var ExpenseAllocation $this->resource */
         return [
-            'id'            => $this->id,
-            'tenantId'      => $this->tenant_id,
-            'expenseId'     => $this->expense_id,
-            'amount'        => $this->amount->toFloat(),
-            'note'          => $this->note,
-            'status'        => $this->status->value,
-            'statusLabel'   => $this->status->label(),
+            'id' => $this->id,
+            'tenantId' => $this->tenant_id,
+            'expenseId' => $this->expense_id,
+            'amount' => $this->amount->toFloat(),
+            'note' => $this->note,
+            'status' => $this->status->value,
+            'statusLabel' => $this->status->label(),
             'statusLabelPL' => $this->status->labelPL(),
-            'createdAt'     => $this->created_at?->toIso8601String(),
-            'updatedAt'     => $this->updated_at?->toIso8601String(),
-            'dimensions'    => AllocationDimensionResource::collection($this->whenLoaded('dimensions')),
-            'expense'       => new ExpenseResource($this->whenLoaded('expense')),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
+            'dimensions' => AllocationDimensionResource::collection($this->whenLoaded('dimensions')),
+            'expense' => new ExpenseResource($this->whenLoaded('expense')),
         ];
     }
 }

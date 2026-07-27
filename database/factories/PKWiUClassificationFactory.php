@@ -12,12 +12,12 @@ class PKWiUClassificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'        => $this->faker->regexify('[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]'),
+            'code' => $this->faker->regexify('[0-9]{2}\.[0-9]{2}\.[0-9]{2}\.[0-9]'),
             'parent_code' => null,
-            'name'        => $this->faker->sentence(4),
+            'name' => $this->faker->sentence(4),
             'description' => $this->faker->paragraph(),
-            'level'       => $this->faker->numberBetween(1, 4),
-            'is_active'   => true,
+            'level' => $this->faker->numberBetween(1, 4),
+            'is_active' => true,
         ];
     }
 

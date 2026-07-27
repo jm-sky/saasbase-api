@@ -4,13 +4,14 @@ namespace App\Domain\Export\Services;
 
 use App\Domain\Export\DTOs\ExportConfigDTO;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExportService
 {
     /**
      * Download an Excel export for the given export class and config.
      *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return BinaryFileResponse
      */
     public function download(string $exportClass, ExportConfigDTO $config, string $filename)
     {

@@ -22,8 +22,7 @@ class ViesLookupJob implements ShouldQueue
 
     public function __construct(
         public CompanyContext $context,
-    ) {
-    }
+    ) {}
 
     /**
      * Executes the job.
@@ -33,7 +32,7 @@ class ViesLookupJob implements ShouldQueue
      */
     public function handle(ViesLookupService $viesLookupService): void
     {
-        if ($this->batch()->cancelled() || !$this->context->nip || !$this->context->country) {
+        if ($this->batch()->cancelled() || ! $this->context->nip || ! $this->context->country) {
             return;
         }
 

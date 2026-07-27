@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $user_id
  * @property string $gender
  * @property string $pesel
- * @property bool   $is_gender_verified
- * @property bool   $is_birth_date_verified
- * @property bool   $is_pesel_verified
+ * @property bool $is_gender_verified
+ * @property bool $is_birth_date_verified
+ * @property bool $is_pesel_verified
  */
 class UserPersonalData extends BaseModel
 {
@@ -26,9 +26,9 @@ class UserPersonalData extends BaseModel
     ];
 
     protected $casts = [
-        'is_gender_verified'     => 'boolean',
+        'is_gender_verified' => 'boolean',
         'is_birth_date_verified' => 'boolean',
-        'is_pesel_verified'      => 'boolean',
+        'is_pesel_verified' => 'boolean',
     ];
 
     public function user(): BelongsTo

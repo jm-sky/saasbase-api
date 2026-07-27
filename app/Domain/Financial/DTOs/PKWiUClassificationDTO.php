@@ -15,8 +15,7 @@ final class PKWiUClassificationDTO
         public readonly bool $isActive,
         public readonly ?array $children = null,
         public readonly ?string $hierarchyPath = null
-    ) {
-    }
+    ) {}
 
     public static function fromModel(PKWiUClassification $classification): self
     {
@@ -48,13 +47,13 @@ final class PKWiUClassificationDTO
     public function toArray(): array
     {
         return [
-            'code'           => $this->code,
-            'parent_code'    => $this->parentCode,
-            'name'           => $this->name,
-            'description'    => $this->description,
-            'level'          => $this->level,
-            'is_active'      => $this->isActive,
-            'children'       => $this->children,
+            'code' => $this->code,
+            'parent_code' => $this->parentCode,
+            'name' => $this->name,
+            'description' => $this->description,
+            'level' => $this->level,
+            'is_active' => $this->isActive,
+            'children' => $this->children,
             'hierarchy_path' => $this->hierarchyPath,
         ];
     }

@@ -10,8 +10,7 @@ class IntegrationLimitService
 {
     public function __construct(
         private IntegrationCredentialService $credentialService
-    ) {
-    }
+    ) {}
 
     public function shouldBypassApiLimits(string $tenantId, TenantIntegrationType $type): bool
     {
@@ -35,13 +34,13 @@ class IntegrationLimitService
 
         $tenant = Tenant::find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             return 0;
         }
 
         $subscription = $tenant->currentSubscription();
 
-        if (!$subscription) {
+        if (! $subscription) {
             return 0;
         }
 
@@ -52,7 +51,7 @@ class IntegrationLimitService
 
     public function canUseIntegration(string $tenantId, TenantIntegrationType $type): bool
     {
-        if (!$this->credentialService->isIntegrationEnabled($tenantId, $type)) {
+        if (! $this->credentialService->isIntegrationEnabled($tenantId, $type)) {
             return false;
         }
 
@@ -63,19 +62,19 @@ class IntegrationLimitService
     {
         $tenant = Tenant::find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             return false;
         }
 
         $subscription = $tenant->currentSubscription();
 
-        if (!$subscription) {
+        if (! $subscription) {
             return false;
         }
 
         $featureName = $this->getIntegrationFeatureName($type);
 
-        if (!$featureName) {
+        if (! $featureName) {
             return true; // No specific feature requirement
         }
 
@@ -85,25 +84,25 @@ class IntegrationLimitService
     private function getIntegrationFeatureName(TenantIntegrationType $type): ?FeatureName
     {
         return match ($type) {
-            TenantIntegrationType::Ksef      => FeatureName::KSEF_INTEGRATION,
+            TenantIntegrationType::Ksef => FeatureName::KSEF_INTEGRATION,
             TenantIntegrationType::EDelivery => FeatureName::EDORECZENIA_INTEGRATION,
-            default                          => null,
+            default => null,
         };
     }
 
     public function getIntegrationStatus(string $tenantId, TenantIntegrationType $type): array
     {
-        $hasCustomCredentials  = $this->credentialService->hasCustomCredentials($tenantId, $type);
-        $isEnabled             = $this->credentialService->isIntegrationEnabled($tenantId, $type);
+        $hasCustomCredentials = $this->credentialService->hasCustomCredentials($tenantId, $type);
+        $isEnabled = $this->credentialService->isIntegrationEnabled($tenantId, $type);
         $hasSubscriptionAccess = $this->hasSubscriptionAccessToIntegration($tenantId, $type);
 
         return [
-            'integration_type'        => $type->value,
-            'enabled'                 => $isEnabled,
-            'has_custom_credentials'  => $hasCustomCredentials,
+            'integration_type' => $type->value,
+            'enabled' => $isEnabled,
+            'has_custom_credentials' => $hasCustomCredentials,
             'has_subscription_access' => $hasSubscriptionAccess,
-            'can_use'                 => $this->canUseIntegration($tenantId, $type),
-            'bypasses_limits'         => $hasCustomCredentials,
+            'can_use' => $this->canUseIntegration($tenantId, $type),
+            'bypasses_limits' => $hasCustomCredentials,
         ];
     }
 }

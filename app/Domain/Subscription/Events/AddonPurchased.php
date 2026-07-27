@@ -13,6 +13,5 @@ class AddonPurchased
 
     public function __construct(
         public AddonPurchase $purchase
-    ) {
-    }
+    ) {}
 }

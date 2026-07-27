@@ -8,18 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @property string  $id
- * @property string  $inviter_id
+ * @property string $id
+ * @property string $inviter_id
  * @property ?string $invited_user_id
- * @property string  $email
- * @property string  $token
- * @property string  $status
+ * @property string $email
+ * @property string $token
+ * @property string $status
  * @property ?Carbon $accepted_at
- * @property Carbon  $expires_at
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property User    $inviter
- * @property ?User   $invitedUser
+ * @property Carbon $expires_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $inviter
+ * @property ?User $invitedUser
  */
 class ApplicationInvitation extends BaseModel
 {
@@ -39,7 +39,7 @@ class ApplicationInvitation extends BaseModel
 
     protected $casts = [
         'accepted_at' => 'datetime',
-        'expires_at'  => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     public function inviter(): BelongsTo

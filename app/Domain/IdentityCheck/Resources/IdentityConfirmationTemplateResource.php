@@ -14,11 +14,11 @@ class IdentityConfirmationTemplateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'        => $this->id,
-            'fileName'  => $this->file_name,
-            'mimeType'  => $this->mime_type,
-            'size'      => $this->size,
-            'url'       => $this->getFullUrl(),
+            'id' => $this->id,
+            'fileName' => $this->file_name,
+            'mimeType' => $this->mime_type,
+            'size' => $this->size,
+            'url' => $this->getFullUrl(),
             'createdAt' => $this->created_at?->toIso8601String(),
             'updatedAt' => $this->updated_at?->toIso8601String(),
         ];

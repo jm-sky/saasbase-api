@@ -18,8 +18,8 @@ class StripeCustomerService extends StripeService
     /**
      * Create a new Stripe customer and link it to a billable model.
      *
-     * @param Model $billable The model that can be billed (User/Tenant)
-     * @param array $data     Customer data (email, name, etc.)
+     * @param  Model  $billable  The model that can be billed (User/Tenant)
+     * @param  array  $data  Customer data (email, name, etc.)
      *
      * @throws StripeException
      */
@@ -29,19 +29,19 @@ class StripeCustomerService extends StripeService
             // Create customer in Stripe
             /** @var User|Tenant $billable */
             $stripeCustomer = $this->stripe->customers->create([
-                'email'    => $data['email'] ?? $billable->email,
-                'name'     => $data['name'] ?? $billable->name,
+                'email' => $data['email'] ?? $billable->email,
+                'name' => $data['name'] ?? $billable->name,
                 'metadata' => [
                     'billable_type' => get_class($billable),
-                    'billable_id'   => $billable->id,
+                    'billable_id' => $billable->id,
                 ],
             ]);
 
             // Create local billing customer record
             $billingCustomer = new BillingCustomer([
                 'stripe_customer_id' => $stripeCustomer->id,
-                'billable_type'      => get_class($billable),
-                'billable_id'        => $billable->id,
+                'billable_type' => get_class($billable),
+                'billable_id' => $billable->id,
             ]);
 
             $billable->billingCustomer()->save($billingCustomer);
@@ -58,7 +58,7 @@ class StripeCustomerService extends StripeService
     /**
      * Update an existing Stripe customer.
      *
-     * @param array $data Customer data to update
+     * @param  array  $data  Customer data to update
      *
      * @throws StripeException
      */
@@ -68,7 +68,7 @@ class StripeCustomerService extends StripeService
             // Update customer in Stripe
             $this->stripe->customers->update($billingCustomer->stripe_customer_id, [
                 'email' => $data['email'] ?? null,
-                'name'  => $data['name'] ?? null,
+                'name' => $data['name'] ?? null,
             ]);
 
             // Update local billing info if provided
@@ -83,7 +83,7 @@ class StripeCustomerService extends StripeService
     /**
      * Update billing information for a customer.
      *
-     * @param array $data Billing information
+     * @param  array  $data  Billing information
      *
      * @throws StripeException
      */
@@ -93,22 +93,22 @@ class StripeCustomerService extends StripeService
             // Update billing info in Stripe
             $this->stripe->customers->update($billingCustomer->stripe_customer_id, [
                 'address' => [
-                    'line1'       => $data['address_line1'] ?? null,
-                    'line2'       => $data['address_line2'] ?? null,
-                    'city'        => $data['city'] ?? null,
-                    'state'       => $data['state'] ?? null,
+                    'line1' => $data['address_line1'] ?? null,
+                    'line2' => $data['address_line2'] ?? null,
+                    'city' => $data['city'] ?? null,
+                    'state' => $data['state'] ?? null,
                     'postal_code' => $data['postal_code'] ?? null,
-                    'country'     => $data['country'] ?? null,
+                    'country' => $data['country'] ?? null,
                 ],
                 'shipping' => [
-                    'name'    => $data['name'] ?? null,
+                    'name' => $data['name'] ?? null,
                     'address' => [
-                        'line1'       => $data['address_line1'] ?? null,
-                        'line2'       => $data['address_line2'] ?? null,
-                        'city'        => $data['city'] ?? null,
-                        'state'       => $data['state'] ?? null,
+                        'line1' => $data['address_line1'] ?? null,
+                        'line2' => $data['address_line2'] ?? null,
+                        'city' => $data['city'] ?? null,
+                        'state' => $data['state'] ?? null,
                         'postal_code' => $data['postal_code'] ?? null,
-                        'country'     => $data['country'] ?? null,
+                        'country' => $data['country'] ?? null,
                     ],
                 ],
                 'tax' => [
@@ -117,18 +117,18 @@ class StripeCustomerService extends StripeService
             ]);
 
             // Create or update local billing info
-            $billingInfo = $billingCustomer->billingInfo ?? new BillingInfo();
+            $billingInfo = $billingCustomer->billingInfo ?? new BillingInfo;
             $billingInfo->fill([
-                'name'          => $data['name'] ?? null,
-                'email'         => $data['email'] ?? null,
+                'name' => $data['name'] ?? null,
+                'email' => $data['email'] ?? null,
                 'address_line1' => $data['address_line1'] ?? null,
                 'address_line2' => $data['address_line2'] ?? null,
-                'city'          => $data['city'] ?? null,
-                'state'         => $data['state'] ?? null,
-                'postal_code'   => $data['postal_code'] ?? null,
-                'country'       => $data['country'] ?? null,
-                'tax_id'        => $data['tax_id'] ?? null,
-                'notes'         => $data['notes'] ?? null,
+                'city' => $data['city'] ?? null,
+                'state' => $data['state'] ?? null,
+                'postal_code' => $data['postal_code'] ?? null,
+                'country' => $data['country'] ?? null,
+                'tax_id' => $data['tax_id'] ?? null,
+                'notes' => $data['notes'] ?? null,
             ]);
 
             /** @var User|Tenant $billable */
@@ -178,19 +178,19 @@ class StripeCustomerService extends StripeService
                 'stripe_customer_id' => $stripeCustomer->id,
             ]);
 
-            if (!$billingCustomer->exists) {
+            if (! $billingCustomer->exists) {
                 // If this is a new customer, we need the billable model
-                if (!isset($stripeCustomer['metadata']['billable_type']) || !isset($stripeCustomer['metadata']['billable_id'])) {
+                if (! isset($stripeCustomer['metadata']['billable_type']) || ! isset($stripeCustomer['metadata']['billable_id'])) {
                     throw new StripeException('Cannot sync customer: missing billable information in Stripe metadata');
                 }
 
                 $billableClass = $stripeCustomer['metadata']['billable_type'];
-                $billableId    = $stripeCustomer['metadata']['billable_id'];
+                $billableId = $stripeCustomer['metadata']['billable_id'];
 
                 /** @var User|Tenant $billable */
                 $billable = $billableClass::find($billableId);
 
-                if (!$billable) {
+                if (! $billable) {
                     throw new StripeException('Cannot sync customer: billable model not found');
                 }
 
@@ -200,21 +200,21 @@ class StripeCustomerService extends StripeService
             // Sync billing info
             if ($stripeCustomer['address'] || $stripeCustomer['shipping']) {
                 /** @var BillingInfo $billingInfo */
-                $billingInfo = $billingCustomer->billingInfo ?? new BillingInfo();
+                $billingInfo = $billingCustomer->billingInfo ?? new BillingInfo;
 
                 $address = $stripeCustomer['address'] ?? $stripeCustomer['shipping']['address'];
-                $name    = $stripeCustomer['name'] ?? $stripeCustomer['shipping']['name'];
+                $name = $stripeCustomer['name'] ?? $stripeCustomer['shipping']['name'];
 
                 $billingInfo->fill([
-                    'name'          => $name,
-                    'email'         => $stripeCustomer['email'],
+                    'name' => $name,
+                    'email' => $stripeCustomer['email'],
                     'address_line1' => $address['line1'] ?? null,
                     'address_line2' => $address['line2'] ?? null,
-                    'city'          => $address['city'] ?? null,
-                    'state'         => $address['state'] ?? null,
-                    'postal_code'   => $address['postal_code'] ?? null,
-                    'country'       => $address['country'] ?? null,
-                    'tax_id'        => $stripeCustomer['tax_ids']['data'][0]['value'] ?? null,
+                    'city' => $address['city'] ?? null,
+                    'state' => $address['state'] ?? null,
+                    'postal_code' => $address['postal_code'] ?? null,
+                    'country' => $address['country'] ?? null,
+                    'tax_id' => $stripeCustomer['tax_ids']['data'][0]['value'] ?? null,
                 ]);
 
                 /** @var User|Tenant $billable */

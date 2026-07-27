@@ -29,7 +29,7 @@ final class NumberField extends ValueWrapper
 
     public function validate(): void
     {
-        if (!is_numeric($this->value)) {
+        if (! is_numeric($this->value)) {
             throw new \InvalidArgumentException('NumberField value must be numeric');
         }
     }

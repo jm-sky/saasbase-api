@@ -9,18 +9,18 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string                   $id
- * @property string                   $execution_id
- * @property string                   $step_id
- * @property string                   $approver_id
- * @property ApprovalDecision         $decision
- * @property ?string                  $reason
- * @property Carbon                   $decided_at
- * @property Carbon                   $created_at
- * @property Carbon                   $updated_at
+ * @property string $id
+ * @property string $execution_id
+ * @property string $step_id
+ * @property string $approver_id
+ * @property ApprovalDecision $decision
+ * @property ?string $reason
+ * @property Carbon $decided_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property ApprovalExpenseExecution $execution
- * @property ApprovalWorkflowStep     $step
- * @property User                     $approver
+ * @property ApprovalWorkflowStep $step
+ * @property User $approver
  */
 class ApprovalExpenseDecision extends BaseModel
 {
@@ -34,7 +34,7 @@ class ApprovalExpenseDecision extends BaseModel
     ];
 
     protected $casts = [
-        'decision'   => ApprovalDecision::class,
+        'decision' => ApprovalDecision::class,
         'decided_at' => 'datetime',
     ];
 
@@ -55,11 +55,11 @@ class ApprovalExpenseDecision extends BaseModel
 
     public function isApproval(): bool
     {
-        return ApprovalDecision::APPROVED === $this->decision;
+        return $this->decision === ApprovalDecision::APPROVED;
     }
 
     public function isRejection(): bool
     {
-        return ApprovalDecision::REJECTED === $this->decision;
+        return $this->decision === ApprovalDecision::REJECTED;
     }
 }

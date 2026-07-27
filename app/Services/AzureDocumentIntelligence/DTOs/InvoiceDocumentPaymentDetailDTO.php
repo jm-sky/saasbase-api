@@ -9,7 +9,7 @@ use App\Domain\Common\DTOs\BaseDataDTO;
  *
  * @property string $iban
  * @property string $swift
- * @property float  $confidence
+ * @property float $confidence
  */
 final class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
 {
@@ -17,8 +17,7 @@ final class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
         public readonly ?string $iban,
         public readonly ?string $swift,
         public readonly float $confidence = 1.0,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -41,8 +40,8 @@ final class InvoiceDocumentPaymentDetailDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'iban'       => $this->iban,
-            'swift'      => $this->swift,
+            'iban' => $this->iban,
+            'swift' => $this->swift,
             'confidence' => $this->confidence,
         ];
     }

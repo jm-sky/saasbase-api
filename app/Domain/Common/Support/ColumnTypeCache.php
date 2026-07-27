@@ -20,7 +20,7 @@ class ColumnTypeCache
 
         return Cache::rememberForever(self::key($table), function () use ($table) {
             $columns = DB::getSchemaBuilder()->getColumnListing($table);
-            $types   = [];
+            $types = [];
 
             foreach ($columns as $column) {
                 $type = DB::getSchemaBuilder()->getColumnType($table, $column);

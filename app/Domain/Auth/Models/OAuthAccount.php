@@ -11,6 +11,12 @@ class OAuthAccount extends BaseModel
     use HasFactory;
 
     /**
+     * Laravel's inflection turns OAuthAccount into o_auth_accounts;
+     * the schema (and DBML) uses user_oauth_accounts.
+     */
+    protected $table = 'user_oauth_accounts';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -20,6 +26,7 @@ class OAuthAccount extends BaseModel
         'provider',
         'provider_user_id',
         'email',
+        'linked_at',
     ];
 
     /**

@@ -31,7 +31,7 @@ class ProductTagsController extends Controller
 
         return response()->json([
             'message' => 'Tag added successfully.',
-            'data'    => TagDTO::fromModel($tag)->toArray(),
+            'data' => TagDTO::fromModel($tag)->toArray(),
         ], Response::HTTP_CREATED);
     }
 
@@ -51,7 +51,7 @@ class ProductTagsController extends Controller
 
         return response()->json([
             'message' => 'Tags synced successfully.',
-            'data'    => $product->getTagNames(),
+            'data' => $product->getTagNames(),
         ]);
     }
 }

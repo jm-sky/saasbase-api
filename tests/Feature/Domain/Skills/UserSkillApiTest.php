@@ -34,19 +34,18 @@ class UserSkillApiTest extends TestCase
     {
         parent::setUp();
         $this->tenant = Tenant::factory()->create();
-        $this->skill  = Skill::factory()->create();
-        $this->user   = $this->authenticateUser($this->tenant);
+        $this->skill = Skill::factory()->create();
+        $this->user = $this->authenticateUser($this->tenant);
     }
 
-    public function testCanListUserSkills(): void
+    public function test_can_list_user_skills(): void
     {
         UserSkill::factory()
             ->count(3)
             ->create([
-                'user_id'  => $this->user->id,
+                'user_id' => $this->user->id,
                 'skill_id' => $this->skill->id,
-            ])
-        ;
+            ]);
 
         $response = $this->getJson($this->baseUrl);
 
@@ -67,15 +66,14 @@ class UserSkillApiTest extends TestCase
                         'updatedAt',
                     ],
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanCreateUserSkill(): void
+    public function test_can_create_user_skill(): void
     {
         $userSkillData = [
-            'skillId'    => $this->skill->id,
-            'level'      => 3,
+            'skillId' => $this->skill->id,
+            'level' => 3,
             'acquiredAt' => now()->format('Y-m-d'),
         ];
 
@@ -98,27 +96,26 @@ class UserSkillApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'userId'     => $this->user->id,
-                    'skillId'    => $this->skill->id,
-                    'level'      => $userSkillData['level'],
+                    'userId' => $this->user->id,
+                    'skillId' => $this->skill->id,
+                    'level' => $userSkillData['level'],
                     'acquiredAt' => $userSkillData['acquiredAt'],
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('user_skill', [
-            'user_id'     => $this->user->id,
-            'skill_id'    => $this->skill->id,
-            'level'       => $userSkillData['level'],
+            'user_id' => $this->user->id,
+            'skill_id' => $this->skill->id,
+            'level' => $userSkillData['level'],
             'acquired_at' => $userSkillData['acquiredAt'],
         ]);
     }
 
-    public function testCannotCreateUserSkillWithInvalidData(): void
+    public function test_cannot_create_user_skill_with_invalid_data(): void
     {
         $userSkillData = [
-            'skillId'    => 'invalid-uuid',
-            'level'      => 6,
+            'skillId' => 'invalid-uuid',
+            'level' => 6,
             'acquiredAt' => 'invalid-date',
         ];
 
@@ -129,18 +126,17 @@ class UserSkillApiTest extends TestCase
                 'skillId',
                 'level',
                 'acquiredAt',
-            ])
-        ;
+            ]);
     }
 
-    public function testCanShowUserSkill(): void
+    public function test_can_show_user_skill(): void
     {
         $userSkill = UserSkill::factory()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'skill_id' => $this->skill->id,
         ]);
 
-        $response = $this->getJson($this->baseUrl . '/' . $userSkill->id);
+        $response = $this->getJson($this->baseUrl.'/'.$userSkill->id);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -159,27 +155,26 @@ class UserSkillApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'userId'  => $this->user->id,
+                    'userId' => $this->user->id,
                     'skillId' => $this->skill->id,
-                    'level'   => $userSkill->level,
+                    'level' => $userSkill->level,
                 ],
-            ])
-        ;
+            ]);
     }
 
-    public function testCanUpdateUserSkill(): void
+    public function test_can_update_user_skill(): void
     {
         $userSkill = UserSkill::factory()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'skill_id' => $this->skill->id,
         ]);
 
         $updateData = [
-            'level'      => 4,
+            'level' => 4,
             'acquiredAt' => now()->format('Y-m-d'),
         ];
 
-        $response = $this->putJson($this->baseUrl . '/' . $userSkill->id, $updateData);
+        $response = $this->putJson($this->baseUrl.'/'.$userSkill->id, $updateData);
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -198,35 +193,34 @@ class UserSkillApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'level'      => $updateData['level'],
+                    'level' => $updateData['level'],
                     'acquiredAt' => $updateData['acquiredAt'],
                 ],
-            ])
-        ;
+            ]);
 
         $this->assertDatabaseHas('user_skill', [
-            'id'          => $userSkill->id,
-            'level'       => $updateData['level'],
+            'id' => $userSkill->id,
+            'level' => $updateData['level'],
             'acquired_at' => $updateData['acquiredAt'],
         ]);
     }
 
-    public function testCanDeleteUserSkill(): void
+    public function test_can_delete_user_skill(): void
     {
         $userSkill = UserSkill::factory()->create([
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
             'skill_id' => $this->skill->id,
         ]);
 
-        $response = $this->deleteJson($this->baseUrl . '/' . $userSkill->id);
+        $response = $this->deleteJson($this->baseUrl.'/'.$userSkill->id);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseMissing('user_skill', ['id' => $userSkill->id]);
     }
 
-    public function testReturns404ForNonexistentUserSkill(): void
+    public function test_returns404_for_nonexistent_user_skill(): void
     {
-        $response = $this->getJson($this->baseUrl . '/00000000-0000-0000-0000-000000000000');
+        $response = $this->getJson($this->baseUrl.'/00000000-0000-0000-0000-000000000000');
 
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }

@@ -15,20 +15,20 @@ class VerifyXmlSignatureCommand extends Command
     {
         $filePath = $this->argument('file');
 
-        if (!file_exists($filePath)) {
-            $this->error('File does not exist: ' . $filePath);
+        if (! file_exists($filePath)) {
+            $this->error('File does not exist: '.$filePath);
 
             return 1;
         }
 
         try {
             $xmlContent = file_get_contents($filePath);
-            $result     = $service->verify($xmlContent);
+            $result = $service->verify($xmlContent);
             $this->info(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
             return 0;
         } catch (\Throwable $e) {
-            $this->error('Error: ' . $e->getMessage());
+            $this->error('Error: '.$e->getMessage());
 
             return 1;
         }

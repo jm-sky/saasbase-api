@@ -17,8 +17,7 @@ final class InvoicePartyTemplateDTO extends BaseDataDTO
         public readonly ?string $iban = null,
         public readonly ?string $email = null,
         public readonly ?string $phone = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): static
     {
@@ -36,13 +35,13 @@ final class InvoicePartyTemplateDTO extends BaseDataDTO
     public function toArray(): array
     {
         return [
-            'name'    => $this->name,
-            'taxId'   => $this->taxId,
+            'name' => $this->name,
+            'taxId' => $this->taxId,
             'address' => $this->address,
             'country' => $this->country,
-            'iban'    => $this->iban,
-            'email'   => $this->email,
-            'phone'   => $this->phone,
+            'iban' => $this->iban,
+            'email' => $this->email,
+            'phone' => $this->phone,
         ];
     }
 }

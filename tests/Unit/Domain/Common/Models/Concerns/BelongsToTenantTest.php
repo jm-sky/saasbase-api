@@ -29,12 +29,12 @@ class BelongsToTenantTest extends TestCase
     {
         parent::setUp();
 
-        $this->user   = User::factory()->create();
+        $this->user = User::factory()->create();
         $this->tenant = Tenant::factory()->create();
-        $this->model  = new Contractor();
+        $this->model = new Contractor;
     }
 
-    public function testModelIsScopedToTenant(): void
+    public function test_model_is_scoped_to_tenant(): void
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             Contractor::factory()->create([
@@ -56,7 +56,7 @@ class BelongsToTenantTest extends TestCase
         });
     }
 
-    public function testModelAutomaticallySetsTenantIdOnCreate(): void
+    public function test_model_automatically_sets_tenant_id_on_create(): void
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             $model = Contractor::factory()->create(['name' => 'Test Model']);
@@ -65,7 +65,7 @@ class BelongsToTenantTest extends TestCase
         });
     }
 
-    public function testCanQueryOnlyCurrentTenant(): void
+    public function test_can_query_only_current_tenant(): void
     {
         Tenant::bypassTenant($this->tenant->id, function () {
             Contractor::factory()->create([
@@ -87,7 +87,7 @@ class BelongsToTenantTest extends TestCase
         $this->assertEquals('Test Model 1', $models->first()->name);
     }
 
-    public function testCanQueryDifferentTenant(): void
+    public function test_can_query_different_tenant(): void
     {
         $otherTenant = Tenant::factory()->create();
 

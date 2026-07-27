@@ -3,6 +3,7 @@
 namespace App\Domain\Auth\Requests;
 
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class StoreApiKeyRequest extends BaseFormRequest
 {
@@ -17,14 +18,14 @@ class StoreApiKeyRequest extends BaseFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'name'      => ['required', 'string', 'max:255'],
-            'scopes'    => ['required', 'array'],
-            'scopes.*'  => ['string', 'in:*,read,write'],
+            'name' => ['required', 'string', 'max:255'],
+            'scopes' => ['required', 'array'],
+            'scopes.*' => ['string', 'in:*,read,write'],
             'expiresAt' => ['nullable', 'date', 'after:now'],
         ];
     }

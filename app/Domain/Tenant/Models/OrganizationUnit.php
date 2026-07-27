@@ -18,29 +18,29 @@ use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Str;
 
 /**
- * @property string                            $id
- * @property ?string                           $tenant_id
- * @property ?string                           $parent_id
- * @property string                            $name
- * @property ?string                           $code
- * @property ?string                           $description
- * @property bool                              $is_active
- * @property bool                              $is_technical
- * @property Carbon                            $created_at
- * @property Carbon                            $updated_at
- * @property ?Tenant                           $tenant
- * @property ?OrganizationUnit                 $parent
+ * @property string $id
+ * @property ?string $tenant_id
+ * @property ?string $parent_id
+ * @property string $name
+ * @property ?string $code
+ * @property ?string $description
+ * @property bool $is_active
+ * @property bool $is_technical
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property ?Tenant $tenant
+ * @property ?OrganizationUnit $parent
  * @property Collection<int, OrganizationUnit> $children
- * @property Collection<int, User>             $users
- * @property Collection<int, OrgUnitUser>      $orgUnitUsers
- * @property Collection<int, OrgUnitUser>      $workflowMemberships
- * @property Collection<int, Position>         $positions
- * @property Collection<int, Position>         $activePositions
+ * @property Collection<int, User> $users
+ * @property Collection<int, OrgUnitUser> $orgUnitUsers
+ * @property Collection<int, OrgUnitUser> $workflowMemberships
+ * @property Collection<int, Position> $positions
+ * @property Collection<int, Position> $activePositions
  */
 class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 {
-    use IsGlobalOrBelongsToTenant;
     use HasAllocationDimensionInterface;
+    use IsGlobalOrBelongsToTenant;
 
     protected $fillable = [
         'tenant_id',
@@ -53,12 +53,12 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
     ];
 
     protected $casts = [
-        'is_active'    => 'boolean',
+        'is_active' => 'boolean',
         'is_technical' => 'boolean',
     ];
 
     protected $attributes = [
-        'is_active'    => true,
+        'is_active' => true,
         'is_technical' => false,
     ];
 
@@ -96,8 +96,7 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
     {
         return $this->belongsToMany(User::class, 'org_unit_user')
             ->withPivot(['role', 'workflow_role_level', 'is_primary', 'valid_from', 'valid_until'])
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     // Legacy relationship - keep for backward compatibility
@@ -109,11 +108,9 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
             ->wherePivot('valid_from', '<=', now())
             ->where(function ($query) {
                 $query->whereNull('valid_until')
-                    ->orWhere('valid_until', '>=', now())
-                ;
+                    ->orWhere('valid_until', '>=', now());
             })
-            ->withTimestamps()
-        ;
+            ->withTimestamps();
     }
 
     // Enhanced membership system for allocation workflows (using existing OrgUnitUser)
@@ -127,20 +124,18 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
         return $this->belongsToMany(User::class, 'org_unit_user')
             ->withPivot(['role', 'workflow_role_level', 'is_primary', 'valid_from', 'valid_until'])
             ->withTimestamps()
-            ->whereNotNull('org_unit_user.workflow_role_level')
-        ;
+            ->whereNotNull('org_unit_user.workflow_role_level');
     }
 
     public function getOwnersAttribute(): SupportCollection
     {
-        // @phpstan-ignore-next-line
         return $this->workflowMemberships()
             ->where('workflow_role_level', UnitRoleLevel::UNIT_OWNER)
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder, not visible to PHPStan on the HasMany return type
             ->active()
             ->with('user')
             ->get()
-            ->pluck('user')
-        ;
+            ->pluck('user');
     }
 
     /**
@@ -160,7 +155,7 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
      */
     public function getFullPathAttribute(): string
     {
-        $path    = [$this->name];
+        $path = [$this->name];
         $current = $this->parent;
 
         while ($current) {
@@ -201,36 +196,34 @@ class OrganizationUnit extends BaseModel implements AllocationDimensionInterface
 
     public function getUsersWithPositions()
     {
-        // @phpstan-ignore-next-line
         return $this->orgUnitUsers()
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder, not visible to PHPStan on the HasMany return type
             ->active()
             ->with(['user', 'position.category'])
             ->get()
             ->map(function ($orgUnitUser) {
                 return [
-                    'user'       => $orgUnitUser->user,
-                    'position'   => $orgUnitUser->position,
-                    'category'   => $orgUnitUser->position?->category,
+                    'user' => $orgUnitUser->user,
+                    'position' => $orgUnitUser->position,
+                    'category' => $orgUnitUser->position?->category,
                     'is_primary' => $orgUnitUser->is_primary,
                     'valid_from' => $orgUnitUser->valid_from,
-                    'role'       => $orgUnitUser->role,
+                    'role' => $orgUnitUser->role,
                 ];
-            })
-        ;
+            });
     }
 
     public function getDirectors()
     {
-        // @phpstan-ignore-next-line
         return $this->orgUnitUsers()
+            // @phpstan-ignore-next-line active() comes from OrgUnitUserBuilder, not visible to PHPStan on the HasMany return type
             ->active()
             ->whereHas('position', function ($query) {
                 $query->where('is_director', true);
             })
             ->with(['user', 'position'])
             ->get()
-            ->pluck('user')
-        ;
+            ->pluck('user');
     }
 
     /**

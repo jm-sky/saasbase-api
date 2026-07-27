@@ -15,20 +15,19 @@ final class InvoicePartyDTO extends BaseDataDTO
         public ?string $contractorId = null,
         public ?string $contractorType = null,
         public ?string $email = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
-            'contractorId'   => $this->contractorId,
+            'contractorId' => $this->contractorId,
             'contractorType' => $this->contractorType,
-            'name'           => $this->name,
-            'taxId'          => $this->taxId,
-            'address'        => $this->address,
-            'country'        => $this->country,
-            'iban'           => $this->iban,
-            'email'          => $this->email,
+            'name' => $this->name,
+            'taxId' => $this->taxId,
+            'address' => $this->address,
+            'country' => $this->country,
+            'iban' => $this->iban,
+            'email' => $this->email,
         ];
     }
 

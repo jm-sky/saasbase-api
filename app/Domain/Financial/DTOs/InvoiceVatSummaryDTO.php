@@ -18,16 +18,15 @@ final class InvoiceVatSummaryDTO extends BaseDataDTO
         public BigDecimal $net,
         public BigDecimal $vat,
         public BigDecimal $gross,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
         return [
             'vatRate' => $this->vatRate->toArray(),
-            'net'     => $this->net->toFloat(),
-            'vat'     => $this->vat->toFloat(),
-            'gross'   => $this->gross->toFloat(),
+            'net' => $this->net->toFloat(),
+            'vat' => $this->vat->toFloat(),
+            'gross' => $this->gross->toFloat(),
         ];
     }
 

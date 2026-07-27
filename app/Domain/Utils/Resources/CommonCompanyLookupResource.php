@@ -10,16 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property string                      $name
- * @property string                      $country
- * @property ?string                     $vatId
- * @property ?string                     $regon
- * @property ?string                     $shortName
- * @property ?string                     $phoneNumber
- * @property ?string                     $email
- * @property ?string                     $website
- * @property ?AddressDTO                 $address
- * @property ?BankAccountDTO             $bankAccount
+ * @property string $name
+ * @property string $country
+ * @property ?string $vatId
+ * @property ?string $regon
+ * @property ?string $shortName
+ * @property ?string $phoneNumber
+ * @property ?string $email
+ * @property ?string $website
+ * @property ?AddressDTO $address
+ * @property ?BankAccountDTO $bankAccount
  * @property ?CommonCompanyLookupSources $sources
  */
 class CommonCompanyLookupResource extends JsonResource
@@ -35,17 +35,17 @@ class CommonCompanyLookupResource extends JsonResource
         $data = $this->resource;
 
         return [
-            'country'     => $data->country,
-            'name'        => $data->name,
-            'vatId'       => $data->vatId,
-            'regon'       => $data->regon,
-            'shortName'   => $data->shortName,
+            'country' => $data->country,
+            'name' => $data->name,
+            'vatId' => $data->vatId,
+            'regon' => $data->regon,
+            'shortName' => $data->shortName,
             'phoneNumber' => $data->phoneNumber,
-            'email'       => $data->email,
-            'website'     => $data->website,
-            'address'     => $data->address?->toArray(),
+            'email' => $data->email,
+            'website' => $data->website,
+            'address' => $data->address?->toArray(),
             'bankAccount' => $data->bankAccount?->toArray(),
-            'sources'     => $data->sources?->toArray(),
+            'sources' => $data->sources?->toArray(),
         ];
     }
 }

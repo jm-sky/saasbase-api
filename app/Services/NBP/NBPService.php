@@ -12,6 +12,8 @@ use App\Services\NBP\Requests\GetExchangeRatesRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Saloon\Enums\Method;
+use Saloon\Http\Request;
 
 class NBPService
 {
@@ -19,8 +21,7 @@ class NBPService
 
     public function __construct(
         protected NBPConnector $connector
-    ) {
-    }
+    ) {}
 
     /**
      * Get exchange rate table for a specific date.
@@ -29,21 +30,21 @@ class NBPService
     {
         $dateString = $date ? $date->format('Y-m-d') : null;
 
-        $request  = new GetExchangeRatesRequest($table, $dateString);
+        $request = new GetExchangeRatesRequest($table, $dateString);
         $response = $this->connector->send($request);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error('NBP API request failed', [
                 'status' => $response->status(),
-                'body'   => $response->body(),
+                'body' => $response->body(),
             ]);
 
-            throw new \Exception('Failed to fetch exchange rates: ' . $response->body());
+            throw new \Exception('Failed to fetch exchange rates: '.$response->body());
         }
 
         $data = $response->json();
 
-        if (empty($data) || !isset($data[0]['rates'])) {
+        if (empty($data) || ! isset($data[0]['rates'])) {
             return null;
         }
 
@@ -67,14 +68,14 @@ class NBPService
     {
         $dateString = $date ? $date->format('Y-m-d') : null;
 
-        $request  = new GetCurrencyRateRequest($table, strtoupper($currencyCode), $dateString);
+        $request = new GetCurrencyRateRequest($table, strtoupper($currencyCode), $dateString);
         $response = $this->connector->send($request);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error('NBP API currency request failed', [
                 'currency' => $currencyCode,
-                'status'   => $response->status(),
-                'body'     => $response->body(),
+                'status' => $response->status(),
+                'body' => $response->body(),
             ]);
 
             return null;
@@ -98,12 +99,11 @@ class NBPService
     {
         $endpoint = "/exchangerates/tables/{$table}/{$startDate->format('Y-m-d')}/{$endDate->format('Y-m-d')}";
 
-        $request = new class($endpoint) extends \Saloon\Http\Request {
-            protected \Saloon\Enums\Method $method = \Saloon\Enums\Method::GET;
+        $request = new class($endpoint) extends Request
+        {
+            protected Method $method = Method::GET;
 
-            public function __construct(protected string $endpoint)
-            {
-            }
+            public function __construct(protected string $endpoint) {}
 
             public function resolveEndpoint(): string
             {
@@ -113,22 +113,22 @@ class NBPService
 
         $response = $this->connector->send($request);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error('NBP API range request failed', [
                 'start_date' => $startDate->format('Y-m-d'),
-                'end_date'   => $endDate->format('Y-m-d'),
-                'status'     => $response->status(),
+                'end_date' => $endDate->format('Y-m-d'),
+                'status' => $response->status(),
             ]);
 
             throw new \Exception('Failed to fetch exchange rates for date range');
         }
 
-        $data  = $response->json();
+        $data = $response->json();
         $rates = collect();
 
         foreach ($data as $dayData) {
             $tableDTO = ExchangeRateTableDTO::fromArray($dayData);
-            $rates    = $rates->merge($tableDTO->rates);
+            $rates = $rates->merge($tableDTO->rates);
         }
 
         return $rates;

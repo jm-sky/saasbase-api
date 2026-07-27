@@ -15,31 +15,31 @@ class UpdateContractorRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'contractor.tenantId'    => ['nullable', 'ulid', 'exists:tenants,id'],
-            'contractor.name'        => ['required', 'string', 'max:255'],
-            'contractor.email'       => ['nullable', 'email', 'max:255'],
-            'contractor.phone'       => ['nullable', 'string', 'max:20'],
-            'contractor.website'     => ['nullable', 'string', 'max:255'],
-            'contractor.country'     => ['nullable', 'string', 'max:100'],
-            'contractor.vatId'       => ['nullable', 'string', 'max:20'],
-            'contractor.taxId'       => ['nullable', 'string', 'max:20'],
-            'contractor.regon'       => ['nullable', 'string', 'max:20'],
+            'contractor.tenantId' => ['nullable', 'ulid', 'exists:tenants,id'],
+            'contractor.name' => ['required', 'string', 'max:255'],
+            'contractor.email' => ['nullable', 'email', 'max:255'],
+            'contractor.phone' => ['nullable', 'string', 'max:20'],
+            'contractor.website' => ['nullable', 'string', 'max:255'],
+            'contractor.country' => ['nullable', 'string', 'max:100'],
+            'contractor.vatId' => ['nullable', 'string', 'max:20'],
+            'contractor.taxId' => ['nullable', 'string', 'max:20'],
+            'contractor.regon' => ['nullable', 'string', 'max:20'],
             'contractor.description' => ['nullable', 'string'],
-            'contractor.isActive'    => ['boolean'],
-            'contractor.isBuyer'     => ['boolean'],
-            'contractor.isSupplier'  => ['boolean'],
+            'contractor.isActive' => ['boolean'],
+            'contractor.isBuyer' => ['boolean'],
+            'contractor.isSupplier' => ['boolean'],
 
-            'options.fetchLogo'      => ['sometimes', 'nullable', 'boolean'],
+            'options.fetchLogo' => ['sometimes', 'nullable', 'boolean'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'contractor.tenantId.ulid'     => 'The tenant ID must be a valid ULID.',
-            'contractor.tenantId.exists'   => 'The selected tenant does not exist.',
-            'contractor.name.required'     => 'The name field is required.',
-            'contractor.email.email'       => 'The email must be a valid email address.',
+            'contractor.tenantId.ulid' => 'The tenant ID must be a valid ULID.',
+            'contractor.tenantId.exists' => 'The selected tenant does not exist.',
+            'contractor.name.required' => 'The name field is required.',
+            'contractor.email.email' => 'The email must be a valid email address.',
         ];
     }
 

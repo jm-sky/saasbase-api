@@ -15,13 +15,13 @@ class FinancialOverviewWidgetResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'year'   => $this->resource['year'],
+            'year' => $this->resource['year'],
             'months' => collect($this->resource['months'])->map(function ($month) {
                 return [
-                    'month'     => $month['month'],
-                    'revenue'   => $month['revenue'],
-                    'expenses'  => $month['expenses'],
-                    'balance'   => $month['balance'],
+                    'month' => $month['month'],
+                    'revenue' => $month['revenue'],
+                    'expenses' => $month['expenses'],
+                    'balance' => $month['balance'],
                 ];
             })->values()->all(),
         ];

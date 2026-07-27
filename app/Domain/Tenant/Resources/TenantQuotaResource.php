@@ -20,8 +20,8 @@ class TenantQuotaResource extends JsonResource
     {
         /* @var TenantQuotaDTO $this */
         return [
-            'storage'  => $this->storage->toArray(),
-            'users'    => $this->users->toArray(),
+            'storage' => $this->storage->toArray(),
+            'users' => $this->users->toArray(),
             'apiCalls' => $this->apiCalls->toArray(),
         ];
     }

@@ -21,8 +21,7 @@ class FeedCommentController extends Controller
         $comments = $feed->comments()
             ->with('user')
             ->latest()
-            ->paginate(10)
-        ;
+            ->paginate(10);
 
         return response()->json([
             'data' => CommentDTO::collect($comments),
@@ -37,8 +36,8 @@ class FeedCommentController extends Controller
 
         $comment = $feed->comments()->create([
             'tenant_id' => $request->user()->getTenantId(),
-            'user_id'   => Auth::id(),
-            'content'   => $validated['content'],
+            'user_id' => Auth::id(),
+            'content' => $validated['content'],
         ]);
 
         return response()->json(CommentDTO::from($comment));
@@ -46,12 +45,11 @@ class FeedCommentController extends Controller
 
     public function destroy(Feed $feed, Comment $comment): Response
     {
-        // TODO: Add authorization
-        // $this->authorize('delete', $comment);
-
-        if ($comment->commentable_id !== $feed->id || Feed::class !== $comment->commentable_type) {
+        if ($comment->commentable_id !== $feed->id || $comment->commentable_type !== Feed::class) {
             abort(404); // Nie pozwalamy usuwać cudzych komentarzy lub innych modeli
         }
+
+        abort_unless(Auth::id() === $comment->user_id, Response::HTTP_FORBIDDEN);
 
         $comment->delete();
 
