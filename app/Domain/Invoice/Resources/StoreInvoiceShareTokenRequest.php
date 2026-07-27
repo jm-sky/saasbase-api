@@ -6,6 +6,15 @@ use App\Http\Requests\BaseFormRequest;
 
 class StoreInvoiceShareTokenRequest extends BaseFormRequest
 {
+    public function prepareForValidation(): void
+    {
+        $invoice = $this->route('invoice');
+
+        $this->merge([
+            'invoiceId' => is_object($invoice) ? $invoice->id : $invoice,
+        ]);
+    }
+
     public function rules(): array
     {
         return [

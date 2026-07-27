@@ -40,6 +40,7 @@ Route::prefix('v1')->group(function () {
     require __DIR__.'/api/images.php';
     require __DIR__.'/api/user.php';
     require __DIR__.'/api/utils.php';
+    require __DIR__.'/api/public.php';
 
     Route::middleware(['auth:api', 'session.active', 'is_active', 'mfa'])->group(function () {
         require __DIR__.'/api/tenants.php';
