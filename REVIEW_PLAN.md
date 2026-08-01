@@ -91,15 +91,15 @@ Wszystko z listy domenowej +
 ### Faza 1 — Integracje zewnętrzne
 *Najwyższe ryzyko: pieniądze, prawo, bezpieczeństwo.*
 
-- [ ] Billing/Subscription → Stripe
-- [ ] Financial → kursy walut, stawki VAT
-- [ ] IbanInfo → IBAN API
-- [ ] IdentityCheck → REGON, VIES, Biała Lista MF
-- [ ] Invoice → KSeF
-- [ ] EDoreczenia → e-doręczenia (eDO Post)
-- [ ] Expense → Azure Document Intelligence (OCR)
-- [ ] Ai → OpenRouter (chat AI)
-- [ ] Exchanges → kursy wymiany
+- [x] Billing/Subscription → Stripe
+- [x] Financial → kursy walut, stawki VAT
+- [x] IbanInfo → IBAN API
+- [x] IdentityCheck → REGON, VIES, Biała Lista MF
+- [x] Invoice → KSeF
+- [x] EDoreczenia → e-doręczenia (eDO Post)
+- [x] Expense → Azure Document Intelligence (OCR)
+- [x] Ai → OpenRouter (chat AI)
+- [x] Exchanges → kursy wymiany
 
 ### Faza 2 — Domeny biznesowe core
 
